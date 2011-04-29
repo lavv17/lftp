@@ -267,40 +267,35 @@ void pgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 }
 
 // list subjobs (chunk xfers) only when verbose
-void  pgetJob::ListJobs(int verbose,int indent)
+xstring& pgetJob::FormatJobs(xstring& s,int verbose,int indent)
 {
    indent--;
    if(!chunks)
-   {
-      Job::ListJobs(verbose,indent);
-      return;
-   }
+      return Job::FormatJobs(s,verbose,indent);
    if(verbose>1)
    {
       if(c->GetPos()<limit0)
       {
-	 printf("%*s\\chunk %lld-%lld\n",indent,"",(long long)start0,(long long)limit0);
+	 s.appendf("%*s\\chunk %lld-%lld\n",indent,"",(long long)start0,(long long)limit0);
 	 c->SetRangeLimit(limit0); // to see right ETA.
-	 CopyJob::PrintStatus(verbose,"\t");
+	 CopyJob::FormatStatus(s,verbose,"\t");
 	 c->SetRangeLimit(FILE_END);
       }
-      Job::ListJobs(verbose,indent);
+      Job::FormatJobs(s,verbose,indent);
    }
+   return s;
 }
 
-void  pgetJob::PrintStatus(int verbose,const char *prefix)
+xstring& pgetJob::FormatStatus(xstring& s,int verbose,const char *prefix)
 {
    if(Done() || no_parallel || max_chunks<2 || !chunks)
-   {
-      super::PrintStatus(verbose,prefix);
-      return;
-   }
+      return super::FormatStatus(s,verbose,prefix);
 
-   printf("%s",prefix);
+   s.append(prefix);
    const char *name=GetDispName();
    off_t size=GetSize();
-   printf(PGET_STATUS);
-   printf("\n");
+   s.appendf(PGET_STATUS);
+   return s.append('\n');
 }
 
 void pgetJob::free_chunks()

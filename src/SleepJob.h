@@ -51,7 +51,7 @@ public:
    ~SleepJob();
 
    const char *Status();
-   void PrintStatus(int v,const char *);
+   xstring& FormatStatus(xstring&,int v,const char *);
    void ShowRunStatus(const SMTaskRef<StatusLine>& s);
 
    void Repeat(int m) { repeat=true; max_repeat_count=m; Stop(); }

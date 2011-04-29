@@ -93,13 +93,13 @@ int mkdirJob::Do()
    return MOVED;
 }
 
-void  mkdirJob::PrintStatus(int v,const char *prefix)
+xstring& mkdirJob::FormatStatus(xstring& s,int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v,prefix);
+   SessionJob::FormatStatus(s,v,prefix);
    if(Done())
-      return;
+      return s;
 
-   printf("%s`%s' [%s]\n",prefix,curr,session->CurrentStatus());
+   return s.appendf("%s`%s' [%s]\n",prefix,curr,session->CurrentStatus());
 }
 
 void  mkdirJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)

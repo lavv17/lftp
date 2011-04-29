@@ -105,15 +105,14 @@ const char *SleepJob::Status()
       NULL);
 }
 
-void SleepJob::PrintStatus(int,const char *prefix)
+xstring& SleepJob::FormatStatus(xstring& buf,int,const char *prefix)
 {
    if(repeat)
-   {
-      printf(_("\tRepeat count: %d\n"),repeat_count);
-   }
+      buf.appendf(_("\tRepeat count: %d\n"),repeat_count);
    const char *s=Status();
    if(s[0])
-      printf("\t%s\n",s);
+      buf.appendf("\t%s\n",s);
+   return buf;
 }
 void SleepJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {

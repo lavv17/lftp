@@ -402,11 +402,7 @@ int CmdExec::Do()
 		  session->Close();
 		  exit_code=0;
 		  builtin=BUILTIN_NONE;
-		  char *cmd=string_alloca(6+3+2*strlen(loc));
-		  strcpy(cmd,"open \"");
-		  unquote(cmd+strlen(cmd),loc);
-		  strcat(cmd,"\";");
-		  PrependCmd(cmd);
+		  PrependCmd(xstring::get_tmp("open ").append_quoted(loc));
 	       	  return MOVED;
 	       }
 	    }
@@ -706,58 +702,49 @@ void CmdExec::ShowRunStatus(const SMTaskRef<StatusLine>& s)
    }
 }
 
-void CmdExec::PrintStatus(int v,const char *prefix)
+xstring& CmdExec::FormatStatus(xstring& s,int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v,prefix);
+   SessionJob::FormatStatus(s,v,prefix);
    if(builtin)
    {
-      xstring_ca s(args->Combine());
-      printf(_("\tExecuting builtin `%s' [%s]\n"),s.get(),session->CurrentStatus());
-      return;
+      xstring_ca ac(args->Combine());
+      return s.appendf(_("\tExecuting builtin `%s' [%s]\n"),ac.get(),session->CurrentStatus());
    }
    if(queue_feeder)
    {
       if(IsSuspended())
-	 printf("%s%s\n",prefix,_("Queue is stopped."));
+	 s.appendf("%s%s\n",prefix,_("Queue is stopped."));
       BuryDoneJobs();
       for(int i=0; i<waiting_num; i++)
       {
 	 if(i==0)
-	    printf("%s%s ",prefix,_("Now executing:"));
+	    s.appendf("%s%s ",prefix,_("Now executing:"));
 	 if(v==0)
-	    waiting[i]->ListOneJob(v);
+	    waiting[i]->FormatOneJob(s,v);
 	 else
-	    waiting[i]->PrintJobTitle();
+	    waiting[i]->FormatJobTitle(s);
 	 if(i+1<waiting_num)
-	    printf("%s\t-",prefix);
+	    s.appendf("%s\t-",prefix);
       }
-      queue_feeder->PrintStatus(v,prefix);
-      return;
+      return queue_feeder->FormatStatus(s,v,prefix);
    }
    if(waiting_num==1)
-   {
-      printf(_("\tWaiting for job [%d] to terminate\n"),waiting[0]->jobno);
-      return;
-   }
+      return s.appendf(_("\tWaiting for job [%d] to terminate\n"),waiting[0]->jobno);
    else if(waiting_num>1)
    {
-      printf(_("\tWaiting for termination of jobs: "));
+      s.appendf(_("\tWaiting for termination of jobs: "));
       for(int i=0; i<waiting_num; i++)
       {
-	 printf("[%d]",waiting[i]->jobno);
-	 printf("%c",i+1<waiting_num?' ':'\n');
+	 s.appendf("[%d]",waiting[i]->jobno);
+	 s.append(i+1<waiting_num?' ':'\n');
       }
-      return;
+      return s;
    }
    if(cmd_buf.Size()>0)
-   {
-      // xgettext:c-format
-      printf(_("\tRunning\n"));
-   }
+      s.append(_("\tRunning\n"));
    else if(feeder)
-   {
-      printf(_("\tWaiting for command\n"));
-   }
+      s.append(_("\tWaiting for command\n"));
+   return s;
 }
 
 void CmdExec::init(LocalDirectory *c)
@@ -1023,47 +1010,39 @@ void CmdExec::SetInteractive(bool i)
    interactive=i;
 }
 
-int CmdExec::unquote(char *buf,const char *str)
+xstring& xstring::append_quoted(const char *str,int len)
 {
-   char *buf0=buf;
-   while(*str)
+   if(!CmdExec::needs_quotation(str,len))
+      return append(str);
+
+   append('"');
+   while(len>0)
    {
       if(*str=='"' || *str=='\\')
-	 *buf++='\\';
-      *buf++=*str++;
+	 append('\\');
+      append(*str++);
+      len--;
    }
-   *buf=0;
-   return buf-buf0;
+   return append('"');
 }
 
-const char *CmdExec::unquote(const char *str)
+bool CmdExec::needs_quotation(const char *buf,int len)
 {
-   static xstring ret;
-   ret.get_space(strlen(str)*2);
-   ret.set_length(unquote(ret.get_non_const(),str));
-   return ret;
-}
-
-bool CmdExec::needs_quotation(const char *buf)
-{
-   while(*buf)
+   while(len>0)
    {
       if(*buf==' ' || *buf=='\t')
 	 return true;
       if(strchr("\"'\\&|>;",*buf))
 	 return true;
       buf++;
+      len--;
    }
    return false;
 }
 
 void CmdExec::FeedQuoted(const char *c)
 {
-   char *buf=(char*)alloca(strlen(c)*2+2+1);
-   buf[0]='"';
-   unquote(buf+1,c);
-   strcat(buf,"\"");
-   FeedCmd(buf);
+   FeedCmd(xstring::get_tmp("").append_quoted(c));
 }
 
 // implementation is here because it depends on CmdExec.
@@ -1075,10 +1054,7 @@ char *ArgV::CombineQuoted(int start) const
    for(;;)
    {
       const char *arg=String(start++);
-      if(CmdExec::needs_quotation(arg))
-	 res.vappend("\"",CmdExec::unquote(arg),"\"",NULL);
-      else
-	 res.append(arg);
+      res.append_quoted(arg);
       if(start>=Count())
 	 return(res.borrow());
       res.append(' ');

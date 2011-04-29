@@ -764,7 +764,9 @@ Job *CmdExec::builtin_lftp()
 	 cmd.set("version;");
 	 break;
       case('f'):
-	 cmd.vset("source \"",unquote(optarg),"\";",NULL);
+	 cmd.set("source ");
+	 cmd.append_quoted(optarg);
+	 cmd.append(';');
 	 break;
       case('c'):
 	 cmd.set_allocated(args->CombineCmd(args->getindex()-1));
@@ -904,31 +906,31 @@ Job *CmdExec::builtin_open()
 
    if(!no_bm && host && (bm=lftp_bookmarks.Lookup(host))!=0)
    {
-      char *cmd=string_alloca(5+3+3+xstrlen(user)*2+1+xstrlen(pass)*2+3+xstrlen(port)*2+strlen(bm)*2+6+1);
-      strcpy(cmd,"open -B ");
+      xstring& cmd=xstring::get_tmp("open -B ");
       if(user)
       {
-	 strcat(cmd,"-u \"");
-	 unquote(cmd+strlen(cmd),user);
+	 cmd.append("-u ");
+	 cmd.append_quoted(user);
 	 if(pass)
 	 {
-	    strcat(cmd,",");
-	    unquote(cmd+strlen(cmd),pass);
+	    cmd.append(",");
+	    cmd.append_quoted(pass);
 	 }
-	 strcat(cmd,"\" ");
+	 cmd.append(' ');
       }
       if(port)
       {
-	 strcat(cmd,"-p \"");
-	 unquote(cmd+strlen(cmd),port);
-	 strcat(cmd,"\" ");
+	 cmd.append("-p ");
+	 cmd.append_quoted(port);
+	 cmd.append(' ');
       }
 
-      strcat(cmd,bm);
+      cmd.append(bm);
 
       if(background)
-	 strcat(cmd," &\n");
-      strcat(cmd,";\n");
+	 cmd.append(" &\n");
+      else
+	 cmd.append(";\n");
 
       PrependCmd(cmd);
    }
@@ -1061,13 +1063,11 @@ Job *CmdExec::builtin_open()
       }
 
       const char *cd_arg=(url && url->orig_url)?url->orig_url.get():path;
-      char *s=string_alloca(strlen(cd_arg)*2+40);
-      strcpy(s,"&& cd \"");
-      unquote(s+strlen(s),cd_arg);
-      strcat(s,"\"");
+      xstring& s=xstring::get_tmp("&& cd ");
+      s.append_quoted(cd_arg);
       if(background)
-	 strcat(s,"&");
-      strcat(s,"\n");
+	 s.append('&');
+      s.append('\n');
       PrependCmd(s);
    }
 
@@ -1229,7 +1229,11 @@ Job *CmdExec::builtin_queue()
 	       queue->Suspend();
 	    }
 	    else
-	       queue->PrintStatus(2,"");
+	    {
+	       xstring buf("");
+	       queue->FormatStatus(buf,2,"");
+	       printf("%s",buf.get());
+	    }
 	    exit_code=0;
 	    break;
 	 }
@@ -1925,28 +1929,33 @@ CMD(jobs)
    }
    exit_code=0;
    args->back();
-   const char *arg=args->getnext();
-   if(!arg) {
-      parent->ListJobs(v);
-      return 0;
-   }
    const char *op=args->a0();
-   for(; arg; arg=args->getnext()) {
-      if(!isdigit((unsigned char)*arg)) {
-	 eprintf(_("%s: %s - not a number\n"),op,arg);
-	 exit_code=1;
-	 continue;
+   const char *arg=args->getnext();
+   xstring s("");
+   if(!arg) {
+      parent->FormatJobs(s,v);
+   } else {
+      for(; arg; arg=args->getnext()) {
+	 if(!isdigit((unsigned char)*arg)) {
+	    eprintf(_("%s: %s - not a number\n"),op,arg);
+	    exit_code=1;
+	    continue;
+	 }
+	 int n=atoi(arg);
+	 Job *j=parent->FindJob(n);
+	 if(!j) {
+	    eprintf(_("%s: %d - no such job\n"),op,n);
+	    exit_code=1;
+	    continue;
+	 }
+	 j->FormatOneJob(s,v);
       }
-      int n=atoi(arg);
-      Job *j=parent->FindJob(n);
-      if(!j) {
-	 eprintf(_("%s: %d - no such job\n"),op,n);
-	 exit_code=1;
-	 continue;
-      }
-      j->ListOneJob(v);
    }
-   return 0;
+   if(exit_code)
+      return 0;
+   OutputJob *out=new OutputJob(output.borrow(), args->a0());
+   Job *j=new echoJob(s,s.length(),out);
+   return j;
 }
 
 CMD(cd)
@@ -3257,10 +3266,7 @@ CMD(get1)
 	 const char *bn=basename_ptr(src);
 	 if(bn[0]!='/')
 	 {
-	    char *dst1=string_alloca(strlen(dst)+strlen(bn)+1);
-	    strcpy(dst1,dst);
-	    strcat(dst1,bn);
-	    dst=dst1;
+	    dst=xstring::get_tmp(dst).append(bn);
 	    auto_rename=true;
 	 }
       }
@@ -3282,11 +3288,7 @@ CMD(get1)
 	       slash++;
 	    else
 	       slash=src;
-	    char *dst1=string_alloca(strlen(dst)+strlen(slash)+2);
-	    strcpy(dst1,dst);
-	    strcat(dst1,"/");
-	    strcat(dst1,slash);
-	    dst=dst1;
+	    dst=xstring::cat(dst,"/",slash,NULL);
 	 }
       }
    }

@@ -328,11 +328,7 @@ void DirColors::Parse(const char *p)
       const char *no=Lookup(".no");
       const char *lc=Lookup(".lc");
       const char *rc=Lookup(".rc");
-      char *ec=string_alloca(strlen(lc)+strlen(no)+strlen(rc)+1);
-      strcpy(ec,lc);
-      strcat(ec,no);
-      strcat(ec,rc);
-      Add(".ec",ec);
+      Add(".ec",xstring::cat(lc,no,rc,NULL));
    }
 }
 

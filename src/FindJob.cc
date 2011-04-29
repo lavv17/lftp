@@ -318,20 +318,21 @@ void FinderJob::ShowRunStatus(const SMTaskRef<StatusLine>& sl)
    }
 }
 
-void FinderJob::PrintStatus(int v,const char *prefix)
+xstring& FinderJob::FormatStatus(xstring& s,int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v,prefix);
+   SessionJob::FormatStatus(s,v,prefix);
 
    switch(state)
    {
    case INFO:
-      printf("\t%s: %s\n",dir_file(stack_ptr>=0?top.path.get():0,dir),li->Status());
+      s.appendf("\t%s: %s\n",dir_file(stack_ptr>=0?top.path.get():0,dir),li->Status());
       break;
    case WAIT:
       break;
    default:
       break;
    }
+   return s;
 }
 
 void FinderJob::Fg()

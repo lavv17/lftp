@@ -107,7 +107,7 @@ public:
    const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
    const char *vset(...) ATTRIBUTE_SENTINEL;
-   void truncate(size_t n) { if(buf) buf[n]=0; }
+   void truncate(size_t n=0) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
    bool eq(const char *s) { return !xstrcmp(buf,s); }
    bool ne(const char *s) { return !eq(s); }
@@ -183,7 +183,7 @@ public:
    static xstring& cat(const char *first,...) ATTRIBUTE_SENTINEL;
    static xstring& join(const char *sep,int n,...);
 
-   void truncate(size_t n);
+   void truncate(size_t n=0);
    void truncate_at(char c);
    /* set_length can be used to extend the string, e.g. after modification
       with get_space+get_non_const. */
@@ -211,9 +211,13 @@ public:
    xstring& append_url_encoded(const char *s,const char *unsafe) { return append_url_encoded(s,strlen(s),unsafe); }
    xstring& append_url_encoded(const xstring& s,const char *unsafe) { return append_url_encoded(s,s.length(),unsafe); }
 
+   xstring& append_quoted(const char *s,int len);
+   xstring& append_quoted(const char *s) { return append_quoted(s,strlen(s)); }
+
    static xstring null;
 };
 
 static inline size_t strlen(const xstring& s) { return s.length(); }
+static inline size_t xstrlen(const xstring& s) { return s.length(); }
 
 #endif//XSTRING_H

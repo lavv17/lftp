@@ -43,7 +43,7 @@ class mgetJob : public GetJob
 
 public:
    int	 Do();
-   void	 PrintStatus(int,const char *);
+   xstring& FormatStatus(xstring&,int,const char *);
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
 
    mgetJob(FileAccess *session,ArgV *args,bool c,bool md);

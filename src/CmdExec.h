@@ -153,9 +153,8 @@ public:
    void FeedArgV(const ArgV *,int start=0);
    void PrependCmd(const char *c);
    void ExecParsed(ArgV *a,FDStream *o=0,bool b=false);
-   static int unquote(char *buf,const char *str);  // returns buf length
-   static const char *unquote(const char *str);
-   static bool needs_quotation(const char *buf);
+   static bool needs_quotation(const char *buf,int len);
+   static bool needs_quotation(const char *buf) { return needs_quotation(buf,strlen(buf)); }
    static bool quotable(char c,char in_quotes);
    static bool is_space(char c) { return c==' ' || c=='\t'; }
    static bool is_quote(char c) { return c=='"' || c=='\''; }
@@ -177,7 +176,7 @@ public:
    int Done();
    int ExitCode() { return exit_code; }
    int Do();
-   void PrintStatus(int,const char *prefix="\t");
+   xstring& FormatStatus(xstring&,int,const char *prefix="\t");
    void ShowRunStatus(const SMTaskRef<StatusLine>& s);
    int AcceptSig(int sig);
 

@@ -54,6 +54,7 @@ class QueueFeeder : public CmdFeeder
    /* get the next job in j that matches cmd (including j) */
    static QueueJob *get_next_match(const char *cmd, QueueJob *j);
    void PrintJobs(const QueueJob *job, int v, const char *plur) const;
+   xstring& FormatJobs(xstring& s,const QueueJob *job, int v, const char *plur) const;
 
    void insert_jobs(QueueJob *job,
 		   QueueJob *&lst_head, QueueJob *&lst_tail,
@@ -76,7 +77,7 @@ public:
    bool MoveJob(const char *cmd, int to, int v = 0);
 
    enum { PrintRequeue = 9999 };
-   void PrintStatus(int v,const char *prefix="\t") const;
+   xstring& FormatStatus(xstring&,int v,const char *prefix="\t") const;
 
    QueueFeeder(const char *pwd, const char *lpwd):
       jobs(0), lastjob(0), cur_pwd(pwd), cur_lpwd(lpwd) {}

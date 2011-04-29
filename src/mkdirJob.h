@@ -41,7 +41,7 @@ public:
    int	 Done() { return curr==0; }
    int	 ExitCode() { return failed; }
 
-   void	 PrintStatus(int,const char *);
+   xstring& FormatStatus(xstring&,int,const char *);
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
    void	 SayFinal();
 

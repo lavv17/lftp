@@ -356,11 +356,10 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       if(alias && !TouchedAlias::IsTouched(alias,used_aliases))
       {
 	 used_aliases=new TouchedAlias(alias,used_aliases);
-	 char *cmd1=string_alloca(strlen(alias)+strlen(w)-strlen(buf)+1);
-	 strcpy(cmd1,alias);
-	 strcat(cmd1,w+strlen(buf));
-	 start=start-strlen(buf)+strlen(alias);
-	 cmd=cmd1;
+	 int buf_len=strlen(buf);
+	 const char *cmd1=xstring::cat(alias,w+buf_len,NULL);
+	 cmd=alloca_strdup(cmd1);
+	 start=start-buf_len+strlen(alias);
 	 continue;
       }
       const char *full=CmdExec::GetFullCommandName(buf);
@@ -666,7 +665,7 @@ static char **lftp_completion (const char *text,int start,int end)
       bool tilde_expanded=false;
       const char *home=getenv("HOME");
       int home_len=xstrlen(home);
-      pat=(char*)alloca((len+home_len)*2+10);
+      pat=string_alloca((len+home_len)*2+10);
       if(len>0 && home_len>0 && text[0]=='~' && (len==1 || text[1]=='/'))
       {
 	 glob_quote(pat,home,home_len);
@@ -742,7 +741,7 @@ static char **lftp_completion (const char *text,int start,int end)
 	 break;
       }
 
-      pat=(char*)alloca(len*2+10);
+      pat=string_alloca(len*2+10);
       glob_quote(pat,text,len);
 
       if(pat[0]=='~' && pat[1]==0)

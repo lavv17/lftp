@@ -220,15 +220,15 @@ decode:
 	 const char *new_path=orig_url+url::path_index(orig_url);
 	 if(new_path[0]=='/')
 	    new_path++;
-	 char *u=alloca_strdup2(bm,strlen(new_path)+1);
+	 xstring u(bm);
 	 if(new_path[0]=='/' || new_path[0]=='~')
-	    u[url::path_index(u)]=0;
+	    u.truncate(url::path_index(u));
 	 assert(u[0]);
-	 if(u[strlen(u)-1]!='/' && new_path[0]!='/')
-	    strcat(u,"/");
-	 else if(u[strlen(u)-1]=='/' && new_path[0]=='/')
+	 if(u.last_char()!='/' && new_path[0]!='/')
+	    u.append('/');
+	 else if(u.last_char()=='/' && new_path[0]=='/')
 	    new_path++;
-	 strcat(u,new_path);
+	 u.append(new_path);
 	 new_url=u;
       }
       else

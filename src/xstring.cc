@@ -82,14 +82,12 @@ char *xstring::add_space(size_t s)
 void xstring::init(const char *s,int len)
 {
    init();
-   if(s)
-      nset(s,len);
+   nset(s,len);
 }
 void xstring::init(const char *s)
 {
    init();
-   if(s)
-      set(s);
+   set(s);
 }
 
 xstring& xstring::nset(const char *s,int len)

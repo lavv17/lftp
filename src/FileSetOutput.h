@@ -116,7 +116,7 @@ public:
    int ExitCode() { return error||output->Error() ? 1 : 0; }
 
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
-   void PrintStatus(int v,const char *);
+   xstring& FormatStatus(xstring&,int v,const char *);
 };
 
 #endif

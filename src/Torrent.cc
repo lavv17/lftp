@@ -2602,28 +2602,28 @@ const char *TorrentTracker::Status() const
    return xstring::format("next request in %s",NextRequestIn());
 }
 
-void TorrentJob::PrintStatus(int v,const char *tab)
+xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
 {
    const char *name=torrent->GetName();
    if(name)
-      printf("%sName: %s\n",tab,name);
-   printf("%s%s\n",tab,torrent->Status().get());
+      s.appendf("%sName: %s\n",tab,name);
+   s.appendf("%s%s\n",tab,torrent->Status().get());
    if(torrent->GetRatio()>0)
-      printf("%sratio: %f\n",tab,torrent->GetRatio());
+      s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
    if(v>2) {
-      printf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().dump());
-      printf("%stotal length: %llu\n",tab,torrent->TotalLength());
-      printf("%spiece length: %u\n",tab,torrent->PieceLength());
+      s.appendf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().dump());
+      s.appendf("%stotal length: %llu\n",tab,torrent->TotalLength());
+      s.appendf("%spiece length: %u\n",tab,torrent->PieceLength());
    }
 
    if(v>1) {
       if(torrent->Trackers().count()==1) {
-	 printf("%stracker: %s - %s\n",tab,torrent->Trackers()[0]->GetURL(),
+	 s.appendf("%stracker: %s - %s\n",tab,torrent->Trackers()[0]->GetURL(),
 	       torrent->Trackers()[0]->Status());
       } else if(torrent->Trackers().count()>1) {
-	 printf("%strackers:\n",tab);
+	 s.appendf("%strackers:\n",tab);
 	 for(int i=0; i<torrent->Trackers().count(); i++) {
-	    printf("%s%2d. %s - %s\n",tab,i+1,torrent->Trackers()[i]->GetURL(),
+	    s.appendf("%s%2d. %s - %s\n",tab,i+1,torrent->Trackers()[i]->GetURL(),
 		  torrent->Trackers()[i]->Status());
 	 }
       }
@@ -2632,12 +2632,13 @@ void TorrentJob::PrintStatus(int v,const char *tab)
    if(torrent->GetPeersCount()<=5 || v>1) {
       const TaskRefArray<TorrentPeer>& peers=torrent->GetPeers();
       for(int i=0; i<peers.count(); i++)
-	 printf("%s  %s: %s\n",tab,peers[i]->GetName(),peers[i]->Status());
+	 s.appendf("%s  %s: %s\n",tab,peers[i]->GetName(),peers[i]->Status());
    } else {
-      printf("%s  peers:%d active:%d complete:%d\n",tab,
+      s.appendf("%s  peers:%d active:%d complete:%d\n",tab,
 	 torrent->GetPeersCount(),torrent->GetActivePeersCount(),
 	 torrent->GetCompletePeersCount());
    }
+   return s;
 }
 
 void TorrentJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)

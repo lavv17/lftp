@@ -4700,7 +4700,7 @@ const char *Ftp::make_skey_reply()
    LogNote(9,"found s/key substring");
 
    int skey_sequence=0;
-   char *buf=(char*)alloca(strlen(cp));
+   char *buf=string_alloca(strlen(cp));
 
    if(sscanf(cp,"%d %s",&skey_sequence,buf)!=2 || skey_sequence<1)
       return 0;

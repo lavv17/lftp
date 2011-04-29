@@ -72,7 +72,8 @@ public:
 
    void	 AllocJobno();
 
-   virtual void	PrintStatus(int,const char *prefix="\t") {};
+   void PrintStatus(int,const char *prefix="\t");
+   virtual xstring& FormatStatus(xstring& s,int v,const char *prefix="\t") { return s; }
    virtual void	ShowRunStatus(const SMTaskRef<StatusLine>&);
    void ClearStatus()
       {
@@ -88,12 +89,19 @@ public:
    virtual void	  Fg();
 
    xstring cmdline;
-   virtual void ListJobs(int verbose_level,int indent=0);
+
+   xstring& FormatJobTitle(xstring& s,int indent=0,const char *suffix=0);
+   xstring& FormatOneJob(xstring& s,int verbose,int indent=0,const char *suffix=0);
+   xstring& FormatOneJobRecursively(xstring& s,int verbose,int indent=0);
+   virtual xstring& FormatJobs(xstring& s,int verbose,int indent=0);
+
    void PrintJobTitle(int indent=0,const char *suffix=0);
    void ListOneJob(int verbose,int indent=0,const char *suffix=0);
    void ListOneJobRecursively(int verbose,int indent);
+
    void ListDoneJobs();
    void BuryDoneJobs();
+
    Job *FindAnyChild();
    bool WaitsFor(Job *);
    static Job *FindWhoWaitsFor(Job *);
@@ -148,7 +156,7 @@ protected:
 public:
    FileAccessRef session;
 
-   void PrintStatus(int v,const char *);
+   xstring& FormatStatus(xstring&,int,const char *);
    const char *GetConnectURL()
       {
 	 if(!session)

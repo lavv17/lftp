@@ -69,8 +69,8 @@ protected:
 public:
    int Do();
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
-   void PrintStatus(int,const char *);
-   void ListJobs(int verbose,int indent=0);
+   xstring& FormatStatus(xstring&,int,const char *);
+   xstring& FormatJobs(xstring&,int verbose,int indent);
 
    pgetJob(FileCopy *c1,const char *n,int m=0);
    ~pgetJob();

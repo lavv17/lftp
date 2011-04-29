@@ -414,9 +414,9 @@ void clsJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 	 s->Show("%s", output->Status(s));
 }
 
-void clsJob::PrintStatus(int v,const char *prefix)
+xstring& clsJob::FormatStatus(xstring& s,int v,const char *prefix)
 {
-   Job::PrintStatus(v,prefix);
+   Job::FormatStatus(s,v,prefix);
 
    if(list_info)
    {
@@ -425,6 +425,7 @@ void clsJob::PrintStatus(int v,const char *prefix)
 	 curr = ".";
       const char *stat = list_info->Status();
       if(*stat)
-	 printf("%s`%s' %s\n", prefix, curr, stat);
+	 s.appendf("%s`%s' %s\n", prefix, curr, stat);
    }
+   return s;
 }

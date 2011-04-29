@@ -627,7 +627,7 @@ public:
    ~TorrentJob();
    int Do();
    int Done() { return done; }
-   void PrintStatus(int v,const char *tab);
+   xstring& FormatStatus(xstring&,int v,const char *tab);
    void ShowRunStatus(const SMTaskRef<StatusLine>& s);
    int AcceptSig(int);
    void PrepareToDie();

@@ -258,17 +258,14 @@ void StatusLine::update(const char *const *newstr,int newstr_height)
 
 void StatusLine::WriteLine(const char *f,...)
 {
-   char *newstr=string_alloca(0x800+strlen(f));
-
    va_list v;
    va_start(v,f);
-   vsprintf(newstr,f,v);
+   xstring& newstr=xstring::vformat(f,v).append('\n');
    va_end(v);
 
    Clear();
 
-   strcat(newstr,"\n");
-   write(fd,newstr,strlen(newstr));
+   write(fd,newstr,newstr.length());
    update_delayed=false;
 }
 

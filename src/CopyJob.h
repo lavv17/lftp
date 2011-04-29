@@ -84,7 +84,7 @@ public:
 
    const char *Status(const StatusLine *s,bool base=false);
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
-   void	PrintStatus(int,const char *);
+   xstring& FormatStatus(xstring&,int,const char *);
 
    const char *GetName() const { return name; }
    const char *GetDispName() const { return dispname; }
@@ -138,9 +138,9 @@ public:
 
    void SetCopyJobCreator(CopyJobCreator *c) { cj_new=c; }
 
-   void SayFinalWithPrefix(const char *p);
-   void SayFinal() { SayFinalWithPrefix(""); }
-   void	PrintStatus(int,const char *);
+   void SayFinal();
+   xstring& FormatFinalWithPrefix(xstring&,const char *);
+   xstring& FormatStatus(xstring&,int,const char *);
 
    void Ascii() { ascii=true; }
 

@@ -98,17 +98,18 @@ void CopyJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 
    s->Show("%s", Status(s, false));
 }
-void CopyJob::PrintStatus(int v,const char *prefix)
+xstring& CopyJob::FormatStatus(xstring& s,int v,const char *prefix)
 {
    if(c->Done() || c->Error())
-      return;
+      return s;
    if(no_status)
-      return;
+      return s;
 
-   printf("%s",prefix);
+   s.append(prefix);
    const char *name=GetDispName();
-   printf(COPY_STATUS);
-   printf("\n");
+   s.appendf(COPY_STATUS);
+   s.append('\n');
+   return s;
 }
 
 int CopyJob::AcceptSig(int sig)
@@ -250,31 +251,38 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
    AddCopier(c,n);
 }
 
-void CopyJobEnv::SayFinalWithPrefix(const char *p)
+xstring& CopyJobEnv::FormatFinalWithPrefix(xstring& s,const char *p)
 {
    if(no_status)
-      return;
+      return s;
    if(count==errors)
-      return;
+      return s;
    if(bytes)
-      printf("%s%s\n",p,CopyJob::FormatBytesTimeRate(bytes,time_spent));
+      s.appendf("%s%s\n",p,CopyJob::FormatBytesTimeRate(bytes,time_spent));
    if(errors>0)
    {
-      printf("%s",p);
-      printf(plural("Transfer of %d of %d $file|files$ failed\n",count),
+      s.append(p);
+      s.appendf(plural("Transfer of %d of %d $file|files$ failed\n",count),
 	 errors,count);
    }
    else if(count>1)
    {
-      printf("%s",p);
-      printf(plural("Total %d $file|files$ transferred\n",count),count);
+      s.append(p);
+      s.appendf(plural("Total %d $file|files$ transferred\n",count),count);
    }
+   return s;
 }
-void CopyJobEnv::PrintStatus(int v,const char *prefix)
+xstring& CopyJobEnv::FormatStatus(xstring& s,int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v,prefix);
+   SessionJob::FormatStatus(s,v,prefix);
    if(Done())
-      SayFinalWithPrefix(prefix);
+      FormatFinalWithPrefix(s,prefix);
+   return s;
+}
+
+void CopyJobEnv::SayFinal()
+{
+   printf("%s",FormatFinalWithPrefix(xstring::get_tmp(""),"").get());
 }
 
 int CopyJobEnv::AcceptSig(int sig)

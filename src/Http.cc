@@ -2075,15 +2075,11 @@ void Http::SetCookie(const char *value_const)
       }
    }
 
-   char *closure=string_alloca(strlen(domain)+xstrlen(path)+32);
-   strcpy(closure,domain);
+   xstring closure(domain);
    if(path && path[0] && strcmp(path,"/"))
-   {
-      strcat(closure,";path=");
-      strcat(closure,path);
-   }
+      closure.append(";path=").append(path);
    if(secure)
-      strcat(closure,";secure");
+      closure.append(";secure");
 
    xstring c(Query("cookie",closure));
    CookieMerge(c,value_const);

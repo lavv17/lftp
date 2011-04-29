@@ -106,7 +106,7 @@ public:
    ~FinderJob();
 
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
-   void PrintStatus(int v,const char *);
+   xstring& FormatStatus(xstring&,int,const char *);
 
    void BeQuiet() { quiet=true; }
    void SetExclude(PatternSet *p) { exclude = p; }

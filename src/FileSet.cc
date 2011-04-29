@@ -713,7 +713,7 @@ check_again:
 
    if(t==SYMLINK)
    {
-      char *buf=(char*)alloca(st.st_size+1);
+      char *buf=string_alloca(st.st_size+1);
       int res=readlink(name,buf,st.st_size);
       if(res!=-1)
       {

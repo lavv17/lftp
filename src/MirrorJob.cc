@@ -46,7 +46,7 @@
    Log::global->Format(11,"mirror(%p) enters state %s\n", this, #s); } while(0)
 #define waiting_num waiting.count()
 
-void  MirrorJob::PrintStatus(int v,const char *tab)
+xstring& MirrorJob::FormatStatus(xstring& s,int v,const char *tab)
 {
    if(Done())
       goto final;
@@ -64,60 +64,61 @@ void  MirrorJob::PrintStatus(int v,const char *tab)
       break;
 
    case(MAKE_TARGET_DIR):
-      printf("\tmkdir `%s' [%s]\n",target_dir.get(),target_session->CurrentStatus());
+      s.appendf("\tmkdir `%s' [%s]\n",target_dir.get(),target_session->CurrentStatus());
       break;
 
    case(CHANGING_DIR_SOURCE):
    case(CHANGING_DIR_TARGET):
       if(target_session->IsOpen())
-	 printf("\tcd `%s' [%s]\n",target_dir.get(),target_session->CurrentStatus());
+	 s.appendf("\tcd `%s' [%s]\n",target_dir.get(),target_session->CurrentStatus());
       if(source_session->IsOpen())
-	 printf("\tcd `%s' [%s]\n",source_dir.get(),source_session->CurrentStatus());
+	 s.appendf("\tcd `%s' [%s]\n",source_dir.get(),source_session->CurrentStatus());
       break;
 
    case(GETTING_LIST_INFO):
       if(target_list_info)
       {
 	 if(target_relative_dir)
-	    printf("\t%s: %s\n",target_relative_dir.get(),target_list_info->Status());
+	    s.appendf("\t%s: %s\n",target_relative_dir.get(),target_list_info->Status());
 	 else
-	    printf("\t%s\n",target_list_info->Status());
+	    s.appendf("\t%s\n",target_list_info->Status());
       }
       if(source_list_info)
       {
 	 if(source_relative_dir)
-	    printf("\t%s: %s\n",source_relative_dir.get(),source_list_info->Status());
+	    s.appendf("\t%s: %s\n",source_relative_dir.get(),source_list_info->Status());
 	 else
-	    printf("\t%s\n",source_list_info->Status());
+	    s.appendf("\t%s\n",source_list_info->Status());
       }
       break;
    }
-   return;
+   return s;
 
 final:
    if(stats.dirs>0)
-      printf(plural("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
+      s.appendf(plural("%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
 		     stats.dirs,stats.tot_files,stats.tot_symlinks),
 	 tab,stats.dirs,stats.tot_files,stats.tot_symlinks);
    if(stats.new_files || stats.new_symlinks)
-      printf(plural("%sNew: %d file$|s$, %d symlink$|s$\n",
+      s.appendf(plural("%sNew: %d file$|s$, %d symlink$|s$\n",
 		     stats.new_files,stats.new_symlinks),
 	 tab,stats.new_files,stats.new_symlinks);
    if(stats.mod_files || stats.mod_symlinks)
-      printf(plural("%sModified: %d file$|s$, %d symlink$|s$\n",
+      s.appendf(plural("%sModified: %d file$|s$, %d symlink$|s$\n",
 		     stats.mod_files,stats.mod_symlinks),
 	 tab,stats.mod_files,stats.mod_symlinks);
    if(stats.bytes)
-      printf("%s%s\n",tab,CopyJob::FormatBytesTimeRate(stats.bytes,stats.time));
+      s.appendf("%s%s\n",tab,CopyJob::FormatBytesTimeRate(stats.bytes,stats.time));
    if(stats.del_dirs || stats.del_files || stats.del_symlinks)
-      printf(plural(flags&DELETE ?
+      s.appendf(plural(flags&DELETE ?
 	       "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 	      :"%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
 	      stats.del_dirs,stats.del_files,stats.del_symlinks),
 	 tab,stats.del_dirs,stats.del_files,stats.del_symlinks);
    if(stats.error_count)
-      printf(plural("%s%d error$|s$ detected\n",stats.error_count),
+      s.appendf(plural("%s%d error$|s$ detected\n",stats.error_count),
 	       tab,stats.error_count);
+   return s;
 }
 
 void  MirrorJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
@@ -1657,11 +1658,7 @@ CMD(mirror)
 	    // user wants source dir name appended.
 	    const char *base=basename_ptr(source_dir);
 	    if(base[0]!='/' && strcmp(base,basename_ptr(arg)))
-	    {
-	       char *target_dir1=alloca_strdup2(target_dir,strlen(base));
-	       strcat(target_dir1,base);
-	       target_dir=target_dir1;
-	    }
+	       target_dir=xstring::cat(target_dir,base,NULL);
 	 }
       }
       else

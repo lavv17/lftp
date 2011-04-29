@@ -42,23 +42,19 @@ void mgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
    }
    GetJob::ShowRunStatus(s);
 }
-void mgetJob::PrintStatus(int v,const char *prefix)
+xstring& mgetJob::FormatStatus(xstring& buf,int v,const char *prefix)
 {
    if(mkdir_job)
-   {
-      printf("\tCreating remote directories\n");
-      return;
-   }
+      return buf.append("\tCreating remote directories\n");
    if(rg)
    {
-      SessionJob::PrintStatus(v,prefix);
+      SessionJob::FormatStatus(buf,v,prefix);
       const char *s=rg->Status();
       if(!s || !s[0])
-	 return;
-      printf("\t%s\n",s);
-      return;
+	 return buf;
+      return buf.appendf("\t%s\n",s);
    }
-   GetJob::PrintStatus(v,prefix);
+   return GetJob::FormatStatus(buf,v,prefix);
 }
 
 mgetJob::mgetJob(FileAccess *session,ArgV *a,bool c,bool md)

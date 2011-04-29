@@ -177,7 +177,7 @@ public:
    int	 Do();
    int	 Done() { return state==DONE; }
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
-   void	 PrintStatus(int v,const char *);
+   xstring& FormatStatus(xstring&,int v,const char *);
    void	 SayFinal() { PrintStatus(0,""); }
    int	 ExitCode() { return stats.error_count; }
 

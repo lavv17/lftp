@@ -1,3 +1,16 @@
+2011-04-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+        * CmdExec.cc, CmdExec.h, CopyJob.cc, CopyJob.h, DirColors.cc,
+	  FileSet.cc, FileSetOutput.cc, FileSetOutput.h, FindJob.cc,
+	  FindJob.h, Http.cc, Job.cc, Job.h, MirrorJob.cc, MirrorJob.h,
+	  QueueFeeder.cc, QueueFeeder.h, SleepJob.cc, SleepJob.h,
+	  StatusLine.cc, Torrent.cc, Torrent.h, TreatFileJob.cc,
+	  TreatFileJob.h, commands.cc, complete.cc, ftpclass.cc, mgetJob.cc,
+	  mgetJob.h, mkdirJob.cc, mkdirJob.h, mvJob.cc, mvJob.h, pgetJob.cc,
+	  pgetJob.h, url.cc, xstring.cc, xstring.h: replace PrintStatus with
+	  FormatStatus; allow `jobs' output filtering; get rid of complex
+	  alloca tricks.
+
 2011-04-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, resource.cc: (mirror:no-empty-dirs) new setting.

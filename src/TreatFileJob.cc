@@ -90,12 +90,12 @@ TreatFileJob::prf_res TreatFileJob::ProcessFile(const char *d,const FileInfo *fi
    return res<0? PRF_ERR:PRF_OK;
 }
 
-void  TreatFileJob::PrintStatus(int v,const char *prefix)
+xstring& TreatFileJob::FormatStatus(xstring& s,int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v,prefix);
+   SessionJob::FormatStatus(s,v,prefix);
    if(Done() || !curr)
-      return;
-   printf("\t`%s' [%s]\n",curr->name.get(),session->CurrentStatus());
+      return s;
+   return s.appendf("\t`%s' [%s]\n",curr->name.get(),session->CurrentStatus());
 }
 
 void  TreatFileJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)

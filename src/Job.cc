@@ -238,52 +238,26 @@ void  Job::SortJobs()
       scan->waiting.qsort(jobno_compare);
 }
 
+static xstring print_buf("");
 void Job::PrintJobTitle(int indent,const char *suffix)
 {
-   if(jobno<0 && !cmdline)
-      return;
-   printf("%*s",indent,"");
-   if(jobno>=0)
-      printf("[%d] ",jobno);
-   printf("%s",cmdline?cmdline.get():"?");
-   if(suffix)
-      printf(" %s",suffix);
-   printf("\n");
+   print_buf.truncate();
+   printf("%s",FormatJobTitle(print_buf,indent,suffix).get());
 }
-
 void Job::ListOneJob(int verbose,int indent,const char *suffix)
 {
-   PrintJobTitle(indent,suffix);
-   PrintStatus(verbose);
-   for(int i=0; i<waiting_num; i++)
-   {
-      if(waiting[i]->jobno<0 && waiting[i]!=this && !waiting[i]->cmdline)
-	 waiting[i]->ListOneJob(verbose,indent+1);
-   }
+   print_buf.truncate();
+   printf("%s",FormatOneJob(print_buf,verbose,indent,suffix).get());
 }
-
 void Job::ListOneJobRecursively(int verbose,int indent)
 {
-   PrintJobTitle(indent);
-   PrintStatus(verbose);
-   ListJobs(verbose,indent+1);
+   print_buf.truncate();
+   printf("%s",FormatOneJobRecursively(print_buf,verbose,indent).get());
 }
-
-void  Job::ListJobs(int verbose,int indent)
+void Job::PrintStatus(int v,const char *prefix)
 {
-   if(indent==0)
-      SortJobs();
-
-   // list the foreground job first.
-   for(int i=0; i<waiting_num; i++)
-   {
-      if(waiting[i]!=this && waiting[i]->parent==this)
-	 waiting[i]->ListOneJobRecursively(verbose,indent);
-   }
-
-   ListScan(Job,chain,next)
-      if(scan->parent==this && !scan->Done() && !this->WaitsFor(scan))
-	 scan->ListOneJobRecursively(verbose,indent);
+   print_buf.truncate();
+   printf("%s",FormatStatus(print_buf,v,prefix).get());
 }
 
 void  Job::ListDoneJobs()
@@ -307,6 +281,61 @@ void  Job::ListDoneJobs()
 	 scan->PrintStatus(0);
       }
    }
+}
+
+xstring& Job::FormatJobTitle(xstring& s,int indent,const char *suffix)
+{
+   if(jobno<0 && !cmdline)
+      return s;
+   s.append_padding(indent,' ');
+   if(jobno>=0)
+      s.appendf("[%d] ",jobno);
+   s.append(cmdline?cmdline.get():"?");
+   if(suffix) {
+      s.append(' ');
+      s.append(suffix);
+   }
+   s.append('\n');
+   return s;
+}
+
+xstring& Job::FormatOneJob(xstring& s,int verbose,int indent,const char *suffix)
+{
+   FormatJobTitle(s,indent,suffix);
+   FormatStatus(s,verbose);
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]->jobno<0 && waiting[i]!=this && !waiting[i]->cmdline)
+	 waiting[i]->FormatOneJob(s,verbose,indent+1,"");
+   }
+   return s;
+}
+
+xstring& Job::FormatOneJobRecursively(xstring& s,int verbose,int indent)
+{
+   FormatJobTitle(s,indent,"");
+   FormatStatus(s,verbose);
+   FormatJobs(s,verbose,indent+1);
+   return s;
+}
+
+xstring& Job::FormatJobs(xstring& s,int verbose,int indent)
+{
+   if(indent==0)
+      SortJobs();
+
+   // list the foreground job first.
+   for(int i=0; i<waiting_num; i++)
+   {
+      if(waiting[i]!=this && waiting[i]->parent==this)
+	 waiting[i]->FormatOneJobRecursively(s,verbose,indent);
+   }
+
+   ListScan(Job,chain,next)
+      if(scan->parent==this && !scan->Done() && !this->WaitsFor(scan))
+	 scan->FormatOneJobRecursively(s,verbose,indent);
+
+   return s;
 }
 
 void  Job::BuryDoneJobs()
@@ -345,13 +374,16 @@ void Job::eprintf(const char *fmt,...)
 }
 
 
-void SessionJob::PrintStatus(int v,const char *prefix)
+xstring& SessionJob::FormatStatus(xstring& s,int v,const char *prefix)
 {
    if(v<2 || !session)
-      return;
+      return s;
    const char *url=session->GetConnectURL();
-   if(url && *url)
-      printf("%s%s\n",prefix,url);
+   if(url && *url) {
+      s.append(prefix);
+      s.append(url);
+   }
+   return s;
 }
 
 void SessionJob::Fg()

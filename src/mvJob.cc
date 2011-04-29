@@ -62,15 +62,16 @@ int mvJob::Do()
    return MOVED;
 }
 
-void  mvJob::PrintStatus(int v,const char *prefix)
+xstring& mvJob::FormatStatus(xstring& s,int v,const char *prefix)
 {
-   SessionJob::PrintStatus(v,prefix);
+   SessionJob::FormatStatus(s,v,prefix);
    if(Done())
-      return;
+      return s;
    if(remove_target)
-      printf("%srm %s [%s]\n",prefix,to.get(),session->CurrentStatus());
+      s.appendf("%srm %s [%s]\n",prefix,to.get(),session->CurrentStatus());
    else
-      printf("%s%s %s=>%s [%s]\n",prefix,cmd(),from.get(),to.get(),session->CurrentStatus());
+      s.appendf("%s%s %s=>%s [%s]\n",prefix,cmd(),from.get(),to.get(),session->CurrentStatus());
+   return s;
 }
 
 void  mvJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
