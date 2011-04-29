@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-04-11 13:24+0400\n"
+"POT-Creation-Date: 2011-04-29 16:20+0400\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -164,58 +164,55 @@ msgstr "Le module pour la commande « %s » n'a pas enregistré la commande.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:384 src/MirrorJob.cc:570
+#: src/CmdExec.cc:384 src/MirrorJob.cc:571
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s : reçu une redirection vers « %s »\n"
 
-#: src/CmdExec.cc:387 src/FileCopy.cc:1064
+#: src/CmdExec.cc:387 src/FileCopy.cc:1065
 msgid "Too many redirections"
 msgstr "Trop de redirections"
 
-#: src/CmdExec.cc:499 src/CmdExec.cc:556
+#: src/CmdExec.cc:495 src/CmdExec.cc:552
 msgid "Interrupt"
 msgstr "Interrompu"
 
-#: src/CmdExec.cc:621
+#: src/CmdExec.cc:617
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Attention : commande incomplète ignorée\n"
 
-#: src/CmdExec.cc:715
+#: src/CmdExec.cc:711
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tExécution de la commande interne « %s » [%s]\n"
 
-#: src/CmdExec.cc:721
+#: src/CmdExec.cc:716
 msgid "Queue is stopped."
 msgstr "La file d'attente est stoppée."
 
-#: src/CmdExec.cc:726
+#: src/CmdExec.cc:721
 msgid "Now executing:"
 msgstr "En cours d'exécution :"
 
-#: src/CmdExec.cc:739
+#: src/CmdExec.cc:732
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEn attente de la fin de la tâche [%d]\n"
 
-#: src/CmdExec.cc:744
-#, c-format
+#: src/CmdExec.cc:735
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tEn attente de la fin des tâches : "
 
-#: src/CmdExec.cc:755
-#, c-format
+#: src/CmdExec.cc:744
 msgid "\tRunning\n"
 msgstr "\tEn cours d'exécution\n"
 
-#: src/CmdExec.cc:759
-#, c-format
+#: src/CmdExec.cc:746
 msgid "\tWaiting for command\n"
 msgstr "\tEn attente de la commande\n"
 
-#: src/CmdExec.cc:1222
+#: src/CmdExec.cc:1198
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s : la commande « %s » n'est pas compilée.\n"
@@ -225,28 +222,28 @@ msgstr "%s : la commande « %s » n'est pas compilée.\n"
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "« %s » à %lld %s%s%s%s"
 
-#: src/CopyJob.cc:156
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%lld octet$#ll# transféré|s transférés$ en %ld seconde$#l#|s$"
 
-#: src/CopyJob.cc:164
+#: src/CopyJob.cc:165
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld octet$#ll# transféré|s transférés"
 
-#: src/CopyJob.cc:264
+#: src/CopyJob.cc:265
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Le transfert de %d sur %d fichier$|s$ a échoué\n"
 
-#: src/CopyJob.cc:270
+#: src/CopyJob.cc:271
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Total %d fichier$|s$ transférés\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1632 src/MirrorJob.cc:1648
-#: src/commands.cc:984 src/commands.cc:2120
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1635 src/MirrorJob.cc:1651
+#: src/commands.cc:986 src/commands.cc:2129
 msgid " - not supported protocol"
 msgstr " - protocole non pris en charge"
 
@@ -321,16 +318,16 @@ msgstr "copy : toutes les données reçues, mais « get » est revenu en arrièr
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy : « get » est revenu à %lld, « put » s'y ajuste\n"
 
-#: src/FileCopy.cc:1061
+#: src/FileCopy.cc:1062
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy : reçu une redirection vers « %s »\n"
 
-#: src/FileCopy.cc:1246
+#: src/FileCopy.cc:1247
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
 
-#: src/FileCopy.cc:1899
+#: src/FileCopy.cc:1900
 msgid "Verify command failed without a message"
 msgstr "La commande verify a échoué sans message"
 
@@ -514,7 +511,7 @@ msgstr "Connexion stagnante"
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 
-#: src/Job.cc:299
+#: src/Job.cc:273
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Terminé (%s)"
@@ -527,7 +524,7 @@ msgstr "Récupération du contenu du répertoire"
 msgid "Getting files information"
 msgstr "Lecture des informations de fichiers"
 
-#: src/LocalAccess.cc:658 src/commands.cc:3079
+#: src/LocalAccess.cc:658 src/commands.cc:3088
 msgid "cannot get current directory"
 msgstr "ne peut lire le répertoire en cours"
 
@@ -574,87 +571,87 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d $erreur détectée|erreurs détectées$\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:437 src/MirrorJob.cc:956
+#: src/MirrorJob.cc:253 src/MirrorJob.cc:438 src/MirrorJob.cc:957
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Suppression de l'ancien fichier « %s »"
 
-#: src/MirrorJob.cc:262
+#: src/MirrorJob.cc:263
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "On ignore le fichier « %s » (only-existing)"
 
-#: src/MirrorJob.cc:269
+#: src/MirrorJob.cc:270
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Transfert du fichier « %s »"
 
-#: src/MirrorJob.cc:340
+#: src/MirrorJob.cc:341
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "On ignore le répertoire « %s » (only-existing)"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:469 src/MirrorJob.cc:707
+#: src/MirrorJob.cc:361 src/MirrorJob.cc:470 src/MirrorJob.cc:708
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Suppression de l'ancien fichier local « %s »"
 
-#: src/MirrorJob.cc:408
+#: src/MirrorJob.cc:409
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Duplication du répertoire « %s »"
 
-#: src/MirrorJob.cc:482
+#: src/MirrorJob.cc:483
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "On ignore le lien symbolique « %s » (only-existing)"
 
-#: src/MirrorJob.cc:488
+#: src/MirrorJob.cc:489
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Création du lien symbolique « %s » vers « %s »"
 
-#: src/MirrorJob.cc:621
+#: src/MirrorJob.cc:622
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror : le protocole « %s » ne convient pas pour une duplication\n"
 
-#: src/MirrorJob.cc:728
+#: src/MirrorJob.cc:729
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Création du répertoire « %s »"
 
-#: src/MirrorJob.cc:907
+#: src/MirrorJob.cc:908
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "L'ancien répertoire « %s » n'est pas supprimé"
 
-#: src/MirrorJob.cc:910
+#: src/MirrorJob.cc:911
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "L'ancien fichier « %s » n'est pas supprimé"
 
-#: src/MirrorJob.cc:951
+#: src/MirrorJob.cc:952
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Suppression de l'ancien répertoire « %s »"
 
-#: src/MirrorJob.cc:1084
+#: src/MirrorJob.cc:1085
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Réessaye la commande mirror...\n"
 
-#: src/MirrorJob.cc:1470
+#: src/MirrorJob.cc:1472
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s : expression rationnelle « %s » : %s\n"
 
-#: src/MirrorJob.cc:1601 src/SleepJob.cc:148 src/SleepJob.cc:204
-#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1593
-#: src/commands.cc:1624 src/commands.cc:1727 src/commands.cc:2029
-#: src/commands.cc:2225 src/commands.cc:2387 src/commands.cc:2415
-#: src/commands.cc:2422 src/commands.cc:2708 src/commands.cc:2735
-#: src/commands.cc:2742 src/commands.cc:3062 src/lftp.cc:263
+#: src/MirrorJob.cc:1604 src/SleepJob.cc:147 src/SleepJob.cc:203
+#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1597
+#: src/commands.cc:1628 src/commands.cc:1731 src/commands.cc:2038
+#: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
+#: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
+#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:263
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Essayez « help %s » pour plus d'informations.\n"
@@ -703,30 +700,30 @@ msgstr "l'allocation du pseudo-terminal a échoué : "
 msgid "Added job$|s$"
 msgstr "Ajout $de la tâche|des tâches$"
 
-#: src/QueueFeeder.cc:149 src/QueueFeeder.cc:170
+#: src/QueueFeeder.cc:160 src/QueueFeeder.cc:181
 #, c-format
 msgid "No queued jobs.\n"
 msgstr "Aucune tâche dans la file d'attente\n"
 
-#: src/QueueFeeder.cc:151
+#: src/QueueFeeder.cc:162
 #, c-format
 msgid "No queued job #%i.\n"
 msgstr "Aucune tâche #%i dans la file d'attente.\n"
 
-#: src/QueueFeeder.cc:156 src/QueueFeeder.cc:177
+#: src/QueueFeeder.cc:167 src/QueueFeeder.cc:188
 msgid "Deleted job$|s$"
 msgstr "$Tâche supprimée|Tâches supprimées$"
 
-#: src/QueueFeeder.cc:172
+#: src/QueueFeeder.cc:183
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
 msgstr "Aucune tâche correspondant à « %s ».\n"
 
-#: src/QueueFeeder.cc:197 src/QueueFeeder.cc:215
+#: src/QueueFeeder.cc:208 src/QueueFeeder.cc:226
 msgid "Moved job$|s$"
 msgstr "$Tâche déplacée|Tâches déplacées$"
 
-#: src/QueueFeeder.cc:342
+#: src/QueueFeeder.cc:350
 msgid "Commands queued:"
 msgstr "Commande en file d'attente :"
 
@@ -768,7 +765,7 @@ msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 "Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
 
-#: src/ResMgr.cc:764 src/commands.cc:3222 src/commands.cc:3231
+#: src/ResMgr.cc:764 src/commands.cc:3231 src/commands.cc:3240
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Format d'intervalle invalide. Le format est min-max, par ex. : 10-20."
 
@@ -838,12 +835,12 @@ msgstr ""
 msgid "Sleep time left: "
 msgstr ""
 
-#: src/SleepJob.cc:112
+#: src/SleepJob.cc:111
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tNombre de répétitions : %d\n"
 
-#: src/SleepJob.cc:146
+#: src/SleepJob.cc:145
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s : argument requis. "
@@ -1954,21 +1951,21 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:887 src/commands.cc:3355
+#: src/commands.cc:889 src/commands.cc:3357
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Essayez « %s --help » pour plus d'informations\n"
 
-#: src/commands.cc:889
+#: src/commands.cc:891
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "Utilisation : %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
-#: src/commands.cc:1016 src/commands.cc:2104
+#: src/commands.cc:1018 src/commands.cc:2113
 msgid "Password: "
 msgstr "Mot de passe : "
 
-#: src/commands.cc:1018
+#: src/commands.cc:1020
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s : GetPass() a échoué -- passage en mode anonyme\n"
@@ -1988,148 +1985,148 @@ msgstr "%s : -n : nombre positif attendu. "
 msgid "Created a stopped queue.\n"
 msgstr "Crée une file d'attente stoppée.\n"
 
-#: src/commands.cc:1266 src/commands.cc:1296
+#: src/commands.cc:1270 src/commands.cc:1300
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s : aucune file d'attente active.\n"
 
-#: src/commands.cc:1288
+#: src/commands.cc:1292
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s : -m : nombre attendu en tant que second argument. "
 
-#: src/commands.cc:1341
+#: src/commands.cc:1345
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Utilisation : %s <cmd>\n"
 
-#: src/commands.cc:1451
+#: src/commands.cc:1455
 msgid "invalid argument for `--sort'"
 msgstr "argument invalide pour « --sort »"
 
-#: src/commands.cc:1481
+#: src/commands.cc:1485
 msgid "invalid block size"
 msgstr "taille de bloc invalide"
 
-#: src/commands.cc:1633
+#: src/commands.cc:1637
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Utilisation : %s [OPTS] fichier...\n"
 
-#: src/commands.cc:1705
+#: src/commands.cc:1709
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s : -n : Nombre attendu. "
 
-#: src/commands.cc:1738
+#: src/commands.cc:1742
 #, c-format
 msgid "File name missed. "
 msgstr "Nom de fichier manquant. "
 
-#: src/commands.cc:1836
+#: src/commands.cc:1840
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Utilisation : %s %s[-f] fichiers...\n"
 
-#: src/commands.cc:1879
+#: src/commands.cc:1883
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "Utilisation : %s [-e] <fichier|commande>\n"
 
-#: src/commands.cc:1922
+#: src/commands.cc:1926
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Utilisation : %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1936 src/commands.cc:2191 src/commands.cc:2314
-#: src/commands.cc:2484 src/commands.cc:2873 src/commands.cc:2949
+#: src/commands.cc:1940 src/commands.cc:2200 src/commands.cc:2323
+#: src/commands.cc:2493 src/commands.cc:2882 src/commands.cc:2958
 #: src/lftp.cc:275
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s : %s - n'est pas un nombre\n"
 
-#: src/commands.cc:1943 src/commands.cc:2170 src/commands.cc:2200
-#: src/commands.cc:2332
+#: src/commands.cc:1947 src/commands.cc:2179 src/commands.cc:2209
+#: src/commands.cc:2341
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s : %d - tâche inconnue\n"
 
-#: src/commands.cc:1970
+#: src/commands.cc:1979
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Utilisation : %s [-p]\n"
 
-#: src/commands.cc:2071
+#: src/commands.cc:2080
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "niveau de débogage %d, sortie sur %s\n"
 
-#: src/commands.cc:2074
+#: src/commands.cc:2083
 #, c-format
 msgid "debug is off\n"
 msgstr "débogage désactivé\n"
 
-#: src/commands.cc:2085
+#: src/commands.cc:2094
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "Utilisation : %s <user|URL> [<pass>]\n"
 
-#: src/commands.cc:2160 src/commands.cc:2324
+#: src/commands.cc:2169 src/commands.cc:2333
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s : pas de tâche en cours\n"
 
-#: src/commands.cc:2172
+#: src/commands.cc:2181
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Utilisation : %s <num_tache> | all\n"
 
-#: src/commands.cc:2254
+#: src/commands.cc:2263
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s : %s. Utilisez « set -a » pour visualiser toutes les variables.\n"
 
-#: src/commands.cc:2298
+#: src/commands.cc:2307
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Utilisation : %s [<num_tache>]\n"
 
-#: src/commands.cc:2337
+#: src/commands.cc:2346
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s : d'autres tâches attendent la tâche %d\n"
 
-#: src/commands.cc:2342
+#: src/commands.cc:2351
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s : boucle infinie détectée\n"
 
-#: src/commands.cc:2366
+#: src/commands.cc:2375
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Utilisation : mv <fichier1> <fichier2>\n"
 
-#: src/commands.cc:2414 src/commands.cc:2734
+#: src/commands.cc:2423 src/commands.cc:2743
 #, c-format
 msgid "Invalid command. "
 msgstr "Commande invalide. "
 
-#: src/commands.cc:2421 src/commands.cc:2741
+#: src/commands.cc:2430 src/commands.cc:2750
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Commande ambiguë. "
 
-#: src/commands.cc:2440
+#: src/commands.cc:2449
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s : la taille n'a pas été indiquée\n"
 
-#: src/commands.cc:2457
+#: src/commands.cc:2466
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s : opérande manquant pour « expire »\n"
 
-#: src/commands.cc:2490
+#: src/commands.cc:2499
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -2137,46 +2134,46 @@ msgstr ""
 "%s : %s - pas de telle session en cache.\n"
 "Utilisez « scache » pour afficher la liste des sessions.\n"
 
-#: src/commands.cc:2507
+#: src/commands.cc:2516
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Désolé, pas d'aide disponible pour %s\n"
 
-#: src/commands.cc:2512
+#: src/commands.cc:2521
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s est un alias interne pour %s\n"
 
-#: src/commands.cc:2517
+#: src/commands.cc:2526
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Utilisation : %s\n"
 
-#: src/commands.cc:2525
+#: src/commands.cc:2534
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s est un alias pour « %s »\n"
 
-#: src/commands.cc:2529
+#: src/commands.cc:2538
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Commande « %s » inconnue.\n"
 "Utilisez « help » pour afficher la liste des commandes disponibles.\n"
 
-#: src/commands.cc:2531
+#: src/commands.cc:2540
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Commande « %s »ambiguë.\n"
 "Utilisez « help » pour afficher la liste des commandes disponibles.\n"
 
-#: src/commands.cc:2594
+#: src/commands.cc:2603
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2597
+#: src/commands.cc:2606
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2193,81 +2190,81 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2611
+#: src/commands.cc:2620
 #, fuzzy, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Envoyez les rapports de bogues et les questions à <%s>.\n"
 
-#: src/commands.cc:2617
+#: src/commands.cc:2626
 msgid "Libraries used: "
 msgstr "Bibliothèques utilisées : "
 
-#: src/commands.cc:2757 src/commands.cc:2788
+#: src/commands.cc:2766 src/commands.cc:2797
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s : nom de signet requis\n"
 
-#: src/commands.cc:2777
+#: src/commands.cc:2786
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s : les espaces dans les noms de signets ne sont pas permises\n"
 
-#: src/commands.cc:2790
+#: src/commands.cc:2799
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s : signet « %s » inconnu\n"
 
-#: src/commands.cc:2806
+#: src/commands.cc:2815
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s : type d'import requis (netscape,ncftp)\n"
 
-#: src/commands.cc:2879
+#: src/commands.cc:2888
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Utilisation : %s [-d #] répertoire\n"
 
-#: src/commands.cc:2982
+#: src/commands.cc:2991
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s : taille de bloc invalide « %s »\n"
 
-#: src/commands.cc:2991
+#: src/commands.cc:3000
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Utilisation : %s [options] <répertoires>\n"
 
-#: src/commands.cc:2997
+#: src/commands.cc:3006
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s : attention : summarize revient à faire --max-depth=0\n"
 
-#: src/commands.cc:3001
+#: src/commands.cc:3010
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s : summarize est en conflit avec --max-depth=%i\n"
 
-#: src/commands.cc:3049
+#: src/commands.cc:3058
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Utilisation : %s commande args...\n"
 
-#: src/commands.cc:3061
+#: src/commands.cc:3070
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Utilisation : %s module [args...]\n"
 
-#: src/commands.cc:3143
+#: src/commands.cc:3152
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Utilisation : %s [OPTS] mode du fichier...\n"
 
-#: src/commands.cc:3163
+#: src/commands.cc:3172
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "chaîne de mode invalide : %s\n"
 
-#: src/commands.cc:3237
+#: src/commands.cc:3246
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Utilisation : %s [OPTS] fichier\n"
@@ -2482,7 +2479,7 @@ msgstr ""
 "afficher,\n"
 "ou « all » pour afficher toutes les entrées.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:209
+#: src/mgetJob.cc:121 src/mgetJob.cc:205
 #, fuzzy, c-format
 msgid "%s: %s: no files found\n"
 msgstr "%s : aucun fichier trouvé\n"
@@ -2511,7 +2508,7 @@ msgstr "dépendance du module « %s » : %s\n"
 msgid "modules are not supported on this system"
 msgstr "les modules ne sont pas pris en charge sur ce système"
 
-#: src/mvJob.cc:92
+#: src/mvJob.cc:93
 #, c-format
 msgid "rename successful\n"
 msgstr "renommage réussi\n"

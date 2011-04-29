@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.2.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-04-11 13:24+0400\n"
+"POT-Creation-Date: 2011-04-29 16:20+0400\n"
 "PO-Revision-Date: 2010-11-22 17:38+04:00\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -164,58 +164,55 @@ msgstr "Модуль для команды `%s' не зарегистриров�
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, каталог=%s\n"
 
-#: src/CmdExec.cc:384 src/MirrorJob.cc:570
+#: src/CmdExec.cc:384 src/MirrorJob.cc:571
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
 
-#: src/CmdExec.cc:387 src/FileCopy.cc:1064
+#: src/CmdExec.cc:387 src/FileCopy.cc:1065
 msgid "Too many redirections"
 msgstr "Слишком много перенаправлений"
 
-#: src/CmdExec.cc:499 src/CmdExec.cc:556
+#: src/CmdExec.cc:495 src/CmdExec.cc:552
 msgid "Interrupt"
 msgstr "Прерывание"
 
-#: src/CmdExec.cc:621
+#: src/CmdExec.cc:617
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Предупреждение: неполный остаток команды игнорируется\n"
 
-#: src/CmdExec.cc:715
+#: src/CmdExec.cc:711
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tВыполнение примитива `%s' [%s]\n"
 
-#: src/CmdExec.cc:721
+#: src/CmdExec.cc:716
 msgid "Queue is stopped."
 msgstr "Очередь остановлена."
 
-#: src/CmdExec.cc:726
+#: src/CmdExec.cc:721
 msgid "Now executing:"
 msgstr "Сейчас исполняется:"
 
-#: src/CmdExec.cc:739
+#: src/CmdExec.cc:732
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tОжидание завершения задания [%d]\n"
 
-#: src/CmdExec.cc:744
-#, c-format
+#: src/CmdExec.cc:735
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tОжидание завершения заданий: "
 
-#: src/CmdExec.cc:755
-#, c-format
+#: src/CmdExec.cc:744
 msgid "\tRunning\n"
 msgstr "\tВыполнение\n"
 
-#: src/CmdExec.cc:759
-#, c-format
+#: src/CmdExec.cc:746
 msgid "\tWaiting for command\n"
 msgstr "\tОжидание команды\n"
 
-#: src/CmdExec.cc:1222
+#: src/CmdExec.cc:1198
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: команда `%s' не встроена при компиляции.\n"
@@ -225,30 +222,30 @@ msgstr "%s: команда `%s' не встроена при компиляци�
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' в позиции %lld %s%s%s%s"
 
-#: src/CopyJob.cc:156
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr ""
 "%lld $#ll#байт перемещен|байта перемещены|байтов перемещено$ за %ld "
 "$#l#секунду|секунды|секунд$"
 
-#: src/CopyJob.cc:164
+#: src/CopyJob.cc:165
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld $#ll#байт перемещен|байта перемещены|байтов перемещено$"
 
-#: src/CopyJob.cc:264
+#: src/CopyJob.cc:265
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Пересылка %d из %d $файла|файлов|файлов$ завершилась неудачей\n"
 
-#: src/CopyJob.cc:270
+#: src/CopyJob.cc:271
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1632 src/MirrorJob.cc:1648
-#: src/commands.cc:984 src/commands.cc:2120
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1635 src/MirrorJob.cc:1651
+#: src/commands.cc:986 src/commands.cc:2129
 msgid " - not supported protocol"
 msgstr " - протокол не поддерживается"
 
@@ -323,16 +320,16 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1061
+#: src/FileCopy.cc:1062
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "копирование: получено перенаправление на `%s'\n"
 
-#: src/FileCopy.cc:1246
+#: src/FileCopy.cc:1247
 msgid "file name missed in URL"
 msgstr "пропущено имя файла в URL"
 
-#: src/FileCopy.cc:1899
+#: src/FileCopy.cc:1900
 msgid "Verify command failed without a message"
 msgstr "Команда проверки вернула статус ошибки без сообщения"
 
@@ -516,7 +513,7 @@ msgstr "Соединение не используется"
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 
-#: src/Job.cc:299
+#: src/Job.cc:273
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Завершено (%s)"
@@ -529,7 +526,7 @@ msgstr "Получение содержимого каталога"
 msgid "Getting files information"
 msgstr "Получение информации о файлах"
 
-#: src/LocalAccess.cc:658 src/commands.cc:3079
+#: src/LocalAccess.cc:658 src/commands.cc:3088
 msgid "cannot get current directory"
 msgstr "невозможно получить текущий каталог"
 
@@ -574,87 +571,87 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d ошиб$ка обнаружена|ки обнаружены|ок обнаружено$\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:437 src/MirrorJob.cc:956
+#: src/MirrorJob.cc:253 src/MirrorJob.cc:438 src/MirrorJob.cc:957
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Удаление старого файла `%s'"
 
-#: src/MirrorJob.cc:262
+#: src/MirrorJob.cc:263
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Пропущен файл `%s' (only-existing)"
 
-#: src/MirrorJob.cc:269
+#: src/MirrorJob.cc:270
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Копирование файла `%s'"
 
-#: src/MirrorJob.cc:340
+#: src/MirrorJob.cc:341
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Пропущен каталог `%s' (only-existing)"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:469 src/MirrorJob.cc:707
+#: src/MirrorJob.cc:361 src/MirrorJob.cc:470 src/MirrorJob.cc:708
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Удаление старого локального файла `%s'"
 
-#: src/MirrorJob.cc:408
+#: src/MirrorJob.cc:409
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Копирование каталога `%s'"
 
-#: src/MirrorJob.cc:482
+#: src/MirrorJob.cc:483
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Пропущена символьная ссылка `%s' (only-existing)"
 
-#: src/MirrorJob.cc:488
+#: src/MirrorJob.cc:489
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Создание символьной ссылки `%s' на `%s'"
 
-#: src/MirrorJob.cc:621
+#: src/MirrorJob.cc:622
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: протокол `%s' не подходит для зеркалирования\n"
 
-#: src/MirrorJob.cc:728
+#: src/MirrorJob.cc:729
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Создание каталога `%s'"
 
-#: src/MirrorJob.cc:907
+#: src/MirrorJob.cc:908
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Старый каталог `%s' не удален"
 
-#: src/MirrorJob.cc:910
+#: src/MirrorJob.cc:911
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старый файл `%s' не удален"
 
-#: src/MirrorJob.cc:951
+#: src/MirrorJob.cc:952
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Удаление старого каталога `%s'"
 
-#: src/MirrorJob.cc:1084
+#: src/MirrorJob.cc:1085
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Повторный проход...\n"
 
-#: src/MirrorJob.cc:1470
+#: src/MirrorJob.cc:1472
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: регулярное выражение `%s': %s\n"
 
-#: src/MirrorJob.cc:1601 src/SleepJob.cc:148 src/SleepJob.cc:204
-#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1593
-#: src/commands.cc:1624 src/commands.cc:1727 src/commands.cc:2029
-#: src/commands.cc:2225 src/commands.cc:2387 src/commands.cc:2415
-#: src/commands.cc:2422 src/commands.cc:2708 src/commands.cc:2735
-#: src/commands.cc:2742 src/commands.cc:3062 src/lftp.cc:263
+#: src/MirrorJob.cc:1604 src/SleepJob.cc:147 src/SleepJob.cc:203
+#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1597
+#: src/commands.cc:1628 src/commands.cc:1731 src/commands.cc:2038
+#: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
+#: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
+#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:263
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
@@ -703,30 +700,30 @@ msgstr "выделение псевдо-терминала неудачно: "
 msgid "Added job$|s$"
 msgstr "Задани$е добавлено|я добавлены|я добавлены$"
 
-#: src/QueueFeeder.cc:149 src/QueueFeeder.cc:170
+#: src/QueueFeeder.cc:160 src/QueueFeeder.cc:181
 #, c-format
 msgid "No queued jobs.\n"
 msgstr "В очереди нет заданий.\n"
 
-#: src/QueueFeeder.cc:151
+#: src/QueueFeeder.cc:162
 #, c-format
 msgid "No queued job #%i.\n"
 msgstr "В очереди нет задания №%i.\n"
 
-#: src/QueueFeeder.cc:156 src/QueueFeeder.cc:177
+#: src/QueueFeeder.cc:167 src/QueueFeeder.cc:188
 msgid "Deleted job$|s$"
 msgstr "Задани$е удалено|я удалены|я удалены$"
 
-#: src/QueueFeeder.cc:172
+#: src/QueueFeeder.cc:183
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
 msgstr "В очереди нет заданий, соответствующих \"%s\".\n"
 
-#: src/QueueFeeder.cc:197 src/QueueFeeder.cc:215
+#: src/QueueFeeder.cc:208 src/QueueFeeder.cc:226
 msgid "Moved job$|s$"
 msgstr "Задани$е перемещено|я перемещены|я перемещены$"
 
-#: src/QueueFeeder.cc:342
+#: src/QueueFeeder.cc:350
 msgid "Commands queued:"
 msgstr "Очередь команд:"
 
@@ -766,7 +763,7 @@ msgstr "Недопустимые единицы измерения времен�
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Неверный формат времени. Формат: <время><единицы>, например 2h30m."
 
-#: src/ResMgr.cc:764 src/commands.cc:3222 src/commands.cc:3231
+#: src/ResMgr.cc:764 src/commands.cc:3231 src/commands.cc:3240
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Неверный формат диапазона. Формат: минимум-максимум, например 10-20."
 
@@ -836,12 +833,12 @@ msgstr "Бесконечное ожидание"
 msgid "Sleep time left: "
 msgstr "Осталось подождать: "
 
-#: src/SleepJob.cc:112
+#: src/SleepJob.cc:111
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tСчетчик повторений: %d\n"
 
-#: src/SleepJob.cc:146
+#: src/SleepJob.cc:145
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: требуется аргумент. "
@@ -1850,22 +1847,22 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:887 src/commands.cc:3355
+#: src/commands.cc:889 src/commands.cc:3357
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Введите `%s --help' для получения дополнительной информации\n"
 
-#: src/commands.cc:889
+#: src/commands.cc:891
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 "Использование: %s [-e команда] [-p порт] [-u имя[,пароль]] <машина|url>\n"
 
-#: src/commands.cc:1016 src/commands.cc:2104
+#: src/commands.cc:1018 src/commands.cc:2113
 msgid "Password: "
 msgstr "Пароль: "
 
-#: src/commands.cc:1018
+#: src/commands.cc:1020
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: ошибка GetPass() -- подразумевается анонимная регистрация\n"
@@ -1885,148 +1882,148 @@ msgstr "%s: -n: Ожидается числовое значение больш�
 msgid "Created a stopped queue.\n"
 msgstr "Создана остановленная очередь.\n"
 
-#: src/commands.cc:1266 src/commands.cc:1296
+#: src/commands.cc:1270 src/commands.cc:1300
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: Нет активной очереди.\n"
 
-#: src/commands.cc:1288
+#: src/commands.cc:1292
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: Ожидается числовое значение во втором аргументе. "
 
-#: src/commands.cc:1341
+#: src/commands.cc:1345
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Использование: %s <команда>\n"
 
-#: src/commands.cc:1451
+#: src/commands.cc:1455
 msgid "invalid argument for `--sort'"
 msgstr "неверный аргумент для `--sort'"
 
-#: src/commands.cc:1481
+#: src/commands.cc:1485
 msgid "invalid block size"
 msgstr "неверный размер блока"
 
-#: src/commands.cc:1633
+#: src/commands.cc:1637
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Использование: %s [КЛЮЧИ] файлы...\n"
 
-#: src/commands.cc:1705
+#: src/commands.cc:1709
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Ожидается числовое значение. "
 
-#: src/commands.cc:1738
+#: src/commands.cc:1742
 #, c-format
 msgid "File name missed. "
 msgstr "Пропущено имя файла. "
 
-#: src/commands.cc:1836
+#: src/commands.cc:1840
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Использование: %s %s[-f] файлы...\n"
 
-#: src/commands.cc:1879
+#: src/commands.cc:1883
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "Использование: %s [-e] <файл|команда>\n"
 
-#: src/commands.cc:1922
+#: src/commands.cc:1926
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Использование: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1936 src/commands.cc:2191 src/commands.cc:2314
-#: src/commands.cc:2484 src/commands.cc:2873 src/commands.cc:2949
+#: src/commands.cc:1940 src/commands.cc:2200 src/commands.cc:2323
+#: src/commands.cc:2493 src/commands.cc:2882 src/commands.cc:2958
 #: src/lftp.cc:275
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - не является числом\n"
 
-#: src/commands.cc:1943 src/commands.cc:2170 src/commands.cc:2200
-#: src/commands.cc:2332
+#: src/commands.cc:1947 src/commands.cc:2179 src/commands.cc:2209
+#: src/commands.cc:2341
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - указанное задание отсутствует\n"
 
-#: src/commands.cc:1970
+#: src/commands.cc:1979
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Использование: %s [-p]\n"
 
-#: src/commands.cc:2071
+#: src/commands.cc:2080
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "уровень отладки %d, вывод направлен в %s\n"
 
-#: src/commands.cc:2074
+#: src/commands.cc:2083
 #, c-format
 msgid "debug is off\n"
 msgstr "отладка выключена\n"
 
-#: src/commands.cc:2085
+#: src/commands.cc:2094
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "Использование: %s <имя|URL> [<пароль>]\n"
 
-#: src/commands.cc:2160 src/commands.cc:2324
+#: src/commands.cc:2169 src/commands.cc:2333
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: текущее задание отсутствует\n"
 
-#: src/commands.cc:2172
+#: src/commands.cc:2181
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Использование: %s <номер_задания> ... | all\n"
 
-#: src/commands.cc:2254
+#: src/commands.cc:2263
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Используйте `set -a' для просмотра списка всех переменных.\n"
 
-#: src/commands.cc:2298
+#: src/commands.cc:2307
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Использование: %s [<номер_задания>]\n"
 
-#: src/commands.cc:2337
+#: src/commands.cc:2346
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: другое задание ожидает завершения задания %d\n"
 
-#: src/commands.cc:2342
+#: src/commands.cc:2351
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: обнаружен цикл в цепочке ожидания\n"
 
-#: src/commands.cc:2366
+#: src/commands.cc:2375
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Использование: mv <файл1> <файл2>\n"
 
-#: src/commands.cc:2414 src/commands.cc:2734
+#: src/commands.cc:2423 src/commands.cc:2743
 #, c-format
 msgid "Invalid command. "
 msgstr "Недопустимая команда. "
 
-#: src/commands.cc:2421 src/commands.cc:2741
+#: src/commands.cc:2430 src/commands.cc:2750
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Неоднозначное сокращение. "
 
-#: src/commands.cc:2440
+#: src/commands.cc:2449
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Пропущен параметр размера\n"
 
-#: src/commands.cc:2457
+#: src/commands.cc:2466
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Пропущен параметр `expire'\n"
 
-#: src/commands.cc:2490
+#: src/commands.cc:2499
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -2034,45 +2031,45 @@ msgstr ""
 "%s: %s - нет такого резервного сеанса.\n"
 "Для просмотра списка резервных сеансов используйте команду `scache'.\n"
 
-#: src/commands.cc:2507
+#: src/commands.cc:2516
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Извините, нет помощи для %s\n"
 
-#: src/commands.cc:2512
+#: src/commands.cc:2521
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s является встроенным псевдонимом для %s\n"
 
-#: src/commands.cc:2517
+#: src/commands.cc:2526
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Использование: %s\n"
 
-#: src/commands.cc:2525
+#: src/commands.cc:2534
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s является псевдонимом для `%s'\n"
 
-#: src/commands.cc:2529
+#: src/commands.cc:2538
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Команда `%s' отсутствует.\n"
 "Введите `help' для получения списка доступных команд.\n"
 
-#: src/commands.cc:2531
+#: src/commands.cc:2540
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Неоднозначное сокращение `%s'. Введите `help' для списка доступных команд.\n"
 
-#: src/commands.cc:2594
+#: src/commands.cc:2603
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Версия %s | Copyright (c) 1996-%d Александр В. Лукьянов\n"
 
-#: src/commands.cc:2597
+#: src/commands.cc:2606
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2089,81 +2086,81 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2611
+#: src/commands.cc:2620
 #, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Сообщения об ошибках и вопросы посылайте в список рассылки <%s>.\n"
 
-#: src/commands.cc:2617
+#: src/commands.cc:2626
 msgid "Libraries used: "
 msgstr "Загруженые библиотеки: "
 
-#: src/commands.cc:2757 src/commands.cc:2788
+#: src/commands.cc:2766 src/commands.cc:2797
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: требуется указать имя закладки\n"
 
-#: src/commands.cc:2777
+#: src/commands.cc:2786
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: пробелы в имени закладки не разрешаются\n"
 
-#: src/commands.cc:2790
+#: src/commands.cc:2799
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: закладка `%s' отсутствует\n"
 
-#: src/commands.cc:2806
+#: src/commands.cc:2815
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: требуется указание типа импорта (netscape,ncftp)\n"
 
-#: src/commands.cc:2879
+#: src/commands.cc:2888
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Использование: %s [-d #] dir\n"
 
-#: src/commands.cc:2982
+#: src/commands.cc:2991
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: неверный размер блока `%s'\n"
 
-#: src/commands.cc:2991
+#: src/commands.cc:3000
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Использование: %s [ключи] <каталоги>\n"
 
-#: src/commands.cc:2997
+#: src/commands.cc:3006
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:3001
+#: src/commands.cc:3010
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:3049
+#: src/commands.cc:3058
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Использование: %s команда аргументы...\n"
 
-#: src/commands.cc:3061
+#: src/commands.cc:3070
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Использование: %s модуль [аргументы...]\n"
 
-#: src/commands.cc:3143
+#: src/commands.cc:3152
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Использование: %s [КЛЮЧИ] права файлы...\n"
 
-#: src/commands.cc:3163
+#: src/commands.cc:3172
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "неверная запись прав: %s\n"
 
-#: src/commands.cc:3237
+#: src/commands.cc:3246
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Использование: %s [КЛЮЧИ] <файл>\n"
@@ -2371,7 +2368,7 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:209
+#: src/mgetJob.cc:121 src/mgetJob.cc:205
 #, c-format
 msgid "%s: %s: no files found\n"
 msgstr "%s: %s: файлы не найдены\n"
@@ -2400,7 +2397,7 @@ msgstr "модуль зависимости `%s': %s\n"
 msgid "modules are not supported on this system"
 msgstr "модули на этой системе не поддерживаются"
 
-#: src/mvJob.cc:92
+#: src/mvJob.cc:93
 #, c-format
 msgid "rename successful\n"
 msgstr "переименование выполнено успешно\n"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.1.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-04-11 13:24+0400\n"
+"POT-Creation-Date: 2011-04-29 16:20+0400\n"
 "PO-Revision-Date: 2011-01-06 15:18+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -165,58 +165,55 @@ msgstr "Modu³ dla komendy `%s' nie zarejestrowa³ komendy.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:384 src/MirrorJob.cc:570
+#: src/CmdExec.cc:384 src/MirrorJob.cc:571
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: otrzymano przekierowanie do `%s'\n"
 
-#: src/CmdExec.cc:387 src/FileCopy.cc:1064
+#: src/CmdExec.cc:387 src/FileCopy.cc:1065
 msgid "Too many redirections"
 msgstr "Zbyt du¿o przekierowañ"
 
-#: src/CmdExec.cc:499 src/CmdExec.cc:556
+#: src/CmdExec.cc:495 src/CmdExec.cc:552
 msgid "Interrupt"
 msgstr "Przerwanie"
 
-#: src/CmdExec.cc:621
+#: src/CmdExec.cc:617
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Uwaga: niekompletna komenda zosta³a odrzucona\n"
 
-#: src/CmdExec.cc:715
+#: src/CmdExec.cc:711
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tUruchamianie wbudowanego `%s' [%s]\n"
 
-#: src/CmdExec.cc:721
+#: src/CmdExec.cc:716
 msgid "Queue is stopped."
 msgstr "Kolejka jest zatrzymana."
 
-#: src/CmdExec.cc:726
+#: src/CmdExec.cc:721
 msgid "Now executing:"
 msgstr "Aktualnie wykonujê:"
 
-#: src/CmdExec.cc:739
+#: src/CmdExec.cc:732
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tOczekiwanie na zakoñczenie zadania [%d]\n"
 
-#: src/CmdExec.cc:744
-#, c-format
+#: src/CmdExec.cc:735
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tOczekiwanie na zakoñczenie prac: "
 
-#: src/CmdExec.cc:755
-#, c-format
+#: src/CmdExec.cc:744
 msgid "\tRunning\n"
 msgstr "\tUruchamianie\n"
 
-#: src/CmdExec.cc:759
-#, c-format
+#: src/CmdExec.cc:746
 msgid "\tWaiting for command\n"
 msgstr "\tOczekiwanie na komendê\n"
 
-#: src/CmdExec.cc:1222
+#: src/CmdExec.cc:1198
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: komenda `%s' nie zosta³a wkompilowana.\n"
@@ -226,28 +223,28 @@ msgstr "%s: komenda `%s' nie zosta³a wkompilowana.\n"
 msgid "`%s' at %lld %s%s%s%s"
 msgstr "`%s' w %lld %s%s%s%s"
 
-#: src/CopyJob.cc:156
+#: src/CopyJob.cc:157
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
 msgstr "%lld bajt$#ll#|y|ów$ przes³an$y|e|ych$ w ci±gu %ld sekund$#l#y||$"
 
-#: src/CopyJob.cc:164
+#: src/CopyJob.cc:165
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld bajt$#ll#|y|ów$ przes³an$y|e|ych$"
 
-#: src/CopyJob.cc:264
+#: src/CopyJob.cc:265
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Transfer %d z %d plik$u|ów|ów$ nie powiód³ siê\n"
 
-#: src/CopyJob.cc:270
+#: src/CopyJob.cc:271
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Podsumowuj±c: przes³ano %d plik$|i|ów$\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1632 src/MirrorJob.cc:1648
-#: src/commands.cc:984 src/commands.cc:2120
+#: src/DummyProto.cc:66 src/MirrorJob.cc:1635 src/MirrorJob.cc:1651
+#: src/commands.cc:986 src/commands.cc:2129
 msgid " - not supported protocol"
 msgstr " - protokó³ nie jest wspierany"
 
@@ -323,16 +320,16 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "kopiowanie: get powróci³o do %lld, przeszukiwanie put\n"
 
-#: src/FileCopy.cc:1061
+#: src/FileCopy.cc:1062
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "kopiowanie: otrzymano przekierowanie do `%s'\n"
 
-#: src/FileCopy.cc:1246
+#: src/FileCopy.cc:1247
 msgid "file name missed in URL"
 msgstr "brak nazwy pliku w URL"
 
-#: src/FileCopy.cc:1899
+#: src/FileCopy.cc:1900
 msgid "Verify command failed without a message"
 msgstr "Polecenie weryfikacji nie powiod³o siê bez komunikatu"
 
@@ -515,7 +512,7 @@ msgstr "Po³±czenie bezczynne"
 msgid "Fetching headers..."
 msgstr "Przesy³am nag³ówki..."
 
-#: src/Job.cc:299
+#: src/Job.cc:273
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Zakoñczono (%s)"
@@ -528,7 +525,7 @@ msgstr "Pobieranie zawarto¶ci katalogu"
 msgid "Getting files information"
 msgstr "Pobieranie informacji o plikach"
 
-#: src/LocalAccess.cc:658 src/commands.cc:3079
+#: src/LocalAccess.cc:658 src/commands.cc:3088
 msgid "cannot get current directory"
 msgstr "nie mo¿na uzyskaæ aktualnego katalogu"
 
@@ -579,87 +576,87 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%sWykryto %d b³$±d|êdy|êdów$\n"
 
-#: src/MirrorJob.cc:252 src/MirrorJob.cc:437 src/MirrorJob.cc:956
+#: src/MirrorJob.cc:253 src/MirrorJob.cc:438 src/MirrorJob.cc:957
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Usuwanie starego pliku `%s'"
 
-#: src/MirrorJob.cc:262
+#: src/MirrorJob.cc:263
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Pominiêcie pliku `%s' (tylko istniej±ce)"
 
-#: src/MirrorJob.cc:269
+#: src/MirrorJob.cc:270
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Przesy³anie pliku `%s'"
 
-#: src/MirrorJob.cc:340
+#: src/MirrorJob.cc:341
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Pominiêcie katalogu `%s' (tylko istniej±ce)"
 
-#: src/MirrorJob.cc:360 src/MirrorJob.cc:469 src/MirrorJob.cc:707
+#: src/MirrorJob.cc:361 src/MirrorJob.cc:470 src/MirrorJob.cc:708
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Usuwanie starego lokalnego pliku `%s'"
 
-#: src/MirrorJob.cc:408
+#: src/MirrorJob.cc:409
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Mirrorowanie katalogu `%s'"
 
-#: src/MirrorJob.cc:482
+#: src/MirrorJob.cc:483
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Pomijanie dowi±zania symbolicznego `%s' (tylko istniej±ce)"
 
-#: src/MirrorJob.cc:488
+#: src/MirrorJob.cc:489
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Tworzenie dowi±zania symbolicznego `%s' do `%s'"
 
-#: src/MirrorJob.cc:621
+#: src/MirrorJob.cc:622
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: protokó³ `%s' nieodpowiedni dla mirrora\n"
 
-#: src/MirrorJob.cc:728
+#: src/MirrorJob.cc:729
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Tworzenie katalogu `%s'"
 
-#: src/MirrorJob.cc:907
+#: src/MirrorJob.cc:908
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Stary katalog `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:910
+#: src/MirrorJob.cc:911
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Stary plik `%s' nie zosta³ usuniêty"
 
-#: src/MirrorJob.cc:951
+#: src/MirrorJob.cc:952
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Usuwanie starego katalogu `%s'"
 
-#: src/MirrorJob.cc:1084
+#: src/MirrorJob.cc:1085
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Ponowne próbowanie mirrora...\n"
 
-#: src/MirrorJob.cc:1470
+#: src/MirrorJob.cc:1472
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: wyra¿enie regularne `%s': %s\n"
 
-#: src/MirrorJob.cc:1601 src/SleepJob.cc:148 src/SleepJob.cc:204
-#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1593
-#: src/commands.cc:1624 src/commands.cc:1727 src/commands.cc:2029
-#: src/commands.cc:2225 src/commands.cc:2387 src/commands.cc:2415
-#: src/commands.cc:2422 src/commands.cc:2708 src/commands.cc:2735
-#: src/commands.cc:2742 src/commands.cc:3062 src/lftp.cc:263
+#: src/MirrorJob.cc:1604 src/SleepJob.cc:147 src/SleepJob.cc:203
+#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1597
+#: src/commands.cc:1628 src/commands.cc:1731 src/commands.cc:2038
+#: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
+#: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
+#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:263
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania wiêkszej ilo¶ci informacji spróbuj `help %s'.\n"
@@ -708,30 +705,30 @@ msgstr "przydzielenie pseudo-tty nie powiod³o siê: "
 msgid "Added job$|s$"
 msgstr "Dodano zadani$e|a|a$"
 
-#: src/QueueFeeder.cc:149 src/QueueFeeder.cc:170
+#: src/QueueFeeder.cc:160 src/QueueFeeder.cc:181
 #, c-format
 msgid "No queued jobs.\n"
 msgstr "Nie ma ¿adnych skolejkowanych zadañ.\n"
 
-#: src/QueueFeeder.cc:151
+#: src/QueueFeeder.cc:162
 #, c-format
 msgid "No queued job #%i.\n"
 msgstr "Nie ma skolejkowanego zadania %i.\n"
 
-#: src/QueueFeeder.cc:156 src/QueueFeeder.cc:177
+#: src/QueueFeeder.cc:167 src/QueueFeeder.cc:188
 msgid "Deleted job$|s$"
 msgstr "Usuniêto zadani$e|a|a$"
 
-#: src/QueueFeeder.cc:172
+#: src/QueueFeeder.cc:183
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
 msgstr "Nie ma skolejkowanego zadania pasuj±cego do \"%s\".\n"
 
-#: src/QueueFeeder.cc:197 src/QueueFeeder.cc:215
+#: src/QueueFeeder.cc:208 src/QueueFeeder.cc:226
 msgid "Moved job$|s$"
 msgstr "Przesuniêto zadani$e|a|a$"
 
-#: src/QueueFeeder.cc:342
+#: src/QueueFeeder.cc:350
 msgid "Commands queued:"
 msgstr "Skolejkowane polecenia:"
 
@@ -771,7 +768,7 @@ msgstr "Nieprawid³owa litera-jednostka czasu, wy³±cznie [shmd] s± dozwolone."
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawid³owy format czasu. Format to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:764 src/commands.cc:3222 src/commands.cc:3231
+#: src/ResMgr.cc:764 src/commands.cc:3231 src/commands.cc:3240
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
 
@@ -841,12 +838,12 @@ msgstr "Zasypianie na zawsze"
 msgid "Sleep time left: "
 msgstr "Pozosta³y czas snu: "
 
-#: src/SleepJob.cc:112
+#: src/SleepJob.cc:111
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr "\tLicznik powtórek: %d\n"
 
-#: src/SleepJob.cc:146
+#: src/SleepJob.cc:145
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s: wymagany jest argument. "
@@ -1936,22 +1933,22 @@ msgstr ""
 "lftp wy³±czy siê automatycznie po zakoñczeniu wszystkich zadañ.\n"
 "Dopóki lftp dzia³a, mo¿na go przywróciæ w normalnym trybie poleceniem `fg'.\n"
 
-#: src/commands.cc:887 src/commands.cc:3355
+#: src/commands.cc:889 src/commands.cc:3357
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Spróbuj `%s --help' by uzyskaæ wiêcej informacji\n"
 
-#: src/commands.cc:889
+#: src/commands.cc:891
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 "U¿ycie: %s [-e polecenie] [-p port] [-u u¿ytkownik[,has³o]] <host|url>\n"
 
-#: src/commands.cc:1016 src/commands.cc:2104
+#: src/commands.cc:1018 src/commands.cc:2113
 msgid "Password: "
 msgstr "Has³o: "
 
-#: src/commands.cc:1018
+#: src/commands.cc:1020
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() nie powiod³o siê -- logowanie anonimowe\n"
@@ -1971,190 +1968,190 @@ msgstr "%s: -n: Oczekiwano liczby dodatniej. "
 msgid "Created a stopped queue.\n"
 msgstr "Utworzono zatrzyman± kolejkê.\n"
 
-#: src/commands.cc:1266 src/commands.cc:1296
+#: src/commands.cc:1270 src/commands.cc:1300
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: Nie ma aktywnej kolejki.\n"
 
-#: src/commands.cc:1288
+#: src/commands.cc:1292
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: Oczekiwano liczby jako drugiego argumentu. "
 
-#: src/commands.cc:1341
+#: src/commands.cc:1345
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "U¿ycie: %s <komenda>\n"
 
-#: src/commands.cc:1451
+#: src/commands.cc:1455
 msgid "invalid argument for `--sort'"
 msgstr "nieprawid³owy argument dla `--sort'"
 
-#: src/commands.cc:1481
+#: src/commands.cc:1485
 msgid "invalid block size"
 msgstr "nieprawid³owy rozmiar bloku"
 
-#: src/commands.cc:1633
+#: src/commands.cc:1637
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "U¿ycie: %s [OPCJE] pliki...\n"
 
-#: src/commands.cc:1705
+#: src/commands.cc:1709
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Oczekiwano liczby. "
 
-#: src/commands.cc:1738
+#: src/commands.cc:1742
 #, c-format
 msgid "File name missed. "
 msgstr "Brak nazwy pliku. "
 
-#: src/commands.cc:1836
+#: src/commands.cc:1840
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "U¿ycie: %s %s[-f] pliki...\n"
 
-#: src/commands.cc:1879
+#: src/commands.cc:1883
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "U¿ycie: %s [-e] <plik|polecenie>\n"
 
-#: src/commands.cc:1922
+#: src/commands.cc:1926
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "U¿ycie: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1936 src/commands.cc:2191 src/commands.cc:2314
-#: src/commands.cc:2484 src/commands.cc:2873 src/commands.cc:2949
+#: src/commands.cc:1940 src/commands.cc:2200 src/commands.cc:2323
+#: src/commands.cc:2493 src/commands.cc:2882 src/commands.cc:2958
 #: src/lftp.cc:275
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - nie jest numerem\n"
 
-#: src/commands.cc:1943 src/commands.cc:2170 src/commands.cc:2200
-#: src/commands.cc:2332
+#: src/commands.cc:1947 src/commands.cc:2179 src/commands.cc:2209
+#: src/commands.cc:2341
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - nie ma takiego zadania\n"
 
-#: src/commands.cc:1970
+#: src/commands.cc:1979
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "U¿ycie: %s [-p]\n"
 
-#: src/commands.cc:2071
+#: src/commands.cc:2080
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "poziom debugowania wynosi %d, wyniki przekierowywane do %s\n"
 
-#: src/commands.cc:2074
+#: src/commands.cc:2083
 #, c-format
 msgid "debug is off\n"
 msgstr "debugowanie jest wy³±czone\n"
 
-#: src/commands.cc:2085
+#: src/commands.cc:2094
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "U¿ycie: %s <u¿ytkownik|URL> [<has³o>]\n"
 
-#: src/commands.cc:2160 src/commands.cc:2324
+#: src/commands.cc:2169 src/commands.cc:2333
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: nie ma takiego zadania\n"
 
-#: src/commands.cc:2172
+#: src/commands.cc:2181
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "U¿ycie: %s <nr_proc> ... | all\n"
 
-#: src/commands.cc:2254
+#: src/commands.cc:2263
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. U¿yj `set -a' by sprawdziæ wszystkie zmienne.\n"
 
-#: src/commands.cc:2298
+#: src/commands.cc:2307
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "U¿ycie: %s [<nr_proc>]\n"
 
-#: src/commands.cc:2337
+#: src/commands.cc:2346
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: jaki¶ inny proces czeka na proces %d\n"
 
-#: src/commands.cc:2342
+#: src/commands.cc:2351
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: wykryto pêtle zastoju\n"
 
-#: src/commands.cc:2366
+#: src/commands.cc:2375
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "U¿ycie: mv <plik1> <plik2>\n"
 
-#: src/commands.cc:2414 src/commands.cc:2734
+#: src/commands.cc:2423 src/commands.cc:2743
 #, c-format
 msgid "Invalid command. "
 msgstr "Nieprawid³owe polecenie. "
 
-#: src/commands.cc:2421 src/commands.cc:2741
+#: src/commands.cc:2430 src/commands.cc:2750
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Dwuznaczne polecenie. "
 
-#: src/commands.cc:2440
+#: src/commands.cc:2449
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Operandowi brakuje rozmiaru\n"
 
-#: src/commands.cc:2457
+#: src/commands.cc:2466
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Brakuje operandu dla `expire'\n"
 
-#: src/commands.cc:2490
+#: src/commands.cc:2499
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s: %s - brak takiej sesji w buforze. U¿yj `scache' by poszukaæ w li¶cie.\n"
 
-#: src/commands.cc:2507
+#: src/commands.cc:2516
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Niestety, brak pomocy dla %s\n"
 
-#: src/commands.cc:2512
+#: src/commands.cc:2521
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s jest wbudowanym aliasem do %s\n"
 
-#: src/commands.cc:2517
+#: src/commands.cc:2526
 #, c-format
 msgid "Usage: %s\n"
 msgstr "U¿ycie: %s\n"
 
-#: src/commands.cc:2525
+#: src/commands.cc:2534
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s jest aliasem do `%s'\n"
 
-#: src/commands.cc:2529
+#: src/commands.cc:2538
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "Nie ma takiego polecenia `%s'. U¿yj `help' by uzyskaæ spis komend.\n"
 
-#: src/commands.cc:2531
+#: src/commands.cc:2540
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "Dwuznaczne polecenie `%s'. U¿yj `help' by uzyskaæ spis komend.\n"
 
-#: src/commands.cc:2594
+#: src/commands.cc:2603
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Wersja %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2597
+#: src/commands.cc:2606
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2183,81 +2180,81 @@ msgstr ""
 "Kopia Powszechnej Licencji Publicznej GNU powinna byæ do³±czona do LFTP.\n"
 "Je¶li nie, mo¿na j± zobaczyæ pod <http://www.gnu.org/licenses/>.\n"
 
-#: src/commands.cc:2611
+#: src/commands.cc:2620
 #, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Raporty o b³êdach oraz pytania proszê przesy³aæ na listê <%s>.\n"
 
-#: src/commands.cc:2617
+#: src/commands.cc:2626
 msgid "Libraries used: "
 msgstr "U¿yte biblioteki: "
 
-#: src/commands.cc:2757 src/commands.cc:2788
+#: src/commands.cc:2766 src/commands.cc:2797
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: wymagana jest nazwa zak³adki\n"
 
-#: src/commands.cc:2777
+#: src/commands.cc:2786
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: spacje w nazwie pliku zak³adki s± niedozwolone\n"
 
-#: src/commands.cc:2790
+#: src/commands.cc:2799
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: nie ma takiej zak³adki `%s'\n"
 
-#: src/commands.cc:2806
+#: src/commands.cc:2815
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: wymagany jest typ importowanych danych (netscape,ncftp)\n"
 
-#: src/commands.cc:2879
+#: src/commands.cc:2888
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "U¿ycie: %s [-d $] katalog\n"
 
-#: src/commands.cc:2982
+#: src/commands.cc:2991
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: nieprawid³owy rozmiar bloku `%s'\n"
 
-#: src/commands.cc:2991
+#: src/commands.cc:3000
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "U¿ycie: %s [opcje] <katalogi>\n"
 
-#: src/commands.cc:2997
+#: src/commands.cc:3006
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s: uwaga: podsumowanie jest takie samo jak przy --max-depth=0\n"
 
-#: src/commands.cc:3001
+#: src/commands.cc:3010
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: podsumowanie konfliktów z --max-depth=%i\n"
 
-#: src/commands.cc:3049
+#: src/commands.cc:3058
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "U¿ycie: %s module argumenty...\n"
 
-#: src/commands.cc:3061
+#: src/commands.cc:3070
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "U¿ycie: %s module [argumenty...]\n"
 
-#: src/commands.cc:3143
+#: src/commands.cc:3152
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "U¿ycie: %s [OPCJE] tryb pliki...\n"
 
-#: src/commands.cc:3163
+#: src/commands.cc:3172
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "nieprawid³owy tryb: %s\n"
 
-#: src/commands.cc:3237
+#: src/commands.cc:3246
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "U¿ycie: %s [OPCJE] plik\n"
@@ -2471,7 +2468,7 @@ msgstr ""
 "Opcjonalny argument licznik podaje liczbê linii z historii, które\n"
 "maj± byæ wy¶wietlone lub \"all\" by wy¶wietliæ wszystkie wpisy.\n"
 
-#: src/mgetJob.cc:125 src/mgetJob.cc:209
+#: src/mgetJob.cc:121 src/mgetJob.cc:205
 #, c-format
 msgid "%s: %s: no files found\n"
 msgstr "%s: %s: nie znaleziono plików\n"
@@ -2500,7 +2497,7 @@ msgstr "zale¿no¶ci modu³u `%s': %s\n"
 msgid "modules are not supported on this system"
 msgstr "modu³y nie s± wspierane na tym systemie"
 
-#: src/mvJob.cc:92
+#: src/mvJob.cc:93
 #, c-format
 msgid "rename successful\n"
 msgstr "zmiana nazwy powiod³a siê\n"

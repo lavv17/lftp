@@ -1,3 +1,11 @@
+Version 4.2.3 - 2011-04-29
+
+* don't write passwords to transfer_log.
+* new setting mirror:no-empty-dirs.
+* allow `jobs' output to be redirected.
+* don't list not connected torrent peers by default.
+* show torrent validation rate and ETA.
+
 Version 4.2.2 - 2011-04-11
 
 * fixed `cd -'.

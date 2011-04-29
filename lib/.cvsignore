@@ -237,3 +237,7 @@ mbsrtowcs-impl.h
 dosname.h
 mbtowc-impl.h
 mbtowc.c
+fd-hook.c
+fd-hook.h
+sys_uio.in.h
+xalloc-oversized.h
