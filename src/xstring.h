@@ -178,6 +178,7 @@ public:
    static xstring& get_tmp();
    static xstring& get_tmp(const char *s) { return get_tmp().set(s); }
    static xstring& get_tmp(const char *s,int n) { return get_tmp().nset(s,n); }
+   static char *tmp_buf(int n);
    static xstring& vformat(const char *fmt,va_list ap) { return get_tmp().vsetf(fmt,ap); }
    static xstring& format(const char *fmt,...) PRINTF_LIKE(1,2);
    static xstring& cat(const char *first,...) ATTRIBUTE_SENTINEL;

@@ -318,6 +318,12 @@ xstring& xstring::get_tmp()
    static int i;
    return revolver[i=(i+1)&15];
 }
+char *xstring::tmp_buf(int n)
+{
+   xstring& buf=get_tmp();
+   buf.get_space(n-1);	// get_space adds a tail byte again
+   return buf.get_non_const();
+}
 xstring& xstring::format(const char *fmt, ...)
 {
    va_list va;
