@@ -57,8 +57,8 @@ sockaddr_u::sockaddr_u()
 const char *sockaddr_u::address() const
 {
 #ifdef HAVE_GETNAMEINFO
-   static char buf[NI_MAXHOST];
-   if(getnameinfo(&sa,addr_len(),buf,sizeof(buf),0,0,NI_NUMERICHOST)<0)
+   char *buf=xstring::tmp_buf(NI_MAXHOST);
+   if(getnameinfo(&sa,addr_len(),buf,NI_MAXHOST,0,0,NI_NUMERICHOST)<0)
       return "????";
    return buf;
 #else

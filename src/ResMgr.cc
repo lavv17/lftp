@@ -814,8 +814,9 @@ const char *ResMgr::ERegExpValidate(xstring_c *s)
    int err=regcomp(&re,*s,REG_EXTENDED|REG_NOSUB);
    if(err)
    {
-      static char err_msg[128];
-      regerror(err,0,err_msg,sizeof(err_msg));
+      const int max_err_len=128;
+      char *err_msg=xstring::tmp_buf(max_err_len);
+      regerror(err,0,err_msg,max_err_len);
       return err_msg;
    }
    regfree(&re);

@@ -872,11 +872,7 @@ const char *CmdExec::FormatPrompt(const char *scan)
 const char *CmdExec::MakePrompt()
 {
    if(partial_cmd)
-   {
-      static char partial_prompt[] = "> ";
-      return partial_prompt;
-   }
-
+      return "> ";
    return FormatPrompt(ResMgr::Query("cmd:prompt",getenv("TERM")));
 }
 
