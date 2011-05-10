@@ -53,6 +53,54 @@ static ResType torrent_vars[] = {
 };
 static ResDecls torrent_vars_register(torrent_vars);
 
+#if INET6
+#ifdef HAVE_IFADDRS_H
+#include <ifaddrs.h>
+#endif
+static const char *FindGlobalIPv6Address()
+{
+#ifdef HAVE_IFADDRS_H
+   struct ifaddrs *ifaddrs=0;
+   getifaddrs(&ifaddrs);
+   for(struct ifaddrs *ifa=ifaddrs; ifa; ifa=ifa->ifa_next) {
+      if(ifa->ifa_addr->sa_family==AF_INET6) {
+	 struct in6_addr *addr=&((struct sockaddr_in6*)ifa->ifa_addr)->sin6_addr;
+	 if(!IN6_IS_ADDR_UNSPECIFIED(addr) && !IN6_IS_ADDR_LOOPBACK(addr)
+	 && !IN6_IS_ADDR_LINKLOCAL(addr) && !IN6_IS_ADDR_SITELOCAL(addr)
+	 && !IN6_IS_ADDR_MULTICAST(addr)) {
+	    char *buf=xstring::tmp_buf(INET6_ADDRSTRLEN);
+	    inet_ntop(AF_INET6, addr, buf, INET6_ADDRSTRLEN);
+	    freeifaddrs(ifaddrs);
+	    return buf;
+	 }
+      }
+   }
+   freeifaddrs(ifaddrs);
+#endif
+   return 0;
+}
+#endif
+
+void Torrent::ClassInit()
+{
+   static bool inited;
+   if(inited)
+      return;
+   inited=true;
+
+#if INET6
+   const char *ipv6=ResMgr::Query("torrent:ipv6",0);
+   if(!*ipv6)
+   {
+      ipv6=FindGlobalIPv6Address();
+      if(ipv6) {
+	 ProtoLog::LogNote(9,"found IPv6 address: %s",ipv6);
+	 ResMgr::Set("torrent:ipv6",0,ipv6);
+      }
+   }
+#endif
+}
+
 xstring Torrent::my_peer_id;
 xstring Torrent::my_key;
 xmap<Torrent*> Torrent::torrents;
@@ -1349,7 +1397,7 @@ const xstring& Torrent::Status()
    if(validating) {
       return xstring::format("Validation: %u/%u (%u%%) %s%s",validate_index,total_pieces,
 	 validate_index*100/total_pieces,recv_rate.GetStrS(),
-	 recv_rate.GetETAStrFromSize((total_pieces-validate_index-1)*piece_length+last_piece_length).get());
+	 recv_rate.GetETAStrFromSize((off_t)(total_pieces-validate_index-1)*piece_length+last_piece_length).get());
    }
    if(shutting_down) {
       if(trackers.count()==0)
@@ -2016,7 +2064,7 @@ int TorrentPeer::Do()
 	    if(recv_buf->Size()>0)
 	       LogError(2,"peer unexpectedly closed connection after %s",recv_buf->Dump());
 	    else
-	       LogError(4,"peer closed connection");
+	       LogError(4,"peer closed connection (before handshake)");
 	 }
 	 Disconnect();
 	 return MOVED;
@@ -2542,7 +2590,7 @@ int TorrentDispatcher::Do()
 	 if(recv_buf->Size()>0)
 	    LogError(1,"peer short handshake");
 	 else
-	    LogError(4,"peer closed connection");
+	    LogError(4,"peer closed just accepted connection");
 	 deleting=true;
 	 return MOVED;
       }
@@ -2619,6 +2667,7 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
    s.appendf("%s%s\n",tab,torrent->Status().get());
    if(torrent->GetRatio()>0)
       s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
+
    if(v>2) {
       s.appendf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().dump());
       s.appendf("%stotal length: %llu\n",tab,torrent->TotalLength());
@@ -2638,12 +2687,14 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
       }
    }
 
+   if(torrent->ShuttingDown())
+      return s;
+
    if(torrent->GetPeersCount()<=5 || v>1) {
       const TaskRefArray<TorrentPeer>& peers=torrent->GetPeers();
-      if(v<=2) {
-	 s.appendf("%s  not connected peers: %d\n",tab,
-	    torrent->GetPeersCount()-torrent->GetConnectedPeersCount());
-      }
+      int not_connected_peers=torrent->GetPeersCount()-torrent->GetConnectedPeersCount();
+      if(v<=2 && not_connected_peers>0)
+	 s.appendf("%s  not connected peers: %d\n",tab,not_connected_peers);
       for(int i=0; i<peers.count(); i++) {
 	 if(peers[i]->Connected() || v>2)
 	    s.appendf("%s  %s: %s\n",tab,peers[i]->GetName(),peers[i]->Status());
@@ -2682,6 +2733,8 @@ CDECL_END
 
 CMD(torrent)
 {
+   Torrent::ClassInit();
+
 #define args (parent->args)
 #define eprintf parent->eprintf
    enum {
@@ -2774,6 +2827,7 @@ CMD(torrent)
 #ifdef MODULE_CMD_TORRENT
 void module_init()
 {
+   Torrent::ClassInit();
    CmdExec::RegisterCommand("torrent",cmd_torrent);
 }
 #endif

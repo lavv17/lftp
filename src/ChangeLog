@@ -1,3 +1,9 @@
+2011-05-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: (tmp_buf) new method.
+	* CmdExec.cc, network.cc, ResMgr.cc: get rid of static buffers.
+	* Torrent.cc, Torrent.h: auto set torrent:ipv6; better status.
+
 2011-04-29  Alexander V. Lukyanov <lav@yars.free.net>
 
         * CmdExec.cc, CmdExec.h, CopyJob.cc, CopyJob.h, DirColors.cc,

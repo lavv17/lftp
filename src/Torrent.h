@@ -263,6 +263,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    TorrentPeer *FindPeerById(const xstring& p_id);
 
 public:
+   static void ClassInit();
+
    Torrent(const char *mf,const char *cwd,const char *output_dir);
 
    int Do();
