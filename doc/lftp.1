@@ -160,30 +160,39 @@ Wait until the given time and execute given (optional) command. See also \fBat\f
 .RI " [" subcommand ]
 .PP
 The bookmark command controls bookmarks.
-.Ds
-add <name> [<loc>]	add current place or given location
-  			to bookmarks and bind to given name
-del <name>		remove bookmark with name
-edit			start editor on bookmarks file
-import <type>		import foreign bookmarks
-list			list bookmarks (default)
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+add <name> [<loc>]	T{
+add current place or given location to bookmarks and bind to given name
+T}
+del <name>	remove bookmark with name
+edit	start editor on bookmarks file
+import <type>	import foreign bookmarks
+list	list bookmarks (default)
+.TE
 
+.PP
 .B cache
 .RI " [" subcommand ]
 .PP
 The cache command controls local memory cache.
 The following subcommands are recognized:
-.Ds
-stat			print cache status (default)
-on|off			turn on/off caching
-flush			flush cache
-size \fIlim\fP			set memory limit, -1 means unlimited
-expire \fINx\fP		set cache expiration time to \fIN\fP seconds (\fIx\fP=s)
-			minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
-.De
-.PP
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+stat	print cache status (default)
+on|off	turn on/off caching
+flush	flush cache
+size \fIlim\fP	set memory limit, -1 means unlimited
+expire \fINx\fP	T{
+set cache expiration time to \fIN\fP seconds (\fIx\fP=s) minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
+T}
+.TE
 
+.PP
 .BR cat " \fIfiles\fP"
 .PP
 cat outputs the remote file(s) to stdout.  (See also \fBmore\fR,
@@ -281,12 +290,17 @@ Retrieve the remote file \fIrfile\fP and store it as the local file
 base name of \fIrfile\fP. You can get multiple files by specifying multiple
 instances of \fIrfile\fP (and \-o \fIlfile\fP). Does not expand wildcards, use
 \fBmget\fR for that.
-.Ds
-\-c		continue, reget
-\-E		delete source files after successful transfer
-\-a		use ascii mode (binary is the default)
-\-O <base>	specifies base directory or URL where files should be placed
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-c	continue, reget
+\-E	delete source files after successful transfer
+\-a	use ascii mode (binary is the default)
+\-O <base>	T{
+specifies base directory or URL where files should be placed
+T}
+.TE
 .PP
 Examples:
 .Ds
@@ -295,35 +309,49 @@ get README \-o debian.README
 get README README.mirrors
 get README \-o debian.README README.mirrors \-o debian.mirrors
 get README \-o ftp://some.host.org/debian.README
-get README \-o ftp://some.host.org/debian-dir/ (end slash is important)
+get README \-o ftp://some.host.org/debian-dir/ \ \ \fB(end slash is important)\fP
 .De
 
 .BR get1
 .RI [ OPTS "] " rfile
 .PP
 Transfer a single file. Options:
-.Ds
-\-o <lfile>	destination file name (default - basename of rfile)
-\-c		continue, reget
-\-E		delete source files after successful transfer
-\-a		use ascii mode (binary is the default)
-\-\-source\-region=<from-to>
-		transfer specified region of source file
-\-\-target\-position=<pos>
-		position in target file to write data at
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-o <lfile>	T{
+destination file name (default - basename of rfile)
+T}
+\-c	continue, reget
+\-E	T{
+delete source files after successful transfer
+T}
+\-a	use ascii mode (binary is the default)
+\-\-source\-region=<from-to>	T{
+transfer specified region of source file
+T}
+\-\-target\-position=<pos>	T{
+position in target file to write data at
+T}
+.TE
 
+.PP
 .BR glob " [" \-d "] [" \-a "]"
 .RB "[" \-f "] \fIcommand patterns\fP"
 .PP
 Glob given patterns containing metacharacters and pass result to given command.
 E.g. ``glob echo *''.
-.Ds
+.Sp
+.in +0.5i
+.TS
+l	lx	.
 \-f	plain files (default)
 \-d	directories
 \-a	all types
-.De
+.TE
 
+.PP
 .B help
 [\fIcmd\fP]
 .PP
@@ -385,15 +413,22 @@ or
 .PP
 Gets selected files with expanded wildcards.
 .PP
-.Ds
-\-c		continue, reget.
-\-d		create directories the same as file names and get
-		the files into them instead of current directory.
-\-E		delete source files after successful transfer
-\-a		use ascii mode (binary is the default)
-\-O <base>	specifies base directory or URL where files should be placed
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-c	continue, reget.
+\-d	T{
+create directories the same as file names and get the files into them instead of current directory.
+T}
+\-E	delete source files after successful transfer
+\-a	use ascii mode (binary is the default)
+\-O <base>	T{
+specifies base directory or URL where files should be placed
+T}
+.TE
 
+.PP
 .B mirror
 .RI [ OPTS "] [" source
 .RI "[" target "]]"
@@ -402,45 +437,122 @@ Mirror specified source directory to local target directory. If target
 directory ends with a slash, the source base name is appended to target
 directory name. Source and/or target can be URLs pointing to directories.
 .PP
-.Ds
-\-c, \-\-continue		continue a mirror job if possible
-\-e, \-\-delete		delete files not present at remote site
-    \-\-delete\-first		delete old files before transferring new ones
-    \-\-depth\-first		descend into subdirectories before transferring files
-\-s, \-\-allow\-suid		set suid/sgid bits according to remote site
-    \-\-allow\-chown	try to set owner and group on files
-    \-\-ascii		use ascii mode transfers (implies \-\-ignore\-size)
-    \-\-ignore\-time		ignore time when deciding whether to download
-    \-\-ignore\-size		ignore size when deciding whether to download
-    \-\-only\-missing	download only missing files
-    \-\-only\-existing	download only files already existing at target
-\-n, \-\-only\-newer	download only newer files (\-c won't work)
-    \-\-no\-empty\-dirs	don't create empty directories (implies \-\-depth\-first)
-\-r, \-\-no\-recursion	don't go to subdirectories
-    \-\-no\-symlinks	don't create symbolic links
-\-p, \-\-no\-perms		don't set file permissions
-    \-\-no\-umask		don't apply umask to file modes
-\-R, \-\-reverse		reverse mirror (put files)
-\-L, \-\-dereference	download symbolic links as files
-\-N, \-\-newer\-than=SPEC	download only files newer than specified time
-    \-\-on\-change=CMD		execute the command if anything has been changed
-    \-\-older\-than=SPEC	download only files older than specified time
-    \-\-size\-range=RANGE	download only files with size in specified range
-\-P, \-\-parallel[=N]	download N files in parallel
-    \-\-use-pget[\-n=N]	use pget to transfer every single file
-    \-\-loop		loop until no changes found
-\-i \fIRX\fP, \-\-include \fIRX\fP	include matching files
-\-x \fIRX\fP, \-\-exclude \fIRX\fP	exclude matching files
-\-I \fIGP\fP, \-\-include\-glob \fIGP\fP	include matching files
-\-X \fIGP\fP, \-\-exclude\-glob \fIGP\fP	exclude matching files
-\-v, \-\-verbose[=level]	verbose operation
-    \-\-log=FILE		write lftp commands being executed to FILE
-    \-\-script=FILE		write lftp commands to FILE, but don't execute them
-    \-\-just-print, \-\-dry-run	same as \-\-script=-
-    \-\-use-cache		use cached directory listings
--\-Remove\-source\-files	remove files after transfer (use with caution)
-\-a			same as \-\-allow-chown \-\-allow-suid \-\-no-umask
-.De
+.Sp
+.in +0.5i
+.TS
+l1	l	lx	.
+\-c,	\-\-continue	T{
+continue a mirror job if possible
+T}
+\-e,	\-\-delete	T{
+delete files not present at remote site
+T}
+	\-\-delete\-first	T{
+delete old files before transferring new ones
+T}
+	\-\-depth\-first	T{
+descend into subdirectories before transferring files
+T}
+\-s,	\-\-allow\-suid	T{
+set suid/sgid bits according to remote site
+T}
+	\-\-allow\-chown	T{
+try to set owner and group on files
+T}
+	\-\-ascii	T{
+use ascii mode transfers (implies \-\-ignore\-size)
+T}
+	\-\-ignore\-time	T{
+ignore time when deciding whether to download
+T}
+	\-\-ignore\-size	T{
+ignore size when deciding whether to download
+T}
+	\-\-only\-missing	T{
+download only missing files
+T}
+	\-\-only\-existing	T{
+download only files already existing at target
+T}
+\-n,	\-\-only\-newer	T{
+download only newer files (\-c won't work)
+T}
+	\-\-no\-empty\-dirs	T{
+don't create empty directories (implies \-\-depth\-first)
+T}
+\-r,	\-\-no\-recursion	T{
+don't go to subdirectories
+T}
+	\-\-no\-symlinks	T{
+don't create symbolic links
+T}
+\-p,	\-\-no\-perms	T{
+don't set file permissions
+T}
+	\-\-no\-umask	T{
+don't apply umask to file modes
+T}
+\-R,	\-\-reverse	T{
+reverse mirror (put files)
+T}
+\-L,	\-\-dereference	T{
+download symbolic links as files
+T}
+\-N,	\-\-newer\-than=SPEC	T{
+download only files newer than specified time
+T}
+	\-\-on\-change=CMD	T{
+execute the command if anything has been changed
+T}
+	\-\-older\-than=SPEC	T{
+download only files older than specified time
+T}
+	\-\-size\-range=RANGE	T{
+download only files with size in specified range
+T}
+\-P,	\-\-parallel[=N]	T{
+download N files in parallel
+T}
+	\-\-use-pget[\-n=N]	T{
+use pget to transfer every single file
+T}
+	\-\-loop	T{
+loop until no changes found
+T}
+\-i \fIRX\fP,	\-\-include \fIRX\fP	T{
+include matching files
+T}
+\-x \fIRX\fP,	\-\-exclude \fIRX\fP	T{
+exclude matching files
+T}
+\-I \fIGP\fP,	\-\-include\-glob \fIGP\fP	T{
+include matching files
+T}
+\-X \fIGP\fP,	\-\-exclude\-glob \fIGP\fP	T{
+exclude matching files
+T}
+\-v,	\-\-verbose[=level]	T{
+verbose operation
+T}
+	\-\-log=FILE	T{
+write lftp commands being executed to FILE
+T}
+	\-\-script=FILE	T{
+write lftp commands to FILE, but don't execute them
+T}
+	\-\-just-print, \-\-dry-run	T{
+same as \-\-script=-
+T}
+	\-\-use-cache	T{
+use cached directory listings
+T}
+	-\-Remove\-source\-files	T{
+remove files after transfer (use with caution)
+T}
+\-a		T{
+same as \-\-allow-chown \-\-allow-suid \-\-no-umask
+T}
+.TE
 .PP
 When using \-R, the first directory is local and the second is remote.
 If the second directory is omitted, base name of first directory is used.
@@ -509,15 +621,24 @@ Same as `cat \fIfiles\fP | more'. if \fBPAGER\fP is set, it is used as filter.
 .PP
 Upload files with wildcard expansion. By default it uses the base name of
 local name as remote one. This can be changed by `\-d' option.
-.Ds
-\-c		continue, reput
-\-d		create directories the same as in file names and put the
-		files into them instead of current directory
-\-E		delete source files after successful transfer (dangerous)
-\-a		use ascii mode (binary is the default)
-\-O <base>	specifies base directory or URL where files should be placed
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-c	continue, reput
+\-d	T{
+create directories the same as in file names and put the files into them instead of current directory
+T}
+\-E	T{
+delete source files after successful transfer (dangerous)
+T}
+\-a	use ascii mode (binary is the default)
+\-O <base>	T{
+specifies base directory or URL where files should be placed
+T}
+.TE
 
+.PP
 .B mrm
 \fIfile(s)\fP
 .PP
@@ -549,12 +670,19 @@ Gets the specified file using several connections. This can speed up
 transfer, but loads the net and server heavily impacting other users. Use only if
 you really have to transfer the file ASAP.
 Options:
-.Ds
-\-c		continue transfer. Requires \fIlfile.lftp-pget-status\fP file.
-\-n \fImaxconn\fP	set maximum number of connections (default is taken from pget:default-n setting)
-.De
-.PP
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-c	T{
+continue transfer. Requires \fIlfile.lftp-pget-status\fP file.
+T}
+\-n \fImaxconn\fP	T{
+set maximum number of connections (default is taken from \fBpget:default-n\fP setting)
+T}
+.TE
 
+.PP
 .B put
 .RB [ \-E ]
 .RB [ \-a ]
@@ -565,15 +693,26 @@ Options:
 .PP
 Upload \fIlfile\fP with remote name \fIrfile\fP. If \-o omitted, the base name
 of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR for that.
-.Ds
-\-o <rfile>	specifies remote file name (default - basename of lfile)
-\-c		continue, reput
-		it requires permission to overwrite remote files
-\-E		delete source files after successful transfer (dangerous)
-\-a		use ascii mode (binary is the default)
-\-O <base>	specifies base directory or URL where files should be placed
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-o <rfile>	T{
+specifies remote file name (default - basename of lfile)
+T}
+\-c	T{
+continue, reput. It requires permission to overwrite remote files
+T}
+\-E	T{
+delete source files after successful transfer (dangerous)
+T}
+\-a	use ascii mode (binary is the default)
+\-O <base>	T{
+specifies base directory or URL where files should be placed
+T}
+.TE
 
+.PP
 .B pwd
 .RB [ \-p ]
 .PP
@@ -610,13 +749,18 @@ entry in the queue is deleted.
 Move the given items before the given queue index, or to the end if no
 destination is given.
 .PP
-.Ds
+.Sp
+.in +0.5i
+.TS
+l	lx	.
 \-q	Be quiet.
 \-v	Be verbose.
-\-Q	Output in a format that can be used to re-queue.
-	Useful with \-\-delete.
-.De
+\-Q	T{
+Output in a format that can be used to re-queue. Useful with \-\-delete.
+T}
+.TE
 .PP
+Examples:
 .Ds
 > get file &
 [1] get file
@@ -626,14 +770,23 @@ destination is given.
 > queue get yet_another_file
 .De
 .PP
-.Ds
-queue \-d 3		Delete the third item in the queue.
-queue \-m 6 4		Move the sixth item in the queue before the fourth.
-queue \-m "get*zip" 1	Move all commands matching "get*zip" to the beginning
-			of the queue.  (The order of the items is preserved.)
-queue \-d "get*zip"	Delete all commands matching "get*zip".
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+queue \-d 3	Delete the third item in the queue.
+queue \-m 6 4	T{
+Move the sixth item in the queue before the fourth.
+T}
+queue \-m "get*zip" 1	T{
+Move all commands matching "get*zip" to the beginning of the queue.  (The order of the items is preserved.)
+T}
+queue \-d "get*zip"	T{
+Delete all commands matching "get*zip".
+T}
+.TE
 
+.PP
 .B quote
 \fIcmd\fP
 .PP
@@ -681,13 +834,16 @@ Same as `nlist', but ignores the cache.
 Repeat specified command with a delay between iterations.
 Default delay is one second, default command is empty.
 .PP
-.Ds
+.Sp
+.in +0.5i
+.TS
+l	lx	.
 \-c <count>	maximum number of iterations
 \-d <delay>	delay between iterations
 \-\-while\-ok	stop when command exits with non-zero code
 \-\-until\-ok	stop when command exits with zero code
 \-\-weak     	stop when lftp moves to background.
-.De
+.TE
 .PP
 Examples:
 .Ds
@@ -725,12 +881,15 @@ exact application of the setting. See below for details.
 If set is called with no variable then only altered settings are listed.
 It can be changed by options:
 .PP
-.Ds
+.Sp
+.in +0.5i
+.TS
+l	lx	.
 \-a	list all settings, including default values
 \-d	list only default values, not necessary current ones
-.De
-.PP
+.TE
 
+.PP
 .B site
 \fIsite_cmd\fP
 .PP
@@ -781,10 +940,17 @@ working directory by default. Seeding continues until ratio reachs
 outs.
 .PP
 Options:
-.Ds
-\-O <directory>	specifies base directory where files should be placed
-\-\-force\-valid	skip file validation (if you are sure they are ok).
-.De
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-O <directory>	T{
+specifies base directory where files should be placed
+T}
+\-\-force\-valid	T{
+skip file validation (if you are sure they are ok).
+T}
+.TE
 
 .B user
 \fIuser\fP [\fIpass\fP]
@@ -971,14 +1137,17 @@ setting is the terminal type from TERM environment variable. Default uses
 ``tsl'' and ``fsl'' termcap values.
 
 The following escapes are supported:
-.Ds
+.Sp
+.in +0.5i
+.TS
+l	lx	.
 \\a	bell
 \\e	escape
 \\n	new line
 \\s	"lftp"
 \\v	lftp version
 \\T	the status string
-.De
+.TE
 .TP
 .BR cmd:time-style \ (string)
 This setting is the default value for cls \-\-time\-style option.
