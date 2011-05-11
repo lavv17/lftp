@@ -1,3 +1,7 @@
+2011-05-11	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: use tbl
+
 2011-04-29	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add mirror:no-empty-dirs setting.
