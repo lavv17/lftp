@@ -1,3 +1,7 @@
+2011-06-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.h: use ResClient to hook Reconfig (reported by Fernando Gutierrez <zerks0@gmail.com>).
+
 2011-05-10  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc, xstring.h: (tmp_buf) new method.

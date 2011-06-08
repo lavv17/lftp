@@ -59,7 +59,7 @@ public:
 
 extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command
 
-class CmdExec : public SessionJob
+class CmdExec : public SessionJob, public ResClient
 {
 public:
 // current command data
