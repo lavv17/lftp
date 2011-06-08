@@ -251,6 +251,7 @@ void CmdExec::AddNewJob(Job *new_job)
    if(new_job->jobno<0)
       new_job->AllocJobno();
    new_job->SetParentFg(this,!background);
+   exit_code=0;
    AddWaiting(new_job);
    if(background) {
       Roll(new_job);
