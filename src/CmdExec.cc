@@ -566,7 +566,7 @@ int CmdExec::Do()
       }
       if(status_line && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
-      if(m != STALL || interactive || !feeder || waiting_num >= max_waiting)
+      if(m != STALL || interactive || waiting_num >= max_waiting)
 	 return m;
    }
 
@@ -647,8 +647,7 @@ try_get_cmd:
       return m;
    }
 
-   parse_result
-      res = parse_one_cmd();
+   parse_result res = parse_one_cmd();
 
    if(alias_field<=0)
       free_used_aliases();
