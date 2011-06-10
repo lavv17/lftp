@@ -156,6 +156,7 @@ void  CmdExec::exec_parsed_command()
    case(COND_ANY):
       if(exit_code!=0 && ResMgr::QueryBool("cmd:fail-exit",0))
       {
+         failed_exit_code=exit_code;
 	 while(feeder)
 	    RemoveFeeder();
 	 cmd_buf.Empty();
@@ -768,6 +769,7 @@ void CmdExec::init(LocalDirectory *c)
    condition=COND_ANY;
    prev_exit_code=0;
    exit_code=0;
+   failed_exit_code=0;
    last_bg=-1;
 
    cwd=c;

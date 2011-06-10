@@ -73,6 +73,7 @@ private:
    Buffer cmd_buf;
    bool partial_cmd;
    int alias_field; // length of expanded alias (and ttl for used_aliases)
+   int failed_exit_code;
 
    TouchedAlias *used_aliases;
    void free_used_aliases();
@@ -174,7 +175,7 @@ public:
 
    bool Idle();	// when we have no command running and command buffer is empty
    int Done();
-   int ExitCode() { return exit_code; }
+   int ExitCode() { return failed_exit_code ? failed_exit_code : exit_code; }
    int Do();
    xstring& FormatStatus(xstring&,int,const char *prefix="\t");
    void ShowRunStatus(const SMTaskRef<StatusLine>& s);
