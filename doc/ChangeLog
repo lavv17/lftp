@@ -1,3 +1,7 @@
+2011-06-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document attach; sockets path; torrent:ipv6 default.
+
 2011-05-11	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: use tbl

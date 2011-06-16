@@ -42,7 +42,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "29 Apr 2011"
+.TH lftp 1 "16 Jun 2011"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +59,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.2.3.
+This man page documents lftp version 4.3.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -148,13 +148,14 @@ alias dir ls \-lF
 alias less zmore
 .De
 
-.B anon
-.PP
-Sets the user to anonymous.  This is the default.
-
 .BR at " \fItime\fP [ \-\- \fIcommand\fP ] "
 .PP
 Wait until the given time and execute given (optional) command. See also \fBat\fR(1).
+
+.B attach
+.RI " [" PID ]
+.PP
+Attach the terminal to specified backgrounded lftp process.
 
 .B bookmark
 .RI " [" subcommand ]
@@ -1803,7 +1804,7 @@ Certificate Authority and not be on Certificate Revocation List.
 IP address to send to the tracker. Specify it if you are using an http proxy.
 .TP
 .BR torrent:ipv6 " (ipv6 address)"
-IPv6 address to send to the tracker. Specify it if the tracker has IPv4 address.
+IPv6 address to send to the tracker. By default, first found global unicast address is used.
 .TP
 .BR torrent:max-peers \ (number)
 maximum number of peers for a torrent. Least used peers are removed to
@@ -1986,6 +1987,9 @@ command.
 .TP
 .I "~/.lftp/cwd_history"
 The file is used to store last working directories for each site visited.
+.TP
+.I "~/.lftp/bg/"
+The directory is used to store named sockets for backgrounded lftp processes.
 .TP
 .I "~/.netrc"
 The file is consulted to get default login and password to ftp server.
