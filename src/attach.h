@@ -239,6 +239,7 @@ public:
 	 SignalHook::Handle(SIGINT,pass_sig);
 	 SignalHook::Handle(SIGQUIT,pass_sig);
 	 SignalHook::Handle(SIGTSTP,pass_sig);
+	 SignalHook::Handle(SIGWINCH,pass_sig);
       }
       char buf;
       int res=read(sock,&buf,1);
@@ -251,8 +252,9 @@ public:
 	 close(sock);
 	 sock=-1;
 	 SignalHook::DoCount(SIGINT);
-	 SignalHook::DoCount(SIGQUIT);
+	 SignalHook::Restore(SIGQUIT);
 	 SignalHook::DoCount(SIGTSTP);
+	 SignalHook::Restore(SIGWINCH);
       }
       return MOVED;
    }
