@@ -471,7 +471,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
 	 N_("Use specified info for remote login. If you specify URL, the password\n"
 	 "will be cached for future usage.\n")},
-   {"version", cmd_ver,    "version",
+   {"version", cmd_ver,    0,
 	 N_("Shows lftp version\n")},
    {"wait",    cmd_wait,   N_("wait [<jobno>]"),
 	 N_("Wait for specified job to terminate. If jobno is omitted, wait\n"

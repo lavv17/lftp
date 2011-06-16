@@ -486,7 +486,8 @@ int   main(int argc,char **argv)
 	 " -l  List the history (default).\n"
 	 "Optional argument cnt specifies the number of history lines to list,\n"
 	 "or \"all\" to list all entries.\n"));
-   CmdExec::RegisterCommand("attach",cmd_attach);
+   CmdExec::RegisterCommand("attach",cmd_attach,"attach [PID]",
+      N_("Attach the terminal to specified backgrounded lftp process.\n"));
 
    top_exec=new CmdExec(0,0);
    hook_signals();
