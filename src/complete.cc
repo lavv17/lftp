@@ -1236,13 +1236,12 @@ static int lftp_complete_remote(int count,int key)
 
 int lftp_rl_getc(FILE *file)
 {
-   int res;
+   SignalHook::DoCount(SIGINT);
    CharReader r(fileno(file));
-
    for(;;)
    {
       SMTask::Schedule();
-      res=r.GetChar();
+      int res=r.GetChar();
       if(res==r.EOFCHAR)
 	 return EOF;
       if(res!=r.NOCHAR)
