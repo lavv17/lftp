@@ -59,6 +59,7 @@ void NetAccess::Init()
    connection_takeover=false;
 
    Reconfig(0);
+   reconnect_interval_current=reconnect_interval;
 }
 
 NetAccess::NetAccess()
