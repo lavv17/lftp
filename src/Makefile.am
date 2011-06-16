@@ -8,7 +8,7 @@ noinst_SCRIPTS = ftpget
 
 EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS)
 
-lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h
+lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h attach.cc attach.h
 
 noinst_PROGRAMS = example1 example2 example1-cmd
 noinst_LTLIBRARIES = example-module1.la
