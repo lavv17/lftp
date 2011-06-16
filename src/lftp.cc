@@ -25,16 +25,16 @@
 #include "modconfig.h"
 
 #include "trio.h"
+#include <sys/types.h>
+#include <sys/stat.h> // for mkdir()
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h> // for mkdir()
-#include "xstring.h"
 #include <fcntl.h>
 #include <locale.h>
 #include <ctype.h>
 
+#include "xstring.h"
 #include "xmalloc.h"
 #include "alias.h"
 #include "CmdExec.h"
@@ -50,6 +50,7 @@
 #include "ConnectionSlot.h"
 #include "misc.h"
 #include "ArgV.h"
+#include "attach.h"
 
 #include "configmake.h"
 
@@ -303,16 +304,36 @@ CMD(history)
 
    return 0;
 }
+CMD(attach)
+{
+   const char *pid_s=args->getarg(1);
+   if(!pid_s) {
+      eprintf("Usage: %s PID\n",args->a0());
+      return 0;
+   }
+   int pid=atoi(pid_s);
+   SMTaskRef<SendTermFD> term_sender(new SendTermFD(pid));
+   while(!term_sender->Done()) {
+      SMTask::Schedule();
+      SMTask::Block();
+   }
+   exit_code=0;
+   if(term_sender->Failed()) {
+      eprintf("%s\n",term_sender->ErrorText());
+      exit_code=1;
+   }
+   return 0;
+}
 #undef args
 #undef exit_code
 #undef output
 #undef session
 #undef eprintf
 
+
 static void sig_term(int sig)
 {
-   time_t t=time(0);
-   printf(_("[%lu] Terminated by signal %d. %s"),(unsigned long)getpid(),sig,ctime(&t));
+   printf(_("[%lu] Terminated by signal %d. %s\n"),(unsigned long)getpid(),sig,SMTask::now.IsoDateTime());
    if(top_exec) {
       top_exec->KillAll();
       alarm(30);
@@ -324,7 +345,46 @@ static void sig_term(int sig)
    exit(1);
 }
 
-static void move_to_background()
+static void detach()
+{
+   SignalHook::Ignore(SIGINT);
+   SignalHook::Ignore(SIGQUIT);
+   SignalHook::Ignore(SIGHUP);
+   SignalHook::Ignore(SIGTSTP);
+
+   const char *home=get_lftp_home();
+   if(home)
+   {
+      xstring& log=xstring::get_tmp(home);
+      if(access(log,F_OK)==-1)
+	 log.append("_log");
+      else
+	 log.append("/log");
+
+      int fd=open(log,O_WRONLY|O_APPEND|O_CREAT,0600);
+      if(fd>=0)
+      {
+	 dup2(fd,1); // stdout
+	 dup2(fd,2); // stderr
+	 if(fd!=1 && fd!=2)
+	    close(fd);
+      }
+      Log::global->ShowPID();
+      Log::global->ShowTime();
+      Log::global->ShowContext();
+   }
+   close(0);	  // close stdin.
+   open("/dev/null",O_RDONLY); // reopen it, just in case.
+
+#ifdef HAVE_SETSID
+   setsid();	  // start a new session.
+#endif
+
+   SignalHook::Handle(SIGTERM,sig_term);
+}
+
+SMTaskRef<AcceptTermFD> term_acceptor;
+static int move_to_background()
 {
    // notify jobs
    Job::lftpMovesToBackground_ToAll();
@@ -332,63 +392,37 @@ static void move_to_background()
    SMTask::RollAll(TimeInterval(1,0));
    // if all jobs terminated, don't really move to bg.
    if(Job::NumberOfJobs()==0)
-      return;
+      return 0;
 
    fflush(stdout);
    fflush(stderr);
 
-   pid_t pid=fork();
+   static bool detached;
+   pid_t pid=0;
+   if(!detached)
+      pid=fork();
    switch(pid)
    {
    case(0): // child
    {
-      SignalHook::Ignore(SIGINT);
-      SignalHook::Ignore(SIGQUIT);
-      SignalHook::Ignore(SIGHUP);
-      SignalHook::Ignore(SIGTSTP);
-
-      const char *home=get_lftp_home();
-      if(home)
-      {
-	 xstring& log=xstring::get_tmp(home);
-	 if(access(log,F_OK)==-1)
-	    log.append("_log");
-	 else
-	    log.append("/log");
-
-	 int fd=open(log,O_WRONLY|O_APPEND|O_CREAT,0600);
-	 if(fd>=0)
-	 {
-	    dup2(fd,1); // stdout
-	    dup2(fd,2); // stderr
-	    if(fd!=1 && fd!=2)
-	       close(fd);
-	 }
-	 Log::global->ShowPID();
-	 Log::global->ShowTime();
-	 Log::global->ShowContext();
+      if(!detached) {
+	 detach();
+	 detached=true;
+	 printf(_("[%lu] Started.  %s\n"),(unsigned long)getpid(),SMTask::now.IsoDateTime());
       }
-      close(0);	  // close stdin.
-      open("/dev/null",O_RDONLY); // reopen it, just in case.
-
-#ifdef HAVE_SETSID
-      setsid();	  // start a new session.
-#endif
-
-      pid=getpid();
-      time_t t=time(0);
-      SignalHook::Handle(SIGTERM,sig_term);
-      printf(_("[%lu] Started.  %s"),(unsigned long)pid,ctime(&t));
+      if(!term_acceptor)
+	 term_acceptor=new AcceptTermFD();
       for(;;)
       {
 	 SMTask::Schedule();
 	 if(Job::NumberOfJobs()==0)
 	    break;
 	 SMTask::Block();
+	 if(term_acceptor->Accepted())
+	    return 1;
       }
-      t=time(0);
-      printf(_("[%lu] Finished. %s"),(unsigned long)pid,ctime(&t));
-      return;
+      printf(_("[%lu] Finished. %s\n"),(unsigned long)getpid(),SMTask::now.IsoDateTime());
+      return 0;
    }
    default: // parent
       printf(_("[%lu] Moving to background to complete transfers...\n"),
@@ -398,6 +432,7 @@ static void move_to_background()
    case(-1):
       perror("fork()");
    }
+   return 0;
 }
 
 int lftp_slot(int count,int key)
@@ -451,6 +486,7 @@ int   main(int argc,char **argv)
 	 " -l  List the history (default).\n"
 	 "Optional argument cnt specifies the number of history lines to list,\n"
 	 "or \"all\" to list all entries.\n"));
+   CmdExec::RegisterCommand("attach",cmd_attach);
 
    top_exec=new CmdExec(0,0);
    hook_signals();
@@ -475,6 +511,7 @@ int   main(int argc,char **argv)
    lftp_feeder=new ReadlineFeeder(args);
 
    top_exec->ExecParsed(args.borrow());
+revived:
    top_exec->WaitDone();
    int exit_code=top_exec->ExitCode();
 
@@ -484,10 +521,28 @@ int   main(int argc,char **argv)
    if(Job::NumberOfJobs()>0)
    {
       top_exec->SetInteractive(false);
-      move_to_background();
+      if(term_acceptor) {
+	 printf(_("[%lu] Detaching from the terminal to complete transfers...\n"),
+	       (unsigned long)getpid());
+	 fflush(stdout);
+	 term_acceptor->Detach();
+	 detach();
+	 printf(_("[%lu] Detached from terminal. %s\n"),(unsigned long)getpid(),SMTask::now.IsoDateTime());
+      }
+      if(move_to_background())
+      {
+	 top_exec->SetInteractive(true);
+	 top_exec->SetCmdFeeder(new ReadlineFeeder(args));
+	 goto revived;
+      }
    }
    top_exec->KillAll();
    top_exec=0;
+
+   if(term_acceptor) {
+      printf(_("Exiting and detaching from the terminal.\n"));
+      fflush(stdout);
+   }
 
    Job::Cleanup();
    ConnectionSlot::Cleanup();
@@ -498,6 +553,5 @@ int   main(int argc,char **argv)
    SignalHook::Cleanup();
    Log::Cleanup();
    SMTask::Cleanup();
-
    return exit_code;
 }

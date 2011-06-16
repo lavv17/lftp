@@ -1,6 +1,24 @@
+2011-06-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* attach.cc, attach.h: new files.
+	* lftp.cc: (attach) new command, pass tty fd to a backgrounded lftp.
+	* NetAccess.cc: init reconnect_interval_current properly.
+	* complete.cc: re-set SIGINT handler.
+	* ftpclass.cc: don't send FEAT after QUIT.
+
+2011-06-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h: when cmd:fail-exit is true, save the non-zero
+	  exit code for the case of cmd:parallel>1 (patch by Fernando Gutierrez).
+
 2011-06-08  Alexander V. Lukyanov <lav@yars.free.net>
 
-	* CmdExec.h: use ResClient to hook Reconfig (reported by Fernando Gutierrez <zerks0@gmail.com>).
+	* CmdExec.h: use ResClient to hook Reconfig (reported by Fernando
+          Gutierrez <zerks0@gmail.com>).
+	* CmdExec.cc: parse buffered command even without a feeder, when
+	  cmd:parallel>1 (patch by Fernando Gutierrez).
+	* CmdExec.cc: set exit_code to 0 when a job has been created
+	  (patch by Fernando Gutierrez).
 
 2011-05-10  Alexander V. Lukyanov <lav@yars.free.net>
 
