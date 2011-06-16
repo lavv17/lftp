@@ -1426,7 +1426,7 @@ int   Ftp::Do()
       if(state!=CONNECTED_STATE || Error())
 	 return MOVED;
 
-      if(expect->Has(Expect::FEAT))
+      if(expect->Has(Expect::FEAT) || conn->quit_sent)
 	 goto usual_return;
 
 #if USE_SSL
