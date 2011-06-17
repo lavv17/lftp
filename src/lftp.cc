@@ -57,9 +57,11 @@
 #include "lftp_rl.h"
 #include "complete.h"
 
+CDECL_BEGIN
+#include <glob.h>
+CDECL_END
 
 #define top_exec CmdExec::top
-
 
 void  hook_signals()
 {
@@ -308,8 +310,23 @@ CMD(attach)
 {
    const char *pid_s=args->getarg(1);
    if(!pid_s) {
-      eprintf("Usage: %s PID\n",args->a0());
-      return 0;
+      xstring& path=AcceptTermFD::get_sock_path(1);
+      path.rtrim('1');
+      path.append('*');
+      glob_t g;
+      glob(path, 0, NULL, &g);
+      if(g.gl_pathc==0) {
+      not_found:
+	 eprintf("%s: no backgrounded lftp processes found.\n",args->a0());
+	 globfree(&g);
+	 return 0;
+      }
+      pid_s=strrchr(g.gl_pathv[0],'-');
+      if(pid_s)
+	 pid_s=alloca_strdup(pid_s+1);
+      globfree(&g);
+      if(!pid_s)
+	 goto not_found;
    }
    int pid=atoi(pid_s);
    SMTaskRef<SendTermFD> term_sender(new SendTermFD(pid));
@@ -333,7 +350,7 @@ CMD(attach)
 
 static void sig_term(int sig)
 {
-   printf(_("[%lu] Terminated by signal %d. %s\n"),(unsigned long)getpid(),sig,SMTask::now.IsoDateTime());
+   printf(_("[%u] Terminated by signal %d. %s\n"),(unsigned)getpid(),sig,SMTask::now.IsoDateTime());
    if(top_exec) {
       top_exec->KillAll();
       alarm(30);
@@ -407,7 +424,7 @@ static int move_to_background()
       if(!detached) {
 	 detach();
 	 detached=true;
-	 printf(_("[%lu] Started.  %s\n"),(unsigned long)getpid(),SMTask::now.IsoDateTime());
+	 printf(_("[%u] Started.  %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
       }
       if(!term_acceptor)
 	 term_acceptor=new AcceptTermFD();
@@ -420,12 +437,12 @@ static int move_to_background()
 	 if(term_acceptor->Accepted())
 	    return 1;
       }
-      printf(_("[%lu] Finished. %s\n"),(unsigned long)getpid(),SMTask::now.IsoDateTime());
+      printf(_("[%u] Finished. %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
       return 0;
    }
    default: // parent
-      printf(_("[%lu] Moving to background to complete transfers...\n"),
-	       (unsigned long)pid);
+      printf(_("[%u] Moving to background to complete transfers...\n"),
+	       (unsigned)pid);
       fflush(stdout);
       _exit(0);
    case(-1):
@@ -522,12 +539,12 @@ revived:
    {
       top_exec->SetInteractive(false);
       if(term_acceptor) {
-	 printf(_("[%lu] Detaching from the terminal to complete transfers...\n"),
-	       (unsigned long)getpid());
+	 printf(_("[%u] Detaching from the terminal to complete transfers...\n"),
+	       (unsigned)getpid());
 	 fflush(stdout);
 	 term_acceptor->Detach();
 	 detach();
-	 printf(_("[%lu] Detached from terminal. %s\n"),(unsigned long)getpid(),SMTask::now.IsoDateTime());
+	 printf(_("[%u] Detached from terminal. %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
       }
       if(move_to_background())
       {
@@ -541,7 +558,7 @@ revived:
    top_exec=0;
 
    if(term_acceptor) {
-      printf(_("Exiting and detaching from the terminal.\n"));
+      printf(_("[%u] Exiting and detaching from the terminal.\n"),(unsigned)getpid());
       fflush(stdout);
    }
 

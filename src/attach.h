@@ -108,7 +108,7 @@ public:
 	 return m;
       }
       fcntl(fd,F_SETFD,FD_CLOEXEC);
-      printf(_("[%lu] Attached to terminal %s. %s\n"),(unsigned long)getpid(),ttyname(fd),now.IsoDateTime());
+      printf(_("[%u] Attached to terminal %s. %s\n"),(unsigned)getpid(),ttyname(fd),now.IsoDateTime());
       fflush(stdout);
       fflush(stderr);
       dup2(fd,0);
@@ -120,10 +120,10 @@ public:
       sock=-1;
       unlink(get_sock_path());
       accepted=true;
-      printf(_("[%lu] Attached to terminal.\n"),(unsigned long)getpid());
+      printf(_("[%u] Attached to terminal.\n"),(unsigned)getpid());
       return MOVED;
    }
-   static const char *get_sock_path(int pid=0) {
+   static xstring& get_sock_path(int pid=0) {
       if(!pid)
 	 pid=getpid();
       struct utsname u;

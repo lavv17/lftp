@@ -1,3 +1,8 @@
+2011-06-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc: attach without arguments; don't use long for pid.
+	* attach.h: use unsigned for pid.
+
 2011-06-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* attach.cc, attach.h: new files.
