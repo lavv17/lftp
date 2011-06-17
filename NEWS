@@ -1,3 +1,11 @@
+Version 4.3.0 - 2011-06-17
+
+* new command `attach' to control a backgrounded lftp.
+* automatically fill torrent:ipv6 setting.
+* slightly improved torrent status display.
+* fixed reconnect interval (it was sometimes uninitialized).
+* several fixes for the case of cmd:parallel>1 (Fernando Gutierrez).
+
 Version 4.2.3 - 2011-04-29
 
 * don't write passwords to transfer_log.

@@ -241,3 +241,8 @@ fd-hook.c
 fd-hook.h
 sys_uio.in.h
 xalloc-oversized.h
+strerror-override.c
+strerror-override.h
+iconv.c
+iconv_close.c
+unistr.in.h

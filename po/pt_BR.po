@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-04-29 16:20+0400\n"
+"POT-Creation-Date: 2011-06-17 17:33+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -29,61 +29,61 @@ msgstr ""
 msgid "Valid arguments are:"
 msgstr ""
 
-#: lib/error.c:181
+#: lib/error.c:185
 msgid "Unknown system error"
 msgstr ""
 
-#: lib/getopt.c:527 lib/getopt.c:543
+#: lib/getopt.c:547 lib/getopt.c:576
 #, c-format
-msgid "%s: option '%s' is ambiguous\n"
+msgid "%s: option '%s' is ambiguous; possibilities:"
 msgstr ""
 
-#: lib/getopt.c:576 lib/getopt.c:580
+#: lib/getopt.c:624 lib/getopt.c:628
 #, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr ""
 
-#: lib/getopt.c:589 lib/getopt.c:594
+#: lib/getopt.c:637 lib/getopt.c:642
 #, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr ""
 
-#: lib/getopt.c:637 lib/getopt.c:656
+#: lib/getopt.c:685 lib/getopt.c:704
 #, c-format
 msgid "%s: option '--%s' requires an argument\n"
 msgstr ""
 
-#: lib/getopt.c:694 lib/getopt.c:697
+#: lib/getopt.c:742 lib/getopt.c:745
 #, fuzzy, c-format
 msgid "%s: unrecognized option '--%s'\n"
 msgstr "número inválido"
 
-#: lib/getopt.c:705 lib/getopt.c:708
+#: lib/getopt.c:753 lib/getopt.c:756
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%c%s'\n"
 msgstr "número inválido"
 
-#: lib/getopt.c:757 lib/getopt.c:760
+#: lib/getopt.c:805 lib/getopt.c:808
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "número inválido"
 
-#: lib/getopt.c:810 lib/getopt.c:827 lib/getopt.c:1035 lib/getopt.c:1053
+#: lib/getopt.c:858 lib/getopt.c:875 lib/getopt.c:1083 lib/getopt.c:1101
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr ""
 
-#: lib/getopt.c:883 lib/getopt.c:899
+#: lib/getopt.c:931 lib/getopt.c:947
 #, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr ""
 
-#: lib/getopt.c:923 lib/getopt.c:941
+#: lib/getopt.c:971 lib/getopt.c:989
 #, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: lib/getopt.c:962 lib/getopt.c:980
+#: lib/getopt.c:1010 lib/getopt.c:1028
 #, c-format
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr ""
@@ -139,77 +139,77 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Atenção: chdir(%s) falhou: %s\n"
 
-#: src/CmdExec.cc:199
+#: src/CmdExec.cc:200
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Comando `%s' desconhecido.\n"
 
-#: src/CmdExec.cc:201
+#: src/CmdExec.cc:202
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Comando `%s' ambíguo.\n"
 
-#: src/CmdExec.cc:220
+#: src/CmdExec.cc:221
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr ""
 
-#: src/CmdExec.cc:363
+#: src/CmdExec.cc:365
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr ""
 
-#: src/CmdExec.cc:384 src/MirrorJob.cc:571
+#: src/CmdExec.cc:386 src/MirrorJob.cc:571
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:387 src/FileCopy.cc:1065
+#: src/CmdExec.cc:389 src/FileCopy.cc:1065
 msgid "Too many redirections"
 msgstr ""
 
-#: src/CmdExec.cc:495 src/CmdExec.cc:552
+#: src/CmdExec.cc:497 src/CmdExec.cc:554
 msgid "Interrupt"
 msgstr "Interrupção"
 
-#: src/CmdExec.cc:617
+#: src/CmdExec.cc:619
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:711
+#: src/CmdExec.cc:712
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tExecutando comando embutido `%s' [%s]\n"
 
-#: src/CmdExec.cc:716
+#: src/CmdExec.cc:717
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:721
+#: src/CmdExec.cc:722
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperanto término do serviço [%d]\n"
 
-#: src/CmdExec.cc:735
+#: src/CmdExec.cc:736
 #, fuzzy
 msgid "\tWaiting for termination of jobs: "
 msgstr "Esperando término da filtragem"
 
-#: src/CmdExec.cc:744
+#: src/CmdExec.cc:745
 msgid "\tRunning\n"
 msgstr "\tExecutando\n"
 
-#: src/CmdExec.cc:746
+#: src/CmdExec.cc:747
 #, fuzzy
 msgid "\tWaiting for command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:1198
+#: src/CmdExec.cc:1196
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
@@ -518,12 +518,12 @@ msgstr ""
 msgid "[%d] Done (%s)"
 msgstr "[%d] Feito (%s)"
 
-#: src/LocalAccess.cc:620 src/NetAccess.cc:616
+#: src/LocalAccess.cc:620 src/NetAccess.cc:617
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "Buscando conteúdo do diretório (%ld)"
 
-#: src/LocalAccess.cc:622 src/NetAccess.cc:620
+#: src/LocalAccess.cc:622 src/NetAccess.cc:621
 #, fuzzy
 msgid "Getting files information"
 msgstr "Buscando informações dos arquivos (%d%%)"
@@ -652,34 +652,34 @@ msgstr ""
 #: src/commands.cc:1628 src/commands.cc:1731 src/commands.cc:2038
 #: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
 #: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
-#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:263
+#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:266
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr ""
 
-#: src/NetAccess.cc:130
+#: src/NetAccess.cc:131
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Erro no socket (%s) - reconectando"
 
-#: src/NetAccess.cc:163
+#: src/NetAccess.cc:164
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
 
-#: src/NetAccess.cc:219
+#: src/NetAccess.cc:220
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/NetAccess.cc:315
+#: src/NetAccess.cc:316
 msgid "Connection limit reached"
 msgstr ""
 
-#: src/NetAccess.cc:320
+#: src/NetAccess.cc:321
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:342
+#: src/NetAccess.cc:343
 msgid "max-retries exceeded"
 msgstr ""
 
@@ -779,24 +779,24 @@ msgstr ""
 msgid "Integer overflow"
 msgstr ""
 
-#: src/ResMgr.cc:831
+#: src/ResMgr.cc:832
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:842
+#: src/ResMgr.cc:843
 msgid "Invalid IPv6 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:912 src/ResMgr.cc:916
+#: src/ResMgr.cc:913 src/ResMgr.cc:917
 #, fuzzy
 msgid "this encoding is not supported"
 msgstr "Operação não suportada"
 
-#: src/ResMgr.cc:922
+#: src/ResMgr.cc:923
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/ResMgr.cc:933
+#: src/ResMgr.cc:934
 #, fuzzy
 msgid "invalid pair of numbers"
 msgstr "número inválido"
@@ -1817,7 +1817,7 @@ msgstr ""
 
 #: src/commands.cc:1940 src/commands.cc:2200 src/commands.cc:2323
 #: src/commands.cc:2493 src/commands.cc:2882 src/commands.cc:2958
-#: src/lftp.cc:275
+#: src/lftp.cc:278
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr ""
@@ -2208,31 +2208,31 @@ msgstr ""
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/lftp.cc:315
+#: src/lftp.cc:353
 #, c-format
-msgid "[%lu] Terminated by signal %d. %s"
+msgid "[%u] Terminated by signal %d. %s\n"
 msgstr ""
 
-#: src/lftp.cc:381
+#: src/lftp.cc:427
 #, c-format
-msgid "[%lu] Started.  %s"
+msgid "[%u] Started.  %s\n"
 msgstr ""
 
-#: src/lftp.cc:390
+#: src/lftp.cc:440
 #, c-format
-msgid "[%lu] Finished. %s"
+msgid "[%u] Finished. %s\n"
 msgstr ""
 
-#: src/lftp.cc:394
+#: src/lftp.cc:444
 #, c-format
-msgid "[%lu] Moving to background to complete transfers...\n"
+msgid "[%u] Moving to background to complete transfers...\n"
 msgstr ""
 
-#: src/lftp.cc:447
+#: src/lftp.cc:498
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr ""
 
-#: src/lftp.cc:448
+#: src/lftp.cc:499
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2240,6 +2240,25 @@ msgid ""
 " -l  List the history (default).\n"
 "Optional argument cnt specifies the number of history lines to list,\n"
 "or \"all\" to list all entries.\n"
+msgstr ""
+
+#: src/lftp.cc:506
+msgid "Attach the terminal to specified backgrounded lftp process.\n"
+msgstr ""
+
+#: src/lftp.cc:542
+#, c-format
+msgid "[%u] Detaching from the terminal to complete transfers...\n"
+msgstr ""
+
+#: src/lftp.cc:547
+#, c-format
+msgid "[%u] Detached from terminal. %s\n"
+msgstr ""
+
+#: src/lftp.cc:561
+#, c-format
+msgid "[%u] Exiting and detaching from the terminal.\n"
 msgstr ""
 
 #: src/mgetJob.cc:121 src/mgetJob.cc:205

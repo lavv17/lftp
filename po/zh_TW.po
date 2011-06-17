@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-04-29 16:20+0400\n"
+"POT-Creation-Date: 2011-06-17 17:33+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <community@linuxhall.org>\n"
@@ -30,61 +30,61 @@ msgstr "%2$s 的參數 %1$s 不明確"
 msgid "Valid arguments are:"
 msgstr "有效的參數為："
 
-#: lib/error.c:181
+#: lib/error.c:185
 msgid "Unknown system error"
 msgstr "不明的系統錯誤"
 
-#: lib/getopt.c:527 lib/getopt.c:543
+#: lib/getopt.c:547 lib/getopt.c:576
 #, fuzzy, c-format
-msgid "%s: option '%s' is ambiguous\n"
+msgid "%s: option '%s' is ambiguous; possibilities:"
 msgstr "%s：選項 ‘%s’ 不明確\n"
 
-#: lib/getopt.c:576 lib/getopt.c:580
+#: lib/getopt.c:624 lib/getopt.c:628
 #, fuzzy, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘--%s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:589 lib/getopt.c:594
+#: lib/getopt.c:637 lib/getopt.c:642
 #, fuzzy, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘%c%s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:637 lib/getopt.c:656
+#: lib/getopt.c:685 lib/getopt.c:704
 #, fuzzy, c-format
 msgid "%s: option '--%s' requires an argument\n"
 msgstr "%s：選項 ‘%s’ 需要參數\n"
 
-#: lib/getopt.c:694 lib/getopt.c:697
+#: lib/getopt.c:742 lib/getopt.c:745
 #, fuzzy, c-format
 msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s：‘--%s’ 選項無法辨識\n"
 
-#: lib/getopt.c:705 lib/getopt.c:708
+#: lib/getopt.c:753 lib/getopt.c:756
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s：‘%c%s’ 選項無法辨識\n"
 
-#: lib/getopt.c:757 lib/getopt.c:760
+#: lib/getopt.c:805 lib/getopt.c:808
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s：無效的選項 ─ %c\n"
 
-#: lib/getopt.c:810 lib/getopt.c:827 lib/getopt.c:1035 lib/getopt.c:1053
+#: lib/getopt.c:858 lib/getopt.c:875 lib/getopt.c:1083 lib/getopt.c:1101
 #, fuzzy, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s：選項需要參數 ─ %c\n"
 
-#: lib/getopt.c:883 lib/getopt.c:899
+#: lib/getopt.c:931 lib/getopt.c:947
 #, fuzzy, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s：選項 ‘-W %s’ 不明確\n"
 
-#: lib/getopt.c:923 lib/getopt.c:941
+#: lib/getopt.c:971 lib/getopt.c:989
 #, fuzzy, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘-W %s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:962 lib/getopt.c:980
+#: lib/getopt.c:1010 lib/getopt.c:1028
 #, fuzzy, c-format
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr "%s：選項 ‘%s’ 需要參數\n"
@@ -140,75 +140,75 @@ msgstr "無法變更‘%s’的存取權限，因為無法獲取它本來的權�
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "警告：chdir(%s) 失敗：%s\n"
 
-#: src/CmdExec.cc:199
+#: src/CmdExec.cc:200
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "不明的指令 ‘%s’。\n"
 
-#: src/CmdExec.cc:201
+#: src/CmdExec.cc:202
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "指令 ‘%s’ 不明確。\n"
 
-#: src/CmdExec.cc:220
+#: src/CmdExec.cc:221
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "應該和指令 ‘%s’ 有關的模組根本沒有包含該指令在內。\n"
 
-#: src/CmdExec.cc:363
+#: src/CmdExec.cc:365
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功，目前的目錄為 %s\n"
 
-#: src/CmdExec.cc:384 src/MirrorJob.cc:571
+#: src/CmdExec.cc:386 src/MirrorJob.cc:571
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s：將輸出結果重新導向至 ‘%s’\n"
 
-#: src/CmdExec.cc:387 src/FileCopy.cc:1065
+#: src/CmdExec.cc:389 src/FileCopy.cc:1065
 msgid "Too many redirections"
 msgstr "重新導向次數太多"
 
-#: src/CmdExec.cc:495 src/CmdExec.cc:552
+#: src/CmdExec.cc:497 src/CmdExec.cc:554
 msgid "Interrupt"
 msgstr "中斷"
 
-#: src/CmdExec.cc:617
+#: src/CmdExec.cc:619
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "警告：忽略不完整的指令\n"
 
-#: src/CmdExec.cc:711
+#: src/CmdExec.cc:712
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\t執行內建的 ‘%s’ [%s]\n"
 
-#: src/CmdExec.cc:716
+#: src/CmdExec.cc:717
 msgid "Queue is stopped."
 msgstr "佇列已停止。"
 
-#: src/CmdExec.cc:721
+#: src/CmdExec.cc:722
 msgid "Now executing:"
 msgstr "現在執行："
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t等待工作 [%d] 終止\n"
 
-#: src/CmdExec.cc:735
+#: src/CmdExec.cc:736
 msgid "\tWaiting for termination of jobs: "
 msgstr "\t等待工作終止："
 
-#: src/CmdExec.cc:744
+#: src/CmdExec.cc:745
 msgid "\tRunning\n"
 msgstr "\t正在執行\n"
 
-#: src/CmdExec.cc:746
+#: src/CmdExec.cc:747
 msgid "\tWaiting for command\n"
 msgstr "\t等待輸入指令\n"
 
-#: src/CmdExec.cc:1198
+#: src/CmdExec.cc:1196
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s：編譯程式時沒有包括指令 ‘%s’ 的支援。\n"
@@ -517,12 +517,12 @@ msgstr "正在讀取標頭資料……"
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完成 (%s)"
 
-#: src/LocalAccess.cc:620 src/NetAccess.cc:616
+#: src/LocalAccess.cc:620 src/NetAccess.cc:617
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "正在擷取目錄內容 (%lld) %s[%s]"
 
-#: src/LocalAccess.cc:622 src/NetAccess.cc:620
+#: src/LocalAccess.cc:622 src/NetAccess.cc:621
 #, fuzzy
 msgid "Getting files information"
 msgstr "正在擷取檔案資訊 (%d%%) [%s]"
@@ -650,34 +650,34 @@ msgstr "%s：正規表示式 ‘%s’：%s\n"
 #: src/commands.cc:1628 src/commands.cc:1731 src/commands.cc:2038
 #: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
 #: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
-#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:263
+#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:266
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
 
-#: src/NetAccess.cc:130
+#: src/NetAccess.cc:131
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket 錯誤 (%s) - 準備重新連線"
 
-#: src/NetAccess.cc:163
+#: src/NetAccess.cc:164
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "連接至 %s%s (%s) 連接埠 %u"
 
-#: src/NetAccess.cc:219
+#: src/NetAccess.cc:220
 msgid "Timeout - reconnecting"
 msgstr "逾時 - 重新連線"
 
-#: src/NetAccess.cc:315
+#: src/NetAccess.cc:316
 msgid "Connection limit reached"
 msgstr "到達連線數目的上限"
 
-#: src/NetAccess.cc:320
+#: src/NetAccess.cc:321
 msgid "Delaying before reconnect"
 msgstr "重新連接前延遲(秒)"
 
-#: src/NetAccess.cc:342
+#: src/NetAccess.cc:343
 msgid "max-retries exceeded"
 msgstr "超過 max-retries 上限"
 
@@ -776,23 +776,23 @@ msgstr "單位無效。有效的單位為 k、M、G、T、P、E、Z 或 Y"
 msgid "Integer overflow"
 msgstr "整數溢位"
 
-#: src/ResMgr.cc:831
+#: src/ResMgr.cc:832
 msgid "Invalid IPv4 numeric address"
 msgstr "IPv4 地址無效"
 
-#: src/ResMgr.cc:842
+#: src/ResMgr.cc:843
 msgid "Invalid IPv6 numeric address"
 msgstr "IPv6 地址無效"
 
-#: src/ResMgr.cc:912 src/ResMgr.cc:916
+#: src/ResMgr.cc:913 src/ResMgr.cc:917
 msgid "this encoding is not supported"
 msgstr "不支援這種編碼"
 
-#: src/ResMgr.cc:922
+#: src/ResMgr.cc:923
 msgid "no closure defined for this setting"
 msgstr "本設定值並沒有定義 closure"
 
-#: src/ResMgr.cc:933
+#: src/ResMgr.cc:934
 msgid "invalid pair of numbers"
 msgstr "該對數字無效"
 
@@ -1963,7 +1963,7 @@ msgstr "用法：%s [-v] [-v] ……\n"
 
 #: src/commands.cc:1940 src/commands.cc:2200 src/commands.cc:2323
 #: src/commands.cc:2493 src/commands.cc:2882 src/commands.cc:2958
-#: src/lftp.cc:275
+#: src/lftp.cc:278
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s：%s - 不是數字\n"
@@ -2354,31 +2354,31 @@ msgstr "上傳中/TLS"
 msgid "Receiving data/TLS"
 msgstr "下載中/TLS"
 
-#: src/lftp.cc:315
-#, c-format
-msgid "[%lu] Terminated by signal %d. %s"
+#: src/lftp.cc:353
+#, fuzzy, c-format
+msgid "[%u] Terminated by signal %d. %s\n"
 msgstr "[%lu] 以訊號 %d 終止。%s"
 
-#: src/lftp.cc:381
-#, c-format
-msgid "[%lu] Started.  %s"
+#: src/lftp.cc:427
+#, fuzzy, c-format
+msgid "[%u] Started.  %s\n"
 msgstr "[%lu] 開始。%s"
 
-#: src/lftp.cc:390
-#, c-format
-msgid "[%lu] Finished. %s"
+#: src/lftp.cc:440
+#, fuzzy, c-format
+msgid "[%u] Finished. %s\n"
 msgstr "[%lu] 完成。%s"
 
-#: src/lftp.cc:394
-#, c-format
-msgid "[%lu] Moving to background to complete transfers...\n"
+#: src/lftp.cc:444
+#, fuzzy, c-format
+msgid "[%u] Moving to background to complete transfers...\n"
 msgstr "[%lu] 將傳送工作轉移至背景繼續執行……\n"
 
-#: src/lftp.cc:447
+#: src/lftp.cc:498
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr "history -w 檔案|-r 檔案|-c|-l [數目]"
 
-#: src/lftp.cc:448
+#: src/lftp.cc:499
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2393,6 +2393,25 @@ msgstr ""
 " -l          列出指令紀錄 (預設操作)。\n"
 "選擇性的選項 <數目> 可指定準備列出的指令紀錄行數，\n"
 "或者用 “all” 來指定所有條目。\n"
+
+#: src/lftp.cc:506
+msgid "Attach the terminal to specified backgrounded lftp process.\n"
+msgstr ""
+
+#: src/lftp.cc:542
+#, fuzzy, c-format
+msgid "[%u] Detaching from the terminal to complete transfers...\n"
+msgstr "[%lu] 將傳送工作轉移至背景繼續執行……\n"
+
+#: src/lftp.cc:547
+#, c-format
+msgid "[%u] Detached from terminal. %s\n"
+msgstr ""
+
+#: src/lftp.cc:561
+#, c-format
+msgid "[%u] Exiting and detaching from the terminal.\n"
+msgstr ""
 
 #: src/mgetJob.cc:121 src/mgetJob.cc:205
 #, fuzzy, c-format

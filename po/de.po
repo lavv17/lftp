@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-04-29 16:20+0400\n"
+"POT-Creation-Date: 2011-06-17 17:33+0400\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -36,61 +36,61 @@ msgstr "mehrdeutiges Argument  %s für %s"
 msgid "Valid arguments are:"
 msgstr "Gültige Argumente sind:"
 
-#: lib/error.c:181
+#: lib/error.c:185
 msgid "Unknown system error"
 msgstr "Unbekannter Systemfehler"
 
-#: lib/getopt.c:527 lib/getopt.c:543
+#: lib/getopt.c:547 lib/getopt.c:576
 #, fuzzy, c-format
-msgid "%s: option '%s' is ambiguous\n"
+msgid "%s: option '%s' is ambiguous; possibilities:"
 msgstr "%s: Option »%s« ist mehrdeutig\n"
 
-#: lib/getopt.c:576 lib/getopt.c:580
+#: lib/getopt.c:624 lib/getopt.c:628
 #, fuzzy, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s: Option »--%s« erlaubt kein Argument\n"
 
-#: lib/getopt.c:589 lib/getopt.c:594
+#: lib/getopt.c:637 lib/getopt.c:642
 #, fuzzy, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s: Option »%c%s« erlaubt kein Argument\n"
 
-#: lib/getopt.c:637 lib/getopt.c:656
+#: lib/getopt.c:685 lib/getopt.c:704
 #, fuzzy, c-format
 msgid "%s: option '--%s' requires an argument\n"
 msgstr "%s: Option »%s« erfordert einen Parameter\n"
 
-#: lib/getopt.c:694 lib/getopt.c:697
+#: lib/getopt.c:742 lib/getopt.c:745
 #, fuzzy, c-format
 msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s: nicht erkannte Option »--%s«\n"
 
-#: lib/getopt.c:705 lib/getopt.c:708
+#: lib/getopt.c:753 lib/getopt.c:756
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s: nicht erkannte Option »--%c%s«\n"
 
-#: lib/getopt.c:757 lib/getopt.c:760
+#: lib/getopt.c:805 lib/getopt.c:808
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s: Ungültige Option --%c\n"
 
-#: lib/getopt.c:810 lib/getopt.c:827 lib/getopt.c:1035 lib/getopt.c:1053
+#: lib/getopt.c:858 lib/getopt.c:875 lib/getopt.c:1083 lib/getopt.c:1101
 #, fuzzy, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s: Option erfordert einen Parameter --%c\n"
 
-#: lib/getopt.c:883 lib/getopt.c:899
+#: lib/getopt.c:931 lib/getopt.c:947
 #, fuzzy, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s: Option »-W %s« ist mehrdeutig\n"
 
-#: lib/getopt.c:923 lib/getopt.c:941
+#: lib/getopt.c:971 lib/getopt.c:989
 #, fuzzy, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s: Option »-W %s« erlaubt keine Parameter\n"
 
-#: lib/getopt.c:962 lib/getopt.c:980
+#: lib/getopt.c:1010 lib/getopt.c:1028
 #, fuzzy, c-format
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr "%s: Option »%s« erfordert einen Parameter\n"
@@ -147,75 +147,75 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Warnung: chdir(%s) fehlgeschlagen: %s\n"
 
-#: src/CmdExec.cc:199
+#: src/CmdExec.cc:200
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Unbekannter Befehl »%s«.\n"
 
-#: src/CmdExec.cc:201
+#: src/CmdExec.cc:202
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Mehrdeutiger Befehl »%s«.\n"
 
-#: src/CmdExec.cc:220
+#: src/CmdExec.cc:221
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Das Modul für den Befehl »%s« hat den Befehl nicht registriert.\n"
 
-#: src/CmdExec.cc:363
+#: src/CmdExec.cc:365
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel OK, cwd=%s\n"
 
-#: src/CmdExec.cc:384 src/MirrorJob.cc:571
+#: src/CmdExec.cc:386 src/MirrorJob.cc:571
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:387 src/FileCopy.cc:1065
+#: src/CmdExec.cc:389 src/FileCopy.cc:1065
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
-#: src/CmdExec.cc:495 src/CmdExec.cc:552
+#: src/CmdExec.cc:497 src/CmdExec.cc:554
 msgid "Interrupt"
 msgstr "Abbruch"
 
-#: src/CmdExec.cc:617
+#: src/CmdExec.cc:619
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Warnung: unvollständiger Befehl verworfen\n"
 
-#: src/CmdExec.cc:711
+#: src/CmdExec.cc:712
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEingebautes»%s« wird ausgeführt [%s]\n"
 
-#: src/CmdExec.cc:716
+#: src/CmdExec.cc:717
 msgid "Queue is stopped."
 msgstr "Warteschlange wurde angehalten."
 
-#: src/CmdExec.cc:721
+#: src/CmdExec.cc:722
 msgid "Now executing:"
 msgstr "Momentan läuft:"
 
-#: src/CmdExec.cc:732
+#: src/CmdExec.cc:733
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:735
+#: src/CmdExec.cc:736
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tWarte auf Erledigung der Jobs: "
 
-#: src/CmdExec.cc:744
+#: src/CmdExec.cc:745
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
 
-#: src/CmdExec.cc:746
+#: src/CmdExec.cc:747
 msgid "\tWaiting for command\n"
 msgstr "\tWarten auf Befehl\n"
 
-#: src/CmdExec.cc:1198
+#: src/CmdExec.cc:1196
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: Befehl »%s« wurde nicht mitkompiliert.\n"
@@ -522,11 +522,11 @@ msgstr "Hole Kopfzeilen..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] Fertig (%s)"
 
-#: src/LocalAccess.cc:620 src/NetAccess.cc:616
+#: src/LocalAccess.cc:620 src/NetAccess.cc:617
 msgid "Getting directory contents"
 msgstr "Lese Verzeichnisinhalt aus"
 
-#: src/LocalAccess.cc:622 src/NetAccess.cc:620
+#: src/LocalAccess.cc:622 src/NetAccess.cc:621
 msgid "Getting files information"
 msgstr "Lese Dateiinformationen"
 
@@ -653,34 +653,34 @@ msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 #: src/commands.cc:1628 src/commands.cc:1731 src/commands.cc:2038
 #: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
 #: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
-#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:263
+#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:266
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "»help %s« gibt mehr Informationen aus.\n"
 
-#: src/NetAccess.cc:130
+#: src/NetAccess.cc:131
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket Fehler (%s) - erneutes Verbinden"
 
-#: src/NetAccess.cc:163
+#: src/NetAccess.cc:164
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Verbinde mit %s%s (%s) Port %u"
 
-#: src/NetAccess.cc:219
+#: src/NetAccess.cc:220
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
-#: src/NetAccess.cc:315
+#: src/NetAccess.cc:316
 msgid "Connection limit reached"
 msgstr "Zahl der Verbindungen hat Grenze erreicht"
 
-#: src/NetAccess.cc:320
+#: src/NetAccess.cc:321
 msgid "Delaying before reconnect"
 msgstr "Pausiere vor erneuter Verbindung"
 
-#: src/NetAccess.cc:342
+#: src/NetAccess.cc:343
 msgid "max-retries exceeded"
 msgstr "max-retries überschritten"
 
@@ -779,23 +779,23 @@ msgstr ""
 msgid "Integer overflow"
 msgstr "Integerüberlauf"
 
-#: src/ResMgr.cc:831
+#: src/ResMgr.cc:832
 msgid "Invalid IPv4 numeric address"
 msgstr "Ungültige IPv4 Adressierungsnummer"
 
-#: src/ResMgr.cc:842
+#: src/ResMgr.cc:843
 msgid "Invalid IPv6 numeric address"
 msgstr "Ungültige IPv6 Adressierungsnummer"
 
-#: src/ResMgr.cc:912 src/ResMgr.cc:916
+#: src/ResMgr.cc:913 src/ResMgr.cc:917
 msgid "this encoding is not supported"
 msgstr "Diese Zeichenkodierung wird nicht unterstützt"
 
-#: src/ResMgr.cc:922
+#: src/ResMgr.cc:923
 msgid "no closure defined for this setting"
 msgstr "kein Gültigkeitsbereich (closure) für diese Einstellung definiert"
 
-#: src/ResMgr.cc:933
+#: src/ResMgr.cc:934
 msgid "invalid pair of numbers"
 msgstr "Unzulässiges Zahlenpaar"
 
@@ -2043,7 +2043,7 @@ msgstr "Benutzung: %s [-v] [-v] ...\n"
 
 #: src/commands.cc:1940 src/commands.cc:2200 src/commands.cc:2323
 #: src/commands.cc:2493 src/commands.cc:2882 src/commands.cc:2958
-#: src/lftp.cc:275
+#: src/lftp.cc:278
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - keine Zahl\n"
@@ -2437,31 +2437,31 @@ msgstr "Sende Daten/TLS"
 msgid "Receiving data/TLS"
 msgstr "Empfange Daten/TLS"
 
-#: src/lftp.cc:315
-#, c-format
-msgid "[%lu] Terminated by signal %d. %s"
+#: src/lftp.cc:353
+#, fuzzy, c-format
+msgid "[%u] Terminated by signal %d. %s\n"
 msgstr "[%lu] Beendet durch Signal %d. %s"
 
-#: src/lftp.cc:381
-#, c-format
-msgid "[%lu] Started.  %s"
+#: src/lftp.cc:427
+#, fuzzy, c-format
+msgid "[%u] Started.  %s\n"
 msgstr "[%lu] Begonnen. %s"
 
-#: src/lftp.cc:390
-#, c-format
-msgid "[%lu] Finished. %s"
+#: src/lftp.cc:440
+#, fuzzy, c-format
+msgid "[%u] Finished. %s\n"
 msgstr "[%lu] Beendet. %s"
 
-#: src/lftp.cc:394
-#, c-format
-msgid "[%lu] Moving to background to complete transfers...\n"
+#: src/lftp.cc:444
+#, fuzzy, c-format
+msgid "[%u] Moving to background to complete transfers...\n"
 msgstr "[%lu] Gehe in den Hintergrund um Übertragungen zu beenden...\n"
 
-#: src/lftp.cc:447
+#: src/lftp.cc:498
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr "history -w Datei|-r Datei|-c|-l [Zahl]"
 
-#: src/lftp.cc:448
+#: src/lftp.cc:499
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2476,6 +2476,25 @@ msgstr ""
 " -l  Verlauf anzeigen (Vorgabe).\n"
 "Das entbehrliche Argument »Zahl« gibt die Anzahl der aufzulistenden\n"
 "Verlaufszeilen an. »all« gibt alle Einträge aus.\n"
+
+#: src/lftp.cc:506
+msgid "Attach the terminal to specified backgrounded lftp process.\n"
+msgstr ""
+
+#: src/lftp.cc:542
+#, fuzzy, c-format
+msgid "[%u] Detaching from the terminal to complete transfers...\n"
+msgstr "[%lu] Gehe in den Hintergrund um Übertragungen zu beenden...\n"
+
+#: src/lftp.cc:547
+#, c-format
+msgid "[%u] Detached from terminal. %s\n"
+msgstr ""
+
+#: src/lftp.cc:561
+#, c-format
+msgid "[%u] Exiting and detaching from the terminal.\n"
+msgstr ""
 
 #: src/mgetJob.cc:121 src/mgetJob.cc:205
 #, fuzzy, c-format

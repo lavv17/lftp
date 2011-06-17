@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.2.3], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.3.0], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -320,7 +320,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(libintl.h fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
- netinet/in_systm.h netinet/ip.h termcap.h sys/statfs.h\
+ netinet/in_systm.h netinet/ip.h termcap.h sys/statfs.h ifaddrs.h\
  resolv.h langinfo.h endian.h locale.h expat.h linux/magic.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
@@ -395,7 +395,7 @@ LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS([statfs\
  killpg setpgid tcgetattr vsnprintf snprintf sscanf \
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton setlocale dn_expand])
+ inet_aton setlocale dn_expand socketpair])
 lftp_VA_COPY
 LFTP_ENVIRON_CHECK
 AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strptime,strtok_r,dn_expand,memmem],,,[
