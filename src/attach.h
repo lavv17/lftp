@@ -91,8 +91,14 @@ public:
 	 struct sockaddr_un sun;
 	 socklen_t sa_len=sizeof(sun);
 	 a_sock=accept(sock,(sockaddr*)&sun,&sa_len);
-	 if(a_sock==-1) {
+	 if(a_sock==-1 && E_RETRY(errno)) {
 	    Block(sock,POLLIN);
+	    return m;
+	 }
+	 if(a_sock==-1) {
+	    perror("accept");
+	    do_listen();
+	    TimeoutS(1);
 	    return m;
 	 }
 	 close(sock);
@@ -103,8 +109,15 @@ public:
 	 m=MOVED;
       }
       int fd=recvfd(a_sock,0);
-      if(fd==-1) {
+      if(fd==-1 && E_RETRY(errno)) {
 	 Block(a_sock,POLLIN);
+	 return m;
+      }
+      if(fd==-1)
+      {
+	 perror("recvfd");
+	 do_listen();
+	 TimeoutS(1);
 	 return m;
       }
       fcntl(fd,F_SETFD,FD_CLOEXEC);
@@ -142,6 +155,7 @@ public:
 	 a_sock=-1;
       }
       accepted=false;
+      detached=false;
       sock=socket(AF_UNIX,SOCK_STREAM,0);
       if(sock!=-1) {
 	 int fl=fcntl(sock,F_GETFL);
@@ -156,7 +170,8 @@ public:
 	    close(sock);
 	    sock=-1;
 	 }
-	 listen(sock,1);
+	 if(sock>=0)
+	    listen(sock,1);
       }
    }
    bool Accepted() { return accepted; }
