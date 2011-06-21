@@ -63,7 +63,7 @@ static const char *FindGlobalIPv6Address()
    struct ifaddrs *ifaddrs=0;
    getifaddrs(&ifaddrs);
    for(struct ifaddrs *ifa=ifaddrs; ifa; ifa=ifa->ifa_next) {
-      if(ifa->ifa_addr->sa_family==AF_INET6) {
+      if(ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET6) {
 	 struct in6_addr *addr=&((struct sockaddr_in6*)ifa->ifa_addr)->sin6_addr;
 	 if(!IN6_IS_ADDR_UNSPECIFIED(addr) && !IN6_IS_ADDR_LOOPBACK(addr)
 	 && !IN6_IS_ADDR_LINKLOCAL(addr) && !IN6_IS_ADDR_SITELOCAL(addr)
