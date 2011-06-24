@@ -1,3 +1,8 @@
+2011-06-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SleepJob.cc: print error when date-time spec is missed; remove
+	  a hack with Combine.
+
 2011-06-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: check ifa_addr!=0.

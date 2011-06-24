@@ -244,7 +244,7 @@ Job *cmd_at(CmdExec *parent)
 {
    int count=1;
    int cmd_start=0;
-   int date_len=0;
+   xstring date;
    for(;;)
    {
       const char *arg=args->getnext();
@@ -255,17 +255,21 @@ Job *cmd_at(CmdExec *parent)
 	 cmd_start=count+1;
 	 break;
       }
-      date_len+=strlen(arg)+1;
+      if(date)
+	 date.append(' ');
+      date.append(arg);
       count++;
    }
 
-   xstring_ca date(args->Combine(1));
-   date.truncate(date_len);
+   if(!date) {
+      eprintf(_("%s: date-time specification missed\n"),args->a0());
+      return 0;
+   }
 
    struct timespec ts;
    if(!parse_datetime(&ts,date,0))
    {
-      eprintf("%s: %s\n",args->a0(),"date parse error");
+      eprintf(_("%s: date-time parse error\n"),args->a0());
       return 0;
    }
    time_t when=ts.tv_sec;
