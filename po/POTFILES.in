@@ -54,3 +54,5 @@ src/pgetJob.cc
 src/plural.c
 src/resource.cc
 src/rmJob.cc
+src/Torrent.cc
+src/attach.h

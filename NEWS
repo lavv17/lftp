@@ -1,3 +1,8 @@
+Version 4.3.1 - 2011-06-28
+
+* fixed a coredump in torrent on linux with a ppp interface.
+* translation updated (ru).
+
 Version 4.3.0 - 2011-06-17
 
 * new command `attach' to control a backgrounded lftp.

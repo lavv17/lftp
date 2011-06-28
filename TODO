@@ -55,6 +55,3 @@ implemented.
  * mirror: multiple source and target dirs.
 
  * APPE support.
-
- * allow to connect to backgrounded lftp process.
-   (maybe connect by default to any running lftp)

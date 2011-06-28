@@ -246,3 +246,4 @@ strerror-override.h
 iconv.c
 iconv_close.c
 unistr.in.h
+float.c

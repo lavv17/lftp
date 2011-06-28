@@ -537,12 +537,12 @@ T}
 write lftp commands to FILE, but don't execute them
 T}
 	\-\-just-print, \-\-dry-run	T{
-same as \-\-script=-
+same as \-\-script=\-
 T}
 	\-\-use-cache	T{
 use cached directory listings
 T}
-	-\-Remove\-source\-files	T{
+	\-\-Remove\-source\-files	T{
 remove files after transfer (use with caution)
 T}
 \-a		T{
@@ -1028,15 +1028,14 @@ when false, lftp refuses to go to background when exiting. To force it, use `exi
 .TP
 .BR cmd:move-background-detach " (boolean)"
 when true (default), lftp detaches itself from the control terminal when
-moving to background, it is not possible to attach back; when false, lftp
-tricks the shell to move lftp to background process group and continues to
-run, then fg shell command brings lftp back to foreground unless it has
-done all jobs and terminated.
+moving to background, it is possible to attach back using `attach' command;
+when false, lftp tricks the shell to move lftp to background process group
+and continues to run, then fg shell command brings lftp back to foreground
+unless it has done all jobs and terminated.
 .TP
 .BR cmd:prompt \ (string)
 The prompt. lftp recognizes the following backslash-escaped special
 characters that are decoded as follows:
-
 .RS
 .PD 0
 .TP

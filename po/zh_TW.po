@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-06-17 17:33+0400\n"
+"POT-Creation-Date: 2011-06-24 09:32+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <community@linuxhall.org>\n"
@@ -253,7 +253,7 @@ msgid "File cannot be accessed"
 msgstr "無法存取檔案"
 
 #: src/FileAccess.cc:165 src/Fish.cc:987 src/SFtp.cc:1306 src/ftpclass.cc:4298
-#: src/ftpclass.cc:4307
+#: src/ftpclass.cc:4307 src/Torrent.cc:2278
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -401,7 +401,7 @@ msgid "extra server response"
 msgstr "額外的伺服器回應"
 
 #: src/Fish.cc:992 src/Http.cc:1820 src/Http.cc:1827 src/SFtp.cc:1312
-#: src/ftpclass.cc:4310
+#: src/ftpclass.cc:4310 src/Torrent.cc:2280
 msgid "Connecting..."
 msgstr "嘗試連線……"
 
@@ -450,7 +450,8 @@ msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
-#: src/Http.cc:1035 src/ftpclass.cc:1332
+#: src/Http.cc:1035 src/ftpclass.cc:1332 src/Torrent.cc:2012
+#: src/Torrent.cc:2464
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "無法建立地址族群 %d 的 socket"
@@ -651,6 +652,7 @@ msgstr "%s：正規表示式 ‘%s’：%s\n"
 #: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
 #: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
 #: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:266
+#: src/Torrent.cc:2768
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
@@ -665,7 +667,7 @@ msgstr "Socket 錯誤 (%s) - 準備重新連線"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "連接至 %s%s (%s) 連接埠 %u"
 
-#: src/NetAccess.cc:220
+#: src/NetAccess.cc:220 src/Torrent.cc:2106
 msgid "Timeout - reconnecting"
 msgstr "逾時 - 重新連線"
 
@@ -843,6 +845,16 @@ msgstr "\t重複次數：%d\n"
 #, c-format
 msgid "%s: argument required. "
 msgstr "%s：需要參數。"
+
+#: src/SleepJob.cc:265
+#, c-format
+msgid "%s: date-time specification missed\n"
+msgstr ""
+
+#: src/SleepJob.cc:272
+#, c-format
+msgid "%s: date-time parse error\n"
+msgstr ""
 
 #: src/Speedometer.cc:97
 #, c-format
@@ -2526,6 +2538,106 @@ msgstr "%s 成功，刪除了 %d 個目錄\n"
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功，刪除了 %d 個檔案\n"
+
+#: src/Torrent.cc:483
+#, c-format
+msgid "Received valid info about %d peer$|s$"
+msgstr ""
+
+#: src/Torrent.cc:500
+#, c-format
+msgid "Received valid info about %d IPv6 peer$|s$"
+msgstr ""
+
+#: src/Torrent.cc:1396
+#, c-format
+msgid "Getting meta-data: %s"
+msgstr ""
+
+#: src/Torrent.cc:1398
+#, c-format
+msgid "Validation: %u/%u (%u%%) %s%s"
+msgstr ""
+
+#: src/Torrent.cc:1408
+msgid "Shutting down: "
+msgstr ""
+
+#: src/Torrent.cc:2015
+#, fuzzy, c-format
+msgid "Connecting to peer %s port %u"
+msgstr "連接至 %s%s (%s) 連接埠 %u"
+
+#: src/Torrent.cc:2065 src/Torrent.cc:2152
+#, fuzzy, c-format
+msgid "peer unexpectedly closed connection after %s"
+msgstr "對方關閉了連線"
+
+#: src/Torrent.cc:2067
+#, fuzzy
+msgid "peer closed connection (before handshake)"
+msgstr "對方關閉了連線"
+
+#: src/Torrent.cc:2140
+#, fuzzy
+msgid "peer closed connection"
+msgstr "對方關閉了連線"
+
+#: src/Torrent.cc:2154
+#, fuzzy
+msgid "invalid peer response format"
+msgstr "伺服器回應格式無效"
+
+#: src/Torrent.cc:2282
+msgid "Handshaking..."
+msgstr ""
+
+#: src/Torrent.cc:2517
+msgid "Cannot bind a socket for torrent:port-range"
+msgstr ""
+
+#: src/Torrent.cc:2545
+#, fuzzy, c-format
+msgid "Accepted connection from [%s]:%d"
+msgstr "連接資料 socket 到 (%s)，埠號為 %u"
+
+#: src/Torrent.cc:2579
+msgid "peer handshake timeout"
+msgstr ""
+
+#: src/Torrent.cc:2591
+msgid "peer short handshake"
+msgstr ""
+
+#: src/Torrent.cc:2593
+#, fuzzy
+msgid "peer closed just accepted connection"
+msgstr "對方關閉了連線"
+
+#: src/Torrent.cc:2644
+#, fuzzy, c-format
+msgid "Seeding in background...\n"
+msgstr "正在送出指令……"
+
+#: src/Torrent.cc:2659
+#, c-format
+msgid "next request in %s"
+msgstr ""
+
+#: src/Torrent.cc:2810
+#, c-format
+msgid "%s: Please specify meta-info file or URL.\n"
+msgstr ""
+
+#: src/attach.h:124
+#, fuzzy, c-format
+msgid "[%u] Attached to terminal %s. %s\n"
+msgstr "[%lu] 以訊號 %d 終止。%s"
+
+#: src/attach.h:136
+#, c-format
+msgid "[%u] Attached to terminal.\n"
+msgstr ""
 
 #~ msgid "Can only edit plain queues.\n"
 #~ msgstr "只可以修改普通的佇列。\n"

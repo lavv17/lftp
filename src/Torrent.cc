@@ -172,7 +172,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
 #endif
    }
    if(!my_peer_id) {
-      my_peer_id.set("-lftp42-");
+      my_peer_id.set("-lftp43-");
       my_peer_id.appendf("%04x",(unsigned)getpid());
       my_peer_id.appendf("%08x",(unsigned)now.UnixTime());
       assert(my_peer_id.length()==PEER_ID_LEN);
@@ -1393,9 +1393,9 @@ void Torrent::Reconfig(const char *name)
 const xstring& Torrent::Status()
 {
    if(metainfo_data)
-      return xstring::format("Getting meta-data: %s",metainfo_data->Status());
+      return xstring::format(_("Getting meta-data: %s"),metainfo_data->Status());
    if(validating) {
-      return xstring::format("Validation: %u/%u (%u%%) %s%s",validate_index,total_pieces,
+      return xstring::format(_("Validation: %u/%u (%u%%) %s%s"),validate_index,total_pieces,
 	 validate_index*100/total_pieces,recv_rate.GetStrS(),
 	 recv_rate.GetETAStrFromSize((off_t)(total_pieces-validate_index-1)*piece_length+last_piece_length).get());
    }
@@ -1405,7 +1405,7 @@ const xstring& Torrent::Status()
       for(int i=0; i<trackers.count(); i++) {
 	 const char *status=trackers[i]->Status();
 	 if(status[0]) {
-	    xstring &s=xstring::get_tmp("Shutting down: ");
+	    xstring &s=xstring::get_tmp(_("Shutting down: "));
 	    if(trackers.count()>1)
 	       s.appendf("%d. ",i+1);
 	    s.append(status);
@@ -2062,9 +2062,9 @@ int TorrentPeer::Do()
       if(s!=UNPACK_SUCCESS) {
 	 if(s==UNPACK_PREMATURE_EOF) {
 	    if(recv_buf->Size()>0)
-	       LogError(2,"peer unexpectedly closed connection after %s",recv_buf->Dump());
+	       LogError(2,_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
 	    else
-	       LogError(4,"peer closed connection (before handshake)");
+	       LogError(4,_("peer closed connection (before handshake)"));
 	 }
 	 Disconnect();
 	 return MOVED;
@@ -2137,7 +2137,7 @@ int TorrentPeer::Do()
    }
 
    if(recv_buf->Eof() && recv_buf->Size()==0) {
-      LogError(4,"peer closed connection");
+      LogError(4,_("peer closed connection"));
       Disconnect();
       return MOVED;
    }
@@ -2149,9 +2149,9 @@ int TorrentPeer::Do()
    if(st!=UNPACK_SUCCESS)
    {
       if(st==UNPACK_PREMATURE_EOF)
-	 LogError(2,"peer unexpectedly closed connection after %s",recv_buf->Dump());
+	 LogError(2,_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
       else
-	 LogError(2,"invalid peer response format");
+	 LogError(2,_("invalid peer response format"));
       Disconnect();
       return MOVED;
    }
@@ -2275,11 +2275,11 @@ const char *TorrentPeer::GetName() const
 const char *TorrentPeer::Status()
 {
    if(sock==-1)
-      return "Not connected";
+      return _("Not connected");
    if(!connected)
-      return "Connecting...";
+      return _("Connecting...");
    if(!peer_id)
-      return "Handshaking...";
+      return _("Handshaking...");
    xstring &buf=xstring::format("dn:%llu %sup:%llu %s",
       peer_recv,peer_recv_rate.GetStrS(),peer_sent,peer_send_rate.GetStrS());
    if(peer_interested)
@@ -2514,7 +2514,7 @@ int TorrentListener::Do()
 	       TimeoutS(1);
 	       return m;
 	    }
-	    error=Error::Fatal("Cannot bind a socket for torrent:port-range");
+	    error=Error::Fatal(_("Cannot bind a socket for torrent:port-range"));
 	    return MOVED;
 	 }
 	 LogError(10,"bind(%s): %s",addr.to_string().get(),strerror(saved_errno));
@@ -2542,7 +2542,7 @@ int TorrentListener::Do()
       return m;
    }
    rate.Add(1);
-   LogNote(3,"Accepted connection from [%s]:%d",remote_addr.address(),remote_addr.port());
+   LogNote(3,_("Accepted connection from [%s]:%d"),remote_addr.address(),remote_addr.port());
    (void)new TorrentDispatcher(a,&remote_addr);
    m=MOVED;
 
@@ -2576,7 +2576,7 @@ int TorrentDispatcher::Do()
 {
    if(timeout_timer.Stopped())
    {
-      LogError(1,"peer handshake timeout");
+      LogError(1,_("peer handshake timeout"));
       deleting=true;
       return MOVED;
    }
@@ -2588,9 +2588,9 @@ int TorrentDispatcher::Do()
    if((unsigned)recv_buf->Size()<1+proto_len+8+SHA1_DIGEST_SIZE) {
       if(recv_buf->Eof()) {
 	 if(recv_buf->Size()>0)
-	    LogError(1,"peer short handshake");
+	    LogError(1,_("peer short handshake"));
 	 else
-	    LogError(4,"peer closed just accepted connection");
+	    LogError(4,_("peer closed just accepted connection"));
 	 deleting=true;
 	 return MOVED;
       }
@@ -2641,7 +2641,7 @@ int TorrentJob::Do()
    if(!completed && torrent->Complete()) {
       if(parent->WaitsFor(this)) {
 	 PrintStatus(1,"");
-	 printf("Seeding in background...\n");
+	 printf(_("Seeding in background...\n"));
 	 parent->RemoveWaiting(this);
       }
       completed=true;
@@ -2656,7 +2656,7 @@ const char *TorrentTracker::Status() const
       return "";
    if(t_session->IsOpen())
       return t_session->CurrentStatus();
-   return xstring::format("next request in %s",NextRequestIn());
+   return xstring::format(_("next request in %s"),NextRequestIn());
 }
 
 xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
