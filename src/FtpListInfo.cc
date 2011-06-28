@@ -495,7 +495,7 @@ FileInfo *ParseFtpLongList_EPLF(char *line,int *err,const char *)
    if(name==0 || !type_known)
       ERR;
 
-   fi=new FileInfo(name);
+   fi=new FileInfo(xstring::get_tmp(name,name_len));
    if(size!=NO_SIZE)
       fi->SetSize(size);
    if(date!=NO_DATE)
