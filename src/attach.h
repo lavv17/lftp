@@ -46,6 +46,10 @@
 #include "misc.h"
 #include "passfd.h"
 
+#ifndef SUN_LEN
+#define SUN_LEN(su) (sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
+#endif
+
 class AcceptTermFD : public SMTask
 {
    int sock;
@@ -88,9 +92,9 @@ public:
 	    TimeoutS(1);
 	    return m;
 	 }
-	 struct sockaddr_un sun;
-	 socklen_t sa_len=sizeof(sun);
-	 a_sock=accept(sock,(sockaddr*)&sun,&sa_len);
+	 struct sockaddr_un sun_addr;
+	 socklen_t sa_len=sizeof(sun_addr);
+	 a_sock=accept(sock,(sockaddr*)&sun_addr,&sa_len);
 	 if(a_sock==-1 && E_RETRY(errno)) {
 	    Block(sock,POLLIN);
 	    return m;
@@ -161,11 +165,11 @@ public:
 	 int fl=fcntl(sock,F_GETFL);
 	 fcntl(sock,F_SETFL,fl|O_NONBLOCK);
 	 fcntl(sock,F_SETFD,FD_CLOEXEC);
-	 struct sockaddr_un sun;
-	 memset(&sun,0,sizeof(sun));
-	 sun.sun_family=AF_UNIX;
-	 strncpy(sun.sun_path,path,sizeof(sun.sun_path));
-	 if(bind(sock,(sockaddr*)&sun,SUN_LEN(&sun))==-1) {
+	 struct sockaddr_un sun_addr;
+	 memset(&sun_addr,0,sizeof(sun_addr));
+	 sun_addr.sun_family=AF_UNIX;
+	 strncpy(sun_addr.sun_path,path,sizeof(sun_addr.sun_path));
+	 if(bind(sock,(sockaddr*)&sun_addr,SUN_LEN(&sun_addr))==-1) {
 	    perror("bind");
 	    close(sock);
 	    sock=-1;
@@ -219,12 +223,12 @@ public:
 	 m=MOVED;
       }
       if(!connected) {
-	 struct sockaddr_un sun;
-	 memset(&sun,0,sizeof(sun));
-	 sun.sun_family=AF_UNIX;
+	 struct sockaddr_un sun_addr;
+	 memset(&sun_addr,0,sizeof(sun_addr));
+	 sun_addr.sun_family=AF_UNIX;
 	 const char *path=AcceptTermFD::get_sock_path(pid);
-	 strncpy(sun.sun_path,path,sizeof(sun.sun_path));
-	 int res=connect(sock,(sockaddr*)&sun,SUN_LEN(&sun));
+	 strncpy(sun_addr.sun_path,path,sizeof(sun_addr.sun_path));
+	 int res=connect(sock,(sockaddr*)&sun_addr,SUN_LEN(&sun_addr));
 	 if(res==-1 && !NonFatalError(errno)) {
 	    error=Error::Fatal(xstring::format("connect(%s): %s",path,strerror(errno)));
 	    return MOVED;
