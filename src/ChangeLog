@@ -1,3 +1,8 @@
+2011-08-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc: check for '###' before parsing ls line.
+	* Torrent.cc: use a separate check for posix_fadvise.
+
 2011-06-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SleepJob.cc: print error when date-time spec is missed; remove

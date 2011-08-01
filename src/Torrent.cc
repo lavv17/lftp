@@ -1061,21 +1061,23 @@ int FDCache::OpenFile(const char *file,int m,off_t size)
    } while(fd==-1 && (errno==EMFILE || errno==ENFILE) && CloseOne());
    FD new_entry = {fd,errno,now.UnixTime()};
    cache[ci].add(file,new_entry);
-#ifdef HAVE_POSIX_FALLOCATE
    if(fd==-1 || size==0)
       return fd;
+#ifdef HAVE_POSIX_FALLOCATE
    if(ci==O_RDWR) {
       struct stat st;
       // check if it is newly created file, then allocate space
       if(fstat(fd,&st)!=-1 && st.st_size==0)
 	 posix_fallocate(fd,0,size);
    }
-   else if(ci==O_RDONLY) {
-      // validation mode
+#endif//HAVE_POSIX_FALLOCATE
+#ifdef HAVE_POSIX_FADVISE
+   if(ci==O_RDONLY) {
+      // validation mode (when validating, size>0)
       posix_fadvise(fd,0,size,POSIX_FADV_SEQUENTIAL);
       posix_fadvise(fd,0,size,POSIX_FADV_NOREUSE);
    }
-#endif//HAVE_POSIX_FALLOCATE
+#endif//HAVE_POSIX_FADVISE
    return fd;
 }
 

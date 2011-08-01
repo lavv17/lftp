@@ -640,8 +640,6 @@ int Fish::HandleReplies()
    expect_t e=RespQueue.next();
 
    bool keep_message=false;
-   xstring p;
-
    switch(e)
    {
    case EXPECT_FISH:
@@ -658,7 +656,8 @@ int Fish::HandleReplies()
 	 set_home(home_auto);
       cache->SetDirectory(this, home, true);
       break;
-   case EXPECT_CWD:
+   case EXPECT_CWD: {
+      xstring p;
       PopDirectory(&p);
       if(message==0)
       {
@@ -673,6 +672,7 @@ int Fish::HandleReplies()
       else
 	 SetError(NO_FILE,message);
       break;
+   }
    case EXPECT_RETR_INFO:
       if(message && is_ascii_digit(message[0]) && !strchr(message,':'))
       {
@@ -684,13 +684,13 @@ int Fish::HandleReplies()
 	       *opt_size=entity_size;
 	 }
       }
-      else if(message)
+      else if(message && message[0]!='#')
       {
 	 FileInfo *fi=FileInfo::parse_ls_line(message,"GMT");
 	 if(!fi)
 	 {
 	    SetError(NO_FILE,message);
-	    return MOVED;
+	    break;
 	 }
 	 if(fi->defined&fi->SIZE)
 	 {
