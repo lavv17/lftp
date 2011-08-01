@@ -274,10 +274,7 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    // hack for some ftp servers
    const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
    if(auth && !strncmp(auth, "SSL", 3))
-   {
-      int proto[] = { GNUTLS_SSL3, 0 };
-      gnutls_protocol_set_priority(session, proto);
-   }
+      gnutls_priority_set_direct(session, "NORMAL:+SSL3.0:-TLS1.0:-TLS1.1:-TLS1.2");
 }
 void lftp_ssl_gnutls::load_keys()
 {
