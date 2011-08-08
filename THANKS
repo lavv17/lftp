@@ -29,6 +29,7 @@ Glenn F. Maynard <glenn@zewt.org> for du, cls, major code contributions.
 Henry Hu <henry.hu.sh@gmail.com>
 Hugo Van den Berg <hbe@cypres.nl> for tip about quote command, patch.
 Igor Vinokurov <igor@zynaps.ru> for suggestions.
+Iida <y-iida@secom.co.jp>
 J Kalevi Suominen <kalsuomi@cc.helsinki.fi>
 James Troup <J.J.Troup@comp.brad.ac.uk> for documentation update, other patches.
 Jason Vas Dias <jvdias@redhat.com> for Red Hat package maintenance; patches.
@@ -53,6 +54,7 @@ Nix <nix@esperi.org.uk>
 Pascal Bleser <pascal.bleser@skynet.be>
 Robert de Bath <rdebath@poboxes.com>
 Robert Story <Robert.Story@cobham.com>
+Roger Pixley <skreech2@gmail.com>
 Ryan Thomas <ryan@coraid.com>
 Sam Steingold <sds@usa.net>
 Serge Bezzubov <gray@yars.free.net> for extensive testing.
@@ -63,7 +65,6 @@ Timur Sufiev <tsufiev@jet.msk.su>
 Uhus <uhus@cnit.uniyar.ac.ru> for testing and suggestions.
 Victor Sudakov <sudakov@sibptus.tomsk.ru>
 Yann Rouillard <yann@pleiades.fr.eu.org>
-
 
 bash developers for pieces of code and example of how to use readline.
 

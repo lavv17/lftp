@@ -1,4 +1,4 @@
-** lftp-4.1.x
+** lftp-4.3.x
 
 This package `lftp' contains the following components:
 
@@ -42,7 +42,8 @@ previous command (&&, ||).
 
 If you exit lftp when some jobs are not finished yet, lftp will move itself
 to nohup mode in background. The same happens when you have a real modem
-hangup or when you close an xterm.
+hangup or when you close an xterm. It is possible to attach to backgrounded
+lftp instance using `attach' command in lftp.
 
 lftp has builtin mirror which can download or update a whole directory
 tree. There is also reverse mirror (mirror -R) which uploads or updates a
@@ -76,12 +77,6 @@ By FTP:
 By HTTP:
 	http://ftp.yar.ru/lftp/
 	http://metalab.unc.edu/pub/Linux/system/network/file-transfer/
-By CVS:
-	CVSROOT=:pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot
-	export CVSROOT
-	cvs login (empty password, just hit enter)
-	cvs -z9 co -r lftp-2-0-3 lftp (if you omit -r option, you'll get
-		latest development sources)
 
 See also home page `http://lftp.yar.ru/'.
 
@@ -121,11 +116,10 @@ CXXFLAGS="-compat=4 -features=bool".
 Mailing list
 ~~~~~~~~~~~~
 There is a mailing list for discussion of lftp and announcements. It is
-managed by majordomo; to subscribe, send mail to majordomo@uniyar.ac.ru
-with `subscribe lftp' in body of message; to send letters to the list, send
-them to lftp@uniyar.ac.ru; to unsubscribe, send mail to
-majordomo@uniyar.ac.ru with `unsubscribe lftp' in body of message. This is
-low volume list.
+managed by mailman; to subscribe, send mail to lftp-subscribe@uniyar.ac.ru;
+to send letters to the list, send them to lftp@uniyar.ac.ru; to
+unsubscribe, send mail to lftp-unsubscribe@uniyar.ac.ru. This is a low
+volume list. See also http://univ.uniyar.ac.ru/mailman/listinfo/lftp.
 
 There is also list lftp-devel@uniyar.ac.ru for snapshot announcements and
 other development.

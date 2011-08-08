@@ -246,7 +246,7 @@ dnl Taken from dovecot
 AC_DEFUN([LFTP_POSIX_FALLOCATE_CHECK],[
    dnl * Old glibcs have broken posix_fallocate(). Make sure not to use it.
    dnl * It may also be broken in AIX.
-   AC_CACHE_CHECK([whether posix_fallocate() works],i_cv_posix_fallocate_works,[
+   AC_CACHE_CHECK([whether posix_fallocate() works],[i_cv_posix_fallocate_works],[
      AC_TRY_RUN([
        #define _XOPEN_SOURCE 600
        #include <stdio.h>
@@ -273,7 +273,27 @@ AC_DEFUN([LFTP_POSIX_FALLOCATE_CHECK],[
        i_cv_posix_fallocate_works=no
      ])
    ])
-   if test $i_cv_posix_fallocate_works = yes; then
-     AC_DEFINE(HAVE_POSIX_FALLOCATE,, Define if you have a working posix_fallocate())
+   if test x$i_cv_posix_fallocate_works = xyes; then
+     AC_DEFINE(HAVE_POSIX_FALLOCATE, 1, [Define if you have a working posix_fallocate()])
+   fi
+])
+
+AC_DEFUN([LFTP_POSIX_FADVISE_CHECK],[
+   AC_CACHE_CHECK([for posix_fadvise], [ac_cv_posix_fadvise], [AC_TRY_LINK([
+   #define _XOPEN_SOURCE 600
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <fcntl.h>
+   #include <unistd.h>
+   ],[
+      int res = posix_fadvise ((int)0, (off_t)0, (off_t)0, POSIX_FADV_NORMAL);
+      int a = POSIX_FADV_SEQUENTIAL;
+      int b = POSIX_FADV_NOREUSE;
+      int c = POSIX_FADV_RANDOM;
+      int d = POSIX_FADV_WILLNEED;
+      int e = POSIX_FADV_DONTNEED;
+   ],[ac_cv_posix_fadvise=yes],[ac_cv_posix_fadvise=no])])
+   if test x$ac_cv_posix_fadvise = xyes; then
+      AC_DEFINE(HAVE_POSIX_FADVISE, 1, [Define if posix_fadvise() is available])
    fi
 ])

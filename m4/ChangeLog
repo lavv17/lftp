@@ -1,3 +1,7 @@
+2011-08-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.m4: (LFTP_POSIX_FADVISE_CHECK) new check.
+
 2010-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.m4: (LFTP_POSIX_FTRUNCATE_CHECK) new check.

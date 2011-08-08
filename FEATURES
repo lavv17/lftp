@@ -14,7 +14,7 @@ LFTP includes the following features (some may be missed in this list):
 * SFTP protocol v3-v6 support.
 * HTTP/1.1 keep-alive support.
 * Partial WebDAV support.
-* BitTorrent protocol support.
+* BitTorrent protocol support (including IPv6).
 * Experimental support for SRV DNS records.
 * SOCKS support (configure option).
 
