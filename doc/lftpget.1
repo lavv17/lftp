@@ -1,0 +1,45 @@
+.TH "lftpget" "1" "31 December 2005" 
+
+.SH "NAME" 
+lftpget \- get a file with lftp(1)
+
+.SH "SYNOPSIS"
+.PP 
+.B lftpget 
+[-c] [-d] [-v]
+.I URL
+[URL...]
+
+.SH "DESCRIPTION" 
+.PP 
+This manual page documents briefly the 
+.B lftpget
+command.
+.PP
+.B lftpget
+is a shell script for downloading by URL, it calls `lftp -c'.  It supports
+the same set of protocols as lftp does, including ftp, http, fish, sftp.
+
+.SH "OPTIONS" 
+.TP
+.B \-c 
+Continue a previous download.
+.TP
+.B \-d
+Debug output.
+.TP
+.B \-v
+Verbose messages.
+
+.SH "SEE ALSO"
+.PP
+.BR lftp (1),
+.BR wget (1).
+
+.SH "AUTHOR" 
+.PP
+.B lftpget
+is Copyright (c) 1999-2000 Alexander V. Lukyanov <lav@yars.free.net>.
+.PP 
+This manual page was initially written by Francois Wendling <frwendling@free.fr>
+and later updated by Alexander V. Lukyanov.

@@ -1,0 +1,59 @@
+Date: Wed, 22 Dec 1999 13:46:30 +0000 (GMT)
+Subject: Debug Levels
+From: Robert de Bath <rdebath@poboxes.com>
+
+...
+
+Level 0
+   Errors and states that cause a significant change in program flow.  
+   => Anything that causes a Discon+Retry or a "giveup" message.
+
+Level 1
+   Important or inaccessible state information.
+   => Connection start, Idle disconnection.
+
+Level 2
+   Rare things that cause a minor program flow adjustment.
+   => No REST, No PASV, etc.
+
+Level 3
+   Errors and useful messages that are slightly too verbose or common
+   for 0-2 or don't quite fit in the classifications.
+   => Login banner
+
+Level 4
+   All remote responses or major results. (Trace results)
+   => All "999 Xyzzy" responses received.
+
+Level 5
+   All remote commands or major tasks. (Trace jobs)
+   => All commands sent to server.
+
+Level 6
+   General information that will not be too verbose but is normally a
+   little less important. (Trace state)
+
+Level 7
+   Similar to level 3 but verbose or not as useful.
+
+Level 8
+   Very verbose information that'll probably be useful sometime.
+
+Level 9
+   Anything and everything else, debugs that probably won't be useful
+   ever again.                                            (unclassified)
+   
+Notes:
+   If the programmer doesn't set the debug level this is not an important
+   debug message or is only important right now.
+   => default debug level == 9
+
+   If something fits in one of the lower levels but is very verbose
+   it should nevertheless be moved upto level 3 or levels 7-9.
+   (Possibly leaving a single line 'oops' at the lower level)
+
+   The general idea is that debug levels 0-3 should not scroll too fast
+   to read and nothing below level 7 should be much more verbose than 
+   levels 4 or 5. 
+
+...

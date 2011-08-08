@@ -1,0 +1,468 @@
+2011-06-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document attach; sockets path; torrent:ipv6 default.
+
+2011-05-11	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: use tbl
+
+2011-04-29	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add mirror:no-empty-dirs setting.
+
+2011-03-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:log-file and ftp:use-ip-tos
+
+2010-12-30	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add ln description.
+
+2010-11-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: update `local' examples; better torrent desc;
+	  add multi-tracker ref.
+
+2010-10-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document some settings; ``local'' prefix.
+
+2010-08-17	Noël Köthe <noel@debian.org>
+
+	* lftp.1: the option is xfer:disk-full-fatal but the manpage says
+	  xfer:full-disk-fatal; s/thansfer/transfer.
+
+2010-06-10	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: improve `repeat' description.
+
+2009-08-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document torrent.
+
+2009-04-23	Robert Spillner <Robert.Spillner@post.rwth-aachen.de>
+
+	* lftp.1: document ftp:prefer-epsv.
+
+2008-12-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:proxy-type new value and ftp:trust-feat.
+
+2008-11-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:disk-full-fatal, cmd:trace,
+	  cmd:move-background-detach; fix minor typo for cmd:queue-parallel.
+
+2008-08-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document number suffixes and prefixes.
+
+2008-05-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:use-site-utime2.
+
+2008-02-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:proxy-auth-type (based on patch from David
+	  Wolfe <davidw@wolfeden.org>).
+
+2007-10-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document eval; new mirror options; ftp:use-stat-for-list;
+	  ssl:check-hostname; correct xfer:max-redirections default.
+
+2007-08-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:log; boolean settings; appending of
+	  basename in mirror; minor tweaks.
+
+2007-02-27	Damon Harper <gnu@usrbin.ca>
+
+	* lftp.1: new mirror option --only-existing.
+
+2006-08-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document cmd:parallel and cmd:queue-parallel.
+
+2006-08-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+        * lftp.1: document ftp:ssl-data-load-keys; fix a typo; merge
+	  ssl/tls library notes to one.
+
+2006-08-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document mirror:include-regex option.
+
+2006-07-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+        * lftp.1: change openssl to an ssl/tls library; note that GNU TLS
+	  can be used instead of OpenSSL.
+	  Document pget settings; change seconds to time interval where needed;
+	  add note about floating point in time intarval.
+	  Document pget -c, pwd -p.
+
+2006-06-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new repeat options.
+
+2006-05-13	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document fish:charset and sftp:charset.
+
+2006-04-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new exit options; new mirror:dereference option.
+
+2005-12-31	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Makefile.am: install lftpget.1.
+	* lftpget.1: clarify supported protocols.
+
+2005-12-31	Francois Wendling <frwendling@free.fr>
+
+	* lftpget.1: new file.
+
+2005-12-27	Jason Vas Dias <jvdias@redhat.com>
+
+	* lftp.1: add dns:max-retries description.
+
+2005-10-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:destination-directory; update RFC list;
+	  a phrase fixed.
+
+2005-07-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: fix dns:order description.
+
+2005-05-23	A Costa <agcosta@gis.net>
+
+	* lftp.1: fixed several typos.
+
+2005-04-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document mirror --loop option.
+
+2005-04-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document cache: settings, cmd:verify-path-cached.
+
+2005-02-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:ignore-pasv-address.
+
+2005-02-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document use-mkcol and use-propfind options; add short
+	  cls description; use boolean instead of bool.
+
+2005-01-21	Thomas Glanzmann <sithglan@stud.uni-erlangen.de>
+
+	* lftp.1: change connect-program default.
+
+2004-08-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:proxy-auth-joined, http:authorization and
+	  http:cache-control.
+
+2004-05-24	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:ssl-protect-{list,fxp}.
+
+2004-04-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:list-empty-ok.
+
+2004-02-18	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document source -e.
+
+2004-02-13	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document mirror --use-pget-n and mirror:use-pget-n options.
+
+2004-02-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: change "delete remote" and "delete local" to "delete source",
+	  as URL notation can specify both local and remote files;
+	  document get1; document --ignore-size, --only-missing options of
+	  mirror; delete spurious `\n"'; document new feature of --newer-than
+	  mirror option.
+
+2004-01-28	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:use-hftp; add rfc and drafts.
+
+2004-01-24	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: mirror updates: --delete-first, --log, --script.
+
+2004-01-18	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document file:charset.
+
+2004-01-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document sftp, mirror --ignore-time, ftp:use-feat, ftp:lang,
+	  ftp:use-mdtm-overloaded, ftp:use-site-utime, ftp:charset.
+
+2003-08-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new settings.
+
+2003-05-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: minor corrections.
+
+2003-05-15	Noel Kothe <noel@debian.org>
+
+	* lftp.1: update ftp over ssl draft version; make it wrap properly.
+
+2002-12-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:port-ipv4, net:socket-bind-ipv{4,6}.
+
+2002-08-02	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror target/ semantics.
+
+2002-07-31	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new queue features (stop/start); -I/-X options
+	  of mirror.
+
+2002-07-24	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ssl vars, slot command, \? in prompt, new limit-rate
+	  format.
+
+2002-03-03	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror ability to mirror between two URLs.
+
+2001-12-19	Glenn Maynard <g_ld@zewt.org>
+
+	* lftp.1: document new queue options.
+
+2001-12-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror settings.
+
+2001-12-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document quote for fish.
+
+2001-11-14	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror settings; remove old ones.
+
+2001-10-29	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document fish:shell and ftp:timezone.
+
+2001-09-05	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:acct, ftp:site-group and their closures.
+
+2001-08-23	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:home.
+
+2001-07-30	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new queue options; formatting.
+
+2001-05-29	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:retry-530.
+
+2001-05-28	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: some fixes; document ftp:fix-pasv-address.
+
+2001-03-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document http:referer, hftp:use-type, module:path.
+
+2001-03-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document mirror -P.
+
+2001-02-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:bind-data-socket.
+
+2001-01-06	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add more examples of `get' (suggested by Arkadiusz Miskiewicz)
+
+2000-12-01	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document hftp:use-authorization.
+
+2000-08-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add RFC2228 reference.
+
+2000-08-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document several new settings and protocols https and ftps;
+	  document ftp:auto-sync-mode.
+
+2000-07-27	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document http:post-content-type.
+
+2000-07-21	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document a lot of new settings.
+
+2000-07-14	kromJx <kromJx@crosswinds.net>
+
+	* lftp.1: document ftp:anon-user and ftp:anon-pass.
+
+2000-04-29	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add http:cookie; mirror --Remove-source-files.
+
+2000-04-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add http:user-agent.
+
+2000-04-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new mirror: settings and -T mirror option.
+
+2000-04-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add a note about --only-newer.
+
+2000-03-21	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document rm -f.
+
+2000-03-14	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:web-mode.
+
+2000-03-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:port-range.
+
+2000-03-02	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document net:connection-* settings; change -e to -E.
+
+2000-02-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document --verbose[=level] option of mirror.
+
+**** missed some.
+
+1999-12-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: use `base name' instead of basename.
+
+1999-10-22	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document hftp:use-head.
+
+1999-10-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: correct example with verify-path.
+
+1999-10-10	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add hftp to protocol list, document cmd:verify-*
+	  variables, document closure for cmd: domain.
+
+1999-09-22      Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add subsections headings `Settings' and
+	  `FTP asynchronous mode'; remove some extra blank lines.
+
+1999-09-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: describe time interval; fix an error.
+
+1999-09-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document dns:cache-* variables, update closure
+	  description.
+
+1999-09-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document repeat command.
+
+1999-09-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document command `queue'; settings xfer:clobber,
+	  net:limit-total-rate, net:limit-total-max, http:cache,
+	  hftp:proxy, hftp:cache; mention environment variables
+	  http_proxy and ftp_proxy.
+
+1999-08-10	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add a note about sysconfdir.
+
+1999-08-06	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:rest-list; remove statement about non-strict
+	  URLs.
+
+1999-07-31	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: correct few typos and obsolete statements.
+
+1999-06-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document xfer:eta-terse.
+
+1999-06-14	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document symbolic link handling on mirror -R.
+
+1999-06-02	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: updates for 2.0; fixes.
+	* ftpget.1: version 2.0; deprecated.
+
+1999-04-26	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: change redial to reconnect; update `set' description.
+	* lftp.1: documented 'cmd:fail-exit'.
+
+1998-12-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: documented 'cmd:at-exit'
+
+1998-11-18	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: documented 'command' command.
+
+1998-11-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: update for 1.2
+	* ftpget.1: change version to 1.2, no other changes.
+
+**** Some entries are lost below this line :-(  Ones below are from my mailbox.
+
+1998-04-06	James Troup <J.J.Troup@scm.brad.ac.uk>
+
+	* lftp.1: update
+
+1997-09-05	James Troup <J.J.Troup@comp.brad.ac.uk>
+
+	* lftp.1: update
+
+1997-08-29	James Troup <J.J.Troup@comp.brad.ac.uk>
+
+	* lftp.1: update
+
+1997-07-19	James Troup <J.J.Troup@comp.brad.ac.uk>
+
+	* lftp.1, ftpget.1: update
+
+1997-05-12	Nicolas Lichtmaier <nick@Feedback.com.ar>
+
+	* lftp.1: update

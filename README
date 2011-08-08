@@ -1,0 +1,158 @@
+** lftp-4.3.x
+
+This package `lftp' contains the following components:
+
+   lftp
+      sophisticated command line file transfer program (ftp/http client,
+      also supports fish protocol and file URLs).
+
+   lftpget
+      shell script for downloading by URL, it calls `lftp -c'.
+
+lftp is written in C++ and uses a cooperative-threaded model.
+
+
+lftp
+~~~~
+lftp is sophisticated file transfer program with command line interface. It
+supports FTP, HTTP, FISH, SFTP and FILE (local FS) protocols. GNU Readline
+library is used for input. BitTorrent protocol is supported as built-in
+`torrent' command.
+
+Low level stuff supported: ftp proxy, http proxy, ftp over http, opie/skey,
+fxp transfers, automatic retrying on non-fatal errors and timeouts, ipv6,
+socks, http/1.1, sftp v3-v6. See FEATURES for more detailed list of
+features.
+
+Every operation in lftp is reliable, that is any non-fatal error is ignored
+and the operation is retried. So if downloading breaks, it will be
+restarted from the point automatically. Even if ftp server does not support
+REST command, lftp will try to retrieve the file from the very beginning
+until the file is transferred completely.
+
+lftp has shell-like command syntax allowing you to launch several commands
+in parallel in background (&). It is also possible to group commands within
+() and execute them in background. All background jobs are executed in the
+same single process. You can bring a foreground job to background with ^Z
+(c-z) and back with command `wait' (or `fg' which is alias to `wait'). To
+list running jobs, use command `jobs'. Some commands allow redirecting
+their output (cat, ls, ...) to file or via pipe to external command.
+Commands can be executed conditionally based on termination status of
+previous command (&&, ||).
+
+If you exit lftp when some jobs are not finished yet, lftp will move itself
+to nohup mode in background. The same happens when you have a real modem
+hangup or when you close an xterm. It is possible to attach to backgrounded
+lftp instance using `attach' command in lftp.
+
+lftp has builtin mirror which can download or update a whole directory
+tree. There is also reverse mirror (mirror -R) which uploads or updates a
+directory tree on server.
+
+There is command `at' to launch a job at specified time in current context,
+command `queue' to queue commands for sequential execution for current
+server, and much more.
+
+On startup, lftp executes /etc/lftp.conf and then ~/.lftprc and ~/.lftp/rc.
+You can place aliases and `set' commands there. Some people prefer to see
+full protocol debug, use `debug' to turn the debug on. Use `debug 3' to see
+only greeting messages and error messages.
+
+lftp has a number of settable variables. You can use `set -a' to see all
+variables and their values or `set -d' to see list of defaults. Variable
+names can be abbreviated and prefix can be omitted unless the rest becomes
+ambiguous.
+
+Use command `help' or read documentation (man lftp) to learn more.
+
+If lftp was compiled with ssl support, then it includes software developed
+by the OpenSSL Project for use in the OpenSSL Toolkit.
+(http://www.openssl.org/)
+
+Where to get
+~~~~~~~~~~~~
+By FTP:
+	ftp://ftp.yar.ru/lftp/
+	ftp://metalab.unc.edu/pub/Linux/system/network/file-transfer/
+By HTTP:
+	http://ftp.yar.ru/lftp/
+	http://metalab.unc.edu/pub/Linux/system/network/file-transfer/
+
+See also home page `http://lftp.yar.ru/'.
+
+Internals
+~~~~~~~~~
+All this is based on SMTask class which implements non-preemptive
+multitasking via Do method. The method Do does a little bit of work, sets
+wake up condition (block member) and returns.
+
+The class Ftp allows reliable deliver of files via ftp protocol, it hides
+all the details from application and allows asynchronous operation.
+Reconnect and reget are done as necessary. It can also speed up ftp
+operations by sending several commands at once and then checking all the
+responses. It seems this sometimes does not work, so it is disabled by
+default. To turn it on, use `set sync-mode n' in lftp.
+
+Note that sending several commands is considered as violation or protocol,
+but RFC959 says: ``The user-process sending another command before the
+completion reply would be in violation of protocol; but server-FTP
+processes should queue any commands that arrive while a preceding command
+is in progress.''
+
+It is known that some network software dealing with address translation
+works incorrectly in case of several FTP commands in one network packet.
+
+
+Systems
+~~~~~~~
+The package is known to compile on Solaris(gcc), Linux, FreeBSD, NetBSD,
+SCO v5.0(gcc), IRIX(gcc), Tru64(gcc) and other systems. If you can't
+compile it on your system, let me know. It is possible that lftp version
+2.0 can be compiled with non-gcc compilers since it does not have gcc-isms,
+and it was successfully compiled by Sun C++ v5.0 compiler using
+CXXFLAGS="-compat=4 -features=bool".
+
+
+Mailing list
+~~~~~~~~~~~~
+There is a mailing list for discussion of lftp and announcements. It is
+managed by mailman; to subscribe, send mail to lftp-subscribe@uniyar.ac.ru;
+to send letters to the list, send them to lftp@uniyar.ac.ru; to
+unsubscribe, send mail to lftp-unsubscribe@uniyar.ac.ru. This is a low
+volume list. See also http://univ.uniyar.ac.ru/mailman/listinfo/lftp.
+
+There is also list lftp-devel@uniyar.ac.ru for snapshot announcements and
+other development.
+
+These lists are archived at
+   http://www.mail-archive.com/lftp%40uniyar.ac.ru/
+   http://www.mail-archive.com/lftp-devel%40uniyar.ac.ru/
+
+
+Author
+~~~~~~
+Author: Alexander V. Lukyanov <lav@yars.free.net>
+My home page: http://lav.yar.ru/
+
+Other people have contributed to lftp development, see THANKS and ChangeLog
+files.
+
+Comments and bug reports are welcome. Please send them to the list:
+<lftp@uniyar.ac.ru>.
+
+License
+~~~~~~~
+Copyright (c) 1996-2011 by Alexander V. Lukyanov (lav@yars.free.net)
+
+LFTP is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with LFTP.  If not, see <http://www.gnu.org/licenses/>.

@@ -1,0 +1,71 @@
+The following people contributed to lftp in various ways: testing,
+suggesting useful improvements, sending patches. Listed in abc order.
+
+Andreas Metzler <ametzler@downhill.at.eu.org>
+Andy Eskilsson <x-aes@telelogic.se> for testing and suggestions.
+Andy Lutomirski <luto@myrealbox.com>
+Arkadiusz Miskiewicz <misiek@pld.org.pl>
+Arkady Sherman <Arkady.Sherman@ksu.ru>
+Artur Frysiak <wiget@t17.ds.pwr.wroc.pl>
+Bozo Dragojevic <bozzo@hermes.si> for testing with an ftp proxy, patch.
+Brandon Hume <hume@Den.BOFH.Halifax.NS.Ca>
+Chmouel Boudjnah <chmouel@mandrakesoft.com>
+Christoph Lameter <clameter@debian.org> for initial man pages
+Claus K. Larsen <ckl@bankdata.dk>
+Damon Harper <gnu@usrbin.ca>
+Daniel Black <dragonheart@gentoo.org>
+Daniel Fazekas <fdsoft@gmail.com>
+Darren Stuart Embry <dsembr01@ox.slug.louisville.edu>
+David Champion <dgc@uchicago.edu>
+David Wolfe <davidw@wolfeden.org>
+Dejan Muhamedagic <dejan@quant-x.com>
+Edward Grimm <tgape@bigfoot.com> for testing and suggestions.
+Eugene Exarevsky <zheka@relex.ru>
+Fernando Gutierrez <zerks0@gmail.com>
+Ganael LAPLANCHE <ganael.laplanche@martymac.com>
+Gabriele Balducci <balducci@dschgrazlin2.units.it>
+gARetH baBB <hick@pobox.co.uk>
+Glenn F. Maynard <glenn@zewt.org> for du, cls, major code contributions.
+Henry Hu <henry.hu.sh@gmail.com>
+Hugo Van den Berg <hbe@cypres.nl> for tip about quote command, patch.
+Igor Vinokurov <igor@zynaps.ru> for suggestions.
+Iida <y-iida@secom.co.jp>
+J Kalevi Suominen <kalsuomi@cc.helsinki.fi>
+James Troup <J.J.Troup@comp.brad.ac.uk> for documentation update, other patches.
+Jason Vas Dias <jvdias@redhat.com> for Red Hat package maintenance; patches.
+Jim Pick <jim@jimpick.com>
+Jiri Skala <jskala@redhat.com>
+Jonas Jensen <bones@huleboer.dk>
+Julien Oster <joster@soft-research.de>
+Laurent MONIN <zas@norz.org>
+Ludwig Nussel <ludwig.nussel@suse.de>
+Manoj Kasichainula <manoj@io.com>
+Marc Bevand <marc.bevand@smartjog.com>
+Marco Calmar <mac@calmar.ws>
+Mark Pulford <mark@kyne.com.au>
+Matt E Richards <v2matt@btv.ibm.com> for a fix.
+Matthias Andree <matthias.andree@gmx.de>
+Michael Handler <handler@sub-rosa.com>
+Naofumi Yasufuku <naofumi.yasufuku@gmail.com>
+Nate Sutton <nate@zencoder.com>
+Nicolás Lichtmaier <nick@Feedback.com.ar> for i18n, Debian package maintenance.
+Nicolas Noble <nicolas.n.@wanadoo.fr>
+Nix <nix@esperi.org.uk>
+Pascal Bleser <pascal.bleser@skynet.be>
+Robert de Bath <rdebath@poboxes.com>
+Robert Story <Robert.Story@cobham.com>
+Roger Pixley <skreech2@gmail.com>
+Ryan Thomas <ryan@coraid.com>
+Sam Steingold <sds@usa.net>
+Serge Bezzubov <gray@yars.free.net> for extensive testing.
+Slama YA <slamaya@netscape.net>
+Thomas Glanzmann <sithglan@stud.uni-erlangen.de>
+Tillmann Steinbrecher <tillmann.steinbrecher@anandtech.com>
+Timur Sufiev <tsufiev@jet.msk.su>
+Uhus <uhus@cnit.uniyar.ac.ru> for testing and suggestions.
+Victor Sudakov <sudakov@sibptus.tomsk.ru>
+Yann Rouillard <yann@pleiades.fr.eu.org>
+
+bash developers for pieces of code and example of how to use readline.
+
+Thanks to all who wrote to me about lftp.

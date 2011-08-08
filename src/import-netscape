@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# This script is based on draft by Sam Steingold
+# Copyright (c) 1998 by Alexander V. Lukyanov
+# This script can be distributed and modified freely under GNU GPL, see COPYING
+
+set -e
+
+NS="$HOME/.netscape/bookmarks.html"
+OLD="${LFTP_HOME:-$HOME/.lftp}/bookmarks"
+NEW="$OLD.new.$$"
+
+prepend_hash()
+{
+   n=$$
+   while read line; do
+      u=`echo $line | sed -e 's|\(ftp://[^:]*\):[^@]*@|\1|'`
+      t=`expr "$u" : "ftp://\([^.]*\)"`
+      if [ "$t" = ftp -o -z "$t" ]; then
+      	 t=`expr "$u" : "ftp://[^.]*.\([^.]*\)"`
+	 if [ "$t" = ftp -o -z "$t" ]; then
+	    t="$n"
+	    n=`expr $n + 1`
+	 fi
+      fi
+      echo "NS-$t $line"
+   done
+}
+
+grep ftp:// "$NS" | cut "-d\"" -f2 | prepend_hash > "$NEW"
+
+if [ -f "$OLD" ]; then
+   sort -u "$OLD" "$NEW" -o "$NEW"
+   mv -f "$OLD" "$OLD~" # backup
+else
+   sort -u "$NEW" -o "$NEW"
+fi
+mv -f "$NEW" "$OLD"

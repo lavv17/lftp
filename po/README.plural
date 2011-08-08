@@ -1,0 +1,109 @@
+* Introduction
+
+Many languages have complex plural forms of words, and often more than just
+two, unlike english.
+
+In english language case, programmers often write code like this:
+
+     printf (gettext("you should see %d %s"), number_count,
+             number_count == 1 ? gettext ("number") : gettext ("numbers"))
+
+But obviously it will not work for all languages. It will work for english
+and some other, but russian, polish and maybe others languages have three
+plural forms which cannot be formed just by adding a letter, and the actual
+form of a word depends on its place in a sentence.
+
+So there is a need for a method for plural form choosing.
+
+
+* My method
+
+First, there is a number, and it should be somehow mapped to plural forms.
+
+The rule is language specific and I don't know all languages to encode
+them in my program, and it is just nasty to modify program to add another
+language translation.
+
+I decided to make the rules in very simple interpreted language and put it
+into the translation files. The other possible solution would be to make
+a shared object for each language, but it seemed too global for me.
+
+Here is the language grammar I've chosen:
+
+	RULE -> /* empty */
+	RULE -> CONDITION
+	RULE -> CONDITION ' ' RULE
+	CONDITION -> SUB_COND
+	CONDITION -> SUB_COND '|' CONDITION
+	SUB_COND -> OPERATOR
+	SUB_COND -> OPERATOR SUB_COND
+	OPERATOR -> OP_CHAR NUMBER
+	OP_CHAR -> '>'
+	OP_CHAR -> '<'
+	OP_CHAR -> '='
+	OP_CHAR -> '%'
+	NUMBER -> /* you know it */
+
+Each condition is boolean expression, the first true condition corresponds
+to the number of plural form. If all conditions are false, the number of
+conditions plus one is taken as form number. The later is like "default"
+clause.
+
+There is OR operator '|' which separates subconditions, either of them being
+true makes the whole condition true.
+
+Other operators take one numeric argument and they all must be true
+for subcondition to be true. The operators are evaluated from left to
+right.
+
+The '%' operator modifies the number from which the plural form is being
+determined. This is done by taking division remainder. It is useful to take
+last few digits of the number. The number is modified for one condition
+only, other conditions work with original one unless they contain % operator.
+This operator is always true.
+
+Other operators '>' '<' '=' are comparisions. You can guess their meaning.
+
+That said, let's show an example. The rule "=1 >1<5|>20%10>1<5" means:
+   choose form #1 if the number =1 (equals to 1)
+   choose form #2 if the number >1 and <5, or it is >20 and last
+      digit >1 and <5 (%10 means ramainder from division by 10)
+   otherwise, choose form #3
+This is NOT the rule for russian language, %100 is missing.
+
+
+The second thing is to get the chosen form of a word. I decided to make
+a printf-like function which takes a string and numeric arguments, and
+substitutes appropriate plural forms in the string, returning the result.
+
+The grammar of the string passed to the function plural() is the following:
+
+	STRING -> /* empty */
+	STRING -> CHAR STRING
+	STRING -> '$$' STRING
+	STRING -> SUBSTITUTE STRING
+	SUBSTITUTE -> '$' OPTIONS FORM FORMS '$'
+	OPTIONS -> /* empty */
+	OPTIONS -> '#' 'l' '#' /* this means long type of argument */
+	FORMS -> /* empty */
+	FORMS -> '|' FORM FORMS
+	FORM -> just a string without characters '|' and '$'
+
+In short, it contains inserts like this: $file|files$ or $plik|pliki|pliko'w$.
+
+
+* Conclusion
+
+A rather universal method for plural form choosing is presented here.
+It is based on a trivial interpreted language which is used to encode
+plural form rule in the translation file, along with translated
+sentenses. The translated strings contain all necessary plural forms
+and the function plural() cooses proper form using the rule.
+
+
+* Author
+
+This note and the actual code in plural.cc and plural.h are written by
+Alexander V. Lukyanov in 1998 and placed in public domain.
+
+Send comments to <lav@yars.free.net>.

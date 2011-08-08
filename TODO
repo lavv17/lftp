@@ -1,0 +1,57 @@
+The items with a question mark are questionable. I'm not sure whether they
+are really needed. If you think it is a good feature do it yourself :) or
+at least tell me what you think. Items marked with - are hard to implement
+currently; other work needs to be done. Items marked with + are partially
+implemented.
+
+
+?* document variables in on-line help
+
+ * mirror --config <file.cf>
+
+ * update process title
+ * at-exit-bg
+
+ * implement Queueing in FileAccess. fa->AddQueue(new FAQueueOp(args)).
+   (Done()==true when queue is empty)
+   This way ARRAY_* can be obsoleted.
+
+ * there are many interesting protocols which can be used to transfer
+   files/data: smb, fsp, imap, irc, pop3...
+
+-* put -n (only if newer) Maybe it would be better to add a command to compare
+   times?
+   mirror can be used: mirror -Rr -I file
+
+ * http: ls -a to see all links, even off-site.
+
+ * mirror: add more settings.
+
+ * more intelligently squeeze file name in status line.
+
+ * parallel get's in mget
++* make a command get1 to get a single file with extra options.
+
+ * tail command
+
+ * make a class FileAccessLocation (class url?)
+
+ * job suspend/resume.
+
+ * motd. if it is not yet known, connect/login and get it. (use class Buffer).
+
+ * use NDIR (from RFC1127) in FtpListInfo, when long list cannot be parsed.
+
+?* optimize help text, introduce a phrase separator for separate translations.
+?* help in external files
+
+ * a setting to make commands quiet (cmd:quiet? or cmd:verbose with int value)
+
+ * redirect error messages
+ * stdout/stderr analogues, use class IOBuffer.
+
+ * mirror option to check an alternative directory(ies) for existing files.
+   (overlay filesystem replacement?)
+ * mirror: multiple source and target dirs.
+
+ * APPE support.

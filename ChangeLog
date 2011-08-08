@@ -1,0 +1,257 @@
+2008-04-06  Nix  <nix@esperi.org.uk>
+
+	* configure.ac: Provide missing bits needed for strtoumax et al.
+
+2007-06-15	Jakob Truelsen <antialize@gmail.com>
+
+	* configure.ac: check for libintl.h.
+
+2006-08-22  lav
+
+	* configure.ac: link stdbool_.h to include if needed.
+
+2006-08-03  lav
+
+	* configure.ac: use AS_HELP_STRING everywhere.
+
+2006-08-02  Daniel Black <dragonheart@gentoo.org>
+
+	* configure.ac: add --enable-packager-mode to disable *FLAGS defaults.
+
+2006-07-22  Nix  <nix@esperi.org.uk>
+
+        * configure.ac: Synch with gnulib-20060722.
+        (jm_PREREQ_MBSWIDTH): Rename to...
+        (gl_MBSWIDTH): ... this.
+        (jm_PREREQ_HUMAN): Rename to...
+        (gl_HUMAN): ... this.
+        (jm_FUNC_MBRTOWC): Rename to...
+        (gl_MBRTOWC): ... this.
+
+        (gl_FILEMODE): Newly required by filemode.[ch].
+
+        Pull in gnulib transitive dependencies:
+
+        (gl_STAT_MACROS, gl_XALLOC, gl_MODECHANGE, EXITFAIL,
+        gl_QUOTE, gl_QUOTEARG, gl_XSTRTOL, gl_FUNC_STRTOULL,
+        gl_FUNC_STRTOIMAX, gl_FUNC_STRTOUMAX, gl_FUNC_XSTROTUMAX,
+        gl_ERROR): New.
+
+
+2005-12-12  Conan The Grammarian <spell-check@earthlink.net>
+
+	* FAQ: some grammar fixes.
+
+2005-03-01  lav
+
+	* configure.ac: check for netinet/in_systm.h, netinet/ip.h.
+
+2005-01-21	lav
+
+	* configure.ac: check for declaration of dn_expand.
+
+2004-07-08	Albert Chin <lftp-devel@mlists.thewrittenword.com>
+
+	* configure.ac: use AC_GNU_SOURCE, AC_FUNC_FNMATCH_GNU, AH_TOP and
+	  AH_BOTTOM.
+	* acconfig.h: drop it.
+
+2004-01-15	lav
+
+	* configure.ac: use AM_ICONV.
+
+2003-12-17	albert chin <china@thewrittenword.com>
+
+	* configure.ac: do AC_SYS_LARGEFILE early.
+
+2003-12-16	albert chin <china@thewrittenword.com>
+
+	* configure.ac: LOCALE_DIR no longer used; check for sscanf.
+
+2003-11-28	Dmitry V. Levin <ldv@altlinux.org>
+
+	* configure.ac: calls for AC_LIBOBJ should be quoted now
+	  (autoconf >= 2.58).
+
+2002-08-09	Eduardo <eperez@it.uc3m.es>
+
+	* README.debug-levels: a minor spelling fix taken from the Debian
+	  package.
+
+2002-07-12	Glenn Maynard <g_ld@zewt.org>
+
+	* acconfig.h, m4/lftp.m4: HAVE_POLL acconfig.
+	* lftp.conf: Fix cls/hostls aliases
+
+2001-12-18	Glenn Maynard <g_ld@zewt.org>
+
+	* lftp.conf: "colored ls" -> "cls" (they're both colored).  Add
+	  "reconnect" alias that I've used for a while.
+
+2001-10-27	Glenn Maynard <glenn@zewt.org>
+
+	* configure.in: add --with-profiling
+
+2001-10-22	Glenn Maynard <glenn@zewt.org>
+
+	* acconfig.h: define dgettext and dcgettext when nls is disabled.
+
+2001-09-07	albert chin <china@thewrittenword.com>
+
+	* configure.in: add trionan.o to LIBOBJS.
+	* Makefile.am: don't distribute ltcf-*.sh.
+
+2001-08-07	lav
+
+	* acconfig.h: define inet_aton if needed.
+	* configure.in: check for inet_aton.
+
+2001-07-24	Glenn F. Maynard <g_ld@zewt.org>
+
+	* configure.in: don't optimize code for debugging.
+
+2001-05-11	lav
+
+	* config.guess, config.sub: update.
+
+2001-04-04	lav
+
+	* configure.in: migrate to libtool completely.
+
+2000-11-30	Matthias Andree <matthias.andree@stud.uni-dortmund.de>
+
+	* lftp.spec: fix for mandir!=/usr/man.
+
+2000-01-28	lav
+
+	* acinclude.m4: LFTP_NOIMPLEMENTINLINE new macro; LFTP_CHECK_CXX_FLAGS
+	  new macro.
+	* configure.in: use them.
+
+2000-01-17	lav
+
+	* Makefile.am: use DESTDIR.
+	* acinclude.m4: try to find socklen_t analogue.
+
+2000-01-13	lav
+
+	* configure.in: check for md5; add CXX flags -fno-implement-inlines,
+	  -Winline.
+
+2000-01-07	lav
+
+	* configure.in: check for more headers; replace strptime if not found.
+
+1999-10-09	lav
+
+	* configure.in: version 2.1.2
+
+1999-10-06	lav
+
+	* acconfig.h, configure.in: handle --with-socksdante.
+
+1999-10-05	lav
+
+	* acconfig.h, configure.in: handle --with-socks5, define SOCKS4 for old
+	  socks.
+
+1999-09-30	lav
+
+	* acinclude.m4: (READLINE_CHECK) check for header readline/readline.h.
+
+1999-09-29	Andreas Ley <andy@rz.uni-karlsruhe.de>
+
+	* configure.in: fix check for res_search for AIX.
+
+1999-09-20	lav
+
+	* acconfig.h: remove __USE_XOPEN.
+
+1999-08-11	lav
+
+	* configure.in, acconfig.h, acinclude.m4: define LFTP_C_INLINE,
+	  use it instead of AC_C_INLINE to protect c++ inline.
+
+1999-08-02	lav
+
+	* configure.in, acconfig.h: check for res_search, vsnprintf
+	  declarations, add corresponding symbols.
+
+1999-07-25	lav
+
+	* configure.in, NEWS, lftp.lsm, README: version 2.0.3
+
+1999-07-21	lav
+
+	* BUGS: new file; describe problem with ftp glob.
+
+1999-07-06	lav
+
+	* README: add download section.
+
+1999-07-04	lav
+
+	* configure.in: check for res_search.
+	* acconfig.h: add HAVE_RES_SEARCH
+
+1999-06-27	lav
+
+	* configure.in: version 2.0.1
+
+1999-06-22	lav
+
+	* configure.in: workaround autoconf feature with multiple AC_LINK_FILES
+	* Makefile.am: remove autoconf.patch from distribution.
+
+1999-06-15	lav
+
+	* INSTALL: refer to libstdc++ instead of libg++.
+	* README: correct wording about variables.
+	* configure.in: version 2.0.0
+	* lftp.conf: remove chmod alias; misc.
+
+1999-06-14	lav
+
+	* acconfig.h: define __USE_XOPEN on linux
+
+1999-06-05  lav
+
+	* configure.in: snapshot pre2.0.0-990605
+
+1999-06-02  lav
+
+	* configure.in: snapshot pre2.0.0-990602
+
+1999-06-01  lav
+
+	* configure.in: snapshot 990601
+
+1999-05-31  lav
+
+	* configure.in: snapshot 990531
+
+1999-05-26  lav
+
+	* configure.in: snapshot 990526
+
+1999-05-22  lav
+
+	* configure.in: snapshot 990522
+
+1999-05-20  lav
+
+	* readline-4.0: new directory
+	* configure.in, Makefile.am, acinclude.m4: change for readline-4.0
+
+1999-05-17  lav
+
+	* configure.in: snapshot 990517
+
+1999-04-30  lav
+
+	* configure.in: snapshot 990430
+
+1999-04-01  lav
+
+	* configure.in, acinclude.m4: add check for sscanf working on const
+	  strings. (for hpux9.x, report by Marko Macek)

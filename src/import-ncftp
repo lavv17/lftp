@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# This script is based on draft by Sam Steingold
+# Copyright (c) 1998 by Alexander V. Lukyanov
+# This script can be distributed and modified freely under GNU GPL, see COPYING
+
+set -e
+
+NCFTP="$HOME/.ncftp/bookmarks"
+OLD="${LFTP_HOME:-$HOME/.lftp}/bookmarks"
+NEW="$OLD.new.$$"
+
+grep "," "$NCFTP" | cut -d, -f1,2,3,6 | sed \
+   -e "s?,,?/?" \
+   -e "s?//?/?" \
+   -e "s?,?	ftp://?" \
+   -e "s?ftp://\([^,]*\),\([^,]*\),/*?ftp://\2@\1/?" \
+   -e "s?^?NC-?" > "$NEW"
+
+if [ -f "$OLD" ]; then
+   sort -u "$OLD" "$NEW" -o "$NEW"
+   mv -f "$OLD" "$OLD~" # backup
+else
+   sort -u "$NEW" -o "$NEW"
+fi
+mv -f "$NEW" "$OLD"

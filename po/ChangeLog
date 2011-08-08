@@ -1,0 +1,566 @@
+2011-04-11	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2011-04-11	Petr Pisar <petr.pisar@atlas.cz>
+
+	* cs.po: update.
+
+2010-11-26	Petr Pisar <petr.pisar@atlas.cz>
+
+	* cs.po: update.
+
+2010-08-31	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2010-08-17	NoÃ«l KÃ¶the <noel@debian.org>
+
+	* de.po: add missed comma; fix some minor translation.
+
+2010-06-23	Petr Pisar <petr.pisar@atlas.cz>
+
+	* cs.po: update.
+
+2008-05-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2008-05-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* de.po: fixed encoding (reported by Gerfried Fuchs).
+
+2008-05-07	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2008-04-18	Alain PORTAL <alain.portal@free.fr>
+
+	* fr.po: update.
+
+2008-03-31	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2008-03-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2008-02-05	Abel Cheung <abelcheung@gmail.com>
+
+	* zh_HK.po: new translation.
+	* zh_TW.po: update.
+
+2007-11-01	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2007-10-24	Alain PORTAL <aportal@univ-montp2.fr>
+
+	* fr.po: update.
+
+2007-10-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2007-08-01	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: fixed mput description (reported by <komar@ukr.net>).
+
+2007-07-02	Alain PORTAL <aportal@univ-montp2.fr>
+
+	* fr.po: update.
+
+2007-04-11	Alexander V. Lukyanov <lav@yars.free.net>
+
+        * ru.po: update.
+
+2007-01-29	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2006-08-27	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2005-11-08	Nicolas Noble <pixel@nobis-crew.org>
+
+	* fr.po: update.
+
+2005-09-05	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2005-08-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2005-08-04	Abel Cheung <abelcheung@gmail.com>
+
+	* zh_TW.po: update.
+
+2005-06-27	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2005-06-27	Wei-Lun Chao <chaoweilun@pcmail.com.tw>
+
+	* zh_TW.po: update.
+
+2005-05-23	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2005-04-16	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+	
+2004-12-06	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2004-11-26	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2004-06-02	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: a fix.
+
+2004-05-26	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2004-05-21	Moritz Moeller-Herrmann <moritz@moeller-herrmann.de>
+
+	* de.po: update.
+
+2004-04-08	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2004-03-29	Arkadiusz Miskiewicz <arekm@pld-linux.org>
+
+	* pl.po: update.
+
+2003-12-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2003-12-18	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2003-11-21	Jakub Bogusz <qboosh@pld.org.pl>
+
+	* pl.po: update.
+
+2003-10-10	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2003-06-16	Jakub Bogusz <qboosh@pld.org.pl>
+
+	* pl.po: update.
+
+2003-06-09	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2003-03-03	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2003-02-20	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2003-02-06	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2002-09-16	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2002-08-09	Eduardo <eperez@it.uc3m.es>
+
+	* es.po: update.
+
+2002-07-09	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+	
+2002-05-17	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2002-05-14  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.in.in: Upgrade to gettext-0.11.2.
+	* Rules-quot: New file, from gettext-0.11.2.
+	* boldquot.sed: New file, from gettext-0.11.2.
+	* en@boldquot.header: New file, from gettext-0.11.2.
+	* en@quot.header: New file, from gettext-0.11.2.
+	* insert-header.sin: New file, from gettext-0.11.2.
+	* quot.sed: New file, from gettext-0.11.2.
+	* remove-potcdate.sin: New file, from gettext-0.11.2.
+
+2002-04-12	Jun Nakajima <naka01@orihime.net>
+
+	* ja.po: don't translate ETA time abbreviations because of two-byte
+	  character encoding.
+
+2002-03-13	Arkadiusz Miskiewicz <misiek@pld.org.pl>
+
+	* pl.po: update
+
+2002-03-04	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2002-03-03	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2001-10-19	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2001-10-19	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2001-10-02	Masayuki Hatta <mhatta@po.airs.net>
+
+	* ja.po: update.
+
+2001-10-01	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2001-08-06	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2001-07-31	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2001-07-27	Martin Michlmayr <tbm@cyrius.com>
+
+	* fr.po: use libre instead of gratuit.
+
+2001-07-06	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2001-06-22  gettextize  <bug-gnu-utils@gnu.org>
+
+	* Makefile.in.in: Upgrade to gettext-0.10.38.
+
+2001-06-01	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2001-05-29	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2001-05-28	Dojip Kim <greendrm@netsgo.com>
+
+	* ko.po: update.
+
+2001-05-22	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update.
+
+2001-04-24	R.I.P. Deaddog <maddog@linuxhall.org>
+
+	* zh_TW.po: new file.
+
+2001-04-04	Nicolas Noble <Pixel@the-babel-tower.nobis-crew.org>
+
+	* fr.po: update
+
+2001-04-03	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: fix plural rule for russian. What a shame...
+
+2001-03-02	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+2001-02-16	Albert Chin-A-Young <china@thewrittenword.com>
+
+	* Makefile.in.in: Add --with-locale-dir=DIR and 
+	  --with-gnu-locale-dir=DIR for more precise placement of GNU locale
+	  files.
+
+2001-01-04	Nicolas Noble <Pixel@the-babel-tower.nobis.phear.org>
+
+	* fr.po: update
+
+2000-11-23	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+2000-10-31	Arkadiusz Miskiewicz <misiek@misiek.eu.org>
+
+	* pl.po: update
+
+2000-10-02	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+2000-09-30	Masayuki Hatta <mhatta@gnu.org>
+
+	* ja.po: new file.
+
+2000-09-25	Nicolas Lichtmaier <nick@debian.org>
+
+	* es.po: update.
+
+2000-09-22	Pixel@the-babel-tower.nobis.phear.org
+
+	* fr.po: update
+
+2000-09-07	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2000-08-27	Nicolas Noble <nicolas.n.@wanadoo.fr>
+
+	* fr.po: new file.
+
+2000-08-26	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* POTFILES.in: add Speedometer.cc (reported by Nicolas Noble)
+
+2000-08-25	Nicolás Lichtmaier <nick@debian.org>
+
+	* es.po: update.
+
+2000-08-22	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+2000-08-06	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+2000-07-17	Nicolás Lichtmaier <nick@debian.org>
+
+	* es.po: update.
+
+2000-06-29	Manoj Kasichainula <manoj@io.com>
+
+	* Makefile.in.in: use DESTDIR.
+
+2000-05-24	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+2000-04-27	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+2000-04-24	Giovanni Bortolozzo <borto@dei.unipd.it>
+
+	* it.po: update.
+
+2000-03-22	Nicolas Lichtmaier <nick@debian.org>
+
+	* es.po: update.
+
+2000-02-25      Giovanni Bortolozzo <borto@dei.unipd.it>
+
+        * it.po: update.
+
+2000-02-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: some updates.
+
+2000-01-02	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update.
+
+1999-10-25	Giovanni Bortolozzo <borto@dei.unipd.it>
+
+	* it.po: update for 2.1.4
+
+1999-10-21	Dojip Kim <greendrm@kamsi.yonsei.ac.kr>
+
+	* ko.po: update
+
+1999-10-20	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+1999-10-11	Nicolas Lichtmaier <nick@debian.org>
+
+	* es.po: update
+
+1999-10-05	Dojip Kim <greendrm@kamsi.yonsei.ac.kr>
+
+	* ko.po: new file.
+
+1999-09-30	Const Kaplinsky <const@ce.cctpu.edu.ru>
+
+	* ru.po: update
+
+1999-09-12	Wang Jian <lark@linux.net.cn>
+
+	* zh_CN.po: new file.
+
+1999-08-24	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+1999-08-15	Arkadiusz Miskiewicz <misiek@misiek.eu.org>
+
+	* pl.po: update
+
+1999-07-25	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+1999-07-15	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update for 2.0.2
+
+1999-07-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* de.po, es.po, it.po, pl.po, pt_BR.po, ru.po: remove \n in Done
+	  message.
+
+1999-07-11	Giovanni Bortolozzo <borto@dei.unipd.it>
+
+	* it.po: update for 2.0.1
+
+1999-07-01	Const Kaplinsky <const@ce.cctpu.edu.ru>
+
+	* ru.po: update for 2.0.1
+
+1999-06-27	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+
+	* pl.po: update
+
+1999-06-25	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* de.po, es.po, pl.po, ru.po: translate "eta:"
+
+1999-06-25	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+
+	* pl.po: update
+
+1999-06-11	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* it.po, pt_BR.po: few obvious to me corrections.
+
+1999-06-11	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+1999-06-09	Nicolas Lichtmaier <nick@debian.org>
+
+	* es.po: update
+
+1999-06-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: few corrections.
+
+1999-06-04	Const Kaplinsky <const@ce.cctpu.edu.ru>
+
+	* ru.po: better translation.
+
+1999-06-03	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update for 990602
+
+1999-06-02	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for 990602 snapshot
+
+1999-05-26	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990526
+	* POTFILES.in: add ChmodJob.cc, TreatFileJob.cc; remove mrmJob.cc.
+
+1999-05-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* POTFILES.in: add HttpDir.cc
+
+1999-05-17	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990517
+	* POTFILES.in: add FtpGlob.cc
+
+1999-04-30	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990430
+
+1999-04-16	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update for lftp-990415
+
+1999-04-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update for lftp-990415
+
+1999-04-15	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: update
+
+1999-02-19	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+
+	* pl.po: updated for lftp-990204
+
+1999-01-29	Moritz Moeller-Herrmann <mmh@gmx.net>
+
+	* de.po: new file
+
+1999-01-03	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* es.po, it.po, pl.po, ru.po: updated copyright translation for
+	  1999 year
+
+1998-12-13	Giovanni Bortolozzo <borto@dei.unipd.it>
+
+	* it.po: update for 1.2
+
+1998-12-10	Arkadiusz Mi¶kiewicz <misiek@zsz2.starachowice.pl>
+
+	* pl.po: update
+
+1998-11-27	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update
+
+1998-10-27	Giovanni Bortolozzo <borto@dei.unipd.it>
+
+	* it.po: update
+
+1998-09-27	Nicolás Lichtmaier <nick@debian.org>
+
+	* es.po: update
+
+1998-09-14	Arkadiusz Mi¶kiewicz <misiek@debian.eu.org>
+
+	* pl.po: fixed typo (',' -> '|')
+
+1998-09-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pl.po: added #l# for some strings, add %s for eta
+
+1998-09-08	Arkadiusz Mi¶kiewicz <misiek@debian.eu.org>
+
+	* new pl.po
+
+1998-09-04	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* es.po, ru.po, it.po, pt_BR.po: ajusted some strings due to
+	  introduction of #l# option for plural; also add %s to some
+	  strings for new eta in get and pget.
+
+(older events were not logged, unfortunately)

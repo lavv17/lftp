@@ -1,0 +1,11 @@
+.TH LFTP.CONF 5
+.SH NAME
+lftp.conf \- the global configuration file for lftp
+
+.SH "DESCRIPTION"
+the /etc/lftp.conf configuration file changes the default behavior of lftp and affects the settings for all users. User-specific options should be set in either the ~/.lftprc or ~/.lftp/rc file. These configuration files are read when lftp starts up and the parameters defined therein take affect at that time.
+
+In addition to lftp's configuration options, aliases and 'set' commands can be defined in any of these configuration files. Refer to the Command and Settings sections of the lftp man page for more details.
+
+.SH SEE ALSO
+.BR lftp (1)

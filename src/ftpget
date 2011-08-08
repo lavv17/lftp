@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# ftpget - script replacement for old utility
+# Copyright (c) 2000 Alexander V. Lukyanov <lav@yars.free.net>
+# This file is covered by GNU GPL. See file COPYING for details.
+
+# $Id: ftpget,v 1.3 2002/02/24 09:15:01 lav Exp $
+
+usage()
+{
+   echo "Usage: $0 [OPTS] host filename [-o local] [filename...]"
+   echo " -p <port>         set port number"
+   echo " -u <user[,pass]>  login as user using pass as password"
+   echo " -l                get listing of specified directory(ies)"
+   echo " -c                reget specified file(s)"
+   echo " -q                quiet (no output)"
+   echo " -v                verbose (lots of output)"
+   echo " -o <file>         output to this file (default - base name of filename)"
+   exit 1
+}
+
+port=""
+user=""
+list=false
+cont=""
+verb=""
+final="set verbose yes; "
+
+while getopts +p:u:lcv opt
+do
+   case $opt in
+   \?)	 usage;;
+   p)	 port=":$OPTARG";;
+   u)	 user="-u $OPTARG ";;
+   l)	 list=true;;
+   c)	 cont=" -c";;
+   v)	 verb="debug 5; ";;
+   q)	 final="";;
+   esac
+done
+while [ $OPTIND -gt 1 ]
+do
+   OPTIND=$(($OPTIND-1))
+   shift
+done
+host="$1"
+shift
+
+if [ -z "$host" ]; then
+   usage
+fi
+
+cmd="get$cont"
+ok=false
+$list && { cmd="ls"; ok=true; }
+
+for f
+do
+   case "$f" in
+   "*[\"'\\]*")
+      # need to quote
+      f="`echo "$f" | sed 's/\([\\\"'\'']\)/\\\1/g'`"
+      ;;
+   esac
+   cmd="$cmd \"$f\""
+   ok=true;
+done
+
+$ok || { usage; }
+
+exec lftp -c "$final${verb}open $user$host$port; $cmd"

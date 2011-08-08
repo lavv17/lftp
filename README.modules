@@ -1,0 +1,34 @@
+lftp 2.0 and later support loading modules (shared objects) at
+runtime. Use command `module' to load a module.
+
+It also supports loading certain modules (some of protocols and commands)
+automatically on demand. To compile modular lftp use:
+
+   configure --with-modules
+
+You will need GCC and ELF platform (linux, freebsd-3.x, solaris, irix etc).
+
+
+Below are the technical details.
+
+Module is a shared object, after loading it with dlopen(3) lftp does
+dlsym("module_init") and calls this function with parameters argc, argv:
+
+   extern "C"
+   void module_init(int argc, const char * const *argv);
+
+The argv vector contains the arguments passed to `module' command after
+module name. In case of loading module on demand it is empty.
+
+Note: function _init of a module is called automatically by dlopen. It can
+execute constructors if the module is properly compiled with `gcc -shared'.
+
+To load modules on demand lftp uses protocol or command name to find
+module file. For protocols it looks for proto-<PROTOCOL>.so and for
+commands -- cmd-<COMMAND>.so. The modules register the protocols and
+commands they provide with functions FileAccess::Register and
+CmdExec::RegisterCommand.
+
+lftp searches module for any protocol specified in URL in open command,
+and only for certain compile time defined set of commands -- the commands
+that have NULL instead of function pointer in command table in commands.cc.

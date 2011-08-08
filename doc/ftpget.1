@@ -1,0 +1,77 @@
+.\" ftpget.1
+.\"
+.\" This file is part of lftp.
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License , or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.\" $Id: ftpget.1,v 1.4 1999/06/02 19:28:13 lav Exp $
+.\"
+.TH ftpget 1 "02 Jun 1999"
+.SH NAME
+ftpget \- Get files fast from the commandline
+.SH SYNTAX
+.B ftpget
+.RI [ options ] " host filename
+.RB [ "\-o"
+.IR local "] [" filename "] ..."
+.SH VERSION
+This man page documents ftpget version 2.0. Note that ftpget is deprecated
+and it is recommended to use scripting capabilities of \fBlftp\fP.
+.SH "DESCRIPTION"
+\fBftpget\fR is a program that gets the given \fIfilename\fR from the
+indicated \fIhost\fR.  Multiple filenames can be specified. If a
+filename needs to be redirected to another local file then use the
+\fB-o\fR option.
+.SH OPTIONS
+.TP
+.I \-p, \-\-port
+Set port number
+.TP
+.I \-u, \-\-user
+login as user using pass as password
+.TP
+.I \-l, \-\-list
+Get listing of specified directories
+.TP
+.I \-c, \-\-continue
+Reget specified file(s)
+.TP
+.I \-q, \-\-quiet
+Run quietly (no output).
+.TP
+.I \-v, \-\-verbose
+Run verbosely (lots of output).
+.TP
+.I \-\-async-mode
+Use asynchronos mode (faster)
+.TP
+.I \-\-sync-mode
+Use synchronos mode (compatible with bugs)
+.TP
+.I \-o file
+output to local file 'local' (default \- base name of filename)
+
+.SH SEE ALSO
+.BR lftp (1)
+
+.SH AUTHOR
+.nf
+Alexander V. Lukyanov
+lav@yars.free.net
+.fi
+
+.SH ACKNOWLEDGMENTS
+This manual page was originally written by Christoph Lameter
+<clameter@debian.org>, for the Debian GNU/Linux system.

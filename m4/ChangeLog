@@ -1,0 +1,118 @@
+2011-08-01  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.m4: (LFTP_POSIX_FADVISE_CHECK) new check.
+
+2010-11-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.m4: (LFTP_POSIX_FTRUNCATE_CHECK) new check.
+
+2009-10-23  Robert Story <Robert.Story@cobham.com>
+
+	* lftp.m4: newer versions of gcc don't support -fwritable-strings.
+
+2008-08-18  Arkadiusz Miskiewicz <arekm@maven.pl>
+
+	* terminfo.m4: check for libtinfo.
+
+2008-04-06  Nix  <nix@esperi.org.uk>
+
+	* _inttypes_h.m4, absolute-header.m4, include_next.m4,
+	strtol.m4, strtoll.m4: New files, transitive
+	dependencies of gnulib strtoumax and strtoimax modules.
+        * Makefile.am: Updated.
+
+2007-11-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.m4: add a poll check for MacOS X.
+
+2007-06-15	Jakob Truelsen <antialize@gmail.com>
+
+	* needtrio.m4, va_copy.m4: allow cross-compilation.
+
+2007-04-11	Yann Rouillard <yann@pleiades.fr.eu.org>
+
+	* lftp.m4: (LFTP_CXX__BOOL) new test for Sun native compiler.
+
+2006-07-22  Nix  <nix@esperi.org.uk>
+
+        * va_copy.m4 (lftp_VA_COPY): Include <stdlib.h> for exit()
+        prototype in autoconf 2.60+.
+
+        * gnu-source.m4: Fix quoting.
+        * mbstate_t.m4: Fix quoting.
+
+        Synch with gnulib-20060722.
+
+        * Makefile.am: Rebuild from scratch.
+
+        * human.m4: Updated. jm_ -> gl_.
+        * mbrtowc.m4: Likewise.
+        * inttypes_h.m4: Likewise.
+        * mbswidth.m4: Likewise.
+        * uintmax_t.m4: Likewise.
+        * ulonglong.m4: Likewise.
+
+        * filemode.m4: New, required by updated filemode.[ch].
+        * modechange.m4: New, required by updated modechange.[ch].
+
+        * error.m4: New, prerequisite of human, xstrtol.
+        * exitfail.m4: New, prerequisite of argmatch, xalloc-die,
+        xstrtol.
+        * intmax_t.m4: New, prerequisite of strtoimax, xstrtol.
+        * longlong.m4: New, prerequisite of strtoimax.
+        * quote.m4: New, prerequisite of argmatch.
+        * quotearg.m4: Likewise.
+        * stat-macros.m4: New, prerequisite of filemode, modechange.
+        * stdbool.m4: New, prerequisite of human, argmatch, modechange,
+        quotearg.
+        * stdint_h.m4: New, prerequisite of uintmax_t, intmax_t.
+        * strerror_r.m4: New, prerequisite of error.
+        * strtoull.m4: New, prerequisite of strtoumax.
+        * strtoimax.m4: New, prerequisite of xstrtol.
+        * strtoumax.m4: Likewise.
+        * xalloc.m4: New, prerequisite of quotearg, modechange.
+        * xstrtol.m4: New, prequisite of xstrtol.
+        * xstrtoumax.m4: New, prerequisite of human.
+
+2005-07-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* pty.m4: don't check for /dev/ptc on linux; should help for cross-compiling.
+
+2003-12-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* socklen.m4: don't define lftp_socklen_t if socklen_t is available.
+
+2003-12-17  albert chin <china@thewrittenword.com>
+
+	* socklen.m4: define lftp_socklen_t instead of socklen_t.
+	* va_copy.m4: rename VA_ZZZ_COPY section for proper sorting.
+
+2003-05-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ssl.m4: add -R option for shared ssl lib.
+
+2002-03-13  Arkadiusz Miskiewicz <misiek@pld.org.pl>
+
+	* Makefile.am: distribute va_copy.m4
+
+2002-03-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* va_copy.m4: fix copy-by-value test; use VA_ZZZ_COPY tag for
+	  proper autoheader sorting; don't do unneeded tests.
+
+2002-01-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* needtrio.m4: define TRIO_REPLACE_STDIO instead of NEED_TRIO.
+
+2001-12-05	Glenn Maynard <g_ld@zewt.org>
+
+	* gnu-source.m4: new file.
+	* needtrio.m4: add missing def.
+	* va_copy.m4: Add copy-by-value test; always either define VA_LIST
+	  or fail during autoconf.
+
+**** some events missed
+
+2000-12-18	Joerg Dorchain <jd@europeonline.net>
+
+	* ssl.m4: look for ssl library in $prefix.

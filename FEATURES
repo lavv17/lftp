@@ -1,0 +1,58 @@
+LFTP includes the following features (some may be missed in this list):
+
+* FTP and HTTP protocols support.
+* FTP (e.g. TIS FWTK) proxy support.
+* HTTP proxy support.
+* FTP over HTTP proxy support (hftp and CONNECT method).
+* HTTPS and FTPS protocols support using GNU TLS or OpenSSL library.
+* Automatic OPIE/SKEY support in FTP protocol.
+* FXP transfers support (between two FTP servers, bypassing client machine).
+* FTP listings support: unix-style, NT, EPLF, OS/2, AS400, MacWebStar, MLSD.
+* Automatic reconnect and retry of an operation on retriable errors or timeout.
+* IPv6 support in both FTP and HTTP.
+* FISH protocol support. It uses ssh with no special program on server side.
+* SFTP protocol v3-v6 support.
+* HTTP/1.1 keep-alive support.
+* Partial WebDAV support.
+* BitTorrent protocol support (including IPv6).
+* Experimental support for SRV DNS records.
+* SOCKS support (configure option).
+
+* Modification time preservation (if server can report it).
+* `reget' and `reput' support.
+* Built-in mirror and reverse mirror (mirror -R).
+* Transfer rate throttling for each connection and for all connections in sum.
+* Limit for number of connections to the same site. Interruption of background
+  transfer to do a foreground operation when the limit is reached.
+* Socket options tuning: buffer size and maximum segment size.
+* Job queueing.
+* Job execution at specified time.
+* Comprehensive scripting support.
+* URL recognition in most operations.
+* Readline library is used for input.
+* Context sensitive completion.
+* Bash-like prompt extensions.
+* Launching of local shell commands.
+* Suspend support.
+* Bookmarks.
+* Aliases.
+* Saving of last directory on each site. `cd -' to go there.
+* Copying of files between two servers, e.g. between FTP and HTTP.
+* Numerous settings which can be associated with a specific server or a group.
+* Paging of remote files using external program.
+* `zcat' and `zmore' support.
+* Help for commands.
+* Command history saved in a file.
+* Transfer status includes rate and ETA.
+* File listing cache.
+
+* Background jobs (bash-like).
+* Job output redirection to a file or to a program via pipe.
+* Conditional commands depending on exit status of previous one.
+* Loading of binary modules at run time (configure option).
+* `pget' to download a file using several connections. `pget' download
+  can be continued as it saves a status file periodically.
+* `mirror' can download several files in parallel (--parallel option)
+  and a single file with `pget' (--use-pget-n option).
+* Slots. Each slot is a separate session, switch using Meta-{1-9} or `slot'
+  command. Refer to a slot site using pseudo URL slot:name.

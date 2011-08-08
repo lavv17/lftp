@@ -1,0 +1,72 @@
+#!/bin/sh
+
+# lftpget - get a file with lftp
+# Copyright (c) 1999-2000 Alexander V. Lukyanov <lav@yars.free.net>
+# This file is covered by GNU GPL. See file COPYING for details.
+
+# $Id: lftpget,v 1.9 2006/05/18 06:31:27 lav Exp $
+
+if [ $# -eq 0 ]; then
+   echo "Usage: $0 [-c] [-d] [-v] URL [URL...]"
+   echo " -c  continue, reget"
+   echo " -d  debug output"
+   echo " -v  verbose messages"
+   exit 1
+fi
+
+INTRO="set cmd:at-exit;set xfer:max-redirections 16;"
+SCRIPT=""
+verbose=false
+
+while :
+do
+   case "$1" in
+   -*v*) verbose=true
+	 INTRO="$INTRO set cmd:verbose y;"
+	 ;;
+   esac
+   case "$1" in
+   -*d*) INTRO="$INTRO debug 8;";;
+   esac
+   case "$1" in
+   -*c*) CONT=-c;;
+   -*[dv]*) ;;
+   *)	 break;;
+   esac
+   shift
+done
+
+for f
+do
+   need_pass=false
+   case "$f" in
+   "*[\"'\\]*")
+      # need to quote
+      f="`echo "$f" | sed 's/\([\\\"'\'']\)/\\\1/g'`"
+      ;;
+   esac
+   case "$f" in
+   "*://*:*@*")  ;;
+   "*://*@*")    need_pass=true;;
+   esac
+
+   if $verbose; then
+      SCRIPT="$SCRIPT echo Retrieving \`\"$f\"\'...;"
+   fi
+
+   if $need_pass; then
+      SCRIPT="$SCRIPT echo \"$f\" needs password;"
+   fi
+   SCRIPT="$SCRIPT get1 $CONT \"$f\";"
+
+   if $verbose; then
+      SCRIPT="$SCRIPT && echo Got \`\"$f\"\'.;"
+   fi
+done
+
+if [ "$SCRIPT" = "" ]; then
+   echo "Usage: $0 URL [URL...]" >&2
+   exit 1
+fi
+
+exec lftp -c "$INTRO $SCRIPT"

@@ -1,0 +1,13 @@
+Makefile
+Makefile.in
+confpaths.h
+getdate.c
+lftp
+.deps
+.libs
+.le.ini
+*.lo
+*.la
+example1
+example2
+example1-cmd

@@ -1,0 +1,1988 @@
+Version 4.3.2 - 2011-08-??
+
+* fixed fish protocol synchronization when ls fails on the server.
+* fixed compilation on Solaris.
+
+Version 4.3.1 - 2011-06-28
+
+* fixed a coredump in torrent on linux with a ppp interface.
+* translation updated (ru).
+
+Version 4.3.0 - 2011-06-17
+
+* new command `attach' to control a backgrounded lftp.
+* automatically fill torrent:ipv6 setting.
+* slightly improved torrent status display.
+* fixed reconnect interval (it was sometimes uninitialized).
+* several fixes for the case of cmd:parallel>1 (Fernando Gutierrez).
+
+Version 4.2.3 - 2011-04-29
+
+* don't write passwords to transfer_log.
+* new setting mirror:no-empty-dirs.
+* allow `jobs' output to be redirected.
+* don't list not connected torrent peers by default.
+* show torrent validation rate and ETA.
+
+Version 4.2.2 - 2011-04-11
+
+* fixed `cd -'.
+* fixed pget for URLs with special symbols.
+* translations updated (cs, ru).
+
+Version 4.2.1 - 2011-03-30
+
+* new setting ftp:use-ip-tos.
+* optimized torrent validation.
+* fixed fallocate call.
+* got rid of sprintf calls.
+
+Version 4.2.0 - 2011-03-03
+
+* changed ssl:verify-certificate default to yes.
+* check certificate common name in openssl case (code from curl).
+* disable weak algorithms in openssl (Ludwig Nussel <ludwig.nussel@suse.de>).
+* new setting xfer:log-file (Timur Sufiev).
+* support for netkey pasword in ftp (Ryan Thomas <ryan@coraid.com>).
+* added torrent ipv6 support (new setting torrent:ipv6)
+* don't accept new connections when no torrent can accept them.
+* allow to specify job numbers in `jobs' command.
+* fixed a segfault in pget when an error happens on second chunk.
+
+Version 4.1.3 - 2011-01-17
+
+* fixed a coredump in torrent (introduced in 4.1.2).
+
+Version 4.1.2 - 2010-12-31
+
+* new command ln [-s], supported by FTP (SITE [SYM]LINK), FISH, SFTP, and
+  locally via file: schema.
+* create remote symlinks in mirror -R if supported by server.
+* detect and remove duplicate peers in torrent.
+
+Version 4.1.1 - 2010-11-24
+
+* fixed job command line display.
+* fixed some warnings and compilation with old gcc compilers (Openwall).
+
+Version 4.1.0 - 2010-11-22
+
+* send path components to ftp server separately, unless TVFS is in FEAT reply.
+* save pget status at the very beginning of pget execution.
+* allow mirror pget continuation (mirror -c --use-pget).
+* allow multiple torrent startup at once (e.g. torrent *.torrent).
+* pre-allocate disk space in torrent, if posix_fallocate(3) is supported.
+* new command prefix `local'. It makes the following command use local
+  session instead of remote.
+* added torrent multi-tracker support.
+* fixed convert-mozilla-cookies cookie duplication.
+
+Version 4.0.10 - 2010-09-01
+
+* use cached file set, don't parse file listing again.
+* updated convert-netscape-cookies.
+* fixed a problem with zeroed errno in http.
+* fixed coredump on mirror --log=file when the file cannot be opened.
+* translations updated (de, ru).
+
+Version 4.0.9 - 2010-06-10
+
+* torrent: don't try to re-download invalid piece from the same peer.
+* added a short lftp.conf(5) man page (Jiri Skala).
+* fixed a problem with zeroed errno (Gabriele Balducci).
+* fixed status of mget from file: schema.
+* fixed a compilation problem on AIX (Claus K. Larsen).
+
+Version 4.0.8 - 2010-05-24
+
+* fixed get/mget -c when xfer:clobber is off.
+* fixed file verification in pget.
+* fixed ftp encoding for servers with LANG but without UTF8 feature.
+
+Version 4.0.7 - 2010-04-29
+
+* make xfer:clobber off by default.
+* limit number of attempts to upload a file (net:max-retries).
+* handle 426 ftp reply to STOR specially.
+* retry FEAT after login even after non-standard 5xx reply.
+
+Version 4.0.6 - 2010-03-25
+
+* use O_EXCL flag when xfer:clobber is off.
+* better validation of server-provided file name.
+* new setting xfer:auto-rename (off by default).
+* new setting ftp:ssl-copy-sid (for some broken servers).
+* fixed CCC ftp command to shutdown SSL connection properly.
+* fixed `pget -c' on complete files.
+
+Version 4.0.5 - 2009-12-21
+
+* added support for lighttpd listings.
+* fixed sftp rename.
+* fixed a core dump on `kill all' with pget.
+* fixed interrupting of a torrent with unresponsive tracker.
+* Czech translation updated (Petr Pisar).
+
+Version 4.0.4 - 2009-11-19
+
+* added dnssec support (Robert Story).
+* new setting cmd:stifle-rl-history to limit command history size.
+
+Version 4.0.3 - 2009-10-20
+
+* fixed exit code of mget/mput.
+* fixed compilation on some systems.
+* fixed crash of `cls -s' on MacOS X x64.
+
+Version 4.0.2 - 2009-09-23
+
+* torrent: don't try to connect back to peers which connected to us.
+
+Version 4.0.1 - 2009-09-17
+
+* ignore `Status of' line in STAT output (ftp).
+* fixed handling of files starting with a tilde in ftp.
+* fixed an infinite bind-loop in ftp.
+* fixed iconv translit usage for NetBSD.
+
+Version 4.0.0 - 2009-09-11
+
+* added torrent client.
+* automatically set time precision on FAT-like FS (linux only).
+* fixed timestamps in `mirror --ignore-time'.
+
+Version 3.7.15 - 2009-07-21
+
+* fixed http ls when a file name has encoded characters (Jiri Skala).
+* fixed core dump on `help' command.
+
+Version 3.7.14 - 2009-05-15
+
+* use line buffering for mirror log file.
+* fixed `chmod' command mode calculation.
+* fixed status line of `repeat' command.
+* fixed sftp charset translation in file listings.
+* fixed output ordering by flushing stdout before calling external programs.
+* fixed coredump in sftp when ssh process gets killed.
+
+Version 3.7.13 - 2009-04-30
+
+* fixed a coredump in some commands printing to screen.
+
+Version 3.7.12 - 2009-04-28
+
+* fixed core dump on `mput -d' command.
+* fixed a core dump on `kill' command.
+* fixed mkdir -p for sftp protocol.
+* fixed some signed/unsigned conversion bugs.
+
+Version 3.7.11 - 2009-03-20
+
+* add dynamic commands in abc order (as output by help).
+* fixed eta display (broken in 3.7.10).
+
+Version 3.7.10 - 2009-03-18
+
+* fixed pget -c.
+* fixed `exit kill' command.
+* show sleep time left in status.
+* make ftp:prefer-epsv off by default.
+* recognize a specific error message and turn off REST command.
+
+Version 3.7.9 - 2009-03-03
+
+* new setting ftp:prefer-epsv.
+* add support for IPv6 scope for link-local addresses (Arkadiusz Miskiewicz).
+* fixed compilation on OpenBSD (Kevin Lo).
+* fixed parsing of NT unix-like listings where hour is one digit.
+* gnulib sources updated, vsnprintf-posix module imported.
+
+Version 3.7.8 - 2009-01-23
+
+* fixed upload via ftps in encrypted mode.
+* gnulib sources updated.
+
+Version 3.7.7 - 2008-12-12
+
+* new ftp proxy auth type: proxy-user@host.
+* new setting ftp:trust-feat (default no).
+* changed GPL version to 3 (as gnulib modules require it).
+
+Version 3.7.6 - 2008-11-17
+
+* fixed memory corruption in zmore.
+* fixed compilation on some systems.
+
+Version 3.7.5 - 2008-11-07
+
+* new setting cmd:move-background-detach.
+* added support for number suffixes in settings (k - kibi, m - mebi, etc).
+* shutdown SSL connection before closing the socket on upload.
+* fixed mirror -RP.
+* fixed another problem with `kill all'.
+* fixed sftp directory listing with unknown entries.
+* updated gnulib.
+
+Version 3.7.4 - 2008-08-06
+
+* fixed a coredump in `kill all'.
+* fixed compilation problems on some systems.
+* used getdate from gnulib.
+
+Version 3.7.3 - 2008-05-23
+
+* added support for 2-argument SITE UTIME and MFMT commands.
+* added a workaround for paramiko sftp server.
+* included newer gnulib sources using gnulib-tool.
+* Polish translation updated (Jakub Bogusz).
+* fixed German translation encoding.
+
+Version 3.7.2 - 2008-05-07
+
+* fixed core dump when sending http cookies.
+* fixed assertion failure for ftp over http proxy (CONNECT mode).
+* fixed cwd tracking for ftps.
+
+Version 3.7.1 - 2008-04-18
+
+* use time 12:00:00 instead of 12:00:30 when the time is unknown.
+* make sftp:use-full-path on by default.
+* fixed sftp du on non-existent files.
+* GNU Lib sources updated (Nix <nix@esperi.org.uk>).
+* fixed compilation on cygwin (Arkady Sherman <Arkady.Sherman@ksu.ru>).
+* French translation updated (Alain PORTAL <alain.portal@free.fr>).
+* German translation updated (Moritz Moeller-Herrmann <mmh@gmx.net>).
+
+Version 3.7.0 - 2008-03-07
+
+* new setting ftp:proxy-auth-type and two new ftp proxy modes (joined-acct, open)
+  (partly based on patch from David Wolfe <davidw@wolfeden.org>).
+* don't add the same network address multiple times; report resolved addresses.
+* added new open -s option; help for "slot" command (Laurent MONIN <zas@norz.org>).
+* added a workaround for proftpd NLST bug.
+* added a workaround for servers sending single NL.
+* handle host key verification error in fish and sftp.
+* handle http codes 307 and 303.
+* fixed a core dump when doing "open host>file".
+* fixed CCC handling in secure ftp.
+* fixed spinning when cmd:fail-exit is true in a script.
+* included zh_HK translation (Abel Cheung <abelcheung@gmail.com>).
+
+Version 3.6.3 - 2008-01-28
+
+* new setting sftp:use-full-path to send full path instead of home-relative.
+* don't use sftp FSETSTAT when not needed.
+* fixed core dump on `kill all' with mirror.
+* fixed sftp:charset setting.
+* fixed debug printing of sftp file handle.
+* fixed unsetting of fish:charset setting.
+* fixed compilation on systems lacking wcwidth.
+
+Version 3.6.2 - 2008-01-03
+
+* added a workaround for ftp servers which don't open data connection in
+  certain conditions.
+* don't decode URL escapes in get/put when no URL schema used.
+* fixed counting of file removal errors in mirror.
+* fixed a 2-byte buffer overflow when showing transfer percents.
+* fixed a problem with incorrect port/host name in http requests.
+* fixed coredump in du command with long paths on some systems.
+* fixed coredump in html parser on empty links.
+* fixed compilation on some systems.
+
+Version 3.6.1 - 2007-11-09
+
+* repeat --weak option to terminate the loop automatically when exiting lftp.
+* ftp:use-stat-for-list is off by default.
+* slot command fixed.
+* fixed timeout handling in ftp.
+* french and polish translations updated.
+
+Version 3.6.0 - 2007-10-19
+
+* major code cleanup.
+* new setting ftp:use-stat-for-list allows faster directory listing.
+* new command `eval' with -f option allows complex aliases.
+* send encoded parts of ftp URLs untranslated to ftp server.
+* new mirror options --on-change, --depth-first, --no-empty-dirs, --ascii.
+* new mirror option --only-existing (Damon Harper).
+* new setting xfer:log, log successful transfers if true to ~/.lftp/tarnsfer_log.
+* new setting ssl:check-hostname.
+* fixed cls exit code in case of an error.
+
+Version 3.5.15 - 2007-10-19
+
+* fixed timeout handling when waiting for 150 or 125 ftp reply.
+* fixed a bug occuring when turning off proxy server setting.
+
+Version 3.5.14 - 2007-08-31
+
+* handle ftp reply with code 125 same as code 150 (Craig Ruff).
+* french translation updated (Alain PORTAL).
+
+Version 3.5.13 - 2007-08-23
+
+* fixed ftps not to access data socket before 150 reply.
+* fixed sftp to send properly sized packets on upload.
+* fixed infinite retrying on upload.
+* fixed compilation without iconv.
+* fixed buffering in ascii mode transfers.
+
+Version 3.5.12 - 2007-07-26
+
+* hex-encode all non-ascii characters in URLs.
+* allow cross-compilation without iconv (Jakob Truelsen).
+* french translation updated (Alain PORTAL).
+
+Version 3.5.11 - 2007-04-11
+
+* fixed mirror for MDTM-less ftp servers.
+* fixed readline prompt for \[\] (visible on win32).
+* fixed compilation with Sun native compiler (Yann Rouillard).
+
+Version 3.5.10 - 2007-03-26
+
+* fixed core dump when doing ls on file: connection.
+* fixed core dump when doing pget to write-protected directory.
+
+Version 3.5.9 - 2007-01-09
+
+* fixed `mirror --script' which generated improperly quoted shell commands
+(potential security vulnerability, when someone executes the resulting script).
+
+Version 3.5.8 - 2006-12-28
+
+* fixed `sleep' command.
+
+Version 3.5.7 - 2006-12-08
+
+* Fixed a spurious timeout when uploading a file.
+
+Version 3.5.6 - 2006-10-12
+
+* fixed a coredump in mget.
+
+Version 3.5.5 - 2006-10-05
+
+* new settings cmd:parallel and cmd:queue-parallel to set number of jobs
+  executed in parallel in non-interactive mode and in a queue.
+* new mirror option --skip-noaccess and setting mirror:skip-noaccess.
+* fixed a coredump when lftp was compiled with a non-gcc compiler.
+* fixed compilation when stdbool.h is missing.
+* fixed a failed assertion.
+* fixed coredump when doing `ls ..' on a http site.
+* fixed memory and file descriptor leak in mget/mput.
+
+Version 3.5.4 - 2006-08-09
+
+* new setting mirror:include-regex.
+* load ssl keys for protected data connection as well; use new option
+  ftp:ssl-data-use-keys to disable it.
+* fixed human-readable options of du and cls.
+* fixed compilation on certain systems.
+
+Version 3.5.3 - 2006-08-04
+
+* fixed a core dump in ftps with gnu tls.
+* fixed random queue duplication.
+* fixed compilation with modules and socks.
+* fixed installation with modules.
+* added configure --enable-packager-mode option (Daniel Black
+  <dragonheart@gentoo.org>).
+
+Version 3.5.2 - 2006-07-28
+
+* strip CRs from ls output, as before.
+* updated help for pget.
+* fixed mirror -c and get -c hang.
+* fixed mirror timestamps for hftp and http.
+* fixed mirror for files starting with a tilde.
+* fixed use of PROPFIND when http:use-propfind is no.
+* fixed directory listing and globbing for ftp over http proxy.
+* updated gnulib sources (Nix <nix@esperi.org.uk>).
+
+Version 3.5.1 - 2006-07-05
+
+* fixed a coredump in pget.
+
+Version 3.5.0 - 2006-07-05
+
+* implemented pget -c (continue) with a status file. (`set pget:save-status never'
+  to disable periodic saving of the status).
+* new options of `repeat' command: --count (-c), --delay (-d), --while-ok, --until-ok.
+* listing and dns cache optimized; added per host enable/disable for caching.
+* made ABOR more robust.
+* added support for ALLO command and ftp:use-allo setting.
+* use binary mode for `quote' (e.g. `quote POST' for http).
+* sped up uploading in fish protocol.
+* fixed coredump in pget when terminal lacks prev_line capability.
+* fixed pget for URLs with question sign.
+
+Version 3.4.7 - 2006-05-18
+
+* get1 can now automatically rename files to server suggested file name.
+* new settings fish:charset and sftp:charset (for sftp version<4).
+* fixed http chunked transfers with explicit Content-Length.
+* fixed compilation with sun c++ compiler.
+* fixed compilation without ssl.
+
+Version 3.4.6 - 2006-04-25
+
+* fixed opening sites with explicitly specified port (it could either use
+  default port or spin).
+* fixed ftps over http proxy with CONNECT method.
+
+Version 3.4.5 - 2006-04-22
+
+* handle ftp PRET errors.
+* send ssh password twice if needed, this fixes a problem with encoded
+  secret keys.
+* updated programming examples.
+* fixed cross-references between jobs/tasks libraries and lftp.
+
+Version 3.4.4 - 2006-04-06
+
+* new setting mirror:dereference.
+* new exit options: top, kill.
+* fixed stalling when uploading empty files with ftps.
+* fixed lftp exit code when cmd:at-exit is set.
+* fixed a rare spinning.
+
+Version 3.4.3 - 2006-03-15
+
+* don't create target file when source file does not exist.
+* show done jobs before exit.
+* changed default for http:use-propfind to no.
+* fixed condition for getting exact time for cls.
+* fixed coredump with non-absolute http redirection.
+* fixed coredump when exiting lftp with a done job.
+
+Version 3.4.2 - 2006-02-08
+
+* fixed a coredump in cls (option parsing).
+* import TIME_STYLE environment variable to cmd:time-style.
+
+Version 3.4.1 - 2006-02-07
+
+* new cls option --time-style, new setting cmd:time-style.
+* use PROPFIND first to check directory existence (http).
+* fixed CCC - don't try to shutdown ssl connection gracefully.
+* fixed an abortion when completing with cmd:remote-completion set to false.
+
+Version 3.4.0 - 2005-12-31
+
+* flush cache when changing ftp:charset.
+* show all queued commands on `queue' command.
+* support open ranges for `mirror --size-range'.
+* new setting dns:max-retries.
+* change dns:fatal-timeout setting to accept time interval suffixes.
+* prefer getaddrinfo over gethostbyname2.
+* treat GNUTLS_E_UNEXPECTED_PACKET_LENGTH as EOF indicator - this fixes
+  secure ftp with ProFTPD server.
+* fixed netrc usage when no user name is given.
+
+Version 3.3.5 - 2005-12-02
+
+* added mirror --older-than, --size-range and --max-errors options.
+* improved CCC support - allowed protected transfers after CCC.
+* added support for sftp v5 and v6 (experimental).
+* added configure option --with-pager.
+* fixed file uploading via protected ftp with openssl.
+* fixed compilation on cygwin.
+* fixed compilation with sun c++.
+
+Version 3.3.4 - 2005-11-15
+
+* added support for CCC command and ftp:ssl-use-ccc setting.
+* remove password from URLs when showing them on status line.
+* fixed `open -u' with an URL.
+* fixed a rare spinning.
+* fixed compilation on HP-UX.
+* fixed handling of 334 reply to AUTH command.
+
+Version 3.3.3 - 2005-10-21
+
+* added support for LFTP_HOME environment variable.
+* added workaround for proftpd's empty directories.
+* fixed `open file:/path'.
+* fixed some bugs introduced in 3.3.2.
+
+Version 3.3.2 - 2005-10-17
+
+* fixed a coredump caused by double-free.
+
+Version 3.3.1 - 2005-10-12
+
+* new setting xfer:destination-directory (default for -O option of get, mget).
+* fixed path+file combination in http - avoid double slash.
+* fixed url composition in hftp, a slash was missed.
+* fixed `open ftp.example.com/path'.
+* fixed a coredump when a bookmark contained lots of quotable characters.
+* fixed a coredump when an error happened while loading CA or CRL certificates.
+* fixed uploading of empty files via ftp with ftp:ssl-protect-data on.
+* fixed exit code of slot command.
+* fixed a coredump with `kill all'.
+* fixed path extraction from html files (broken in 3.3.0).
+
+Version 3.3.0 - 2005-08-12
+
+* now plain files can be current location in http protocol.
+* report total bytes transferred and transfer rate in mirror.
+* included a script for file verification (verify-file). It can check crc32,
+  md5sum, gzip, bzip2, rpm, unzip and other things.
+* new settings xfer:verify, xfer:verify-command. When xfer:verify is on,
+  verify-command is launched after successful file transfer (to local disk)
+  to check the file consistency.
+* fixed `source -e' to allow subprocess reading from the terminal.
+* fixed `source' to return error exit code if the file is unreadable.
+* fixed `source' on large command files - some commands were truncated.
+
+Version 3.2.1 - 2005-05-25
+
+* fixed handling of file names starting with a tilde in sftp protocol.
+* fixed minor problem with `lftp -u user --help'.
+* fixed compilation with modules.
+* fixed compilation without OpenSSL and GnuTLS.
+* fixed compilation with certain compiler versions.
+* relaxed version requirement on GnuTLS.
+
+Version 3.2.0 - 2005-05-14
+
+* added support for gnutls library. Now OpenSSL is only used if explicitly
+  configured with option --with-openssl, and by default gnutls is used.
+* added parser for AS/400 ftp listing.
+* fixed a coredump in mirror when symbolic link target is unknown.
+* fixed tilde expansion in get -O argument.
+
+Version 3.1.3 - 2005-04-15
+
+* added mirror --loop option to re-mirror until no changes found.
+* fixed mirror creating too many children mirrors.
+* fixed cls and mirror with http backend, when PROPFIND returns 404 error.
+* fixed mirror --use-cache with sftp backend.
+* fixed a rare hang in sftp.
+
+Version 3.1.2 - 2005-04-04
+
+* cache negative results, new setting cache:expire-negative.
+* set http:use-propfind and http:use-mkcol automatically if those methods
+  are unsupported, so that they will not be retried.
+* handle DAV:creator-displayname in PROPFIND parser.
+* parse incorrect XML returned for PROPFIND requests as HTML.
+* fixed coredump and href handling in PROPFIND result parsing.
+* fixed sftp transfer of growing files.
+* fixed compilation with socks5 on freebsd.
+
+Version 3.1.1 - 2005-03-23
+
+* new setting ftp:ignore-pasv-address.
+* use IP TOS for ftp connections.
+* new `quote' command extentions for http: `quote move' and `quote copy'
+  for DAV operations. E.g. `quote copy index.html http://x.org/index2.html'.
+* fixed timeout handling when waiting for FXP source confirmation.
+* fixed http DAV method MOVE (use full URL in Destination; fixed stall).
+
+Version 3.1.0 - 2005-02-25
+
+* http DAV support added (PROPFIND, MKCOL, DELETE, MOVE).
+* new setting mirror:set-permissions.
+* added cls -r option (reverse sorting).
+* ignore non fatal STAT and FSTAT errors in sftp.
+* fixed globbing for file names starting with a tilde.
+* fixed fish and sftp for solaris 9 ssh.
+* fixed SITE UTIME and overloaded MDTM in ftp protocol.
+* fixed spinning when local disk is full.
+* fixed passive ftp mode for some broken servers.
+* fixed wrong year in cls output when the time is several hours in the future.
+* fixed Last-Modified parsing in non-english locales.
+* optimized memory usage for large directories.
+* compilation fixes for some compilers.
+
+Version 3.0.13 - 2004-12-20
+
+* man page updated.
+* fixed mirror option --no-symlinks (sense reversed).
+* fixed a coredump.
+
+Version 3.0.12 - 2004-12-03
+
+* new setting ftps:initial-prot to workaround broken ftps servers.
+  Default is empty so that lftp would assume it is not known, and if
+  PROT command is not implemented then clear data transfers would be
+  assumed.
+* ftp over http proxies with CONNECT method can now use proxy authorization.
+* mirror fixed not to chmod unchanged files (should help incremental backups).
+* fixed excluding files for sftp protocol (mirror -x).
+* fixed transfer of growing files over fish protocol.
+* fixed mkdir over hftp.
+* fixed delay between connection attempts (broken in 3.0.10).
+* Polish translation updated.
+
+Version 3.0.11 - 2004-11-03
+
+* new mirror option --no-symlinks.
+* implemented transfer continue in fish protocol (thanks to Loic Le Loarer).
+* improved completion for aliases.
+* fixed file removing in mirror --delete-first.
+* fixed FXP transfer mode (broken in 3.0.7).
+
+Version 3.0.10 - 2004-10-20
+
+* better mirror -R completion added.
+* fixed upload retry corruption bug.
+* fixed rare coredump in parallel mirror.
+* don't retry on wrong password in fish and sftp protocols.
+* don't send empty Cache-Control http header.
+* don't unconditionally chmod files in mirror.
+
+Version 3.0.9 - 2004-09-20
+
+* fixed a hang up when filtering output via an external command (the bug
+  appeared in 3.0.8).
+* don't use ftp:port-ipv4 in FXP mode.
+
+Version 3.0.8 - 2004-09-14
+
+* made http:cache-control host specific; added hftp:cache-control.
+* new setting http:authorization.
+* fixed sftp and fish protocols working with FreeBSD servers.
+* fixed transfer of zero length files when modification time is not known.
+* fixed put over fish protocol when source file grows.
+* fixed a core dump in FXP transfer mode.
+
+Version 3.0.7 - 2004-08-09
+
+* slow-start in sftp implemented.
+* ftp proxy which expects user@proxy-user@host is now supported with new
+  boolean setting ftp:proxy-auth-joined.
+* key passphrase for sftp is now supported.
+* new setting http:cache-control to set corresponding request header.
+* don't send FEAT to ftp proxy before login.
+* fixed timeout handling after FEAT command.
+* fixed find and du to show status line correctly when output goes to screen.
+* fixed shell (!) command to return proper error code.
+* fixed binding ftp data socket in non-passive mode.
+
+Version 3.0.6 - 2004-06-12
+
+* completion for bm: URL scheme implemented.
+* fixed `du' command with large files >2Gb.
+* fixed saving old directory when no cd verification is performed.
+* compilation on HP-UX fixed.
+
+Version 3.0.5 - 2004-05-31
+
+* new URL scheme bm:bookmark_name[/path] to specify bookmarked URLs.
+* fixed encrypted FXP in certain server combinations.
+* fixed ftp retrying on 4xx code when data connection was already closed.
+* fixed compilation without SSL.
+
+Version 3.0.4 - 2004-05-24
+
+* encrypted FXP is now supported with CPSV or SSCN commands.
+* new setting ftp:ssl-protect-fxp (default is no).
+* cpu usage optimizations, sftp speed-up.
+* fixed uploading of zero sized files over ftp.
+* fixed coredump when AUTH SSL was used and the server refused to setup
+  ssl connection.
+* fixed coredump on unexpected extra ftp server reply.
+* added workaround for ftp servers violating RFC2389 (format of FEAT reply).
+* added workaround for ftp servers which refuse to switch to utf-8 before login.
+* fixed compilation on systems without strtok_r.
+
+Version 3.0.3 - 2004-04-23
+
+* cls for sftp can now print symbolic user, group and number of hard links.
+* make `cd dir/' check if dir exists.
+* follow ftp:ssl-force even if ftp server does not advertise AUTH in FEAT reply.
+* fixed excessive STAT commands in FXP transfer.
+* fixed core dump when disconnecting with active FXP transfer.
+* fixed memory leak in sftp uploading and file renaming.
+
+Version 3.0.2 - 2004-04-15
+
+* support for ftp commands CLNT, HOST and OPTS MLST added.
+* ftp command MLSD disabled by default as it does not return symlink info.
+* added workaround for MLSD format bug in NcFTPd.
+* fixed spinning in cls when output stalls (e.g. cls|less).
+* fixed coredump when ftp:proxy was specified without protocol name.
+* fixed assertion failure when using ftp over http proxy with CONNECT method.
+* fixed timeout message in sftp when it is disconnected.
+* fixed compilation on systems lacking atoll function.
+
+Version 3.0.1 - 2004-04-06
+
+* fixed timeout handling in sftp.
+* fixed a coredump in case of some network errors.
+* fixed compilation with gcc-2.95.
+* fixed compilation with socks.
+* fixed compilation without ssl.
+
+Version 3.0.0 - 2004-04-02
+
+* sftp protocol support (use `sftp://user@host' URLs). sftp is a protocol
+  implemented as ssh2 subsystem, it is binary and works over a secure channel.
+* faster directory caching, no re-parsing each time.
+* ftp now follows RFC2640; FEAT, LANG, UTF8 support; new settings ftp:use-feat
+  and ftp:lang.
+* ftp can set modification time on remote files using either SITE UTIME or two
+  argument MDTM command (off by default); new settings ftp:use-site-utime and
+  ftp:use-mdtm-overloaded.
+* ftp can now use MLSD to get machine parseable file listing (ftp:use-mlsd).
+* charset translation in ftp protocol, new setting ftp:charset.
+* new mirror option --delete-first to remove old files before transferring new
+  files. By default mirror removes old files after the transfers.
+* now mirror can replace directories with plain files or symbolic links if
+  --delete (-e) option is specified.
+* ftp can now use CONNECT method of http proxies (when ftp:use-hftp is false).
+* mirror open --newer-than can now take time specification like that of at(1)
+  command, like `week ago', `now-7days' or `2004-01-01'.
+* new mirror options --ignore-size and --only-missing.
+* new mirror option --use-pget[-n=N] to make mirror use pget to transfer files.
+* debug output can now include date and time on each line (debug -t). When lftp
+  goes to background, this is turned on by default, along with pid (-p) and
+  context (-c). Try `debug -tcp' and see.
+* get1 command has now --source-region and --target-position options to get
+  a part of a file.
+* better handling of ~/.netrc - multiple logins for the same machine are
+  allowed, proper password is taken automatically from netrc if a login matches.
+* pget has now a progress bar which shows file download state.
+* new source option -e to execute output of an external program.
+* chmod -R fixed.
+* fixed cache invalidation when file name being invalidated ends with a slash.
+
+Version 2.6.12 - 2004-01-23
+
+* fixed put over https protocol.
+* fixed spinning in bg mode when an external program was still running at
+  the time of moving to background.
+* fixed compilation with IRIX MIPSPro compiler.
+
+Version 2.6.11 - 2003-12-22
+
+* fixed mirror for empty files.
+* a rare coredump fixed in http 0.9 handling, when first line of reply is empty.
+* compilation fixes for compilers other than gcc.
+* translations update.
+
+Version 2.6.10 - 2003-12-11
+
+* security fixes in html parsing code.
+* fxp between ftps session is now possible (unencrypted yet).
+* fixed a rare bug with access to freed memory in ftp.
+* fixed a bug in mirror, now it does not incorrectly append directory name
+  when target directory is the root.
+* fixed compilation on AIX.
+* Polish translation updated.
+
+Version 2.6.9 - 2003-11-19
+
+* new setting ftp:ssl-protect-list for encrypting file listings selectively.
+* don't use PRET again if it is not supported.
+* added cls --sort=time option (alias for sort=date).
+* don't set file modification time if it grew while downloading.
+* new setting cmd:verify-path-cached.
+* added long options for `open' command.
+
+Version 2.6.8 - 2003-10-10
+
+* better multibyte character support.
+* experimental ftp protocol command PRET added; new setting ftp:use-pret.
+* unblock SIGCLD signal when running external programs.
+* fixed included readline compilation.
+* fixed compilation with socks.
+
+Version 2.6.7 - 2003-08-29
+
+* new settings ftp:use-size, ftp:use-mdtm, ftp:use-telnet-iac.
+* optimized writing to local disk by increasing write size.
+* fixed size catching from 150 ftp server reply.
+* correct exit code of commands help, lftp (reported by trancefx).
+* hftp improvements from Johannes Zellner: CSM proxy support; colored listings;
+  do not print hour:minute if not known.
+* translations updated.
+* fixed a bug with saving last working directory for a site.
+* fixed a bug with FXP of zero sized files.
+* fixed a bug happening when a 5xx reply is received after QUIT is sent.
+* readline updated to version 4.3.
+
+Version 2.6.6 - 2003-05-28
+
+* raised sane mirror connection limit to 64.
+* fixed hftp file information retrieval when use-head is off (reported by
+  Robert A. Thompson).
+* ignore zero size reported by SIZE (for sunsolve.sun.com).
+* fixed a bug with exclude/include of directories in reverse mirror.
+* several bugs with mirror --script fixed (reported by Olaf Kaehler).
+* fixed a bug with unterminated string in HTML parsing; add wwwoffle support
+  (AIDA Shinra).
+* fixed a bug with ssl settings pointing to files and directories (Diego
+  Reyes).
+* fixed a bug with sending empty path in HTTP protocol (Geoffrey Lee).
+* fixed catching of file size from ftp server message 150.
+* fixed hftp with password - now it should work with all proxies as it
+  sends password in URI even when Authorization header is used.
+* new debugging command .tasks to show number of tasks.
+* now lftp does not load/save histories until it interacts with user.
+  E.g. `lftp -c command' does not update ~/.lftp/rl_history now.
+
+Version 2.6.5 - 2003-02-28
+
+* new mirror options --log=<file> and --script=<file> to produce lftp commands
+  equivalent to the actions done (log) or to be done (script) by mirror.
+  `-' as file name means stdout.
+* fixed a dead-lock when resuming FXP with passive source.
+* re-get file size and date after HTTP redirect.
+* added workarounds for proftpd.
+* handle EPIPE (Broken pipe) error as temporary network error.
+* fixed a dead-lock in HTTP retrieval after redirect.
+* added cls option --sort=date (Oskar Liljeblad).
+* fixed compilation on OpenBSD and older Solaris.
+* fixed handling of symbolic links in find.
+* lftp -f and -c options can now be combined with -d.
+* fixed slot handling in non-interactive mode.
+* fixed large file support in cat command.
+* fixed dante socks compilation (now lftp does not use poll with dante).
+* fixed data connection abort with ssl connection to wu-ftpd.
+
+Version 2.6.4 - 2002-12-26
+
+* new settings net:socket-bind-ipv4 and net:socket-bind-ipv6 to bind sockets
+  to a specific address (useful to select a specific network interface to use).
+* now reget does not start transfer if not needed.
+* ssl:verify-certificate set to no by default.
+* fixed ~ handling in find and mirror.
+
+Version 2.6.3 - 2002-11-04
+
+* fixed wrong eta calculation.
+* fixed cls when redirected output file was not writable.
+* fixed uploading of zero sized files over fish protocol.
+* fixed timezone manipulation on linux.
+* fixed a compilation problem on hp/ux.
+
+Version 2.6.2 - 2002-09-10
+
+* readline history is now stored in a file.
+* handle full-disk condition as fatal if the file is removed.
+* recursive deletion (rm -r) fixed. It used DELE instead of RMD.
+* fixed a rare core dump, usually happening on completion.
+* fixed compilation with modules.
+
+Version 2.6.1 - 2002-08-10
+
+* fixed core dump when handling Content-Disposition.
+* fixed core dump when specifying zero queue position (Glenn Maynard).
+* fixed ETA rounding - it was possible to see 1h60m (reported by Igor Zhbanov
+  <bsg@uniyar.ac.ru>).
+* a number of compile problems fixed.
+
+Version 2.6.0 - 2002-08-02
+
+* separated rate limitations for download and upload (set limit-rate 200:100).
+* added SSL certificate support and several SSL related settings.
+* connection slot support. Now you can switch sessions with Meta-[123...]
+  or with command `slot <name>'. You can also use slot:<name> as a pseudo-URL.
+* per-slot queues. Now you can have several queues for the same site using
+  different slots.
+* queue can be stopped now. Use `queue' with no args to create a stopped
+  queue, `queue start' to run it, `queue stop' to stop it. When you exit lftp,
+  the queue will start automatically.
+* mirror now appends source base name to target if target ends with a slash.
+* improved hftp:proxy setting. Now it defaults to http:proxy and is not
+  needed if ftp:proxy is set to `http://...'.
+* fixed mirror in case of server without MDTM command (Glenn Maynard).
+* mirror could start multiple transfers if it could not cd to a direcory,
+  even without --parallel (test case by Glenn Maynard).
+* fixed fd leak in `(commands)' structure (Glenn Maynard).
+* fixed memory leak in '(commands)'.
+
+Version 2.5.4 - 2002-06-05
+
+* fixed double free problem introduced in version 2.5.3.
+* compilation fixes (Glenn Maynard).
+
+Version 2.5.3 - 2002-06-02
+
+* security fix: long error message from ftp server could cause buffer overflow.
+* fixed ftp:fix-pasv-address. Now the address should be fixed properly.
+* handle HTTP `100 Continue' in any open mode.
+* status line fixed: don't write a space to last screen column.
+* security fix: check that addresses have proper length (Michail Litvak).
+* migrated to gettext-0.11.2 and automake-1.6.1.
+
+Version 2.5.2 - 2002-05-07
+
+* new setting ftp:fxp-force to disable copying data over client.
+* new settings cache:enable, cache:expire and cache:size for cache control.
+* create parent directories of target mirror directory.
+* ignore any error 550 for NLST if no file name is given.
+* fixed ftp request to http proxy - port number could be missing.
+* change http request to GET after redirection from a POST request.
+* handle relative redirect location from a POST request correctly.
+* try next peer address if server disconnects without greeting message.
+* a memory leak fixed (Glenn Maynard).
+* fixed compilation on case-insensitive systems.
+
+Version 2.5.1 - 2002-04-16
+
+* translations updated.
+* fixed a failed assertion when cls redirection could not create file.
+* fixed a rare coredump when host name becomes unresolvable.
+* fixed occasional spinning in mirror.
+* fixed some bugs in trio_sscanf function.
+* fixed flood of waitpid errors when lftp forks into background.
+
+Version 2.5.0a - 2002-03-12
+
+* make it compile without ssl.
+
+Version 2.5.0 - 2002-03-06
+
+* mirror understands URLs now. It can mirror between two ftp sites, for
+  example: `mirror ftp://site1/path1 ftp://site2/path2'. It will use FXP
+  if possible.
+* mirror can now upload/download certain files first based on pattern list,
+  new setting mirror:order contains the pattern list.
+* mirror has now options -X and -I which allow to specify exclude and include
+  as shell glob patterns. E.g. `mirror -X *.bak'.
+* mirror can now set file owner/group if it can (--allow-chown option).
+* mirror options -t, -T, --time-prec and --loose-time-prec are now obsolete,
+  so are settings mirror:time-prec and mirror:loose-time-prec.
+* find can now understand URLs and plain files specified on command line
+  (Glenn Maynard, Alexander Lukyanov)
+* chmod can now handle symbolic modes and can work recursively (Glenn Maynard).
+* now plain ls can also use color for file names.
+* new setting xfer:disk-full-fatal. When it is false, lftp waits for more disk
+  space instead of cancelling transfers in case of full disk (Glenn Maynard,
+  Alexander Lukyanov).
+* cls improved (Glenn Maynard).
+* `bookmark list' hides passwords now.
+
+Version 2.4.10a - 2002-03-10
+
+* missed file triostr.h was added.
+
+Version 2.4.10 - 2002-02-26
+
+* newer trio library with scanf fix.
+* try another FXP mode (fxp-passive-source on/off) on any 425 reply.
+* translations updated.
+* fixed lftpget -v.
+
+Version 2.4.9 - 2002-01-30
+
+* use trio library if system's printf is broken with %lld.
+* fixed single quote escaping in several places.
+* fixed coredump if service is unknown.
+* fixed keep-alive for http/1.1.
+* fixed uploading in ssl enabled ftp when data connection is protected.
+* don't send AUTH TLS to ftp proxy.
+* fixed fish protocol module.
+
+Version 2.4.8 - 2001-12-04
+
+* fixed rm and rmdir - they were actually interchanged in 2.4.7.
+* fixed listing parser in Fish protocol, now it extracts all information.
+* force LC_NUMERIC to C, this fixes floating point settings initialization.
+* fixed assertion failure when setting ftp proxy after establishing
+  connection to an ftp server.
+* fixed a memory leak and some other bugs in cls (Glenn Maynard).
+
+Version 2.4.7 - 2001-11-12
+
+* du command (Glenn Maynard).
+* fixed coredump in `mget -E', introduced in 2.4.6.
+* speed-optimized directory listing parsing.
+* fixed EPLF listings.
+
+Version 2.4.6 - 2001-10-30
+
+* new setting ftp:timezone to select time zone of file listings.
+* new setting fish:shell to select remote shell, default is /bin/sh.
+* translation updates.
+* optimized cpu usage in ascii mode transfer (Glenn Maynard).
+* restore prompt when remote completion is interrupted with ^C.
+* fixed local tilde completion.
+* compilation fixes.
+
+Version 2.4.5 - 2001-10-17
+
+* fish protocol support improved. Now password can be used for authentication.
+* new command `cls' - colored ls (Glenn Maynard).
+* colored completion file list, like cls (Glenn Maynard).
+* `ls' and `cls' now display status before listing is printed.
+* accept @ in URL passwords (Jonas Jensen).
+* added a workaround for WarFTPD ABOR glitch.
+* new configure option --with-included-readline.
+* powerpc fixes (Aaron Schrab).
+* fixed a coredump on exit.
+* fixed home directory glitches (reported by Glenn Maynard).
+
+Version 2.4.4 - 2001-09-13
+
+* sometimes lftp forgot to send CWD to restore working directory
+  after reconnect - fixed (bug introduced in 2.4.2).
+* trio updated.
+
+Version 2.4.3 - 2001-09-05
+
+* man page updated.
+* sometimes lftp did not expand tilde in remote path - fixed.
+* fixed `bookmark add' in cygwin port.
+
+Version 2.4.2 - 2001-08-23
+
+* new setting ftp:home to specify starting directory explicitly. Set it
+  to `/' to override RFC1738 ftp url semantics if you don't like the
+  look of `ftp://host/%2Fpath'.
+* fixed validation of ftp:ssl-auth.
+* fixed a coredump with assertion "res==Ftp::OK" failed.
+* improved abort sequence for passive mode, now wu-ftpd does not hang.
+* compile proto-fish.so properly when configured with modules.
+* compilation fixes.
+
+Version 2.4.1 - 2001-08-08
+
+* translation updates.
+* fixed a coredump due to incorrect memory allocation.
+* compilation fixes.
+
+Version 2.4.0 - 2001-07-30
+
+* fish protocol support (over plain ssh connection).
+* use CONNECT method for https over http proxy.
+* support for variable name completion (Nicolas Noble).
+* queue editing support (Glenn F. Maynard).
+* support http keep-alive in case of chunked transfer encoding.
+* terminate some never-ending jobs before moving to background.
+* included trio for systems lacking vsnprintf (Albert Chin).
+* support for HTTP/1.1 416 reply code.
+* support for ftp ACCT command (ftp:acct variable) and for SITE GROUP command
+  (ftp:site-group variable). E.g. `set ftp:acct/user@host account/password'.
+* new setting ftp:port-ipv4 to specify explicitly IP address sent with PORT
+  command (suggested by Julien Oster and Jonas Jensen with patches).
+* new setting ftp:ssl-auth to specify AUTH argument to use (SSL, TLS, TLS-C
+  or TLS-P).
+* roxen directory listing support.
+* fixed reget of non-existent files.
+* fixed restart of transfer in FXP mode.
+* fixed rare live-lock in open (it required dns:use-fork=no and happened
+  rarely).
+* fixed a memory leak happening in resolver when dns:use-fork=no.
+* fixed debug redirection to a file (debug LEVEL -o log).
+* fixed glob for */* in http.
+* fixed a memory leak in find/mirror for ftp protocol (reported by
+  Glenn F. Maynard)
+* fixed handling of range-end==-1 in http header Content-Range:.
+
+Version 2.3.11 - 2001-05-24
+
+* new settings ftp:retry-530 and ftp:retry-530-anonymous. Retry on server
+  reply 530 for PASS command if text matches these regular expressions.
+  These settings should be useful to distinguish between overloaded server
+  (temporary condition) and incorrect password (permanent condition).
+* retry ftp login quickly on next address if the server has many (works
+  well on ftp.redhat.com, for example).
+* improved fuzzy variable name matching. Exact prefix and exact name after
+  prefix are taken into account separately. E.g. http:pro is not ambigous
+  now between http:proxy and https:proxy.
+* implemented -c option for reverse mirror (mirror -R -c).
+* french translation updated (Nicolas Noble).
+
+Version 2.3.10 - 2001-05-11
+
+* used libtool to build modules (finally).
+* allow open "" to switch to disconnected dummy session.
+* allow adding bookmark for disconnected dummy session.
+* fixed ftp listing time conversion for DST.
+* fixed http Referer generation: don't add extra /.
+* fixed two buffer overflows (reported by Julie PELAT <42@wanadoo.fr>)
+* fixed rare deadlock message in case of ftp timeout.
+* included gettext-0.10.37.
+* included readline-4.2.
+* new translation zh_TW (by R.I.P. Deaddog <maddog@linuxhall.org>).
+* made `lftp@' the default ftp password.
+
+Version 2.3.9 - 2001-03-22
+
+* new setting module:path, path to look for modules.
+* new setting http:referer to send Referer: header, `.' expands to current
+  directory URL.
+* new setting hftp:use-type to disable `;type=' url suffix.
+* terminal status line support (Glenn F. Maynard <glenn@zewt.org>)
+* fixed mirror exclude/include options for hftp and http.
+* ignore certain file locking errors, don't print messages.
+
+Version 2.3.8 - 2001-02-16
+
+* miscellaneous improvements.
+* fixed rate limit with closure (net:limit-rate/ftp.host.com).
+* don't bind data socket to loopback address.
+* fixed core dump after asking for ftp:proxy password.
+* fixed rare spinning in dns child process when parent terminates.
+* portability fix: make it work on SCO UNIX.
+* CygWin port: allow command files to be in ascii mode (CRLF).
+
+Version 2.3.7 - 2001-01-15
+
+* fixed OPIE/SKEY automatic password generation.
+* fixed put over http or hftp when server replies `100 Continue'.
+
+Version 2.3.6 - 2001-01-02
+
+* new setting cmd:save-cwd-history.
+* new setting ftp:fix-pasv-address, don't fix PASV address by default.
+  (this fixes a problem with certain masquerading firewalls).
+* new setting hftp:use-authorization for some proxies (default is yes).
+* send port in Host: HTTP header.
+* check net:no-proxy before using hftp instead of ftp.
+* new commands bzcat, bzmore (Chmouel Boudjnah).
+
+Version 2.3.5 - 2000-11-25
+
+* implemented [ipv6::address]:port as specified by rfc2732.
+* fixed local tilde globbing.
+* don't wait for file lock forever; print warning if locking fails.
+* save cwd_history only if needed.
+* `queue' command now sets last job number to itself.
+* optimize number of poll calls during ftp transfer.
+* fixed mput for directory case (continue loop instead of returning).
+* don't queue up too much MDTM/SIZE commands in sync mode.
+* fixed --with-modules compilation.
+
+Version 2.3.4 - 2000-10-13
+
+* fixed completion and globbing for file names starting with tilde.
+* some compilation fixes.
+
+Version 2.3.3 - 2000-10-01
+
+* fixed `ls|head'.
+* new setting ftp:bind-data-socket (bool) to disable binding of local end
+  of data connection in passive mode.
+* japanese translation (Masayuki Hatta)
+
+Version 2.3.2 - 2000-09-28
+
+* fixed bug in mirror - some files were not downloaded.
+* fixed very rare bug with assert(rate_limit!=0).
+
+Version 2.3.1 - 2000-09-25
+
+* fixed cmd:move-background handling.
+* fixed `cd ... &' in queue command.
+* fixed passive mode IPv6 ftp (Arkadiusz Miskiewicz).
+* fixed module configuration for https and ftps.
+* allow ssl path to be specified in --with-ssl=/path (David Champion).
+* spanish translation updated (Nicolás Lichtmaier).
+
+Version 2.3.0 - 2000-09-18
+
+* https and ftps protocols support (openssl library is needed for that).
+* completion now appends a slash to remote directories (finally!).
+* new mirror option --parallel=[N] to download several files in parallel.
+* ask for password for ftp:proxy if not supplied.
+* now if you set ftp:proxy to http://proxy.host:port, hftp will be used
+  automatically instead of ftp, but pwd will still show ftp://.
+* large file (>2G) support added.
+* full http keep-alive support.
+* new settings http:put-method (PUT or POST), http:put-content-type,
+  http:post-content-type.
+* new setting xfer:max-redirections for http redirections following.
+* automatic cookie accepting (off by default). New setting http:set-cookies.
+* two http specific quote commands: `quote set-cookie' and `quote post'.
+  (e.g. `quote set-cookie var=value' or `quote post /cgi-bin/script.cgi
+  var=value > output'.
+* send encoded path in http protocol as it was entered by user in URL.
+  (e.g. `get http://www.server.net/abc.cgi?arg=cba -o cba')
+* new settings http:accept, http:accept-charset, http:accept-language.
+* new setting cmd:move-background to disable automatic moving to background;
+  `exit bg' forces moving to background.
+* `wait all' waits for termination of all jobs.
+* show QUIT reply in debug output.
+* new setting ftp:use-quit.
+* new setting net:persist-retries (ignore this number of hard errors).
+* new setting ftp:auto-sync-mode (extended regex) to match first server reply.
+* try to connect to original IP when PASV returns address from private
+  network and original IP is not in private network.
+* mirror can return error code now.
+* add workarounds for hftp over apache proxy.
+* use getipnodebyname or getaddrinfo when gethostbyname2 is unavailable.
+* invalidate dir listing cache on chmod.
+* fixed pget's eta (sometimes it was not shown).
+* fixed max-retries and reconnect delay handling when uploading.
+* fixed `open -u ... -p ... bookmark_name'.
+
+Version 2.2.6 - 2000-09-07
+
+* compile fix for AIX (Gombas Gabor).
+* reformat EPLF even if modification time if absent (Matthias Andree).
+* russian translation updated (Alexander Lukyanov).
+* deutsch translation updated (Moritz Moeller-Herrmann).
+* french translation included (Nicolas Noble).
+
+Version 2.2.5 - 2000-07-31
+
+* fixed coredump on completion and globbing on empty directory or
+  when directory listing cannot be completely parsed.
+* fixed coredump on FreeBSD in `mirror -x/-i'.
+  The bug was found by Andriy I Pilipenko <bamby@marka.net.ua>.
+* fixed coredump on ^V^C^C keyboard sequence.
+* Spanish translation updated.
+
+Version 2.2.4 - 2000-07-12
+
+* fixed chmod and removing old directories in `mirror -R'.
+* fixed a deadlock in `pget'.
+* fixed a compile problem in Http.cc.
+* italian translation updated.
+
+Version 2.2.3 - 2000-06-08
+
+* cmd:prompt is now sensitive to TERM variable, e.g. cmd:prompt/xterm.
+* fixed: send un-localized Last-Modified in http PUT request.
+* fixed bug in file:/ accessing (which caused hang).
+* fixed buffer allocation in http.
+* fixed symlink handling in hftp squid listing.
+* fixed rare spinning in ascii mode.
+
+Version 2.2.2 - 2000-04-29
+
+* added http:cookie setting.
+* italian and german translations updated.
+* fixed handling of http timeout - don't always disable ranges.
+* fixed handling of old (0.9) http servers reply.
+* fixed stall problem with `glob' command.
+* really fixed handling of ^Z during `cd' command.
+
+Version 2.2.1a - 2000-04-20
+
+* Use http:user-agent for hftp, this fixes hftp core dump.
+
+Version 2.2.1 - 2000-04-19
+
+* mirror --Remove-source-files and --loose-time-precision new options.
+* new settings mirror:time-precision and mirror:loose-time-precision.
+* new setting http:user-agent.
+* new setting cmd:interactive.
+* A bug in error checking fixed, which lead to infinite loops on upload
+  in passive mode when the file could not be created.
+* pget hang maybe fixed.
+* fixed handling of ^Z during `cd' command.
+
+Version 2.2.0a - 2000-03-29
+
+* A bug in ftp code fixed, it could lead to connection hang.
+
+Version 2.2.0 - 2000-03-28
+
+* URLs are now handled in more places: `get URL1 -o URL2', `login URL',
+  `glob URL', `cat URL', `mget URL/*', etc. Setting xfer:use-urls is obsolete,
+  option -u is also obsolete but accepted for compatibility. Completion
+  also works on URLs. `login URL' can be used to cache password for further
+  URL usage.
+* new settings xfer:eta-period and xfer:rate-period for calculation of eta
+  and current rate.
+* ascii mode transfers - `get -a', `put -a' etc.
+* new settings net:connection-limit and net:connection-takeover to limit
+  number of connections to the same site and allow take-over of background
+  connections being used to do foreground operations.
+* new setting ftp:use-abor. (default: yes) If set to no, lftp does not send
+  ABOR command but closes data connection immediately.
+* new settings net:reconnect-interval-multiplier and net:reconnect-interval-max,
+  reconnect-interval renamed to reconnect-interval-base. It is possible to
+  use short names, e.g. recon-int-b, recon-int-mul, recon-int-max.
+* new setting ftp:list-options to append to every LIST command. E.g. it can
+  be useful for some sites to set it to `-a'. Default is empty.
+* new setting ftp:rest-stor (default: yes) to avoid file corruption
+  on some old and buggy ftp servers after restarted upload.
+* new setting net:no-proxy. It contains comma separated list of domains.
+  Environment variable no_proxy is copied to net:no-proxy on startup.
+* `glob' command can now select files by type. By default wildcards are
+  expanded to list of plain files, option `-d' makes it expand to directories
+  and `-a' - to files and directories.
+* Commands `get', `put', `mget' and `mput' now have an option `-O base'
+  which specifies base directory or URL to which the files should be placed.
+* ftp to ftp (FXP) copying is now easy, e.g. `get ftp://... -o ftp://...' or
+  `put ftp://...'. The command `ftpcopy' is now obsolete.
+  New settings: ftp:use-fxp, ftp:fxp-passive-source. It does not work
+  for some servers, so use `set ftp:use-fxp no' for them. FXP is also tried
+  both ways - with passive and active source, if both fail it falls back to
+  simple copy.
+* now lftp remembers that commands MDTM, SIZE or SITE CHMOD are not supported
+  by the server, and does not send them again.
+* if password is entered on command line it is supposed to be insecure and is
+  printed on screen and entered into bookmarks automatically.
+* slightly better VMS support.
+* EPLF listing format is now understood. It is used by anonftpd
+  (e.g. ftp://vgsn.glasnet.ru).
+* in globbing, if list restart is not used, don't skip list beginning but
+  rather use it instead of previously received.
+* ftp and hftp URLs are now assumed to have home-relative path. To write
+  root-relative path in such URLs, use ftp://site/%2Fpath.
+* new setting dns:use-fork. When true, lftp does fork before gethostbyname
+  (as in previous versions) to allow instant interrupting and asynchronousity.
+  (default is true)
+* new setting cmd:default-protocol. The value is used when open is used
+  with just host name without protocol. Default is `ftp'.
+* new setting ftp:port-range for active mode port range (useful for firewalls).
+* mirror --use-cache to allow mirror to use directory listing cache.
+* check file names in ftp listings for slashes, don't use file names with
+  slashes.
+* ftp REST bug workaround - send REST 0 if last REST was >0.
+* ftp server's 19100 in MDTM bug workaround.
+* fixed completion and file name globbing for wu-ftpd-2.6.0. A long standing
+  bug with multiple path component globbing over ftp has also been fixed.
+* fixed coredump on `command' with no arguments.
+
+Version 2.1.10 - 2000-03-09
+
+* fixed core dump on very long prompt.
+
+Version 2.1.9 - 2000-02-22
+
+* fixed command `mv'. It was broken for a year.
+
+Version 2.1.8 - 2000-02-18
+
+* fixed a stupid bug in PWD reply extraction.
+
+Version 2.1.7 - 2000-02-14
+
+* fixed assertion failure in ftpclass.cc.
+* fixed handling of PWD reply when it does not include a quoted path.
+* `mirror -R' now checks time stamps again.
+
+Version 2.1.6 - 2000-01-13
+
+* fixed html parser spinning on & in file names when no sequence matches.
+* fixed compilation on Solaris2.5.1.
+* korean translation updated.
+
+Version 2.1.5 - 2000-01-09
+
+* fixed &amp; and others handling in http links.
+* fixed sending of port to http proxy.
+* don't send queued command after 1xx reply in sync mode.
+* fixed `mget -e': session was Close()'d too early.
+* fixed connect() problem on NetBSD 1.4P
+
+Version 2.1.4 - 1999-10-23
+
+* hftp support for non-anonymous user added
+* http Proxy-Authorization support added.
+* new setting hftp:use-head for proxies that don't properly handle HEAD
+  requests for ftp:// URLs.
+* memory leak in http code fixed.
+* http/hftp PUT fixed.
+* a bug in parsing squid ftp listing fixed (some files were shown
+  without info).
+* fixed handling of base-href in hftp listings.
+
+Version 2.1.3 - 1999-10-16
+
+* documentation update.
+* get: don't create output file early.
+* http: check if extracted file info is valid.
+* http: list parser for Mini-Proxy added.
+* http: fixed core dump on certain html pages.
+* fixed closure handling in cmd: veriables.
+* fixed a bug with setting variables using shortened name.
+* fixed completion for files with spaces in name.
+
+Version 2.1.2 - 1999-10-09
+
+* http: ls -F implemented, accept some other options.
+* hftp: parser for Netscape proxy added.
+* socks5 and dante support added (--with-socks5, --with-socksdante).
+* korean translation.
+* mget -d now uses 0777 mode on directories.
+* fixed a SEGV due to double freed memory.
+
+Version 2.1.1 - 1999-10-02
+
+* close -a now really closes all connections, even if current protocol is http.
+* extra info in debug output when it goes to a file.
+* in http listings, strip slash in /~user links.
+* fixed compile problems on some systems in ResMgr.h, module.c.
+
+Version 2.1.0 - 1999-09-27
+
+* ftp over http proxy support via hftp:// notation.
+* new command `queue' to queue commands for sequential execution.
+* rate limit for all connections in sum: settings net:limit-total-rate and
+  net:limit-total-max.
+* dns cache implemented: settings dns:cache-{enable,expire,size}.
+  Use `set dns:cache-expire never' to disable expiration.
+* improved completion of file names with wildcards.
+* debug output now clears and redraws the prompt.
+* mirror now does not overwrite just appeared/changed files.
+* added a possibility to specify protocol family explicitly in host name:
+  inet6,ftp.hostname.com will resolve to only inet6 address. This can be
+  also acheived by `set dns:order/ftp.hostname.com inet6'.
+* added xfer:clobber setting. When it is off, get does not overwrite files.
+* new command `repeat' to repeat a command. E.g. `repeat 1d mirror'.
+
+Version 2.0.5 - 1999-09-18
+
+* new translation zh_CN. (by Wang Jian)
+* fixed unlimited memory usage on `ls -R' when the listing is too large to be
+  cached.
+* fixed error with `Invalid argument' when kernel is compiled without ipv6
+  support and host has both ipv4 and ipv6 addresses.
+* fixed deadlock bug when doing put from named pipe and pipe is slower
+  than network.
+
+Version 2.0.4 - 1999-08-11
+
+* added ftp:rest-list setting to allow using of REST/LIST pair. By default
+  it is off, since some ftp servers silently ignore REST before LIST.
+* ignore SIGXFSZ signal, print an error instead.
+* try to catch ftp server error "Too many open files".
+* added options -c, -v, -d to lftpget script.
+* in mirror, don't reset time stamps on unchanged files.
+* few fixes in html parser.
+* fixed get -u to decode %XX in default output file name.
+* fixed interrupting (^C) of `at' command.
+* fixed `at' command to quote its arguments for execution.
+* fixed NT listing parser for files with space in name.
+* fixed renlist, it was printing long list instead of short one.
+
+Version 2.0.3 - 1999-07-25
+
+* added lftpget (get an URL) script to distribution.
+* fixed rare spining in ls (when pipe stalls).
+* fixed handling of HREF=/ in http ls.
+* fixed coredump on mrm without arguments.
+* fixed coredump from find command when pipe stalls.
+* fixed compilation problem with T_SRV on some systems.
+
+Version 2.0.2 - 1999-07-12
+
+* when background job terminates and its cwd is different from current one,
+  show the cwd in `Done' message.
+* cd and lcd without argument go to remote/local home directory.
+* send User-Agent in http request.
+* html parser improved.
+* dns SRV records support (`set dns:SRV-query y' to enable).
+* fixed port representation in URL - colon was missing.
+* fixed completion for nlist command - should use remote completion.
+
+Version 2.0.1 - 1999-06-27
+
+* report ETA more precisely (e.g. 2h15m)
+* added verbose ETA option (set eta-terse no)
+* http ls -f file.html to extract links just as from index.
+* extract http links from frame src and area href too.
+* added http:cache option to disable server/proxy side cache.
+* fixed core dump in http ls on certain documents.
+* workaround for a readline bug causing core dump on certain completions.
+
+Version 2.0.0 - 1999-06-15
+
+* command `module' to load shared objects at runtime
+* autoloading modules for protocols and for some commands (only mirror now)
+  To build with modules use `configure --with-modules'.
+* http protocol support (via ipv6 too)
+* socks support (configure --with-socks)
+* cmd:verbose - show command's summary even in non-interactive mode.
+* command `lpwd'.
+* command `glob' to do globbing: e.g. `glob echo *'.
+* command `chmod'.
+* since `glob' now exists, `cat', `more', `zcat', `zmore' commands do not
+  do globbing themself now; use `glob cat', or make alias `cat' -> `glob cat'.
+* mirror -R can now set permission on remote files, if server supports
+  SITE CHMOD.
+* try all addresses of multihomed hosts.
+* remote globbing redesigned, now the wildcards are matched locally
+* finally implemented automatic cache invalidation on certain operations.
+* ftp over ipv6 support (uses EPSV/EPRT - RFC2428)
+* NT directory listing parser added
+* set now prints only altered settings, use set -a to see all
+* argument for `wait' is now optional. It waits for last bg job by default.
+* redial-interval is renamed to reconnect-interval
+* ftp:timeout and some others are renamed to net:... to be shared with http.
+  you can still set them without net: prefix.
+* dns:timeout renamed to dns:fatal-timeout.
+* fixed bug with url special chars @/: encoding in user name and password
+* fixed bug with symbolic ports on little-endian machines
+* fixed bug with wrong ETA in pget
+* fixed bug which caused file times set by mirror to be non-precise.
+* fixed `quote' for certain commands, e.g. `quote stat .'.
+* fixed `ftpcopy' for the case of `set ftp:passive-mode yes'
+
+Version 1.2.4 - 1999-01-11
+
+* small completion improvement: after mirror -N use local completion
+* now it is possible to do non-checking open and cd using &
+* few bugs hopefully fixed: sometimes ignoring response to USER, very
+  rare (i.e. can't reproduce) using wrong cwd.
+
+Version 1.2.3 - 1998-12-24
+
+* cmd:fail-exit setting. If true, exit when a command fails.
+  Useful for scripts.
+* fix to "exit" if initial open fails. (was broken in 1.2.2)
+* fix for "put" to print more correct statistics (in some rare
+  cases it said that negative amount was transferred)
+
+Version 1.2.2 - 1998-12-19
+
+* cmd:at-exit setting. Execute given commands before exiting.
+* mget "" should now work (get all files), useful if `mget *' does not work.
+* refuse to add empty bookmarks.
+
+Version 1.2.1 - 1998-12-17
+
+* updated translations:
+   it (by Giovanni Bortolozzo),
+   pl (by Arkadiusz Mi¶kiewicz)
+* fixed 'mirror -R' coredump
+
+Version 1.2 - 1998-12-08
+
+* rate limit for each connection implemented. set ftp:limit-rate, ftp:limit-max.
+  limit-max is maximum rate accumulated. 0 means unlimited.
+* path and host verification can be turned off via cmd:verify-* settings.
+  Also verification can be stopped via ^Z. Then path will be set and checked
+  later, same for host name.
+* added ftp:socket-maxseg option, 0 means system default.
+* mirror -L: follow symlinks (treat them as files)
+* completion for open from bookmarks
+* encode/decode %XX in URLs
+* rm -r (recursive - be careful)
+* Polish (pl || pl_PL) translation
+* don't use ls cache for mget
+* ftpcopy, sleep, at, find, command - new commands
+* abort data connection properly
+* ETA in status (original by jaeger@tekniq.net)
+* fixed `bookmark list' when there were no bookmarks
+* fixed `bookmark import' when there were no ~/.lftp/bookmarks
+* fixed `mirror -i/-x', the pattern was mangled when mirror is used second time.
+
+Version 1.1.1 - 1998-08-30
+
+* fix connection leak. It happened when many connection to the same site
+  were open, and then tried to be reused.
+* exclude "total *" from file name completion
+* fix error messages of mget/mput
+
+Version 1.1 - 1998-08-19
+
+* `suspend' command
+* when doing `cd -', show real directory on status line
+* recognize tilde in `source' command
+* set ftp:verify-address - data connection peer address verification
+  set ftp:verify-port - peer port verification (must be 20) - off by default
+* try to use cached 'ls' for completion (ls-in-completion setting)
+* add xfer:use-urls option to make get,mget etc recognize urls by default
+* add bmk:save-passwords option to save password on `bookmark add' command
+* make `bookmark delete' complain when bookmark does not exist
+* lftp -c option (execute command and exit)
+* set ftp:anon-user, ftp:anon-pass
+* set dns:timeout to limit host name lookup time
+* allow redirection for 'bookmark list': bo|grep, etc;
+  same for `set' and `alias'.
+* print url on `pwd' command, allow redirection
+* echo command with redirection
+* skey/opie support (ftp:skey-allow, ftp:skey-force)
+  (suggested/tested by Eugene B. Byrganov)
+* bookmark edit -- start an editor on bookmarks file
+  bookmark import ncftp/netscape -- import foreign bookmarks
+  (suggested by Sam Steingold)
+* exit if options given to lftp are incorrect,
+  support --help and --version options for lftp
+  (suggested by Sam Steingold)
+* use password from .netrc if given user name matches it
+* fixed memory leak in input routine
+* fixed spinning when output pipe is closed and data is not available yet
+
+Version 1.0.1 - 1998-05-28
+
+* pt_BR translation
+bugs fixed:
+* fixed a bug with not expanding sometimes aliases
+* fixed coredump on (open ...; ls)
+* fixed a rare coredump in mirror
+
+Version 1.0 - 1998-04-29
+
+* debug -o file N: redirect output to the file
+* builtin alias shell=!, the difference is that ! takes full line to eol
+* cd -, lcd -
+* old remote cwd is saved to ~/.lftp/cwd_history for each host separately
+  and it is possible to do 'open host && cd -' to go to last directory
+* show cd status
+* mirror option --newer-than FILE: download only files newer than given one
+* mirror option --verbose, useful for background operation
+* ~/.lftp/rc - additional rc file
+* write log to ~/.lftp/log
+* bookmark command: maintain bookmark file ~/.lftp/bookmarks
+* close command: close all idle connections with current host
+* set idle: close idle connections locally
+* set max-retries: limit maximum number of operation retries (default 0=unlim)
+* i18n: spanish, russian and italian translations
+* ftp.kde.org is now accessible in sync mode
+* use sysconfdir for lftp.conf; /etc for prefix=/usr
+* output current transfer rate in `jobs', also in pget.
+* in pget, don't show chunks by default; use `jobs -v' to see them
+* limited pget status update rate
+bugs fixed:
+* several problems with reverse mirror fixed
+* fixed recursive alias expansion in case of 'alias a "x;a"'
+* fixed parse bug in line join construct
+* fixed a bug that forced re-creation of symlinks in mirror
+* fixed ^C for `more' when pager has not started yet
+
+Version 0.14.3 - 1998-03-10
+
+* changed transfer statistics format (x bytes .. in y sec (z b/s))
+bugs fixed:
+* fixed spinning in case relookup-always=on
+* disabled timeout in store mode when waiting for transfer completion
+* count bytes in 'put' more precisely on soft errors
+* 'open host:/;open host:/' bug fixed
+
+Version 0.14.2 - 1998-03-03
+
+bugs fixed:
+* fixed 'lftp -u user' - now asks for password correctly
+* fixed sync mode: clear waiting flag only after complete response
+
+Version 0.14.1 - 1998-02-21
+
+* man page corrected
+* broken fnmatch should be detected now (e.g. in solaris2.4)
+* limit transfer status update rate (from Sean Reifschneider)
+bugs fixed:
+* 'exit' in lftp -e option: now works again
+
+Version 0.14.0 - 1998-01-28
+
+* mirror: default target directory is now basename of source instead of .
+* mirror: exclude files before MDTM's, don't set time/mode on excluded files
+* mirror: exclude/include regexp is matched against relative path now
+* show current minute average transfer speed
+* reset parser and readline on ^C
+* file size can be caught from text responce now
+* debug output is now more realistic in sync mode
+* reverse mirror (--reverse) (limited - no symlinks, no timestamps)
+* workaround for \0 characters in server replies (Jason Gunthorpe)
+* setting closure can now be specified using wildcards (fnmatch)
+* set ftp:proxy URL - now a user and a password can be used in the URL
+  (protocol of url should be still `ftp' or omitted)
+* --verbose/--quiet options for ftpget (James Troup)
+* set ftp:nop-interval - seconds between NOOPs while downloading tail of a file
+  (for broken servers)
+* `get/reget/pget/cat/zcat/more/zmore -u' recognize URLs now
+* automatically guess addrlen type (socklen_t/size_t/int)
+bugs fixed:
+* mirror could set wrong year on directories in some cases
+* pget did not set local mtime
+* lftp had problems with xmalloc on 64-bit platforms due to wrong prototype
+* fclose(0) could be executed
+
+Version 0.13.2 - 1997-11-14
+
+bugs fixed:
+* sometimes wrong remote directory was used
+* ftpget -c did not work
+
+Version 0.13.1
+
+* completion improved - handle aliases, incomplete commands; catch -o if
+  extra space given.
+* some compatibility fixes
+* man page for lftp corrected
+* mirror: ignore size if the remote file is older and --only-newer is given
+bugs fixed:
+* in some cases `put' loose data on soft errors
+* zero length files could not be uploaded
+
+Version 0.13.0 - 1997-10-18
+
+* ftp proxy support:
+      set proxy pxhost:port - default proxy,
+      set proxy/host pxhost:port - proxy for host,
+      set proxy/host "" - no proxy for host
+* ls output is now line buffered
+* nlist and renlist commands implemented
+* compare file name with pattern to prevent untrusted server to fake file names
+* `lftp -f file' executes the file
+* mirror can now re-get files with certain conditions, option -c
+* if --include is specified and --exclude is not, assume to exclude all
+* moved functionality of parallelftp into lftp (pget command)
+* ftp:relookup-always (bool) - look up host address always before connecting
+* Meta-Tab does remote completion now (Tab still guesses completion type)
+* ^C on command group terminates current job of the group, not the interpreter
+* better external process handling - using process groups
+* rm, mrm, mget now use remote completion (James Troup)
+* rmdir/mkdir should use remote completion too
+* optional csh-style history expansion
+* allowed any characters (but \0) in password in .netrc via \ddd
+* skip macdef's in .netrc
+* mget -e - remove remote files after successful transfer
+* integrated patch for documentation/help from James Troup <J.J.Troup@comp.brad.ac.uk>
+* replaced execl with execlp in ! (shell escape) handling
+* workaround for server sending ./ or // before file names
+* completion workaround for servers returning only file names without
+  directory for 'nlist dir'
+* --without-libresolv to disable libresolv usage
+Bugs fixed:
+* should ignore 'Connection timed out' error (and retry)
+* mirror --no-perms should create directories with default mode
+* fixed site and quote commands to work with filter correctly
+* coredump when starting ls in background with a pipe to external command
+* realloc size in PrependCmd corrected - could coredump
+* -d option handling for mget fixed
+* coredump in mirror when using 'jobs -v'
+* coredump when using shortened subcommands for `cache'
+* occasional coredump in CatchSIZE_opt/CatchDATE_opt
+* in some rare cases lftp ate cpu time in background mode
+* in some cases aliases were not expanded properly
+* fixed readline-2.1/Makefile.in to enable compiling on `make install'
+* fixed MirrorJob to create directories with permission to write to them.
+* default entry of .netrc was used instead of the previous one
+* `cd ~user' fixed
+
+Version 0.12.2 - 1997-07-19
+
+* file 'missing' replaced with common one
+* readline completion improved to understand quoting properly
+Bugs fixed:
+* reput was broken
+
+Version 0.12.1
+
+* fail configure when no tgetent function found
+* print to log that background lftp finished; print pid in the final message
+  `Moving to background'
+* append / to file name in cd command completion
+* disconnect on unexpected extra responces
+* handle remote timeout message better
+Bugs fixed:
+* core-dump when receiving error responce after downloading some data fixed
+* object leak in mput, cat on ^C (caused cpu-eating) fixed
+
+Version 0.12.0
+
+* more flexible settings system, now it is possible to tune parameters
+  for each host separately (ex: set sync/ftp.host.org y)
+* rearranged printing of error messages so that they don't mess with
+  status line
+* quote command implemented (thanks to Hugo Van den Berg <hbe@cypres.nl>)
+* ls cache can now expire
+* passwords can now appear in URLs; host:/path is recognized
+* passive mode ftp connection is now supported
+* command lines can now be joined with \eol
+* mrm command implemented (globbing rm)
+Bugs fixed:
+* `cd ~..' bug fixed
+* `mput & lcd' bug fixed
+* memory allocation bug in PrependCmd (calles by `source') fixed
+* mput did not initialize make_dirs (the variable for -d option). fixed
+* integer overflow in percent printing for large files fixed
+* symbolic port was ignored - fixed
+
+Version 0.11.1 - 1997-05-12
+
+* timeout and redial-interval are now global
+* gethostbyname is now done in a separate process, thus allowing instant
+  interrupt and parallelness.
+Bugs fixed:
+* fixed a bug in `put' which prevented correct restart of transfer
+* kill subjobs when they don't have a jobno (else they can't be killed)
+* alias expansion could cause buffer overflow/core dump (fixed)
+* completion sometimes opened another ftp connection (fixed)
+
+Version 0.11.0
+
+* automake used
+* various options for mirror
+* allowed comments #
+* optimized file date/size retrieve (parallel with RETR)
+* allowed wildcards in cat, more, zcat, zmore
+* allowed help for command abbreviations
+* log errors to ~/.lftp_log when moved to background
+* cache ls output, rels to re-ls
+* `cache' command to control cache
+* show percents completed
+* allow kill for any job; not kill subjobs but rather reparent them
+* expand ~ in get/put
+* when `get rfile -o lfile' used and lfile is a directory, write to file
+  named as basename of rfile in the directory lfile.
+* sync-mode is the default now, so it should work always. If you want
+  speed and it works for you, turn it off (set sync-mode n).
+* improved printing debug slightly - now it does not mess up with status
+* added several escapes in prompt (Suggested by Ed Grimm)
+* mkdir -p
+* debug printing control now works globally
+* exit now can return exit code to system
+* poll.h replaced
+Bugs fixed:
+* a bug caused spinning when mirror dealt with symlink - fixed
+* `user' did not reset home dir - fixed
+* corrected multiline responce handling - terminate with the same code
+  as it started.
+* `open -u user' sometimes did not ask for password - fixed
+* directory count corrected in mirror
+
+Version 0.10.7 - 1997-03-09
+
+* unitialized variable could cause unneeded SIZE or MDTM commands or coredump
+* bug in configure which prevented use of preinstalled readline - fixed
+
+Version 0.10.6
+
+* home-relative paths were handled incorrectly since 0.10.5
+* expand shortened commands to use correct argv0
+
+Version 0.10.5
+
+* path handling - fix for //dir
+* Buffer overrun sometimes caused 'not supported protocol' errors
+* blocking logic corrected for GetJob
+
+Version 0.10.4
+
+* in some rare cases it did not catch EAGAIN errors and printed
+  'Resource temporary unavailable' - fixed
+* a bug in REST command handling could cause some cpu-eating
+* ignore local directories . and .. in mirror.cc
+* restore Ftp flags from env vars after Connect (CmdExec.cc)
+* inherit env vars when creating sub-CmdExec
+* put command name in error messages (XferJob.cc)
+
+Version 0.10.3
+
+* make Connect less blocking (external loop)
+* reimplemented reconnect on timeout (occasionally dropped in 0.10.0)
+* set mode on newly created files in mirror
+* improve error handling in RemoteGlob
+* add options --delete, --allow-suid for mirror
+* don't retrive file date when it is impossible to set it locally
+* awful bug in reput (namely `reput' not `put -c') (file was truncated) fixed
+
+Version 0.10.2
+
+* stupid forgotten case caused abort()
+* `open' (and Ftp::Connect) did not reset home - fixed
+* error code DO_AGAIN simplified handling of Ftp errors
+* #ifdef S_ISLNK for Unixware and such.
+
+Version 0.10.1
+
+* in ftpclass.cc, FlushSendQueue, errors were effectively ignored - fixed
+  (this one could lead to time-eating)
+* `put' skipped next file after error - fixed
+* `get' could break after dl error - fixed
+* man pages (Christoph Lameter <clameter@debian.org>)
+* read /etc/lftp.conf on startup
+
+Version lftp-0.10.0
+
+* The package renamed to lftp
+* help improved
+* readline from bash-2.0 used (hook for rl_getc)
+* mv
+* mirror
+* `long-running' parameter
+* `timeout' parameter
+* `redial-interval' parameter
+* alias listing on `alias'
+* parameters handling improvement (shortened names allowed)
+* site command
+* () command groupping (like in shell)
+* && and || command separation (like in shell)
+* wait <jobno> command
+* Complete rewrite for new object model
+* open doesn't turn off debugging
+
+Version ftpclass-0.5.4
+
+* dosish style path recognition
+* ignore intermediate responces 1xy
+* command on cmd line of lftp (-e option)
+* don't use SIZE when in norest_mode (ftptransfer.cc)
+* fixed rate calc for put (ftptransfer.cc)
+* fixed hanging in FtpTransfer::waitpid for filter_pid
+* added -w option for get,put,mget (wait for a transfer)
+
+Version 0.5.3
+
+* wait_fg should print `done' when the transfer is complete
+* FtpTransfer::Step cleanup
+* not destroying foreground dession in close_transfer
+* help ca/anon did not output LF
+* don't give data to program until REST result is known
+* long options for ftpget
+* ask password in ftpget if not given
+* NOREST_MODE - dumb but it works
+
+Version 0.5.2
+
+* don't call all_transfers_check_done from wait_fg_transfer
+* don't print password on debug
+* don't disconnect on "Broken pipe" responce
+* ftptransfer rewrite
+* added mkdir,rmdir,rm (MAKE_DIR,REMOVE_DIR,REMOVE)
+* now lftp uses .netrc for default login
+* now it should work if ftpd doesn't ask for password
+
+Version 0.5.1
+
+* non-sync mode should not be default :)
+* fixed GetPollVector to notice SYNC_WAIT
+
+Version 0.5.0
+
+* readline completion support
+* was disconnecting on NO_FILE condition - fixed
+* foreground session was left open after cd - fixed
+* url support - open ftp://host/path, cd ftp://host/path
+* synchronous mode operation -- works with buggy NT ftp server and
+with old one at ftp.sunlabs.com. Use 'set sync_mode y' to turn it on.
+
+Version 0.4.6
+
+* was wrongly printing status when doing cat - fixed
+* did not close data socket in Ftp::Close - fixed
+* lftp: added 'source' command
+* lftp: disconnect foreground session before moving to background
+
+Version 0.4.5
+
+* not closing files in 'mget' - fixed
+* don't close ftp session when downloading several files in chain
+
+Version 0.4.4
+
+* lftp: help improvement (no long desc yet)
+* lftp: command separation with ';'
+* 'cd ok, cwd=' another fix (hopefully the last)
+* lftp: ~/ handling in lcd
+* lftp: fixed options handling in mget
+* ftpclass: anon_pass inheritance
+* Ftp::operator=
+* Used readline from bash-1.14.7, stock 2.0 had problems with FreeBSD
+* configure changes - now all handled in one configure
+
+Version 0.4.3
+
+* fixed changing wait_chain in close_transfer_session (affected 'kill')
+* fixed REST&NLST, NLST mode&Transfer complete
+* fixed falling back to non-waiting transfer in add_transfer
+* lftp: added mget
+* lftp and ftpclass: added handling of ~/
+* ftpclass: portability fix: timezone/tm_gmtoff autoconf (for FreeBSD)
+
+Version 0.4.2
+
+* lftp: set prompt
+* lftp: wait chains
+* ftpclass: SendEOT
+... many small changes which I don't remember
+
+Version 0.4.1
+... no change log was being written

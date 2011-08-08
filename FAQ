@@ -1,0 +1,41 @@
+Q: I have compile/link problems.
+A: Some common installation problems are described in the INSTALL file.
+   If your case is not covered, please send a problem report.
+
+Q: How can I see the greeting message from the server?
+A: Try `debug 3'. It is disabled by default to keep the screen clear in case
+   of several simultaneous connections.
+
+Q: Why doesn't lftp download files like this: `lftp ftp://host/path/file'?
+A: It expects an URL of a directory. To download a file use `lftpget URL'.
+
+Q: What is the %2F in ftp URL's?
+A: RFC1738 specifies that clients handling ftp URL's should interpret them
+   as HOME relative by default. %2F stands for leading slash pointing to
+   the root directory.
+
+Q: Why do the secure protocols https and ftps give the "PRNG not seeded" error
+   message?
+A: Your system probably lacks a /dev/random-like device. Create a ~/.rnd file
+   containing random characters and SSL will work. See also the OpenSSL FAQ
+   about this.
+
+Q: Why does lftp say that locking fails all the time? (on linux)
+A: You have compiled lftp with large file support (>2G) but your kernel
+   does not support 64-bit file-locking. Either install a better kernel
+   (e.g. linux-2.4.x) or compile lftp without large file support
+   (configure --disable-largefile)
+
+Q: Where is lls?
+A: !ls
+
+Q: Why doesn't `mirror' download files starting with a dot? I can see the files
+   using `ls -a'.
+A: Try `set ftp:list-options -a'.
+
+Q: ^Z doesn't work in Cygwin.
+A: Use "SET CYGWIN=TTY".  This must be done before starting a shell, if any.
+
+Q: lftp consumes 100% CPU on MacOS X Tiger just waiting at the command prompt.
+A: See http://www.mail-archive.com/lftp%40uniyar.ac.ru/msg02101.html for
+   a workaround for MacOS X bug.
