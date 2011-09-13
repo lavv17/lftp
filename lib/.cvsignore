@@ -247,3 +247,10 @@ iconv.c
 iconv_close.c
 unistr.in.h
 float.c
+cloexec.c
+cloexec.h
+dup2.c
+fcntl.c
+getdtablesize.c
+passfd.c
+passfd.h

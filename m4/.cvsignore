@@ -191,3 +191,7 @@ configmake.m4
 error.m4
 mbtowc.m4
 sys_uio_h.m4
+dup2.m4
+fcntl.m4
+getdtablesize.m4
+passfd.m4

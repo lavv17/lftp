@@ -1,5 +1,5 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
  * Copyright (c) 1996-2011 by Alexander V. Lukyanov (lav@yars.free.net)
  *
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* $Id: commands.cc,v 1.308 2011/06/16 12:24:05 lav Exp $ */
