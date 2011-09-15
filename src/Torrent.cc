@@ -205,6 +205,9 @@ int Torrent::Done() const
 
 void TorrentTracker::Shutdown()
 {
+   if(Failed()) // don't stop a failed tracker
+      return;
+   // stop if have started or at least processing a start request
    if(started || tracker_reply)
       SendTrackerRequest("stopped");
 }
@@ -418,6 +421,7 @@ int TorrentTracker::HandleTrackerReply()
 
    if(reply->type!=BeNode::BE_DICT) {
       SetError("Reply: wrong reply type, must be DICT");
+      tracker_reply=0;
       return MOVED;
    }
 
@@ -427,6 +431,7 @@ int TorrentTracker::HandleTrackerReply()
 	 SetError(b_failure_reason->str);
       else
 	 SetError("Reply: wrong `failure reason' type, must be STR");
+      tracker_reply=0;
       return MOVED;
    }
 
