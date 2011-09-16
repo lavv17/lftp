@@ -254,3 +254,6 @@ fcntl.c
 getdtablesize.c
 passfd.c
 passfd.h
+pathmax.h
+signal.in.h
+sys_types.in.h

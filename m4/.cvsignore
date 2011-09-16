@@ -195,3 +195,7 @@ dup2.m4
 fcntl.m4
 getdtablesize.m4
 passfd.m4
+largefile.m4
+pathmax.m4
+signal_h.m4
+sys_types_h.m4
