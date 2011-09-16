@@ -37,9 +37,9 @@ dist-hook:
 
 REL_DIR=/ftp/pub/source/lftp
 release:
-	cvs commit -m $(VERSION)
-	make dist
-	cvs commit -m $(VERSION)
+#	cvs commit -m $(VERSION)
+#	make dist
+#	cvs commit -m $(VERSION)
 	make distcheck
 	make release-ftp
 
@@ -54,4 +54,4 @@ release-ftp:
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.xz; \
 	    md5sum $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION).tar.bz2 $(PACKAGE)-$(VERSION).tar.xz > $(PACKAGE)-$(VERSION).md5sum)
 	mutt -s add lsm@execpc.com < $(PACKAGE).lsm
-	cvs tag $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'` .
+#	cvs tag $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'` .
