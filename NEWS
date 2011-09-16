@@ -1,6 +1,7 @@
-Version 4.3.2 - 2011-08-??
+Version 4.3.2 - 2011-09-16
 
 * fixed fish protocol synchronization when ls fails on the server.
+* fixed torrent shutting down when the tracker fails.
 * fixed compilation on Solaris.
 
 Version 4.3.1 - 2011-06-28
