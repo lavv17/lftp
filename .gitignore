@@ -1,0 +1,40 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+libtool
+.deps
+
+# backup files
+*~
+
+# http://www.gnu.org/software/automake
+Makefile.in
+
+# http://www.gnu.org/software/autoconf
+Makefile
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/config.cache
+/config.log
+/config.status
+/build-aux/depcomp
+/build-aux/install-sh
+/build-aux/missing
+
+# LE editor
+.le.ini
+
+# gettext
+/ABOUT-NLS
