@@ -1,3 +1,8 @@
+2011-09-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc: (ResMgr::Resource::ClosureMatch) try to match basename,
+	  it helps matching torrent metadata urls to *.torrent pattern.
+
 2011-09-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: don't try to send stop to a failed tracker.

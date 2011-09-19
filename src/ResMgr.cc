@@ -537,8 +537,16 @@ bool ResMgr::Resource::ClosureMatch(const char *cl_data)
       return true;
    if(!(closure && cl_data))
       return false;
-   return 0==fnmatch(closure,cl_data,FNM_PATHNAME)
-      || (closure[0]=='*' && closure[1]=='.' && !strcmp(closure+2,cl_data));
+   // a special case for domain name match (i.e. example.org matches *.example.org)
+   if(closure[0]=='*' && closure[1]=='.' && !strcmp(closure+2,cl_data))
+      return true;
+   if(0==fnmatch(closure,cl_data,FNM_PATHNAME))
+      return true;
+   // try to match basename; helps matching torrent metadata url to *.torrent
+   const char *bn=basename_ptr(cl_data);
+   if(bn!=cl_data && 0==fnmatch(closure,bn,FNM_PATHNAME))
+      return true;
+   return false;
 }
 
 const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **ptr)
