@@ -3,17 +3,19 @@
 # This file is distributed under the same license as the lftp package.
 # Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011.
 #
+# handshake → dojednání (spojení)
 # option → volba
+# peer → protistrana
 # put → nahrát (jako opak get, download, stáhnout)
 # site-cmd → příkaz_serveru (ruční příkaz FTP)
 # slot → slot (protože se tak jmenuje příkaz „slot“)
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.2.1\n"
+"Project-Id-Version: lftp 4.3.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2011-09-16 16:12+0400\n"
-"PO-Revision-Date: 2011-04-05 20:34+0200\n"
+"PO-Revision-Date: 2011-09-18 22:37+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -41,9 +43,9 @@ msgid "Unknown system error"
 msgstr "Neznámá chyba systému"
 
 #: lib/getopt.c:547 lib/getopt.c:576
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s' is ambiguous; possibilities:"
-msgstr "%s: volba „%s“ není jednoznačná\n"
+msgstr "%s: volba „%s“ není jednoznačná; možnosti:"
 
 #: lib/getopt.c:624 lib/getopt.c:628
 #, c-format
@@ -857,12 +859,12 @@ msgstr "%s: vyžadován argument. "
 #: src/SleepJob.cc:264
 #, c-format
 msgid "%s: date-time specification missed\n"
-msgstr ""
+msgstr "%s: chybí určení data/času\n"
 
 #: src/SleepJob.cc:271
 #, c-format
 msgid "%s: date-time parse error\n"
-msgstr ""
+msgstr "%s: chyba při rozebírání data/času\n"
 
 # Bytes per second
 #: src/Speedometer.cc:96
@@ -1136,7 +1138,7 @@ msgid ""
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
 "Nastaví úroveň ladění na zadanou hodnotu, nebo jej úplně vypne („off“).\n"
-" -o <soubor>  ladicí zprávy přesměruje do soubor.\n"
+" -o <soubor>  ladicí zprávy přesměruje do souboru.\n"
 
 #: src/commands.cc:218
 msgid "du [options] <dirs>"
@@ -1328,7 +1330,7 @@ msgstr "ln [-s] <soubor1> <soubor2>"
 
 #: src/commands.cc:288
 msgid "Link <file1> to <file2>\n"
-msgstr "Vytvoří odkaz z <soubor1> na <soubor2>\n"
+msgstr "Vytvoří odkaz ze <souboru1> na <soubor2>\n"
 
 #: src/commands.cc:292
 msgid "ls [<args>]"
@@ -2449,24 +2451,24 @@ msgid "Receiving data/TLS"
 msgstr "Přijímají se data/TLS"
 
 #: src/lftp.cc:352
-#, fuzzy, c-format
+#, c-format
 msgid "[%u] Terminated by signal %d. %s\n"
-msgstr "[%lu] Ukončeno signálem %d. %s"
+msgstr "[%u] Ukončeno signálem %d. %s\n"
 
 #: src/lftp.cc:426
-#, fuzzy, c-format
+#, c-format
 msgid "[%u] Started.  %s\n"
-msgstr "[%lu] Zahájeno. %s"
+msgstr "[%u] Zahájeno. %s\n"
 
 #: src/lftp.cc:439
-#, fuzzy, c-format
+#, c-format
 msgid "[%u] Finished. %s\n"
-msgstr "[%lu] Dokončeno. %s"
+msgstr "[%u] Dokončeno. %s\n"
 
 #: src/lftp.cc:443
-#, fuzzy, c-format
+#, c-format
 msgid "[%u] Moving to background to complete transfers...\n"
-msgstr "[%lu] Přesouvá se na pozadí, aby se mohl dokončit přenos…\n"
+msgstr "[%u] Přesouvá se na pozadí, aby se mohl dokončit přenos…\n"
 
 #: src/lftp.cc:497
 msgid "history -w file|-r file|-c|-l [cnt]"
@@ -2490,22 +2492,22 @@ msgstr ""
 
 #: src/lftp.cc:505
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
-msgstr ""
+msgstr "Připojí terminál k určenému procesu lftp na pozadí.\n"
 
 #: src/lftp.cc:541
-#, fuzzy, c-format
+#, c-format
 msgid "[%u] Detaching from the terminal to complete transfers...\n"
-msgstr "[%lu] Přesouvá se na pozadí, aby se mohl dokončit přenos…\n"
+msgstr "[%u] Odpojuje se od terminálů, aby se mohl dokončit přenos…\n"
 
 #: src/lftp.cc:546
 #, c-format
 msgid "[%u] Detached from terminal. %s\n"
-msgstr ""
+msgstr "[%u] Odpojeno od terminálu. %s\n"
 
 #: src/lftp.cc:560
 #, c-format
 msgid "[%u] Exiting and detaching from the terminal.\n"
-msgstr ""
+msgstr "[%u] Končí se a odpojuje se od terminálu.\n"
 
 #: src/mgetJob.cc:120 src/mgetJob.cc:204
 #, c-format
@@ -2629,102 +2631,99 @@ msgstr ""
 #: src/Torrent.cc:487
 #, c-format
 msgid "Received valid info about %d peer$|s$"
-msgstr ""
+msgstr "Platné údaje o %d $protistraně|protistranách|protistranách$ přijaty"
 
 #: src/Torrent.cc:504
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr ""
+"Platné údaje o %d IPv6 $protistraně|protistranách|protistranách$ přijaty"
 
 #: src/Torrent.cc:1402
 #, c-format
 msgid "Getting meta-data: %s"
-msgstr ""
+msgstr "Získávají se metadata: %s"
 
 #: src/Torrent.cc:1404
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
-msgstr ""
+msgstr "Ověřování platnosti: %u/%u (%u %%) %s%s"
 
 #: src/Torrent.cc:1414
 msgid "Shutting down: "
-msgstr ""
+msgstr "Ukončuje se: "
 
 #: src/Torrent.cc:2021
-#, fuzzy, c-format
+#, c-format
 msgid "Connecting to peer %s port %u"
-msgstr "Navazuje se spojení na %s%s (%s) port %u"
+msgstr "Navazuje se spojení s protistranou %s na portu %u"
 
 #: src/Torrent.cc:2071 src/Torrent.cc:2158
-#, fuzzy, c-format
+#, c-format
 msgid "peer unexpectedly closed connection after %s"
-msgstr "Druhá strana uzavřela spojení"
+msgstr "protistrana nečekaně uzavřela spojení po %s"
 
 #: src/Torrent.cc:2073
-#, fuzzy
 msgid "peer closed connection (before handshake)"
-msgstr "Druhá strana uzavřela spojení"
+msgstr "protistrana uzavřela spojení (před dojednáním spojení)"
 
 #: src/Torrent.cc:2146
-#, fuzzy
 msgid "peer closed connection"
-msgstr "Druhá strana uzavřela spojení"
+msgstr "protistrana uzavřela spojení"
 
 #: src/Torrent.cc:2160
-#, fuzzy
 msgid "invalid peer response format"
-msgstr "neplatný tvar odpovědi serveru"
+msgstr "neplatný tvar odpovědi protistrany"
 
 #: src/Torrent.cc:2288
 msgid "Handshaking..."
-msgstr ""
+msgstr "Dojednává se spojení…"
 
 #: src/Torrent.cc:2523
 msgid "Cannot bind a socket for torrent:port-range"
-msgstr ""
+msgstr "Socket nelze navázat na torrent:port-range"
 
 #: src/Torrent.cc:2551
-#, fuzzy, c-format
+#, c-format
 msgid "Accepted connection from [%s]:%d"
-msgstr "Přijato datové spojení z (%s) portu %u"
+msgstr "Přijato spojení z [%s]:%d"
 
 #: src/Torrent.cc:2585
 msgid "peer handshake timeout"
-msgstr ""
+msgstr "protistrana nedojednala spojení včas"
 
 #: src/Torrent.cc:2597
 msgid "peer short handshake"
-msgstr ""
+msgstr "protistrana zkrátila dojednání spojení"
 
 #: src/Torrent.cc:2599
-#, fuzzy
 msgid "peer closed just accepted connection"
-msgstr "Druhá strana uzavřela spojení"
+msgstr "protistrana uzavřela právě přijaté spojení"
 
 #: src/Torrent.cc:2650
-#, fuzzy, c-format
+#, c-format
 msgid "Seeding in background...\n"
-msgstr "Odesílají se příkazy…"
+msgstr "Vysemeňování na pozadí…\n"
 
 #: src/Torrent.cc:2665
 #, c-format
 msgid "next request in %s"
-msgstr ""
+msgstr "další požadavek za %s"
 
 #: src/Torrent.cc:2816
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
-msgstr ""
+msgstr "%s: Prosím, zadejte metadata souboru nebo URL.\n"
 
 #: src/attach.h:127
-#, fuzzy, c-format
+#, c-format
 msgid "[%u] Attached to terminal %s. %s\n"
-msgstr "[%lu] Ukončeno signálem %d. %s"
+msgstr "[%u] Připojeno k terminálu %s. %s\n"
 
 #: src/attach.h:139
 #, c-format
 msgid "[%u] Attached to terminal.\n"
-msgstr ""
+msgstr "[%u] Připojeno k terminálu.\n"
 
 #~ msgid "Can only edit plain queues.\n"
 #~ msgstr "Upravovat lze pouze čisté fronty.\n"
