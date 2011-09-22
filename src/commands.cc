@@ -1044,11 +1044,11 @@ Job *CmdExec::builtin_open()
       if(old)
       {
 	 bool is_file=false;
-	 const char *url=0;
+	 const char *old_url=0;
 	 if(url::is_url(old))
 	 {
 	    ParsedURL u(old,true);
-	    url=old;
+	    old_url=old;
 	    old=alloca_strdup(u.path);
 	    if(url::dir_needs_trailing_slash(u.proto))
 	       is_file=(last_char(old)!='/');
@@ -1058,7 +1058,7 @@ Job *CmdExec::builtin_open()
 	    if(url::dir_needs_trailing_slash(session->GetProto()))
 	       is_file=(last_char(old)!='/');
 	 }
-	 session->SetCwd(FileAccess::Path(old,is_file,url));
+	 session->SetCwd(FileAccess::Path(old,is_file,old_url));
       }
 
       const char *cd_arg=(url && url->orig_url)?url->orig_url.get():path;

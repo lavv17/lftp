@@ -1007,16 +1007,11 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
    // sanity check
    if(url)
    {
-      const char *url_path=url+path_index;
-      if(url_path[0]=='/' && url_path[1]=='~')
-	 url_path++;
-      url_path=url::decode(url_path);
-      int up_len=strlen(url_path);
-      if(up_len>1 && url_path[up_len-1]=='/')
-	 up_len--;
-      if(strncmp(url_path,path,up_len))
+      ParsedURL u(url);
+      u.path.chomp('/');
+      if(!u.path.eq(path))
       {
-	 LogError(0,"(BUG?) URL mismatch %s vs %s, dropping URL\n",url.get(),path.get());
+	 LogError(0,"URL mismatch %s [%s] vs %s, dropping URL\n",url.get(),u.path.get(),path.get());
 	 url.set(0);
       }
    }

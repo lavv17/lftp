@@ -1,3 +1,11 @@
+2011-09-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, FileAccess.cc, commands.cc:
+	  use ParsedURL for URL path verification; compare path to home
+	  dir ~ properly; send first path component together with root
+	  directory to ftp server; use reconnect if cannot change back to
+	  home dir.
+
 2011-09-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ResMgr.cc: (ResMgr::Resource::ClosureMatch) try to match basename,
