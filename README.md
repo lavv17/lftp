@@ -1,0 +1,1 @@
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=lavv17&url=https://github.com/lavv17/lftp&title=LFTP&language=en_GB&tags=github&category=software)
