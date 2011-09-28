@@ -280,7 +280,7 @@ lftp would fallback to plain copy (via client) if FXP transfer cannot be
 initiated or ftp:use-fxp is false.
 
 .BR get " [" \-E ]
-.RB [ \-a "] [" \-c "] [" \-O
+.RB [ \-a "] [" \-c "] [" \-e "] [" \-O
 .RB "\fIbase\fP] \fIrfile\fP [" \-o " \fIlfile\fP] ..."
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
@@ -294,6 +294,7 @@ instances of \fIrfile\fP (and \-o \fIlfile\fP). Does not expand wildcards, use
 l	lx	.
 \-c	continue, reget
 \-E	delete source files after successful transfer
+\-e	delete target file before the transfer
 \-a	use ascii mode (binary is the default)
 \-O <base>	T{
 specifies base directory or URL where files should be placed
