@@ -269,3 +269,13 @@
 /xstrtol.h
 /xstrtoul.c
 /xstrtoumax.c
+/closedir.c
+/dirent-private.h
+/filename.h
+/fstat.c
+/msvc-inval.c
+/msvc-inval.h
+/msvc-nothrow.c
+/msvc-nothrow.h
+/opendir.c
+/readdir.c

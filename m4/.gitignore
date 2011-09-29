@@ -201,3 +201,9 @@
 /xalloc.m4
 /xsize.m4
 /xstrtol.m4
+/closedir.m4
+/fstat.m4
+/msvc-inval.m4
+/msvc-nothrow.m4
+/opendir.m4
+/readdir.m4

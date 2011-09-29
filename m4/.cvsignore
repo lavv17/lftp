@@ -199,3 +199,9 @@ largefile.m4
 pathmax.m4
 signal_h.m4
 sys_types_h.m4
+closedir.m4
+fstat.m4
+msvc-inval.m4
+msvc-nothrow.m4
+opendir.m4
+readdir.m4
