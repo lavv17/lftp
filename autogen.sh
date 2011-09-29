@@ -65,6 +65,14 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   echo "(or a newer version if it is available)"
   DIE=1
 }
+
+(gnulib-tool --version) < /dev/null > /dev/null 2>&1 || {
+  echo
+  echo "**Error**: You must have \`gnulib-tool' in PATH to compile $PKG_NAME."
+  echo "Get it from git://git.savannah.gnu.org/gnulib"
+  DIE=1
+}
+
 ver=`gettextize --version 2>&1 | sed -n 's/^.*GNU gettext.* \([0-9]*\.[0-9.]*\).*$/\1/p'`
 
 case $ver in
