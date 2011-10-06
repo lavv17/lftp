@@ -1357,22 +1357,13 @@ CMD(ls)
    if(!nlist && args->count()==1 && var_ls[0])
       args->Append(var_ls);
 
-   bool use_color=false;
-   if(!nlist)
-   {
-      ResValue color=ResMgr::Query("color:use-color",0);
-      if(!strcasecmp(color,"auto"))
-	 use_color=!output && isatty(1);
-      else
-	 use_color=color.to_bool();
-   }
    bool no_status=(!output || output->usesfd(1));
 
    FileCopyPeer *src_peer=0;
    if(!nlist)
    {
       FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(session->Clone(),args.borrow());
-      dir_list->UseColor(use_color);
+      dir_list->UseColor(ResMgr::QueryTriBool("color:use-color",0,(!output && isatty(1))));
       src_peer=dir_list;
    }
    else

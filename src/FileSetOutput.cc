@@ -205,9 +205,7 @@ void FileSetOutput::config(const OutputJob *o)
    width = o->GetWidth();
    if(width == -1)
       width = 80;
-
-   if(!strcasecmp(ResMgr::Query("color:use-color", 0), "auto")) color = o->IsTTY();
-   else color = ResMgr::QueryBool("color:use-color", 0);
+   color = ResMgr::QueryTriBool("color:use-color", 0, o->IsTTY());
 }
 
 void FileSetOutput::long_list()
