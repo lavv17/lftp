@@ -1656,8 +1656,10 @@ CMD(mirror)
 	 {
 	    // user wants source dir name appended.
 	    const char *base=basename_ptr(source_dir);
-	    if(base[0]!='/' && strcmp(base,basename_ptr(arg)))
+	    if(base[0]!='/' && strcmp(base,basename_ptr(arg))) {
 	       target_dir=xstring::cat(target_dir,base,NULL);
+	       target_dir=alloca_strdup(target_dir); // save the buffer
+	    }
 	 }
       }
       else
@@ -1665,8 +1667,10 @@ CMD(mirror)
 	 target_dir=basename_ptr(source_dir);
 	 if(target_dir[0]=='/')
 	    target_dir=".";
-	 else if(target_dir[0]=='~')
-	    target_dir=alloca_strdup(dir_file(".",target_dir));
+	 else if(target_dir[0]=='~') {
+	    target_dir=dir_file(".",target_dir);
+	    target_dir=alloca_strdup(target_dir); // save the buffer
+	 }
       }
    }
 

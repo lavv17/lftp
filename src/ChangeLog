@@ -1,3 +1,7 @@
+2011-10-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: save the buffer of target_dir using alloca.
+
 2011-09-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, FileAccess.cc, commands.cc:
