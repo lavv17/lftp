@@ -1,6 +1,8 @@
 2011-10-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc: save the buffer of target_dir using alloca.
+	* ResMgr.cc, ResMgr.h: (ResValue::to_tri_bool, *::QueryTriBool)
+	  new methods; use const for const methods; remove ifdef0'ed code.
 
 2011-09-22  Alexander V. Lukyanov <lav@yars.free.net>
 

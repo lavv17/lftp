@@ -478,7 +478,7 @@ const char *ResMgr::UNumberValidate(xstring_c *value)
 
    return 0;
 }
-unsigned long long ResValue::to_unumber(unsigned long long max)
+unsigned long long ResValue::to_unumber(unsigned long long max) const
 {
    if (is_nil())
       return 0;
@@ -490,7 +490,7 @@ unsigned long long ResValue::to_unumber(unsigned long long max)
       return max;
    return vm;
 }
-long long ResValue::to_number(long long min,long long max)
+long long ResValue::to_number(long long min,long long max) const
 {
    if (is_nil())
       return 0;
@@ -506,21 +506,27 @@ long long ResValue::to_number(long long min,long long max)
       return min;
    return vm;
 }
-ResValue::operator int()
+ResValue::operator int() const
 {
    return to_number(INT_MIN,INT_MAX);
 }
-ResValue::operator long()
+ResValue::operator long() const
 {
    return to_number(LONG_MIN,LONG_MAX);
 }
-ResValue::operator unsigned()
+ResValue::operator unsigned() const
 {
    return to_unumber(UINT_MAX);
 }
-ResValue::operator unsigned long()
+ResValue::operator unsigned long() const
 {
    return to_unumber(ULONG_MAX);
+}
+bool ResValue::to_tri_bool(bool a) const
+{
+   if(*s=='a' || *s=='A')
+      return a;
+   return to_bool();
 }
 
 ResMgr::Resource::Resource(Resource *next,const ResType *type,const char *closure,const char *value)
@@ -664,24 +670,14 @@ ResType::~ResType()
 
    {
       // remove all resources of this type
-      bool modified=false;
       ResMgr::Resource **scan=&ResMgr::chain;
       while(*scan)
       {
 	 if((*scan)->type==this)
-	 {
 	    delete replace_value(*scan,(*scan)->next);
-	    modified=true;
-	 }
 	 else
-	 {
 	    scan=&(*scan)->next;
-	 }
       }
-#if 0 // this makes trouble at exit.
-      if(modified)
-	 SMTask::ReconfigAll(this->name);
-#endif
    }
 }
 
@@ -946,7 +942,7 @@ const char *ResMgr::UNumberPairValidate(xstring_c *value)
 
    return 0;
 }
-void ResValue::ToNumberPair(int &a,int &b)
+void ResValue::ToNumberPair(int &a,int &b) const
 {
    switch(sscanf(s,"%d%*c%d",&a,&b))
    {
@@ -993,4 +989,16 @@ bool ResMgr::QueryBool(const char *name,const char *closure)
 bool ResClient::QueryBool(const char *name,const char *closure) const
 {
    return Query(name,closure).to_bool();
+}
+bool ResType::QueryTriBool(const char *closure,bool a) const
+{
+   return Query(closure).to_tri_bool(a);
+}
+bool ResMgr::QueryTriBool(const char *name,const char *closure,bool a)
+{
+   return Query(name,closure).to_tri_bool(a);
+}
+bool ResClient::QueryTriBool(const char *name,const char *closure,bool a) const
+{
+   return Query(name,closure).to_tri_bool(a);
 }

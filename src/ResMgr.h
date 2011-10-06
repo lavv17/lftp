@@ -44,6 +44,7 @@ struct ResType
 
    ResValue Query(const char *closure) const;
    bool QueryBool(const char *closure) const;
+   bool QueryTriBool(const char *closure,bool a) const;
 };
 
 class ResMgr
@@ -79,6 +80,7 @@ public:
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
    static bool QueryBool(const char *name,const char *closure);
+   static bool QueryTriBool(const char *name,const char *closure,bool a);
 
    enum CmpRes {
       EXACT_PREFIX=0x00,SUBSTR_PREFIX=0x01,
@@ -143,24 +145,25 @@ public:
       {
 	 s=s_new;
       }
-   bool to_bool()
+   bool to_bool() const
       {
 	 return ResMgr::str2bool(s);
       }
-   unsigned long long to_unumber(unsigned long long max);
-   long long to_number(long long min,long long max);
-   operator int();
-   operator long();
-   operator unsigned();
-   operator unsigned long();
-   operator double() { return atof(s); }
-   operator float()  { return atof(s); }
-   operator const char*()
+   bool to_tri_bool(bool a) const;
+   unsigned long long to_unumber(unsigned long long max) const;
+   long long to_number(long long min,long long max) const;
+   operator int() const;
+   operator long() const;
+   operator unsigned() const;
+   operator unsigned long() const;
+   operator double() const { return atof(s); }
+   operator float() const  { return atof(s); }
+   operator const char*() const
       {
 	 return s;
       }
-   bool is_nil() { return s==0; }
-   void ToNumberPair(int &a,int &b);
+   bool is_nil() const { return s==0; }
+   void ToNumberPair(int &a,int &b) const;
 };
 
 class TimeIntervalR : public TimeInterval
@@ -205,6 +208,7 @@ protected:
    virtual void Reconfig(const char *) {}
    ResValue Query(const char *name,const char *closure=0) const;
    bool QueryBool(const char *name,const char *closure=0) const;
+   bool QueryTriBool(const char *name,const char *closure,bool a) const;
    ResClient();
    virtual ~ResClient();
 public:
