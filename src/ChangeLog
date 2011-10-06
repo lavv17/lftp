@@ -4,6 +4,7 @@
 	* ResMgr.cc, ResMgr.h: (ResValue::to_tri_bool, *::QueryTriBool)
 	  new methods; use const for const methods; remove ifdef0'ed code.
 	* FileSetOutput.cc, commands.cc: use QueryTriBool.
+	* ftpclass.cc, resource.cc: new setting ftp:use-tvfs.
 
 2011-09-22  Alexander V. Lukyanov <lav@yars.free.net>
 

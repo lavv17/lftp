@@ -642,7 +642,7 @@ char *Ftp::ExtractPWD()
 
 void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 {
-   if(conn->tvfs_supported) {
+   if(QueryTriBool("ftp:use-tvfs",0,conn->tvfs_supported)) {
       conn->SendCmd2("CWD",path);
       expect->Push(new Expect(Expect::CWD_CURR,path));
    } else if(path_url) {
