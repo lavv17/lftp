@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 Jun 2011"
+.TH lftp 1 "19 Oct 2011"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.3.0.
+This man page documents lftp version 4.3.3.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -99,7 +99,7 @@ If you exit \fBlftp\fP when some jobs are not finished yet, \fBlftp\fP will move
 itself to nohup mode in background. The same happens when you have a
 real modem hangup or when you close an xterm.
 .PP
-\fBlftp\fP has builtin mirror which can download or update a whole directory
+\fBlftp\fP has built-in mirror which can download or update a whole directory
 tree. There is also reverse mirror (mirror \-R) which uploads or
 updates a directory tree on server. Mirror can also synchronize directories
 between two remote servers, using FXP if available.
@@ -1182,8 +1182,9 @@ cd directory &
 When false, `cd' to a directory known from cache as existent will succeed immediately.
 Otherwise the verification will depend on cmd:verify-path setting.
 .TP
-.BR color:use-color " (boolean)"
+.BR color:use-color " (tri-boolean)"
 when true, cls command and completion output colored file listings according to color:dir-colors setting.
+When set to auto, colors are used when output is a terminal.
 .TP
 .BR color:dir-colors " (string)"
 file listing color description. By default the value of LS_COLORS environment variable is used. See dircolors(1).
@@ -1496,6 +1497,11 @@ when true (default), lftp uses TELNET IAC command and follows TELNET protocol
 as specified in RFC959. When false, it does not follow TELNET protocol and
 thus does not double 255 (0xFF, 0377) character and does not prefix ABOR and
 STAT commands with TELNET IP+SYNCH signal.
+.TP
+.BR ftp:use-tvfs " (tri-boolean)"
+When set to auto, usage of TVFS feature depends on FEAT server reply. Otherwise
+this setting tells whether use it or not. In short, if a server supports TVFS
+feature then it uses unix-like paths.
 .TP
 .BR ftp:use-quit " (boolean)"
 if true, lftp sends QUIT before disconnecting from ftp server. Default is true.
@@ -1890,6 +1896,8 @@ infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
 Boolean settings can be one of (true, on, yes, 1, +) for a True value
 or one of (false, off, no, 0, -) for a False value.
 .PP
+Tri-boolean settings have either a boolean value or `auto'.
+.PP
 Integer settings can have a suffix: k - kibi, m - mebi, g - gigi, etc.
 They can also have a prefix: 0 - octal, 0x - hexadecimal.
 
@@ -1919,23 +1927,28 @@ several commands in one packet, and so cannot some broken routers.
 .SH OPTIONS
 .TP
 .B \-d
-Switch on debugging mode
+Switch on debugging mode.
 .TP
 .BI \-e " commands"
 Execute given commands and don't exit.
 .TP
 .BI \-p " port"
-Use the given port to connect
+Use the given port to connect.
 .TP
 .BI \-u " user\fR[\fP\fB,\fPpass\fR]\fP"
-Use the given username and password to connect
+Use the given username and password to connect. Remember to quote the password properly in the shell.
+Also note that it is not secure to specify the password on command line, use \fI~/.netrc\fP file.
+Alternatively you can use ssh-based protocols with authorized keys, so you don't have to enter a password.
+.PP
 .TP
 .BI \-f " script_file"
-Execute commands in the file and exit
+Execute commands in the file and exit.
+This option must be used alone without other arguments.
 .TP
 .BI \-c " commands"
 Execute the given commands and exit. Commands can be separated with
-a semicolon, `&&' or `||'.
+a semicolon, `&&' or `||'. Remember to quote the commands argument properly in the shell.
+This option must be used alone without other arguments.
 
 .SH ENVIRONMENT VARIABLES
 The following environment variables are processed by \fBlftp\fR:

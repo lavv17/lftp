@@ -1,3 +1,7 @@
+2011-10-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document ftp:use-tvfs setting; minor updates.
+
 2011-09-28	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document get -e option.
