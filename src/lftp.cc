@@ -314,18 +314,34 @@ CMD(attach)
       path.append('*');
       glob_t g;
       glob(path, 0, NULL, &g);
-      if(g.gl_pathc==0) {
-      not_found:
+      for(size_t i=0; i<g.gl_pathc; i++) {
+	 const char *sock_path=g.gl_pathv[i];
+	 pid_s=strrchr(sock_path,'-');
+	 if(!pid_s)
+	    continue;
+	 pid_s++;
+	 int p=atoi(pid_s);
+	 if(p<=1) {
+	    pid_s=0;
+	    continue;
+	 }
+	 if(kill(p,0)==-1) {
+	    if(errno==ESRCH) {
+	       eprintf("%s: removing stale socket `%s'.\n",args->a0(),sock_path);
+	       if(unlink(sock_path)==-1)
+		  eprintf("%s: unlink(%s): %s\n",args->a0(),sock_path,strerror(errno));
+	    }
+	    pid_s=0;
+	    continue;
+	 }
+	 pid_s=alloca_strdup(pid_s);
+	 break;
+      }
+      globfree(&g);
+      if(!pid_s) {
 	 eprintf("%s: no backgrounded lftp processes found.\n",args->a0());
-	 globfree(&g);
 	 return 0;
       }
-      pid_s=strrchr(g.gl_pathv[0],'-');
-      if(pid_s)
-	 pid_s=alloca_strdup(pid_s+1);
-      globfree(&g);
-      if(!pid_s)
-	 goto not_found;
    }
    int pid=atoi(pid_s);
    SMTaskRef<SendTermFD> term_sender(new SendTermFD(pid));
