@@ -1008,7 +1008,8 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
    if(url)
    {
       ParsedURL u(url);
-      u.path.chomp('/');
+      if(u.path.length()>1)
+	 u.path.chomp('/');
       if(!u.path.eq(path))
       {
 	 LogError(0,"URL mismatch %s [%s] vs %s, dropping URL\n",url.get(),u.path.get(),path.get());

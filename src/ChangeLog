@@ -1,3 +1,7 @@
+2011-11-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc: fixed "URL mismatch" message for root directory.
+
 2011-11-09  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: fixed NULL-crash on ssl.
