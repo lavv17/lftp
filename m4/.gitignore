@@ -207,3 +207,4 @@
 /msvc-nothrow.m4
 /opendir.m4
 /readdir.m4
+/stdalign.m4

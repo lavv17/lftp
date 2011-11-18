@@ -280,3 +280,4 @@
 /opendir.c
 /readdir.c
 /itold.c
+/stdalign.in.h
