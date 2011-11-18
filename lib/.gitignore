@@ -281,3 +281,4 @@
 /readdir.c
 /itold.c
 /stdalign.in.h
+/stdalign.h
