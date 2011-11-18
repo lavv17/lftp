@@ -33,10 +33,15 @@ void lftp_line_complete();
 void lftp_add_history_nodups(const char *cmd_buf)
 {
    HIST_ENTRY *temp;
+   char ts[24];
+   if(cmd_buf[0]==' ')
+      return;
    using_history();
    temp=previous_history();
    if(temp==0 || strcmp(temp->line,cmd_buf))
       add_history(cmd_buf);
+   sprintf(ts," %lld",(long long)time(0));
+   add_history_time(ts);
    using_history();
 }
 
@@ -77,8 +82,15 @@ void lftp_history_list(int cnt)
    i = history_base + st->length - cnt;
    if(cnt == -1 || i < history_base) i = history_base;
 
-   while((hist = history_get(i)))
-      printf("%5d%c %s\n", i++, hist->data?'*':' ', hist->line);
+   char ts_str[24];
+   while((hist = history_get(i))) {
+      ts_str[0]=0;
+      if(hist->timestamp[0]) {
+	 time_t ts=atol(hist->timestamp+1);
+	 strftime(ts_str,sizeof(ts_str),"%Y-%m-%d %H:%M:%S",localtime(&ts));
+      }
+      printf("%5d%c %s  %s\n", i++, hist->data?'*':' ', ts_str, hist->line);
+   }
 }
 
 void lftp_history_clear()
@@ -163,6 +175,9 @@ void lftp_rl_init(
    rl_char_is_quoted_p               =(rl_linebuf_func_t*)char_is_quoted_p;
 
    rl_completion_display_matches_hook = lftp_rl_display_match_list;
+
+   history_write_timestamps=1;
+   history_comment_char=' ';
 }
 
 void lftp_rl_add_defun(const char *name,int (*func)(int,int),int key)

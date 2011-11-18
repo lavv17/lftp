@@ -1,6 +1,7 @@
 2011-11-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* TimeDate.cc: fixed IsoDateTime (added seconds).
+	* lftp_rl.c: save timestamps in history; show them.
 
 2011-11-16  Alexander V. Lukyanov <lav@yars.free.net>
 
