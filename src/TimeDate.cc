@@ -82,7 +82,7 @@ const char *TimeDate::IsoDateTime()
 {
    static char buf[21];
    set_local_time();
-   strftime(buf,sizeof(buf),"%Y-%m-%d %H:%M",&local_time);
+   strftime(buf,sizeof(buf),"%Y-%m-%d %H:%M:%S",&local_time);
    buf[sizeof(buf)-1]=0;
    return buf;
 }
