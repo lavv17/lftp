@@ -218,7 +218,7 @@ int Fish::Do()
 	 if(xstrcmp(path_queue.LastString(),cwd))
 	 {
 	    Send("#CWD %s\n"
-		 "cd %s; echo '### 000'\n",cwd.path.get(),shell_encode(cwd));
+		 "cd %s; echo '### 000'\n",cwd.path.get(),shell_encode(cwd).get());
 	    PushExpect(EXPECT_CWD);
 	    PushDirectory(cwd);
 	 }

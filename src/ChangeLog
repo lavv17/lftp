@@ -1,6 +1,7 @@
 2011-12-06  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: open files with CLOEXEC flag.
+	* misc.cc, misc.h, Fish.cc, LocalAccess.cc: (shell_encode) return xstring ref.
 
 2011-11-18  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -118,14 +118,14 @@ int LocalAccess::Do()
 	 if(mode==LIST)
 	 {
 	    if(file && file[0])
-	       cmd=xstring::cat("ls ",shell_encode(file),NULL);
+	       cmd=xstring::cat("ls ",shell_encode(file).get(),NULL);
 	    else
 	       cmd="ls";
 	 }
 	 else if(mode==LONG_LIST)
 	 {
 	    if(file && file[0])
-	       cmd=xstring::cat("ls -l",shell_encode(file),NULL);
+	       cmd=xstring::cat("ls -l",shell_encode(file).get(),NULL);
 	    else
 	       cmd="ls -la";
 	 }

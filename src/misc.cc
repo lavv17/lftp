@@ -804,10 +804,10 @@ const char *memrchr(const char *buf,char c,size_t len)
    return 0;
 }
 
-const char *shell_encode(const char *string)
+const xstring& shell_encode(const char *string)
 {
    if(!string)
-      return 0;
+      return xstring::null;
 
    static xstring result;
 
