@@ -1065,10 +1065,8 @@ int FDCache::OpenFile(const char *file,int m,off_t size)
    } while(fd==-1 && (errno==EMFILE || errno==ENFILE) && CloseOne());
    FD new_entry = {fd,errno,now.UnixTime()};
    cache[ci].add(file,new_entry);
-   if(fd!=-1) {
+   if(fd!=-1)
       fcntl(fd,F_SETFD,FD_CLOEXEC);
-      fcntl(fd,F_SETFL,O_NONBLOCK);
-   }
    if(fd==-1 || size==0)
       return fd;
 #ifdef HAVE_POSIX_FALLOCATE
