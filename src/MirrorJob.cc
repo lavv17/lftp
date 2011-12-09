@@ -348,7 +348,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 }
 	 if(target_is_local && !script_only)
 	 {
-	    if(lstat(target_name,&st)!=-1)
+	    if((flags&RETR_SYMLINKS?stat:lstat)(target_name,&st)!=-1)
 	    {
 	       if(S_ISDIR(st.st_mode))
 	       {
@@ -693,7 +693,7 @@ int   MirrorJob::Do()
       if(target_is_local)
       {
 	 struct stat st;
-	 if(lstat(target_dir,&st)!=-1)
+	 if((flags&RETR_SYMLINKS?stat:lstat)(target_dir,&st)!=-1)
 	 {
 	    if(S_ISDIR(st.st_mode))
 	    {
