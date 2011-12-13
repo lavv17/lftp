@@ -1229,7 +1229,7 @@ Job *CmdExec::builtin_queue()
 	    }
 	    else
 	    {
-	       xstring buf("");
+	       xstring& buf=xstring::get_tmp("");
 	       queue->FormatStatus(buf,2,"");
 	       printf("%s",buf.get());
 	    }
@@ -1271,13 +1271,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(!arg)
-	    queue->queue_feeder->DelJob(-1, verbose); /* delete the last job */
+	    exit_code=!queue->queue_feeder->DelJob(-1, verbose); /* delete the last job */
 	 else if(atoi(arg) != 0)
-	    queue->queue_feeder->DelJob(atoi(arg)-1, verbose);
+	    exit_code=!queue->queue_feeder->DelJob(atoi(arg)-1, verbose);
 	 else
-	    queue->queue_feeder->DelJob(arg, verbose);
-
-	 exit_code=0;
+	    exit_code=!queue->queue_feeder->DelJob(arg, verbose);
       }
       break;
 
@@ -1301,12 +1299,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(atoi(arg) != 0) {
-	    queue->queue_feeder->MoveJob(atoi(arg)-1, to, verbose);
+	    exit_code=!queue->queue_feeder->MoveJob(atoi(arg)-1, to, verbose);
 	    break;
 	 }
 
-	 queue->queue_feeder->MoveJob(arg, to, verbose);
-	 exit_code=0;
+	 exit_code=!queue->queue_feeder->MoveJob(arg, to, verbose);
       }
       break;
    }
