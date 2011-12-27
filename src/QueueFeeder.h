@@ -75,6 +75,9 @@ public:
    bool MoveJob(int from, int to, int v = 0);
    bool MoveJob(const char *cmd, int to, int v = 0);
 
+   static int JobCount(const QueueJob *);
+   int JobCount() const { return JobCount(jobs); }
+
    enum { PrintRequeue = 9999 };
    xstring& FormatStatus(xstring&,int v,const char *prefix="\t") const;
 

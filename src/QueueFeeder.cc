@@ -68,6 +68,14 @@ void QueueFeeder::QueueCmd(const char *cmd, const char *pwd, const char *lpwd, i
    PrintJobs(job, v, _("Added job$|s$"));
 }
 
+int QueueFeeder::JobCount(const QueueJob *j)
+{
+   int job_count=0;
+   for(; j; j=j->next)
+      job_count++;
+   return job_count;
+}
+
 /* verbose:
  * 0, quiet
  * 1, interactive
@@ -101,10 +109,7 @@ xstring& QueueFeeder::FormatJobs(xstring& s,const QueueJob *job, int v, const ch
       return s;
    }
 
-   int job_count=0;
-   for(const QueueJob *j = job; j; j=j->next)
-      job_count++;
-
+   int job_count=JobCount(job);
    if(job_count>1)
       s.appendf("%s:\n", plural(plur,job_count));
 
