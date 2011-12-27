@@ -178,7 +178,7 @@ public:
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
    xstring& FormatStatus(xstring&,int v,const char *);
    void	 SayFinal() { PrintStatus(0,""); }
-   int	 ExitCode() { return stats.error_count; }
+   int	 ExitCode() { return stats.error_count!=0; }
 
    void	 SetExclude(PatternSet *x) { my_exclude=x; exclude=my_exclude; }
    void	 SetExclude(const PatternSet *x) { exclude=x; }

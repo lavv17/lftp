@@ -3,6 +3,7 @@
 	* QueueFeeder.cc, QueueFeeder.h: (JobCount) new method.
 	* CmdExec.cc, CmdExec.h, lftp.cc: new settings cmd:at-exit-bg,
 	  cmd:at-finish, cmd:at-queue-finish.
+	* MirrorJob.h: use 0,1 exit codes.
 
 2011-12-13  Alexander V. Lukyanov <lav@yars.free.net>
 
