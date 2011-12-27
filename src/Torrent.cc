@@ -2779,7 +2779,7 @@ CMD(torrent)
    }
    args->back();
 
-   xstring_ca torrent_opt(args->Combine(0,args->getindex()));
+   xstring_ca torrent_opt(args->Combine(0,args->getindex()+1));
 
    xstring_ca cwd(xgetcwd());
    if(output_dir) {

@@ -4,6 +4,7 @@
 	* CmdExec.cc, CmdExec.h, lftp.cc: new settings cmd:at-exit-bg,
 	  cmd:at-finish, cmd:at-queue-finish.
 	* MirrorJob.h: use 0,1 exit codes.
+	* Torrent.cc: fixed status command line.
 
 2011-12-13  Alexander V. Lukyanov <lav@yars.free.net>
 
