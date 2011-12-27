@@ -56,6 +56,9 @@ static ResType lftp_cmd_vars[] = {
    {"cmd:verify-path-cached",	 "no",	  ResMgr::BoolValidate,0},
    {"cmd:verify-host",		 "yes",	  ResMgr::BoolValidate,0},
    {"cmd:at-exit",		 "",	  0,0},
+   {"cmd:at-exit-bg",		 "",	  0,0},
+   {"cmd:at-finish",		 "",	  0,0},
+   {"cmd:at-queue-finish",	 "",	  0,0},
    {"cmd:fail-exit",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:verbose",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:interactive",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
@@ -340,6 +343,17 @@ void CmdExec::ChangeSlot(const char *n)
       ConnectionSlot::Set(n,session);
    else
       ChangeSession(s->Clone());
+}
+
+void CmdExec::AtFinish()
+{
+   if(queue_feeder && queue_feeder->JobCount())
+      return;
+   if(!fed_at_finish && NumAwaitedJobs()==0) {
+      FeedCmd(ResMgr::Query(queue_feeder?"cmd:at-queue-finish":"cmd:at-finish",0));
+      FeedCmd("\n");
+      fed_at_finish=true;
+   }
 }
 
 int CmdExec::Do()
@@ -633,6 +647,9 @@ try_get_cmd:
 	 {
 	    auto_terminate_in_bg=false;
 	    FeedCmd(cmd);
+	    Roll();
+	    if(!Idle())
+	       fed_at_finish=false;
 	    return MOVED;
 	 }
 	 else
@@ -770,6 +787,7 @@ void CmdExec::init(LocalDirectory *c)
    exit_code=0;
    failed_exit_code=0;
    last_bg=-1;
+   fed_at_finish=true;
 
    cwd=c;
    if(!cwd)
@@ -883,6 +901,7 @@ void CmdExec::beep_if_long()
    && now.UnixTime()>start_time+long_running
    && interactive && Idle() && isatty(1))
       write(1,"\007",1);
+   AtFinish();
 }
 
 void CmdExec::Reconfig(const char *name)
@@ -1078,6 +1097,12 @@ void CmdExec::AtExit()
    /* Clear the title, and ensure we don't write anything else
     * to it in case we're being backgrounded. */
    status_line=0;
+}
+
+void CmdExec::AtExitBg()
+{
+   FeedCmd(ResMgr::Query("cmd:at-exit-bg",0));
+   FeedCmd("\n");
 }
 
 void CmdExec::EmptyCmds()

@@ -452,6 +452,8 @@ static int move_to_background()
 	 if(term_acceptor->Accepted())
 	    return 1;
       }
+      top_exec->AtExitBg();
+      top_exec->WaitDone();
       printf(_("[%u] Finished. %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
       return 0;
    }
@@ -572,7 +574,7 @@ revived:
    top_exec->KillAll();
    top_exec=0;
 
-   if(term_acceptor) {
+   if(term_acceptor && term_acceptor->Accepted()) {
       printf(_("[%u] Exiting and detaching from the terminal.\n"),(unsigned)getpid());
       fflush(stdout);
    }

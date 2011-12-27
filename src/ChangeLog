@@ -1,3 +1,9 @@
+2011-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* QueueFeeder.cc, QueueFeeder.h: (JobCount) new method.
+	* CmdExec.cc, CmdExec.h, lftp.cc: new settings cmd:at-exit-bg,
+	  cmd:at-finish, cmd:at-queue-finish.
+
 2011-12-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: fixed exit code of queue command.

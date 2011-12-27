@@ -115,6 +115,9 @@ private:
    CmdFeeder *feeder;
    bool feeder_called;
 
+   bool fed_at_finish;
+   void AtFinish();
+
    enum builtins
    {
       BUILTIN_NONE=0,
@@ -161,6 +164,7 @@ public:
    void FeedQuoted(const char *c);
    void Exit(int);
    void AtExit();
+   void AtExitBg();
    void EmptyCmds();
    bool WriteCmds(int fd) const;
    bool ReadCmds(int fd); // does not clear queue before reading (appends)
