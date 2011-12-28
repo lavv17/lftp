@@ -268,7 +268,7 @@ class Ftp : public NetAccess
    void	 proxy_NoPassReqCheck(int);
    void	 CheckFEAT(char *reply);
    char *ExtractPWD();
-   void  SendCWD(const char *path,const char *path_url,Expect::expect_t c);
+   int   SendCWD(const char *path,const char *path_url,Expect::expect_t c);
    void	 CatchDATE(int);
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);

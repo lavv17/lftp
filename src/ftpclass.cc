@@ -640,11 +640,13 @@ char *Ftp::ExtractPWD()
    return xstrdup(pwd);
 }
 
-void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
+int Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 {
+   int cwd_count=0;
    if(QueryTriBool("ftp:use-tvfs",0,conn->tvfs_supported)) {
       conn->SendCmd2("CWD",path);
       expect->Push(new Expect(Expect::CWD_CURR,path));
+      cwd_count++;
    } else if(path_url) {
       path_url=url::path_ptr(path_url);
       if(path_url[0]=='/')
@@ -667,12 +669,13 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	 path2.append(dir);
 	 conn->SendCmd2("CWD",dir);
 	 expect->Push(new Expect(Expect::CWD_CURR,path2));
+	 cwd_count++;
       }
    } else {
       char *path1=alloca_strdup(path); // to split it
       char *path2=alloca_strdup(path); // to re-assemble
       if(AbsolutePath(path)) {
-	 if(!strncmp(real_cwd,path,real_cwd.length())
+	 if(real_cwd && !strncmp(real_cwd,path,real_cwd.length())
 	 && path[real_cwd.length()]=='/') {
 	    path1+=real_cwd.length()+1;
 	    path2[real_cwd.length()]=0;
@@ -689,9 +692,10 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	    }
 	    path2[dev_len]=0;
 	    path1+=dev_len;
-	    if(strcmp(real_cwd,path2)) {
+	    if(!real_cwd || strcmp(real_cwd,path2)) {
 	       conn->SendCmd2("CWD",path2);
 	       expect->Push(new Expect(Expect::CWD_CURR,path2));
+	       cwd_count++;
 	    }
 	 }
       } else {
@@ -702,9 +706,11 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	    else if(path1[1]=='/')
 	       path1+=2;
 	 }
-	 if(strcmp(real_cwd,"~") && strcmp(real_cwd,home.path)) {
+	 if(real_cwd && strcmp(real_cwd,"~")
+	 && (!home.path || strcmp(real_cwd,home.path))) {
 	    conn->SendCmd("CWD");
 	    expect->Push(new Expect(Expect::CWD_CURR,"~"));
+	    cwd_count++;
 	 }
       }
       int path2_len=strlen(path2);
@@ -717,6 +723,7 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	 path2_len+=strlen(dir);
 	 conn->SendCmd2("CWD",dir);
 	 expect->Push(new Expect(Expect::CWD_CURR,path2));
+	 cwd_count++;
       }
    }
    Expect *last_cwd=expect->FindLastCWD();
@@ -725,6 +732,7 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
       LogNote(9,"CWD path to be sent is `%s'",last_cwd->arg.get());
       last_cwd->check_case=c;
    }
+   return cwd_count;
 }
 
 Ftp::pasv_state_t Ftp::Handle_PASV()
@@ -1877,10 +1885,9 @@ int   Ftp::Do()
             append_file=true;
          break;
       case(CHANGE_DIR):
-	 if(!xstrcmp(real_cwd,file))
-	    cwd.Set(file,false,file_url,device_prefix_len(real_cwd));
-	 else
-	    SendCWD(file,file_url,Expect::CWD);
+	 if((real_cwd && !xstrcmp(real_cwd,file))
+	 || SendCWD(file,file_url,Expect::CWD)==0)
+	    cwd.Set(file,false,file_url,device_prefix_len(file));
 	 goto pre_WAITING_STATE;
       case(MAKE_DIR):
 	 command="MKD";
@@ -4022,7 +4029,7 @@ void Ftp::CheckResp(int act)
       {
 	 if(cc==Expect::CWD) {
 	    assert(!strcmp(arg,file));
-	    cwd.Set(file,false,file_url,device_prefix_len(arg));
+	    cwd.Set(file,false,file_url,device_prefix_len(file));
 	 }
 	 set_real_cwd(arg);
 	 cache->SetDirectory(this, arg, true);

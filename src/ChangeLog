@@ -1,3 +1,8 @@
+2011-12-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: fixed the case when home is unknown;
+	  accept new cwd when real_cwd equals the new cwd.
+
 2011-12-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* QueueFeeder.cc, QueueFeeder.h: (JobCount) new method.
