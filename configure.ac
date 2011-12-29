@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.3.3], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.3.4], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -225,7 +225,14 @@ fi
 AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 
+AC_LANG_PUSH(C++)
 gl_INIT
+AC_LANG_POP(C++)
+
+if test x$ac_cv_func_wcwidth != xyes || test x$REPLACE_WCWIDTH = x1; then
+   gl_LIBOBJ([wcwidth])
+   AC_DEFINE([REPLACE_WCWIDTH], 1, [Define when using wcwidth replacement])
+fi
 
 dnl Checks for libraries.
 dnl LFTP_CHECK_LIBM

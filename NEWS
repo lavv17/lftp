@@ -1,3 +1,16 @@
+Version 4.3.4 - 2011-12-29
+
+* new settings cmd:at-exit-bg, cmd:at-finish, cmd:at-queue-finish.
+* added timestamps in readline history.
+* improved attach command to remove stale sockets.
+* fixed core dump when ftp server does not return valid PWD result.
+* fixed a special ftp cd case when real cwd equals to the new cwd.
+* fixed torrent status command line.
+* fixed torrent to open files with CLOEXEC flag.
+* fixed exit code of queue command.
+* fixed mirror to follow local symlinks with -L option.
+* fixed a crash with https.
+
 Version 4.3.3 - 2011-10-20
 
 * new setting ftp:use-tvfs (yes, no, auto).
