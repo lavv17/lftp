@@ -1,3 +1,8 @@
+2011-12-30	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new settings: cmd:at-exit-bg, at-finish,
+	  at-queue-finish.
+
 2011-10-19	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document ftp:use-tvfs setting; minor updates.
