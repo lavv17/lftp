@@ -1,4 +1,4 @@
-Version 4.3.4 - 2011-12-29
+Version 4.3.4 - 2011-12-30
 
 * new settings cmd:at-exit-bg, cmd:at-finish, cmd:at-queue-finish.
 * added timestamps in readline history.
