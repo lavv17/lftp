@@ -129,7 +129,9 @@ void Http::MoveConnectionHere(Http *o)
 {
    send_buf=o->send_buf.borrow();
    recv_buf=o->recv_buf.borrow();
+#if USE_SSL
    ssl=o->ssl.borrow();
+#endif
    sock=o->sock; o->sock=-1;
    rate_limit=o->rate_limit.borrow();
    last_method=o->last_method; o->last_method=0;
@@ -147,7 +149,9 @@ void Http::Disconnect()
    if(sock!=-1)
    {
       LogNote(7,_("Closing HTTP connection"));
+#if USE_SSL
       ssl=0;
+#endif
       close(sock);
       sock=-1;
    }
