@@ -197,6 +197,8 @@ restart:
 
    const struct cmd_rec *c;
    const char *cmd_name=args->getarg(0);
+   if(!cmd_name)
+      return;
    int part=find_cmd(cmd_name,&c);
    if(part<=0)
       eprintf(_("Unknown command `%s'.\n"),cmd_name);
@@ -1223,10 +1225,14 @@ Job *CmdExec::default_cmd()
 }
 Job *CmdExec::builtin_local()
 {
+   if(args->count()<2) {
+      eprintf(_("Usage: %s cmd [args...]\n"),args->a0());
+      return 0;
+   }
    saved_session=session.borrow();
    session=FileAccess::New("file");
    if(!session) {
-      eprintf("%s: cannot create local session\n",args->a0());
+      eprintf(_("%s: cannot create local session\n"),args->a0());
       RevertToSavedSession();
       return 0;
    }
