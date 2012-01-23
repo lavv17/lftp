@@ -51,8 +51,36 @@ class Http : public NetAccess
 
    void	Send(const char *format,...) PRINTF_LIKE(2,3);
 
-   SMTaskRef<IOBuffer> send_buf;
-   SMTaskRef<IOBuffer> recv_buf;
+   class Connection
+   {
+      xstring_c closure;
+   public:
+      int sock;
+      SMTaskRef<IOBuffer> send_buf;
+      SMTaskRef<IOBuffer> recv_buf;
+      void MakeBuffers();
+#if USE_SSL
+      Ref<lftp_ssl> ssl;
+      void MakeSSLBuffers();
+#endif
+
+      void SuspendInternal()
+      {
+	 if(send_buf) send_buf->SuspendSlave();
+	 if(recv_buf) recv_buf->SuspendSlave();
+      }
+      void ResumeInternal()
+      {
+	 if(send_buf) send_buf->ResumeSlave();
+	 if(recv_buf) recv_buf->ResumeSlave();
+      }
+
+      Connection(int s,const char *c);
+      ~Connection();
+   };
+
+   Ref<Connection> conn;
+
    void SendMethod(const char *,const char *);
    const char *last_method;
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
@@ -76,22 +104,17 @@ class Http : public NetAccess
    void CookieMerge(xstring &c,const char *add);
    bool CookieClosureMatch(const char *closure,const char *host,const char *path);
 
-   int sock;
    void Disconnect();
    void ResetRequestData();
    void MoveConnectionHere(Http *o);
    int IsConnected() const
       {
-	 if(sock==-1)
+	 if(!conn)
 	    return 0;
 	 if(state==CONNECTING)
 	    return 1;
 	 return 2;
       }
-#if USE_SSL
-   Ref<lftp_ssl> ssl;
-   void MakeSSLBuffers();
-#endif
    void LogErrorText();
 
    xstring status;

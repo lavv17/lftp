@@ -65,13 +65,29 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #define EINPROGRESS -1
 #endif
 
+Http::Connection::Connection(int s,const char *c)
+   : closure(c), sock(s)
+{
+}
+Http::Connection::~Connection()
+{
+   close(sock);
+   /* make sure we free buffers before ssl */
+   recv_buf=0;
+   send_buf=0;
+}
+void Http::Connection::MakeBuffers()
+{
+   send_buf=new IOBufferFDStream(
+      new FDStream(sock,"<output-socket>"),IOBuffer::PUT);
+   recv_buf=new IOBufferFDStream(
+      new FDStream(sock,"<input-socket>"),IOBuffer::GET);
+}
+
 void Http::Init()
 {
    state=DISCONNECTED;
    tunnel_state=NO_TUNNEL;
-   sock=-1;
-   send_buf=0;
-   recv_buf=0;
    body_size=-1;
    bytes_received=0;
    status_code=0;
@@ -127,12 +143,7 @@ Http::~Http()
 
 void Http::MoveConnectionHere(Http *o)
 {
-   send_buf=o->send_buf.borrow();
-   recv_buf=o->recv_buf.borrow();
-#if USE_SSL
-   ssl=o->ssl.borrow();
-#endif
-   sock=o->sock; o->sock=-1;
+   conn=o->conn.borrow();
    rate_limit=o->rate_limit.borrow();
    last_method=o->last_method; o->last_method=0;
    timeout_timer.Reset(o->timeout_timer);
@@ -143,17 +154,11 @@ void Http::MoveConnectionHere(Http *o)
 
 void Http::Disconnect()
 {
-   send_buf=0;
-   recv_buf=0;
    rate_limit=0;
-   if(sock!=-1)
+   if(conn)
    {
       LogNote(7,_("Closing HTTP connection"));
-#if USE_SSL
-      ssl=0;
-#endif
-      close(sock);
-      sock=-1;
+      conn=0;
    }
    if((mode==STORE && state!=DONE && real_pos>0)
    && !Error())
@@ -191,20 +196,20 @@ void Http::Close()
 {
    if(mode==CLOSED)
       return;
-   if(recv_buf)
-      recv_buf->Roll();	// try to read any remaining data
-   if(sock!=-1 && keep_alive && (keep_alive_max>0 || keep_alive_max==-1)
-   && mode!=STORE && !recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
+   if(conn && conn->recv_buf)
+      conn->recv_buf->Roll();	// try to read any remaining data
+   if(conn && keep_alive && (keep_alive_max>0 || keep_alive_max==-1)
+   && mode!=STORE && !conn->recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
    {
-      recv_buf->Resume();
-      recv_buf->Roll();
+      conn->recv_buf->Resume();
+      conn->recv_buf->Roll();
       if(xstrcmp(last_method,"HEAD"))
       {
 	 // check if all data are in buffer
 	 if(!chunked)	// chunked is a bit complex, so don't handle it
 	 {
-	    bytes_received+=recv_buf->Size();
-	    recv_buf->Skip(recv_buf->Size());
+	    bytes_received+=conn->recv_buf->Size();
+	    conn->recv_buf->Skip(conn->recv_buf->Size());
 	 }
 	 if(!(body_size>=0 && bytes_received==body_size))
 	    goto disconnect;
@@ -236,7 +241,7 @@ void Http::Send(const char *format,...)
    xstring& str=xstring::vformat(format,va);
    va_end(va);
    LogSend(5,str);
-   send_buf->Put(str);
+   conn->send_buf->Put(str);
 }
 
 void Http::SendMethod(const char *method,const char *efile)
@@ -670,7 +675,7 @@ void Http::SendRequest(const char *connection,const char *f)
    chunked_trailer=false;
    no_ranges=false;
 
-   send_buf->SetPos(0);
+   conn->send_buf->SetPos(0);
 }
 
 void Http::SendArrayInfoRequest()
@@ -876,7 +881,7 @@ void Http::GetBetterConnection(int level)
    {
       Http *o=(Http*)fo; // we are sure it is Http.
 
-      if(o->sock==-1 || o->state==CONNECTING)
+      if(!o->conn || o->state==CONNECTING)
 	 continue;
 
       if(o->tunnel_state==TUNNEL_WAITING)
@@ -906,7 +911,7 @@ int Http::Do()
    int len;
 
    // check if idle time exceeded
-   if(mode==CLOSED && sock!=-1 && idle_timer.Stopped())
+   if(mode==CLOSED && conn && idle_timer.Stopped())
    {
       LogNote(1,_("Closing idle connection"));
       Disconnect();
@@ -1024,8 +1029,8 @@ int Http::Do()
       if(!NextTry())
       	 return MOVED;
 
-      sock=SocketCreateTCP(peer[peer_curr].sa.sa_family);
-      if(sock==-1)
+      res=SocketCreateTCP(peer[peer_curr].sa.sa_family);
+      if(res==-1)
       {
 	 saved_errno=errno;
 	 if(peer_curr+1<peer.count())
@@ -1041,9 +1046,10 @@ int Http::Do()
 	    peer[peer_curr].sa.sa_family));
 	 return MOVED;
       }
+      conn=new Connection(res,hostname);
 
       SayConnectingTo();
-      res=SocketConnect(sock,&peer[peer_curr]);
+      res=SocketConnect(conn->sock,&peer[peer_curr]);
       if(res==-1 && errno!=EINPROGRESS)
       {
 	 saved_errno=errno;
@@ -1059,7 +1065,7 @@ int Http::Do()
       timeout_timer.Reset();
 
    case CONNECTING:
-      res=Poll(sock,POLLOUT);
+      res=Poll(conn->sock,POLLOUT);
       if(res==-1)
       {
 	 NextPeer();
@@ -1073,7 +1079,7 @@ int Http::Do()
 	    NextPeer();
 	    return MOVED;
 	 }
-	 Block(sock,POLLOUT);
+	 Block(conn->sock,POLLOUT);
 	 return m;
       }
 
@@ -1082,15 +1088,12 @@ int Http::Do()
 #if USE_SSL
       if(proxy?!strncmp(proxy,"https://",8):https)
       {
-	 MakeSSLBuffers();
+	 conn->MakeSSLBuffers();
       }
       else
 #endif
       {
-	 send_buf=new IOBufferFDStream(
-	    new FDStream(sock,"<output-socket>"),IOBuffer::PUT);
-	 recv_buf=new IOBufferFDStream(
-	    new FDStream(sock,"<input-socket>"),IOBuffer::GET);
+	 conn->MakeBuffers();
 #if USE_SSL
 	 if(proxy && https)
 	 {
@@ -1112,7 +1115,7 @@ int Http::Do()
 
       if(mode==QUOTE_CMD && !special)
 	 goto handle_quote_cmd;
-      if(recv_buf->Eof())
+      if(conn->recv_buf->Eof())
       {
 	 LogError(0,_("Peer closed connection"));
 	 Disconnect();
@@ -1146,31 +1149,31 @@ int Http::Do()
 	 rate_limit=new RateLimit(hostname);
 
    case RECEIVING_HEADER:
-      if(send_buf->Error() || recv_buf->Error())
+      if(conn->send_buf->Error() || conn->recv_buf->Error())
       {
 	 if((mode==STORE || special) && status_code && !H_20X(status_code))
 	    goto pre_RECEIVING_BODY;   // assume error.
       handle_buf_error:
-	 if(send_buf->Error())
+	 if(conn->send_buf->Error())
 	 {
-	    LogError(0,"send: %s",send_buf->ErrorText());
-	    if(send_buf->ErrorFatal())
-	       SetError(FATAL,send_buf->ErrorText());
+	    LogError(0,"send: %s",conn->send_buf->ErrorText());
+	    if(conn->send_buf->ErrorFatal())
+	       SetError(FATAL,conn->send_buf->ErrorText());
 	 }
-	 if(recv_buf->Error())
+	 if(conn->recv_buf->Error())
 	 {
-	    LogError(0,"recv: %s",recv_buf->ErrorText());
-	    if(recv_buf->ErrorFatal())
-	       SetError(FATAL,recv_buf->ErrorText());
+	    LogError(0,"recv: %s",conn->recv_buf->ErrorText());
+	    if(conn->recv_buf->ErrorFatal())
+	       SetError(FATAL,conn->recv_buf->ErrorText());
 	 }
 	 Disconnect();
 	 return MOVED;
       }
-      timeout_timer.Reset(send_buf->EventTime());
-      timeout_timer.Reset(recv_buf->EventTime());
+      timeout_timer.Reset(conn->send_buf->EventTime());
+      timeout_timer.Reset(conn->recv_buf->EventTime());
       if(CheckTimeout())
 	 return MOVED;
-      recv_buf->Get(&buf,&len);
+      conn->recv_buf->Get(&buf,&len);
       if(!buf)
       {
 	 // eof
@@ -1191,14 +1194,14 @@ int Http::Do()
 	    if(eol==buf && status)
 	    {
 	       LogRecv(4,"");
-	       recv_buf->Skip(eol_size);
+	       conn->recv_buf->Skip(eol_size);
 	       if(tunnel_state==TUNNEL_WAITING)
 	       {
 		  if(H_20X(status_code))
 		  {
 #if USE_SSL
 		     if(https)
-			MakeSSLBuffers();
+			conn->MakeSSLBuffers();
 #endif
 		     tunnel_state=TUNNEL_ESTABLISHED;
 		     ResetRequestData();
@@ -1268,7 +1271,7 @@ int Http::Do()
 	    len=eol-buf;
 	    line.nset(buf,len);
 
-	    recv_buf->Skip(len+eol_size);
+	    conn->recv_buf->Skip(len+eol_size);
 
 	    LogRecv(4,line);
 	    m=MOVED;
@@ -1292,7 +1295,7 @@ int Http::Do()
 		     state=DONE;
 		     return MOVED;
 		  }
-		  recv_buf->UnSkip(len+eol_size);
+		  conn->recv_buf->UnSkip(len+eol_size);
 		  goto pre_RECEIVING_BODY;
 	       }
 	       proto_version=(ver_major<<4)+ver_minor;
@@ -1354,7 +1357,7 @@ int Http::Do()
       }
 
       if(mode==STORE && (!status || H_CONTINUE(status_code)) && !sent_eot)
-	 Block(sock,POLLOUT);
+	 Block(conn->sock,POLLOUT);
 
       return m;
 
@@ -1480,29 +1483,29 @@ int Http::Do()
       state=RECEIVING_BODY;
       m=MOVED;
    case RECEIVING_BODY:
-      if(recv_buf->Error() || send_buf->Error())
+      if(conn->recv_buf->Error() || conn->send_buf->Error())
 	 goto handle_buf_error;
-      if(recv_buf->Size()>=rate_limit->BytesAllowedToGet())
+      if(conn->recv_buf->Size()>=rate_limit->BytesAllowedToGet())
       {
-	 recv_buf->Suspend();
+	 conn->recv_buf->Suspend();
 	 Timeout(1000);
       }
-      else if(recv_buf->Size()>=max_buf)
+      else if(conn->recv_buf->Size()>=max_buf)
       {
-	 recv_buf->Suspend();
+	 conn->recv_buf->Suspend();
 	 m=MOVED;
       }
       else
       {
-	 if(recv_buf->IsSuspended())
+	 if(conn->recv_buf->IsSuspended())
 	 {
-	    recv_buf->Resume();
-	    if(recv_buf->Size()>0 || (recv_buf->Size()==0 && recv_buf->Eof()))
+	    conn->recv_buf->Resume();
+	    if(conn->recv_buf->Size()>0 || (conn->recv_buf->Size()==0 && conn->recv_buf->Eof()))
 	       m=MOVED;
 	 }
-	 timeout_timer.Reset(send_buf->EventTime());
-	 timeout_timer.Reset(recv_buf->EventTime());
-	 if(recv_buf->Size()==0)
+	 timeout_timer.Reset(conn->send_buf->EventTime());
+	 timeout_timer.Reset(conn->recv_buf->EventTime());
+	 if(conn->recv_buf->Size()==0)
 	 {
 	    // check if ranges were emulated by squid
 	    bool no_ranges_if_timeout=(bytes_received==0 && !seen_ranges_bytes);
@@ -1548,17 +1551,13 @@ void  Http::ClassInit()
 
 void Http::SuspendInternal()
 {
-   if(recv_buf)
-      recv_buf->SuspendSlave();
-   if(send_buf)
-      send_buf->SuspendSlave();
+   if(conn)
+      conn->SuspendInternal();
 }
 void Http::ResumeInternal()
 {
-   if(recv_buf)
-      recv_buf->ResumeSlave();
-   if(send_buf)
-      send_buf->ResumeSlave();
+   if(conn)
+      conn->ResumeInternal();
 }
 
 int Http::Read(void *buf,int size)
@@ -1588,15 +1587,15 @@ int Http::_Read(void *buf,int size)
    const char *buf1;
    int size1;
 get_again:
-   if(recv_buf->Size()==0 && recv_buf->Error())
+   if(conn->recv_buf->Size()==0 && conn->recv_buf->Error())
    {
-      LogError(0,"recv: %s",recv_buf->ErrorText());
-      if(recv_buf->ErrorFatal())
-	 SetError(FATAL,recv_buf->ErrorText());
+      LogError(0,"recv: %s",conn->recv_buf->ErrorText());
+      if(conn->recv_buf->ErrorFatal())
+	 SetError(FATAL,conn->recv_buf->ErrorText());
       Disconnect();
       return DO_AGAIN;
    }
-   recv_buf->Get(&buf1,&size1);
+   conn->recv_buf->Get(&buf1,&size1);
    if(buf1==0) // eof
    {
       LogNote(9,_("Hit EOF"));
@@ -1634,7 +1633,7 @@ get_again:
 	 if(nl==0)  // not yet
 	 {
 	 not_yet:
-	    if(recv_buf->Eof())
+	    if(conn->recv_buf->Eof())
 	       Disconnect();	 // connection closed too early
 	    return DO_AGAIN;
 	 }
@@ -1644,7 +1643,7 @@ get_again:
 	    Fatal(_("chunked format violated"));
 	    return FATAL;
 	 }
-	 recv_buf->Skip(nl-buf1+1);
+	 conn->recv_buf->Skip(nl-buf1+1);
 	 chunk_pos=0;
 	 goto get_again;
       }
@@ -1666,7 +1665,7 @@ get_again:
 	    Fatal(_("chunked format violated"));
 	    return FATAL;
 	 }
-	 recv_buf->Skip(2);
+	 conn->recv_buf->Skip(2);
 	 chunk_size=-1;
 	 goto get_again;
       }
@@ -1695,7 +1694,7 @@ get_again:
       off_t to_skip=pos-real_pos;
       if(to_skip>size1)
 	 to_skip=size1;
-      recv_buf->Skip(to_skip);
+      conn->recv_buf->Skip(to_skip);
       real_pos+=to_skip;
       bytes_received+=to_skip;
       if(chunked)
@@ -1705,7 +1704,7 @@ get_again:
    if(size>size1)
       size=size1;
    memcpy(buf,buf1,size);
-   recv_buf->Skip(size);
+   conn->recv_buf->Skip(size);
    if(chunked)
       chunk_pos+=size;
    real_pos+=size;
@@ -1721,7 +1720,7 @@ int Http::Done()
       return error_code;
    if(state==DONE)
       return OK;
-   if(mode==CONNECT_VERIFY && (peer || sock!=-1))
+   if(mode==CONNECT_VERIFY && (peer || conn))
       return OK;
    if((mode==REMOVE || mode==REMOVE_DIR || mode==RENAME)
    && state==RECEIVING_BODY)
@@ -1731,9 +1730,9 @@ int Http::Done()
 
 int Http::Buffered()
 {
-   if(mode!=STORE || !send_buf)
+   if(mode!=STORE || !conn || !conn->send_buf)
       return 0;
-   return send_buf->Size()+SocketBuffered(sock);
+   return conn->send_buf->Size()+SocketBuffered(conn->sock);
 }
 
 int Http::Write(const void *buf,int size)
@@ -1746,7 +1745,7 @@ int Http::Write(const void *buf,int size)
    if(Error())
       return(error_code);
 
-   if(state!=RECEIVING_HEADER || status!=0 || send_buf->Size()!=0)
+   if(state!=RECEIVING_HEADER || status!=0 || conn->send_buf->Size()!=0)
       return DO_AGAIN;
 
    {
@@ -1756,8 +1755,8 @@ int Http::Write(const void *buf,int size)
       if(size>allowed)
 	 size=allowed;
    }
-   if(size+send_buf->Size()>=max_buf)
-      size=max_buf-send_buf->Size();
+   if(size+conn->send_buf->Size()>=max_buf)
+      size=max_buf-conn->send_buf->Size();
    if(entity_size!=NO_SIZE && pos+size>entity_size)
    {
       size=entity_size-pos;
@@ -1768,9 +1767,9 @@ int Http::Write(const void *buf,int size)
    if(size<=0)
       return 0;
 
-   send_buf->Put((const char*)buf,size);
+   conn->send_buf->Put((const char*)buf,size);
 
-   if(retries>0 && send_buf->GetPos()-send_buf->Size()>Buffered()+0x1000)
+   if(retries>0 && conn->send_buf->GetPos()-conn->send_buf->Size()>Buffered()+0x1000)
       TrySuccess();
    rate_limit->BytesPut(size);
    pos+=size;
@@ -1786,11 +1785,11 @@ int Http::SendEOT()
       return(error_code);
    if(mode==STORE)
    {
-      if(state==RECEIVING_HEADER && send_buf->Size()==0)
+      if(state==RECEIVING_HEADER && conn->send_buf->Size()==0)
       {
 	 if(entity_size==NO_SIZE || pos<entity_size)
 	 {
-	    shutdown(sock,1);
+	    shutdown(conn->sock,1);
 	    keep_alive=false;
 	 }
 	 sent_eot=true;
@@ -1872,8 +1871,8 @@ void Http::Reconfig(const char *name)
       SetProxy(p);
    }
 
-   if(sock!=-1)
-      SetSocketBuffer(sock);
+   if(conn)
+      SetSocketBuffer(conn->sock);
    if(proxy && proxy_port==0)
       proxy_port.set(HTTP_DEFAULT_PROXY_PORT);
 
@@ -2110,9 +2109,9 @@ Https::Https(const Https *o) : super(o)
 }
 FileAccess *Https::New(){ return new Https();}
 
-void Http::MakeSSLBuffers()
+void Http::Connection::MakeSSLBuffers()
 {
-   ssl=new lftp_ssl(sock,lftp_ssl::CLIENT,hostname);
+   ssl=new lftp_ssl(sock,lftp_ssl::CLIENT,closure);
    ssl->load_keys();
    IOBufferSSL *send_buf_ssl=new IOBufferSSL(ssl,IOBuffer::PUT);
    IOBufferSSL *recv_buf_ssl=new IOBufferSSL(ssl,IOBuffer::GET);
@@ -2171,10 +2170,10 @@ void Http::CleanupThis()
 
 void Http::LogErrorText()
 {
-   if(!recv_buf)
+   if(!conn || !conn->recv_buf)
       return;
-   recv_buf->Roll();
-   int size=recv_buf->Size();
+   conn->recv_buf->Roll();
+   int size=conn->recv_buf->Size();
    if(size==0)
       return;
    char *buf=string_alloca(size+1);
