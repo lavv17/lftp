@@ -1561,6 +1561,10 @@ int FileCopyPeerFDStream::Get_LL(int len)
       {
 	 SetDate(st.st_mtime);
 	 SetSize(st.st_size);
+#ifndef NATIVE_CRLF
+	 if(ascii)
+	    SetSize(NO_SIZE);
+#endif
       }
    }
 
