@@ -171,6 +171,20 @@ class Ftp : public NetAccess
       void SendCmd2(const char *cmd,int v);
       void SendCmdF(const char *fmt,...) PRINTF_LIKE(2,3);
       int FlushSendQueueOneCmd(); // sends single command from send_cmd_buffer
+
+      void SuspendInternal()
+      {
+	 if(control_send) control_send->SuspendSlave();
+	 if(control_recv) control_recv->SuspendSlave();
+	 if(data_iobuf)	data_iobuf->SuspendSlave();
+      }
+      void ResumeInternal()
+      {
+	 if(control_send) control_send->ResumeSlave();
+	 if(control_recv) control_recv->ResumeSlave();
+	 if(data_iobuf)	data_iobuf->ResumeSlave();
+      }
+
    };
 
    Ref<Connection> conn;
@@ -527,6 +541,9 @@ public:
 	 CheckTimeout();
       }
    bool AnonymousQuietMode();
+
+   void SuspendInternal();
+   void ResumeInternal();
 };
 
 class FtpS : public Ftp

@@ -3582,6 +3582,17 @@ bool  Ftp::IOReady()
       && real_pos!=-1 && IsOpen();
 }
 
+void Ftp::SuspendInternal()
+{
+   if(conn)
+      conn->SuspendInternal();
+}
+void Ftp::ResumeInternal()
+{
+   if(conn)
+      conn->ResumeInternal();
+}
+
 int   Ftp::Read(void *buf,int size)
 {
    int shift;
@@ -3726,6 +3737,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    assert(o->conn->data_iobuf==0);
 
    conn=o->conn.borrow();
+   conn->ResumeInternal();
    o->state=INITIAL_STATE;
 
    if(peer_curr>=peer.count())

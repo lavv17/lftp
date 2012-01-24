@@ -144,6 +144,7 @@ Http::~Http()
 void Http::MoveConnectionHere(Http *o)
 {
    conn=o->conn.borrow();
+   conn->ResumeInternal();
    rate_limit=o->rate_limit.borrow();
    last_method=o->last_method; o->last_method=0;
    timeout_timer.Reset(o->timeout_timer);
