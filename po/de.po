@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-12-30 18:55+0400\n"
+"POT-Creation-Date: 2012-01-24 13:43+0400\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -35,7 +35,7 @@ msgstr "mehrdeutiges Argument  %s für %s"
 msgid "Valid arguments are:"
 msgstr "Gültige Argumente sind:"
 
-#: lib/error.c:187
+#: lib/error.c:188
 msgid "Unknown system error"
 msgstr "Unbekannter Systemfehler"
 
@@ -96,28 +96,30 @@ msgstr "%s: Option »%s« erfordert einen Parameter\n"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
-#.
 #. The message catalog should translate "`" to a left
 #. quotation mark suitable for the locale, and similarly for
-#. "'".  If the catalog has no translation,
-#. locale_quoting_style quotes `like this', and
-#. clocale_quoting_style quotes "like this".
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
 #.
-#. For example, an American English Unicode locale should
-#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
-#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
-#. MARK).  A British English Unicode locale should instead
-#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK)
-#. and U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:278
+#: lib/quotearg.c:311
 msgid "`"
 msgstr "»"
 
-#: lib/quotearg.c:279
+#: lib/quotearg.c:312
 msgid "'"
 msgstr "«"
 
@@ -146,78 +148,88 @@ msgstr ""
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Warnung: chdir(%s) fehlgeschlagen: %s\n"
 
-#: src/CmdExec.cc:202
+#: src/CmdExec.cc:204
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Unbekannter Befehl »%s«.\n"
 
-#: src/CmdExec.cc:204
+#: src/CmdExec.cc:206
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Mehrdeutiger Befehl »%s«.\n"
 
-#: src/CmdExec.cc:223
+#: src/CmdExec.cc:225
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Das Modul für den Befehl »%s« hat den Befehl nicht registriert.\n"
 
-#: src/CmdExec.cc:378
+#: src/CmdExec.cc:380
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel OK, cwd=%s\n"
 
-#: src/CmdExec.cc:399 src/MirrorJob.cc:570
+#: src/CmdExec.cc:401 src/MirrorJob.cc:570
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:402 src/FileCopy.cc:1064
+#: src/CmdExec.cc:404 src/FileCopy.cc:1064
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
-#: src/CmdExec.cc:510 src/CmdExec.cc:567
+#: src/CmdExec.cc:512 src/CmdExec.cc:569
 msgid "Interrupt"
 msgstr "Abbruch"
 
-#: src/CmdExec.cc:632
+#: src/CmdExec.cc:634
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Warnung: unvollständiger Befehl verworfen\n"
 
-#: src/CmdExec.cc:728
+#: src/CmdExec.cc:730
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEingebautes»%s« wird ausgeführt [%s]\n"
 
-#: src/CmdExec.cc:733
+#: src/CmdExec.cc:735
 msgid "Queue is stopped."
 msgstr "Warteschlange wurde angehalten."
 
-#: src/CmdExec.cc:738
+#: src/CmdExec.cc:740
 msgid "Now executing:"
 msgstr "Momentan läuft:"
 
-#: src/CmdExec.cc:749
+#: src/CmdExec.cc:751
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:752
+#: src/CmdExec.cc:754
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tWarte auf Erledigung der Jobs: "
 
-#: src/CmdExec.cc:761
+#: src/CmdExec.cc:763
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
 
-#: src/CmdExec.cc:763
+#: src/CmdExec.cc:765
 msgid "\tWaiting for command\n"
 msgstr "\tWarten auf Befehl\n"
 
-#: src/CmdExec.cc:1220
+#: src/CmdExec.cc:1222
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: Befehl »%s« wurde nicht mitkompiliert.\n"
+
+#: src/CmdExec.cc:1229
+#, fuzzy, c-format
+msgid "Usage: %s cmd [args...]\n"
+msgstr "Benutzung: %s module [Argumente..]\n"
+
+#: src/CmdExec.cc:1235
+#, c-format
+msgid "%s: cannot create local session\n"
+msgstr ""
 
 #: src/CopyJob.cc:79
 #, c-format
@@ -257,8 +269,8 @@ msgstr "Zugriff nicht möglich:"
 msgid "File cannot be accessed"
 msgstr "Zugriff auf Datei nicht möglich"
 
-#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4323
-#: src/ftpclass.cc:4332 src/Torrent.cc:2286
+#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4335
+#: src/ftpclass.cc:4344 src/Torrent.cc:2286
 msgid "Not connected"
 msgstr "Keine Verbindung"
 
@@ -329,7 +341,7 @@ msgstr "copy: Umleitung nach »%s« empfangen\n"
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"
 
-#: src/FileCopy.cc:1899
+#: src/FileCopy.cc:1903
 msgid "Verify command failed without a message"
 msgstr "Überprüfung des Befehls fehlgeschlagen ohne Rückmeldung"
 
@@ -384,7 +396,7 @@ msgstr "execl(/bin/sh) fehlgeschlagen: %s\n"
 msgid "total"
 msgstr "insgesamt"
 
-#: src/Fish.cc:75 src/Http.cc:907 src/SFtp.cc:79 src/ftpclass.cc:1227
+#: src/Fish.cc:75 src/Http.cc:917 src/SFtp.cc:79 src/ftpclass.cc:1227
 msgid "Closing idle connection"
 msgstr "Schließe unbenutzte Verbindung"
 
@@ -392,34 +404,34 @@ msgstr "Schließe unbenutzte Verbindung"
 msgid "Running connect program"
 msgstr "Starte Verbindungsprogramm"
 
-#: src/Fish.cc:591 src/Http.cc:1113 src/SFtp.cc:730 src/SFtp.cc:1052
+#: src/Fish.cc:591 src/Http.cc:1121 src/SFtp.cc:730 src/SFtp.cc:1052
 #: src/ftpclass.cc:2732 src/ftpclass.cc:2942
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:3960
+#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:3972
 msgid "extra server response"
 msgstr "zusätzliche Server Antwort"
 
-#: src/Fish.cc:991 src/Http.cc:1821 src/Http.cc:1828 src/SFtp.cc:1311
-#: src/ftpclass.cc:4335 src/Torrent.cc:2288
+#: src/Fish.cc:991 src/Http.cc:1825 src/Http.cc:1832 src/SFtp.cc:1311
+#: src/ftpclass.cc:4347 src/Torrent.cc:2288
 msgid "Connecting..."
 msgstr "Verbinde..."
 
-#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4341
+#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4353
 msgid "Connected"
 msgstr "Verbunden"
 
-#: src/Fish.cc:995 src/Http.cc:1830 src/SFtp.cc:1315 src/ftpclass.cc:4318
-#: src/ftpclass.cc:4346 src/ftpclass.cc:4360
+#: src/Fish.cc:995 src/Http.cc:1834 src/SFtp.cc:1315 src/ftpclass.cc:4330
+#: src/ftpclass.cc:4358 src/ftpclass.cc:4372
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort..."
 
-#: src/Fish.cc:997 src/Http.cc:1833 src/SFtp.cc:1317 src/ftpclass.cc:4380
+#: src/Fish.cc:997 src/Http.cc:1837 src/SFtp.cc:1317 src/ftpclass.cc:4392
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
-#: src/Fish.cc:999 src/Http.cc:1826 src/SFtp.cc:1319 src/ftpclass.cc:4378
+#: src/Fish.cc:999 src/Http.cc:1830 src/SFtp.cc:1319 src/ftpclass.cc:4390
 msgid "Sending data"
 msgstr "Sende Daten"
 
@@ -440,80 +452,80 @@ msgstr ""
 "%s: %s: Datei existiert bereits und xfer:clobber (=überschreiben) ist nicht "
 "eingeschaltet\n"
 
-#: src/Http.cc:149
+#: src/Http.cc:161
 msgid "Closing HTTP connection"
 msgstr "Schließe HTTP-Verbindung"
 
-#: src/Http.cc:158
+#: src/Http.cc:168
 msgid "POST method failed"
 msgstr "POST - Methode fehlgeschlagen"
 
-#: src/Http.cc:988
+#: src/Http.cc:998
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP über HTTP funktioniert nur mit Proxy, hftp:proxy Option angeben."
 
-#: src/Http.cc:1036 src/ftpclass.cc:1350 src/Torrent.cc:2020
+#: src/Http.cc:1046 src/ftpclass.cc:1350 src/Torrent.cc:2020
 #: src/Torrent.cc:2472
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "Kann kein Socket für die Adressfamilie %d anlegen"
 
-#: src/Http.cc:1129
+#: src/Http.cc:1137
 msgid "Sending request..."
 msgstr "Schicke Anforderung..."
 
-#: src/Http.cc:1173
+#: src/Http.cc:1181
 msgid "Hit EOF while fetching headers"
 msgstr "Dateiende beim Lesen der Kopfzeilen erhalten"
 
-#: src/Http.cc:1283
+#: src/Http.cc:1291
 msgid "Could not parse HTTP status line"
 msgstr "Konnte HTTP Statusanzeige nicht auswerten"
 
-#: src/Http.cc:1314
+#: src/Http.cc:1322
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 "Objekt ist nicht zwischengespeichert und http:cache-control bestimmt only-if-"
 "cached (nur mit Zwischenspeicherung)"
 
-#: src/Http.cc:1464
+#: src/Http.cc:1472
 msgid "Receiving body..."
 msgstr "Empfange BODY..."
 
-#: src/Http.cc:1598
+#: src/Http.cc:1602
 msgid "Hit EOF"
 msgstr "Dateiende (EOF) angetroffen"
 
-#: src/Http.cc:1601
+#: src/Http.cc:1605
 msgid "Received not enough data, retrying"
 msgstr "Nicht genug Daten erhalten, neuer Versuch"
 
-#: src/Http.cc:1611
+#: src/Http.cc:1615
 msgid "Received all"
 msgstr "alles empfangen"
 
-#: src/Http.cc:1616
+#: src/Http.cc:1620
 msgid "Received all (total)"
 msgstr "Alles empfangen (insgesamt)"
 
-#: src/Http.cc:1640 src/Http.cc:1662
+#: src/Http.cc:1644 src/Http.cc:1666
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1649
+#: src/Http.cc:1653
 msgid "Received last chunk"
 msgstr "Letztes Teil empfangen"
 
-#: src/Http.cc:1815 src/Resolver.cc:170 src/Resolver.cc:212
-#: src/ftpclass.cc:4328
+#: src/Http.cc:1819 src/Resolver.cc:170 src/Resolver.cc:212
+#: src/ftpclass.cc:4340
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
-#: src/Http.cc:1823 src/ftpclass.cc:4321
+#: src/Http.cc:1827 src/ftpclass.cc:4333
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/Http.cc:1831
+#: src/Http.cc:1835
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 
@@ -2359,7 +2371,7 @@ msgstr "Verbinde Daten Socket mit (%s) Port %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Datenverbindung mit Proxy %s (%s) Port %u"
 
-#: src/ftpclass.cc:2233 src/ftpclass.cc:4142
+#: src/ftpclass.cc:2233 src/ftpclass.cc:4154
 msgid "Switching passive mode off"
 msgstr "Schalte Passivmodus ab"
 
@@ -2367,7 +2379,7 @@ msgstr "Schalte Passivmodus ab"
 msgid "Data connection established"
 msgstr "Datenverbindung hergestellt"
 
-#: src/ftpclass.cc:2546 src/ftpclass.cc:4272
+#: src/ftpclass.cc:2546 src/ftpclass.cc:4284
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force ist gesetzt und Gegenstelle unterstützt oder erlaubt kein SSL"
@@ -2384,67 +2396,67 @@ msgstr "Schließe den Daten Socket"
 msgid "Closing aborted data socket"
 msgstr "Schließe die Datenverbindung"
 
-#: src/ftpclass.cc:3944
+#: src/ftpclass.cc:3956
 msgid "saw file size in response"
 msgstr "Dateigröße in Antwort empfangen"
 
-#: src/ftpclass.cc:3974 src/ftpclass.cc:4001
+#: src/ftpclass.cc:3986 src/ftpclass.cc:4013
 msgid "Turning on sync-mode"
 msgstr "sync - Modus eingeschaltet"
 
-#: src/ftpclass.cc:4162
+#: src/ftpclass.cc:4174
 msgid "Switching passive mode on"
 msgstr "Schalte Passivmodus ein"
 
-#: src/ftpclass.cc:4309
+#: src/ftpclass.cc:4321
 msgid "FEAT negotiation..."
 msgstr "FEAT Verbindungsaufbau..."
 
-#: src/ftpclass.cc:4316
+#: src/ftpclass.cc:4328
 msgid "Sending commands..."
 msgstr "Schicke Befehle..."
 
-#: src/ftpclass.cc:4320
+#: src/ftpclass.cc:4332
 msgid "Delaying before retry"
 msgstr "Pausiere vor erneuter Verbindung"
 
-#: src/ftpclass.cc:4339
+#: src/ftpclass.cc:4351
 msgid "TLS negotiation..."
 msgstr "TLS Verbindungsaufbau..."
 
-#: src/ftpclass.cc:4343
+#: src/ftpclass.cc:4355
 msgid "Logging in..."
 msgstr "Logge ein..."
 
-#: src/ftpclass.cc:4347
+#: src/ftpclass.cc:4359
 msgid "Making data connection..."
 msgstr "Stelle Datenverbindung her..."
 
-#: src/ftpclass.cc:4350
+#: src/ftpclass.cc:4362
 msgid "Changing remote directory..."
 msgstr "Wechsle nichtlokales Verzeichnis..."
 
-#: src/ftpclass.cc:4356
+#: src/ftpclass.cc:4368
 msgid "Waiting for other copy peer..."
 msgstr "Warte auf die Gegenstelle für die andere Kopie..."
 
-#: src/ftpclass.cc:4358 src/ftpclass.cc:4382
+#: src/ftpclass.cc:4370 src/ftpclass.cc:4394
 msgid "Waiting for transfer to complete"
 msgstr "Warte auf Übertragungsende"
 
-#: src/ftpclass.cc:4362
+#: src/ftpclass.cc:4374
 msgid "Waiting for TLS shutdown..."
 msgstr "Warte auf Beendung von LTS..."
 
-#: src/ftpclass.cc:4364
+#: src/ftpclass.cc:4376
 msgid "Waiting for data connection..."
 msgstr "Warte auf Datenverbindung..."
 
-#: src/ftpclass.cc:4370
+#: src/ftpclass.cc:4382
 msgid "Sending data/TLS"
 msgstr "Sende Daten/TLS"
 
-#: src/ftpclass.cc:4372
+#: src/ftpclass.cc:4384
 msgid "Receiving data/TLS"
 msgstr "Empfange Daten/TLS"
 
