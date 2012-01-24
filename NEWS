@@ -1,3 +1,11 @@
+Version 4.3.5 - 2011-01-24
+
+* fixed ascii mode uploads to sftp.
+* fixed "local" command without arguments.
+* fixed compilation without ssl.
+* fixed https.
+* fixed large memory consumption in ftp when target disk is full.
+
 Version 4.3.4 - 2011-12-30
 
 * new settings cmd:at-exit-bg, cmd:at-finish, cmd:at-queue-finish.
