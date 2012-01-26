@@ -1,14 +1,14 @@
 # Russian translation for lftp
-# Copyright (C) 1998,2000-2011 Alexander V. Lukyanov <lav@yars.free.net>
+# Copyright (C) 1998,2000-2012 Alexander V. Lukyanov <lav@yars.free.net>
 # Copyright (C) 1999 Const Kaplinsky <const@ce.cctpu.edu.ru>
 # You may modify and redistribute this file according to GNU GPL (see COPYING).
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.2.2\n"
+"Project-Id-Version: lftp 4.3.5\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2012-01-24 13:52+0400\n"
-"PO-Revision-Date: 2010-11-22 17:38+04:00\n"
+"PO-Revision-Date: 2012-01-24 13:52+0400\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "Language: ru\n"
