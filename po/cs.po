@@ -1,7 +1,7 @@
 # Czech translation of lftp.
 # Copyright (C) 2009 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is distributed under the same license as the lftp package.
-# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011.
+# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011, 2012.
 #
 # handshake → dojednání (spojení)
 # option → volba
@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.3.2\n"
+"Project-Id-Version: lftp 4.3.5\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2012-01-24 13:52+0400\n"
-"PO-Revision-Date: 2011-09-18 22:37+0200\n"
+"PO-Revision-Date: 2012-01-25 23:38+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -224,14 +224,14 @@ msgstr "%s: příkaz „%s“ není zakompilován.\n"
 
 # TODO: use singular before elipses
 #: src/CmdExec.cc:1229
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s cmd [args...]\n"
-msgstr "Použití: %s modul [argument…]\n"
+msgstr "Použití: %s příkaz [argument…]\n"
 
 #: src/CmdExec.cc:1235
 #, c-format
 msgid "%s: cannot create local session\n"
-msgstr ""
+msgstr "%s: místní relaci nelze vytvořit\n"
 
 #: src/CopyJob.cc:79
 #, c-format
