@@ -1,4 +1,4 @@
-Version 4.3.5 - 2011-01-24
+Version 4.3.5 - 2012-01-24
 
 * fixed ascii mode uploads to sftp.
 * fixed "local" command without arguments.
