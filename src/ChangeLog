@@ -1,3 +1,8 @@
+2012-02-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: fixed error reporting.
+	* Torrent.cc: add explicit retracker support.
+
 2012-01-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: resume connection when moving it.

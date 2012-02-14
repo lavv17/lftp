@@ -1384,7 +1384,7 @@ int Http::Do()
 
       if(!H_20X(status_code))
       {
-	 xstring& err=xstring::get_tmp();
+	 xstring err;
 	 int code=NO_FILE;
 
 	 if(H_REDIRECTED(status_code))

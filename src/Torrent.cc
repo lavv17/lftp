@@ -45,6 +45,7 @@ static ResType torrent_vars[] = {
    {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate},
    {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate},
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
+   {"torrent:retracker", ""},
 #if INET6
    {"torrent:ipv6", "", ResMgr::IPv6AddrValidate, ResMgr::NoClosure},
 #endif
@@ -613,6 +614,8 @@ int Torrent::Do()
          return MOVED;
       }
 
+      const char *retracker=ResMgr::Query("torrent:retracker",GetName());
+      int retracker_len=xstrlen(retracker);
       BeNode *announce_list=metainfo_tree->dict.lookup("announce-list");
       if(announce_list && announce_list->type==BeNode::BE_LIST) {
 	 for(int i=0; i<announce_list->list.length(); i++) {
@@ -624,6 +627,8 @@ int Torrent::Do()
 	       BeNode *announce=announce_list1->list[j];
 	       if(announce->type!=BeNode::BE_STR)
 		  continue;
+	       if(retracker_len && !strncmp(retracker,announce->str,retracker_len))
+		  retracker=0, retracker_len=0;
 	       if(!new_tracker)
 		  new_tracker=new TorrentTracker(this,announce->str);
 	       else
@@ -645,6 +650,14 @@ int Torrent::Do()
 	 {
 	    SetError(trackers.last()->ErrorText());
 	    return MOVED;
+	 }
+      }
+
+      if(retracker_len) {
+	 SMTaskRef<TorrentTracker> new_tracker(new TorrentTracker(this,retracker));
+	 if(!new_tracker->Failed()) {
+	    new_tracker->tracker_no=trackers.count();
+            trackers.append(new_tracker.borrow());
 	 }
       }
 
