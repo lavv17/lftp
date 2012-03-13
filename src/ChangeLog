@@ -1,3 +1,9 @@
+2012-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Http.h: add support for status "429 Too Many Requests"
+	  and Retry-After header; don't handle redirect for CONNECT method.
+	* ftpclass.cc: better handle extra server messages in sync mode.
+
 2012-02-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: fixed error reporting.

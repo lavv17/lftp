@@ -2872,8 +2872,16 @@ int  Ftp::ReceiveResp()
 	 continue; // The space is required to terminate multiline reply
       conn->multiline_code=0;
 
-      if(conn->sync_wait>0 && !is1XX(code))
-	 conn->sync_wait--; // clear the flag to send next command
+      if(!is1XX(code)) {
+	 if(conn->sync_wait>0)
+	    conn->sync_wait--; // clear the flag to send next command
+	 else {
+	    if(code!=421) {
+	       LogError(3,_("extra server response"));
+	       return m;
+	    }
+	 }
+      }
 
       CheckResp(code);
       m=MOVED;

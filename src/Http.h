@@ -145,6 +145,8 @@ class Http : public NetAccess
 
    bool use_propfind_now;
 
+   long retry_after;
+
    const char *user_agent;
 
    int _Read(void *,int);  // does not update pos, rate_limit, retries, does not check state.

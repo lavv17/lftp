@@ -116,6 +116,8 @@ void Http::Init()
 
    use_propfind_now=true;
 
+   retry_after=0;
+
    hftp=false;
    https=false;
    use_head=true;
@@ -787,6 +789,12 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       location.set(value);
       return;
    }
+   if(!strcasecmp(name,"Retry-After"))
+   {
+      retry_after=0;
+      sscanf(value,"%ld",&retry_after);
+      return;
+   }
    if(!strcasecmp(name,"Keep-Alive"))
    {
       keep_alive=true;
@@ -1029,6 +1037,8 @@ int Http::Do()
 
       if(!NextTry())
       	 return MOVED;
+
+      retry_after=0;
 
       res=SocketCreateTCP(peer[peer_curr].sa.sa_family);
       if(res==-1)
@@ -1334,6 +1344,13 @@ int Http::Do()
 		     Disconnect();
 		     return MOVED;
 		  }
+		  if(status_code==429) // Too Many Requests
+		  {
+		     Disconnect();
+		     if(retry_after)
+			try_time = time_t(now)+retry_after-long(reconnect_interval_current);
+		     return MOVED;
+		  }
 
 		  if(mode==ARRAY_INFO)
 		     TrySuccess();
@@ -1390,7 +1407,8 @@ int Http::Do()
 	 if(H_REDIRECTED(status_code))
 	 {
 	    if(location && !url::is_url(location)
-	    && mode==QUOTE_CMD && !strncasecmp(file,"POST ",5))
+	    && mode==QUOTE_CMD && !strncasecmp(file,"POST ",5)
+	    && tunnel_state!=TUNNEL_WAITING)
 	    {
 	       const char *the_file=file;
 
