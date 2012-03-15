@@ -270,3 +270,4 @@ readdir.c
 itold.c
 stdalign.in.h
 c-strcaseeq.h
+close.c
