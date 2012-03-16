@@ -2,6 +2,7 @@
 
 	* ftpclass.cc, ftpclass.h: check USER reply against retry-530 RExp;
 	  (Retry530) new method.
+	* complete.cc: add "edit" command to the list of remote commands.
 
 2012-03-13  Alexander V. Lukyanov <lav@yars.free.net>
 
