@@ -301,12 +301,8 @@ bool Ftp::Transient5XX(int act) const
    if(!is5XX(act))
       return false;
 
-   if(act==530 && expect->FirstIs(Expect::PASS)) {
-      if(re_match(all_lines,Query("retry-530",hostname),REG_ICASE))
-	 return true;
-      if(!user && re_match(all_lines,Query("retry-530-anonymous",hostname),REG_ICASE))
-	 return true;
-   }
+   if(act==530 && expect->FirstIs(Expect::PASS) && Retry530())
+      return true;
 
    // retry on these errors (ftp server ought to send 4xx code instead)
    if(ServerSaid("Broken pipe") || ServerSaid("Too many")
@@ -429,28 +425,32 @@ simulate_eof:
    return;
 }
 
+bool Ftp::Retry530() const
+{
+   const char *rexp=Query("retry-530",hostname);
+   if(re_match(all_lines,rexp,REG_ICASE))
+   {
+      LogNote(9,_("Server reply matched ftp:retry-530, retrying"));
+      return true;
+   }
+   if(!user)
+   {
+      rexp=Query("retry-530-anonymous",hostname);
+      if(re_match(all_lines,rexp,REG_ICASE))
+      {
+	 LogNote(9,_("Server reply matched ftp:retry-530-anonymous, retrying"));
+	 return true;
+      }
+   }
+   return false;
+}
+
 void Ftp::LoginCheck(int act)
 {
    if(conn->ignore_pass)
       return;
-   if(act==530) // login incorrect or overloaded server
-   {
-      const char *rexp=Query("retry-530",hostname);
-      if(re_match(all_lines,rexp,REG_ICASE))
-      {
-	 LogNote(9,_("Server reply matched ftp:retry-530, retrying"));
-	 goto retry;
-      }
-      if(!user)
-      {
-	 rexp=Query("retry-530-anonymous",hostname);
-	 if(re_match(all_lines,rexp,REG_ICASE))
-	 {
-	    LogNote(9,_("Server reply matched ftp:retry-530-anonymous, retrying"));
-	    goto retry;
-	 }
-      }
-   }
+   if(act==530 && Retry530()) // overloaded server?
+      goto retry;
    if(is5XX(act))
    {
       SetError(LOGIN_FAILED,all_lines);
@@ -499,22 +499,8 @@ void Ftp::NoPassReqCheck(int act) // for USER command
 
    if(is3XX(act))
       return;
-   if(act==530)	  // no such user or overloaded server
-   {
-      // Unfortunately, at this point we cannot tell if it is
-      // really incorrect login or overloaded server, because
-      // many overloaded servers return hard error 530...
-      // So try to check the message for `user unknown'.
-      // NOTE: modern ftp servers don't say `user unknown', they wait for
-      // PASS and then say `Login incorrect'.
-      if(strstr(line,"unknown")) // Don't translate!!!
-      {
-	 LogNote(9,_("Saw `unknown', assume failed login"));
-	 SetError(LOGIN_FAILED,all_lines);
-	 return;
-      }
-      goto def_ret;
-   }
+   if(act==530 && Retry530()) // overloaded server?
+      goto retry;
    if(is5XX(act))
    {
       // proxy interprets USER as user@host, so we check for host name validity
@@ -527,7 +513,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       SetError(LOGIN_FAILED,all_lines);
       return;
    }
-def_ret:
+retry:
    Disconnect();
    try_time=now;	// count the reconnect-interval from this moment
    last_connection_failed=true;

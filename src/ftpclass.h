@@ -276,6 +276,7 @@ class Ftp : public NetAccess
    void	 RestCheck(int);
    void  NoFileCheck(int);
    void	 TransferCheck(int);
+   bool	 Retry530() const;
    void	 LoginCheck(int);
    void	 NoPassReqCheck(int);
    void	 proxy_LoginCheck(int);
