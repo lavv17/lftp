@@ -36,7 +36,7 @@ void mgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
    if(rg)
    {
-      s->Show(rg->Status());
+      s->Show("%s",rg->Status());
       return;
    }
    GetJob::ShowRunStatus(s);

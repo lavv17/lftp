@@ -76,8 +76,7 @@ public:
    virtual void	ShowRunStatus(const SMTaskRef<StatusLine>&);
    void ClearStatus()
       {
-	 const char *empty="";
-	 eprintf(empty);
+	 eprintf("%s",""); /* just "" causes a -Wformat-zero-length" warning */
       }
    virtual void	  SayFinal() {}; // final phrase of fg job
    virtual int	  Done()=0;

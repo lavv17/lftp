@@ -119,7 +119,7 @@ void SleepJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
       Job::ShowRunStatus(s);
    else
    {
-      s->Show(Status());
+      s->Show("%s",Status());
       current->TimeoutS(1);
    }
 }

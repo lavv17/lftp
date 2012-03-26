@@ -564,7 +564,7 @@ int Fish::HandleReplies()
 	 const char *eol=strchr(err,'\n');
 	 if(eol) {
 	    xstring &e=xstring::get_tmp(err,eol-err);
-	    LogError(0,e);
+	    LogError(0,"%s",e.get());
 	    SetError(NO_FILE,e);
 	    if(pty_recv_buf)
 	       pty_recv_buf->Skip(eol-err+1);

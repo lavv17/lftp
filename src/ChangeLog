@@ -1,3 +1,8 @@
+2012-03-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, Job.h, SleepJob.cc, mgetJob.cc: Fix errors reported
+	  by -Werror=format-security (Simon Ruderich <simon@ruderich.org>)
+
 2012-03-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, ftpclass.h: check USER reply against retry-530 RExp;
