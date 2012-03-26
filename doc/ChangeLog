@@ -1,3 +1,7 @@
+2012-03-26	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document torrent:retracker; fix type of xfer:log-file.
+
 2011-12-30	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document new settings: cmd:at-exit-bg, at-finish,

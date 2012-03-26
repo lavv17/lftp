@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "30 Dec 2011"
+.TH lftp 1 "26 Mar 2012"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.3.4.
+This man page documents lftp version 4.3.6.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1828,6 +1828,9 @@ maintain this limit.
 port range to accept connections on. A single port is selected when a torrent
 starts.
 .TP
+.BR torrent:retracker \ (URL)
+explicit retracker URL, e.g. `http://retracker.local/announce'.
+.TP
 .BR torrent:seed-max-time " (time interval)"
 maximum seed time. After this period of time a complete torrent shuts down
 independently of ratio. It can be set to infinity if needed.
@@ -1860,7 +1863,7 @@ show terse ETA (only high order parts). Default is true.
 .BR xfer:log \ (boolean)
 when true, lftp logs transfers to a file from xfer:log-file setting.
 .TP
-.BR xfer:log-file \ (boolean)
+.BR xfer:log-file \ (path to file)
 the file to log transfers to. Default is \fI~/.lftp/transfer_log\fR.
 .TP
 .BR xfer:make-backup \ (boolean)
