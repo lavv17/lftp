@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.3.5\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2012-01-24 13:52+0400\n"
+"POT-Creation-Date: 2012-04-01 22:50+0400\n"
 "PO-Revision-Date: 2012-01-25 23:38+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -117,11 +117,11 @@ msgstr "%s: volba „-W %s“ vyžaduje argument\n"
 #. If you don't know what to put here, please see
 #. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:311
+#: lib/quotearg.c:312
 msgid "`"
 msgstr "„"
 
-#: lib/quotearg.c:312
+#: lib/quotearg.c:313
 msgid "'"
 msgstr "“"
 
@@ -273,8 +273,8 @@ msgstr "Přístup selhal: "
 msgid "File cannot be accessed"
 msgstr "K souboru nelze přistoupit"
 
-#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4335
-#: src/ftpclass.cc:4344 src/Torrent.cc:2286
+#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4329
+#: src/ftpclass.cc:4338 src/Torrent.cc:2299
 msgid "Not connected"
 msgstr "Nepřipojeno"
 
@@ -402,7 +402,7 @@ msgstr "execl(/bin/sh) selhalo: %s\n"
 msgid "total"
 msgstr "celkem"
 
-#: src/Fish.cc:75 src/Http.cc:917 src/SFtp.cc:79 src/ftpclass.cc:1227
+#: src/Fish.cc:75 src/Http.cc:925 src/SFtp.cc:79 src/ftpclass.cc:1213
 msgid "Closing idle connection"
 msgstr "Nepoužívané spojení uzavřeno"
 
@@ -410,34 +410,34 @@ msgstr "Nepoužívané spojení uzavřeno"
 msgid "Running connect program"
 msgstr "Běží připojovací program"
 
-#: src/Fish.cc:591 src/Http.cc:1121 src/SFtp.cc:730 src/SFtp.cc:1052
-#: src/ftpclass.cc:2732 src/ftpclass.cc:2942
+#: src/Fish.cc:591 src/Http.cc:1131 src/SFtp.cc:730 src/SFtp.cc:1052
+#: src/ftpclass.cc:2718 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "Druhá strana uzavřela spojení"
 
-#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:3972
+#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:2866 src/ftpclass.cc:3966
 msgid "extra server response"
 msgstr "nadbytečná odpověď serveru"
 
-#: src/Fish.cc:991 src/Http.cc:1825 src/Http.cc:1832 src/SFtp.cc:1311
-#: src/ftpclass.cc:4347 src/Torrent.cc:2288
+#: src/Fish.cc:991 src/Http.cc:1843 src/Http.cc:1850 src/SFtp.cc:1311
+#: src/ftpclass.cc:4341 src/Torrent.cc:2301
 msgid "Connecting..."
 msgstr "Navazuje se spojení…"
 
-#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4353
+#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4347
 msgid "Connected"
 msgstr "Spojeno"
 
-#: src/Fish.cc:995 src/Http.cc:1834 src/SFtp.cc:1315 src/ftpclass.cc:4330
-#: src/ftpclass.cc:4358 src/ftpclass.cc:4372
+#: src/Fish.cc:995 src/Http.cc:1852 src/SFtp.cc:1315 src/ftpclass.cc:4324
+#: src/ftpclass.cc:4352 src/ftpclass.cc:4366
 msgid "Waiting for response..."
 msgstr "Čeká se na odpověď…"
 
-#: src/Fish.cc:997 src/Http.cc:1837 src/SFtp.cc:1317 src/ftpclass.cc:4392
+#: src/Fish.cc:997 src/Http.cc:1855 src/SFtp.cc:1317 src/ftpclass.cc:4386
 msgid "Receiving data"
 msgstr "Přijímají se data"
 
-#: src/Fish.cc:999 src/Http.cc:1830 src/SFtp.cc:1319 src/ftpclass.cc:4390
+#: src/Fish.cc:999 src/Http.cc:1848 src/SFtp.cc:1319 src/ftpclass.cc:4384
 msgid "Sending data"
 msgstr "Odesílají se data"
 
@@ -456,78 +456,78 @@ msgstr "Přijímá se seznam souborů (%'lld) [%s])"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: soubor již existuje a xfer:clobber není nastaveno\n"
 
-#: src/Http.cc:161
+#: src/Http.cc:163
 msgid "Closing HTTP connection"
 msgstr "Zavírá se HTTP spojení"
 
-#: src/Http.cc:168
+#: src/Http.cc:170
 msgid "POST method failed"
 msgstr "Metoda POST selhala"
 
-#: src/Http.cc:998
+#: src/Http.cc:1006
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP nad HTTP nemůže fungovat bez proxy, nastavte hftp:proxy."
 
-#: src/Http.cc:1046 src/ftpclass.cc:1350 src/Torrent.cc:2020
-#: src/Torrent.cc:2472
+#: src/Http.cc:1056 src/ftpclass.cc:1336 src/Torrent.cc:2033
+#: src/Torrent.cc:2485
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "socket z rodiny %d nelze vytvořit"
 
-#: src/Http.cc:1137
+#: src/Http.cc:1147
 msgid "Sending request..."
 msgstr "Požadavek se odesílá…"
 
-#: src/Http.cc:1181
+#: src/Http.cc:1191
 msgid "Hit EOF while fetching headers"
 msgstr "Při příjmu hlaviček se objevil konec souboru (EOF)"
 
-#: src/Http.cc:1291
+#: src/Http.cc:1301
 msgid "Could not parse HTTP status line"
 msgstr "Nebylo možné rozebrat stavový řádek HTTP"
 
-#: src/Http.cc:1322
+#: src/Http.cc:1332
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Objekt není v keši a http:cache-control má hodnotu only-if-cached"
 
-#: src/Http.cc:1472
+#: src/Http.cc:1490
 msgid "Receiving body..."
 msgstr "Přijímá se tělo…"
 
-#: src/Http.cc:1602
+#: src/Http.cc:1620
 msgid "Hit EOF"
 msgstr "Objevil se EOF (konec souboru)"
 
-#: src/Http.cc:1605
+#: src/Http.cc:1623
 msgid "Received not enough data, retrying"
 msgstr "Nebylo přijato dostatečné množství dat, zkusí se znovu"
 
-#: src/Http.cc:1615
+#: src/Http.cc:1633
 msgid "Received all"
 msgstr "Vše přijato"
 
-#: src/Http.cc:1620
+#: src/Http.cc:1638
 msgid "Received all (total)"
 msgstr "Vše přijato (celkem)"
 
-#: src/Http.cc:1644 src/Http.cc:1666
+#: src/Http.cc:1662 src/Http.cc:1684
 msgid "chunked format violated"
 msgstr "formát chunked porušen"
 
-#: src/Http.cc:1653
+#: src/Http.cc:1671
 msgid "Received last chunk"
 msgstr "Přijat poslední kus dat (chunk)"
 
-#: src/Http.cc:1819 src/Resolver.cc:170 src/Resolver.cc:212
-#: src/ftpclass.cc:4340
+#: src/Http.cc:1837 src/Resolver.cc:170 src/Resolver.cc:212
+#: src/ftpclass.cc:4334
 msgid "Resolving host address..."
 msgstr "Překládá se adresa stroje…"
 
-#: src/Http.cc:1827 src/ftpclass.cc:4333
+#: src/Http.cc:1845 src/ftpclass.cc:4327
 msgid "Connection idle"
 msgstr "Spojení zahálí"
 
-#: src/Http.cc:1835
+#: src/Http.cc:1853
 msgid "Fetching headers..."
 msgstr "Stahují se hlavičky…"
 
@@ -676,7 +676,7 @@ msgstr "%s: regulární výraz „%s“: %s\n"
 #: src/commands.cc:2221 src/commands.cc:2383 src/commands.cc:2411
 #: src/commands.cc:2418 src/commands.cc:2704 src/commands.cc:2731
 #: src/commands.cc:2738 src/commands.cc:3058 src/lftp.cc:265
-#: src/Torrent.cc:2776
+#: src/Torrent.cc:2789
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Podrobnosti získáte příkazem „help %s“.\n"
@@ -691,7 +691,7 @@ msgstr "Chyba socketu (%s) – obnovuje se spojení"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Navazuje se spojení na %s%s (%s) port %u"
 
-#: src/NetAccess.cc:219 src/Torrent.cc:2114
+#: src/NetAccess.cc:219 src/Torrent.cc:2127
 msgid "Timeout - reconnecting"
 msgstr "Časový limit vypršel – obnovuje se spojení"
 
@@ -2304,11 +2304,11 @@ msgstr "Datové spojení protistrany má odlišnou adresu"
 msgid "Switching to NOREST mode"
 msgstr "Přepíná se do režimu NOREST"
 
-#: src/ftpclass.cc:441
+#: src/ftpclass.cc:433
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr "Odpověď serveru odpovídá ftp:retry-530, zkouší se znovu"
 
-#: src/ftpclass.cc:449
+#: src/ftpclass.cc:441
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr "Odpověď serveru odpovídá ftp:retry-530-anonymous, zkouší se znovu"
 
@@ -2321,144 +2321,139 @@ msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 "Je nastaveno ftp:skey-force, ale server nepodporuje ani OPIE, ani S/KEY"
 
-#: src/ftpclass.cc:512
-msgid "Saw `unknown', assume failed login"
-msgstr ""
-"Zahlédnuto „unknown“ (neznámý), přihlášení bude považováno za nezdařilé"
-
-#: src/ftpclass.cc:523
+#: src/ftpclass.cc:509
 msgid "assuming failed host name lookup"
 msgstr "překlad názvu stroje shledán nezdařeným"
 
-#: src/ftpclass.cc:824
+#: src/ftpclass.cc:810
 msgid "cannot parse EPSV response"
 msgstr "odpověď EPSV nelze rozebrat"
 
-#: src/ftpclass.cc:1079
+#: src/ftpclass.cc:1065
 msgid "Closing control socket"
 msgstr "Řídicí socket bude uzavřen"
 
-#: src/ftpclass.cc:1276
+#: src/ftpclass.cc:1262
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "SITE CHMOD je dle ftp:use-site-chmod zakázán"
 
-#: src/ftpclass.cc:1281
+#: src/ftpclass.cc:1267
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD je dle ftp:use-mlsd zakázán"
 
-#: src/ftpclass.cc:1625
+#: src/ftpclass.cc:1611
 msgid "SITE CHMOD is not supported by this site"
 msgstr "Tento server nepodporuje SITE CHMOD"
 
-#: src/ftpclass.cc:1630
+#: src/ftpclass.cc:1616
 msgid "MLST and MLSD are not supported by this site"
 msgstr "Tento server nepodporuje MLST a MLSD"
 
-#: src/ftpclass.cc:2087
+#: src/ftpclass.cc:2073
 msgid "unsupported network protocol"
 msgstr "nepodporovaný síťový protokol"
 
-#: src/ftpclass.cc:2164
+#: src/ftpclass.cc:2150
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "Přijato datové spojení z (%s) portu %u"
 
-#: src/ftpclass.cc:2206
+#: src/ftpclass.cc:2192
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "Datový socket se připojuje na (%s) port %u"
 
-#: src/ftpclass.cc:2212
+#: src/ftpclass.cc:2198
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Datový socket se připojuje na proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2233 src/ftpclass.cc:4154
+#: src/ftpclass.cc:2219 src/ftpclass.cc:4148
 msgid "Switching passive mode off"
 msgstr "Pasivní režim bude vypnut"
 
-#: src/ftpclass.cc:2241
+#: src/ftpclass.cc:2227
 msgid "Data connection established"
 msgstr "Datové spojení navázáno"
 
-#: src/ftpclass.cc:2546 src/ftpclass.cc:4284
+#: src/ftpclass.cc:2532 src/ftpclass.cc:4278
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "Je nastaveno ftp:ssl-force, ale server nepodporuje nebo nedovoluje SSL"
 
 # net:persist-retries
-#: src/ftpclass.cc:2888
+#: src/ftpclass.cc:2882
 msgid "Persist and retry"
 msgstr "Opakování po trvalé chybě"
 
-#: src/ftpclass.cc:3155
+#: src/ftpclass.cc:3149
 msgid "Closing data socket"
 msgstr "Datový socket bude uzavřen"
 
-#: src/ftpclass.cc:3177
+#: src/ftpclass.cc:3171
 msgid "Closing aborted data socket"
 msgstr "Přerušený datový socket bude uzavřen"
 
-#: src/ftpclass.cc:3956
+#: src/ftpclass.cc:3950
 msgid "saw file size in response"
 msgstr "v odpovědi zahlédnuta velikost souboru"
 
-#: src/ftpclass.cc:3986 src/ftpclass.cc:4013
+#: src/ftpclass.cc:3980 src/ftpclass.cc:4007
 msgid "Turning on sync-mode"
 msgstr "Zapíná se sync-mode (synchronní režim)"
 
-#: src/ftpclass.cc:4174
+#: src/ftpclass.cc:4168
 msgid "Switching passive mode on"
 msgstr "Zapíná se pasivní režim"
 
-#: src/ftpclass.cc:4321
+#: src/ftpclass.cc:4315
 msgid "FEAT negotiation..."
 msgstr "Vyjednávají se vlastnosti pomocí FEAT…"
 
-#: src/ftpclass.cc:4328
+#: src/ftpclass.cc:4322
 msgid "Sending commands..."
 msgstr "Odesílají se příkazy…"
 
-#: src/ftpclass.cc:4332
+#: src/ftpclass.cc:4326
 msgid "Delaying before retry"
 msgstr "Zpoždění před opakováním"
 
-#: src/ftpclass.cc:4351
+#: src/ftpclass.cc:4345
 msgid "TLS negotiation..."
 msgstr "Vyjednává se TLS…"
 
-#: src/ftpclass.cc:4355
+#: src/ftpclass.cc:4349
 msgid "Logging in..."
 msgstr "Probíhá přihlašování…"
 
-#: src/ftpclass.cc:4359
+#: src/ftpclass.cc:4353
 msgid "Making data connection..."
 msgstr "Vytváří se datové spojení…"
 
-#: src/ftpclass.cc:4362
+#: src/ftpclass.cc:4356
 msgid "Changing remote directory..."
 msgstr "Mění se vzdálený adresář…"
 
-#: src/ftpclass.cc:4368
+#: src/ftpclass.cc:4362
 msgid "Waiting for other copy peer..."
 msgstr "Čeká se na druhou kopírovací protistranu…"
 
-#: src/ftpclass.cc:4370 src/ftpclass.cc:4394
+#: src/ftpclass.cc:4364 src/ftpclass.cc:4388
 msgid "Waiting for transfer to complete"
 msgstr "Čeká se na dokončení přenosu"
 
-#: src/ftpclass.cc:4374
+#: src/ftpclass.cc:4368
 msgid "Waiting for TLS shutdown..."
 msgstr "Čeká se ukončení TLS…"
 
-#: src/ftpclass.cc:4376
+#: src/ftpclass.cc:4370
 msgid "Waiting for data connection..."
 msgstr "Čeká se na datové spojení…"
 
-#: src/ftpclass.cc:4382
+#: src/ftpclass.cc:4376
 msgid "Sending data/TLS"
 msgstr "Odesílají se data/TLS"
 
-#: src/ftpclass.cc:4384
+#: src/ftpclass.cc:4378
 msgid "Receiving data/TLS"
 msgstr "Přijímají se data/TLS"
 
@@ -2640,89 +2635,89 @@ msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 "%s uspělo, %d $soubor odstraněn|soubory odstraněny|souborů odstraněno$\n"
 
-#: src/Torrent.cc:487
+#: src/Torrent.cc:488
 #, c-format
 msgid "Received valid info about %d peer$|s$"
 msgstr "Platné údaje o %d $protistraně|protistranách|protistranách$ přijaty"
 
-#: src/Torrent.cc:504
+#: src/Torrent.cc:505
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr ""
 "Platné údaje o %d IPv6 $protistraně|protistranách|protistranách$ přijaty"
 
-#: src/Torrent.cc:1404
+#: src/Torrent.cc:1417
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Získávají se metadata: %s"
 
-#: src/Torrent.cc:1406
+#: src/Torrent.cc:1419
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Ověřování platnosti: %u/%u (%u %%) %s%s"
 
-#: src/Torrent.cc:1416
+#: src/Torrent.cc:1429
 msgid "Shutting down: "
 msgstr "Ukončuje se: "
 
-#: src/Torrent.cc:2023
+#: src/Torrent.cc:2036
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Navazuje se spojení s protistranou %s na portu %u"
 
-#: src/Torrent.cc:2073 src/Torrent.cc:2160
+#: src/Torrent.cc:2086 src/Torrent.cc:2173
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "protistrana nečekaně uzavřela spojení po %s"
 
-#: src/Torrent.cc:2075
+#: src/Torrent.cc:2088
 msgid "peer closed connection (before handshake)"
 msgstr "protistrana uzavřela spojení (před dojednáním spojení)"
 
-#: src/Torrent.cc:2148
+#: src/Torrent.cc:2161
 msgid "peer closed connection"
 msgstr "protistrana uzavřela spojení"
 
-#: src/Torrent.cc:2162
+#: src/Torrent.cc:2175
 msgid "invalid peer response format"
 msgstr "neplatný tvar odpovědi protistrany"
 
-#: src/Torrent.cc:2290
+#: src/Torrent.cc:2303
 msgid "Handshaking..."
 msgstr "Dojednává se spojení…"
 
-#: src/Torrent.cc:2525
+#: src/Torrent.cc:2538
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Socket nelze navázat na torrent:port-range"
 
-#: src/Torrent.cc:2553
+#: src/Torrent.cc:2566
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Přijato spojení z [%s]:%d"
 
-#: src/Torrent.cc:2587
+#: src/Torrent.cc:2600
 msgid "peer handshake timeout"
 msgstr "protistrana nedojednala spojení včas"
 
-#: src/Torrent.cc:2599
+#: src/Torrent.cc:2612
 msgid "peer short handshake"
 msgstr "protistrana zkrátila dojednání spojení"
 
-#: src/Torrent.cc:2601
+#: src/Torrent.cc:2614
 msgid "peer closed just accepted connection"
 msgstr "protistrana uzavřela právě přijaté spojení"
 
-#: src/Torrent.cc:2652
+#: src/Torrent.cc:2665
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Vysemeňování na pozadí…\n"
 
-#: src/Torrent.cc:2667
+#: src/Torrent.cc:2680
 #, c-format
 msgid "next request in %s"
 msgstr "další požadavek za %s"
 
-#: src/Torrent.cc:2818
+#: src/Torrent.cc:2831
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Prosím, zadejte metadata souboru nebo URL.\n"
@@ -2736,6 +2731,10 @@ msgstr "[%u] Připojeno k terminálu %s. %s\n"
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr "[%u] Připojeno k terminálu.\n"
+
+#~ msgid "Saw `unknown', assume failed login"
+#~ msgstr ""
+#~ "Zahlédnuto „unknown“ (neznámý), přihlášení bude považováno za nezdařilé"
 
 #~ msgid "Can only edit plain queues.\n"
 #~ msgstr "Upravovat lze pouze čisté fronty.\n"

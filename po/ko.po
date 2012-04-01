@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2012-01-24 13:52+0400\n"
+"POT-Creation-Date: 2012-04-01 22:50+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -109,11 +109,11 @@ msgstr ""
 #. If you don't know what to put here, please see
 #. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:311
+#: lib/quotearg.c:312
 msgid "`"
 msgstr ""
 
-#: lib/quotearg.c:312
+#: lib/quotearg.c:313
 msgid "'"
 msgstr ""
 
@@ -263,8 +263,8 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4335
-#: src/ftpclass.cc:4344 src/Torrent.cc:2286
+#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4329
+#: src/ftpclass.cc:4338 src/Torrent.cc:2299
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
 
@@ -396,7 +396,7 @@ msgstr "execl(/bin/sh) 실패: %s\n"
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:75 src/Http.cc:917 src/SFtp.cc:79 src/ftpclass.cc:1227
+#: src/Fish.cc:75 src/Http.cc:925 src/SFtp.cc:79 src/ftpclass.cc:1213
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
@@ -404,34 +404,34 @@ msgstr "사용하지 않는 접속을 끊습니다"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:591 src/Http.cc:1121 src/SFtp.cc:730 src/SFtp.cc:1052
-#: src/ftpclass.cc:2732 src/ftpclass.cc:2942
+#: src/Fish.cc:591 src/Http.cc:1131 src/SFtp.cc:730 src/SFtp.cc:1052
+#: src/ftpclass.cc:2718 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:3972
+#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:2866 src/ftpclass.cc:3966
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/Fish.cc:991 src/Http.cc:1825 src/Http.cc:1832 src/SFtp.cc:1311
-#: src/ftpclass.cc:4347 src/Torrent.cc:2288
+#: src/Fish.cc:991 src/Http.cc:1843 src/Http.cc:1850 src/SFtp.cc:1311
+#: src/ftpclass.cc:4341 src/Torrent.cc:2301
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4353
+#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4347
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/Fish.cc:995 src/Http.cc:1834 src/SFtp.cc:1315 src/ftpclass.cc:4330
-#: src/ftpclass.cc:4358 src/ftpclass.cc:4372
+#: src/Fish.cc:995 src/Http.cc:1852 src/SFtp.cc:1315 src/ftpclass.cc:4324
+#: src/ftpclass.cc:4352 src/ftpclass.cc:4366
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/Fish.cc:997 src/Http.cc:1837 src/SFtp.cc:1317 src/ftpclass.cc:4392
+#: src/Fish.cc:997 src/Http.cc:1855 src/SFtp.cc:1317 src/ftpclass.cc:4386
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
-#: src/Fish.cc:999 src/Http.cc:1830 src/SFtp.cc:1319 src/ftpclass.cc:4390
+#: src/Fish.cc:999 src/Http.cc:1848 src/SFtp.cc:1319 src/ftpclass.cc:4384
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
@@ -451,80 +451,80 @@ msgstr "파일 목록을 가져옵니다 (%lld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: 파일이 이미 존재하며 xfer:clobber가 설정되어 있지 않습니다\n"
 
-#: src/Http.cc:161
+#: src/Http.cc:163
 msgid "Closing HTTP connection"
 msgstr "HTTP 연결을 닫습니다"
 
-#: src/Http.cc:168
+#: src/Http.cc:170
 msgid "POST method failed"
 msgstr "POST 메소드 실패"
 
-#: src/Http.cc:998
+#: src/Http.cc:1006
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "http상의 ftp는 프락시 없이는 동작할 수 없습니다, http:proxy를 설정하세요"
 
-#: src/Http.cc:1046 src/ftpclass.cc:1350 src/Torrent.cc:2020
-#: src/Torrent.cc:2472
+#: src/Http.cc:1056 src/ftpclass.cc:1336 src/Torrent.cc:2033
+#: src/Torrent.cc:2485
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
 
-#: src/Http.cc:1137
+#: src/Http.cc:1147
 msgid "Sending request..."
 msgstr "request 보내는 중..."
 
-#: src/Http.cc:1181
+#: src/Http.cc:1191
 msgid "Hit EOF while fetching headers"
 msgstr "헤더를 읽어 오는 동안 EOF를 입력"
 
-#: src/Http.cc:1291
+#: src/Http.cc:1301
 msgid "Could not parse HTTP status line"
 msgstr "HTTP 상태를 파싱할 수 없음"
 
-#: src/Http.cc:1322
+#: src/Http.cc:1332
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1472
+#: src/Http.cc:1490
 msgid "Receiving body..."
 msgstr "body를 받은 중..."
 
-#: src/Http.cc:1602
+#: src/Http.cc:1620
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1605
+#: src/Http.cc:1623
 msgid "Received not enough data, retrying"
 msgstr "충분한 자료를 받지 못해 다시 시도중"
 
-#: src/Http.cc:1615
+#: src/Http.cc:1633
 msgid "Received all"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1620
+#: src/Http.cc:1638
 msgid "Received all (total)"
 msgstr "모두(전체) 받음"
 
-#: src/Http.cc:1644 src/Http.cc:1666
+#: src/Http.cc:1662 src/Http.cc:1684
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1653
+#: src/Http.cc:1671
 #, fuzzy
 msgid "Received last chunk"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1819 src/Resolver.cc:170 src/Resolver.cc:212
-#: src/ftpclass.cc:4340
+#: src/Http.cc:1837 src/Resolver.cc:170 src/Resolver.cc:212
+#: src/ftpclass.cc:4334
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
-#: src/Http.cc:1827 src/ftpclass.cc:4333
+#: src/Http.cc:1845 src/ftpclass.cc:4327
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/Http.cc:1835
+#: src/Http.cc:1853
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 
@@ -667,7 +667,7 @@ msgstr ""
 #: src/commands.cc:2221 src/commands.cc:2383 src/commands.cc:2411
 #: src/commands.cc:2418 src/commands.cc:2704 src/commands.cc:2731
 #: src/commands.cc:2738 src/commands.cc:3058 src/lftp.cc:265
-#: src/Torrent.cc:2776
+#: src/Torrent.cc:2789
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "상세한 것은 `help %s'를 이용하십시오\n"
@@ -682,7 +682,7 @@ msgstr "(%s) 소켓 오류 - 재접속중"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "%s%s (%s) 포트 %u에 연결 중"
 
-#: src/NetAccess.cc:219 src/Torrent.cc:2114
+#: src/NetAccess.cc:219 src/Torrent.cc:2127
 msgid "Timeout - reconnecting"
 msgstr "시간초과 - 재접속"
 
@@ -2164,11 +2164,11 @@ msgstr "접속이 잘못된 주소로 된 듯 합니다"
 msgid "Switching to NOREST mode"
 msgstr "NOREST 모드로 전환"
 
-#: src/ftpclass.cc:441
+#: src/ftpclass.cc:433
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:449
+#: src/ftpclass.cc:441
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr ""
 
@@ -2180,151 +2180,147 @@ msgstr ""
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 
-#: src/ftpclass.cc:512
-msgid "Saw `unknown', assume failed login"
-msgstr "`알수 없는' 보면, 로그인에 실패한 듯 합니다"
-
-#: src/ftpclass.cc:523
+#: src/ftpclass.cc:509
 msgid "assuming failed host name lookup"
 msgstr "호스트 이름을 찾는데 실패한 듯 합니다"
 
-#: src/ftpclass.cc:824
+#: src/ftpclass.cc:810
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1079
+#: src/ftpclass.cc:1065
 msgid "Closing control socket"
 msgstr "제어 소켓 닫음"
 
-#: src/ftpclass.cc:1276
+#: src/ftpclass.cc:1262
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1281
+#: src/ftpclass.cc:1267
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1625
+#: src/ftpclass.cc:1611
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1630
+#: src/ftpclass.cc:1616
 #, fuzzy
 msgid "MLST and MLSD are not supported by this site"
 msgstr "모듈은 이 시스템에서 지원되지 않음"
 
-#: src/ftpclass.cc:2087
+#: src/ftpclass.cc:2073
 msgid "unsupported network protocol"
 msgstr "지원하지 않는 네트워크 프로토콜입니다"
 
-#: src/ftpclass.cc:2164
+#: src/ftpclass.cc:2150
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:2206
+#: src/ftpclass.cc:2192
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:2212
+#: src/ftpclass.cc:2198
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/ftpclass.cc:2233 src/ftpclass.cc:4154
+#: src/ftpclass.cc:2219 src/ftpclass.cc:4148
 msgid "Switching passive mode off"
 msgstr "패시브(passive) 모드 끔"
 
-#: src/ftpclass.cc:2241
+#: src/ftpclass.cc:2227
 #, fuzzy
 msgid "Data connection established"
 msgstr "접속이 잘못된 주소로 된 듯 합니다"
 
-#: src/ftpclass.cc:2546 src/ftpclass.cc:4284
+#: src/ftpclass.cc:2532 src/ftpclass.cc:4278
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force가 설정되어있지만 서버가 지원하지 않거나 SSL을 허용하지 않음"
 
-#: src/ftpclass.cc:2888
+#: src/ftpclass.cc:2882
 msgid "Persist and retry"
 msgstr "계속 재시도함"
 
-#: src/ftpclass.cc:3155
+#: src/ftpclass.cc:3149
 msgid "Closing data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:3177
+#: src/ftpclass.cc:3171
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "데이터 소켓 닫음"
 
-#: src/ftpclass.cc:3956
+#: src/ftpclass.cc:3950
 msgid "saw file size in response"
 msgstr "응답에서 파일 크기를 봅니다"
 
-#: src/ftpclass.cc:3986 src/ftpclass.cc:4013
+#: src/ftpclass.cc:3980 src/ftpclass.cc:4007
 msgid "Turning on sync-mode"
 msgstr "동기 모드로 전환"
 
-#: src/ftpclass.cc:4174
+#: src/ftpclass.cc:4168
 msgid "Switching passive mode on"
 msgstr "패시브(passive) 모드로 전환"
 
-#: src/ftpclass.cc:4321
+#: src/ftpclass.cc:4315
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:4328
+#: src/ftpclass.cc:4322
 msgid "Sending commands..."
 msgstr "명령어 전송중..."
 
-#: src/ftpclass.cc:4332
+#: src/ftpclass.cc:4326
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/ftpclass.cc:4351
+#: src/ftpclass.cc:4345
 msgid "TLS negotiation..."
 msgstr "TLS 협상중..."
 
-#: src/ftpclass.cc:4355
+#: src/ftpclass.cc:4349
 msgid "Logging in..."
 msgstr "로그인 중..."
 
-#: src/ftpclass.cc:4359
+#: src/ftpclass.cc:4353
 msgid "Making data connection..."
 msgstr "접속 하는 중..."
 
-#: src/ftpclass.cc:4362
+#: src/ftpclass.cc:4356
 msgid "Changing remote directory..."
 msgstr "원거리 디렉토리 변경중..."
 
-#: src/ftpclass.cc:4368
+#: src/ftpclass.cc:4362
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:4370 src/ftpclass.cc:4394
+#: src/ftpclass.cc:4364 src/ftpclass.cc:4388
 msgid "Waiting for transfer to complete"
 msgstr "전송 완료를 기다립니다"
 
-#: src/ftpclass.cc:4374
+#: src/ftpclass.cc:4368
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "응답을 기다립니다..."
 
-#: src/ftpclass.cc:4376
+#: src/ftpclass.cc:4370
 msgid "Waiting for data connection..."
 msgstr "접속을 기다리는 중..."
 
-#: src/ftpclass.cc:4382
+#: src/ftpclass.cc:4376
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "자료 보내는 중"
 
-#: src/ftpclass.cc:4384
+#: src/ftpclass.cc:4378
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "자료 받는 중"
@@ -2497,92 +2493,92 @@ msgstr "%s 성공, %d director$y|ies$ 삭제했습니다\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 성공, %d file$|s$ 삭제했습니다\n"
 
-#: src/Torrent.cc:487
+#: src/Torrent.cc:488
 #, c-format
 msgid "Received valid info about %d peer$|s$"
 msgstr ""
 
-#: src/Torrent.cc:504
+#: src/Torrent.cc:505
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr ""
 
-#: src/Torrent.cc:1404
+#: src/Torrent.cc:1417
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1406
+#: src/Torrent.cc:1419
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1416
+#: src/Torrent.cc:1429
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2023
+#: src/Torrent.cc:2036
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "%s%s (%s) 포트 %u에 연결 중"
 
-#: src/Torrent.cc:2073 src/Torrent.cc:2160
+#: src/Torrent.cc:2086 src/Torrent.cc:2173
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "원거리 끝이 접속을 끊습니다"
 
-#: src/Torrent.cc:2075
+#: src/Torrent.cc:2088
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "접속이 끊겼습니다"
 
-#: src/Torrent.cc:2148
+#: src/Torrent.cc:2161
 #, fuzzy
 msgid "peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/Torrent.cc:2162
+#: src/Torrent.cc:2175
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "임시 서버 응답"
 
-#: src/Torrent.cc:2290
+#: src/Torrent.cc:2303
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:2525
+#: src/Torrent.cc:2538
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:2553
+#: src/Torrent.cc:2566
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "(%s) 포트 %u에 자료 소켓을 연결합니다"
 
-#: src/Torrent.cc:2587
+#: src/Torrent.cc:2600
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:2599
+#: src/Torrent.cc:2612
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:2601
+#: src/Torrent.cc:2614
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/Torrent.cc:2652
+#: src/Torrent.cc:2665
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "명령어 전송중..."
 
-#: src/Torrent.cc:2667
+#: src/Torrent.cc:2680
 #, c-format
 msgid "next request in %s"
 msgstr ""
 
-#: src/Torrent.cc:2818
+#: src/Torrent.cc:2831
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""
@@ -2596,6 +2592,9 @@ msgstr "[%lu] 시그널 %d 로 종료되었습니다. %s"
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr ""
+
+#~ msgid "Saw `unknown', assume failed login"
+#~ msgstr "`알수 없는' 보면, 로그인에 실패한 듯 합니다"
 
 #, fuzzy
 #~ msgid "block size"
