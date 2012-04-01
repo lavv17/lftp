@@ -1,3 +1,11 @@
+Version 4.3.6 - 2012-04-01
+
+* added explicit retracker support (new setting torrent:retracker).
+* added support for http status code 429 Too Many Requests.
+* improved ftp login error handling.
+* fixed errors reported by -Werror=format-security.
+* fixed http error reporting.
+
 Version 4.3.5 - 2012-01-24
 
 * fixed ascii mode uploads to sftp.
