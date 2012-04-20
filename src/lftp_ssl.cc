@@ -350,8 +350,12 @@ void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,
    /* Check if the name in the first certificate matches our destination!
     */
    bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
-   if(check_hostname && !gnutls_x509_crt_check_hostname(cert[0], hostname))
-      set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)));
+   if(check_hostname) {
+      if(!gnutls_x509_crt_check_hostname(cert[0], hostname))
+	 set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)));
+   } else {
+      Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled");
+   }
 
    for (i = 0; i < cert_chain_length; i++)
       gnutls_x509_crt_deinit(cert[i]);
@@ -1234,6 +1238,12 @@ void lftp_ssl_openssl::check_certificate()
                  quotearg_style (escape_quoting_style, hostname)));
       return;
     }
+
+  bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
+  if(!check_hostname) {
+    Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled");
+    return;
+  }
 
   int matched = -1; /* -1 is no alternative match yet, 1 means match and 0
                        means mismatch */
