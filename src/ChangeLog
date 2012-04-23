@@ -1,3 +1,7 @@
+2012-04-23  Solar Designer <solar@openwall.com>
+
+	* Torrent.cc: fix for large PIDs.
+
 2012-04-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: don't check hostname in openssl case with ssl:check-hostname off;
