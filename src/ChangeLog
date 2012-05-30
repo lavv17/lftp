@@ -1,3 +1,11 @@
+2012-05-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: don't Feed at-finish commands if the command buffer is
+	  not empty.
+	* FileFeeder.cc, FileFeeder.h: read by 4K.
+	* commands.cc: set need_exact_time=true when the time is needed at all,
+	  this removes complex and incomplete guess logic.
+
 2012-04-23  Solar Designer <solar@openwall.com>
 
 	* Torrent.cc: fix for large PIDs.
