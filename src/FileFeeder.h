@@ -25,9 +25,8 @@
 class FileFeeder : public CmdFeeder
 {
    Ref<FDStream> in;
-   enum { buffer_size=0x1000 };
-   char buffer[buffer_size];
    Ref<FgData> fg_data;
+   char buffer[0x1001];
 public:
    const char *NextCmd(CmdExec *exec,const char *prompt);
    FileFeeder(FDStream *in);

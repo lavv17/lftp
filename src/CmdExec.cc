@@ -351,7 +351,7 @@ void CmdExec::AtFinish()
 {
    if(queue_feeder && queue_feeder->JobCount())
       return;
-   if(!fed_at_finish && NumAwaitedJobs()==0) {
+   if(!fed_at_finish && NumAwaitedJobs()==0 && cmd_buf.Size()==0) {
       FeedCmd(ResMgr::Query(queue_feeder?"cmd:at-queue-finish":"cmd:at-finish",0));
       FeedCmd("\n");
       fed_at_finish=true;
