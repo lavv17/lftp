@@ -1528,6 +1528,8 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 
    time_fmt.set(0);
    if(time_style && time_style[0]) {
+      if (mode & DATE)
+	 need_exact_time=true;
       if(time_style[0]=='+')
 	 time_fmt.set(time_style+1);
       else if(!strcmp(time_style,"full-iso"))
@@ -1539,20 +1541,6 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 	 time_fmt.set("%Y-%m-%d \n%m-%d %H:%M");
       else
 	 time_fmt.set(time_style);
-      need_exact_time=false;
-      if(time_fmt) {
-	 static const char exact_fmts[][3]={"%H","%M","%S","%N",""};
-	 int sep=strcspn(time_fmt,"\n|");
-	 for(int i=0; exact_fmts[i][0]; i++) {
-	    const char *f=strstr(time_fmt,exact_fmts[i]);
-	    if(!f)
-	       continue;
-	    if(i>1 || sep>f-time_fmt) {
-	       need_exact_time=true;
-	       break;
-	    }
-	 }
-      }
    }
 
    // remove parsed options.
