@@ -214,12 +214,12 @@ decode:
       if(!bm || !bm[0])
 	 return;
       const char *new_url=0;
+      xstring u(bm);
       if(orig_url)
       {
 	 const char *new_path=orig_url+url::path_index(orig_url);
 	 if(new_path[0]=='/')
 	    new_path++;
-	 xstring u(bm);
 	 if(new_path[0]=='/' || new_path[0]=='~')
 	    u.truncate(url::path_index(u));
 	 assert(u[0]);
