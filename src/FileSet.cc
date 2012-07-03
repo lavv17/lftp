@@ -935,7 +935,7 @@ void FileInfo::MakeLongName()
    int w=20-strlen(usergroup);
    if(w<1)
       w=1;
-   char size_str[20];
+   char size_str[21];
    if(defined&SIZE)
       snprintf(size_str,sizeof(size_str),"%*lld",w,(long long)size);
    else
