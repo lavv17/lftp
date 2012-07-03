@@ -471,6 +471,9 @@ void Http::SendRequest(const char *connection,const char *f)
       "<propfind xmlns=\"DAV:\">"
         "<allprop/>"
       "</propfind>\r\n";
+   if(!QueryBool("use-allprop",hostname))
+      allprop="";
+   int allprop_len=strlen(allprop);
 
    xstring pfile;
    if(proxy && !https)
@@ -604,7 +607,8 @@ void Http::SendRequest(const char *connection,const char *f)
 	    SendMethod("PROPFIND",efile);
 	    Send("Depth: 0\r\n"); // no directory listing required
 	    Send("Content-Type: text/xml\r\n");
-	    Send("Content-Length: %d\r\n",(int)strlen(allprop));
+	    if(allprop_len>0)
+	       Send("Content-Length: %d\r\n",allprop_len);
 	 }
 	 else
 	    SendMethod("HEAD",efile);
@@ -627,7 +631,8 @@ void Http::SendRequest(const char *connection,const char *f)
 	 SendMethod("PROPFIND",efile);
 	 Send("Depth: 1\r\n"); // directory listing required
 	 Send("Content-Type: text/xml\r\n");
-	 Send("Content-Length: %d\r\n",(int)strlen(allprop));
+	 if(allprop_len>0)
+	    Send("Content-Length: %d\r\n",allprop_len);
 	 pos=0;
       }
       break;
