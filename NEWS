@@ -1,3 +1,9 @@
+Version 4.3.8 - 2012-07-03
+
+* treat gnutls decryption error as non-fatal.
+* fixed core dump in `bm:' pseudo-URL opening.
+* fixed PROPFIND result parsing (WebDAV).
+
 Version 4.3.7 - 2012-05-30
 
 * fixed script execution.

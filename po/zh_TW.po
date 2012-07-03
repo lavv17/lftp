@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2012-05-30 10:39+0400\n"
+"POT-Creation-Date: 2012-07-03 15:49+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <community@linuxhall.org>\n"
@@ -394,7 +394,7 @@ msgstr "execl(/bin/sh) 失敗：%s\n"
 msgid "total"
 msgstr "總數"
 
-#: src/Fish.cc:75 src/Http.cc:925 src/SFtp.cc:79 src/ftpclass.cc:1213
+#: src/Fish.cc:75 src/Http.cc:930 src/SFtp.cc:79 src/ftpclass.cc:1213
 msgid "Closing idle connection"
 msgstr "關閉閒置連線"
 
@@ -402,7 +402,7 @@ msgstr "關閉閒置連線"
 msgid "Running connect program"
 msgstr "正在執行進行連線的程式"
 
-#: src/Fish.cc:591 src/Http.cc:1131 src/SFtp.cc:730 src/SFtp.cc:1052
+#: src/Fish.cc:591 src/Http.cc:1136 src/SFtp.cc:730 src/SFtp.cc:1052
 #: src/ftpclass.cc:2718 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "對方關閉了連線"
@@ -411,7 +411,7 @@ msgstr "對方關閉了連線"
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/Fish.cc:991 src/Http.cc:1843 src/Http.cc:1850 src/SFtp.cc:1311
+#: src/Fish.cc:991 src/Http.cc:1848 src/Http.cc:1855 src/SFtp.cc:1311
 #: src/ftpclass.cc:4341 src/Torrent.cc:2301
 msgid "Connecting..."
 msgstr "嘗試連線……"
@@ -420,16 +420,16 @@ msgstr "嘗試連線……"
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/Fish.cc:995 src/Http.cc:1852 src/SFtp.cc:1315 src/ftpclass.cc:4324
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1315 src/ftpclass.cc:4324
 #: src/ftpclass.cc:4352 src/ftpclass.cc:4366
 msgid "Waiting for response..."
 msgstr "正在等待回應……"
 
-#: src/Fish.cc:997 src/Http.cc:1855 src/SFtp.cc:1317 src/ftpclass.cc:4386
+#: src/Fish.cc:997 src/Http.cc:1860 src/SFtp.cc:1317 src/ftpclass.cc:4386
 msgid "Receiving data"
 msgstr "下載中"
 
-#: src/Fish.cc:999 src/Http.cc:1848 src/SFtp.cc:1319 src/ftpclass.cc:4384
+#: src/Fish.cc:999 src/Http.cc:1853 src/SFtp.cc:1319 src/ftpclass.cc:4384
 msgid "Sending data"
 msgstr "上傳中"
 
@@ -456,71 +456,71 @@ msgstr "正在關閉 HTTP 連線"
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#: src/Http.cc:1006
+#: src/Http.cc:1011
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
-#: src/Http.cc:1056 src/ftpclass.cc:1336 src/Torrent.cc:2033
+#: src/Http.cc:1061 src/ftpclass.cc:1336 src/Torrent.cc:2033
 #: src/Torrent.cc:2485
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "無法建立地址族群 %d 的 socket"
 
-#: src/Http.cc:1147
+#: src/Http.cc:1152
 msgid "Sending request..."
 msgstr "正在送出要求……"
 
-#: src/Http.cc:1191
+#: src/Http.cc:1196
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#: src/Http.cc:1301
+#: src/Http.cc:1306
 msgid "Could not parse HTTP status line"
 msgstr "無法分析 HTTP 狀態"
 
-#: src/Http.cc:1332
+#: src/Http.cc:1337
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "快取記憶中沒有該物件，但 http:cache-control 的設定為 only-if-cached"
 
-#: src/Http.cc:1490
+#: src/Http.cc:1495
 msgid "Receiving body..."
 msgstr "正在下載內容……"
 
-#: src/Http.cc:1620
+#: src/Http.cc:1625
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1623
+#: src/Http.cc:1628
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1633
+#: src/Http.cc:1638
 msgid "Received all"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1638
+#: src/Http.cc:1643
 msgid "Received all (total)"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1662 src/Http.cc:1684
+#: src/Http.cc:1667 src/Http.cc:1689
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1671
+#: src/Http.cc:1676
 msgid "Received last chunk"
 msgstr "已收到最後的片段"
 
-#: src/Http.cc:1837 src/Resolver.cc:170 src/Resolver.cc:212
+#: src/Http.cc:1842 src/Resolver.cc:170 src/Resolver.cc:212
 #: src/ftpclass.cc:4334
 msgid "Resolving host address..."
 msgstr "正在解析主機地址……"
 
-#: src/Http.cc:1845 src/ftpclass.cc:4327
+#: src/Http.cc:1850 src/ftpclass.cc:4327
 msgid "Connection idle"
 msgstr "連線閒置"
 
-#: src/Http.cc:1853
+#: src/Http.cc:1858
 msgid "Fetching headers..."
 msgstr "正在讀取標頭資料……"
 

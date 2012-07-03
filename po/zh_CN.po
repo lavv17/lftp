@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2012-05-30 10:39+0400\n"
+"POT-Creation-Date: 2012-07-03 15:49+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -397,7 +397,7 @@ msgstr "execlp(%s) 失败: %s\n"
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:75 src/Http.cc:925 src/SFtp.cc:79 src/ftpclass.cc:1213
+#: src/Fish.cc:75 src/Http.cc:930 src/SFtp.cc:79 src/ftpclass.cc:1213
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
@@ -405,7 +405,7 @@ msgstr "关闭发呆的连接"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:591 src/Http.cc:1131 src/SFtp.cc:730 src/SFtp.cc:1052
+#: src/Fish.cc:591 src/Http.cc:1136 src/SFtp.cc:730 src/SFtp.cc:1052
 #: src/ftpclass.cc:2718 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
@@ -414,7 +414,7 @@ msgstr "对端关闭连接"
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
-#: src/Fish.cc:991 src/Http.cc:1843 src/Http.cc:1850 src/SFtp.cc:1311
+#: src/Fish.cc:991 src/Http.cc:1848 src/Http.cc:1855 src/SFtp.cc:1311
 #: src/ftpclass.cc:4341 src/Torrent.cc:2301
 msgid "Connecting..."
 msgstr "正在连接..."
@@ -424,16 +424,16 @@ msgstr "正在连接..."
 msgid "Connected"
 msgstr "没有连接上"
 
-#: src/Fish.cc:995 src/Http.cc:1852 src/SFtp.cc:1315 src/ftpclass.cc:4324
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1315 src/ftpclass.cc:4324
 #: src/ftpclass.cc:4352 src/ftpclass.cc:4366
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/Fish.cc:997 src/Http.cc:1855 src/SFtp.cc:1317 src/ftpclass.cc:4386
+#: src/Fish.cc:997 src/Http.cc:1860 src/SFtp.cc:1317 src/ftpclass.cc:4386
 msgid "Receiving data"
 msgstr "正接收数据"
 
-#: src/Fish.cc:999 src/Http.cc:1848 src/SFtp.cc:1319 src/ftpclass.cc:4384
+#: src/Fish.cc:999 src/Http.cc:1853 src/SFtp.cc:1319 src/ftpclass.cc:4384
 msgid "Sending data"
 msgstr "正发送数据"
 
@@ -462,75 +462,75 @@ msgstr "关闭发呆的连接"
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:1006
+#: src/Http.cc:1011
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1056 src/ftpclass.cc:1336 src/Torrent.cc:2033
+#: src/Http.cc:1061 src/ftpclass.cc:1336 src/Torrent.cc:2033
 #: src/Torrent.cc:2485
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/Http.cc:1147
+#: src/Http.cc:1152
 #, fuzzy
 msgid "Sending request..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1191
+#: src/Http.cc:1196
 #, fuzzy
 msgid "Hit EOF while fetching headers"
 msgstr "正在取得头..."
 
-#: src/Http.cc:1301
+#: src/Http.cc:1306
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1332
+#: src/Http.cc:1337
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1490
+#: src/Http.cc:1495
 #, fuzzy
 msgid "Receiving body..."
 msgstr "正接收数据"
 
-#: src/Http.cc:1620
+#: src/Http.cc:1625
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1623
+#: src/Http.cc:1628
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1633
+#: src/Http.cc:1638
 #, fuzzy
 msgid "Received all"
 msgstr "正接收数据"
 
-#: src/Http.cc:1638
+#: src/Http.cc:1643
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1662 src/Http.cc:1684
+#: src/Http.cc:1667 src/Http.cc:1689
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1671
+#: src/Http.cc:1676
 #, fuzzy
 msgid "Received last chunk"
 msgstr "正接收数据"
 
-#: src/Http.cc:1837 src/Resolver.cc:170 src/Resolver.cc:212
+#: src/Http.cc:1842 src/Resolver.cc:170 src/Resolver.cc:212
 #: src/ftpclass.cc:4334
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
-#: src/Http.cc:1845 src/ftpclass.cc:4327
+#: src/Http.cc:1850 src/ftpclass.cc:4327
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/Http.cc:1853
+#: src/Http.cc:1858
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 

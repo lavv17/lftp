@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2012-05-30 10:39+0400\n"
+"POT-Creation-Date: 2012-07-03 15:49+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -396,7 +396,7 @@ msgstr "execl(/bin/sh) 실패: %s\n"
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:75 src/Http.cc:925 src/SFtp.cc:79 src/ftpclass.cc:1213
+#: src/Fish.cc:75 src/Http.cc:930 src/SFtp.cc:79 src/ftpclass.cc:1213
 msgid "Closing idle connection"
 msgstr "사용하지 않는 접속을 끊습니다"
 
@@ -404,7 +404,7 @@ msgstr "사용하지 않는 접속을 끊습니다"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:591 src/Http.cc:1131 src/SFtp.cc:730 src/SFtp.cc:1052
+#: src/Fish.cc:591 src/Http.cc:1136 src/SFtp.cc:730 src/SFtp.cc:1052
 #: src/ftpclass.cc:2718 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
@@ -413,7 +413,7 @@ msgstr "접속이 끊겼습니다"
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/Fish.cc:991 src/Http.cc:1843 src/Http.cc:1850 src/SFtp.cc:1311
+#: src/Fish.cc:991 src/Http.cc:1848 src/Http.cc:1855 src/SFtp.cc:1311
 #: src/ftpclass.cc:4341 src/Torrent.cc:2301
 msgid "Connecting..."
 msgstr "접속중..."
@@ -422,16 +422,16 @@ msgstr "접속중..."
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/Fish.cc:995 src/Http.cc:1852 src/SFtp.cc:1315 src/ftpclass.cc:4324
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1315 src/ftpclass.cc:4324
 #: src/ftpclass.cc:4352 src/ftpclass.cc:4366
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/Fish.cc:997 src/Http.cc:1855 src/SFtp.cc:1317 src/ftpclass.cc:4386
+#: src/Fish.cc:997 src/Http.cc:1860 src/SFtp.cc:1317 src/ftpclass.cc:4386
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
-#: src/Fish.cc:999 src/Http.cc:1848 src/SFtp.cc:1319 src/ftpclass.cc:4384
+#: src/Fish.cc:999 src/Http.cc:1853 src/SFtp.cc:1319 src/ftpclass.cc:4384
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
@@ -459,72 +459,72 @@ msgstr "HTTP 연결을 닫습니다"
 msgid "POST method failed"
 msgstr "POST 메소드 실패"
 
-#: src/Http.cc:1006
+#: src/Http.cc:1011
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "http상의 ftp는 프락시 없이는 동작할 수 없습니다, http:proxy를 설정하세요"
 
-#: src/Http.cc:1056 src/ftpclass.cc:1336 src/Torrent.cc:2033
+#: src/Http.cc:1061 src/ftpclass.cc:1336 src/Torrent.cc:2033
 #: src/Torrent.cc:2485
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "주소 %d의 소켓을 만들 수 없습니다"
 
-#: src/Http.cc:1147
+#: src/Http.cc:1152
 msgid "Sending request..."
 msgstr "request 보내는 중..."
 
-#: src/Http.cc:1191
+#: src/Http.cc:1196
 msgid "Hit EOF while fetching headers"
 msgstr "헤더를 읽어 오는 동안 EOF를 입력"
 
-#: src/Http.cc:1301
+#: src/Http.cc:1306
 msgid "Could not parse HTTP status line"
 msgstr "HTTP 상태를 파싱할 수 없음"
 
-#: src/Http.cc:1332
+#: src/Http.cc:1337
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1490
+#: src/Http.cc:1495
 msgid "Receiving body..."
 msgstr "body를 받은 중..."
 
-#: src/Http.cc:1620
+#: src/Http.cc:1625
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1623
+#: src/Http.cc:1628
 msgid "Received not enough data, retrying"
 msgstr "충분한 자료를 받지 못해 다시 시도중"
 
-#: src/Http.cc:1633
+#: src/Http.cc:1638
 msgid "Received all"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1638
+#: src/Http.cc:1643
 msgid "Received all (total)"
 msgstr "모두(전체) 받음"
 
-#: src/Http.cc:1662 src/Http.cc:1684
+#: src/Http.cc:1667 src/Http.cc:1689
 msgid "chunked format violated"
 msgstr "쓰지 않는 양식이 문제가 됩니다"
 
-#: src/Http.cc:1671
+#: src/Http.cc:1676
 #, fuzzy
 msgid "Received last chunk"
 msgstr "모두 받았음"
 
-#: src/Http.cc:1837 src/Resolver.cc:170 src/Resolver.cc:212
+#: src/Http.cc:1842 src/Resolver.cc:170 src/Resolver.cc:212
 #: src/ftpclass.cc:4334
 msgid "Resolving host address..."
 msgstr "호스트 주소를 찾습니다..."
 
-#: src/Http.cc:1845 src/ftpclass.cc:4327
+#: src/Http.cc:1850 src/ftpclass.cc:4327
 msgid "Connection idle"
 msgstr "사용하지 않는 접속"
 
-#: src/Http.cc:1853
+#: src/Http.cc:1858
 msgid "Fetching headers..."
 msgstr "헤더를 읽고 있는중.."
 
