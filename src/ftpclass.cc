@@ -45,13 +45,13 @@
 #include "misc.h"
 #include "strftime.h"
 
-#define TELNET_IAC	255		/* interpret as command: */
-#define	TELNET_IP	244		/* interrupt process--permanently */
-#define	TELNET_DM	242		/* for telfunc calls */
-#define	TELNET_WILL	251
-#define	TELNET_WONT	252
-#define	TELNET_DO	253
-#define	TELNET_DONT	254
+#define TELNET_IAC	'\377'	 //255	/* interpret as command: */
+#define TELNET_IP	'\364'	 //244	/* interrupt process--permanently */
+#define TELNET_DM	'\362'	 //242	/* for telfunc calls */
+#define TELNET_WILL	'\373'	 //251
+#define TELNET_WONT	'\374'	 //252
+#define TELNET_DO	'\375'	 //253
+#define TELNET_DONT	'\376'	 //254
 
 #include <errno.h>
 #include <time.h>
@@ -3219,14 +3219,14 @@ int Ftp::Connection::FlushSendQueueOneCmd()
       {
 	 if(*s==0)
 	    log.append("<NUL>");
-	 else if((unsigned char)*s==TELNET_IAC && telnet_layer_send)
+	 else if(*s==TELNET_IAC && telnet_layer_send)
 	 {
 	    s++;
-	    if((unsigned char)*s==TELNET_IAC)
+	    if(*s==TELNET_IAC)
 	       log.append('\377');
-	    else if((unsigned char)*s==TELNET_IP)
+	    else if(*s==TELNET_IP)
 	       log.append("<IP>");
-	    else if((unsigned char)*s==TELNET_DM)
+	    else if(*s==TELNET_DM)
 	       log.append("<DM>");
 	 }
 	 else
@@ -4871,7 +4871,7 @@ void TelnetDecode::PutTranslated(Buffer *target,const char *put_buf,int size)
 	    Put(put_buf,put_size); // remember incomplete sequence
 	 return;
       }
-      switch((unsigned char)iac[1])
+      switch(iac[1])
       {
       // 3-byte commands
       case TELNET_WILL:
