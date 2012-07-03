@@ -14,7 +14,7 @@ install-data-local:
 	fi
 
 uninstall-local:
-	if cmp -s $(DESTDIR)$(sysconfdir)/lftp.conf lftp.conf; then \
+	if cmp -s $(DESTDIR)$(sysconfdir)/lftp.conf $(srcdir)/lftp.conf; then \
 		echo "$(DESTDIR)$(sysconfdir)/lftp.conf is not changed and will be removed."; \
 		rm -f $(DESTDIR)$(sysconfdir)/lftp.conf; \
 	fi
