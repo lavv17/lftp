@@ -4,6 +4,7 @@
 	* ftpclass.cc: define TELNET_* ad char constants, get rid of type casts.
 	* FileSet.cc: fixed buffer size (string was truncated).
 	* Http.cc, resource.cc: add use-allprop settings.
+	* HttpDirXML.cc: fixed PROPFIND result parsing.
 
 2012-05-30  Alexander V. Lukyanov <lav@yars.free.net>
 

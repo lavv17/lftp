@@ -33,11 +33,15 @@ struct xml_context
    xarray_s<xstring_c> stack;
    Ref<FileSet> fs;
    Ref<FileInfo> fi;
-   xstring_c base_dir;
+   xstring base_dir;
 
    void push(const char *);
    void pop();
-   void set_base_dir(const char *d) { base_dir.set(d); }
+   void set_base_dir(const char *d) {
+      base_dir.set(d);
+      if(base_dir.length()>1)
+	 base_dir.chomp('/');
+   }
    const char *top(int i=0) { return stack.count()>i ? stack[stack.count()-i-1].get() : 0; }
 };
 
@@ -62,6 +66,7 @@ static void start_handle(void *data, const char *el, const char **attr)
    else if(!strcmp(ctx->top(), "DAV:collection"))
    {
       ctx->fi->SetType(ctx->fi->DIRECTORY);
+      ctx->fi->SetMode(0755);
    }
 }
 static void end_handle(void *data, const char *el)
@@ -95,7 +100,8 @@ static void chardata_handle(void *data, const char *chardata, int len)
       int s_len=strlen(s);
       if(s_len>0 && s[s_len-1]=='/')
       {
-	 s[s_len-1]=0;
+	 if(s_len>1)
+	    s[--s_len]=0;
 	 ctx->fi->SetType(ctx->fi->DIRECTORY);
 	 ctx->fi->SetMode(0755);
       }
@@ -106,12 +112,7 @@ static void chardata_handle(void *data, const char *chardata, int len)
       }
       if(s[0]=='/' && s[1]=='~')
 	 s++;
-      const char *name;
-      if(ctx->base_dir && !strcmp(s,ctx->base_dir))
-	 name=".";
-      else
-	 name=basename_ptr(s);
-      ctx->fi->SetName(name);
+      ctx->fi->SetName(ctx->base_dir.eq(s) ? "." : basename_ptr(s));
    }
    else if(!strcmp(tag,"DAV:getcontentlength"))
    {
