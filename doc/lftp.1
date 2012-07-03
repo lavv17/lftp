@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "26 Mar 2012"
+.TH lftp 1 "03 Jul 2012"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.3.6.
+This man page documents lftp version 4.3.8.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1552,6 +1552,10 @@ variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
 environment variable \fBhttp_proxy\fP.  If your ftp proxy
 requires authentication, specify user name and password in the URL.
 .TP
+.BR hftp:use-allprop \ (boolean)
+if true, lftp will send `<allprop/>' request body in `PROPFIND' requests,
+otherwise it will send an empty request body.
+.TP
 .BR hftp:use-authorization \ (boolean)
 if set to off, lftp will send password as part of URL to the proxy. This
 may be required for some proxies (e.g. M-soft). Default is on, and lftp
@@ -1614,6 +1618,10 @@ Referer header.
 .TP
 .BR http:set-cookies " (boolean)"
 if true, lftp modifies http:cookie variables when Set-Cookie header is received.
+.TP
+.BR http:use-allprop \ (boolean)
+if true, lftp will send `<allprop/>' request body in `PROPFIND' requests,
+otherwise it will send an empty request body.
 .TP
 .BR http:use-mkcol \ (boolean)
 if set to off, lftp will try to use `PUT' instead of `MKCOL' to create
