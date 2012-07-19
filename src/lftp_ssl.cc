@@ -501,7 +501,7 @@ bool lftp_ssl_gnutls::check_fatal(int res)
    if((res==GNUTLS_E_UNEXPECTED_PACKET_LENGTH
        || res==GNUTLS_E_PUSH_ERROR || res==GNUTLS_E_PULL_ERROR
        || res==GNUTLS_E_DECRYPTION_FAILED)
-   && temporary_network_error(errno))
+   && (!errno || temporary_network_error(errno)))
       return false;
    return true;
 }
