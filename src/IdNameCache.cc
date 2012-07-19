@@ -67,8 +67,6 @@ IdNamePair *IdNameCache::lookup(int id)
 }
 IdNamePair *IdNameCache::lookup(const char *name)
 {
-   if(isdigit((unsigned char)*name))
-      return lookup(atoi(name));
    unsigned h=hash(name);
    for(IdNamePair *scan=table_id[h]; scan; scan=scan->next)
       if(!xstrcmp(name,scan->name))
@@ -92,8 +90,6 @@ const char *IdNameCache::Lookup(int id)
 }
 int IdNameCache::Lookup(const char *name)
 {
-   if(isdigit((unsigned char)*name))
-      return atoi(name);
    return lookup(name)->id;
 }
 IdNameCache::IdNameCache()
@@ -137,19 +133,27 @@ IdNamePair *GroupCache::get_record(int id)
       return 0;
    return new IdNamePair(p->gr_gid,p->gr_name);
 }
+
+IdNamePair *IdNameCache::get_record(const char *name)
+{
+   int id,n;
+   if(sscanf(name,"%d%n",&id,&n)==1 && !name[n])
+      return new IdNamePair(id,name);
+   return 0;
+}
 IdNamePair *PasswdCache::get_record(const char *name)
 {
    struct passwd *p=getpwnam(name);
-   if(!p)
-      return 0;
-   return new IdNamePair(p->pw_uid,name);
+   if(p)
+      return new IdNamePair(p->pw_uid,name);
+   return IdNameCache::get_record(name);
 }
 IdNamePair *GroupCache::get_record(const char *name)
 {
    struct group *p=getgrnam(name);
-   if(!p)
-      return 0;
-   return new IdNamePair(p->gr_gid,name);
+   if(p)
+      return new IdNamePair(p->gr_gid,name);
+   return IdNameCache::get_record(name);
 }
 
 PasswdCache *PasswdCache::instance;

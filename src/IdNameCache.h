@@ -53,7 +53,7 @@ class IdNameCache : public SMTask
 
 protected:
    virtual IdNamePair *get_record(int id)=0;
-   virtual IdNamePair *get_record(const char *name)=0;
+   virtual IdNamePair *get_record(const char *name);
 
    IdNamePair *lookup(int id);
    IdNamePair *lookup(const char *id);
