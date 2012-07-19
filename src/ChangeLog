@@ -1,3 +1,8 @@
+2012-07-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: fixed fatal error checking for gnutls.
+	* IdNameCache.cc, IdNameCache.h: allow numeric names.
+
 2012-07-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: tread decryption error as non-fatal.
