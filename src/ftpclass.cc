@@ -4102,6 +4102,8 @@ void Ftp::CheckResp(int act)
    case Expect::ALLO:
       if(cmd_unsupported(act) || act==202)
 	 ResMgr::Set("ftp:use-allo",hostname,"no");
+      else if(is5XX(act))
+	 SetError(NO_FILE,all_lines);
       break;
 
    case Expect::PASV:

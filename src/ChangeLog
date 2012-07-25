@@ -1,3 +1,7 @@
+2012-07-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: don't try to upload if ALLO fails.
+
 2012-07-19  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc: fixed fatal error checking for gnutls.
