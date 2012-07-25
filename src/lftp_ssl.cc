@@ -354,7 +354,7 @@ void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,
       if(!gnutls_x509_crt_check_hostname(cert[0], hostname))
 	 set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)));
    } else {
-      Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled");
+      Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled\n");
    }
 
    for (i = 0; i < cert_chain_length; i++)
@@ -1242,7 +1242,7 @@ void lftp_ssl_openssl::check_certificate()
 
   bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
   if(!check_hostname) {
-    Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled");
+    Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled\n");
     return;
   }
 
