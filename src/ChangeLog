@@ -1,3 +1,8 @@
+2012-07-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: send PROT after AUTH in any case, for servers
+	  requiring a PROT command.
+
 2012-07-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: don't try to upload if ALLO fails.

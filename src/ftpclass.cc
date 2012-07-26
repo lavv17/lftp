@@ -2560,11 +2560,7 @@ void Ftp::SendAuth(const char *auth)
    conn->SendCmd2("AUTH",auth);
    expect->Push(Expect::AUTH_TLS);
    conn->auth_sent=true;
-   if(!strcmp(auth,"TLS")
-   || !strcmp(auth,"TLS-C"))
-      conn->prot='C';
-   else
-      conn->prot='P';
+   conn->prot='\0'; // send PROT command always, for non-conforming servers
 }
 void Ftp::SendPROT(char want_prot)
 {
