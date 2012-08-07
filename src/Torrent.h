@@ -380,8 +380,12 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    Speedometer peer_send_rate;
 
    xstring peer_id;
+   unsigned char extensions[8];
    TorrentPeer *duplicate;
    bool myself;
+
+   bool FastExtensionEnabled() { return extensions[7]&0x04; }
+   bool LTEPExtensionEnabled() { return extensions[5]&0x10; }
 
    bool am_choking;
    bool am_interested;
@@ -390,6 +394,10 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
 
    Ref<BitField> peer_bitfield;
    unsigned peer_complete_pieces;
+
+   xqueue<unsigned,xarray<unsigned> > fast_set;
+   bool InFastSet(unsigned);
+   xqueue<unsigned,xarray<unsigned> > suggested_set;
 
    enum packet_type
    {
@@ -403,7 +411,13 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
       MSG_REQUEST=6,
       MSG_PIECE=7,
       MSG_CANCEL=8,
-      MSG_PORT=9
+      MSG_PORT=9,
+      MSG_SUGGEST_PIECE=13,
+      MSG_HAVE_ALL=14,
+      MSG_HAVE_NONE=15,
+      MSG_REJECT_REQUEST=16,
+      MSG_ALLOWED_FAST=17,
+      MSG_EXTENDED=20,
    };
 public:
    enum unpack_status_t
@@ -417,7 +431,9 @@ public:
    {
       static bool is_valid_reply(int p)
       {
-	 return p>=0 && p<=MSG_PORT;
+	 return (p>=0 && p<=MSG_PORT)
+	    || (p>=MSG_SUGGEST_PIECE && p<=MSG_ALLOWED_FAST)
+	    || p==MSG_EXTENDED;
       }
    protected:
       int length;
@@ -435,12 +451,13 @@ public:
       const char *GetPacketTypeText() const;
       void DropData(Ref<IOBuffer>& b) { b->Skip(4+length); }
       bool TypeIs(packet_type t) const { return type==t; }
+      static unpack_status_t UnpackBencoded(const Buffer *b,int *offset,int limit,Ref<BeNode> *out);
    };
-   class PacketHave : public Packet
+   class _PacketPiece : public Packet
    {
    public:
       unsigned piece;
-      PacketHave(unsigned p=0) : Packet(MSG_HAVE), piece(p) { length+=4; }
+      _PacketPiece(packet_type t,unsigned p) : Packet(t), piece(p) { length+=4; }
       unpack_status_t Unpack(const Buffer *b)
 	 {
 	    unpack_status_t res;
@@ -454,6 +471,10 @@ public:
       void ComputeLength() { Packet::ComputeLength(); length+=4; }
       void Pack(Ref<IOBuffer>& b) { Packet::Pack(b); b->PackUINT32BE(piece); }
    };
+   class PacketHave : public _PacketPiece {
+   public:
+      PacketHave(unsigned p=0) : _PacketPiece(MSG_HAVE,p) {}
+   };
    class PacketBitField : public Packet
    {
    public:
@@ -465,20 +486,25 @@ public:
       void ComputeLength();
       void Pack(Ref<IOBuffer>& b);
    };
-   class PacketRequest : public Packet
+   class _PacketIBL : public Packet
    {
    public:
-      Timer expire;
       unsigned index,begin,req_length;
-      PacketRequest(unsigned i=0,unsigned b=0,unsigned l=0);
+      _PacketIBL(packet_type t,unsigned i,unsigned b,unsigned l);
       unpack_status_t Unpack(const Buffer *b);
       void ComputeLength();
       void Pack(Ref<IOBuffer>& b);
    };
-   class PacketCancel : public PacketRequest {
+   class PacketRequest : public _PacketIBL
+   {
+   public:
+      PacketRequest(unsigned i=0,unsigned b=0,unsigned l=0)
+	 : _PacketIBL(MSG_REQUEST,i,b,l) {}
+   };
+   class PacketCancel : public _PacketIBL {
    public:
       PacketCancel(unsigned i=0,unsigned b=0,unsigned l=0)
-      : PacketRequest(i,b,l) { type=MSG_CANCEL; }
+	 : _PacketIBL(MSG_CANCEL,i,b,l) {}
    };
    class PacketPiece : public Packet
    {
@@ -527,6 +553,39 @@ public:
       void ComputeLength() { Packet::ComputeLength(); length+=2; }
       void Pack(Ref<IOBuffer>& b) { Packet::Pack(b); b->PackUINT16BE(port); }
    };
+   class PacketSuggestPiece : public _PacketPiece {
+   public:
+      PacketSuggestPiece(unsigned p=0) : _PacketPiece(MSG_SUGGEST_PIECE,p) {}
+   };
+   class PacketAllowedFast : public _PacketPiece {
+   public:
+      PacketAllowedFast(unsigned p=0) : _PacketPiece(MSG_ALLOWED_FAST,p) {}
+   };
+   class PacketRejectRequest : public _PacketIBL {
+   public:
+      PacketRejectRequest(unsigned i=0,unsigned b=0,unsigned l=0)
+	 : _PacketIBL(MSG_REJECT_REQUEST,i,b,l) {}
+   };
+   class PacketExtended : public Packet
+   {
+   public:
+      unsigned char code;
+      Ref<BeNode> data;
+      PacketExtended(unsigned char c='\0',BeNode *d=0)
+	 : Packet(MSG_EXTENDED), code(c), data(d) { length++; if(data) length+=data->ComputeLength(); }
+      unpack_status_t Unpack(const Buffer *b)
+	 {
+	    unpack_status_t res;
+	    res=Packet::Unpack(b);
+	    if(res!=UNPACK_SUCCESS)
+	       return res;
+	    code=b->UnpackUINT8(unpacked); unpacked++;
+	    res=UnpackBencoded(b,&unpacked,length+4,&data);
+	    return res;
+	 }
+      void ComputeLength() { Packet::ComputeLength(); length++; if(data) length+=data->ComputeLength(); }
+      void Pack(Ref<IOBuffer>& b) { Packet::Pack(b); b->PackUINT8(code); if(data) data->Pack(b); }
+   };
 
 private:
    unpack_status_t UnpackPacket(Ref<IOBuffer>& ,Packet **);
@@ -553,6 +612,7 @@ private:
    void SetError(const char *);
    void SendHandshake();
    unpack_status_t RecvHandshake();
+   void SendExtensions();
    void Disconnect();
    int SendDataRequests(unsigned p);
    void SendDataRequests();
