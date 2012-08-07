@@ -1,3 +1,8 @@
+2012-08-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Bencode.cc, Bencode.h: new ctor BeNode(const char *);
+	  (ComputeLength, Pack, Format1) new methods.
+
 2012-07-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc: send PROT after AUTH in any case, for servers

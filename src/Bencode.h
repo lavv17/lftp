@@ -23,6 +23,7 @@
 #define BENCODE_H
 
 #include "xmap.h"
+#include "buffer.h"
 
 class BeNode
 {
@@ -43,13 +44,19 @@ public:
    static BeNode *Parse(const char *s,int len,int *rest);
 
    BeNode(const char *s,int l);
+   BeNode(const char *s);
    BeNode(xarray_p<BeNode> *l);
    BeNode(xmap_p<BeNode> *d);
    BeNode(long long);
    ~BeNode();
 
+   int ComputeLength();
+   void Pack(Ref<IOBuffer> &buf);
+
    void Format(xstring &buf,int level);
    const char *Format();
+   void Format1(xstring &buf);
+   const char *Format1();
 
    static const char *TypeName(be_type_t t);
 };
