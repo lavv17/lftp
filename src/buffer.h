@@ -82,6 +82,7 @@ public:
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void Put(const xstring &s) { Put(s.get(),s.length()); }
+   void Put(char c) { Put(&c,1); }
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void vFormat(const char *f, va_list v);
    void PutEOF() { eof=true; }
@@ -219,6 +220,7 @@ public:
    void Put(const char *,int);
    void Put(const char *buf);
    void Put(const xstring &s) { Put(s.get(),s.length()); }
+   void Put(char c) { Put(&c,1); }
    // anchor to PutEOF_LL
    void PutEOF() { DirectedBuffer::PutEOF(); PutEOF_LL(); }
 };

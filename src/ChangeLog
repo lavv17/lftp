@@ -2,6 +2,8 @@
 
 	* Bencode.cc, Bencode.h: new ctor BeNode(const char *);
 	  (ComputeLength, Pack, Format1) new methods.
+	* buffer.h: add Put(char) method.
+	* xmap.h: add add(const char*) method.
 
 2012-07-26  Alexander V. Lukyanov <lav@yars.free.net>
 
