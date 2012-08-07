@@ -238,6 +238,9 @@ const char *BeNode::Format()
    return buf;
 }
 
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
 void BeNode::Format1(xstring &buf)
 {
    int i;
@@ -267,7 +270,23 @@ void BeNode::Format1(xstring &buf)
       {
 	 if(i>0)
 	    buf.append(", ");
-	 buf.appendf("\"%s\":",dict.each_key()->get());
+	 const xstring& key=*dict.each_key();
+	 buf.appendf("\"%s\":",key.get());
+	 if(e->type==BE_STR) {
+	    char tmp[40];
+	    if(e->str.length()==4 && (key.eq("ip",2) || key.eq("ipv4",4) || key.eq("yourip",6))) {
+	       inet_ntop(AF_INET,e->str.get(),tmp,sizeof(tmp));
+	       buf.append(tmp);
+	       continue;
+	    }
+#if INET6
+	    else if(e->str.length()==16 && (key.eq("ip",2) || key.eq("ipv6",4) || key.eq("yourip",6))) {
+	       inet_ntop(AF_INET6,e->str.get(),tmp,sizeof(tmp));
+	       buf.append(tmp);
+	       continue;
+	    }
+#endif//INET6
+	 }
 	 e->Format1(buf);
       }
       buf.append('}');
@@ -357,7 +376,7 @@ void BeNode::Pack(Ref<IOBuffer> &buf)
       buf->Put('e');
       break;
    case BE_DICT:
-      buf->Put('l');
+      buf->Put('d');
       for(BeNode *e=dict.each_begin(); e; e=dict.each_next())
       {
 	 const xstring &key=*dict.each_key();
