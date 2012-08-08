@@ -1,3 +1,7 @@
+2012-08-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h: add mt_metadata extension.
+
 2012-08-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Bencode.cc, Bencode.h: new ctor BeNode(const char *);

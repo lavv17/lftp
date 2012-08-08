@@ -156,6 +156,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    SMTaskRef<IOBuffer> metainfo_data;
    Ref<BeNode> metainfo_tree;
    BeNode *info;
+   xstring metadata;
    xstring info_hash;
    const xstring *pieces;
    const xstring *name;
@@ -419,6 +420,18 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
       MSG_ALLOWED_FAST=17,
       MSG_EXTENDED=20,
    };
+   enum msg_ext_id
+   {
+      MSG_EXT_HANDSHAKE=0,
+      MSG_EXT_PEX=1,
+      MSG_EXT_METADATA=2,
+   };
+   enum ut_metadata_msg_id
+   {
+      UT_METADATA_REQUEST=0,
+      UT_METADATA_DATA=1,
+      UT_METADATA_REJECT=2,
+   };
 public:
    enum unpack_status_t
    {
@@ -571,6 +584,7 @@ public:
    public:
       unsigned char code;
       Ref<BeNode> data;
+      xstring appendix;
       PacketExtended(unsigned char c='\0',BeNode *d=0)
 	 : Packet(MSG_EXTENDED), code(c), data(d) { length++; if(data) length+=data->ComputeLength(); }
       unpack_status_t Unpack(const Buffer *b)
@@ -583,13 +597,15 @@ public:
 	    res=UnpackBencoded(b,&unpacked,length+4,&data);
 	    return res;
 	 }
-      void ComputeLength() { Packet::ComputeLength(); length++; if(data) length+=data->ComputeLength(); }
+      void ComputeLength() { Packet::ComputeLength(); length++; if(data) length+=data->ComputeLength(); length+=appendix.length(); }
       void Pack(Ref<IOBuffer>& b) { Packet::Pack(b); b->PackUINT8(code); if(data) data->Pack(b); }
+      void SetAppendix(const char *s,int len) { appendix.nset(s,len); length+=len; }
    };
 
 private:
    unpack_status_t UnpackPacket(Ref<IOBuffer>& ,Packet **);
    void HandlePacket(Packet *);
+   void HandleExtendedMessage(PacketExtended *);
 
    static const int MAX_QUEUE_LEN = 16;
    RefQueue<PacketRequest> recv_queue;

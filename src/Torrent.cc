@@ -677,7 +677,8 @@ int Torrent::Do()
       if(!info)
          return MOVED;
 
-      SHA1(info->str,info_hash);
+      metadata.set(info->str);
+      SHA1(metadata,info_hash);
 
       BeNode *b_piece_length=Lookup(info,"piece length",BeNode::BE_INT);
       if(!b_piece_length)
@@ -1616,13 +1617,15 @@ void TorrentPeer::SendExtensions()
   if(!LTEPExtensionEnabled())
       return;
    xmap_p<BeNode> m;
-   m.add("ut_metadata",new BeNode(0LL));
+   m.add("ut_metadata",new BeNode(MSG_EXT_METADATA));
    m.add("ut_pex",new BeNode(0LL));
    xmap_p<BeNode> ext;
    ext.add("m",new BeNode(&m));
    ext.add("p",new BeNode(parent->GetPort()));
    ext.add("v",new BeNode(PACKAGE"/"VERSION));
    ext.add("reqq",new BeNode(MAX_QUEUE_LEN*16));
+   if(parent->metadata)
+      ext.add("metadata_size",new BeNode(parent->metadata.length()));
 
    const char *ip=ResMgr::Query("torrent:ip",0);
    sockaddr_u sa;
@@ -1649,7 +1652,7 @@ void TorrentPeer::SendExtensions()
 #endif
    }
 
-   PacketExtended pkt(0,new BeNode(&ext));
+   PacketExtended pkt(MSG_EXT_HANDSHAKE,new BeNode(&ext));
    pkt.Pack(send_buf);
    LogSend(9,xstring::format("extended(%u,%s)",pkt.code,pkt.data->Format1()));
 }
@@ -1838,6 +1841,8 @@ void TorrentPeer::MarkPieceInvalid(unsigned p)
 
 void TorrentPeer::ClearSentQueue(int i)
 {
+   if(i<0)
+      return;
    if(!FastExtensionEnabled()) {
       // without Fast Extension we assume sequential packet processing,
       // thus clear also all sent requests before this one.
@@ -1950,7 +1955,7 @@ void TorrentPeer::SetAmChoking(bool c)
 	 // send rejects
 	 while(recv_queue.count()>0) {
 	    const PacketRequest *p=recv_queue.next();
-	    LogSend(4,xstring::format("reject-request piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
+	    LogSend(6,xstring::format("reject-request piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
 	    PacketRejectRequest(p->index,p->begin,p->req_length).Pack(send_buf);
 	 }
       }
@@ -2103,39 +2108,7 @@ void TorrentPeer::HandlePacket(Packet *p)
    case MSG_EXTENDED: {
 	 PacketExtended *pp=static_cast<PacketExtended*>(p);
 	 LogRecv(9,xstring::format("extended(%u,%s)",pp->code,pp->data->Format1()));
-	 if(pp->data->type!=BeNode::BE_DICT) {
-	    SetError("extended type must be DICT");
-	    break;
-	 }
-	 if(pp->code==0) {
-	    BeNode *v=pp->data->dict.lookup("v");
-	    if(v && v->type==BeNode::BE_STR) {
-	       LogNote(3,"peer version is %s",v->str.get());
-	    }
-	    BeNode *myip=pp->data->dict.lookup("yourip");
-	    if(myip && myip->type==BeNode::BE_STR && myip->str.length()==4) {
-	       char ip[16];
-	       inet_ntop(AF_INET,myip->str.get(),ip,sizeof(ip));
-	       LogNote(3,"my external IPv4 is %s",ip);
-	    }
-	    if(passive) {
-	       // use specified port number to connect back
-	       BeNode *p=pp->data->dict.lookup("p");
-	       if(p && p->type==BeNode::BE_INT && p->num>=1024 && p->num<=65535) {
-		  LogNote(9,"using port %lld to connect back",p->num);
-		  if(addr.sa.sa_family==AF_INET) {
-		     addr.in.sin_port=htons(p->num);
-		     passive=false;
-		  }
-#if INET6
-		  else if(addr.sa.sa_family==AF_INET6) {
-		     addr.in6.sin6_port=htons(p->num);
-		     passive=false;
-		  }
-#endif
-	       }
-	    }
-	 }
+	 HandleExtendedMessage(pp);
 	 break;
       }
    case MSG_PIECE: {
@@ -2221,6 +2194,83 @@ void TorrentPeer::HandlePacket(Packet *p)
    delete p;
 }
 
+void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
+{
+   if(pp->data->type!=BeNode::BE_DICT) {
+      SetError("extended type must be DICT");
+      return;
+   }
+   if(pp->code==MSG_EXT_HANDSHAKE) {
+      BeNode *v=pp->data->dict.lookup("v");
+      if(v && v->type==BeNode::BE_STR) {
+	 LogNote(3,"peer version is %s",v->str.get());
+      }
+      BeNode *myip=pp->data->dict.lookup("yourip");
+      if(myip && myip->type==BeNode::BE_STR && myip->str.length()==4) {
+	 char ip[16];
+	 inet_ntop(AF_INET,myip->str.get(),ip,sizeof(ip));
+	 LogNote(3,"my external IPv4 is %s",ip);
+      }
+      if(passive) {
+	 // use specified port number to connect back
+	 BeNode *p=pp->data->dict.lookup("p");
+	 if(p && p->type==BeNode::BE_INT && p->num>=1024 && p->num<=65535) {
+	    LogNote(9,"using port %lld to connect back",p->num);
+	    if(addr.sa.sa_family==AF_INET) {
+	       addr.in.sin_port=htons(p->num);
+	       passive=false;
+	    }
+#if INET6
+	    else if(addr.sa.sa_family==AF_INET6) {
+	       addr.in6.sin6_port=htons(p->num);
+	       passive=false;
+	    }
+#endif
+	 }
+      }
+   } else if(pp->code==MSG_EXT_METADATA) {
+      BeNode *msg_type=pp->data->dict.lookup("msg_type");
+      if(msg_type->type!=BeNode::BE_INT) {
+	 SetError("ut_metadata msg_type must be INT");
+	 return;
+      }
+      BeNode *piece=pp->data->dict.lookup("piece");
+      if(piece->type!=BeNode::BE_INT) {
+	 SetError("ut_metadata piece must be INT");
+	 return;
+      }
+      xmap_p<BeNode> reply;
+      switch(msg_type->num) {
+	 case UT_METADATA_REQUEST: {
+	    size_t offset=piece->num*Torrent::BLOCK_SIZE;
+	    if(offset>parent->metadata.length()) {
+	       reply.add("msg_type",new BeNode(UT_METADATA_REJECT));
+	       reply.add("piece",new BeNode(piece->num));
+	       PacketExtended pkt(MSG_EXT_METADATA,new BeNode(&reply));
+	       LogSend(4,xstring::format("ut_metadata reject %s",pkt.data->Format1()));
+	       pkt.Pack(send_buf);
+	       break;
+	    }
+	    const char *d=parent->metadata+offset;
+	    unsigned len=parent->metadata.length()-offset;
+	    if(len>Torrent::BLOCK_SIZE)
+	       len=Torrent::BLOCK_SIZE;
+	    reply.add("msg_type",new BeNode(UT_METADATA_DATA));
+	    reply.add("piece",new BeNode(piece->num));
+	    reply.add("total_size",new BeNode(len));
+	    PacketExtended pkt(MSG_EXT_METADATA,new BeNode(&reply));
+	    LogSend(4,xstring::format("ut_metadata data %s",pkt.data->Format1()));
+	    pkt.SetAppendix(d,len);
+	    pkt.Pack(send_buf);
+	    break;
+	 }
+	 case UT_METADATA_DATA:
+	    break;
+	 case UT_METADATA_REJECT:
+	    break;
+      }
+   }
+}
 bool TorrentPeer::HasNeededPieces()
 {
    if(GetLastPiece()!=NO_PIECE)
