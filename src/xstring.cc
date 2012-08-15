@@ -115,14 +115,38 @@ xstring& xstring::set(const char *s)
    return nset(s,xstrlen(s));
 }
 
+xstring::xstring(const xstring_clonable& c)
+{
+   init();
+   if(!c.buf)
+      return;
+   len=c.len;
+   get_space(c.len);
+   memcpy(buf,c.buf,c.len);
+}
+
 xstring& xstring::set_allocated(char *s)
 {
-   if(!s)
-      return set(0);
+   if(!s) {
+      unset();
+      return *this;
+   }
    len=strlen(s);
    size=len+1;
    xfree(buf);
    buf=s;
+   return *this;
+}
+xstring& xstring::move_here(xstring& o)
+{
+   if(!o) {
+      unset();
+      return *this;
+   }
+   len=o.len; o.len=0;
+   size=o.size; o.size=0;
+   xfree(buf);
+   buf=o.buf; o.buf=0;
    return *this;
 }
 
@@ -311,11 +335,17 @@ xstring& xstring::appendf(const char *format, ...)
    va_end(va);
    return *this;
 }
+// don't use it in nested loops
 xstring& xstring::get_tmp()
 {
    static xstring revolver[16];
    static int i;
-   return revolver[i=(i+1)&15];
+   int next=(i+1)&15;
+   xstring& tmp=revolver[i];
+   // keep the oldest tmp clear to trigger NULL dereference
+   tmp.move_here(revolver[next]);
+   i=next;
+   return tmp;
 }
 char *xstring::tmp_buf(int n)
 {
@@ -387,7 +417,7 @@ const char *xstring::dump_to(xstring& buf) const
    int len=length();
    const char *s=get();
    if(is_binary()) {
-      if(len<128) {
+      if(len<1024) {
 	 buf.append("<binary: 0x");
 	 while(len-->0)
 	    buf.appendf("%02X",(unsigned char)*s++);

@@ -126,6 +126,7 @@ public:
    xstring_ca(char *s) { buf=s; }
 };
 
+class xstring_clonable;
 // full implementation
 class xstring : public xstring0
 {
@@ -139,13 +140,17 @@ class xstring : public xstring0
    // make xstring = xstrdup() fail:
    xstring& operator=(char *);
    const char *operator=(const char *s) { return set(s); }
-   const char *operator=(const xstring& s) { return set(s.get()); }
+   const char *operator=(const xstring& s) { return set(s); }
    xstring(const xstring&); // disable cloning
 
 public:
    xstring() { init(); }
    xstring(const char *s) { init(s); }
    xstring(const char *s,int l) { init(s,l); }
+
+   // explicit cloning
+   xstring(const xstring_clonable& c);
+   const xstring_clonable& copy() const { return *(xstring_clonable*)(this); }
 
    void get_space(size_t s);
    void get_space2(size_t s,size_t g);
@@ -158,6 +163,7 @@ public:
    xstring& set(const char *s);
    xstring& nset(const char *s,int len);
    xstring& set_allocated(char *s);
+   xstring& move_here(xstring&);
    xstring& set_substr(int start,size_t sublen,const char *,size_t);
    xstring& set_substr(int start,size_t sublen,const char *);
    xstring& set_substr(int start,size_t sublen,const xstring &s) { return set_substr(start,sublen,s.get(),s.length()); }
@@ -216,6 +222,7 @@ public:
 
    static xstring null;
 };
+class xstring_clonable : public xstring {};
 
 static inline size_t strlen(const xstring& s) { return s.length(); }
 static inline size_t xstrlen(const xstring& s) { return s.length(); }
