@@ -3204,7 +3204,8 @@ void Torrent::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remot
 {
    Torrent *t=FindTorrent(info_hash);
    if(!t) {
-      LogError(3,"peer sent unknown info_hash=%s in handshake",info_hash.hexdump());
+      LogError(3,"peer %s sent unknown info_hash=%s in handshake",
+	 remote_addr->to_string().get(),info_hash.hexdump());
       close(sock);
       delete recv_buf;
       return;
@@ -3608,7 +3609,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 if(!ip_voted.lookup(src.compact_addr())) {
 	    sockaddr_u reported_ip;
 	    reported_ip.set_compact(ip->str);
-	    LogNote(2,"%s reported our IP as %s",src.to_string().get(),reported_ip.to_string().get());
+	    LogNote(2,"%s reported our IP as %s",src.to_string().get(),reported_ip.address());
 	    unsigned& votes=ip_votes.lookup_Lv(ip->str);
 	    votes++;
 	    if(votes>=4) {
