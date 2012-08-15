@@ -915,6 +915,7 @@ public:
    TorrentDispatcher(int s,const sockaddr_u *a);
    ~TorrentDispatcher();
    int Do();
+   const char *GetLogContext() { return "torrent"; }
 };
 
 #include "Job.h"
