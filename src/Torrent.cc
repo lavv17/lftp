@@ -1783,7 +1783,7 @@ TorrentPeer::unpack_status_t TorrentPeer::RecvHandshake()
    xstring peer_info_hash(data+unpacked,SHA1_DIGEST_SIZE);
    unpacked+=SHA1_DIGEST_SIZE;
    if(peer_info_hash.ne(parent->info_hash)) {
-      LogError(0,"got info_hash: %s, wanted: %s",peer_info_hash.dump(),parent->info_hash.dump());
+      LogError(0,"got info_hash: %s, wanted: %s",peer_info_hash.hexdump(),parent->info_hash.hexdump());
       SetError("peer info_hash mismatch");
       return UNPACK_WRONG_FORMAT;
    }
@@ -2877,8 +2877,9 @@ const char *TorrentPeer::Status()
       buf.append("am-interested ");
    if(am_choking)
       buf.append("am-choking ");
-   buf.appendf("complete:%u/%u (%u%%)",peer_complete_pieces,parent->total_pieces,
-      peer_complete_pieces*100/parent->total_pieces);
+   if(parent->HasMetadata())
+      buf.appendf("complete:%u/%u (%u%%)",peer_complete_pieces,parent->total_pieces,
+	 peer_complete_pieces*100/parent->total_pieces);
    return buf;
 }
 
@@ -3192,10 +3193,10 @@ void Torrent::DispatchUDP(const char *buf,int len,const sockaddr_u& src)
       d->HandlePacket(msg.get_non_const(),src);
       d->Leave();
    } else if(buf[0]==0x41) {
-      LogRecv(9,xstring::format("uTP SYN v1 from %s {%s}",src.to_string().get(),xstring::get_tmp(buf,len).dump()));
+      LogRecv(9,xstring::format("uTP SYN v1 from %s {%s}",src.to_string().get(),xstring::get_tmp(buf,len).hexdump()));
    } else {
    unknown:
-      LogRecv(4,xstring::format("udp from %s {%s}",src.to_string().get(),xstring::get_tmp(buf,len).dump()));
+      LogRecv(4,xstring::format("udp from %s {%s}",src.to_string().get(),xstring::get_tmp(buf,len).hexdump()));
    }
 }
 
@@ -3203,7 +3204,7 @@ void Torrent::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remot
 {
    Torrent *t=FindTorrent(info_hash);
    if(!t) {
-      LogError(1,"peer sent unknown info_hash=%s in handshake",info_hash.dump());
+      LogError(3,"peer sent unknown info_hash=%s in handshake",info_hash.hexdump());
       close(sock);
       delete recv_buf;
       return;
@@ -3267,7 +3268,7 @@ DHT::DHT(int af,const xstring& id)
      refresh_timer(60), nodes_cleanup_timer(5*60),
      node_id(id.copy()), t(random())
 {
-   LogNote(10,"creating DHT with id=%s",node_id.dump());
+   LogNote(10,"creating DHT with id=%s",node_id.hexdump());
 }
 DHT::~DHT()
 {
@@ -3473,7 +3474,6 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       BeNode *q=p->dict.lookup("q");
       if(!q || q->type!=t->BE_STR)
 	 return;
-      LogNote(1,"received DHT query %s",q->str.get());
       BeNode *a=p->dict.lookup("a");
       if(!a || a->type!=a->BE_DICT)
 	 return;
@@ -3505,14 +3505,14 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       }
 
       if(q->str.eq("ping")) {
-	 LogSend(4,xstring::format("DHT ping reply to %s",src.to_string().get()));
+	 LogSend(5,xstring::format("DHT ping reply to %s",src.to_string().get()));
 	 SendMessage(NewReply(t->str,r),src);
       } else if(q->str.eq("find_node")) {
 	 BeNode *target=a->dict.lookup("target");
 	 if(!target || target->type!=BeNode::BE_STR)
 	    return;
 	 int nodes_count=AddNodesToReply(r,target->str,want_n4,want_n6);
-	 LogSend(4,xstring::format("DHT find_node reply with %d nodes to %s",nodes_count,src.to_string().get()));
+	 LogSend(5,xstring::format("DHT find_node reply with %d nodes to %s",nodes_count,src.to_string().get()));
 	 SendMessage(NewReply(t->str,r),src);
       } else if(q->str.eq("get_peers")) {
 	 BeNode *info_hash=a->dict.lookup("info_hash");
@@ -3552,7 +3552,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    node->token_timer.Reset();
 	 }
 	 r.add("token",new BeNode(node->my_token));
-	 LogSend(4,xstring::format("DHT get_peers reply with %d values and %d nodes to %s",
+	 LogSend(5,xstring::format("DHT get_peers reply with %d values and %d nodes to %s",
 	    p?p->count():0,nodes_count,src.to_string().get()));
 	 SendMessage(NewReply(t->str,r),src);
       } else if(q->str.eq("announce_peer")) {
@@ -3590,14 +3590,13 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
    }
    Ref<Request> req(sent_req.lookup(t->str));
    if(!req) {
-      LogError(1,"got DHT reply with unknown `t'");
+      LogError(2,"got DHT reply with unknown `t' from %s",src.to_string().get());
       return;
    }
    sent_req.remove(t->str);
 
    const xstring& q=req->data->dict.lookup("q")->str;
    if(y->str.eq("r")) {
-      LogNote(1,"got DHT reply for %s",q.get());
       BeNode *r=p->dict.lookup("r");
       if(!r || r->type!=r->BE_DICT)
 	 return;
@@ -3607,13 +3606,15 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       BeNode *ip=r->dict.lookup("ip");
       if(ip && ip->type==ip->BE_STR && !ValidNodeId(node_id,ip->str)) {
 	 if(!ip_voted.lookup(src.compact_addr())) {
-	    LogNote(1,"our node id seems to be invalid");
+	    sockaddr_u reported_ip;
+	    reported_ip.set_compact(ip->str);
+	    LogNote(2,"%s reported our IP as %s",src.to_string().get(),reported_ip.to_string().get());
 	    unsigned& votes=ip_votes.lookup_Lv(ip->str);
 	    votes++;
 	    if(votes>=4) {
 	       // we have incorrect node_id, restart with correct one.
 	       MakeNodeId(node_id,ip->str);
-	       LogNote(0,"restarting DHT with new id %s",node_id.dump());
+	       LogNote(0,"restarting DHT with new id %s",node_id.hexdump());
 	       Restart();
 	    }
 	 }
@@ -3640,7 +3641,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 		  memcpy(&a.in.sin_port,c+16,2);
 	       } else
 		  continue;
-	       LogNote(9,"found peer %s for info_hash=%s",a.to_string().get(),info_hash.dump());
+	       LogNote(9,"found peer %s for info_hash=%s",a.to_string().get(),info_hash.hexdump());
 	       if(torrent)
 		  torrent->AddPeer(new TorrentPeer(torrent,&a,-2));
 	    }
@@ -3706,7 +3707,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 if(e->list.count()>=2 && e->list[1]->type==BeNode::BE_STR)
 	    msg=e->list[1]->str;
       }
-      LogError(1,"got DHT error for %s (%d: %s)",q.get(),code,msg);
+      LogError(2,"got DHT error for %s (%d: %s) from %s",q.get(),code,msg,src.to_string().get());
    }
 }
 bool DHT::Node::IsBetterThan(const Node *node,const xstring& target) const
@@ -3792,8 +3793,8 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
       const Ref<Search>& s=search[i];
       if(s->IsFeasible(n)) {
 	 s->ContinueOn(this,n);
-	 LogNote(4,"search for %s continues on %s (%s) depth=%d",
-	    s->target_id.dump(),n->id.dump(),
+	 LogNote(3,"search for %s continues on %s (%s) depth=%d",
+	    s->target_id.hexdump(),n->id.hexdump(),
 	    n->addr.to_string().get(),s->depth);
       }
    }
@@ -3892,7 +3893,7 @@ try_again:
 	 routes.insert(b2,0);
 	 i=(n->id[byte]&mask)?1:0;
       }
-      LogNote(1,"splitted route bucket 0");
+      LogNote(9,"splitted route bucket 0");
       goto try_again;
    }
    r->fresh_timer.Reset();
@@ -3904,7 +3905,7 @@ try_again:
 	 r->nodes.remove(j);
       }
    }
-   LogNote(1,"adding node %s to route bucket %d (prefix=%d)",n->addr.to_string().get(),i,r->prefix_bits);
+   LogNote(3,"adding node %s to route bucket %d (prefix=%d)",n->addr.to_string().get(),i,r->prefix_bits);
    r->nodes.append(n);
 }
 bool DHT::RouteBucket::PrefixMatch(const xstring& id) const
@@ -3964,7 +3965,7 @@ void DHT::AddPeer(const xstring& info_hash,const xstring& a,bool seed)
    if(ps->count()>=MAX_PEERS)
       ps->remove(0);
    ps->append(new Peer(a,seed));
-   LogNote(9,"DHT knows %d torrents and %d peers of info_hash=%s",peers.count(),ps->count(),info_hash.dump());
+   LogNote(9,"DHT knows %d torrents and %d peers of info_hash=%s",peers.count(),ps->count(),info_hash.hexdump());
 }
 
 // http://www.rasterbar.com/products/libtorrent/dht_sec.html
@@ -4028,7 +4029,7 @@ void DHT::Restart()
 }
 void DHT::Save(const SMTaskRef<IOBuffer>& buf)
 {
-LogNote(0,"saving state");
+   LogNote(9,"saving state");
    xmap_p<BeNode> state;
    state.add("id",new BeNode(node_id));
    xarray_p<BeNode> b_nodes;
@@ -4139,7 +4140,7 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
       s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
 
    if(v>2) {
-      s.appendf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().dump());
+      s.appendf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().hexdump());
       s.appendf("%stotal length: %llu\n",tab,torrent->TotalLength());
       s.appendf("%spiece length: %u\n",tab,torrent->PieceLength());
    }

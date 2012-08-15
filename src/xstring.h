@@ -211,6 +211,7 @@ public:
    bool is_binary() const;
    const char *dump_to(xstring &out) const;
    const char *dump() const;
+   const char *hexdump() const;
 
    xstring& url_decode();
    xstring& append_url_encoded(const char *s,int len,const char *unsafe);

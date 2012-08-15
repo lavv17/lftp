@@ -408,6 +408,15 @@ bool xstring::is_binary() const
       bin_count+=((unsigned char)buf[i] < 32);
    return bin_count*32>len;
 }
+const char *xstring::hexdump() const
+{
+   xstring& buf=get_tmp("");
+   int len=length();
+   const char *s=get();
+   while(len-->0)
+      buf.appendf("%02X",(unsigned char)*s++);
+   return buf;
+}
 const char *xstring::dump() const
 {
    return dump_to(get_tmp(""));
