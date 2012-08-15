@@ -64,6 +64,11 @@ union sockaddr_u
    const xstring& to_string() const;
    operator const char *() const { return to_string(); }
    bool set_defaults(int af,const char *hostname,int port);
+   void set_port(int port);
+   int family() const { return sa.sa_family; }
+   void set_compact(const xstring& c);
+   const xstring& compact() const;
+   xstring& compact_addr() const;
 };
 
 class Networker

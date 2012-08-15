@@ -8,6 +8,8 @@
 	  method.
 	* xmap.cc, xmap.h: (empty) new method; xmap_p now uses delete.
 	* xarray.h: xarray_p now uses delete.
+	* network.cc, network.h: (family, set_port, compact, compact_addr,
+	  set_compact) new methods.
 
 2012-08-08  Alexander V. Lukyanov <lav@yars.free.net>
 

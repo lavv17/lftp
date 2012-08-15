@@ -79,6 +79,15 @@ int sockaddr_u::port() const
 #endif
    return 0;
 }
+void sockaddr_u::set_port(int port)
+{
+   if(sa.sa_family==AF_INET)
+      in.sin_port=htons(port);
+#if INET6
+   if(sa.sa_family==AF_INET6)
+      in6.sin6_port=htons(port);
+#endif
+}
 
 const xstring& sockaddr_u::to_string() const
 {
@@ -114,7 +123,8 @@ bool sockaddr_u::is_private() const
       unsigned char *a=(unsigned char *)&in.sin_addr;
       return (a[0]==10)
 	  || (a[0]==172 && a[1]>=16 && a[1]<32)
-	  || (a[0]==192 && a[1]==168);
+	  || (a[0]==192 && a[1]==168)
+	  || (a[0]==169 && a[1]==254); // self-assigned
    }
    return false;
 }
@@ -130,6 +140,45 @@ bool sockaddr_u::is_loopback() const
       return IN6_IS_ADDR_LOOPBACK(&in6.sin6_addr);
 #endif
    return false;
+}
+
+void sockaddr_u::set_compact(const xstring& c)
+{
+   if(c.length()==4) {
+      sa.sa_family=AF_INET;
+      memcpy(&in.sin_addr,c.get(),4);
+      in.sin_port=0;
+   } else if(c.length()==16) {
+      sa.sa_family=AF_INET6;
+      memcpy(&in6.sin6_addr,c.get(),16);
+   } else if(c.length()==6) {
+      sa.sa_family=AF_INET;
+      memcpy(&in.sin_addr,c.get(),4);
+      in.sin_port=htons((c[4]&255)|((c[5]&255)<<8));
+   } else if(c.length()==18) {
+      sa.sa_family=AF_INET6;
+      memcpy(&in6.sin6_addr,c.get(),16);
+      in6.sin6_port=htons((c[4]&255)|((c[5]&255)<<8));
+   }
+}
+const xstring& sockaddr_u::compact() const
+{
+   xstring& c=compact_addr();
+   int p=port();
+   if(c.length() && p) {
+      c.append(char(p&255));
+      c.append(char(p>>8));
+   }
+   return c;
+}
+xstring& sockaddr_u::compact_addr() const
+{
+   xstring& c=xstring::get_tmp("");
+   if(family()==AF_INET)
+      c.append((const char*)&in.sin_addr,4);
+   else if(family()==AF_INET)
+      c.append((const char*)&in6.sin6_addr,16);
+   return c;
 }
 
 void Networker::NonBlock(int fd)
