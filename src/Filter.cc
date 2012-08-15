@@ -330,9 +330,9 @@ void FileStream::setmtime(const FileTimestamp &ts)
    ut.actime=ut.modtime=ts;
    utime(full_name,&ut);
 }
-FileStream::FileStream(const char *fname,int new_mode) : FDStream(-1,fname)
+FileStream::FileStream(const char *fname,int new_mode)
+   : FDStream(-1,fname), mode(new_mode), create_mode(0664), do_lock(false)
 {
-   mode=new_mode;
    if(name[0]=='/')
       full_name.set(name);
    else
@@ -367,13 +367,25 @@ int   FileStream::getfd()
 {
    if(fd!=-1 || error())
       return fd;
-   fd=open(full_name,mode|O_NONBLOCK|O_BINARY,0664);
+   fd=open(full_name,mode|O_NONBLOCK|O_BINARY,create_mode);
    if(fd==-1)
    {
       MakeErrorText();
       return -1;
    }
    fcntl(fd,F_SETFD,FD_CLOEXEC);
+   if(do_lock) {
+      struct flock lk;
+      lk.l_type=((mode&3)==0)?F_RDLCK:F_WRLCK;
+      lk.l_whence=SEEK_SET;
+      lk.l_start=0;
+      lk.l_len=0;
+      if(fcntl(fd,F_SETLKW,&lk)==-1) {
+	 MakeErrorText();
+	 close(fd);
+	 return -1;
+      }
+   }
    return fd;
 }
 

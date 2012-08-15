@@ -134,6 +134,8 @@ public:
 class FileStream : public FDStream
 {
    int mode;
+   int create_mode;
+   bool do_lock;
 public:
    FileStream(const char *fname,int open_mode);
    ~FileStream();
@@ -145,6 +147,8 @@ public:
    int getfd();
    bool can_seek();
    off_t get_size();
+   void set_lock() { do_lock=true; }
+   void set_create_mode(int m) { create_mode=m; }
 };
 
 #endif /* FILTER_H */

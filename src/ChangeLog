@@ -1,6 +1,8 @@
 2012-08-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Bencode.cc, Bencode.h: new ctor; Pack to xstring.
+	* Filter.cc, Filter.h: (set_create_mode, set_lock) new methods,
+	  do file locking if requested.
 
 2012-08-08  Alexander V. Lukyanov <lav@yars.free.net>
 
