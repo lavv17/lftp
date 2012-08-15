@@ -10,6 +10,7 @@
 	* xarray.h: xarray_p now uses delete.
 	* network.cc, network.h: (family, set_port, compact, compact_addr,
 	  set_compact) new methods.
+	* Torrent.cc, Torrent.h: add DHT and magnet support.
 
 2012-08-08  Alexander V. Lukyanov <lav@yars.free.net>
 
