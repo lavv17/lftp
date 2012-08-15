@@ -43,6 +43,7 @@ public:
 
    static BeNode *Parse(const char *s,int len,int *rest);
 
+   BeNode(const xstring& s);
    BeNode(const char *s,int l);
    BeNode(const char *s);
    BeNode(xarray_p<BeNode> *l);
@@ -51,7 +52,9 @@ public:
    ~BeNode();
 
    int ComputeLength();
-   void Pack(Ref<IOBuffer> &buf);
+   const xstring& Pack();
+   void Pack(xstring &buf);
+   void Pack(const SMTaskRef<IOBuffer> &buf);
 
    void Format(xstring &buf,int level);
    const char *Format();

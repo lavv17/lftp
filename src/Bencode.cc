@@ -27,6 +27,9 @@
 BeNode::BeNode(long long n)
    : type(BE_INT),num(n)
 {}
+BeNode::BeNode(const xstring& s)
+   : type(BE_STR),str(s.get(),s.length())
+{}
 BeNode::BeNode(const char *s,int len)
    : type(BE_STR),str(s,len)
 {}
@@ -223,7 +226,7 @@ void BeNode::Format(xstring &buf,int level)
       {
 	 for(i=0; i<level+1; i++)
 	    buf.append('\t');
-	 buf.appendf("KEY=%s:\n",dict.each_key()->get());
+	 buf.appendf("KEY=%s:\n",dict.each_key().get());
 	 e->Format(buf,level+2);
       }
       break;
@@ -255,13 +258,13 @@ void BeNode::Format1(xstring &buf)
       buf.appendf("%lld",num);
       break;
    case BE_LIST:
-      buf.append('(');
+      buf.append('[');
       for(i=0; i<list.count(); i++) {
 	 if(i>0)
 	    buf.append(", ");
 	 list[i]->Format1(buf);
       }
-      buf.append(')');
+      buf.append(']');
       break;
    case BE_DICT:
       buf.append('{');
@@ -270,7 +273,7 @@ void BeNode::Format1(xstring &buf)
       {
 	 if(i>0)
 	    buf.append(", ");
-	 const xstring& key=*dict.each_key();
+	 const xstring& key=dict.each_key();
 	 buf.appendf("\"%s\":",key.get());
 	 if(e->type==BE_STR) {
 	    char tmp[40];
@@ -340,7 +343,7 @@ int BeNode::ComputeLength()
       len++; // 'd'
       for(BeNode *e=dict.each_begin(); e; e=dict.each_next())
       {
-	 const xstring &key=*dict.each_key();
+	 const xstring &key=dict.each_key();
 	 i=key.length();
 	 len+=1+i; // ':' + string
 	 while(i>=10) {
@@ -356,36 +359,48 @@ int BeNode::ComputeLength()
    return len;
 }
 
-void BeNode::Pack(Ref<IOBuffer> &buf)
+void BeNode::Pack(const SMTaskRef<IOBuffer> &buf)
+{
+   xstring &tmp=xstring::get_tmp("");
+   Pack(tmp);
+   buf->Put(tmp);
+}
+void BeNode::Pack(xstring &buf)
 {
    int i;
    switch(type)
    {
    case BE_STR:
       i=str.length();
-      buf->Format("%d:",i);
-      buf->Put(str);
+      buf.appendf("%d:",i);
+      buf.append(str);
       break;
    case BE_INT:
-      buf->Format("i%llde",num);
+      buf.appendf("i%llde",num);
       break;
    case BE_LIST:
-      buf->Put('l');
+      buf.append('l');
       for(i=0; i<list.count(); i++)
 	 list[i]->Pack(buf);
-      buf->Put('e');
+      buf.append('e');
       break;
    case BE_DICT:
-      buf->Put('d');
+      buf.append('d');
       for(BeNode *e=dict.each_begin(); e; e=dict.each_next())
       {
-	 const xstring &key=*dict.each_key();
+	 const xstring &key=dict.each_key();
 	 i=key.length();
-	 buf->Format("%d:",i);
-	 buf->Put(key);
+	 buf.appendf("%d:",i);
+	 buf.append(key);
 	 e->Pack(buf);
       }
-      buf->Put('e');
+      buf.append('e');
       break;
    }
+}
+const xstring& BeNode::Pack()
+{
+   xstring& tmp=xstring::get_tmp("");
+   Pack(tmp);
+   return tmp;
 }
