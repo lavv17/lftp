@@ -127,6 +127,8 @@ void rtrim(char *s);
 void random_init();
 double random01();
 
+const char *get_nodename();
+
 #define ListAdd(type,chain,this,next)  \
 do {				       \
    this->next=chain;		       \

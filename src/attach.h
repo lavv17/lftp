@@ -31,7 +31,6 @@
 #include <fcntl.h>
 #include <locale.h>
 #include <ctype.h>
-#include <sys/utsname.h>
 #include <sys/un.h>
 #if HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
@@ -142,11 +141,9 @@ public:
    static xstring& get_sock_path(int pid=0) {
       if(!pid)
 	 pid=getpid();
-      struct utsname u;
-      uname(&u);
       const char *home=get_lftp_home();
       mkdir(xstring::format("%s/bg",home),0700);
-      return xstring::format("%s/bg/%s-%d",home,u.nodename,pid);
+      return xstring::format("%s/bg/%s-%d",home,get_nodename(),pid);
    }
    void do_listen() {
       const char *path=get_sock_path();

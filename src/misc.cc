@@ -910,3 +910,12 @@ double random01()
 {
    return random()/2147483648.0;
 }
+
+#include <sys/utsname.h>
+const char *get_nodename()
+{
+   static struct utsname u;
+   if(uname(&u)==0)
+      return u.nodename;
+   return "NODE";
+}
