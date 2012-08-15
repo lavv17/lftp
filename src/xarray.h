@@ -98,6 +98,7 @@ public:
    void truncate() { set_length(0); }
    void insert(const T& n,int before) { *static_cast<T*>(_insert(before))=n; }
    void append(const T& n) { *static_cast<T*>(_append())=n; }
+   void append(const xarray<T>& a) { for(int i=0; i<a.count(); i++) append(a[i]); }
    void remove(int i) { _remove(i); }
    void remove(int i,int j) { _remove(i,j); }
    void chop() { _chop(); }
@@ -186,7 +187,7 @@ class xarray_p : public xarray0
    xarray_p& operator=(const xarray_p&); // make assignment fail
    xarray_p(const xarray_p&);	       // disable cloning
 
-   void dispose(int i) { xfree(get_non_const()[i]); }
+   void dispose(int i) { delete(get_non_const()[i]); }
    void dispose(int i,int j) { while(i<j) dispose(i++); }
    void clear(int i) { get_non_const()[i]=0; }
    void clear(int i,int j) { while(i<j) clear(i++); }

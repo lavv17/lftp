@@ -6,6 +6,8 @@
 	* misc.cc, misc.h, attach.h: (get_nodename) new function.
 	* xstring.cc, xstring.h: add explicit clone ctor; (move_here) new
 	  method.
+	* xmap.cc, xmap.h: (empty) new method; xmap_p now uses delete.
+	* xarray.h: xarray_p now uses delete.
 
 2012-08-08  Alexander V. Lukyanov <lav@yars.free.net>
 

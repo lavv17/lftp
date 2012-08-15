@@ -38,13 +38,17 @@ _xmap::_xmap(int vs)
    hash_size=1;
    new_map();
 }
-_xmap::~_xmap()
+void _xmap::_empty()
 {
    for(int i=0; i<hash_size; i++) {
       while(map[i])
 	 _remove(&map[i]);
    }
    assert(entry_count==0);
+}
+_xmap::~_xmap()
+{
+   _empty();
 }
 
 int _xmap::make_hash(const xstring& s) const
