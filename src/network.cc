@@ -176,7 +176,7 @@ xstring& sockaddr_u::compact_addr() const
    xstring& c=xstring::get_tmp("");
    if(family()==AF_INET)
       c.append((const char*)&in.sin_addr,4);
-   else if(family()==AF_INET)
+   else if(family()==AF_INET6)
       c.append((const char*)&in6.sin6_addr,16);
    return c;
 }
