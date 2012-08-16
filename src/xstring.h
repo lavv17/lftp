@@ -81,6 +81,7 @@ protected:
    xstring0(const xstring0&); // disable cloning
 
    int _url_decode(size_t len);
+   int _hex_decode(size_t len);
 public:
    ~xstring0() { xfree(buf); }
    operator const char *() const { return buf; }
@@ -225,6 +226,8 @@ public:
 
    xstring& append_quoted(const char *s,int len);
    xstring& append_quoted(const char *s) { return append_quoted(s,strlen(s)); }
+
+   xstring& hex_decode();
 
    static xstring null;
 };

@@ -450,7 +450,7 @@ const char *xstring::dump_to(xstring& buf) const
       int old_buf_len=buf.length();
       int len=length();
       const char *s=get();
-      int invalid=0;
+      size_t invalid=0;
       while(len>0) {
 	 int ch_len=mblen(s,len);
 	 int ch_width=-1;
@@ -511,6 +511,25 @@ int xstring0::_url_decode(size_t len)
    }
    return store-buf;
 }
+int xstring0::_hex_decode(size_t len)
+{
+   if(!buf)
+      return 0;
+   char *store=buf;
+   const char *p=store;
+   int rest=len;
+   while(rest>=2)
+   {
+      int n;
+      if(!c_isxdigit(p[0]) || !c_isxdigit(p[1])
+      || sscanf(p,"%2x",&n)!=1)
+	 break;
+      *store++=n;
+      p+=2;
+      rest-=2;
+   }
+   return store-buf;
+}
 
 xstring& xstring::url_decode()
 {
@@ -520,6 +539,12 @@ xstring& xstring::url_decode()
 xstring_c& xstring_c::url_decode()
 {
    set_length(_url_decode(length()));
+   return *this;
+}
+
+xstring& xstring::hex_decode()
+{
+   set_length(_hex_decode(length()));
    return *this;
 }
 
