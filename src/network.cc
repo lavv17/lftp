@@ -148,17 +148,21 @@ void sockaddr_u::set_compact(const xstring& c)
       sa.sa_family=AF_INET;
       memcpy(&in.sin_addr,c.get(),4);
       in.sin_port=0;
+#if INET6
    } else if(c.length()==16) {
       sa.sa_family=AF_INET6;
       memcpy(&in6.sin6_addr,c.get(),16);
+#endif
    } else if(c.length()==6) {
       sa.sa_family=AF_INET;
       memcpy(&in.sin_addr,c.get(),4);
       in.sin_port=htons((c[4]&255)|((c[5]&255)<<8));
+#if INET6
    } else if(c.length()==18) {
       sa.sa_family=AF_INET6;
       memcpy(&in6.sin6_addr,c.get(),16);
       in6.sin6_port=htons((c[4]&255)|((c[5]&255)<<8));
+#endif
    }
 }
 const xstring& sockaddr_u::compact() const
@@ -176,8 +180,10 @@ xstring& sockaddr_u::compact_addr() const
    xstring& c=xstring::get_tmp("");
    if(family()==AF_INET)
       c.append((const char*)&in.sin_addr,4);
+#if INET6
    else if(family()==AF_INET6)
       c.append((const char*)&in6.sin6_addr,16);
+#endif
    return c;
 }
 
