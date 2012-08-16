@@ -1,37 +1,44 @@
 /* Opie (s/key) support for FTP.
-   Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
+   Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
+   2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
 
-This file is part of Wget.
+This file is part of GNU Wget.
 
-This program is free software; you can redistribute it and/or modify
+GNU Wget is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+GNU Wget is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+along with Wget.  If not, see <http://www.gnu.org/licenses/>.
+
+Additional permission under GNU GPL version 3 section 7
+
+If you modify this program, or any covered work, by linking or
+combining it with the OpenSSL project's OpenSSL library (or a
+modified version of that library), containing parts covered by the
+terms of the OpenSSL or SSLeay licenses, the Free Software Foundation
+grants you additional permission to convey the resulting work.
+Corresponding Source for a non-source form of such a combination
+shall include the source code for the parts of OpenSSL used as well
+as that of the covered work.  */
 
 #include <config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef HAVE_STRING_H
-# include <string.h>
-#else
-# include <strings.h>
-#endif
+#include <string.h>
 
-/*#include "wget.h"*/
 #include "md5.h"
 
-/* Dictionary for integer-word translations.  */
-static const char Wp[2048][4] = {
+/* Dictionary for integer-word translations.  Available in appendix D
+   of rfc2289.  */
+ static char Wp[2048][4] = {
   { 'A', '\0', '\0', '\0' },
   { 'A', 'B', 'E', '\0' },
   { 'A', 'C', 'E', '\0' },
@@ -2083,99 +2090,130 @@ static const char Wp[2048][4] = {
 };
 
 /* Extract LENGTH bits from the char array S starting with bit number
-   START.  */
-static unsigned long
-extract (const char *s, int start, int length)
+   START.  It always reads three consecutive octects, which means it
+   can read past end of data when START is at the edge of the region. */
+
+static uint32_t
+extract (const unsigned char *s, int start, int length)
 {
   unsigned char cl = s[start / 8];
   unsigned char cc = s[start / 8 + 1];
   unsigned char cr = s[start / 8 + 2];
-  unsigned long x = ((long)(cl << 8 | cc) << 8 | cr);
-
-  x = x >> (24 - (length + (start % 8)));
-  x = (x & (0xffff >> (16 - length)));
+  uint32_t x;
+  x   = (uint32_t)(cl << 8 | cc) << 8 | cr;
+  x >>= 24 - (length + (start % 8));
+  x  &= (0xffff >> (16 - length));
   return x;
 }
 
-#define STRLEN4(s) (!*(s) ? 0 :			\
-		    (!*(s + 1) ? 1 :		\
-		     (!*(s + 2) ? 2 :		\
-		      (!*(s + 3) ? 3 : 4))))
+/* Length of a string known to be at least 1 and at most 4 chars
+   long.  */
+
+#define STRLEN_1_4(s) (!(s)[1] ? 1 : !(s)[2] ? 2 : !(s)[3] ? 3 : 4)
 
 /* Encode 8 bytes in C as a string of English words and store them to
    STORE.  Returns STORE.  */
+
 static char *
-btoe (char *store, const char *c)
+btoe (char *store, const unsigned char *c)
 {
-  char cp[10];			/* add in room for the parity 2 bits +
-				   extract() slop.  */
+  unsigned char cp[10];         /* add in room for the parity 2 bits +
+                                   extract() slop.  */
   int p, i;
-  char *ostore = store;
+  char *store_beg = store;
 
   *store = '\0';
+
   /* Workaround for extract() reads beyond end of data */
   memset (cp, 0, sizeof(cp));
   memcpy (cp, c, 8);
-  /* Compute parity.  */
+
+  /* Compute parity and append it to CP.  */
   for (p = 0, i = 0; i < 64; i += 2)
     p += extract (cp, i, 2);
-
   cp[8] = (char)p << 6;
+
+  /* The 64 bits of input and the two parity bits comprise 66 bits of
+     data that are now in CP.  We convert that information, 11 bits at
+     a time, to English words indexed from Wp.  Since there are 2048
+     (2^11) words in Wp, every 11-bit combination corresponds to a
+     distinct word.  */
   memcpy (store, &Wp[extract (cp,  0, 11)][0], 4);
-  store += STRLEN4 (store);
+  store += STRLEN_1_4 (store);
   *store++ = ' ';
   memcpy (store, &Wp[extract (cp, 11, 11)][0], 4);
-  store += STRLEN4 (store);
+  store += STRLEN_1_4 (store);
   *store++ = ' ';
   memcpy (store, &Wp[extract (cp, 22, 11)][0], 4);
-  store += STRLEN4 (store);
+  store += STRLEN_1_4 (store);
   *store++ = ' ';
   memcpy (store, &Wp[extract (cp, 33, 11)][0], 4);
-  store += STRLEN4 (store);
+  store += STRLEN_1_4 (store);
   *store++ = ' ';
   memcpy (store, &Wp[extract (cp, 44, 11)][0], 4);
-  store += STRLEN4 (store);
+  store += STRLEN_1_4 (store);
   *store++ = ' ';
   memcpy (store, &Wp[extract (cp, 55, 11)][0], 4);
+  store[4] = '\0';              /* make sure the string is terminated */
 
-  store[4] = '\0'; /* make sure string is zero-terminated */
-
-/*  DEBUGP (("store is `%s'\n", ostore));*/
-
-  return ostore;
+/*  DEBUGP (("wrote %s to STORE\n", quote (store_beg)));*/
+  return store_beg;
 }
 
-/* #### Document me!  */
+/* Calculate the SKEY response, based on the sequence, seed
+   (challenge), and the secret password.  The calculated response is
+   used instead of the real password when logging in to SKEY-enabled
+   servers.
+
+   The result is calculated like this:
+
+   + Concatenate SEED and PASS and calculate the 16-byte MD5 checksum.
+
+   + Shorten the checksum to eight bytes by folding the second eight
+     bytes onto the first eight using XOR.  The resulting eight-byte
+     sequence is the key.
+
+   + MD5-process the key, fold the checksum to eight bytes and store
+     it back to the key.  Repeat this crunching SEQUENCE times.
+     (Sequence is a number that gets decremented every time the user
+     logs in to the server.  Therefore an eavesdropper would have to
+     invert the hash function in order to guess the next one-time
+     password.)
+
+   + Convert the resulting 64-bit key to 6 English words separated by
+     spaces (see btoe for details) and return the resulting ASCII
+     string.
+
+   All this is described in section 6 of rfc2289 in more detail.  */
+
 const char *
 calculate_skey_response (int sequence, const char *seed, const char *pass)
 {
-  char key[8];
-  static char buf[33];
+  unsigned char key[8];
+
+  /* Room to hold 6 four-letter words (heh), 5 space separators, and
+     the terminating \0.  24+5+1 == 30  */
+  static char english[30];
 
   struct md5_ctx ctx;
-  unsigned long results[4];	/* #### this looks 32-bit-minded */
-  char *feed = (char *) alloca (strlen (seed) + strlen (pass) + 1);
-
-  strcpy (feed, seed);
-  strcat (feed, pass);
+  uint32_t checksum[4];
 
   md5_init_ctx (&ctx);
-  md5_process_bytes (feed, strlen (feed), &ctx);
-  md5_finish_ctx (&ctx, results);
+  md5_process_bytes ((const unsigned char *) seed, strlen (seed), &ctx);
+  md5_process_bytes ((const unsigned char *) pass, strlen (pass), &ctx);
+  md5_finish_ctx (&ctx, (unsigned char *) checksum);
+  checksum[0] ^= checksum[2];
+  checksum[1] ^= checksum[3];
+  memcpy (key, checksum, 8);
 
-  results[0] ^= results[2];
-  results[1] ^= results[3];
-  memcpy (key, (char *) results, 8);
-
-  while (0 < sequence--)
+  while (sequence-- > 0)
     {
       md5_init_ctx (&ctx);
-      md5_process_bytes (key, 8, &ctx);
-      md5_finish_ctx (&ctx, results);
-      results[0] ^= results[2];
-      results[1] ^= results[3];
-      memcpy (key, (char *) results, 8);
+      md5_process_bytes ((unsigned char *) key, 8, &ctx);
+      md5_finish_ctx (&ctx, (unsigned char *) checksum);
+      checksum[0] ^= checksum[2];
+      checksum[1] ^= checksum[3];
+      memcpy (key, checksum, 8);
     }
-  btoe (buf, key);
-  return buf;
+  return btoe (english, key);
 }

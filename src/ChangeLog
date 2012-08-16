@@ -7,6 +7,7 @@
 	* Torrent.cc, Torrent.h: added timeout for tracker requests;
 	  added support for tracker groups; new option --dht-bootstrap
 	  for manual bootstrapping.
+	* ftp-opie.c: use newer version from wget (fixes a bug on 64-bit hw).
 
 2012-08-15  Alexander V. Lukyanov <lav@yars.free.net>
 
