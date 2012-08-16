@@ -176,9 +176,9 @@ xstring& xstring::append_padding(int len,char c)
    return *this;
 }
 
-bool xstring::eq(const char *o_buf,size_t o_len) const
+bool xstring::begins_with(const char *o_buf,size_t o_len) const
 {
-   if(len!=o_len)
+   if(len<o_len)
       return false;
    if(buf==o_buf)
       return true;
@@ -187,6 +187,10 @@ bool xstring::eq(const char *o_buf,size_t o_len) const
    if(o_len==0)
       return true;
    return !memcmp(buf,o_buf,o_len);
+}
+bool xstring::eq(const char *o_buf,size_t o_len) const
+{
+   return len==o_len && begins_with(o_buf,o_len);
 }
 
 static size_t vstrlen(va_list va0)
@@ -294,11 +298,18 @@ void xstring::rtrim(char c)
 {
    while(chomp(c));
 }
-unsigned xstring::skip_all(unsigned i,char c)
+unsigned xstring::skip_all(unsigned i,char c) const
 {
    while(i<len && buf[i]==c)
       i++;
    return i;
+}
+int xstring::instr(char c) const
+{
+   char *pos=(char*)memchr(buf,c,len);
+   if(!pos)
+      return -1;
+   return pos-buf;
 }
 
 xstring& xstring::vappendf(const char *format, va_list ap)
@@ -408,14 +419,17 @@ bool xstring::is_binary() const
       bin_count+=((unsigned char)buf[i] < 32);
    return bin_count*32>len;
 }
-const char *xstring::hexdump() const
+const char *xstring::hexdump_to(xstring& buf) const
 {
-   xstring& buf=get_tmp("");
    int len=length();
    const char *s=get();
    while(len-->0)
       buf.appendf("%02X",(unsigned char)*s++);
    return buf;
+}
+const char *xstring::hexdump() const
+{
+   return hexdump_to(get_tmp(""));
 }
 const char *xstring::dump() const
 {
@@ -423,18 +437,20 @@ const char *xstring::dump() const
 }
 const char *xstring::dump_to(xstring& buf) const
 {
-   int len=length();
-   const char *s=get();
    if(is_binary()) {
+   binary:
       if(len<1024) {
-	 buf.append("<binary: 0x");
-	 while(len-->0)
-	    buf.appendf("%02X",(unsigned char)*s++);
+	 buf.append("<binary:");
+	 hexdump_to(buf);
 	 buf.append('>');
       } else {
 	 buf.appendf("<long binary, %d bytes>",(int)length());
       }
    } else {
+      int old_buf_len=buf.length();
+      int len=length();
+      const char *s=get();
+      int invalid=0;
       while(len>0) {
 	 int ch_len=mblen(s,len);
 	 int ch_width=-1;
@@ -450,10 +466,15 @@ const char *xstring::dump_to(xstring& buf) const
 	       buf.appendf("\\%03o",(unsigned char)*s++);
 	       ch_len--;
 	       len--;
+	       invalid++;
 	    }
 	 }
 	 s+=ch_len;
 	 len-=ch_len;
+      }
+      if(invalid*32>length()) {
+	 buf.truncate(old_buf_len);
+	 goto binary;
       }
    }
    return buf;

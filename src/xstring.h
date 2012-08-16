@@ -108,6 +108,7 @@ public:
    const char *vset(...) ATTRIBUTE_SENTINEL;
    void truncate(size_t n=0) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
+   bool begins_with(const char *s) const { return !strncmp(buf,s,strlen(s)); };
    bool eq(const char *s) { return !xstrcmp(buf,s); }
    bool ne(const char *s) { return !eq(s); }
    size_t length() const { return xstrlen(buf); }
@@ -195,6 +196,8 @@ public:
       with get_space+get_non_const. */
    void set_length(size_t n) { if(buf) buf[len=n]=0; }
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
+   bool begins_with(const char *o_buf,size_t o_len) const;
+   bool begins_with(const char *s) const { return begins_with(s,strlen(s)); };
    bool eq(const char *o_buf,size_t o_len) const;
    bool eq(const char *s) const { return eq(s,strlen(s)); }
    bool eq(const xstring&o) const { return eq(o.get(),o.length()); }
@@ -202,7 +205,8 @@ public:
    bool chomp(char c='\n');
    void rtrim(char c=' ');
    char last_char() const { return len>0?buf[len-1]:0; }
-   unsigned skip_all(unsigned i,char c);
+   unsigned skip_all(unsigned i,char c) const;
+   int instr(char c) const;
 
    void _clear() { init(); }
    void _set(const char *s) { init(s); }
@@ -211,6 +215,7 @@ public:
    bool is_binary() const;
    const char *dump_to(xstring &out) const;
    const char *dump() const;
+   const char *hexdump_to(xstring &out) const;
    const char *hexdump() const;
 
    xstring& url_decode();
