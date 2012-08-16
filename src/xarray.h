@@ -249,6 +249,10 @@ template<typename T,class A> class xqueue : public _xqueue<T,A,const T&>
 {
 };
 
+template<typename T> class xqueue_p : public _xqueue<T*,xarray_p<T>,T*>
+{
+};
+
 template<typename T> class RefQueue : public _xqueue<Ref<T>,RefArray<T>,T*>
 {
 };
