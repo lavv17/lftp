@@ -292,7 +292,7 @@ class TorrentTracker : public SMTask, protected ProtoLog
    int HandleTrackerReply();
 
    void SetError(const char *e) { error=new Error(-1,e,true); }
-   bool Failed() const { return error!=0; }
+   bool Failed() const { return error!=0 || tracker_urls.count()==0; }
    const char *ErrorText() const { return error->Text(); }
 
 public:
@@ -302,7 +302,7 @@ public:
 	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
    }
    const char *GetURL() const {
-      return current_tracker<tracker_urls.count()?tracker_urls[current_tracker]->get():"-";
+      return tracker_urls[current_tracker]->get();
    }
    const char *Status() const;
 };

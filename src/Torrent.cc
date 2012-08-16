@@ -784,17 +784,12 @@ void Torrent::ParseMagnet(const char *m0)
 	    SetError("Invalid length of urn:btih in magnet link");
 	    return;
 	 }
-	 xstring& btih=xstring::get_tmp("");
-	 while(v[0] && v[1]) {
-	    unsigned c;
-	    if(sscanf(v,"%2x",&c)!=1) {
-	       SetError("Invalid value of urn:btih in magnet link");
-	       return;
-	    }
-	    btih.append(char(c));
-	    v+=2;
+	 xstring& btih=xstring::get_tmp(v);
+	 btih.hex_decode();
+	 if(btih.length()!=20) {
+	    SetError("Invalid value of urn:btih in magnet link");
+	    return;
 	 }
-	 assert(btih.length()==20);
 	 info_hash.move_here(btih);
 
 	 if(FindTorrent(info_hash)) {
@@ -827,6 +822,18 @@ int Torrent::Do()
 	 if(metainfo_url.begins_with("magnet:?")) {
 	    ParseMagnet(metainfo_url+8);
 	    return MOVED;
+	 }
+	 if(metainfo_url.length()==40 && strspn(metainfo_url,"0123456789ABCDEFabcdef")==40
+	 && access(metainfo_url,0)==-1) {
+	    xstring& btih=xstring::get_tmp(metainfo_url);
+	    btih.hex_decode();
+	    assert(btih.length()==20);
+	    info_hash.move_here(btih);
+	    if(FindTorrent(info_hash)) {
+	       SetError("This torrent is already running");
+	       return MOVED;
+	    }
+	    AddTorrent(this);
 	 }
 	 ParsedURL u(metainfo_url,true);
 	 if(!u.proto)
@@ -900,8 +907,12 @@ int Torrent::Do()
 
       if(trackers.count()==0) {
 	 BeNode *announce=metainfo_tree->dict.lookup("announce");
-	 if(announce && announce->type==BeNode::BE_STR)
-	    trackers.append(new TorrentTracker(this,announce->str));
+	 if(announce && announce->type==BeNode::BE_STR) {
+	    SMTaskRef<TorrentTracker> new_tracker(
+	       new TorrentTracker(this,announce->str));
+	    if(!new_tracker->Failed())
+	       trackers.append(new_tracker.borrow());
+	 }
       }
 
       if(retracker_len) {
