@@ -105,34 +105,38 @@ void Torrent::ClassInit()
 xstring Torrent::my_peer_id;
 xstring Torrent::my_key;
 xmap<Torrent*> Torrent::torrents;
-Ref<TorrentListener> Torrent::listener;
-Ref<TorrentListener> Torrent::listener_udp;
-Ref<DHT> Torrent::dht;
+SMTaskRef<TorrentListener> Torrent::listener;
+SMTaskRef<TorrentListener> Torrent::listener_udp;
+SMTaskRef<DHT> Torrent::dht;
 #if INET6
-Ref<TorrentListener> Torrent::listener_ipv6;
-Ref<TorrentListener> Torrent::listener_ipv6_udp;
-Ref<DHT> Torrent::dht_ipv6;
+SMTaskRef<TorrentListener> Torrent::listener_ipv6;
+SMTaskRef<TorrentListener> Torrent::listener_ipv6_udp;
+SMTaskRef<DHT> Torrent::dht_ipv6;
 #endif
 Ref<FDCache> Torrent::fd_cache;
 Ref<TorrentBlackList> Torrent::black_list;
 
 void TorrentTracker::AddURL(const char *url)
 {
-   // FIXME
+   LogNote(4,"Tracker URL is `%s'",url);
+   ParsedURL u(url,true);
+   if(u.proto.ne("http") && u.proto.ne("https")) {
+      LogError(1,"unsupported tracker protocol `%s', must be http or https",u.proto.get());
+      return;
+   }
+   xstring& tracker_url=*new xstring(url);
+   // fix the URL: append either ? or & if missing.
+   if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
+      tracker_url.append(tracker_url.instr('?')>=0?'&':'?');
+   tracker_urls.append(&tracker_url);
 }
 
 TorrentTracker::TorrentTracker(Torrent *p,const char *url)
-   : parent(p), tracker_url(url), tracker_timer(600), started(false), tracker_no(0)
+   : parent(p), current_tracker(0),
+     tracker_timer(600), tracker_timeout_timer(120),
+     started(false), tracker_no(0)
 {
-   LogNote(4,"Tracker URL is `%s'",tracker_url.get());
-   ParsedURL u(tracker_url.get(),true);
-   if(u.proto.ne("http") && u.proto.ne("https")) {
-      SetError("Meta-data: wrong `announce' protocol, must be http or https");
-      return;
-   }
-   // fix the URL: append either ? or & if missing.
-   if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
-      tracker_url.append(strchr(tracker_url.get(),'?')?'&':'?');
+   AddURL(url);
 }
 
 void Torrent::StartDHT()
@@ -178,6 +182,23 @@ void Torrent::StartDHT()
 #endif
 }
 
+void Torrent::StartListener()
+{
+   if(listener)
+      return;
+
+   listener=new TorrentListener(AF_INET);
+   fd_cache=new FDCache();
+   black_list=new TorrentBlackList();
+
+   listener->Do(); // try to allocate ipv4 port first
+   listener_udp=new TorrentListener(AF_INET,SOCK_DGRAM);
+#if INET6
+   listener_ipv6=new TorrentListener(AF_INET6);
+   listener_ipv6_udp=new TorrentListener(AF_INET6,SOCK_DGRAM);
+#endif
+}
+
 Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
      pieces_needed_rebuild_timer(10),
@@ -214,19 +235,9 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    last_piece=TorrentPeer::NO_PIECE;
    Reconfig(0);
 
-   if(listener==0) {
-      listener=new TorrentListener(AF_INET);
-      fd_cache=new FDCache();
-      black_list=new TorrentBlackList();
+   StartListener();
+   StartDHT();
 
-      listener->Do(); // try to allocate ipv4 port first
-      listener_udp=new TorrentListener(AF_INET,SOCK_DGRAM);
-#if INET6
-      listener_ipv6=new TorrentListener(AF_INET6);
-      listener_ipv6_udp=new TorrentListener(AF_INET6,SOCK_DGRAM);
-#endif
-      StartDHT();
-   }
    if(!my_peer_id) {
       my_peer_id.set("-lftp44-");
       my_peer_id.appendf("%04x",(unsigned)getpid() & 0xffff);
@@ -447,8 +458,14 @@ int TorrentTracker::HandleTrackerReply()
       tracker_timer.Reset();
       return MOVED;
    }
-   if(!tracker_reply->Eof())
+   if(!tracker_reply->Eof()) {
+      if(tracker_timeout_timer.Stopped()) {
+	 t_session->Close();
+	 tracker_reply=0;
+	 tracker_timer.Reset();
+      }
       return STALL;
+   }
    t_session->Close();
    int rest;
    Ref<BeNode> reply(BeNode::Parse(tracker_reply->Get(),tracker_reply->Size(),&rest));
@@ -526,7 +543,7 @@ int TorrentTracker::HandleTrackerReply()
 	       continue;
 	    sockaddr_u a;
 #if INET6
-	    if(strchr(b_ip->str,':')) {
+	    if(b_ip->str.instr(':')>=0) {
 	       a.sa.sa_family=AF_INET6;
 	       if(inet_pton(AF_INET6,b_ip->str,&a.in6.sin6_addr)<=0)
 		  continue;
@@ -601,7 +618,7 @@ void TorrentTracker::Start()
 {
    if(t_session || Failed())
       return;
-   ParsedURL u(tracker_url.get(),true);
+   ParsedURL u(GetURL(),true);
    t_session=FileAccess::New(&u);
    SendTrackerRequest("started");
 }
@@ -807,7 +824,7 @@ int Torrent::Do()
    if(!metainfo_tree && metainfo_url && !md_download) {
       // retrieve metainfo if don't have already.
       if(!metainfo_fa) {
-	 if(!strncmp(metainfo_url,"magnet:?",8)) {
+	 if(metainfo_url.begins_with("magnet:?")) {
 	    ParseMagnet(metainfo_url+8);
 	    return MOVED;
 	 }
@@ -907,7 +924,7 @@ int Torrent::Do()
 	       continue;
 	    sockaddr_u a;
 #if INET6
-	    if(strchr(b_ip->str,':')) {
+	    if(b_ip->str.instr(':')>=0) {
 	       a.sa.sa_family=AF_INET6;
 	       if(inet_pton(AF_INET6,b_ip->str,&a.in6.sin6_addr)<=0)
 		  continue;
@@ -1071,7 +1088,7 @@ void TorrentTracker::SendTrackerRequest(const char *event)
    if(!t_session)
       return;
 
-   xstring request;
+   xstring request(GetURL());
    request.setf("info_hash=%s",url::encode(parent->GetInfoHash(),URL_PATH_UNSAFE).get());
    request.appendf("&peer_id=%s",url::encode(parent->GetMyPeerId(),URL_PATH_UNSAFE).get());
    request.appendf("&port=%d",parent->GetPort());
@@ -1105,9 +1122,10 @@ void TorrentTracker::SendTrackerRequest(const char *event)
    if(tracker_id)
       request.appendf("&trackerid=%s",url::encode(tracker_id,URL_PATH_UNSAFE).get());
    LogSend(4,request);
-   t_session->Open(request,FA::RETRIEVE);
-   t_session->SetFileURL(xstring::cat(tracker_url.get(),request.get(),NULL));
+   t_session->Open(url::path_ptr(request),FA::RETRIEVE);
+   t_session->SetFileURL(request);
    tracker_reply=new IOBufferFileAccess(t_session);
+   tracker_timeout_timer.Reset();
 }
 
 const char *Torrent::MakePath(BeNode *p) const
@@ -3188,7 +3206,7 @@ void Torrent::DispatchUDP(const char *buf,int len,const sockaddr_u& src)
       Ref<BeNode> msg(BeNode::Parse(buf,len,&rest));
       if(!msg)
 	 goto unknown;
-      Ref<DHT> &d=Torrent::GetDHT(src);
+      const SMTaskRef<DHT> &d=Torrent::GetDHT(src);
       d->Enter();
       d->HandlePacket(msg.get_non_const(),src);
       d->Leave();
@@ -3316,6 +3334,7 @@ int DHT::Do()
    if(nodes_cleanup_timer.Stopped()) {
       for(Node *n=nodes.each_begin(); n; n=nodes.each_next()) {
 	 if(n->IsBad()) {
+	    LogNote(9,"removing bad node %s",n->addr.to_string().get());
 	    RemoveNode(n);
 	 } else if(n->good_timer.TimeLeft() < nodes_cleanup_timer.GetLastSetting()) {
 	    SendPing(n->addr);
@@ -3347,6 +3366,29 @@ int DHT::Do()
    }
    if(send_queue.count()>0) {
       SendMessage(send_queue.next().borrow());
+      m=MOVED;
+   }
+
+   // manual bootstrapping
+   if(resolver) {
+      if(resolver->Error()) {
+	 LogError(1,"%s",resolver->ErrorMsg());
+	 resolver=0;
+	 m=MOVED;
+      } else if(resolver->Done()) {
+	 const xarray<sockaddr_u>& r=resolver->Result();
+	 for(int i=0; i<r.count(); i++) {
+	    Torrent::GetDHT(r[i])->SendPing(r[i]);
+	 }
+	 resolver=0;
+	 m=MOVED;
+      }
+   }
+   if(nodes.count()==0 && !state_io && !resolver && bootstrap_nodes.count()>0) {
+      xstring &b=*bootstrap_nodes.next();
+      ParsedURL u(b);
+      if(u.proto==0 && u.host)
+	 resolver=new Resolver(u.host,u.port,"6881");
       m=MOVED;
    }
 
@@ -3766,7 +3808,11 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
 {
    if(a.family()!=af) {
       assert(!responded); // we should not get replies from different AF
-      return Torrent::GetDHT(a)->FoundNode(id,a,responded);
+      const SMTaskRef<DHT>& d=Torrent::GetDHT(a);
+      d->Enter();
+      d->FoundNode(id,a,false);
+      d->Leave();
+      return 0;
    }
    Node *n=nodes.lookup(id);
    if(!n) {
@@ -4212,14 +4258,17 @@ CMD(torrent)
    enum {
       OPT_OUTPUT_DIRECTORY,
       OPT_FORCE_VALID,
+      OPT_DHT_BOOTSTRAP,
    };
    static const struct option torrent_opts[]=
    {
       {"output-directory",required_argument,0,OPT_OUTPUT_DIRECTORY},
       {"force-valid",no_argument,0,OPT_FORCE_VALID},
+      {"dht-bootstrap",required_argument,0,OPT_DHT_BOOTSTRAP},
       {0}
    };
    const char *output_dir=0;
+   const char *dht_bootstrap=0;
    bool force_valid=false;
 
    args->rewind();
@@ -4234,6 +4283,10 @@ CMD(torrent)
 	 break;
       case(OPT_FORCE_VALID):
 	 force_valid=true;
+	 break;
+      case(OPT_DHT_BOOTSTRAP):
+	 dht_bootstrap=optarg;
+	 Torrent::BootstrapDHT(dht_bootstrap);
 	 break;
       case('?'):
       try_help:
@@ -4279,6 +4332,8 @@ CMD(torrent)
    torrent=args_g->getnext();
    if(!torrent)
    {
+      if(dht_bootstrap)
+	 return 0;
       eprintf(_("%s: Please specify meta-info file or URL.\n"),args->a0());
       goto try_help;
    }

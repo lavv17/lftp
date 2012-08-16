@@ -28,6 +28,7 @@
 #include "ProtoLog.h"
 #include "network.h"
 #include "RateLimit.h"
+#include "Resolver.h"
 
 class FDCache;
 class TorrentBlackList;
@@ -204,6 +205,9 @@ class DHT : public SMTask, protected ProtoLog
    RefArray<Search> search;
    xmap_p<xarray_p<Peer> > peers;
 
+   xqueue_p<xstring> bootstrap_nodes;
+   SMTaskRef<Resolver> resolver;
+
    void AddNode(Node *);
    void RemoveNode(Node *);
    void AddRoute(const Node *);
@@ -244,7 +248,7 @@ public:
    static bool ValidNodeId(const xstring &id,const xstring& ip);
    void Restart();
 
-   const char *GetLogContext() { return "DHT"; }
+   const char *GetLogContext() { return af==AF_INET?"DHT":"DHT6"; }
    const xstring& GetNodeID() const { return node_id; }
 
    void SendPing(const sockaddr_u& addr);
@@ -256,6 +260,8 @@ public:
    xstring state_file;
    void Save();
    void Load();
+
+   void AddBootstrapNode(const char *n) { bootstrap_nodes.push(new xstring(n)); }
 };
 
 class TorrentTracker : public SMTask, protected ProtoLog
@@ -264,9 +270,11 @@ class TorrentTracker : public SMTask, protected ProtoLog
 
    Torrent *parent;
 
-   xstring tracker_url;
+   xarray_p<xstring> tracker_urls;
+   int current_tracker;
    FileAccessRef t_session;
    Timer tracker_timer;
+   Timer tracker_timeout_timer;
    SMTaskRef<IOBuffer> tracker_reply;
    xstring tracker_id;
    bool started;
@@ -293,7 +301,9 @@ public:
       return tracker_timer.TimeLeft().toString(
 	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
    }
-   const char *GetURL() const { return tracker_url; }
+   const char *GetURL() const {
+      return current_tracker<tracker_urls.count()?tracker_urls[current_tracker]->get():"-";
+   }
    const char *Status() const;
 };
 
@@ -316,18 +326,18 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static xstring my_peer_id;
    static xstring my_key;
    static xmap<Torrent*> torrents;
-   static Ref<TorrentListener> listener;
-   static Ref<TorrentListener> listener_udp;
-   static Ref<DHT> dht;
+   static SMTaskRef<TorrentListener> listener;
+   static SMTaskRef<TorrentListener> listener_udp;
+   static SMTaskRef<DHT> dht;
 #if INET6
-   static Ref<TorrentListener> listener_ipv6;
-   static Ref<TorrentListener> listener_ipv6_udp;
-   static Ref<DHT> dht_ipv6;
+   static SMTaskRef<TorrentListener> listener_ipv6;
+   static SMTaskRef<TorrentListener> listener_ipv6_udp;
+   static SMTaskRef<DHT> dht_ipv6;
 #endif
    static Ref<FDCache> fd_cache;
    static Ref<TorrentBlackList> black_list;
 
-   static Ref<DHT>& GetDHT(int af)
+   static const SMTaskRef<DHT>& GetDHT(int af)
    {
 #if INET6
       if(af==AF_INET6 && dht_ipv6)
@@ -335,8 +345,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 #endif
       return dht;
    }
-   static Ref<DHT>& GetDHT(const sockaddr_u& a) { return GetDHT(a.family()); }
-   static Ref<TorrentListener>& GetUDPSocket(const sockaddr_u& a)
+   static const SMTaskRef<DHT>& GetDHT(const sockaddr_u& a) { return GetDHT(a.family()); }
+   static const SMTaskRef<TorrentListener>& GetUDPSocket(const sockaddr_u& a)
    {
 #if INET6
       if(a.family()==AF_INET6)
@@ -377,7 +387,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void StartTrackers();
    void ShutdownTrackers() const;
    void SendTrackersRequest(const char *e) const;
-   void StartDHT();
+   static void StartListener();
+   static void StartDHT();
    void AnnounceDHT();
 
    bool single_file;
@@ -533,6 +544,17 @@ public:
 
    const TaskRefArray<TorrentTracker>& Trackers() { return trackers; }
    bool HasMetadata() { return metadata!=0; }
+
+   static void BootstrapDHT(const char *n) {
+      StartListener();
+      StartDHT();
+      if(dht)
+	 dht->AddBootstrapNode(n);
+#if INET6
+      if(dht_ipv6)
+	 dht_ipv6->AddBootstrapNode(n);
+#endif
+   }
 };
 
 class FDCache : public SMTask, public ResClient

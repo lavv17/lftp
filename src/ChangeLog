@@ -4,6 +4,9 @@
 	* xstring.cc, xstring.h: (begins_with, instr, hexdump_to) new methods;
 	  improved dump() for invalid utf8 strings.
 	* xarray.h: (xqueue_p) new class.
+	* Torrent.cc, Torrent.h: added timeout for tracker requests;
+	  added support for tracker groups; new option --dht-bootstrap
+	  for manual bootstrapping.
 
 2012-08-15  Alexander V. Lukyanov <lav@yars.free.net>
 
