@@ -388,7 +388,11 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void ShutdownTrackers() const;
    void SendTrackersRequest(const char *e) const;
    static void StartListener();
+   static void StartListenerUDP();
+   static void StopListener();
+   static void StopListenerUDP();
    static void StartDHT();
+   static void StopDHT();
    void AnnounceDHT();
 
    bool single_file;
@@ -532,8 +536,10 @@ public:
 
    static int GetPort();
    static int GetPortIPv4() { return listener?listener->GetPort():0; }
+#if INET6
    static int GetPortIPv6() { return listener_ipv6?listener_ipv6->GetPort():0; }
    static const char *GetAddressIPv6() { return listener_ipv6?listener_ipv6->GetAddress():"::"; }
+#endif
    int GetWantedPeersCount() const;
    static const xstring& GetMyPeerId() { return my_peer_id; }
    static const xstring& GetMyKey() { return my_key; }
@@ -544,9 +550,9 @@ public:
 
    const TaskRefArray<TorrentTracker>& Trackers() { return trackers; }
    bool HasMetadata() { return metadata!=0; }
+   void DisconnectPeers();
 
    static void BootstrapDHT(const char *n) {
-      StartListener();
       StartDHT();
       if(dht)
 	 dht->AddBootstrapNode(n);

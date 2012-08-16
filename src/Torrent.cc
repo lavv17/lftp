@@ -142,13 +142,15 @@ TorrentTracker::TorrentTracker(Torrent *p,const char *url)
 void Torrent::StartDHT()
 {
    if(!ResMgr::QueryBool("torrent:use-dht",0)) {
-      dht=0;
-      dht_ipv6=0;
+      StopDHT();
+      StopListenerUDP();
       return;
    }
 
-   if(dht || !listener_udp)
+   if(dht)
       return;
+
+   StartListenerUDP();
 
    const char *home=get_lftp_home();
    const char *nodename=get_nodename();
@@ -181,6 +183,15 @@ void Torrent::StartDHT()
       dht_ipv6->Load();
 #endif
 }
+void Torrent::StopDHT()
+{
+   dht->Save();
+   dht=0;
+#if INET6
+   dht_ipv6->Save();
+   dht_ipv6=0;
+#endif
+}
 
 void Torrent::StartListener()
 {
@@ -188,14 +199,32 @@ void Torrent::StartListener()
       return;
 
    listener=new TorrentListener(AF_INET);
-   fd_cache=new FDCache();
-   black_list=new TorrentBlackList();
-
    listener->Do(); // try to allocate ipv4 port first
-   listener_udp=new TorrentListener(AF_INET,SOCK_DGRAM);
 #if INET6
    listener_ipv6=new TorrentListener(AF_INET6);
+#endif
+}
+void Torrent::StopListener()
+{
+   listener=0;
+#if INET6
+   listener_ipv6=0;
+#endif
+}
+void Torrent::StartListenerUDP()
+{
+   if(listener_udp)
+      return;
+   listener_udp=new TorrentListener(AF_INET,SOCK_DGRAM);
+#if INET6
    listener_ipv6_udp=new TorrentListener(AF_INET6,SOCK_DGRAM);
+#endif
+}
+void Torrent::StopListenerUDP()
+{
+   listener_udp=0;
+#if INET6
+   listener_ipv6_udp=0;
 #endif
 }
 
@@ -234,6 +263,11 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    stop_on_ratio=2;
    last_piece=TorrentPeer::NO_PIECE;
    Reconfig(0);
+
+   if(!fd_cache)
+      fd_cache=new FDCache();
+   if(!black_list)
+      black_list=new TorrentBlackList();
 
    StartListener();
    StartDHT();
@@ -292,8 +326,7 @@ void Torrent::PrepareToDie()
    peers.unset();
    RemoveTorrent(this);
    if(GetTorrentsCount()==0) {
-      listener=0;
-      listener_ipv6=0;
+      StopListener();
       fd_cache=0;
       black_list=0;
    }
@@ -636,8 +669,10 @@ int Torrent::GetPort()
    int port=0;
    if(listener && !port)
       port=listener->GetPort();
+#if INET6
    if(listener_ipv6 && !port)
       port=listener_ipv6->GetPort();
+#endif
    return port;
 }
 
@@ -645,8 +680,10 @@ void Torrent::AnnounceDHT()
 {
    if(dht)
       dht->AnnouncePeer(this);
+#if INET6
    if(dht_ipv6)
       dht_ipv6->AnnouncePeer(this);
+#endif
    dht_announce_timer.Reset();
 }
 
@@ -759,7 +796,13 @@ void Torrent::SetMetadata(const xstring& md)
       total_left=0;
       complete=true;
       seed_timer.Reset();
+      dht_announce_timer.Stop();
    }
+   DisconnectPeers(); // restart all connected peers
+}
+
+void Torrent::DisconnectPeers()
+{
    for(int i=0; i<peers.count(); i++) {
       peers[i]->Disconnect(); // restart all connected peers
    }
@@ -829,11 +872,13 @@ int Torrent::Do()
 	    btih.hex_decode();
 	    assert(btih.length()==20);
 	    info_hash.move_here(btih);
+	    md_download.nset("",0); // start the download
 	    if(FindTorrent(info_hash)) {
 	       SetError("This torrent is already running");
 	       return MOVED;
 	    }
 	    AddTorrent(this);
+	    return MOVED;
 	 }
 	 ParsedURL u(metainfo_url,true);
 	 if(!u.proto)
@@ -975,6 +1020,8 @@ int Torrent::Do()
 	 complete=true;
 	 seed_timer.Reset();
       }
+      DisconnectPeers();   // restart peer connections
+      dht_announce_timer.Stop();
    }
    if(GetPort())
       StartTrackers();
@@ -1551,14 +1598,14 @@ void Torrent::ReduceDownloaders()
 
 bool Torrent::NeedMoreUploaders()
 {
-   if(!metadata)
+   if(!metadata || validating)
       return false;
    return RateLow(RateLimit::GET) && am_interested_peers_count < max_uploaders
       && am_interested_timer.Stopped();
 }
 bool Torrent::AllowMoreDownloaders()
 {
-   if(!metadata)
+   if(!metadata || validating)
       return false;
    return RateLow(RateLimit::PUT) && am_not_choking_peers_count < max_downloaders;
 }
@@ -1631,7 +1678,8 @@ void Torrent::Reconfig(const char *name)
    seed_min_peers=ResMgr::Query("torrent:seed-min-peers",c);
    stop_on_ratio=ResMgr::Query("torrent:stop-on-ratio",c);
    rate_limit.Reconfig(name,metainfo_url);
-   StartDHT();
+   if(listener)
+      StartDHT();
 }
 
 const xstring& Torrent::Status()
@@ -3605,7 +3653,8 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	       node->my_token.append(char(random()/13));
 	    node->token_timer.Reset();
 	 }
-	 r.add("token",new BeNode(node->my_token));
+	 if(ValidNodeId(id->str,src.compact_addr()))
+	    r.add("token",new BeNode(node->my_token));
 	 LogSend(5,xstring::format("DHT get_peers reply with %d values and %d nodes to %s",
 	    p?p->count():0,nodes_count,src.to_string().get()));
 	 SendMessage(NewReply(t->str,r),src);
@@ -3618,10 +3667,6 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    return;
 	 if(token->str.ne(node->my_token) && token->str.ne(node->my_last_token)) {
 	    SendMessage(NewError(t->str,ERR_PROTOCOL,"invalid token"),src);
-	    return;
-	 }
-	 if(!ValidNodeId(id->str,src.compact_addr())) {
-	    SendMessage(NewError(t->str,ERR_PROTOCOL,"invalid node id"),src);
 	    return;
 	 }
 	 // ok, token is valid. Now add the peers.
