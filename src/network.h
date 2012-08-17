@@ -66,7 +66,8 @@ union sockaddr_u
    bool set_defaults(int af,const char *hostname,int port);
    void set_port(int port);
    int family() const { return sa.sa_family; }
-   void set_compact(const xstring& c);
+   void set_compact(const char *c,size_t len);
+   void set_compact(const xstring& c) { set_compact(c,c.length()); }
    const xstring& compact() const;
    xstring& compact_addr() const;
 };

@@ -142,25 +142,25 @@ bool sockaddr_u::is_loopback() const
    return false;
 }
 
-void sockaddr_u::set_compact(const xstring& c)
+void sockaddr_u::set_compact(const char *c,size_t len)
 {
-   if(c.length()==4) {
+   if(len==4) {
       sa.sa_family=AF_INET;
-      memcpy(&in.sin_addr,c.get(),4);
+      memcpy(&in.sin_addr,c,4);
       in.sin_port=0;
 #if INET6
-   } else if(c.length()==16) {
+   } else if(len==16) {
       sa.sa_family=AF_INET6;
-      memcpy(&in6.sin6_addr,c.get(),16);
+      memcpy(&in6.sin6_addr,c,16);
 #endif
-   } else if(c.length()==6) {
+   } else if(len==6) {
       sa.sa_family=AF_INET;
-      memcpy(&in.sin_addr,c.get(),4);
+      memcpy(&in.sin_addr,c,4);
       in.sin_port=htons((c[4]&255)|((c[5]&255)<<8));
 #if INET6
-   } else if(c.length()==18) {
+   } else if(len==18) {
       sa.sa_family=AF_INET6;
-      memcpy(&in6.sin6_addr,c.get(),16);
+      memcpy(&in6.sin6_addr,c,16);
       in6.sin6_port=htons((c[4]&255)|((c[5]&255)<<8));
 #endif
    }
