@@ -59,6 +59,7 @@ public:
    entry *_each_begin();
    entry *_each_next();
    const xstring& each_key() const { return last_entry->key; }
+   bool each_finished() const { return last_entry==0; }
 
    int count() const { return entry_count; }
 
@@ -97,6 +98,7 @@ public:
    const T& each_next()  { entry *e=_each_next();  return e?payload(e):zero; }
    void move_here(xmap<T> &o) { _move_here(o); }
    void empty() { _empty(); }
+   bool exists(const xstring& key) const { return _lookup_c(key); }
 };
 
 template<class T> T xmap<T>::zero;

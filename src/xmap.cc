@@ -160,6 +160,7 @@ _xmap::entry *_xmap::_each_next()
       }
       each_entry=map[++each_hash];
    }
+   last_entry=0;
    return 0;
 }
 
