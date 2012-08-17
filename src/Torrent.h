@@ -291,9 +291,11 @@ class TorrentTracker : public SMTask, protected ProtoLog
    void SendTrackerRequest(const char *event);
    int HandleTrackerReply();
 
-   void SetError(const char *e) { error=new Error(-1,e,true); }
+   void SetError(const char *e);
    bool Failed() const { return error!=0 || tracker_urls.count()==0; }
    const char *ErrorText() const { return error->Text(); }
+
+   void NextTracker();
 
 public:
    ~TorrentTracker() {}
@@ -317,6 +319,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool shutting_down;
    bool complete;
    bool end_game;
+   bool is_private;
    bool validating;
    bool force_valid;
    unsigned validate_index;
@@ -523,6 +526,7 @@ public:
    int GetCompletePeersCount() const { return complete_peers_count; }
 
    bool Complete() const { return complete; }
+   bool Private() const { return is_private; }
    double GetRatio() const;
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
@@ -634,6 +638,8 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    bool peer_choking;
    bool peer_interested;
 
+   bool upload_only;
+
    Ref<BitField> peer_bitfield;
    unsigned peer_complete_pieces;
 
@@ -674,6 +680,7 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
       UT_METADATA_REJECT=2,
    };
 public:
+   enum { TR_ACCEPTED=-1, TR_DHT=-2, TR_PEX=-3 };  // special values for tracker_no
    enum unpack_status_t
    {
       UNPACK_SUCCESS=0,
@@ -899,9 +906,20 @@ private:
    size_t metadata_size;
    void SendMetadataRequest();
 
+   struct ut_pex_data
+   {
+      xmap<char> sent; // key is compact addr
+      Timer send_timer;
+      Timer recv_timer;
+      enum flags { ENCRYPTION=1, SEED=2, UTP=4, HOLEPUNCH=8, CONNECTABLE=16 };
+      ut_pex_data() : send_timer(60), recv_timer(59) {}
+   } pex;
+   void AddPEXPeers(BeNode *added,BeNode *added_f,int addr_size);
+   void SendPEXPeers();
+
 public:
    int Do();
-   TorrentPeer(Torrent *p,const sockaddr_u *a,int tracker_no=-1);
+   TorrentPeer(Torrent *p,const sockaddr_u *a,int tracker_no);
    ~TorrentPeer();
    void PrepareToDie();
    void Connect(int s,IOBuffer *rb);
@@ -917,6 +935,7 @@ public:
    bool Connected() const { return peer_id && send_buf && recv_buf; }
    bool Active() const { return Connected() && (am_interested || peer_interested); }
    bool Complete() const { return peer_complete_pieces==parent->total_pieces; }
+   bool Seed() const { return Complete() || upload_only; }
    bool AddressEq(const TorrentPeer *o) const;
    bool IsPassive() const { return passive; }
    const sockaddr_u& GetAddress() const { return addr; }

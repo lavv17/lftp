@@ -3,6 +3,10 @@
 	* Torrent.cc: fixed ut_metadata total_size.
 	* xmap.cc, xmap.h: (each_finished, exists) new methods.
 	* network.cc, network.h: (set_compact(const char*,size_t)) new method.
+	* Torrent.cc, Torrent.h: added ut_pex extension; remember if the torrent
+	  is private; remember is a peer is upload_only; (Seed) new method;
+	  set tracker error only if last URL failed; disallow huge packets.
+	* network.cc, network.h: (is_compatible) new method.
 
 2012-08-16  Alexander V. Lukyanov <lav@yars.free.net>
 

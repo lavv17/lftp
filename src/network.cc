@@ -103,6 +103,13 @@ bool sockaddr_u::is_reserved() const
 	  || (a[0]==127 && !is_loopback())
 	  || (a[0]>=240);
    }
+#if INET6
+   if(family()==AF_INET6) {
+      return IN6_IS_ADDR_UNSPECIFIED(&in6.sin6_addr)
+	  || IN6_IS_ADDR_V4MAPPED(&in6.sin6_addr)
+	  || IN6_IS_ADDR_V4COMPAT(&in6.sin6_addr);
+   }
+#endif
    return false;
 }
 
@@ -113,6 +120,10 @@ bool sockaddr_u::is_multicast() const
       unsigned char *a=(unsigned char *)&in.sin_addr;
       return (a[0]>=224 && a[0]<240);
    }
+#if INET6
+   if(family()==AF_INET6)
+      return IN6_IS_ADDR_MULTICAST(&in6.sin6_addr);
+#endif
    return false;
 }
 
@@ -126,6 +137,12 @@ bool sockaddr_u::is_private() const
 	  || (a[0]==192 && a[1]==168)
 	  || (a[0]==169 && a[1]==254); // self-assigned
    }
+#if INET6
+   if(family()==AF_INET6) {
+      return IN6_IS_ADDR_SITELOCAL(&in6.sin6_addr)
+	  || IN6_IS_ADDR_LINKLOCAL(&in6.sin6_addr);
+   }
+#endif
    return false;
 }
 bool sockaddr_u::is_loopback() const
@@ -140,6 +157,14 @@ bool sockaddr_u::is_loopback() const
       return IN6_IS_ADDR_LOOPBACK(&in6.sin6_addr);
 #endif
    return false;
+}
+bool sockaddr_u::is_compatible(const sockaddr_u& o) const
+{
+   return family()==o.family()
+      && !is_multicast() && !o.is_multicast()
+      && !is_reserved() && !o.is_reserved()
+      && is_private()==o.is_private()
+      && is_loopback()==o.is_loopback();
 }
 
 void sockaddr_u::set_compact(const char *c,size_t len)
