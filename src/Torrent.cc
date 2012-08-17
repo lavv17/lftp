@@ -2581,7 +2581,7 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
 	       len=Torrent::BLOCK_SIZE;
 	    reply.add("msg_type",new BeNode(UT_METADATA_DATA));
 	    reply.add("piece",new BeNode(piece->num));
-	    reply.add("total_size",new BeNode(len));
+	    reply.add("total_size",new BeNode(parent->metadata.length()));
 	    PacketExtended pkt(msg_ext_metadata,new BeNode(&reply));
 	    LogSend(4,xstring::format("ut_metadata data %s",pkt.data->Format1()));
 	    pkt.SetAppendix(d,len);
@@ -2591,7 +2591,15 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
 	 case UT_METADATA_DATA: {
 	    if(parent->md_download) {
 	       if(offset==parent->md_download.length()) {
-// 		  BeNode *b_size=pp->data->dict.lookup("total_size");
+		  BeNode *b_size=pp->data->dict.lookup("total_size");
+		  if(b_size && b_size->type==BeNode::BE_INT) {
+		     if(metadata_size && metadata_size!=(size_t)b_size->num) {
+			SetError("metadata_size mismatch with total_size");
+			return;
+		     }
+		     metadata_size=b_size->num;
+		     parent->metadata_size=metadata_size;
+		  }
 		  parent->md_download.append(pp->appendix);
 		  if(pp->appendix.length()<Torrent::BLOCK_SIZE)
 		     parent->MetadataDownloaded();
