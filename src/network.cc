@@ -167,28 +167,33 @@ bool sockaddr_u::is_compatible(const sockaddr_u& o) const
       && is_loopback()==o.is_loopback();
 }
 
-void sockaddr_u::set_compact(const char *c,size_t len)
+bool sockaddr_u::set_compact(const char *c,size_t len)
 {
    if(len==4) {
       sa.sa_family=AF_INET;
       memcpy(&in.sin_addr,c,4);
       in.sin_port=0;
+      return true;
 #if INET6
    } else if(len==16) {
       sa.sa_family=AF_INET6;
       memcpy(&in6.sin6_addr,c,16);
+      return true;
 #endif
    } else if(len==6) {
       sa.sa_family=AF_INET;
       memcpy(&in.sin_addr,c,4);
       in.sin_port=htons((c[4]&255)|((c[5]&255)<<8));
+      return true;
 #if INET6
    } else if(len==18) {
       sa.sa_family=AF_INET6;
       memcpy(&in6.sin6_addr,c,16);
       in6.sin6_port=htons((c[4]&255)|((c[5]&255)<<8));
+      return true;
 #endif
    }
+   return false;
 }
 const xstring& sockaddr_u::compact() const
 {
