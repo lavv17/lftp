@@ -378,8 +378,8 @@ BeNode *Torrent::Lookup(xmap_p<BeNode>& dict,const char *name,BeNode::be_type_t 
 void Torrent::InitTranslation()
 {
    const char *charset="UTF-8"; // default
-   BeNode *b_charset=metainfo_tree->dict.lookup("encoding");
-   if(b_charset && b_charset->type==BeNode::BE_STR)
+   BeNode *b_charset=metainfo_tree->lookup("encoding",BeNode::BE_STR);
+   if(b_charset)
       charset=b_charset->str;
    recv_translate=new DirectedBuffer(DirectedBuffer::GET);
    recv_translate->SetTranslation(charset,true);
@@ -539,7 +539,7 @@ int TorrentTracker::HandleTrackerReply()
       return MOVED;
    }
 
-   BeNode *b_failure_reason=reply->dict.lookup("failure reason");
+   BeNode *b_failure_reason=reply->lookup("failure reason");
    if(b_failure_reason) {
       if(b_failure_reason->type==BeNode::BE_STR)
 	 SetError(b_failure_reason->str);
@@ -549,18 +549,17 @@ int TorrentTracker::HandleTrackerReply()
       return MOVED;
    }
 
-   BeNode *b_interval=reply->dict.lookup("interval");
-   if(b_interval && b_interval->type==BeNode::BE_INT) {
+   BeNode *b_interval=reply->lookup("interval",BeNode::BE_INT);
+   if(b_interval) {
       LogNote(4,"Tracker interval is %llu",b_interval->num);
       tracker_timer.Set(b_interval->num);
    }
 
-   BeNode *b_tracker_id=reply->dict.lookup("tracker id");
-   if(!tracker_id && b_tracker_id && b_tracker_id->type==BeNode::BE_STR)
-      tracker_id.set(b_tracker_id->str);
+   if(!tracker_id)
+      tracker_id.set(reply->lookup_str("tracker id"));
 
    int peers_count=0;
-   BeNode *b_peers=reply->dict.lookup("peers");
+   BeNode *b_peers=reply->lookup("peers");
    if(b_peers) {
       if(b_peers->type==BeNode::BE_STR) { // binary model
 	 const char *data=b_peers->str;
@@ -581,11 +580,11 @@ int TorrentTracker::HandleTrackerReply()
 	    BeNode *b_peer=b_peers->list[p];
 	    if(b_peer->type!=BeNode::BE_DICT)
 	       continue;
-	    BeNode *b_ip=b_peer->dict.lookup("ip");
-	    if(b_ip->type!=BeNode::BE_STR)
+	    BeNode *b_ip=b_peer->lookup("ip",BeNode::BE_STR);
+	    if(!b_ip)
 	       continue;
-	    BeNode *b_port=b_peer->dict.lookup("port");
-	    if(b_port->type!=BeNode::BE_INT)
+	    BeNode *b_port=b_peer->lookup("port",BeNode::BE_INT);
+	    if(!b_port)
 	       continue;
 	    sockaddr_u a;
 #if INET6
@@ -610,8 +609,8 @@ int TorrentTracker::HandleTrackerReply()
    }
 #if INET6
    peers_count=0;
-   b_peers=reply->dict.lookup("peers6");
-   if(b_peers && b_peers->type==BeNode::BE_STR) { // binary model
+   b_peers=reply->lookup("peers6",BeNode::BE_STR);
+   if(b_peers) { // binary model
       const char *data=b_peers->str;
       int len=b_peers->str.length();
       while(len>=18) {
@@ -746,7 +745,7 @@ void Torrent::SetMetadata(const xstring& md)
    name.set(b_name->str_lc);
    Reconfig(0);
 
-   BeNode *files=info->dict.lookup("files");
+   BeNode *files=info->lookup("files");
    if(!files) {
       single_file=true;
       BeNode *length=Lookup(info,"length",BeNode::BE_INT);
@@ -791,8 +790,7 @@ void Torrent::SetMetadata(const xstring& md)
       return;
    }
 
-   BeNode *b_private=info->dict.lookup("private");
-   is_private=(b_private && b_private->type==BeNode::BE_INT && b_private->num);
+   is_private=info->lookup_int("private");
 
    Torrent *other=FindTorrent(info_hash);
    if(other) {
@@ -948,8 +946,8 @@ int Torrent::Do()
 
       const char *retracker=ResMgr::Query("torrent:retracker",GetName());
       int retracker_len=xstrlen(retracker);
-      BeNode *announce_list=metainfo_tree->dict.lookup("announce-list");
-      if(announce_list && announce_list->type==BeNode::BE_LIST) {
+      BeNode *announce_list=metainfo_tree->lookup("announce-list",BeNode::BE_LIST);
+      if(announce_list) {
 	 for(int i=0; i<announce_list->list.length(); i++) {
 	    BeNode *announce_list1=announce_list->list[i];
 	    if(announce_list1->type!=BeNode::BE_LIST)
@@ -974,10 +972,10 @@ int Torrent::Do()
       }
 
       if(trackers.count()==0) {
-	 BeNode *announce=metainfo_tree->dict.lookup("announce");
-	 if(announce && announce->type==BeNode::BE_STR) {
+	 const xstring& announce=metainfo_tree->lookup_str("announce");
+	 if(announce) {
 	    SMTaskRef<TorrentTracker> new_tracker(
-	       new TorrentTracker(this,announce->str));
+	       new TorrentTracker(this,announce));
 	    if(!new_tracker->Failed())
 	       trackers.append(new_tracker.borrow());
 	 }
@@ -991,8 +989,8 @@ int Torrent::Do()
 	 }
       }
 
-      BeNode *nodes=metainfo_tree->dict.lookup("nodes");
-      if(nodes && nodes->type==BeNode::BE_LIST && dht) {
+      BeNode *nodes=metainfo_tree->lookup("nodes",BeNode::BE_LIST);
+      if(nodes && dht) {
 	 for(int i=0; i<nodes->list.count(); i++) {
 	    BeNode *n=nodes->list[i];
 	    if(n->type!=BeNode::BE_LIST || n->list.count()<2)
@@ -1211,7 +1209,7 @@ void TorrentTracker::SendTrackerRequest(const char *event)
 
 const char *Torrent::MakePath(BeNode *p) const
 {
-   BeNode *path=p->dict.lookup("path");
+   BeNode *path=p->lookup("path",BeNode::BE_LIST);
    static xstring buf;
    buf.set(name);
    if(buf.eq("..") || buf[0]=='/') {
@@ -1231,7 +1229,7 @@ const char *Torrent::MakePath(BeNode *p) const
 }
 const char *Torrent::FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail) const
 {
-   const BeNode *files=info->dict.lookup("files");
+   const BeNode *files=info->lookup("files",BeNode::BE_LIST);
    off_t target_pos=(off_t)piece*piece_length+begin;
    if(!files) {
       *f_pos=target_pos;
@@ -1240,8 +1238,7 @@ const char *Torrent::FindFileByPosition(unsigned piece,unsigned begin,off_t *f_p
    } else {
       off_t scan_pos=0;
       for(int i=0; i<files->list.length(); i++) {
-	 const BeNode *f=files->list[i]->dict.lookup("length");
-	 off_t file_length=f->num;
+	 off_t file_length=files->list[i]->lookup_int("length");
 	 if(scan_pos<=target_pos && scan_pos+file_length>target_pos) {
 	    *f_pos=target_pos-scan_pos;
 	    *f_tail=file_length-*f_pos;
@@ -2534,62 +2531,44 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
       return;
    }
    if(pp->code==MSG_EXT_HANDSHAKE) {
-      BeNode *m=pp->data->dict.lookup("m");
-      if(m && m->type==BeNode::BE_DICT) {
-	 BeNode *b_metadata=m->dict.lookup("ut_metadata");
-	 if(b_metadata && b_metadata->type==BeNode::BE_INT)
-	    msg_ext_metadata=b_metadata->num;
-	 BeNode *b_pex=m->dict.lookup("ut_pex");
-	 if(b_pex && b_pex->type==BeNode::BE_INT)
-	    msg_ext_pex=b_pex->num;
+      BeNode *m=pp->data->lookup("m",BeNode::BE_DICT);
+      if(m) {
+	 msg_ext_metadata=m->lookup_int("ut_metadata");
+	 msg_ext_pex=m->lookup_int("ut_pex");
       }
-      BeNode *b_md_size=pp->data->dict.lookup("metadata_size");
-      if(b_md_size && b_md_size->type==BeNode::BE_INT) {
-	 metadata_size=b_md_size->num;
-	 parent->metadata_size=metadata_size;
-      }
-      BeNode *b_upload_only=pp->data->dict.lookup("upload_only");
-      if(b_upload_only && b_upload_only->type==BeNode::BE_INT && b_upload_only->num)
-	 upload_only=true;
+      metadata_size=parent->metadata_size=pp->data->lookup_int("metadata_size");
+      upload_only=pp->data->lookup_int("upload_only");
 
-      BeNode *v=pp->data->dict.lookup("v");
-      if(v && v->type==BeNode::BE_STR) {
-	 LogNote(3,"peer version is %s",v->str.get());
-      }
-      BeNode *myip=pp->data->dict.lookup("yourip");
-      if(myip && myip->type==BeNode::BE_STR && myip->str.length()==4) {
+      const xstring& v=pp->data->lookup_str("v");
+      if(v)
+	 LogNote(3,"peer version is %s",v.get());
+
+      const xstring& myip=pp->data->lookup_str("yourip");
+      if(myip && myip.length()==4) {
 	 char ip[16];
-	 inet_ntop(AF_INET,myip->str.get(),ip,sizeof(ip));
-	 LogNote(3,"my external IPv4 is %s",ip);
+	 inet_ntop(AF_INET,myip.get(),ip,sizeof(ip));
+	 LogNote(5,"my external IPv4 is %s",ip);
       }
       if(passive) {
 	 // use specified port number to connect back
-	 BeNode *p=pp->data->dict.lookup("p");
-	 if(p && p->type==BeNode::BE_INT && p->num>=1024 && p->num<=65535) {
-	    LogNote(9,"using port %lld to connect back",p->num);
-	    if(addr.sa.sa_family==AF_INET) {
-	       addr.in.sin_port=htons(p->num);
-	       passive=false;
-	    }
-#if INET6
-	    else if(addr.sa.sa_family==AF_INET6) {
-	       addr.in6.sin6_port=htons(p->num);
-	       passive=false;
-	    }
-#endif
+	 int p=pp->data->lookup_int("p");
+	 if(p && p>=1024 && p<=65535) {
+	    LogNote(9,"using port %d to connect back",p);
+	    addr.set_port(p);
+	    passive=false;
 	 }
       }
       if(msg_ext_metadata && parent->md_download)
 	 SendMetadataRequest();
    } else if(pp->code==MSG_EXT_METADATA) {
-      BeNode *msg_type=pp->data->dict.lookup("msg_type");
-      if(msg_type->type!=BeNode::BE_INT) {
-	 SetError("ut_metadata msg_type must be INT");
+      BeNode *msg_type=pp->data->lookup("msg_type",BeNode::BE_INT);
+      if(!msg_type) {
+	 SetError("ut_metadata msg_type bad or missing");
 	 return;
       }
-      BeNode *piece=pp->data->dict.lookup("piece");
-      if(piece->type!=BeNode::BE_INT) {
-	 SetError("ut_metadata piece must be INT");
+      BeNode *piece=pp->data->lookup("piece",BeNode::BE_INT);
+      if(!piece) {
+	 SetError("ut_metadata piece bad or missing");
 	 return;
       }
       size_t offset=piece->num*Torrent::BLOCK_SIZE;
@@ -2620,8 +2599,8 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
 	 case UT_METADATA_DATA: {
 	    if(parent->md_download) {
 	       if(offset==parent->md_download.length()) {
-		  BeNode *b_size=pp->data->dict.lookup("total_size");
-		  if(b_size && b_size->type==BeNode::BE_INT) {
+		  BeNode *b_size=pp->data->lookup("total_size",BeNode::BE_INT);
+		  if(b_size) {
 		     if(metadata_size && metadata_size!=(size_t)b_size->num) {
 			SetError("metadata_size mismatch with total_size");
 			return;
@@ -2644,17 +2623,17 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
       if(!pex.recv_timer.Stopped())
 	 return;
       pex.recv_timer.Reset();
-      BeNode *added=pp->data->dict.lookup("added");
-      BeNode *added6=pp->data->dict.lookup("added6");
-      BeNode *added_f=pp->data->dict.lookup("added.f");
-      BeNode *added6_f=pp->data->dict.lookup("added6.f");
+      BeNode *added=pp->data->lookup("added",BeNode::BE_STR);
+      BeNode *added6=pp->data->lookup("added6",BeNode::BE_STR);
+      BeNode *added_f=pp->data->lookup("added.f",BeNode::BE_STR);
+      BeNode *added6_f=pp->data->lookup("added6.f",BeNode::BE_STR);
       AddPEXPeers(added,added_f,6);
       AddPEXPeers(added6,added6_f,18);
    }
 }
 void TorrentPeer::AddPEXPeers(BeNode *added,BeNode *added_f,int addr_size)
 {
-   if(!added || added->type!=BeNode::BE_STR)
+   if(!added)
       return;
 
    const char *data=added->str;
@@ -2663,7 +2642,7 @@ void TorrentPeer::AddPEXPeers(BeNode *added,BeNode *added_f,int addr_size)
       n=50;
 
    const char *flags=0;
-   if(added_f && added_f->type==BeNode::BE_STR && added_f->str.length()==n)
+   if(added_f && added_f->str.length()==n)
       flags=added_f->str;
 
    int peers_count=0;
@@ -2701,7 +2680,7 @@ void TorrentPeer::SendPEXPeers()
    for(int i=parent->peers.count(); i>0; i--) {
       const TorrentPeer *peer=parent->peers[i-1];
       if(!peer->Connected() || peer->IsPassive() || peer->Failed()
-      || !peer->addr.is_compatible(this->addr))
+      || !peer->addr.is_compatible(this->addr) || peer==this || peer->myself)
 	 continue;
       const xstring& ca=peer->addr.compact();
       if(old_sent.exists(ca)) {
@@ -3538,14 +3517,13 @@ int DHT::Do()
       }
    }
    if(sent_req_expire_scan.Stopped()) {
-      for(Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
+      for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
 	 if(r->Expired()) {
 	    const xstring &id=r->GetNodeId();
 	    Node *n=nodes.lookup(id);
 	    if(n)
 	       n->LostPing();
 	    sent_req.remove(sent_req.each_key());
-	    delete r;
 	 }
       }
       sent_req_expire_scan.Reset();
@@ -3562,7 +3540,7 @@ int DHT::Do()
 	 if(n->IsBad()) {
 	    LogNote(9,"removing bad node %s",n->addr.to_string().get());
 	    RemoveNode(n);
-	 } else if(n->good_timer.TimeLeft() < nodes_cleanup_timer.GetLastSetting()) {
+	 } else if(n->good_timer.TimeLeft() <= nodes_cleanup_timer.GetLastSetting()) {
 	    SendPing(n->addr);
 	 }
       }
@@ -3578,17 +3556,15 @@ int DHT::Do()
 	    int bits=routes[i]->prefix_bits%8;
 	    xstring random_id(routes[i]->prefix.get(),bytes+(bits>0));
 	    unsigned mask=(1<<(8-bits))-1;
-	    if(bits>0) {
+	    if(bits>0)
 	       random_id.get_non_const()[bytes]|=(random()/13)&mask;
-	       bytes++;
-	    }
-	    while(bytes<20) {
+	    while(random_id.length()<20)
 	       random_id.append(char(random()/13));
-	       bytes++;
-	    }
 	    StartSearch(new Search(random_id));
+	    routes[i]->fresh_timer.Reset();
 	 }
       }
+      refresh_timer.Reset();
    }
    if(send_queue.count()>0) {
       SendMessage(send_queue.next().borrow());
@@ -3654,13 +3630,13 @@ BeNode *DHT::NewError(const xstring& t0,int code,const char *msg)
 }
 const char *DHT::MessageType(BeNode *q)
 {
-   BeNode *y=q->dict.lookup("y");
+   const xstring& y=q->lookup_str("y");
    const char *msg_type="message";
-   if(y && y->str.eq("q"))
+   if(y.eq("q"))
       msg_type="query";
-   if(y && y->str.eq("r"))
+   else if(y.eq("r"))
       msg_type="response";
-   if(y && y->str.eq("e"))
+   else if(y.eq("e"))
       msg_type="error";
    return msg_type;
 }
@@ -3676,13 +3652,15 @@ void DHT::SendMessage(Request *req)
       a.to_string().get(),q->Format1()));
    int res=-1;
    res=Torrent::GetUDPSocket(a)->SendUDP(a,q->Pack());
-   if(res!=-1 && q->dict.lookup("y")->str.eq("q"))
-      sent_req.add(q->dict.lookup("t")->str,req);
+   if(res!=-1 && q->lookup_str("y").eq("q"))
+      sent_req.add(q->lookup_str("t"),req);
    else
       delete req;
 }
 void DHT::SendPing(const sockaddr_u& a)
 {
+   if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast())
+      return;
    Enter();
    LogNote(4,"sending DHT ping to %s",a.to_string().get());
    xmap_p<BeNode> arg;
@@ -3733,31 +3711,31 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 {
    LogRecv(4,xstring::format("received DHT %s from %s %s",MessageType(p),
       src.to_string().get(),p->Format1()));
-   BeNode *t=p->dict.lookup("t");
-   if(!t || t->type!=t->BE_STR)
+   const xstring& t=p->lookup_str("t");
+   if(!t)
       return;
-   BeNode *y=p->dict.lookup("y");
-   if(!y || y->type!=t->BE_STR)
+   const xstring& y=p->lookup_str("y");
+   if(!y)
       return;
-   if(y->str.eq("q")) {
-      BeNode *q=p->dict.lookup("q");
-      if(!q || q->type!=t->BE_STR)
+   if(y.eq("q")) {
+      const xstring& q=p->lookup_str("q");
+      if(!q)
 	 return;
-      BeNode *a=p->dict.lookup("a");
-      if(!a || a->type!=a->BE_DICT)
+      BeNode *a=p->lookup("a",BeNode::BE_DICT);
+      if(!a)
 	 return;
-      BeNode *id=a->dict.lookup("id");
-      if(!id || id->type!=id->BE_STR || id->str.length()!=20)
+      const xstring& id=a->lookup_str("id");
+      if(id.length()!=20)
 	 return;
       xmap_p<BeNode> r;
       const xstring &src_compact=src.compact_addr();
       r.add("ip",new BeNode(src_compact));
-      Node *node=FoundNode(id->str,src,false);
+      Node *node=FoundNode(id,src,false);
 
       bool want_n4=false;
       bool want_n6=false;
-      BeNode *want=a->dict.lookup("want");
-      if(want && want->type==BeNode::BE_LIST) {
+      BeNode *want=a->lookup("want",BeNode::BE_LIST);
+      if(want) {
 	 for(int i=0; i<want->list.count(); i++) {
 	    BeNode *w=want->list[i];
 	    if(w->type!=BeNode::BE_STR)
@@ -3773,26 +3751,25 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 want_n6=(src.family()==AF_INET6);
       }
 
-      if(q->str.eq("ping")) {
+      if(q.eq("ping")) {
 	 LogSend(5,xstring::format("DHT ping reply to %s",src.to_string().get()));
-	 SendMessage(NewReply(t->str,r),src);
-      } else if(q->str.eq("find_node")) {
-	 BeNode *target=a->dict.lookup("target");
-	 if(!target || target->type!=BeNode::BE_STR)
+	 SendMessage(NewReply(t,r),src);
+      } else if(q.eq("find_node")) {
+	 const xstring& target=a->lookup_str("target");
+	 if(!target)
 	    return;
-	 int nodes_count=AddNodesToReply(r,target->str,want_n4,want_n6);
+	 int nodes_count=AddNodesToReply(r,target,want_n4,want_n6);
 	 LogSend(5,xstring::format("DHT find_node reply with %d nodes to %s",nodes_count,src.to_string().get()));
-	 SendMessage(NewReply(t->str,r),src);
-      } else if(q->str.eq("get_peers")) {
-	 BeNode *info_hash=a->dict.lookup("info_hash");
-	 if(!info_hash || info_hash->type!=BeNode::BE_STR)
+	 SendMessage(NewReply(t,r),src);
+      } else if(q.eq("get_peers")) {
+	 const xstring& info_hash=a->lookup_str("info_hash");
+	 if(info_hash.length()!=20)
 	    return;
-	 BeNode *b_noseed=a->dict.lookup("noseed");
-	 bool noseed=(b_noseed && b_noseed->type==BeNode::BE_INT && b_noseed->num);
-	 xarray_p<Peer> *p=peers.lookup(info_hash->str);
+	 bool noseed=a->lookup_int("noseed");
+	 xarray_p<Peer> *p=peers.lookup(info_hash);
 	 int nodes_count=0;
 	 if(!p) {
-	    nodes_count=AddNodesToReply(r,info_hash->str,want_n4,want_n6);
+	    nodes_count=AddNodesToReply(r,info_hash,want_n4,want_n6);
 	 } else {
 	    xarray_p<BeNode> values;
 	    for(int i=0; i<p->count(); i++) {
@@ -3810,7 +3787,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    if(values.count()>0)
 	       r.add("values",new BeNode(&values));
 	    else
-	       nodes_count=AddNodesToReply(r,info_hash->str,want_n4,want_n6);
+	       nodes_count=AddNodesToReply(r,info_hash,want_n4,want_n6);
 	 }
 	 if(!node->my_token || node->token_timer.Stopped()) {
 	    // make new token
@@ -3820,113 +3797,113 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	       node->my_token.append(char(random()/13));
 	    node->token_timer.Reset();
 	 }
-	 if(ValidNodeId(id->str,src.compact_addr()))
-	    r.add("token",new BeNode(node->my_token));
+	 r.add("token",new BeNode(node->my_token));
 	 LogSend(5,xstring::format("DHT get_peers reply with %d values and %d nodes to %s",
 	    p?p->count():0,nodes_count,src.to_string().get()));
-	 SendMessage(NewReply(t->str,r),src);
-      } else if(q->str.eq("announce_peer")) {
+	 SendMessage(NewReply(t,r),src);
+      } else if(q.eq("announce_peer")) {
 	 // need a valid token
 	 if(!node->my_token || node->token_timer.Stopped())
 	    return;
-	 BeNode *token=a->dict.lookup("token");
-	 if(!token || token->type!=BeNode::BE_STR)
+	 const xstring& token=a->lookup_str("token");
+	 if(!token)
 	    return;
-	 if(token->str.ne(node->my_token) && token->str.ne(node->my_last_token)) {
-	    SendMessage(NewError(t->str,ERR_PROTOCOL,"invalid token"),src);
+	 if(token.ne(node->my_token) && token.ne(node->my_last_token)) {
+	    SendMessage(NewError(t,ERR_PROTOCOL,"invalid token"),src);
 	    return;
 	 }
-	 // ok, token is valid. Now add the peers.
-	 BeNode *info_hash=a->dict.lookup("info_hash");
-	 if(!info_hash || info_hash->type!=BeNode::BE_STR)
+	 // ok, token is valid. Now add the peer.
+	 const xstring& info_hash=a->lookup_str("info_hash");
+	 if(info_hash.length()!=20)
 	    return;
-	 BeNode *port=a->dict.lookup("port");
-	 if(!port || port->type!=BeNode::BE_INT)
+	 int port=a->lookup_int("port");
+	 if(!port)
 	    return;
-	 BeNode *b_seed=a->dict.lookup("seed");
-	 bool seed=(b_seed && b_seed->type==BeNode::BE_INT && b_seed->num);
+	 bool seed=a->lookup_int("seed");
 	 sockaddr_u peer_addr(src);
-	 peer_addr.set_port(port->num);
-	 AddPeer(info_hash->str,peer_addr.compact(),seed);
-	 SendMessage(NewReply(t->str,r),src);
+	 peer_addr.set_port(port);
+	 AddPeer(info_hash,peer_addr.compact(),seed);
+	 SendMessage(NewReply(t,r),src);
       } else {
-	 SendMessage(NewError(t->str,ERR_UNKNOWN_METHOD,"method unknown"),src);
+	 SendMessage(NewError(t,ERR_UNKNOWN_METHOD,"method unknown"),src);
       }
       return;
    }
-   Ref<Request> req(sent_req.lookup(t->str));
+   Ref<Request> req(sent_req.borrow(t));
    if(!req) {
       LogError(2,"got DHT reply with unknown `t' from %s",src.to_string().get());
       return;
    }
-   sent_req.remove(t->str);
 
-   const xstring& q=req->data->dict.lookup("q")->str;
-   if(y->str.eq("r")) {
-      BeNode *r=p->dict.lookup("r");
-      if(!r || r->type!=r->BE_DICT)
+   const xstring& q=req->data->lookup_str("q");
+   if(y.eq("r")) {
+      BeNode *r=p->lookup("r",BeNode::BE_DICT);
+      if(!r)
 	 return;
-      BeNode *id=r->dict.lookup("id");
-      if(!id || id->type!=id->BE_STR || id->str.length()!=20)
+      const xstring& id=r->lookup_str("id");
+      if(id.length()!=20)
 	 return;
-      BeNode *ip=r->dict.lookup("ip");
-      if(ip && ip->type==ip->BE_STR && !ValidNodeId(node_id,ip->str)) {
+      const xstring& ip=r->lookup_str("ip");
+      if(ip && !ValidNodeId(node_id,ip)) {
 	 if(!ip_voted.lookup(src.compact_addr())) {
 	    sockaddr_u reported_ip;
-	    reported_ip.set_compact(ip->str);
+	    reported_ip.set_compact(ip);
 	    LogNote(2,"%s reported our IP as %s",src.to_string().get(),reported_ip.address());
-	    unsigned& votes=ip_votes.lookup_Lv(ip->str);
+	    unsigned& votes=ip_votes.lookup_Lv(ip);
 	    votes++;
 	    if(votes>=4) {
 	       // we have incorrect node_id, restart with correct one.
-	       MakeNodeId(node_id,ip->str);
+	       MakeNodeId(node_id,ip);
 	       LogNote(0,"restarting DHT with new id %s",node_id.hexdump());
 	       Restart();
 	    }
 	 }
       }
-      FoundNode(id->str,src,true);
+      FoundNode(id,src,true);
       if(q.eq("get_peers")) {
-	 const xstring& info_hash=req->data->dict.lookup("a")->dict.lookup("info_hash")->str;
+	 const xstring& info_hash=req->data->lookup("a")->lookup_str("info_hash");
 	 Torrent *torrent=Torrent::FindTorrent(info_hash);
-	 BeNode *values=r->dict.lookup("values");
-	 if(values && values->type==BeNode::BE_LIST) {
+	 BeNode *values=r->lookup("values",BeNode::BE_LIST);
+	 if(values) {
 	    // some peers found.
 	    for(int i=0; i<values->list.count(); i++) {
 	       if(values->list[i]->type!=BeNode::BE_STR)
 		  continue;
 	       const xstring &c=values->list[i]->str;
 	       sockaddr_u a;
-	       a.set_compact(c);
-	       if(!a.family())
+	       if(!a.set_compact(c) || !a.port())
 		  continue;
 	       LogNote(9,"found peer %s for info_hash=%s",a.to_string().get(),info_hash.hexdump());
 	       if(torrent)
 		  torrent->AddPeer(new TorrentPeer(torrent,&a,TorrentPeer::TR_DHT));
 	    }
 	 }
-	 BeNode *token=r->dict.lookup("token");
-	 if(token && token->type==BeNode::BE_STR && torrent) {
+	 const xstring& token=r->lookup_str("token");
+	 if(token && torrent) {
+	    if(!ValidNodeId(id,src.compact_addr())) {
+	       LogError(2,"node id %s is invalid for %s, refusing to announce",id.hexdump(),src.address());
+	       return;
+	    }
 	    // announce the torrent
 	    int port=torrent->GetPortIPv4();
 #if INET6
-	    if(src.sa.sa_family==AF_INET6)
+	    if(src.family()==AF_INET6)
 	       port=torrent->GetPortIPv6();
 #endif
 	    xmap_p<BeNode> a;
 	    a.add("info_hash",new BeNode(info_hash));
 	    a.add("port",new BeNode(port));
-	    a.add("token",new BeNode(token->str));
+	    a.add("token",new BeNode(token));
 	    if(torrent->Complete())
 	       a.add("seed",new BeNode(1));
 	    SendMessage(NewQuery("announce_peer",a),src);
 	 }
       }
       if(q.eq("find_node") || q.eq("get_peers")) {
-	 BeNode *nodes=r->dict.lookup("nodes");
-	 if(nodes && nodes->type==BeNode::BE_STR) {
-	    const char *data=nodes->str;
-	    int len=nodes->str.length();
+	 const xstring& nodes=r->lookup_str("nodes");
+	 if(nodes) {
+	    const char *data=nodes;
+	    int len=nodes.length();
 	    while(len>=26) {
 	       xstring id(data,20);
 	       sockaddr_u a;
@@ -3937,10 +3914,10 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    }
 	 }
 #if INET6
-	 nodes=r->dict.lookup("nodes6");
-	 if(nodes && nodes->type==BeNode::BE_STR) {
-	    const char *data=nodes->str;
-	    int len=nodes->str.length();
+	 const xstring& nodes6=r->lookup_str("nodes6");
+	 if(nodes6) {
+	    const char *data=nodes6;
+	    int len=nodes6.length();
 	    while(len>=38) {
 	       xstring id(data,20);
 	       sockaddr_u a;
@@ -3952,11 +3929,11 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 }
 #endif //INET6
       }
-   } else if(y->str.eq("e")) {
+   } else if(y.eq("e")) {
       int code=0;
       const char *msg="unknown";
-      BeNode *e=p->dict.lookup("e");
-      if(e && e->type==BeNode::BE_LIST) {
+      BeNode *e=p->lookup("e",BeNode::BE_LIST);
+      if(e) {
 	 if(e->list.count()>=1 && e->list[0]->type==BeNode::BE_INT)
 	    code=e->list[0]->num;
 	 if(e->list.count()>=2 && e->list[1]->type==BeNode::BE_STR)
@@ -4011,6 +3988,8 @@ void DHT::StartSearch(Search *s)
 {
    xarray<const Node*> n;
    FindKNodes(s->target_id,n);
+   if(n.count()==0)
+      LogError(2,"no good nodes found in the routing table");
    for(int i=0; i<n.count(); i++)
       s->ContinueOn(this,n[i]);
    s->depth=0;
@@ -4018,6 +3997,9 @@ void DHT::StartSearch(Search *s)
 }
 DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
 {
+   if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast())
+      return 0;
+
    if(a.family()!=af) {
       assert(!responded); // we should not get replies from different AF
       const SMTaskRef<DHT>& d=Torrent::GetDHT(a);
@@ -4076,8 +4058,10 @@ void DHT::AddNode(Node *n)
    if(nodes.count()>MAX_NODES) {
       // remove some nodes.
       for(Node *n=nodes.each_begin(); n; n=nodes.each_next()) {
-	 if(!n->IsGood())
+	 if(!n->IsGood()) {
+	    LogNote(9,"removing node %s",n->addr.to_string().get());
 	    RemoveNode(n);
+	 }
       }
       LogNote(9,"good node count=%d",nodes.count());
    }
@@ -4227,20 +4211,20 @@ void DHT::AddPeer(const xstring& info_hash,const xstring& a,bool seed)
    LogNote(9,"DHT knows %d torrents and %d peers of info_hash=%s",peers.count(),ps->count(),info_hash.hexdump());
 }
 
-// http://www.rasterbar.com/products/libtorrent/dht_sec.html
-static const char v4mask[] = { 0x01, 0x07, 0x1f, 0x7f };
-static const char v6mask[] = { 0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f };
-void DHT::MakeNodeId(xstring &id,const xstring& ip)
+void DHT::MakeNodeId(xstring &id,const xstring& ip,int r)
 {
-   const char *mask=(ip.length()==4?v4mask:v6mask);
+   // http://www.rasterbar.com/products/libtorrent/dht_sec.html
+   static char v4mask[] = { 0x01, 0x07, 0x1f, 0x7f };
+   static char v6mask[] = { 0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f };
+
+   char *mask=(ip.length()==4?v4mask:v6mask);
    int len=(ip.length()==4?sizeof(v4mask):sizeof(v6mask));
    int i;
 
    xstring seed;
    for(i=0; i<len; i++)
-      seed.append(ip[i] & mask[i]);
+      seed.append(char(ip[i] & mask[i]));
 
-   int r = random()/13;
    seed.append(char(r&7));
 
    Torrent::SHA1(seed,id);
@@ -4251,28 +4235,18 @@ void DHT::MakeNodeId(xstring &id,const xstring& ip)
 }
 bool DHT::ValidNodeId(const xstring& id,const xstring& ip)
 {
-   sockaddr_u addr;
-   addr.set_compact(ip);
-   if(addr.is_loopback() || addr.is_private())
-      return true;
-
    if(id.length()!=20)
       return false;
 
-   const char *mask=(ip.length()==4?v4mask:v6mask);
-   int len=(ip.length()==4?sizeof(v4mask):sizeof(v6mask));
-   int i;
+   sockaddr_u addr;
+   if(!addr.set_compact(ip))
+      return false;
 
-   xstring seed;
-   for(i=0; i<len; i++)
-      seed.append(ip[i] & mask[i]);
-
-   int r = id[19];
-   seed.append(char(r&7));
+   if(addr.is_loopback() || addr.is_private())
+      return true;
 
    xstring id1;
-   Torrent::SHA1(seed,id1);
-
+   MakeNodeId(id1,ip,id[19]);
    return !memcmp(id,id1,4);
 }
 void DHT::Restart()
@@ -4305,13 +4279,13 @@ void DHT::Load(const SMTaskRef<IOBuffer>& buf)
    Ref<BeNode> state(BeNode::Parse(buf->Get(),buf->Size(),&rest));
    if(!state || state->type!=BeNode::BE_DICT)
       return;
-   BeNode *b_id=state->dict.lookup("id");
-   if(!b_id || b_id->type!=BeNode::BE_STR || b_id->str.length()!=20)
-      return;
-   node_id.set(b_id->str);
-   Restart();
-   BeNode *b_nodes=state->dict.lookup("nodes");
-   if(!b_nodes || b_nodes->type!=BeNode::BE_LIST)
+   const xstring& b_id=state->lookup_str("id");
+   if(b_id.length()==20) {
+      node_id.set(b_id);
+      Restart();
+   }
+   BeNode *b_nodes=state->lookup("nodes",BeNode::BE_LIST);
+   if(!b_nodes)
       return;
    for(int i=0; i<b_nodes->list.count(); i++) {
       BeNode *b_node=b_nodes->list[i];

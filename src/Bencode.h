@@ -51,6 +51,28 @@ public:
    BeNode(long long);
    ~BeNode();
 
+   BeNode *lookup(const char *key) {
+      return dict.lookup(key);
+   }
+   BeNode *lookup(const char *key,be_type_t t) {
+      BeNode *n=dict.lookup(key);
+      if(n && n->type!=t)
+	 n=0;
+      return n;
+   }
+   const xstring& lookup_str(const char *key) {
+      BeNode *n=dict.lookup(key);
+      if(!n || n->type!=BE_STR)
+	 return xstring::null;
+      return n->str;
+   }
+   long long lookup_int(const char *key) {
+      BeNode *n=dict.lookup(key);
+      if(!n || n->type!=BE_INT)
+	 return 0;
+      return n->num;
+   }
+
    int ComputeLength();
    const xstring& Pack();
    void Pack(xstring &buf);

@@ -119,7 +119,7 @@ class DHT : public SMTask, protected ProtoLog
 
       Node(const xstring& i,const sockaddr_u& a,bool r)
 	 : id(i.copy()), addr(a), good_timer(15*60), token_timer(5*60),
-	   responded(r) {}
+	   responded(r), ping_lost_count(0) {}
 
       void SetToken(const xstring& t) { token.set(t); }
 
@@ -189,7 +189,7 @@ class DHT : public SMTask, protected ProtoLog
    int af;
 
    RefQueue<Request> send_queue;
-   xmap<Request*> sent_req; // the key is "t"
+   xmap_p<Request> sent_req; // the key is "t"
    Timer sent_req_expire_scan;
    Timer search_cleanup_timer;
    Timer refresh_timer;
@@ -244,7 +244,7 @@ public:
    ~DHT();
    int Do();
 
-   static void MakeNodeId(xstring &id,const xstring& ip);
+   static void MakeNodeId(xstring &id,const xstring& ip,int r=random()/13);
    static bool ValidNodeId(const xstring &id,const xstring& ip);
    void Restart();
 
