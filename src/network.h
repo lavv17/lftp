@@ -62,7 +62,8 @@ union sockaddr_u
    bool is_loopback() const;
    bool is_private() const;
    bool is_compatible(const sockaddr_u&) const;
-   const xstring& to_string() const;
+   const xstring& to_xstring() const;
+   const char *to_string() const { return to_xstring(); }
    operator const char *() const { return to_string(); }
    bool set_defaults(int af,const char *hostname,int port);
    void set_port(int port);

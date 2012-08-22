@@ -89,7 +89,7 @@ void sockaddr_u::set_port(int port)
 #endif
 }
 
-const xstring& sockaddr_u::to_string() const
+const xstring& sockaddr_u::to_xstring() const
 {
    return xstring::format("[%s]:%d",address(),port());
 }
@@ -312,7 +312,7 @@ void Networker::SocketBindStd(int s,int af,const char *hostname,int port)
    if(bind_addr.set_defaults(af,hostname,port))
    {
       if(bind_addr.bind_to(s)==-1)
-	 ProtoLog::LogError(0,"bind(%s): %s",bind_addr.to_string().get(),strerror(errno));
+	 ProtoLog::LogError(0,"bind(%s): %s",bind_addr.to_string(),strerror(errno));
    }
 }
 int Networker::SocketCreate(int af,int type,int proto,const char *hostname)

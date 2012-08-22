@@ -3245,11 +3245,11 @@ void TorrentBlackList::Add(const sockaddr_u &a,const char *t)
    if(Listed(a))
       return;
    Log::global->Format(4,"---- black-listing peer %s (%s)\n",(const char*)a,t);
-   bl.add(a.to_string(),new Timer(TimeIntervalR(t)));
+   bl.add(a.to_xstring(),new Timer(TimeIntervalR(t)));
 }
 bool TorrentBlackList::Listed(const sockaddr_u &a)
 {
-   return bl.lookup(a.to_string())!=0;
+   return bl.lookup(a.to_xstring())!=0;
 }
 
 
@@ -3302,7 +3302,7 @@ int TorrentListener::Do()
 	 FillAddress(prefer_port);
 	 if(addr.bind_to(sock)==0)
 	    goto bound;
-	 LogError(1,"bind(%s): %s",addr.to_string().get(),strerror(errno));
+	 LogError(1,"bind(%s): %s",addr.to_string(),strerror(errno));
       }
 
       for(int t=0; ; t++)
@@ -3334,7 +3334,7 @@ int TorrentListener::Do()
 	 // Fail unless socket was already taken
 	 if(errno!=EINVAL && errno!=EADDRINUSE)
 	 {
-	    LogError(0,"bind(%s): %s",addr.to_string().get(),strerror(saved_errno));
+	    LogError(0,"bind(%s): %s",addr.to_string(),strerror(saved_errno));
 	    close(sock);
 	    sock=-1;
 	    if(NonFatalError(errno))
@@ -3345,7 +3345,7 @@ int TorrentListener::Do()
 	    error=Error::Fatal(_("Cannot bind a socket for torrent:port-range"));
 	    return MOVED;
 	 }
-	 LogError(10,"bind(%s): %s",addr.to_string().get(),strerror(saved_errno));
+	 LogError(10,"bind(%s): %s",addr.to_string(),strerror(saved_errno));
       }
    bound:
       if(type==SOCK_STREAM)
@@ -3354,7 +3354,7 @@ int TorrentListener::Do()
       // get the allocated port
       socklen_t addr_len=sizeof(addr);
       getsockname(sock,&addr.sa,&addr_len);
-      LogNote(4,"listening on %s %s",type==SOCK_STREAM?"tcp":"udp",addr.to_string().get());
+      LogNote(4,"listening on %s %s",type==SOCK_STREAM?"tcp":"udp",addr.to_string());
       m=MOVED;
 
       if(type==SOCK_DGRAM && Torrent::dht)
@@ -3425,7 +3425,7 @@ int TorrentListener::SendUDP(const sockaddr_u& a,const xstring& buf)
 {
    int res=sendto(sock,buf,buf.length(),0,&a.sa,a.addr_len());
    if(res==-1)
-      LogError(0,"sendto(%s): %s",a.to_string().get(),strerror(errno));
+      LogError(0,"sendto(%s): %s",a.to_string(),strerror(errno));
    return res;
 }
 
@@ -3441,10 +3441,10 @@ void Torrent::DispatchUDP(const char *buf,int len,const sockaddr_u& src)
       d->HandlePacket(msg.get_non_const(),src);
       d->Leave();
    } else if(buf[0]==0x41) {
-      LogRecv(9,xstring::format("uTP SYN v1 from %s {%s}",src.to_string().get(),xstring::get_tmp(buf,len).hexdump()));
+      LogRecv(9,xstring::format("uTP SYN v1 from %s {%s}",src.to_string(),xstring::get_tmp(buf,len).hexdump()));
    } else {
    unknown:
-      LogRecv(4,xstring::format("udp from %s {%s}",src.to_string().get(),xstring::get_tmp(buf,len).hexdump()));
+      LogRecv(4,xstring::format("udp from %s {%s}",src.to_string(),xstring::get_tmp(buf,len).hexdump()));
    }
 }
 
@@ -3453,7 +3453,7 @@ void Torrent::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remot
    Torrent *t=FindTorrent(info_hash);
    if(!t) {
       LogError(3,"peer %s sent unknown info_hash=%s in handshake",
-	 remote_addr->to_string().get(),info_hash.hexdump());
+	 remote_addr->to_string(),info_hash.hexdump());
       close(sock);
       delete recv_buf;
       return;
@@ -3544,7 +3544,7 @@ int DHT::Do()
    if(sent_req_expire_scan.Stopped()) {
       for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
 	 if(r->Expired()) {
-	    LogError(4,"DHT request %s to %s timed out",r->data->lookup_str("q").get(),r->addr.to_string().get());
+	    LogError(4,"DHT request %s to %s timed out",r->data->lookup_str("q").get(),r->addr.to_string());
 	    Node *n=nodes.lookup(r->GetNodeId());
 	    if(n) {
 	       n->LostPing();
@@ -3694,7 +3694,7 @@ void DHT::SendMessage(Request *req)
    BeNode *q=req->data.get_non_const();
    const sockaddr_u& a=req->addr;
    LogSend(4,xstring::format("sending DHT %s to %s %s",MessageType(q),
-      a.to_string().get(),q->Format1()));
+      a.to_string(),q->Format1()));
    int res=-1;
    res=Torrent::GetUDPSocket(af)->SendUDP(a,q->Pack());
    if(res!=-1 && q->lookup_str("y").eq("q"))
@@ -3758,7 +3758,7 @@ int DHT::AddNodesToReply(xmap_p<BeNode> &r,const xstring& target,bool want_n4,bo
 void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 {
    LogRecv(4,xstring::format("received DHT %s from %s %s",MessageType(p),
-      src.to_string().get(),p->Format1()));
+      src.to_string(),p->Format1()));
    const xstring& t=p->lookup_str("t");
    if(!t)
       return;
@@ -3800,14 +3800,14 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       }
 
       if(q.eq("ping")) {
-	 LogSend(5,xstring::format("DHT ping reply to %s",src.to_string().get()));
+	 LogSend(5,xstring::format("DHT ping reply to %s",src.to_string()));
 	 SendMessage(NewReply(t,r),src);
       } else if(q.eq("find_node")) {
 	 const xstring& target=a->lookup_str("target");
 	 if(!target)
 	    return;
 	 int nodes_count=AddNodesToReply(r,target,want_n4,want_n6);
-	 LogSend(5,xstring::format("DHT find_node reply with %d nodes to %s",nodes_count,src.to_string().get()));
+	 LogSend(5,xstring::format("DHT find_node reply with %d nodes to %s",nodes_count,src.to_string()));
 	 SendMessage(NewReply(t,r),src);
       } else if(q.eq("get_peers")) {
 	 const xstring& info_hash=a->lookup_str("info_hash");
@@ -3847,7 +3847,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 }
 	 r.add("token",new BeNode(node->my_token));
 	 LogSend(5,xstring::format("DHT get_peers reply with %d values and %d nodes to %s",
-	    p?p->count():0,nodes_count,src.to_string().get()));
+	    p?p->count():0,nodes_count,src.to_string()));
 	 SendMessage(NewReply(t,r),src);
       } else if(q.eq("announce_peer")) {
 	 // need a valid token
@@ -3879,7 +3879,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
    }
    Ref<Request> req(sent_req.borrow(t));
    if(!req) {
-      LogError(2,"got DHT reply with unknown `t' from %s",src.to_string().get());
+      LogError(2,"got DHT reply with unknown `t' from %s",src.to_string());
       return;
    }
 
@@ -3896,7 +3896,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 if(!ip_voted.lookup(src.compact_addr())) {
 	    sockaddr_u reported_ip;
 	    reported_ip.set_compact(ip);
-	    LogNote(2,"%s reported our IP as %s",src.to_string().get(),reported_ip.address());
+	    LogNote(2,"%s reported our IP as %s",src.to_string(),reported_ip.address());
 	    unsigned& votes=ip_votes.lookup_Lv(ip);
 	    votes++;
 	    if(votes>=4) {
@@ -3921,7 +3921,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	       sockaddr_u a;
 	       if(!a.set_compact(c) || !a.port())
 		  continue;
-	       LogNote(9,"found peer %s for info_hash=%s",a.to_string().get(),info_hash.hexdump());
+	       LogNote(9,"found peer %s for info_hash=%s",a.to_string(),info_hash.hexdump());
 	       if(torrent)
 		  torrent->AddPeer(new TorrentPeer(torrent,&a,TorrentPeer::TR_DHT));
 	    }
@@ -3987,7 +3987,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 if(e->list.count()>=2 && e->list[1]->type==BeNode::BE_STR)
 	    msg=e->list[1]->str;
       }
-      LogError(2,"got DHT error for %s (%d: %s) from %s",q.get(),code,msg,src.to_string().get());
+      LogError(2,"got DHT error for %s (%d: %s) from %s",q.get(),code,msg,src.to_string());
    }
 }
 bool DHT::Node::IsBetterThan(const Node *node,const xstring& target) const
@@ -4053,7 +4053,7 @@ void DHT::StartSearch(Search *s)
 DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
 {
    if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast()) {
-      LogError(9,"node address %s is not valid",a.to_string().get());
+      LogError(9,"node address %s is not valid",a.to_string());
       return 0;
    }
 
