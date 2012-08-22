@@ -5,6 +5,8 @@
 	  sending a udp packet; tune dht timers; improve logging;
 	  save node id in sent requests; try to send find request to all nodes
 	  if no good nodes found; fixed route bucket splitting.
+	* ResMgr.cc, ResMgr.h: (NumberPair) new type; support number power
+	  suffix in ranges and pairs.
 
 2012-08-20  Alexander V. Lukyanov <lav@yars.free.net>
 

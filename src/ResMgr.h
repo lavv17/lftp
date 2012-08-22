@@ -181,21 +181,37 @@ public:
    const char *ErrorText() const { return error_text; }
 };
 
-class Range
+class NumberPair
 {
-   long long start,end;
-   bool no_start,no_end;
+protected:
+   long long n1,n2;
+   bool no_n1,no_n2;
    const char *error_text;
+   char sep;
 
    static const char *scale(long long *value,char suf);
+   long long parse1(const char *s);
+
+   void init(char sep,const char *s);
 
 public:
-   Range(const char *s);
-   bool Match(long long n) const { return (no_start || n>=start) && (no_end || n<=end); }
-   bool IsFull() { return no_start && no_end; }
-   long long Random();
+   NumberPair(char sep) { init(sep,0); }
+   NumberPair(char sep,const char *s) { init(sep,s); }
+   void Set(const char *s);
    bool Error() { return error_text!=0; };
    const char *ErrorText() { return error_text; }
+   long long N1() { return n1; }
+   long long N2() { return n2; }
+   bool HasN1() { return !no_n1; }
+   bool HasN2() { return !no_n2; }
+};
+class Range : public NumberPair
+{
+public:
+   Range(const char *s);
+   bool Match(long long n) const { return (no_n1 || n>=n1) && (no_n2 || n<=n2); }
+   bool IsFull() { return no_n1 && no_n2; }
+   long long Random();
 };
 
 class ResClient

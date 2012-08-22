@@ -39,6 +39,7 @@ CDECL_END
 #include "SMTask.h"
 #include "misc.h"
 #include "StringSet.h"
+#include "log.h"
 
 ResMgr::Resource  *ResMgr::chain=0;
 ResType		  *ResMgr::type_chain=0;
@@ -426,7 +427,7 @@ static const char power_letter[] =
 static unsigned long long get_power_multiplier(char p)
 {
    const char *scan=power_letter;
-   int scale=1024;
+   const int scale=1024;
    unsigned long long mul=1;
    p=toupper(p);
    while(scan<power_letter+sizeof(power_letter)) {
@@ -734,71 +735,75 @@ const char *ResMgr::TimeIntervalValidate(xstring_c *s)
    return 0;
 }
 
-Range::Range(const char *s)
+void NumberPair::init(char sep1,const char *s)
 {
-   start=end=0;
-   no_start=no_end=true;
+   sep=sep1;
+   Set(s);
+}
+long long NumberPair::parse1(const char *s)
+{
+   if(!s || !*s)
+      return 0;
+   const char *end=s;
+   long long v=strtoll(s,const_cast<char**>(&end),0);
+   long long m=get_power_multiplier(*end);
+   if(s==end || m==0 || end[m>1]) {
+      error_text=_("invalid number");
+      return 0;
+   }
+   long long vm=v*m;
+   if(vm/m!=v) {
+      error_text=_("integer overflow");
+      return 0;
+   }
+   return vm;
+}
+void NumberPair::Set(const char *s0)
+{
+   n1=n2=0;
+   no_n1=no_n2=true;
    error_text=0;
 
-   if(!strcasecmp(s,"full") || !strcasecmp(s,"any"))
+   if(!s0)
       return;
 
-   int n;
-   int len=strlen(s);
-   char start_k=0,end_k=0;
-   if(sscanf(s,"%lld-%n",&start,&n)==1 && n==len)
-      no_start=false;
-   else if(sscanf(s,"-%lld%n",&end,&n)==1 && n==len)
-      no_end=false;
-   else if(sscanf(s,"%lld-%lld%n",&start,&end,&n)==2 && n==len)
-      no_start=no_end=false;
-   else if(sscanf(s,"%lld%c-%n",&start,&start_k,&n)==2 && n==len)
-      no_start=false;
-   else if(sscanf(s,"-%lld%c%n",&end,&end_k,&n)==2 && n==len)
-      no_end=false;
-   else if(sscanf(s,"%lld%c-%lld%n",&start,&start_k,&end,&n)==3 && n==len)
-      no_start=no_end=false;
-   else if(sscanf(s,"%lld-%lld%c%n",&start,&end,&end_k,&n)==3 && n==len)
-      no_start=no_end=false;
-   else if(sscanf(s,"%lld%c-%lld%c%n",&start,&start_k,&end,&end_k,&n)==4 && n==len)
-      no_start=no_end=false;
+   char *s1=alloca_strdup(s0);
+   char *s2=s1;
+   while(*s2 && *s2!=sep && *s2!=':')
+      s2++;
+   if(*s2)
+      *s2++=0;
    else
-   {
-      error_text=_("Invalid range format. Format is min-max, e.g. 10-20.");
-      return;
+      s2=0;
+
+   n1=parse1(s1);
+   no_n1=!*s1;
+   n2=(s2?parse1(s2):n1);
+   no_n2=(s2 && !*s2);
+
+   if(!error_text) {
+      Log::global->Format(10,"%s translated to pair %lld%c%lld (%d,%d)\n",
+	 s0,n1,sep,n2,no_n1,no_n2);
    }
-   if(start_k)
-      error_text=scale(&start,start_k);
-   if(!error_text && end_k)
-      error_text=scale(&end,end_k);
-   if(!no_start && !no_end && start>end)
-      start=replace_value(end,start);
 }
 
-const char *Range::scale(long long *value,char suf)
+Range::Range(const char *s) : NumberPair('-')
 {
-   // kilo, Mega, Giga, Tera, Peta, Exa, Zetta, Yotta
-   static const char s[]="kMGTPEZY";
-   const char *match=strchr(s,suf);
-   if(!match)
-      return _("Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y");
-   unsigned shift=10*(match-s+1);
-   if(((*value<<shift)>>shift)!=*value)
-      return _("Integer overflow");
-   *value<<=shift;
-   return 0;
+   if(!strcasecmp(s,"full") || !strcasecmp(s,"any"))
+      return;
+   Set(s);
 }
 
 long long Range::Random()
 {
    random_init();
 
-   if(no_start && no_end)
+   if(no_n1 && no_n2)
       return random();
-   if(no_end)
-      return start+random();
+   if(no_n2)
+      return n1+random();
 
-   return start + (long long)((end-start+1)*random01());
+   return n1 + (long long)((n2-n1+1)*random01());
 }
 
 const char *ResMgr::RangeValidate(xstring_c *s)
@@ -806,6 +811,9 @@ const char *ResMgr::RangeValidate(xstring_c *s)
    Range r(*s);
    if(r.Error())
       return r.ErrorText();
+   char *colon=strchr(s->get_non_const(),':');
+   if(colon)
+      *colon='-';
    return 0;
 }
 
@@ -928,26 +936,19 @@ const char *ResMgr::NoClosure(xstring_c *)
 
 const char *ResMgr::UNumberPairValidate(xstring_c *value)
 {
-   int n=0;
-
-   unsigned a,b;
-   if(2>sscanf(value->get(),"%u%*c%u%n",&a,&b,&n))
-   {
-      if(UNumberValidate(value))
-	 return _("invalid pair of numbers");
-      return 0;
-   }
-
-   value->truncate(n);
-
+   NumberPair pair(':',*value);
+   if(pair.Error())
+      return pair.ErrorText();
    return 0;
 }
 void ResValue::ToNumberPair(int &a,int &b) const
 {
-   switch(sscanf(s,"%d%*c%d",&a,&b))
-   {
-   case 0: a=0;
-   case 1: b=a;
+   NumberPair pair(':',s);
+   if(pair.Error()) {
+      a=b=0;
+   } else {
+      a=pair.N1();
+      b=pair.HasN2()?pair.N2():a;
    }
 }
 
