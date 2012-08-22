@@ -1168,7 +1168,7 @@ void TorrentTracker::SendTrackerRequest(const char *event)
       return;
 
    xstring request(GetURL());
-   request.setf("info_hash=%s",url::encode(parent->GetInfoHash(),URL_PATH_UNSAFE).get());
+   request.appendf("info_hash=%s",url::encode(parent->GetInfoHash(),URL_PATH_UNSAFE).get());
    request.appendf("&peer_id=%s",url::encode(parent->GetMyPeerId(),URL_PATH_UNSAFE).get());
    request.appendf("&port=%d",parent->GetPort());
    request.appendf("&uploaded=%llu",parent->GetTotalSent());
@@ -3254,7 +3254,7 @@ bool TorrentBlackList::Listed(const sockaddr_u &a)
 
 
 TorrentListener::TorrentListener(int a,int t)
-   : af(a), type(t), sock(-1)
+   : af(a), type(t), sock(-1), last_sent_udp_count(0)
 {
 }
 TorrentListener::~TorrentListener()
@@ -3396,6 +3396,31 @@ int TorrentListener::Do()
 
    return m;
 }
+bool TorrentListener::MaySendUDP()
+{
+   // limit udp rate
+   TimeDiff time_passed(now,last_sent_udp);
+   if(time_passed.MilliSeconds()<1) {
+      if(last_sent_udp_count>=10) {
+	 Timeout(1);
+	 return false;
+      }
+      last_sent_udp_count++;
+   } else {
+      last_sent_udp_count=0;
+      last_sent_udp=now;
+   }
+   // check if output buffer is available
+   struct pollfd pfd;
+   pfd.fd=sock;
+   pfd.events=POLLOUT;
+   pfd.revents=0;
+   int res=poll(&pfd,1,0);
+   if(res>0)
+      return true;
+   Block(sock,POLLOUT);
+   return false;
+}
 int TorrentListener::SendUDP(const sockaddr_u& a,const xstring& buf)
 {
    int res=sendto(sock,buf,buf.length(),0,&a.sa,a.addr_len());
@@ -3488,8 +3513,8 @@ int TorrentDispatcher::Do()
 }
 
 DHT::DHT(int af,const xstring& id)
-   : af(af), sent_req_expire_scan(20), search_cleanup_timer(30),
-     refresh_timer(60), nodes_cleanup_timer(5*60),
+   : af(af), sent_req_expire_scan(5), search_cleanup_timer(5),
+     refresh_timer(60), nodes_cleanup_timer(30), save_timer(60),
      node_id(id.copy()), t(random())
 {
    LogNote(10,"creating DHT with id=%s",node_id.hexdump());
@@ -3519,10 +3544,12 @@ int DHT::Do()
    if(sent_req_expire_scan.Stopped()) {
       for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
 	 if(r->Expired()) {
-	    const xstring &id=r->GetNodeId();
-	    Node *n=nodes.lookup(id);
-	    if(n)
+	    LogError(4,"DHT request %s to %s timed out",r->data->lookup_str("q").get(),r->addr.to_string().get());
+	    Node *n=nodes.lookup(r->GetNodeId());
+	    if(n) {
 	       n->LostPing();
+	       LogNote(4,"DHT node %s has lost %d packets",n->GetName(),n->ping_lost_count);
+	    }
 	    sent_req.remove(sent_req.each_key());
 	 }
       }
@@ -3538,14 +3565,24 @@ int DHT::Do()
    if(nodes_cleanup_timer.Stopped()) {
       for(Node *n=nodes.each_begin(); n; n=nodes.each_next()) {
 	 if(n->IsBad()) {
-	    LogNote(9,"removing bad node %s",n->addr.to_string().get());
+	    LogNote(9,"removing bad node %s",n->GetName());
 	    RemoveNode(n);
-	 } else if(n->good_timer.TimeLeft() <= nodes_cleanup_timer.GetLastSetting()) {
-	    SendPing(n->addr);
+	 } else if(n->good_timer.TimeLeft().Seconds() <= 60) {
+	    SendPing(n);
 	 }
       }
-      Save();
       nodes_cleanup_timer.Reset();
+      if(save_timer.Stopped()) {
+	 Save();
+	 save_timer.Reset();
+      }
+      if(nodes.count()>0 && routes[0]->nodes.count()<2 && search.count()==0) {
+	 // run bootstrap search
+	 LogNote(9,"bootstrapping");
+	 Search *s=new Search(node_id);
+	 s->Bootstrap();
+	 StartSearch(s);
+      }
    }
    if(refresh_timer.Stopped()) {
       for(int i=0; i<routes.count(); i++) {
@@ -3566,8 +3603,11 @@ int DHT::Do()
       }
       refresh_timer.Reset();
    }
-   if(send_queue.count()>0) {
-      SendMessage(send_queue.next().borrow());
+   if(nodes.count()<K*K && load_nodes.count()>0 && send_queue.count()<K) {
+      xstring &n=*load_nodes.next();
+      sockaddr_u a;
+      a.set_compact(n);
+      SendPing(a);
       m=MOVED;
    }
 
@@ -3579,18 +3619,22 @@ int DHT::Do()
 	 m=MOVED;
       } else if(resolver->Done()) {
 	 const xarray<sockaddr_u>& r=resolver->Result();
-	 for(int i=0; i<r.count(); i++) {
+	 for(int i=0; i<r.count(); i++)
 	    Torrent::GetDHT(r[i])->SendPing(r[i]);
-	 }
 	 resolver=0;
 	 m=MOVED;
       }
    }
-   if(nodes.count()==0 && !state_io && !resolver && bootstrap_nodes.count()>0) {
+   if(!state_io && !resolver && bootstrap_nodes.count()>0) {
       xstring &b=*bootstrap_nodes.next();
       ParsedURL u(b);
       if(u.proto==0 && u.host)
 	 resolver=new Resolver(u.host,u.port,"6881");
+      m=MOVED;
+   }
+
+   if(send_queue.count()>0 && MaySendMessage()) {
+      SendMessage(send_queue.next().borrow());
       m=MOVED;
    }
 
@@ -3633,38 +3677,42 @@ const char *DHT::MessageType(BeNode *q)
    const xstring& y=q->lookup_str("y");
    const char *msg_type="message";
    if(y.eq("q"))
-      msg_type="query";
+      msg_type=q->lookup_str("q");
    else if(y.eq("r"))
       msg_type="response";
    else if(y.eq("e"))
       msg_type="error";
    return msg_type;
 }
-void DHT::SendMessage(BeNode *q,const sockaddr_u& a)
+void DHT::SendMessage(BeNode *q,const sockaddr_u& a,const xstring& id)
 {
-   send_queue.push(new Request(q,a));
+   send_queue.push(new Request(q,a,id));
 }
 void DHT::SendMessage(Request *req)
 {
+   req->expire_timer.Reset();
    BeNode *q=req->data.get_non_const();
    const sockaddr_u& a=req->addr;
    LogSend(4,xstring::format("sending DHT %s to %s %s",MessageType(q),
       a.to_string().get(),q->Format1()));
    int res=-1;
-   res=Torrent::GetUDPSocket(a)->SendUDP(a,q->Pack());
+   res=Torrent::GetUDPSocket(af)->SendUDP(a,q->Pack());
    if(res!=-1 && q->lookup_str("y").eq("q"))
       sent_req.add(q->lookup_str("t"),req);
    else
       delete req;
 }
-void DHT::SendPing(const sockaddr_u& a)
+bool DHT::MaySendMessage()
+{
+   return Torrent::GetUDPSocket(af)->MaySendUDP();
+}
+void DHT::SendPing(const sockaddr_u& a,const xstring& id)
 {
    if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast())
       return;
    Enter();
-   LogNote(4,"sending DHT ping to %s",a.to_string().get());
    xmap_p<BeNode> arg;
-   SendMessage(NewQuery("ping",arg),a);
+   SendMessage(NewQuery("ping",arg),a,id);
    Leave();
 }
 void DHT::AnnouncePeer(const Torrent *t)
@@ -3686,10 +3734,10 @@ void DHT::AnnouncePeer(const Torrent *t)
    StartSearch(s);
    Leave();
 }
-int DHT::AddNodesToReply(xmap_p<BeNode> &r,const xstring& target)
+int DHT::AddNodesToReply(xmap_p<BeNode> &r,const xstring& target,int max_count)
 {
    xarray<const Node*> n;
-   FindKNodes(target,n);
+   FindNodes(target,n,max_count);
    xstring compact_nodes;
    for(int i=0; i<n.count(); i++) {
       compact_nodes.append(n[i]->id);
@@ -3702,9 +3750,9 @@ int DHT::AddNodesToReply(xmap_p<BeNode> &r,const xstring& target,bool want_n4,bo
 {
    int nodes_count=0;
    if(want_n4)
-      nodes_count+=Torrent::GetDHT(AF_INET)->AddNodesToReply(r,target);
+      nodes_count+=Torrent::GetDHT(AF_INET)->AddNodesToReply(r,target,K);
    if(want_n6)
-      nodes_count+=Torrent::GetDHT(AF_INET6)->AddNodesToReply(r,target);
+      nodes_count+=Torrent::GetDHT(AF_INET6)->AddNodesToReply(r,target,K);
    return nodes_count;
 }
 void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
@@ -3880,10 +3928,8 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 }
 	 const xstring& token=r->lookup_str("token");
 	 if(token && torrent) {
-	    if(!ValidNodeId(id,src.compact_addr())) {
-	       LogError(2,"node id %s is invalid for %s, refusing to announce",id.hexdump(),src.address());
-	       return;
-	    }
+	    if(!ValidNodeId(id,src.compact_addr()))
+	       LogError(2,"warning: node id %s is invalid for %s",id.hexdump(),src.address());
 	    // announce the torrent
 	    int port=torrent->GetPortIPv4();
 #if INET6
@@ -3896,12 +3942,13 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    a.add("token",new BeNode(token));
 	    if(torrent->Complete())
 	       a.add("seed",new BeNode(1));
-	    SendMessage(NewQuery("announce_peer",a),src);
+	    SendMessage(NewQuery("announce_peer",a),src,id);
 	 }
       }
       if(q.eq("find_node") || q.eq("get_peers")) {
 	 const xstring& nodes=r->lookup_str("nodes");
 	 if(nodes) {
+	    LogNote(9,"adding %d nodes",(int)nodes.length()/26);
 	    const char *data=nodes;
 	    int len=nodes.length();
 	    while(len>=26) {
@@ -3916,6 +3963,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 #if INET6
 	 const xstring& nodes6=r->lookup_str("nodes6");
 	 if(nodes6) {
+	    LogNote(9,"adding %d nodes6",(int)nodes6.length()/38);
 	    const char *data=nodes6;
 	    int len=nodes6.length();
 	    while(len>=38) {
@@ -3975,30 +4023,39 @@ void DHT::Search::ContinueOn(DHT *d,const Node *n)
 #endif
    if(!want_peers) {
       a.add("target",new BeNode(target_id));
-      d->SendMessage(d->NewQuery("find_node",a),n->addr);
+      d->SendMessage(d->NewQuery("find_node",a),n->addr,n->id);
    } else {
       a.add("info_hash",new BeNode(target_id));
       if(noseed)
 	 a.add("noseed",new BeNode(1));
-      d->SendMessage(d->NewQuery("get_peers",a),n->addr);
+      d->SendMessage(d->NewQuery("get_peers",a),n->addr,n->id);
    }
    search_timer.Reset();
 }
 void DHT::StartSearch(Search *s)
 {
    xarray<const Node*> n;
-   FindKNodes(s->target_id,n);
-   if(n.count()==0)
+   FindNodes(s->target_id,n,K);
+   if(n.count()==0) {
       LogError(2,"no good nodes found in the routing table");
-   for(int i=0; i<n.count(); i++)
-      s->ContinueOn(this,n[i]);
+      // try to send everywhere
+      for(const Node *node=nodes.each_begin(); node; node=nodes.each_next()) {
+	 if(!node->IsBad())
+	    s->ContinueOn(this,node);
+      }
+   } else {
+      for(int i=0; i<n.count(); i++)
+	 s->ContinueOn(this,n[i]);
+   }
    s->depth=0;
    search.append(s);
 }
 DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
 {
-   if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast())
+   if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast()) {
+      LogError(9,"node address %s is not valid",a.to_string().get());
       return 0;
+   }
 
    if(a.family()!=af) {
       assert(!responded); // we should not get replies from different AF
@@ -4021,13 +4078,6 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
 	 n->SetGood();
       AddRoute(n);
    }
-   if(nodes.count()==1 && search.count()==0) {
-      // run bootstrap search
-      LogNote(9,"bootstrapping");
-      Search *s=new Search(node_id);
-      s->Bootstrap();
-      search.append(s);
-   }
 
    // continue search
    for(int i=0; i<search.count(); i++) {
@@ -4036,7 +4086,7 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
 	 s->ContinueOn(this,n);
 	 LogNote(3,"search for %s continues on %s (%s) depth=%d",
 	    s->target_id.hexdump(),n->id.hexdump(),
-	    n->addr.to_string().get(),s->depth);
+	    n->GetName(),s->depth);
       }
    }
    return n;
@@ -4059,7 +4109,7 @@ void DHT::AddNode(Node *n)
       // remove some nodes.
       for(Node *n=nodes.each_begin(); n; n=nodes.each_next()) {
 	 if(!n->IsGood()) {
-	    LogNote(9,"removing node %s",n->addr.to_string().get());
+	    LogNote(9,"removing node %s",n->GetName());
 	    RemoveNode(n);
 	 }
       }
@@ -4082,13 +4132,7 @@ void DHT::RemoveRoute(const Node *n)
    int i=FindRoute(n->id);
    if(i==-1)
       return;
-   xarray<const Node*>& route_nodes=routes[i]->nodes;
-   for(int i=0; i<route_nodes.count(); i++) {
-      if(route_nodes[i]==n) {
-	 route_nodes.remove(i);
-	 return;
-      }
-   }
+   routes[i]->RemoveNode(n);
 }
 void DHT::AddRoute(const Node *n)
 {
@@ -4100,9 +4144,19 @@ void DHT::AddRoute(const Node *n)
    }
 try_again:
    const Ref<RouteBucket>& r=routes[i];
+   // remove a non-good node to free space
    if(r->nodes.count()>=K) {
       for(int j=0; j<r->nodes.count(); j++) {
 	 if(!r->nodes[j]->IsGood()) {
+	    r->nodes.remove(j);
+	    break;
+	 }
+      }
+   }
+   // prefer responded nodes
+   if(r->nodes.count()>=K && n->responded) {
+      for(int j=0; j<r->nodes.count(); j++) {
+	 if(!r->nodes[j]->responded) {
 	    r->nodes.remove(j);
 	    break;
 	 }
@@ -4133,23 +4187,30 @@ try_again:
 	 i=(n->id[byte]&mask)?0:1;
       } else {
 	 routes[0]=b1;
-	 routes.insert(b2,0);
+	 routes.insert(b2,1);
 	 i=(n->id[byte]&mask)?1:0;
       }
       LogNote(9,"splitted route bucket 0");
+      LogNote(9,"new route[0] prefix=%s",routes[0]->to_string());
+      LogNote(9,"new route[1] prefix=%s",routes[1]->to_string());
+      assert(routes[0]->PrefixMatch(node_id));
       goto try_again;
    }
-   r->fresh_timer.Reset();
+   r->SetFresh();
+   r->RemoveNode(n); // move the node to end of the list
    if(r->nodes.count()>=K)
       return;
-   for(int j=0; j<r->nodes.count(); j++) {
-      if(r->nodes[j]==n) {
-	 // move the node to end of the list
-	 r->nodes.remove(j);
+   LogNote(3,"adding node %s to route bucket %d (prefix=%s)",n->GetName(),i,r->to_string());
+   r->nodes.append(n);
+}
+void DHT::RouteBucket::RemoveNode(const Node *n)
+{
+   for(int j=0; j<nodes.count(); j++) {
+      if(nodes[j]==n) {
+	 nodes.remove(j);
+	 break;
       }
    }
-   LogNote(3,"adding node %s to route bucket %d (prefix=%d)",n->addr.to_string().get(),i,r->prefix_bits);
-   r->nodes.append(n);
 }
 bool DHT::RouteBucket::PrefixMatch(const xstring& id) const
 {
@@ -4168,16 +4229,16 @@ void DHT::AddGoodNodes(xarray<const Node*> &a,const xarray<const Node*> &nodes)
       if(nodes[i]->IsGood())
 	 a.append(nodes[i]);
 }
-void DHT::FindKNodes(const xstring& target_id,xarray<const Node*> &a)
+void DHT::FindNodes(const xstring& target_id,xarray<const Node*> &a,int max_count)
 {
    a.truncate();
    int i=FindRoute(target_id);
    if(i==-1)
       return;
    AddGoodNodes(a,routes[i]->nodes);
-   while(a.count()<K && ++i<routes.count())
+   while(a.count()<max_count && ++i<routes.count())
       AddGoodNodes(a,routes[i]->nodes);
-   if(a.count()>K)
+   if(a.count()>max_count)
       a.set_length(K);
 }
 void DHT::AddPeer(const xstring& info_hash,const xstring& a,bool seed)
@@ -4262,16 +4323,25 @@ void DHT::Restart()
 }
 void DHT::Save(const SMTaskRef<IOBuffer>& buf)
 {
-   LogNote(9,"saving state");
    xmap_p<BeNode> state;
    state.add("id",new BeNode(node_id));
    xarray_p<BeNode> b_nodes;
+   int responded_count=0;
    for(Node *n=nodes.each_begin(); n; n=nodes.each_next()) {
-      if(n->IsGood())
+      if(n->IsGood()) {
 	 b_nodes.append(new BeNode(n->addr.compact()));
+	 if(n->responded)
+	    responded_count++;
+      }
    }
+   LogNote(9,"saving state, %d good nodes (%d responded)",b_nodes.count(),responded_count);
    state.add("nodes",new BeNode(&b_nodes));
    BeNode(&state).Pack(buf);
+   for(int i=0; i<routes.count(); i++) {
+      const RouteBucket *r=routes[i];
+      LogNote(9,"route bucket %d: nodes count=%d prefix=%s",i,
+	 (int)r->nodes.count(),r->to_string());
+   }
 }
 void DHT::Load(const SMTaskRef<IOBuffer>& buf)
 {
@@ -4291,9 +4361,7 @@ void DHT::Load(const SMTaskRef<IOBuffer>& buf)
       BeNode *b_node=b_nodes->list[i];
       if(b_node->type!=BeNode::BE_STR)
 	 continue;
-      sockaddr_u a;
-      a.set_compact(b_node->str);
-      SendPing(a);
+      load_nodes.push(new xstring(b_node->str.copy()));
    }
 }
 void DHT::Save()
@@ -4374,8 +4442,10 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
 
    if(v>2) {
       s.appendf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().hexdump());
-      s.appendf("%stotal length: %llu\n",tab,torrent->TotalLength());
-      s.appendf("%spiece length: %u\n",tab,torrent->PieceLength());
+      if(torrent->HasMetadata()) {
+	 s.appendf("%stotal length: %llu\n",tab,torrent->TotalLength());
+	 s.appendf("%spiece length: %u\n",tab,torrent->PieceLength());
+      }
    }
 
    if(v>1) {

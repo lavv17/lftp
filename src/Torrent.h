@@ -78,15 +78,18 @@ class TorrentListener : public SMTask, protected ProtoLog, protected Networker
    sockaddr_u addr;
    Speedometer rate;
    void FillAddress(int port);
+   Time last_sent_udp;
+   int  last_sent_udp_count;
 public:
    TorrentListener(int a,int type=SOCK_STREAM);
    ~TorrentListener();
    int Do();
    int GetPort() const { return addr.port(); }
    const char *GetAddress() const { return addr.address(); }
-   const char *GetLogContext() { return type==SOCK_DGRAM?"torrent(udp)":"torrent"; }
+   const char *GetLogContext() { return type==SOCK_DGRAM?(af==AF_INET?"torrent(udp)":"torrent(udp6)"):"torrent"; }
 
    int SendUDP(const sockaddr_u& a,const xstring& buf);
+   bool MaySendUDP();
 };
 
 class DHT : public SMTask, protected ProtoLog
@@ -117,9 +120,13 @@ class DHT : public SMTask, protected ProtoLog
       void ResetLostPing() { ping_lost_count=0; }
       bool IsBetterThan(const Node *node,const xstring& target) const;
 
+      const char *GetName() const { return addr.to_string(); }
+
       Node(const xstring& i,const sockaddr_u& a,bool r)
 	 : id(i.copy()), addr(a), good_timer(15*60), token_timer(5*60),
-	   responded(r), ping_lost_count(0) {}
+	   responded(r), ping_lost_count(0) {
+	 good_timer.AddRandom(5);
+      }
 
       void SetToken(const xstring& t) { token.set(t); }
 
@@ -134,12 +141,19 @@ class DHT : public SMTask, protected ProtoLog
       xstring prefix;
       xarray<const Node*> nodes;
       Timer fresh_timer;
+
       bool IsFresh() const { return !fresh_timer.Stopped(); }
+      void SetFresh() { fresh_timer.Reset(); }
       bool PrefixMatch(const xstring& i) const;
+      void RemoveNode(const Node *n);
+
       RouteBucket(int pb,const xstring& p)
 	 : prefix_bits(pb), prefix(p.copy()), fresh_timer(15*60)
       {
 	 assert(prefix.length()>=size_t((prefix_bits+7)/8));
+      }
+      const char *to_string() const {
+	 return xstring::format("%s/%d",prefix.hexdump(),prefix_bits);
       }
    };
    class Request
@@ -147,12 +161,13 @@ class DHT : public SMTask, protected ProtoLog
    public:
       Ref<BeNode> data;
       sockaddr_u addr;
+      xstring node_id;
       Timer expire_timer;
       bool Expired() const { return expire_timer.Stopped(); }
-      const xstring& GetNodeId() const { return data->dict.lookup("a")->dict.lookup("id")->str; }
+      const xstring& GetNodeId() const { return node_id; }
 
-      Request(BeNode *b,const sockaddr_u& a)
-	 : data(b), addr(a), expire_timer(20) {}
+      Request(BeNode *b,const sockaddr_u& a,const xstring& id)
+	 : data(b), addr(a), node_id(id.copy()), expire_timer(180) {}
    };
    class Search
    {
@@ -166,7 +181,7 @@ class DHT : public SMTask, protected ProtoLog
       bool bootstrap;
 
       Search(const xstring& i)
-	 : target_id(i.copy()), best_node(0), depth(0), search_timer(20),
+	 : target_id(i.copy()), best_node(0), depth(0), search_timer(185),
 	   want_peers(false), noseed(false), bootstrap(false) {}
 
       bool IsFeasible(const Node *n) const;
@@ -194,6 +209,7 @@ class DHT : public SMTask, protected ProtoLog
    Timer search_cleanup_timer;
    Timer refresh_timer;
    Timer nodes_cleanup_timer;
+   Timer save_timer;
 
    // voting for new external IP
    xmap<unsigned> ip_votes;
@@ -205,6 +221,7 @@ class DHT : public SMTask, protected ProtoLog
    RefArray<Search> search;
    xmap_p<xarray_p<Peer> > peers;
 
+   xqueue_p<xstring> load_nodes;
    xqueue_p<xstring> bootstrap_nodes;
    SMTaskRef<Resolver> resolver;
 
@@ -214,7 +231,7 @@ class DHT : public SMTask, protected ProtoLog
    void RemoveRoute(const Node *n);
    Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded);
    int FindRoute(const xstring& i);
-   void FindKNodes(const xstring& i,xarray<const Node*> &a);
+   void FindNodes(const xstring& i,xarray<const Node*> &a,int max_count);
    static void AddGoodNodes(xarray<const Node*> &a,const xarray<const Node*> &nodes);
    void StartSearch(Search *s);
    void AddPeer(const xstring& ih,const xstring& ca,bool seed);
@@ -224,11 +241,12 @@ class DHT : public SMTask, protected ProtoLog
    BeNode *NewQuery(const char *q,xmap_p<BeNode>& a);
    BeNode *NewReply(const xstring& t0,xmap_p<BeNode>& r);
    BeNode *NewError(const xstring& t0,int code,const char *msg);
-   void SendMessage(BeNode *q,const sockaddr_u& a);
+   void SendMessage(BeNode *q,const sockaddr_u& a,const xstring& id=xstring::null);
    void SendMessage(Request *);
+   bool MaySendMessage();
    static const char *MessageType(BeNode *q);
    static int AddNodesToReply(xmap_p<BeNode> &r,const xstring& target,bool want_n4,bool want_n6);
-   int AddNodesToReply(xmap_p<BeNode> &r,const xstring& target);
+   int AddNodesToReply(xmap_p<BeNode> &r,const xstring& target,int max_count);
 
    enum {
       ERR_GENERIC=201,
@@ -251,7 +269,8 @@ public:
    const char *GetLogContext() { return af==AF_INET?"DHT":"DHT6"; }
    const xstring& GetNodeID() const { return node_id; }
 
-   void SendPing(const sockaddr_u& addr);
+   void SendPing(const sockaddr_u& addr,const xstring& id=xstring::null);
+   void SendPing(const Node *n) { SendPing(n->addr,n->id); }
    void AnnouncePeer(const Torrent *);
    void HandlePacket(BeNode *b,const sockaddr_u& src);
 
@@ -349,14 +368,15 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
       return dht;
    }
    static const SMTaskRef<DHT>& GetDHT(const sockaddr_u& a) { return GetDHT(a.family()); }
-   static const SMTaskRef<TorrentListener>& GetUDPSocket(const sockaddr_u& a)
+   static const SMTaskRef<TorrentListener>& GetUDPSocket(int af)
    {
 #if INET6
-      if(a.family()==AF_INET6)
+      if(af==AF_INET6)
 	 return listener_ipv6_udp;
 #endif
       return listener_udp;
    }
+   static const SMTaskRef<TorrentListener>& GetUDPSocket(const sockaddr_u& a) { return GetUDPSocket(a.family()); }
 
    static Torrent *FindTorrent(const xstring& info_hash) { return torrents.lookup(info_hash); }
    static void AddTorrent(Torrent *t) { torrents.add(t->GetInfoHash(),t); }
@@ -560,10 +580,6 @@ public:
       StartDHT();
       if(dht)
 	 dht->AddBootstrapNode(n);
-#if INET6
-      if(dht_ipv6)
-	 dht_ipv6->AddBootstrapNode(n);
-#endif
    }
 };
 
