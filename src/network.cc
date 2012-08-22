@@ -189,7 +189,7 @@ bool sockaddr_u::set_compact(const char *c,size_t len)
    } else if(len==18) {
       sa.sa_family=AF_INET6;
       memcpy(&in6.sin6_addr,c,16);
-      in6.sin6_port=htons((c[4]&255)|((c[5]&255)<<8));
+      in6.sin6_port=htons((c[16]&255)|((c[17]&255)<<8));
       return true;
 #endif
    }
