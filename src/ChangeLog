@@ -1,6 +1,11 @@
 2012-08-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* network.cc: fixed port byte order in compact.
+	* Torrent.cc, Torrent.h: split DHT off; save DHT to separate directory;
+	  check peer duplication and black-listing after setting port.
+	* DHT.cc, DHT.h: new files; send pings only when there is new node
+	  candidate and bucket is full; limit ping rate; change disk-cache
+	  format, save node_id too; handle changing node_id of remote nodes.
 
 2012-08-22  Alexander V. Lukyanov <lav@yars.free.net>
 
