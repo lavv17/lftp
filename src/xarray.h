@@ -98,7 +98,6 @@ public:
    void truncate() { set_length(0); }
    void insert(const T& n,int before) { *static_cast<T*>(_insert(before))=n; }
    void append(const T& n) { *static_cast<T*>(_append())=n; }
-   void append(const xarray<T>& a) { for(int i=0; i<a.count(); i++) append(a[i]); }
    void remove(int i) { _remove(i); }
    void remove(int i,int j) { _remove(i,j); }
    void chop() { _chop(); }
