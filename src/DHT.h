@@ -137,16 +137,6 @@ class DHT : public SMTask, protected ProtoLog
    public:
       xstring name;
       xarray_p<Peer> peers;
-      xmap<unsigned> votes;
-
-      double GetAvgVote() {
-	 if(votes.count()==0)
-	    return 0;
-	 double sum=0;
-	 for(unsigned v=votes.each_begin(); !votes.each_finished(); v=votes.each_next())
-	    sum+=v;
-	 return sum/votes.count();
-      }
    };
 
    int af;

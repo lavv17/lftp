@@ -130,8 +130,8 @@ int DHT::Do()
 	    else
 	       seeds+=p[i]->seed;
 	 }
-	 LogNote(9,"torrent %s has %d known peers (%d seeds) (%d votes, avg=%g)",
-	    torrents.each_key().hexdump(),p.count(),seeds,t->votes.count(),t->GetAvgVote());
+	 LogNote(9,"torrent %s has %d known peers (%d seeds)",
+	    torrents.each_key().hexdump(),p.count(),seeds);
 	 if(p.count()==0)
 	    torrents.remove(torrents.each_key());
       }
@@ -446,14 +446,12 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    SendMessage(NewError(t,ERR_PROTOCOL,"invalid token"),src);
 	    return;
 	 }
-	 const xstring& info_hash=a->lookup_str("target");
-	 if(info_hash.length()!=20)
+	 // target is sha1(info_hash+"rating")
+	 const xstring& target=a->lookup_str("target");
+	 if(target.length()!=20)
             return;
-         unsigned vote=a->lookup_int("vote");
-	 KnownTorrent *torrent=torrents.lookup(info_hash);
-	 if(torrent)
-	    torrent->votes.add(node->addr.compact(),vote);
-	 SendMessage(NewReply(t,r),src);
+         //unsigned vote=a->lookup_int("vote");
+	 //SendMessage(NewReply(t,r),src);
       } else {
 	 SendMessage(NewError(t,ERR_UNKNOWN_METHOD,"method unknown"),src);
       }
