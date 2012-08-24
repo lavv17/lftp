@@ -7,6 +7,7 @@
 	  candidate and bucket is full; limit ping rate; change disk-cache
 	  format, save node_id too; handle changing node_id of remote nodes.
 	* network.cc, network.h: (sockaddr_compact) new class.
+	* StatusLine.cc: call termcap functions from StatusLine ctor, not _init.
 
 2012-08-22  Alexander V. Lukyanov <lav@yars.free.net>
 

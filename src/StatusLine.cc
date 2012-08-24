@@ -59,6 +59,10 @@ int  StatusLine::GetWidth()
 
 StatusLine::StatusLine(int new_fd)
 {
+   to_status_line = get_string_term_cap("tsl", "ts");
+   from_status_line = get_string_term_cap("fsl", "fs");
+   prev_line = get_string_term_cap("cuu1","up");
+
    fd=new_fd;
    update_delayed=false;
    next_update_title_only=false;
@@ -131,9 +135,9 @@ void StatusLine::ShowN(const char *const* newstr,int n)
    }
 }
 
-const char *StatusLine::to_status_line = get_string_term_cap("tsl", "ts");
-const char *StatusLine::from_status_line = get_string_term_cap("fsl", "fs");
-const char *StatusLine::prev_line = get_string_term_cap("cuu1","up");
+const char *StatusLine::to_status_line;
+const char *StatusLine::from_status_line;
+const char *StatusLine::prev_line;
 
 void StatusLine::WriteTitle(const char *s, int fd) const
 {
