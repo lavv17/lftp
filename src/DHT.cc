@@ -406,10 +406,12 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 		  continue;
 	       if(!peer->IsGood())
 		  continue;
-	       if(peer->compact_addr.length()==6 && !want_n4)
+	       if(peer->compact_addr.family()==AF_INET && !want_n4)
 		  continue;
-	       if(peer->compact_addr.length()==18 && !want_n6)
+#if INET6
+	       if(peer->compact_addr.family()==AF_INET6 && !want_n6)
 		  continue;
+#endif
 	       values.append(new BeNode(peer->compact_addr));
 	       values_count++;
 	    }
@@ -441,6 +443,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 AddPeer(info_hash,peer_addr.compact(),seed,a->lookup_str("name"));
 	 SendMessage(NewReply(t,r),src);
       } else if(q.eq("vote")) {
+#if 0
 	 // need a valid token
 	 if(!node->TokenIsValid(a->lookup_str("token"))) {
 	    SendMessage(NewError(t,ERR_PROTOCOL,"invalid token"),src);
@@ -450,8 +453,11 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 const xstring& target=a->lookup_str("target");
 	 if(target.length()!=20)
             return;
-         //unsigned vote=a->lookup_int("vote");
-	 //SendMessage(NewReply(t,r),src);
+         unsigned vote=a->lookup_int("vote");
+	 // store the vote
+	 // return what?
+	 SendMessage(NewReply(t,r),src);
+#endif
       } else {
 	 SendMessage(NewError(t,ERR_UNKNOWN_METHOD,"method unknown"),src);
       }
@@ -472,11 +478,10 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       const xstring& id=r->lookup_str("id");
       if(id.length()!=20)
 	 return;
-      const xstring& ip=r->lookup_str("ip");
+      const sockaddr_compact& ip=sockaddr_compact::cast(r->lookup_str("ip"));
       if(ip && !ValidNodeId(node_id,ip)) {
 	 if(!ip_voted.lookup(src.compact_addr())) {
-	    sockaddr_u reported_ip;
-	    reported_ip.set_compact(ip);
+	    sockaddr_u reported_ip(ip);
 	    LogNote(2,"%s reported our IP as %s",src.to_string(),reported_ip.address());
 	    unsigned& votes=ip_votes.lookup_Lv(ip);
 	    votes++;
@@ -498,9 +503,9 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    for(int i=0; i<values->list.count(); i++) {
 	       if(values->list[i]->type!=BeNode::BE_STR)
 		  continue;
-	       const xstring &c=values->list[i]->str;
-	       sockaddr_u a;
-	       if(!a.set_compact(c) || !a.port())
+	       const sockaddr_compact &c=sockaddr_compact::cast(values->list[i]->str);
+	       sockaddr_u a(c);
+	       if(!a.port())
 		  continue;
 	       LogNote(9,"found peer %s for info_hash=%s",a.to_string(),info_hash.hexdump());
 	       if(torrent)
@@ -860,7 +865,7 @@ void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool
       i++;
    }
 }
-void DHT::AddPeer(const xstring& info_hash,const xstring& a,bool seed,const xstring& name)
+void DHT::AddPeer(const xstring& info_hash,const sockaddr_compact& a,bool seed,const xstring& name)
 {
    KnownTorrent *t=torrents.lookup(info_hash);
    if(!t) {
@@ -890,12 +895,11 @@ void DHT::AddPeer(const xstring& info_hash,const xstring& a,bool seed,const xstr
       p.remove(0);
    p.append(new Peer(a,seed));
 
-   sockaddr_u addr;
-   addr.set_compact(a);
+   sockaddr_u addr(a);
    LogNote(9,"added peer %s to torrent %s (%s)",addr.to_string(),info_hash.hexdump(),name?name.get():"no name");
 }
 
-void DHT::MakeNodeId(xstring &id,const xstring& ip,int r)
+void DHT::MakeNodeId(xstring &id,const sockaddr_compact& ip,int r)
 {
    // http://www.rasterbar.com/products/libtorrent/dht_sec.html
    static char v4mask[] = { 0x01, 0x07, 0x1f, 0x7f };
@@ -917,13 +921,13 @@ void DHT::MakeNodeId(xstring &id,const xstring& ip,int r)
       id.get_non_const()[i] = random()/13;
    id.get_non_const()[19] = r;
 }
-bool DHT::ValidNodeId(const xstring& id,const xstring& ip)
+bool DHT::ValidNodeId(const xstring& id,const sockaddr_compact& ip)
 {
    if(id.length()!=20)
       return false;
 
-   sockaddr_u addr;
-   if(!addr.set_compact(ip))
+   sockaddr_u addr(ip);
+   if(!addr.family())
       return false;
 
    if(addr.is_loopback() || addr.is_private())

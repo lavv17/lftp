@@ -161,7 +161,7 @@ void Torrent::StartDHT()
    const char *ip=ResMgr::Query("torrent:ip",0);
    if(!ip || !ip[0])
       ip="127.0.0.1";
-   xstring ip_packed;
+   sockaddr_compact ip_packed;
    ip_packed.get_space(4);
    inet_pton(AF_INET,ip,ip_packed.get_non_const());
    ip_packed.set_length(4);
@@ -3387,11 +3387,12 @@ int TorrentListener::Do()
    }
 
    if(type==SOCK_DGRAM) {
-      char buf[0x1000];
+      char buf[0x4000];
       sockaddr_u src;
       socklen_t src_len=sizeof(src);
       int res=recvfrom(sock,buf,sizeof(buf),0,&src.sa,&src_len);
       if(res==-1) {
+	 LogError(9,"recvfrom: %s",strerror(errno));
 	 Block(sock,POLLIN);
 	 return m;
       }

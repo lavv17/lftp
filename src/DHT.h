@@ -124,12 +124,12 @@ class DHT : public SMTask, protected ProtoLog
    class Peer
    {
    public:
-      xstring compact_addr;
+      sockaddr_compact compact_addr;
       Timer good_timer;
       bool seed;
 
-      Peer(const xstring &a,bool s)
-	 : compact_addr(a.copy()), good_timer(15*60), seed(s) {}
+      Peer(const sockaddr_compact &a,bool s)
+	 : compact_addr(a), good_timer(15*60), seed(s) {}
       bool IsGood() const { return !good_timer.Stopped(); }
    };
    class KnownTorrent
@@ -172,7 +172,7 @@ class DHT : public SMTask, protected ProtoLog
    int FindRoute(const xstring& i);
    void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good);
    void StartSearch(Search *s);
-   void AddPeer(const xstring& ih,const xstring& ca,bool seed,const xstring& name);
+   void AddPeer(const xstring& ih,const sockaddr_compact& ca,bool seed,const xstring& name);
 
    unsigned t; // transaction id
 
@@ -200,8 +200,8 @@ public:
    ~DHT();
    int Do();
 
-   static void MakeNodeId(xstring &id,const xstring& ip,int r=random()/13);
-   static bool ValidNodeId(const xstring &id,const xstring& ip);
+   static void MakeNodeId(xstring &id,const sockaddr_compact& ip,int r=random()/13);
+   static bool ValidNodeId(const xstring &id,const sockaddr_compact& ip);
    void Restart();
 
    const char *GetLogContext() { return af==AF_INET?"DHT":"DHT6"; }
