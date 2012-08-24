@@ -1,3 +1,7 @@
+2012-08-24	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document new torrent features.
+
 2012-03-26	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document torrent:retracker; fix type of xfer:log-file.

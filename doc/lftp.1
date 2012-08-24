@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "03 Jul 2012"
+.TH lftp 1 "24 Aug 2012"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.3.8.
+This man page documents lftp version 4.4.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -927,7 +927,8 @@ continue the process with shell's fg or bg commands.
 .BR torrent " [" OPTS "] " \fItorrent-files...\fP
 .PP
 Start BitTorrent process for the given \fItorrent-files\fP, which can be a
-local file or URL. Local wildcards are expanded. Existing files are first
+local file, URL, magnet link or plain \fIinfo_hash\fP written in hex.
+Local wildcards are expanded. Existing files are first
 validated unless \fI\-\-force\-valid\fP option is given. Missing pieces are
 downloaded. Files are stored in specified \fIdirectory\fP or current
 working directory by default. Seeding continues until ratio reachs
@@ -944,6 +945,10 @@ specifies base directory where files should be placed
 T}
 \-\-force\-valid	T{
 skip file validation (if you are sure they are ok).
+T}
+\-\-dht\-bootstrap=<node>	T{
+bootstrap DHT by sending a query to specified \fInode\fP. E.g. dht.transmissionbt.com:6881.
+This option should be used just once to fill local node cache.
 T}
 .TE
 .P
@@ -1698,6 +1703,7 @@ disconnect from server after this idle time. Default is 3 minutes.
 .BR net:limit-rate " (bytes per second)"
 limit transfer rate on data connection. 0 means unlimited. You can specify
 two numbers separated by colon to limit download and upload rate separately.
+Suffixes are supported, e.g. 100K means 102400.
 .TP
 .BR net:limit-max \ (bytes)
 limit accumulating of unused limit-rate. 0 means twice of limit-rate.
@@ -1853,6 +1859,9 @@ new peers are actively searched for.
 .TP
 .BR torrent:stop-on-ratio " (real number)"
 torrent stops when it's complete and ratio reached this number.
+.TP
+.BR torrent:use-dht \ (boolean)
+when true, DHT is used.
 .TP
 .BR xfer:clobber \ (boolean)
 if this setting is off, get commands will not overwrite existing
@@ -2027,6 +2036,10 @@ The file is used to store last working directories for each site visited.
 .I "~/.lftp/bg/"
 The directory is used to store named sockets for backgrounded lftp processes.
 .TP
+.I "~/.lftp/DHT/""
+The directory is used to store DHT id and nodes cache for IPv4 and IPv6.
+File name suffix is the host name.
+.TP
 .I "~/.netrc"
 The file is consulted to get default login and password to ftp server.
 Passwords are also searched here if an URL with user name but with no
@@ -2047,7 +2060,16 @@ RFC2518 (WebDAV),
 RFC2616 (http/1.1),
 RFC2617 (http/1.1 authentication),
 RFC2640 (ftp i18n),
-RFC4217 (ftp over ssl).
+RFC4217 (ftp over ssl),
+BEP0003 (BitTorrent Protocol),
+BEP0005 (DHT Protocol),
+BEP0006 (Fast Extension),
+BEP0007 (IPv6 Tracker Extension),
+BEP0009 (Extension for Peers to Send Metadata Files),
+BEP0010 (Extension Protocol),
+BEP0012 (Multitracker Metadata Extension),
+BEP0023 (Tracker Returns Compact Peer Lists),
+BEP0032 (DHT Extensions for IPv6).
 .br
 .na
 http://www.ietf.org/internet-drafts/draft-ietf-ftpext-mlst-16.txt
@@ -2059,6 +2081,8 @@ http://www.ietf.org/internet-drafts/draft-ietf-secsh-filexfer-10.txt
 http://wiki.theory.org/BitTorrentSpecification
 .br
 http://www.bittornado.com/docs/multitracker-spec.txt
+.br
+http://www.rasterbar.com/products/libtorrent/dht_sec.html (DHT security extension)
 .ad
 
 .SH AUTHOR
