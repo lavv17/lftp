@@ -840,7 +840,6 @@ void Torrent::DisconnectPeers()
 
 void Torrent::ParseMagnet(const char *m0)
 {
-   md_download.nset("",0); // start the download
    char *m=alloca_strdup(m0);
    for(char *p=strtok(m,"&"); p; p=strtok(NULL,"&")) {
       char *v=strchr(p,'=');
@@ -869,6 +868,7 @@ void Torrent::ParseMagnet(const char *m0)
 	    SetError("This torrent is already running");
 	    return;
 	 }
+	 StartMetadataDownload();
 	 AddTorrent(this);
       }
       else if(!strcmp(p,"tr")) {
@@ -902,11 +902,11 @@ int Torrent::Do()
 	    btih.hex_decode();
 	    assert(btih.length()==20);
 	    info_hash.move_here(btih);
-	    md_download.nset("",0); // start the download
 	    if(FindTorrent(info_hash)) {
 	       SetError("This torrent is already running");
 	       return MOVED;
 	    }
+	    StartMetadataDownload();
 	    AddTorrent(this);
 	    return MOVED;
 	 }
@@ -1718,7 +1718,7 @@ const xstring& Torrent::Status()
 	 return xstring::format(_("Getting meta-data: %s"),
 	    xstring::format("%u/%u",(unsigned)md_download.length(),(unsigned)metadata_size).get());
       else
-	 return xstring::get_tmp(_("Waiting for meta-data"));
+	 return xstring::get_tmp(_("Waiting for meta-data..."));
    }
    if(metainfo_data)
       return xstring::format(_("Getting meta-data: %s"),metainfo_data->Status());
@@ -2322,6 +2322,8 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    break;
 	 PacketHave *pp=static_cast<PacketHave*>(p);
 	 LogRecv(5,xstring::format("have(%u)",pp->piece));
+	 if(!parent->HasMetadata())
+	    break;
 	 if(pp->piece>=parent->total_pieces) {
 	    SetError("invalid piece index");
 	    break;
@@ -2364,6 +2366,8 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    SetError("fast extension is disabled");
 	    break;
 	 }
+	 if(!parent->HasMetadata())
+	    break;
 	 for(unsigned p=0; p<parent->total_pieces; p++)
 	    SetPieceHaving(p,1);
 	 break;
@@ -2374,6 +2378,8 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    SetError("fast extension is disabled");
 	    break;
 	 }
+	 if(!parent->HasMetadata())
+	    break;
 	 for(unsigned p=0; p<parent->total_pieces; p++)
 	    SetPieceHaving(p,0);
 	 break;
@@ -2385,6 +2391,8 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    SetError("fast extension is disabled");
 	    break;
 	 }
+	 if(!parent->HasMetadata())
+	    break;
 	 if(pp->piece>=parent->total_pieces) {
 	    SetError("invalid piece index");
 	    break;
@@ -2399,6 +2407,8 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    SetError("fast extension is disabled");
 	    break;
 	 }
+	 if(!parent->HasMetadata())
+	    break;
 	 if(pp->piece>=parent->total_pieces) {
 	    SetError("invalid piece index");
 	    break;
@@ -2427,6 +2437,8 @@ void TorrentPeer::HandlePacket(Packet *p)
    case MSG_PIECE: {
 	 PacketPiece *pp=static_cast<PacketPiece*>(p);
 	 LogRecv(7,xstring::format("piece:%u begin:%u size:%u",pp->index,pp->begin,(unsigned)pp->data.length()));
+	 if(!parent->HasMetadata())
+	    break;
 	 if(pp->index>=parent->total_pieces) {
 	    SetError("invalid piece index");
 	    break;
@@ -2468,6 +2480,8 @@ void TorrentPeer::HandlePacket(Packet *p)
 	    SetError("too large request");
 	    break;
 	 }
+	 if(!parent->HasMetadata())
+	    break;
 	 if(am_choking)
 	    break;
 	 if(pp->index>=parent->total_pieces) {
@@ -2513,7 +2527,7 @@ void Torrent::MetadataDownloaded()
    SHA1(md_download,new_info_hash);
    if(info_hash && info_hash.ne(new_info_hash)) {
       LogError(1,"downloaded metadata does not match info_hash, retrying");
-      md_download.nset("",0);
+      StartMetadataDownload();
       return;
    }
    SetMetadata(md_download);
@@ -2547,6 +2561,11 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
       }
       metadata_size=parent->metadata_size=pp->data->lookup_int("metadata_size");
       upload_only=pp->data->lookup_int("upload_only");
+
+      if(!parent->HasMetadata() && !msg_ext_metadata) {
+	 Disconnect();
+	 return;
+      }
 
       const xstring& v=pp->data->lookup_str("v");
       if(v)
@@ -2851,6 +2870,10 @@ int TorrentPeer::Do()
 	    else
 	       LogError(4,_("peer closed connection (before handshake)"));
 	 }
+	 Disconnect();
+	 return MOVED;
+      }
+      if(!parent->HasMetadata() && !LTEPExtensionEnabled()) {
 	 Disconnect();
 	 return MOVED;
       }
@@ -3392,7 +3415,8 @@ int TorrentListener::Do()
       socklen_t src_len=sizeof(src);
       int res=recvfrom(sock,buf,sizeof(buf),0,&src.sa,&src_len);
       if(res==-1) {
-	 LogError(9,"recvfrom: %s",strerror(errno));
+	 if(!E_RETRY(errno))
+	    LogError(9,"recvfrom: %s",strerror(errno));
 	 Block(sock,POLLIN);
 	 return m;
       }
