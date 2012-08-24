@@ -1,3 +1,7 @@
+2012-08-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* network.cc: fixed port byte order in compact.
+
 2012-08-22  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* network.cc: fixed set_compact for ipv6.

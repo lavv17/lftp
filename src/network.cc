@@ -183,13 +183,13 @@ bool sockaddr_u::set_compact(const char *c,size_t len)
    } else if(len==6) {
       sa.sa_family=AF_INET;
       memcpy(&in.sin_addr,c,4);
-      in.sin_port=htons((c[4]&255)|((c[5]&255)<<8));
+      in.sin_port=htons((c[5]&255)|((c[4]&255)<<8));
       return true;
 #if INET6
    } else if(len==18) {
       sa.sa_family=AF_INET6;
       memcpy(&in6.sin6_addr,c,16);
-      in6.sin6_port=htons((c[16]&255)|((c[17]&255)<<8));
+      in6.sin6_port=htons((c[17]&255)|((c[16]&255)<<8));
       return true;
 #endif
    }
@@ -200,8 +200,8 @@ const xstring& sockaddr_u::compact() const
    xstring& c=compact_addr();
    int p=port();
    if(c.length() && p) {
-      c.append(char(p&255));
       c.append(char(p>>8));
+      c.append(char(p&255));
    }
    return c;
 }
