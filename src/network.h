@@ -33,6 +33,32 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+class sockaddr_compact : public xstring
+{
+   void operator=(const sockaddr_compact&);   // disable assignment
+
+public:
+   int family() const {
+      if(length()==16 || length()==18)
+	 return AF_INET6;
+      if(length()==4 || length()==6)
+	 return AF_INET;
+      return 0;
+   }
+   int port() const {
+      if(length()==18 || length()==6)
+	 return ((buf[length()-2]&255)<<8)|(buf[length()-1]&255);
+      return 0;
+   }
+   static sockaddr_compact& get_tmp() {
+      return *(sockaddr_compact*)&xstring::get_tmp("",0);
+   }
+   static sockaddr_compact& cast(xstring& s) { return *(sockaddr_compact*)&s; }
+   static const sockaddr_compact& cast(const xstring& s) { return *(const sockaddr_compact*)&s; }
+   sockaddr_compact() {}
+   sockaddr_compact(const sockaddr_compact& c) : xstring(c.copy()) {}
+};
+
 union sockaddr_u
 {
    struct sockaddr	sa;
@@ -56,7 +82,9 @@ union sockaddr_u
    const char *address() const;
    int port() const;
    int bind_to(int s) const { return bind(s,&sa,addr_len()); }
-   sockaddr_u();
+   void clear() { memset(this,0,sizeof(*this)); }
+   sockaddr_u() { clear(); }
+   sockaddr_u(const sockaddr_compact& c) { clear(); set_compact(c); }
    bool is_reserved() const;
    bool is_multicast() const;
    bool is_loopback() const;
@@ -70,8 +98,8 @@ union sockaddr_u
    int family() const { return sa.sa_family; }
    bool set_compact(const char *c,size_t len);
    bool set_compact(const xstring& c) { return set_compact(c,c.length()); }
-   const xstring& compact() const;
-   xstring& compact_addr() const;
+   const sockaddr_compact& compact() const;
+   sockaddr_compact& compact_addr() const;
 };
 
 class Networker

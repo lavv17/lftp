@@ -6,6 +6,7 @@
 	* DHT.cc, DHT.h: new files; send pings only when there is new node
 	  candidate and bucket is full; limit ping rate; change disk-cache
 	  format, save node_id too; handle changing node_id of remote nodes.
+	* network.cc, network.h: (sockaddr_compact) new class.
 
 2012-08-22  Alexander V. Lukyanov <lav@yars.free.net>
 

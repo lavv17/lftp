@@ -48,11 +48,6 @@
 #include "ProtoLog.h"
 #include "xstring.h"
 
-sockaddr_u::sockaddr_u()
-{
-   memset(this,0,sizeof(*this));
-}
-
 const char *sockaddr_u::address() const
 {
 #ifdef HAVE_GETNAMEINFO
@@ -195,9 +190,9 @@ bool sockaddr_u::set_compact(const char *c,size_t len)
    }
    return false;
 }
-const xstring& sockaddr_u::compact() const
+const sockaddr_compact& sockaddr_u::compact() const
 {
-   xstring& c=compact_addr();
+   sockaddr_compact& c=compact_addr();
    int p=port();
    if(c.length() && p) {
       c.append(char(p>>8));
@@ -205,9 +200,9 @@ const xstring& sockaddr_u::compact() const
    }
    return c;
 }
-xstring& sockaddr_u::compact_addr() const
+sockaddr_compact& sockaddr_u::compact_addr() const
 {
-   xstring& c=xstring::get_tmp("");
+   sockaddr_compact& c=sockaddr_compact::get_tmp();
    if(family()==AF_INET)
       c.append((const char*)&in.sin_addr,4);
 #if INET6
