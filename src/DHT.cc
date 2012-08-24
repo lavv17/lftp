@@ -424,7 +424,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 SendMessage(NewReply(t,r),src);
       } else if(q.eq("announce_peer")) {
 	 // need a valid token
-	 if(node->TokenIsValid(a->lookup_str("token"))) {
+	 if(!node->TokenIsValid(a->lookup_str("token"))) {
 	    SendMessage(NewError(t,ERR_PROTOCOL,"invalid token"),src);
 	    return;
 	 }
@@ -442,7 +442,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 SendMessage(NewReply(t,r),src);
       } else if(q.eq("vote")) {
 	 // need a valid token
-	 if(node->TokenIsValid(a->lookup_str("token"))) {
+	 if(!node->TokenIsValid(a->lookup_str("token"))) {
 	    SendMessage(NewError(t,ERR_PROTOCOL,"invalid token"),src);
 	    return;
 	 }
