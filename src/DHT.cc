@@ -456,7 +456,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 bool seed=a->lookup_int("seed");
 	 sockaddr_u peer_addr(src);
 	 peer_addr.set_port(port);
-	 AddPeer(info_hash,peer_addr.compact(),seed,a->lookup_str("name"));
+	 AddPeer(info_hash,peer_addr.compact(),seed);
 	 SendMessage(NewReply(t,r),src);
       } else if(q.eq("vote")) {
 #if 0
@@ -863,6 +863,16 @@ bool DHT::RouteBucket::PrefixMatch(const xstring& id) const
       return false;
    return true;
 }
+const char *DHT::RouteBucket::to_string() const
+{
+   xstring &buf=xstring::get_tmp("",0);
+   prefix.hexdump_to(buf);
+   buf.truncate((prefix_bits+3)/4);
+   buf.append('/');
+   buf.appendf("%d",prefix_bits);
+   return buf;
+}
+
 void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool only_good)
 {
    a.truncate();
@@ -882,7 +892,7 @@ void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool
       i++;
    }
 }
-void DHT::AddPeer(const xstring& info_hash,const sockaddr_compact& a,bool seed,const xstring& name)
+void DHT::AddPeer(const xstring& info_hash,const sockaddr_compact& a,bool seed)
 {
    KnownTorrent *t=torrents.lookup(info_hash);
    if(!t) {
@@ -899,21 +909,22 @@ void DHT::AddPeer(const xstring& info_hash,const sockaddr_compact& a,bool seed,c
       }
       torrents.add(info_hash,t=new KnownTorrent());
    }
-   if(name)
-      t->name.set(name);
-   xarray_p<Peer>& p=t->peers;
-   for(int i=0; i<p.count(); i++) {
-      if(p[i]->compact_addr.eq(a)) {
-	 p.remove(i);
+   t->AddPeer(new Peer(a,seed));
+
+   sockaddr_u addr(a);
+   LogNote(9,"added peer %s to torrent %s",addr.to_string(),info_hash.hexdump());
+}
+void DHT::KnownTorrent::AddPeer(Peer *peer)
+{
+   for(int i=0; i<peers.count(); i++) {
+      if(peers[i]->compact_addr.eq(peer->compact_addr)) {
+	 peers.remove(i);
 	 break;
       }
    }
-   if(p.count()>=MAX_PEERS)
-      p.remove(0);
-   p.append(new Peer(a,seed));
-
-   sockaddr_u addr(a);
-   LogNote(9,"added peer %s to torrent %s (%s)",addr.to_string(),info_hash.hexdump(),name?name.get():"no name");
+   if(peers.count()>=MAX_PEERS)
+      peers.remove(0);
+   peers.append(peer);
 }
 
 void DHT::MakeNodeId(xstring &id,const sockaddr_compact& ip,int r)

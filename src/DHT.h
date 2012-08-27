@@ -85,9 +85,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       {
 	 assert(prefix.length()>=size_t((prefix_bits+7)/8));
       }
-      const char *to_string() const {
-	 return xstring::format("%s/%d",prefix.hexdump(),prefix_bits);
-      }
+      const char *to_string() const;
    };
    class Request
    {
@@ -136,8 +134,8 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    class KnownTorrent
    {
    public:
-      xstring name;
       xarray_p<Peer> peers;
+      void AddPeer(Peer *);
    };
 
    int af;
@@ -174,7 +172,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    int FindRoute(const xstring& i,int start=0);
    void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good);
    void StartSearch(Search *s);
-   void AddPeer(const xstring& ih,const sockaddr_compact& ca,bool seed,const xstring& name);
+   void AddPeer(const xstring& ih,const sockaddr_compact& ca,bool seed);
 
    unsigned t; // transaction id
 
