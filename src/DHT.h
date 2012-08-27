@@ -22,12 +22,13 @@
 
 class Torrent;
 
-class DHT : public SMTask, protected ProtoLog
+class DHT : public SMTask, protected ProtoLog, public ResClient
 {
    static const int K = 8;
    static const int MAX_NODES = 160*K;
    static const int MAX_TORRENTS = 1024;
    static const int MAX_PEERS = 60; // per torrent
+   static const int MAX_SEND_QUEUE = 256;
 
    class Node
    {
@@ -141,6 +142,7 @@ class DHT : public SMTask, protected ProtoLog
 
    int af;
 
+   RateLimit rate_limit;
    RefQueue<Request> send_queue;
    xmap_p<Request> sent_req; // the key is "t"
    Timer sent_req_expire_scan;
@@ -169,7 +171,7 @@ class DHT : public SMTask, protected ProtoLog
    void AddRoute(Node *);
    void RemoveRoute(Node *n);
    Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded);
-   int FindRoute(const xstring& i);
+   int FindRoute(const xstring& i,int start=0);
    void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good);
    void StartSearch(Search *s);
    void AddPeer(const xstring& ih,const sockaddr_compact& ca,bool seed,const xstring& name);
@@ -204,6 +206,7 @@ public:
    static bool ValidNodeId(const xstring &id,const sockaddr_compact& ip);
    void Restart();
 
+   void Reconfig(const char *name);
    const char *GetLogContext() { return af==AF_INET?"DHT":"DHT6"; }
    const xstring& GetNodeID() const { return node_id; }
 

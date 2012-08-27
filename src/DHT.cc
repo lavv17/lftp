@@ -38,11 +38,13 @@
 #include "plural.h"
 
 DHT::DHT(int af,const xstring& id)
-   : af(af), sent_req_expire_scan(5), search_cleanup_timer(5),
-     refresh_timer(1), nodes_cleanup_timer(30), save_timer(60),
+   : af(af), rate_limit("DHT"),
+     sent_req_expire_scan(5), search_cleanup_timer(5),
+     refresh_timer(1), nodes_cleanup_timer(30), save_timer(300),
      node_id(id.copy()), t(random())
 {
    LogNote(10,"creating DHT with id=%s",node_id.hexdump());
+   Reconfig(0);
 }
 DHT::~DHT()
 {
@@ -238,6 +240,11 @@ const char *DHT::MessageType(BeNode *q)
 }
 void DHT::SendMessage(BeNode *q,const sockaddr_u& a,const xstring& id)
 {
+   if(send_queue.count()>MAX_SEND_QUEUE) {
+      LogError(9,"tail dropping output message");
+      delete q;
+      return;
+   }
    send_queue.push(new Request(q,a,id));
 }
 void DHT::SendMessage(Request *req)
@@ -249,14 +256,17 @@ void DHT::SendMessage(Request *req)
       a.to_string(),q->Format1()));
    int res=-1;
    res=Torrent::GetUDPSocket(af)->SendUDP(a,q->Pack());
-   if(res!=-1 && q->lookup_str("y").eq("q"))
+   if(res!=-1 && q->lookup_str("y").eq("q")) {
       sent_req.add(q->lookup_str("t"),req);
-   else
+      rate_limit.BytesPut(res);
+   } else {
       delete req;
+   }
 }
 bool DHT::MaySendMessage()
 {
-   return Torrent::GetUDPSocket(af)->MaySendUDP();
+   return rate_limit.BytesAllowedToPut()>=256
+      && Torrent::GetUDPSocket(af)->MaySendUDP();
 }
 void DHT::SendPing(const sockaddr_u& a,const xstring& id)
 {
@@ -334,6 +344,12 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 {
    LogRecv(4,xstring::format("received DHT %s from %s %s",MessageType(p),
       src.to_string(),p->Format1()));
+   int pkt_len=p->str.length();
+   if(rate_limit.BytesAllowedToGet()<pkt_len) {
+      LogError(9,"dropping incoming message (rate limit exceeded)");
+      return;
+   }
+   rate_limit.BytesGot(pkt_len);
    const xstring& t=p->lookup_str("t");
    if(!t)
       return;
@@ -697,11 +713,11 @@ void DHT::AddNode(Node *n)
    if(nodes.count()==1 && search.count()==0)
       Bootstrap();
 }
-int DHT::FindRoute(const xstring& id)
+int DHT::FindRoute(const xstring& id,int i)
 {
    // routes are ordered by prefix length decreasing
    // the first route bucket always matches our node_id
-   for(int i=0; i<routes.count(); i++) {
+   for( ; i<routes.count(); i++) {
       if(routes[i]->PrefixMatch(id)) {
 	 return i;
       }
@@ -850,10 +866,11 @@ bool DHT::RouteBucket::PrefixMatch(const xstring& id) const
 void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool only_good)
 {
    a.truncate();
-   int i=FindRoute(target_id);
-   if(i==-1)
-      return;
+   int i=0;
    while(a.count()<max_count && i<routes.count()) {
+      i=FindRoute(target_id,i);
+      if(i==-1)
+	 return;
       const xarray<Node*> &nodes=routes[i]->nodes;
       int limit=max_count-a.count();
       for(int j=0; j<nodes.count() && limit>0; j++) {
@@ -1018,4 +1035,9 @@ void DHT::Load()
    FileStream *f=new FileStream(state_file,O_RDONLY);
    f->set_lock();
    state_io=new IOBufferFDStream(f,IOBuffer::GET);
+}
+
+void DHT::Reconfig(const char *name)
+{
+   rate_limit.Reconfig(name,"DHT");
 }
