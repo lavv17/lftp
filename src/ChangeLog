@@ -2,6 +2,7 @@
 
 	* DHT.cc, DHT.h: add rate limit; improve FindNodes by checking
 	  PrefixMatch on every next route bucket.
+	* Torrent.cc, Torrent.h: add name.utf-8 and path.utf-8 support.
 
 2012-08-24  Alexander V. Lukyanov <lav@yars.free.net>
 

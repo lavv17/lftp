@@ -381,6 +381,8 @@ BeNode *Torrent::Lookup(xmap_p<BeNode>& dict,const char *name,BeNode::be_type_t 
 void Torrent::InitTranslation()
 {
    const char *charset="UTF-8"; // default
+   recv_translate_utf8=new DirectedBuffer(DirectedBuffer::GET);
+   recv_translate_utf8->SetTranslation(charset,true);
    BeNode *b_charset=metainfo_tree->lookup("encoding",BeNode::BE_STR);
    if(b_charset)
       charset=b_charset->str;
@@ -395,6 +397,16 @@ void Torrent::TranslateString(BeNode *node) const
    recv_translate->PutTranslated(node->str);
    node->str_lc.nset(recv_translate->Get(),recv_translate->Size());
    recv_translate->Skip(recv_translate->Size());
+}
+void Torrent::TranslateStringFromUTF8(BeNode *node) const
+{
+   if(node->str_lc)
+      return;
+   const Ref<DirectedBuffer>& tr=recv_translate_utf8;
+   tr->ResetTranslation();
+   tr->PutTranslated(node->str);
+   node->str_lc.nset(tr->Get(),tr->Size());
+   tr->Skip(tr->Size());
 }
 
 void Torrent::SHA1(const xstring& str,xstring& buf)
@@ -747,11 +759,18 @@ void Torrent::SetMetadata(const xstring& md)
    piece_length=b_piece_length->num;
    LogNote(4,"Piece length is %u",piece_length);
 
-   BeNode *b_name=Lookup(info,"name",BeNode::BE_STR);
-   if(!b_name)
-      return;
-   TranslateString(b_name);
-   name.set(b_name->str_lc);
+   BeNode *b_name=info->lookup("name",BeNode::BE_STR);
+   BeNode *b_name_utf8=info->lookup("name.utf-8",BeNode::BE_STR);
+   if(b_name_utf8) {
+      TranslateStringFromUTF8(b_name_utf8);
+      name.set(b_name_utf8->str_lc);
+   } else if(b_name) {
+      TranslateString(b_name);
+      name.set(b_name->str_lc);
+   } else {
+      name.truncate();
+      info_hash.hexdump_to(name);
+   }
    Reconfig(0);
 
    BeNode *files=info->lookup("files");
@@ -1218,7 +1237,12 @@ void TorrentTracker::SendTrackerRequest(const char *event)
 
 const char *Torrent::MakePath(BeNode *p) const
 {
-   BeNode *path=p->lookup("path",BeNode::BE_LIST);
+   BeNode *path=p->lookup("path.utf-8",BeNode::BE_LIST);
+   void (Torrent::*tr)(BeNode*)const=&Torrent::TranslateStringFromUTF8;
+   if(!path) {
+      path=p->lookup("path",BeNode::BE_LIST);
+      tr=&Torrent::TranslateString;
+   }
    static xstring buf;
    buf.set(name);
    if(buf.eq("..") || buf[0]=='/') {
@@ -1227,7 +1251,7 @@ const char *Torrent::MakePath(BeNode *p) const
    for(int i=0; i<path->list.count(); i++) {
       BeNode *e=path->list[i];
       if(e->type==BeNode::BE_STR) {
-	 TranslateString(e);
+	 (this->*tr)(e);
 	 buf.append('/');
 	 if(e->str_lc.eq(".."))
 	    buf.append('_');

@@ -213,8 +213,10 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    xstring name;
 
    Ref<DirectedBuffer> recv_translate;
+   Ref<DirectedBuffer> recv_translate_utf8;
    void InitTranslation();
    void TranslateString(BeNode *node) const;
+   void TranslateStringFromUTF8(BeNode *node) const;
 
    TaskRefArray<TorrentTracker> trackers;
    bool TrackersDone() const;
