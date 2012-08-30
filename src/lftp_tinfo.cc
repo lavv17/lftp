@@ -40,10 +40,9 @@ extern "C" {
 # include <termcap.h>
 #endif
 }
-
+#include <stdlib.h>
 #include "lftp_tinfo.h"
 
-#if defined(HAVE_TIGETSTR)
 static bool terminfo_ok = true;
 static void init_terminfo()
 {
@@ -51,21 +50,27 @@ static void init_terminfo()
    if(initted) return;
    initted = true;
 
+#if defined(HAVE_TIGETSTR)
    int errret=0;
    if(setupterm(NULL, 1, &errret) == ERR)
       terminfo_ok = false;
-}
+#elif defined(HAVE_TGETSTR)
+   static char buf[2048];
+   if(tgetent(buf,getenv("TERM")) == -1)
+      terminfo_ok = false;
 #endif
+}
 
 const char *get_string_term_cap(const char *terminfo_cap, const char *tcap_cap)
 {
-#if defined(HAVE_TIGETSTR)
    init_terminfo();
-   if(terminfo_ok) {
-      /* Cast to work around missing const def in some ncurses installations: */
-      const char *ret = tigetstr(const_cast<char *>(terminfo_cap));
-      if(ret && ret != (char *)-1) return ret;
-   }
+   if(!terminfo_ok)
+      return 0;
+
+#if defined(HAVE_TIGETSTR)
+   /* Cast to work around missing const def in some ncurses installations: */
+   const char *ret = tigetstr(const_cast<char *>(terminfo_cap));
+   if(ret && ret != (char *)-1) return ret;
 #elif defined(HAVE_TGETSTR)
    const char *ret = tgetstr(const_cast<char *>(tcap_cap), 0);
    if(ret && ret != (const char *)-1)
