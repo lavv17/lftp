@@ -1,3 +1,8 @@
+2012-09-24  Robert Story <rstory@tislabs.com>
+
+	* Resolver.cc: fix a typo in error message and add a warning for
+	  untrusted domains if dns:strict-dnssec is not set.
+
 2012-08-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_tinfo.cc: fixed termcap coredump.

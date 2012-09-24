@@ -1,3 +1,7 @@
+2012-09-24  Robert Story <rstory@tislabs.com>
+
+	* README.dnssec: update README.dnssec
+
 2008-04-06  Nix  <nix@esperi.org.uk>
 
 	* configure.ac: Provide missing bits needed for strtoumax et al.
