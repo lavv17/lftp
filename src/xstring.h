@@ -199,6 +199,8 @@ public:
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
    bool begins_with(const char *o_buf,size_t o_len) const;
    bool begins_with(const char *s) const { return begins_with(s,strlen(s)); };
+   bool ends_with(const char *o_buf,size_t o_len) const;
+   bool ends_with(const char *s) const { return ends_with(s,strlen(s)); };
    bool eq(const char *o_buf,size_t o_len) const;
    bool eq(const char *s) const { return eq(s,strlen(s)); }
    bool eq(const xstring&o) const { return eq(o.get(),o.length()); }

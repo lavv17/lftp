@@ -116,14 +116,22 @@ lftp_module_info *lftp_module_info::base;
 
 static ResDecl res_mod_path("module:path", PKGLIBDIR"/"VERSION":"PKGLIBDIR, 0,0);
 
+/* dlopen can take a file without extension and automatically do the
+ * right thing, however that doesn't fit with this code that tries to
+ * stat before the dlopen call, hence need some help here */
+#if defined(__MACH__) && defined(__APPLE__)
+static const char ext[] = ".bundle";
+#else
+static const char ext[] = ".so";
+#endif
+
 static int access_so(xstring &fullpath)
 {
    int res=access(fullpath,F_OK);
    if(res==-1)
    {
-      int len=fullpath.length();
-      if(len>3 && strcmp(fullpath+len-3,".so"))
-	 fullpath.append(".so");
+      if(!fullpath.ends_with(ext))
+	 fullpath.append(ext);
       res=access(fullpath,F_OK);
    }
    return res;

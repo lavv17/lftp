@@ -188,6 +188,18 @@ bool xstring::begins_with(const char *o_buf,size_t o_len) const
       return true;
    return !memcmp(buf,o_buf,o_len);
 }
+bool xstring::ends_with(const char *o_buf,size_t o_len) const
+{
+   if(len<o_len)
+      return false;
+   if(buf+len-o_len==o_buf)
+      return true;
+   if(!buf || !o_buf)
+      return false;
+   if(o_len==0)
+      return true;
+   return !memcmp(buf+len-o_len,o_buf,o_len);
+}
 bool xstring::eq(const char *o_buf,size_t o_len) const
 {
    return len==o_len && begins_with(o_buf,o_len);

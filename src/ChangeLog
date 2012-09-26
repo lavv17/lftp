@@ -1,3 +1,11 @@
+2012-09-26  Christoph Junghans <ottxor@gentoo.org>
+
+	* module.cc: use ".bundle" for Darwin.
+
+2012-09-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: (ends_with) new method.
+
 2012-09-24  Robert Story <rstory@tislabs.com>
 
 	* Resolver.cc: fix a typo in error message and add a warning for
