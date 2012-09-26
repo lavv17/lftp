@@ -684,8 +684,10 @@ try_get_cmd:
 	 feeder->Bg();
       break;
    }
-   if(args==0 || args->count()==0)
+   if(args==0 || args->count()==0) {
+      AtFinish();
       return MOVED;  // empty command
+   }
 
    if(interactive)
       session->DontSleep(); // We don't want to get a delay just after user

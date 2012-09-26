@@ -1,3 +1,7 @@
+2012-09-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: call AtFinish after parsing an empty command.
+
 2012-09-26  Christoph Junghans <ottxor@gentoo.org>
 
 	* module.cc: use ".bundle" for Darwin.
