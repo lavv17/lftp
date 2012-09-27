@@ -857,6 +857,46 @@ void Torrent::DisconnectPeers()
    }
 }
 
+static int base32_char_to_value(char c)
+{
+   if(c>='a' && c<='z')
+      return c-'a';
+   if(c>='A' && c<='Z')
+      return c-'A';
+   if(c>='2' && c<='7')
+      return c-'2'+26;
+   if(c=='=')
+      return 0;
+   return -1;
+}
+void base32_decode(const char *base32,xstring& out)
+{
+   unsigned data=0;
+   int data_bits=0;
+   int pad_bits=0;
+   while(*base32) {
+      char c=*base32++;
+      if(c=='=' && data_bits<=pad_bits)
+	 return;
+      if(pad_bits>0 && c!='=')
+	 return;
+      int v=base32_char_to_value(c);
+      if(v==-1)
+	 return;
+      data|=((v&31)<<(11-data_bits));
+      data_bits+=5;
+      if(c=='=')
+	 pad_bits+=5;
+      if(data_bits>=8) {
+	 out.append(char((data>>8)&255));
+	 data<<=8;
+	 data_bits-=8;
+      }
+   }
+   if(data_bits>0)
+      out.append(char((data>>8)&255));
+}
+
 void Torrent::ParseMagnet(const char *m0)
 {
    char *m=alloca_strdup(m0);
@@ -871,17 +911,23 @@ void Torrent::ParseMagnet(const char *m0)
 	    return;
 	 }
 	 v+=9;
-	 if(strlen(v)!=40) {
-	    SetError("Invalid length of urn:btih in magnet link");
-	    return;
-	 }
 	 xstring& btih=xstring::get_tmp(v);
-	 btih.hex_decode();
-	 if(btih.length()!=20) {
-	    SetError("Invalid value of urn:btih in magnet link");
-	    return;
+	 if(btih.length()==40) {
+	    btih.hex_decode();
+	    if(btih.length()!=20) {
+	       SetError("Invalid value of urn:btih in magnet link");
+	       return;
+	    }
+	    info_hash.move_here(btih);
+	 } else {
+	    info_hash.truncate();
+	    base32_decode(v,info_hash);
+	    if(info_hash.length()!=20) {
+	       info_hash.unset();
+	       SetError("Invalid value of urn:btih in magnet link");
+	       return;
+	    }
 	 }
-	 info_hash.move_here(btih);
 
 	 if(FindTorrent(info_hash)) {
 	    SetError("This torrent is already running");

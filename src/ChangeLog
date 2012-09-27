@@ -1,3 +1,7 @@
+2012-09-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: add support for base32 btih in magnet.
+
 2012-09-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: call AtFinish after parsing an empty command.
