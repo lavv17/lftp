@@ -1,3 +1,20 @@
+Version 4.4.0 - 2012-09-27
+
+* implemented bittorrent extensions (FAST, DHT, LTEP, ut_metadata, ut_pex).
+* allow torrent downloading by magnet links.
+* new setting torrent:use-dht.
+* new torrent option --dht-bootstrap for manual bootstrapping.
+* add support for name.utf-8 and path.utf-8 in torrent metadata.
+* now net:limit-rate and net:limit-total-rate settings can use suffixes,
+  e.g. `set net:limit-total-rate 1M:500k'.
+* allow numeric user names.
+* don't try to upload if ALLO fails.
+* send PROT to ftp servers always when AUTH is activated.
+* fixed gnutls non-fatal error checking.
+* fixed execution of at-finish and at-queue-finish in certain cases.
+* fixed termcap coredump.
+* fixed opie on 64-bit machines.
+
 Version 4.3.8 - 2012-07-03
 
 * treat gnutls decryption error as non-fatal.

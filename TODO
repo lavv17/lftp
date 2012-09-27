@@ -54,3 +54,5 @@ implemented.
  * mirror: multiple source and target dirs.
 
  * APPE support.
+
+ * better debug message subsystem
