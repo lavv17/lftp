@@ -274,3 +274,4 @@ close.c
 locale.in.h
 localeconv.c
 timespec.c
+xsize.c
