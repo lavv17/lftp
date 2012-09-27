@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.3.5\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2012-07-03 15:49+0400\n"
+"POT-Creation-Date: 2012-09-27 17:16+0400\n"
 "PO-Revision-Date: 2012-01-25 23:38+0100\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -187,48 +187,48 @@ msgstr "Přerušení"
 msgid "Warning: discarding incomplete command\n"
 msgstr "Pozor: neúplný příkaz bude zahozen\n"
 
-#: src/CmdExec.cc:730
+#: src/CmdExec.cc:732
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tVykonává se vestavěný příkaz „%s“ [%s]\n"
 
-#: src/CmdExec.cc:735
+#: src/CmdExec.cc:737
 msgid "Queue is stopped."
 msgstr "Fronta je pozastavena."
 
-#: src/CmdExec.cc:740
+#: src/CmdExec.cc:742
 msgid "Now executing:"
 msgstr "Nyní se vykonává:"
 
-#: src/CmdExec.cc:751
+#: src/CmdExec.cc:753
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tČeká se na dokončení úlohy [%d]\n"
 
-#: src/CmdExec.cc:754
+#: src/CmdExec.cc:756
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tČeká se na dokončení úloh: "
 
-#: src/CmdExec.cc:763
+#: src/CmdExec.cc:765
 msgid "\tRunning\n"
 msgstr "\tBěžící\n"
 
-#: src/CmdExec.cc:765
+#: src/CmdExec.cc:767
 msgid "\tWaiting for command\n"
 msgstr "\tČeká se na příkaz\n"
 
-#: src/CmdExec.cc:1222
+#: src/CmdExec.cc:1224
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: příkaz „%s“ není zakompilován.\n"
 
 # TODO: use singular before elipses
-#: src/CmdExec.cc:1229
+#: src/CmdExec.cc:1231
 #, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "Použití: %s příkaz [argument…]\n"
 
-#: src/CmdExec.cc:1235
+#: src/CmdExec.cc:1237
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr "%s: místní relaci nelze vytvořit\n"
@@ -273,8 +273,8 @@ msgstr "Přístup selhal: "
 msgid "File cannot be accessed"
 msgstr "K souboru nelze přistoupit"
 
-#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4329
-#: src/ftpclass.cc:4338 src/Torrent.cc:2299
+#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4327
+#: src/ftpclass.cc:4336 src/Torrent.cc:3206
 msgid "Not connected"
 msgstr "Nepřipojeno"
 
@@ -411,33 +411,33 @@ msgid "Running connect program"
 msgstr "Běží připojovací program"
 
 #: src/Fish.cc:591 src/Http.cc:1136 src/SFtp.cc:730 src/SFtp.cc:1052
-#: src/ftpclass.cc:2718 src/ftpclass.cc:2936
+#: src/ftpclass.cc:2714 src/ftpclass.cc:2932
 msgid "Peer closed connection"
 msgstr "Druhá strana uzavřela spojení"
 
-#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:2866 src/ftpclass.cc:3966
+#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:2862 src/ftpclass.cc:3962
 msgid "extra server response"
 msgstr "nadbytečná odpověď serveru"
 
 #: src/Fish.cc:991 src/Http.cc:1848 src/Http.cc:1855 src/SFtp.cc:1311
-#: src/ftpclass.cc:4341 src/Torrent.cc:2301
+#: src/ftpclass.cc:4339 src/Torrent.cc:3208
 msgid "Connecting..."
 msgstr "Navazuje se spojení…"
 
-#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4347
+#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4345
 msgid "Connected"
 msgstr "Spojeno"
 
-#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1315 src/ftpclass.cc:4324
-#: src/ftpclass.cc:4352 src/ftpclass.cc:4366
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1315 src/ftpclass.cc:4322
+#: src/ftpclass.cc:4350 src/ftpclass.cc:4364
 msgid "Waiting for response..."
 msgstr "Čeká se na odpověď…"
 
-#: src/Fish.cc:997 src/Http.cc:1860 src/SFtp.cc:1317 src/ftpclass.cc:4386
+#: src/Fish.cc:997 src/Http.cc:1860 src/SFtp.cc:1317 src/ftpclass.cc:4384
 msgid "Receiving data"
 msgstr "Přijímají se data"
 
-#: src/Fish.cc:999 src/Http.cc:1853 src/SFtp.cc:1319 src/ftpclass.cc:4384
+#: src/Fish.cc:999 src/Http.cc:1853 src/SFtp.cc:1319 src/ftpclass.cc:4382
 msgid "Sending data"
 msgstr "Odesílají se data"
 
@@ -468,8 +468,8 @@ msgstr "Metoda POST selhala"
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP nad HTTP nemůže fungovat bez proxy, nastavte hftp:proxy."
 
-#: src/Http.cc:1061 src/ftpclass.cc:1336 src/Torrent.cc:2033
-#: src/Torrent.cc:2485
+#: src/Http.cc:1061 src/ftpclass.cc:1336 src/Torrent.cc:2886
+#: src/Torrent.cc:3408
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "socket z rodiny %d nelze vytvořit"
@@ -519,11 +519,11 @@ msgid "Received last chunk"
 msgstr "Přijat poslední kus dat (chunk)"
 
 #: src/Http.cc:1842 src/Resolver.cc:170 src/Resolver.cc:212
-#: src/ftpclass.cc:4334
+#: src/ftpclass.cc:4332
 msgid "Resolving host address..."
 msgstr "Překládá se adresa stroje…"
 
-#: src/Http.cc:1850 src/ftpclass.cc:4327
+#: src/Http.cc:1850 src/ftpclass.cc:4325
 msgid "Connection idle"
 msgstr "Spojení zahálí"
 
@@ -676,7 +676,7 @@ msgstr "%s: regulární výraz „%s“: %s\n"
 #: src/commands.cc:2209 src/commands.cc:2371 src/commands.cc:2399
 #: src/commands.cc:2406 src/commands.cc:2692 src/commands.cc:2719
 #: src/commands.cc:2726 src/commands.cc:3046 src/lftp.cc:265
-#: src/Torrent.cc:2789
+#: src/Torrent.cc:3797
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Podrobnosti získáte příkazem „help %s“.\n"
@@ -691,7 +691,7 @@ msgstr "Chyba socketu (%s) – obnovuje se spojení"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Navazuje se spojení na %s%s (%s) port %u"
 
-#: src/NetAccess.cc:219 src/Torrent.cc:2127
+#: src/NetAccess.cc:219 src/Torrent.cc:3003
 msgid "Timeout - reconnecting"
 msgstr "Časový limit vypršel – obnovuje se spojení"
 
@@ -752,73 +752,62 @@ msgstr "$Přesunutá úloha|Přesunuté úlohy$Přesunuté úlohy"
 msgid "Commands queued:"
 msgstr "Příkazy zařazeny do fronty:"
 
-#: src/ResMgr.cc:120
+#: src/ResMgr.cc:121
 msgid "no such variable"
 msgstr "proměnná neexistuje"
 
-#: src/ResMgr.cc:124
+#: src/ResMgr.cc:125
 msgid "ambiguous variable name"
 msgstr "nejednoznačný název proměnné"
 
-#: src/ResMgr.cc:383
+#: src/ResMgr.cc:384
 msgid "invalid boolean value"
 msgstr "neplatná pravdivostní hodnota"
 
-#: src/ResMgr.cc:405
+#: src/ResMgr.cc:406
 msgid "invalid boolean/auto value"
 msgstr "neplatná pravdivostní/automatická hodnota"
 
-#: src/ResMgr.cc:450
+#: src/ResMgr.cc:451 src/ResMgr.cc:751
 msgid "invalid number"
 msgstr "neplatné číslo"
 
-#: src/ResMgr.cc:463
+#: src/ResMgr.cc:464
 msgid "invalid floating point number"
 msgstr "neplatné desetinné číslo"
 
-#: src/ResMgr.cc:477
+#: src/ResMgr.cc:478
 msgid "invalid unsigned number"
 msgstr "neplatné bezznaménkové číslo"
 
-#: src/ResMgr.cc:715
+#: src/ResMgr.cc:716
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Neplatná zkratka jednotky času, povoleny jsou jen [smhd]"
 
-#: src/ResMgr.cc:723
+#: src/ResMgr.cc:724
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Neplatný formát času. Formát je <ČAS><JEDNOTKA>, např. 2h30m."
 
-#: src/ResMgr.cc:767 src/commands.cc:3206 src/commands.cc:3215
-msgid "Invalid range format. Format is min-max, e.g. 10-20."
-msgstr "Neplatný formát rozsahu. Formát je MIN-MAX, např. 10-20."
-
-#: src/ResMgr.cc:784
-msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
-msgstr "Neplatná přípona. Platné přípony jsou: k, M, G, T, P, E, Z, Y"
-
-#: src/ResMgr.cc:787
-msgid "Integer overflow"
+#: src/ResMgr.cc:756
+#, fuzzy
+msgid "integer overflow"
 msgstr "Přetečení celého čísla"
 
-#: src/ResMgr.cc:835
+#: src/ResMgr.cc:843
 msgid "Invalid IPv4 numeric address"
 msgstr "Neplatná IPv4 adresa"
 
-#: src/ResMgr.cc:846
+#: src/ResMgr.cc:854
 msgid "Invalid IPv6 numeric address"
 msgstr "Neplatná IPv6 adresa"
 
-#: src/ResMgr.cc:916 src/ResMgr.cc:920
+#: src/ResMgr.cc:924 src/ResMgr.cc:928
 msgid "this encoding is not supported"
 msgstr "toto kódování není podporováno"
 
-#: src/ResMgr.cc:926
+#: src/ResMgr.cc:934
 msgid "no closure defined for this setting"
 msgstr "toto nastavení nemá definován uzávěr"
-
-#: src/ResMgr.cc:937
-msgid "invalid pair of numbers"
-msgstr "neplatná dvojice čísel"
 
 #: src/Resolver.cc:231
 msgid "host name resolve timeout"
@@ -829,20 +818,21 @@ msgstr "při překladu názvu stroje vypršel časový limit"
 msgid "%d address$|es$ found"
 msgstr "%d $adresa nalezena|adresy nalezeny|adres nalezeno$"
 
-#: src/Resolver.cc:732
-msgid "DNS resoloution not trusted."
+#: src/Resolver.cc:733
+#, fuzzy
+msgid "DNS resolution not trusted."
 msgstr "Překlad DNS není důvěryhodný."
 
-#: src/Resolver.cc:833
+#: src/Resolver.cc:839
 msgid "Host name lookup failure"
 msgstr "Překlad názvu stroje selhal"
 
-#: src/Resolver.cc:865
+#: src/Resolver.cc:871
 #, c-format
 msgid "no such %s service"
 msgstr "služba %s neexistuje"
 
-#: src/Resolver.cc:886
+#: src/Resolver.cc:892
 msgid "No address found"
 msgstr "Žádná adresa nenalezena"
 
@@ -2287,6 +2277,10 @@ msgstr "Použití: %s [VOLBY] mód soubor…\n"
 msgid "invalid mode string: %s\n"
 msgstr "neplatný řetězec módu: %s\n"
 
+#: src/commands.cc:3206 src/commands.cc:3215
+msgid "Invalid range format. Format is min-max, e.g. 10-20."
+msgstr "Neplatný formát rozsahu. Formát je MIN-MAX, např. 10-20."
+
 #: src/commands.cc:3221
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
@@ -2368,7 +2362,7 @@ msgstr "Datový socket se připojuje na (%s) port %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Datový socket se připojuje na proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2219 src/ftpclass.cc:4148
+#: src/ftpclass.cc:2219 src/ftpclass.cc:4146
 msgid "Switching passive mode off"
 msgstr "Pasivní režim bude vypnut"
 
@@ -2376,84 +2370,84 @@ msgstr "Pasivní režim bude vypnut"
 msgid "Data connection established"
 msgstr "Datové spojení navázáno"
 
-#: src/ftpclass.cc:2532 src/ftpclass.cc:4278
+#: src/ftpclass.cc:2532 src/ftpclass.cc:4276
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "Je nastaveno ftp:ssl-force, ale server nepodporuje nebo nedovoluje SSL"
 
 # net:persist-retries
-#: src/ftpclass.cc:2882
+#: src/ftpclass.cc:2878
 msgid "Persist and retry"
 msgstr "Opakování po trvalé chybě"
 
-#: src/ftpclass.cc:3149
+#: src/ftpclass.cc:3145
 msgid "Closing data socket"
 msgstr "Datový socket bude uzavřen"
 
-#: src/ftpclass.cc:3171
+#: src/ftpclass.cc:3167
 msgid "Closing aborted data socket"
 msgstr "Přerušený datový socket bude uzavřen"
 
-#: src/ftpclass.cc:3950
+#: src/ftpclass.cc:3946
 msgid "saw file size in response"
 msgstr "v odpovědi zahlédnuta velikost souboru"
 
-#: src/ftpclass.cc:3980 src/ftpclass.cc:4007
+#: src/ftpclass.cc:3976 src/ftpclass.cc:4003
 msgid "Turning on sync-mode"
 msgstr "Zapíná se sync-mode (synchronní režim)"
 
-#: src/ftpclass.cc:4168
+#: src/ftpclass.cc:4166
 msgid "Switching passive mode on"
 msgstr "Zapíná se pasivní režim"
 
-#: src/ftpclass.cc:4315
+#: src/ftpclass.cc:4313
 msgid "FEAT negotiation..."
 msgstr "Vyjednávají se vlastnosti pomocí FEAT…"
 
-#: src/ftpclass.cc:4322
+#: src/ftpclass.cc:4320
 msgid "Sending commands..."
 msgstr "Odesílají se příkazy…"
 
-#: src/ftpclass.cc:4326
+#: src/ftpclass.cc:4324
 msgid "Delaying before retry"
 msgstr "Zpoždění před opakováním"
 
-#: src/ftpclass.cc:4345
+#: src/ftpclass.cc:4343
 msgid "TLS negotiation..."
 msgstr "Vyjednává se TLS…"
 
-#: src/ftpclass.cc:4349
+#: src/ftpclass.cc:4347
 msgid "Logging in..."
 msgstr "Probíhá přihlašování…"
 
-#: src/ftpclass.cc:4353
+#: src/ftpclass.cc:4351
 msgid "Making data connection..."
 msgstr "Vytváří se datové spojení…"
 
-#: src/ftpclass.cc:4356
+#: src/ftpclass.cc:4354
 msgid "Changing remote directory..."
 msgstr "Mění se vzdálený adresář…"
 
-#: src/ftpclass.cc:4362
+#: src/ftpclass.cc:4360
 msgid "Waiting for other copy peer..."
 msgstr "Čeká se na druhou kopírovací protistranu…"
 
-#: src/ftpclass.cc:4364 src/ftpclass.cc:4388
+#: src/ftpclass.cc:4362 src/ftpclass.cc:4386
 msgid "Waiting for transfer to complete"
 msgstr "Čeká se na dokončení přenosu"
 
-#: src/ftpclass.cc:4368
+#: src/ftpclass.cc:4366
 msgid "Waiting for TLS shutdown..."
 msgstr "Čeká se ukončení TLS…"
 
-#: src/ftpclass.cc:4370
+#: src/ftpclass.cc:4368
 msgid "Waiting for data connection..."
 msgstr "Čeká se na datové spojení…"
 
-#: src/ftpclass.cc:4376
+#: src/ftpclass.cc:4374
 msgid "Sending data/TLS"
 msgstr "Odesílají se data/TLS"
 
-#: src/ftpclass.cc:4378
+#: src/ftpclass.cc:4376
 msgid "Receiving data/TLS"
 msgstr "Přijímají se data/TLS"
 
@@ -2537,12 +2531,12 @@ msgid "%s ok, %d director$y|ies$ created\n"
 msgstr ""
 "%s uspělo, %d $adresář vytvořen|adresáře vytvořeny|adresářů vytvořeno$\n"
 
-#: src/module.cc:183
+#: src/module.cc:191
 #, c-format
 msgid "depend module `%s': %s\n"
 msgstr "závislý modul „%s“: %s\n"
 
-#: src/module.cc:203
+#: src/module.cc:211
 msgid "modules are not supported on this system"
 msgstr "na tomto systému nejsou moduly podporovány"
 
@@ -2635,102 +2629,113 @@ msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 "%s uspělo, %d $soubor odstraněn|soubory odstraněny|souborů odstraněno$\n"
 
-#: src/Torrent.cc:488
+#: src/Torrent.cc:623
 #, c-format
 msgid "Received valid info about %d peer$|s$"
 msgstr "Platné údaje o %d $protistraně|protistranách|protistranách$ přijaty"
 
-#: src/Torrent.cc:505
+#: src/Torrent.cc:639
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr ""
 "Platné údaje o %d IPv6 $protistraně|protistranách|protistranách$ přijaty"
 
-#: src/Torrent.cc:1417
+#: src/Torrent.cc:1788 src/Torrent.cc:1794
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Získávají se metadata: %s"
 
-#: src/Torrent.cc:1419
+#: src/Torrent.cc:1791
+#, fuzzy
+msgid "Waiting for meta-data..."
+msgstr "\tČeká se na příkaz\n"
+
+#: src/Torrent.cc:1796
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Ověřování platnosti: %u/%u (%u %%) %s%s"
 
-#: src/Torrent.cc:1429
+#: src/Torrent.cc:1806
 msgid "Shutting down: "
 msgstr "Ukončuje se: "
 
-#: src/Torrent.cc:2036
+#: src/Torrent.cc:2889
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Navazuje se spojení s protistranou %s na portu %u"
 
-#: src/Torrent.cc:2086 src/Torrent.cc:2173
+#: src/Torrent.cc:2939 src/Torrent.cc:3052
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "protistrana nečekaně uzavřela spojení po %s"
 
-#: src/Torrent.cc:2088
+#: src/Torrent.cc:2941
 msgid "peer closed connection (before handshake)"
 msgstr "protistrana uzavřela spojení (před dojednáním spojení)"
 
-#: src/Torrent.cc:2161
+#: src/Torrent.cc:3037
 msgid "peer closed connection"
 msgstr "protistrana uzavřela spojení"
 
-#: src/Torrent.cc:2175
+#: src/Torrent.cc:3054
 msgid "invalid peer response format"
 msgstr "neplatný tvar odpovědi protistrany"
 
-#: src/Torrent.cc:2303
+#: src/Torrent.cc:3210
 msgid "Handshaking..."
 msgstr "Dojednává se spojení…"
 
-#: src/Torrent.cc:2538
+#: src/Torrent.cc:3463
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Socket nelze navázat na torrent:port-range"
 
-#: src/Torrent.cc:2566
+#: src/Torrent.cc:3513
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Přijato spojení z [%s]:%d"
 
-#: src/Torrent.cc:2600
+#: src/Torrent.cc:3599
 msgid "peer handshake timeout"
 msgstr "protistrana nedojednala spojení včas"
 
-#: src/Torrent.cc:2612
+#: src/Torrent.cc:3611
 msgid "peer short handshake"
 msgstr "protistrana zkrátila dojednání spojení"
 
-#: src/Torrent.cc:2614
+#: src/Torrent.cc:3613
 msgid "peer closed just accepted connection"
 msgstr "protistrana uzavřela právě přijaté spojení"
 
-#: src/Torrent.cc:2665
+#: src/Torrent.cc:3664
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Vysemeňování na pozadí…\n"
 
-#: src/Torrent.cc:2680
+#: src/Torrent.cc:3679
 #, c-format
 msgid "next request in %s"
 msgstr "další požadavek za %s"
 
-#: src/Torrent.cc:2831
+#: src/Torrent.cc:3841
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Prosím, zadejte metadata souboru nebo URL.\n"
 
-#: src/attach.h:127
+#: src/attach.h:126
 #, c-format
 msgid "[%u] Attached to terminal %s. %s\n"
 msgstr "[%u] Připojeno k terminálu %s. %s\n"
 
-#: src/attach.h:139
+#: src/attach.h:138
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr "[%u] Připojeno k terminálu.\n"
+
+#~ msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
+#~ msgstr "Neplatná přípona. Platné přípony jsou: k, M, G, T, P, E, Z, Y"
+
+#~ msgid "invalid pair of numbers"
+#~ msgstr "neplatná dvojice čísel"
 
 #~ msgid "Saw `unknown', assume failed login"
 #~ msgstr ""

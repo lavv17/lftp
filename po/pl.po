@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.3.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2012-07-03 15:49+0400\n"
+"POT-Creation-Date: 2012-09-27 17:16+0400\n"
 "PO-Revision-Date: 2011-09-17 15:45+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -184,47 +184,47 @@ msgstr "Przerwanie"
 msgid "Warning: discarding incomplete command\n"
 msgstr "Uwaga: niekompletna komenda zosta³a odrzucona\n"
 
-#: src/CmdExec.cc:730
+#: src/CmdExec.cc:732
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tUruchamianie wbudowanego `%s' [%s]\n"
 
-#: src/CmdExec.cc:735
+#: src/CmdExec.cc:737
 msgid "Queue is stopped."
 msgstr "Kolejka jest zatrzymana."
 
-#: src/CmdExec.cc:740
+#: src/CmdExec.cc:742
 msgid "Now executing:"
 msgstr "Aktualnie wykonujê:"
 
-#: src/CmdExec.cc:751
+#: src/CmdExec.cc:753
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tOczekiwanie na zakoñczenie zadania [%d]\n"
 
-#: src/CmdExec.cc:754
+#: src/CmdExec.cc:756
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tOczekiwanie na zakoñczenie prac: "
 
-#: src/CmdExec.cc:763
+#: src/CmdExec.cc:765
 msgid "\tRunning\n"
 msgstr "\tUruchamianie\n"
 
-#: src/CmdExec.cc:765
+#: src/CmdExec.cc:767
 msgid "\tWaiting for command\n"
 msgstr "\tOczekiwanie na komendê\n"
 
-#: src/CmdExec.cc:1222
+#: src/CmdExec.cc:1224
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: komenda `%s' nie zosta³a wkompilowana.\n"
 
-#: src/CmdExec.cc:1229
+#: src/CmdExec.cc:1231
 #, fuzzy, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "U¿ycie: %s module [argumenty...]\n"
 
-#: src/CmdExec.cc:1235
+#: src/CmdExec.cc:1237
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr ""
@@ -267,8 +267,8 @@ msgstr "Brak dostêpu: "
 msgid "File cannot be accessed"
 msgstr "Brak dostêpu do pliku"
 
-#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4329
-#: src/ftpclass.cc:4338 src/Torrent.cc:2299
+#: src/FileAccess.cc:164 src/Fish.cc:986 src/SFtp.cc:1305 src/ftpclass.cc:4327
+#: src/ftpclass.cc:4336 src/Torrent.cc:3206
 msgid "Not connected"
 msgstr "Nie po³±czony"
 
@@ -404,33 +404,33 @@ msgid "Running connect program"
 msgstr "Uruchamianie programu ³±cz±cego"
 
 #: src/Fish.cc:591 src/Http.cc:1136 src/SFtp.cc:730 src/SFtp.cc:1052
-#: src/ftpclass.cc:2718 src/ftpclass.cc:2936
+#: src/ftpclass.cc:2714 src/ftpclass.cc:2932
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamkn±³ po³±czenie"
 
-#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:2866 src/ftpclass.cc:3966
+#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:2862 src/ftpclass.cc:3962
 msgid "extra server response"
 msgstr "dodatkowa odpowied¼ serwera"
 
 #: src/Fish.cc:991 src/Http.cc:1848 src/Http.cc:1855 src/SFtp.cc:1311
-#: src/ftpclass.cc:4341 src/Torrent.cc:2301
+#: src/ftpclass.cc:4339 src/Torrent.cc:3208
 msgid "Connecting..."
 msgstr "£±czenie siê..."
 
-#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4347
+#: src/Fish.cc:993 src/SFtp.cc:1313 src/ftpclass.cc:4345
 msgid "Connected"
 msgstr "Po³±czono"
 
-#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1315 src/ftpclass.cc:4324
-#: src/ftpclass.cc:4352 src/ftpclass.cc:4366
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1315 src/ftpclass.cc:4322
+#: src/ftpclass.cc:4350 src/ftpclass.cc:4364
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowied¼..."
 
-#: src/Fish.cc:997 src/Http.cc:1860 src/SFtp.cc:1317 src/ftpclass.cc:4386
+#: src/Fish.cc:997 src/Http.cc:1860 src/SFtp.cc:1317 src/ftpclass.cc:4384
 msgid "Receiving data"
 msgstr "Otrzymujê dane"
 
-#: src/Fish.cc:999 src/Http.cc:1853 src/SFtp.cc:1319 src/ftpclass.cc:4384
+#: src/Fish.cc:999 src/Http.cc:1853 src/SFtp.cc:1319 src/ftpclass.cc:4382
 msgid "Sending data"
 msgstr "Wysy³am dane"
 
@@ -461,8 +461,8 @@ msgstr "nie powiod³a siê metoda POST"
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp poprzez http mo¿e nie dzia³aæ bez proxy, ustaw hftp:proxy"
 
-#: src/Http.cc:1061 src/ftpclass.cc:1336 src/Torrent.cc:2033
-#: src/Torrent.cc:2485
+#: src/Http.cc:1061 src/ftpclass.cc:1336 src/Torrent.cc:2886
+#: src/Torrent.cc:3408
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie mo¿na utworzyæ gniazda dla rodziny adresu %d"
@@ -512,11 +512,11 @@ msgid "Received last chunk"
 msgstr "Przes³ano ostatni fragment"
 
 #: src/Http.cc:1842 src/Resolver.cc:170 src/Resolver.cc:212
-#: src/ftpclass.cc:4334
+#: src/ftpclass.cc:4332
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
-#: src/Http.cc:1850 src/ftpclass.cc:4327
+#: src/Http.cc:1850 src/ftpclass.cc:4325
 msgid "Connection idle"
 msgstr "Po³±czenie bezczynne"
 
@@ -669,7 +669,7 @@ msgstr "%s: wyra¿enie regularne `%s': %s\n"
 #: src/commands.cc:2209 src/commands.cc:2371 src/commands.cc:2399
 #: src/commands.cc:2406 src/commands.cc:2692 src/commands.cc:2719
 #: src/commands.cc:2726 src/commands.cc:3046 src/lftp.cc:265
-#: src/Torrent.cc:2789
+#: src/Torrent.cc:3797
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania wiêkszej ilo¶ci informacji spróbuj `help %s'.\n"
@@ -684,7 +684,7 @@ msgstr "B³±d po³±czenia (%s) - powtórne ³±czenie"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "£±czenie siê z %s%s (%s) port %u"
 
-#: src/NetAccess.cc:219 src/Torrent.cc:2127
+#: src/NetAccess.cc:219 src/Torrent.cc:3003
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - ³±czê siê ponownie"
 
@@ -745,73 +745,62 @@ msgstr "Przesuniêto zadani$e|a|a$"
 msgid "Commands queued:"
 msgstr "Skolejkowane polecenia:"
 
-#: src/ResMgr.cc:120
+#: src/ResMgr.cc:121
 msgid "no such variable"
 msgstr "nie ma takiej zmiennej"
 
-#: src/ResMgr.cc:124
+#: src/ResMgr.cc:125
 msgid "ambiguous variable name"
 msgstr "dwuznaczna nazwa zmiennej"
 
-#: src/ResMgr.cc:383
+#: src/ResMgr.cc:384
 msgid "invalid boolean value"
 msgstr "nieprawid³owa warto¶æ zmiennej logicznej (bool)"
 
-#: src/ResMgr.cc:405
+#: src/ResMgr.cc:406
 msgid "invalid boolean/auto value"
 msgstr "nieprawid³owa warto¶æ zmiennej bool/auto"
 
-#: src/ResMgr.cc:450
+#: src/ResMgr.cc:451 src/ResMgr.cc:751
 msgid "invalid number"
 msgstr "nieprawid³owy numer"
 
-#: src/ResMgr.cc:463
+#: src/ResMgr.cc:464
 msgid "invalid floating point number"
 msgstr "nieprawid³owa liczba zmiennoprzecinkowa"
 
-#: src/ResMgr.cc:477
+#: src/ResMgr.cc:478
 msgid "invalid unsigned number"
 msgstr "nieprawid³owa liczba bez znaku"
 
-#: src/ResMgr.cc:715
+#: src/ResMgr.cc:716
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Nieprawid³owa litera-jednostka czasu, wy³±cznie [shmd] s± dozwolone."
 
-#: src/ResMgr.cc:723
+#: src/ResMgr.cc:724
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawid³owy format czasu. Format to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:767 src/commands.cc:3206 src/commands.cc:3215
-msgid "Invalid range format. Format is min-max, e.g. 10-20."
-msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
-
-#: src/ResMgr.cc:784
-msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
-msgstr "Nieprawid³owy przyrostek. Poprawne to: k, M, G, T, P, E, Z, Y"
-
-#: src/ResMgr.cc:787
-msgid "Integer overflow"
+#: src/ResMgr.cc:756
+#, fuzzy
+msgid "integer overflow"
 msgstr "Przepe³nienie liczby ca³kowitej"
 
-#: src/ResMgr.cc:835
+#: src/ResMgr.cc:843
 msgid "Invalid IPv4 numeric address"
 msgstr "Nieprawid³owy numeryczny adres IPv4"
 
-#: src/ResMgr.cc:846
+#: src/ResMgr.cc:854
 msgid "Invalid IPv6 numeric address"
 msgstr "Nieprawid³owy numeryczny adres IPv6"
 
-#: src/ResMgr.cc:916 src/ResMgr.cc:920
+#: src/ResMgr.cc:924 src/ResMgr.cc:928
 msgid "this encoding is not supported"
 msgstr "to kodowanie nie jest wspierane"
 
-#: src/ResMgr.cc:926
+#: src/ResMgr.cc:934
 msgid "no closure defined for this setting"
 msgstr "nie zdefiniowano zamkniêcia dla tego ustawienia"
-
-#: src/ResMgr.cc:937
-msgid "invalid pair of numbers"
-msgstr "nieprawid³owa para liczb"
 
 #: src/Resolver.cc:231
 msgid "host name resolve timeout"
@@ -822,20 +811,21 @@ msgstr "przekroczony czas rozwi±zywania nazwy hosta"
 msgid "%d address$|es$ found"
 msgstr "Znaleziono %d adres$|y|ów$"
 
-#: src/Resolver.cc:732
-msgid "DNS resoloution not trusted."
+#: src/Resolver.cc:733
+#, fuzzy
+msgid "DNS resolution not trusted."
 msgstr "Rozwi±zanie nazwy przez DNS jest niezaufane."
 
-#: src/Resolver.cc:833
+#: src/Resolver.cc:839
 msgid "Host name lookup failure"
 msgstr "Rozwi±zywanie nazwy hosta nie powiod³o siê"
 
-#: src/Resolver.cc:865
+#: src/Resolver.cc:871
 #, c-format
 msgid "no such %s service"
 msgstr "nie ma takiej us³ugi %s"
 
-#: src/Resolver.cc:886
+#: src/Resolver.cc:892
 msgid "No address found"
 msgstr "Nie znaleziono adresu"
 
@@ -2277,6 +2267,10 @@ msgstr "U¿ycie: %s [OPCJE] tryb pliki...\n"
 msgid "invalid mode string: %s\n"
 msgstr "nieprawid³owy tryb: %s\n"
 
+#: src/commands.cc:3206 src/commands.cc:3215
+msgid "Invalid range format. Format is min-max, e.g. 10-20."
+msgstr "Nieprawid³owy format zakresu. Format to min-maks, np. 10-20."
+
 #: src/commands.cc:3221
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
@@ -2357,7 +2351,7 @@ msgstr "£±czenie siê (gniazdo danych) z (%s) port %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "£±czenie siê (gniazdo danych) z proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2219 src/ftpclass.cc:4148
+#: src/ftpclass.cc:2219 src/ftpclass.cc:4146
 msgid "Switching passive mode off"
 msgstr "Wy³±czam tryb pasywny"
 
@@ -2365,85 +2359,85 @@ msgstr "Wy³±czam tryb pasywny"
 msgid "Data connection established"
 msgstr "Ustanowiono po³±czenie dla danych"
 
-#: src/ftpclass.cc:2532 src/ftpclass.cc:4278
+#: src/ftpclass.cc:2532 src/ftpclass.cc:4276
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force jest ustawione i serwer nie wspiera lub nie zezwala\n"
 "na po³±czenia SSL"
 
-#: src/ftpclass.cc:2882
+#: src/ftpclass.cc:2878
 msgid "Persist and retry"
 msgstr "Ponowne wznawianie"
 
-#: src/ftpclass.cc:3149
+#: src/ftpclass.cc:3145
 msgid "Closing data socket"
 msgstr "Zamykanie gniazda danych"
 
-#: src/ftpclass.cc:3171
+#: src/ftpclass.cc:3167
 msgid "Closing aborted data socket"
 msgstr "Zamykanie gniazda danych po przerwaniu"
 
-#: src/ftpclass.cc:3950
+#: src/ftpclass.cc:3946
 msgid "saw file size in response"
 msgstr "w odpowiedzi pojawi³ siê rozmiar pliku"
 
-#: src/ftpclass.cc:3980 src/ftpclass.cc:4007
+#: src/ftpclass.cc:3976 src/ftpclass.cc:4003
 msgid "Turning on sync-mode"
 msgstr "W³±czanie trybu sync"
 
-#: src/ftpclass.cc:4168
+#: src/ftpclass.cc:4166
 msgid "Switching passive mode on"
 msgstr "W³±czam tryb pasywny"
 
-#: src/ftpclass.cc:4315
+#: src/ftpclass.cc:4313
 msgid "FEAT negotiation..."
 msgstr "Negocjacja FEAT..."
 
-#: src/ftpclass.cc:4322
+#: src/ftpclass.cc:4320
 msgid "Sending commands..."
 msgstr "Wysy³anie komend..."
 
-#: src/ftpclass.cc:4326
+#: src/ftpclass.cc:4324
 msgid "Delaying before retry"
 msgstr "Opó¼nienie przed ponownym po³±czeniem"
 
-#: src/ftpclass.cc:4345
+#: src/ftpclass.cc:4343
 msgid "TLS negotiation..."
 msgstr "Negocjacja TLS..."
 
-#: src/ftpclass.cc:4349
+#: src/ftpclass.cc:4347
 msgid "Logging in..."
 msgstr "Logowanie siê..."
 
-#: src/ftpclass.cc:4353
+#: src/ftpclass.cc:4351
 msgid "Making data connection..."
 msgstr "Ustanawianie po³±czenia dla danych..."
 
-#: src/ftpclass.cc:4356
+#: src/ftpclass.cc:4354
 msgid "Changing remote directory..."
 msgstr "Zmiana zdalnego katalogu..."
 
-#: src/ftpclass.cc:4362
+#: src/ftpclass.cc:4360
 msgid "Waiting for other copy peer..."
 msgstr "Oczekiwanie na inne kopiowanie..."
 
-#: src/ftpclass.cc:4364 src/ftpclass.cc:4388
+#: src/ftpclass.cc:4362 src/ftpclass.cc:4386
 msgid "Waiting for transfer to complete"
 msgstr "Oczekiwanie na zakoñczenie transferu"
 
-#: src/ftpclass.cc:4368
+#: src/ftpclass.cc:4366
 msgid "Waiting for TLS shutdown..."
 msgstr "Oczekiwanie na zakoÃ±czenie TLS..."
 
-#: src/ftpclass.cc:4370
+#: src/ftpclass.cc:4368
 msgid "Waiting for data connection..."
 msgstr "Oczekiwanie na poÂ³Â±czenie dla danych..."
 
-#: src/ftpclass.cc:4376
+#: src/ftpclass.cc:4374
 msgid "Sending data/TLS"
 msgstr "Wysy³am dane/TLS"
 
-#: src/ftpclass.cc:4378
+#: src/ftpclass.cc:4376
 msgid "Receiving data/TLS"
 msgstr "Otrzymujê dane/TLS"
 
@@ -2526,12 +2520,12 @@ msgstr "%s nie uda³o siê %d z %d katalog$|i|ów$\n"
 msgid "%s ok, %d director$y|ies$ created\n"
 msgstr "%s ok, utworzono %d katalog$|i|ów$\n"
 
-#: src/module.cc:183
+#: src/module.cc:191
 #, c-format
 msgid "depend module `%s': %s\n"
 msgstr "zale¿no¶ci modu³u `%s': %s\n"
 
-#: src/module.cc:203
+#: src/module.cc:211
 msgid "modules are not supported on this system"
 msgstr "modu³y nie s± wspierane na tym systemie"
 
@@ -2622,101 +2616,112 @@ msgstr "%s ok, %d katalog$|i|ów$ usuniêto\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usuniêto\n"
 
-#: src/Torrent.cc:488
+#: src/Torrent.cc:623
 #, c-format
 msgid "Received valid info about %d peer$|s$"
 msgstr "Otrzymano poprawne informacje o %d u¿ytkownik$u|ach|ach$"
 
-#: src/Torrent.cc:505
+#: src/Torrent.cc:639
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr "Otrzymano poprawne informacje o %d u¿ytkownik$u|ach|ach$ IPv6"
 
-#: src/Torrent.cc:1417
+#: src/Torrent.cc:1788 src/Torrent.cc:1794
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Pobieranie metadanych: %s"
 
-#: src/Torrent.cc:1419
+#: src/Torrent.cc:1791
+#, fuzzy
+msgid "Waiting for meta-data..."
+msgstr "\tOczekiwanie na komendê\n"
+
+#: src/Torrent.cc:1796
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Sprawdzanie poprawno¶ci: %u/%u (%u%%) %s%s"
 
-#: src/Torrent.cc:1429
+#: src/Torrent.cc:1806
 msgid "Shutting down: "
 msgstr "Zamykanie: "
 
-#: src/Torrent.cc:2036
+#: src/Torrent.cc:2889
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "£±czenie siê z u¿ytkownikiem %s na porcie %u"
 
-#: src/Torrent.cc:2086 src/Torrent.cc:2173
+#: src/Torrent.cc:2939 src/Torrent.cc:3052
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "druga strona nieoczekiwanie zamknê³a po³±czenie po %s"
 
-#: src/Torrent.cc:2088
+#: src/Torrent.cc:2941
 msgid "peer closed connection (before handshake)"
 msgstr "druga strona zamknê³a po³±czenie (przed jego ustanowieniem)"
 
-#: src/Torrent.cc:2161
+#: src/Torrent.cc:3037
 msgid "peer closed connection"
 msgstr "druga strona zamknê³a po³±czenie"
 
-#: src/Torrent.cc:2175
+#: src/Torrent.cc:3054
 msgid "invalid peer response format"
 msgstr "nieprawid³owy format odpowiedzi u¿ytkownika"
 
-#: src/Torrent.cc:2303
+#: src/Torrent.cc:3210
 msgid "Handshaking..."
 msgstr "£±czenie..."
 
-#: src/Torrent.cc:2538
+#: src/Torrent.cc:3463
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Nie mo¿na dowi±zaæ gniazda do torrent:zakres-portów"
 
-#: src/Torrent.cc:2566
+#: src/Torrent.cc:3513
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Przyjêto po³±czenie od [%s]:%d"
 
-#: src/Torrent.cc:2600
+#: src/Torrent.cc:3599
 msgid "peer handshake timeout"
 msgstr "up³yn±³ limit czasu nawi±zywania po³±czenia z drug± stron±"
 
-#: src/Torrent.cc:2612
+#: src/Torrent.cc:3611
 msgid "peer short handshake"
 msgstr "nawi±zanie po³±czenia z drug± stron± zosta³o uciête"
 
-#: src/Torrent.cc:2614
+#: src/Torrent.cc:3613
 msgid "peer closed just accepted connection"
 msgstr "druga strona zamknê³a ¶wie¿o przyjête po³±czenie"
 
-#: src/Torrent.cc:2665
+#: src/Torrent.cc:3664
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Karmienie w tle...\n"
 
-#: src/Torrent.cc:2680
+#: src/Torrent.cc:3679
 #, c-format
 msgid "next request in %s"
 msgstr "nastêpne ¿±danie w %s"
 
-#: src/Torrent.cc:2831
+#: src/Torrent.cc:3841
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Proszê podaæ plik z metadanymi lub URL.\n"
 
-#: src/attach.h:127
+#: src/attach.h:126
 #, c-format
 msgid "[%u] Attached to terminal %s. %s\n"
 msgstr "[%u] Do³±czono do terminala %s. %s\n"
 
-#: src/attach.h:139
+#: src/attach.h:138
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr "[%u] Do³±czono do terminala.\n"
+
+#~ msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
+#~ msgstr "Nieprawid³owy przyrostek. Poprawne to: k, M, G, T, P, E, Z, Y"
+
+#~ msgid "invalid pair of numbers"
+#~ msgstr "nieprawid³owa para liczb"
 
 #~ msgid "Saw `unknown', assume failed login"
 #~ msgstr "Pojawi³o siê `unknown', przypuszczalnie logowanie nie powiod³o siê"
