@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.3.5\n"
+"Project-Id-Version: lftp 4.4.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2012-09-27 17:16+0400\n"
-"PO-Revision-Date: 2012-01-25 23:38+0100\n"
+"PO-Revision-Date: 2012-09-30 20:40+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -789,9 +789,8 @@ msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Neplatný formát času. Formát je <ČAS><JEDNOTKA>, např. 2h30m."
 
 #: src/ResMgr.cc:756
-#, fuzzy
 msgid "integer overflow"
-msgstr "Přetečení celého čísla"
+msgstr "přetečení celého čísla"
 
 #: src/ResMgr.cc:843
 msgid "Invalid IPv4 numeric address"
@@ -819,7 +818,6 @@ msgid "%d address$|es$ found"
 msgstr "%d $adresa nalezena|adresy nalezeny|adres nalezeno$"
 
 #: src/Resolver.cc:733
-#, fuzzy
 msgid "DNS resolution not trusted."
 msgstr "Překlad DNS není důvěryhodný."
 
@@ -2646,9 +2644,8 @@ msgid "Getting meta-data: %s"
 msgstr "Získávají se metadata: %s"
 
 #: src/Torrent.cc:1791
-#, fuzzy
 msgid "Waiting for meta-data..."
-msgstr "\tČeká se na příkaz\n"
+msgstr "Čeká se na metadata…"
 
 #: src/Torrent.cc:1796
 #, c-format
