@@ -384,7 +384,7 @@ void DirectedBuffer::EmbraceNewData(int len)
 
 
 IOBuffer::IOBuffer(dir_t m)
-   : DirectedBuffer(m), event_time(now)
+   : DirectedBuffer(m), event_time(now), max_buf(0)
 {
 }
 IOBuffer::~IOBuffer()
@@ -528,6 +528,12 @@ int IOBufferStacked::Put_LL(const char *buf,int size)
 
 int IOBufferStacked::Get_LL(int)
 {
+   if(max_buf && Size()>=max_buf) {
+      down->SuspendSlave();
+      return 0;
+   }
+   down->ResumeSlave();
+
    const char *b;
    int size;
    down->Get(&b,&size);
@@ -548,6 +554,16 @@ bool IOBufferStacked::Done()
    if(super::Done())
       return down->Done();
    return false;
+}
+
+void IOBufferStacked::SuspendInternal()
+{
+   down->SuspendSlave();
+}
+void IOBufferStacked::ResumeInternal()
+{
+   if(!max_buf || Size()<max_buf)
+      down->ResumeSlave();
 }
 
 // IOBufferFDStream implementation
@@ -608,6 +624,9 @@ stream_err:
 
 int IOBufferFDStream::Get_LL(int size)
 {
+   if(max_buf && Size()>=max_buf)
+      return 0;
+
    int res=0;
 
    int fd=stream->getfd();
@@ -667,6 +686,12 @@ IOBufferFDStream::~IOBufferFDStream() {}
 #define super IOBuffer
 int IOBufferFileAccess::Get_LL(int size)
 {
+   if(max_buf && Size()>=max_buf) {
+      session->SuspendSlave();
+      return 0;
+   }
+   session->ResumeSlave();
+
    int res=0;
 
    res=session->Read(GetSpace(size),size);
@@ -688,7 +713,8 @@ void IOBufferFileAccess::SuspendInternal()
 }
 void IOBufferFileAccess::ResumeInternal()
 {
-   session->ResumeSlave();
+   if(!max_buf || Size()<max_buf)
+      session->ResumeSlave();
 }
 const char *IOBufferFileAccess::Status()
 {

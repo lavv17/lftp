@@ -1,6 +1,9 @@
 2012-11-14  Alexander V. Lukyanov <lav@yars.free.net>
 
-	Job.cc: fixed status message.
+	* Job.cc: fixed status message.
+	* buffer.cc, buffer.h: limit maximum buffer size.
+	* ftpclass.cc: use buffer size limit; don't Resume on several methods;
+	  fixed CWD for certain paths; fixed try count resetting on uploading.
 
 2012-09-27  Alexander V. Lukyanov <lav@yars.free.net>
 

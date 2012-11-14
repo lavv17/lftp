@@ -668,7 +668,7 @@ int Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	 } else {
 	    int dev_len=device_prefix_len(path);
 	    dev_len+=(path2[dev_len]=='/');
-	    if(dev_len==1 && path[0]=='/') {
+	    if(dev_len==1 && path[0]=='/' && real_cwd.ne("/")) {
 	       // just a root directory, append first path component
 	       const char *slash=strchr(path+1,'/');
 	       if(slash)
@@ -678,7 +678,14 @@ int Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	    }
 	    path2[dev_len]=0;
 	    path1+=dev_len;
-	    if(!real_cwd || strcmp(real_cwd,path2)) {
+	    if(!path2[0]) {
+	       if(real_cwd && strcmp(real_cwd,"~")
+	       && (!home.path || strcmp(real_cwd,home.path))) {
+		  conn->SendCmd("CWD");
+		  expect->Push(new Expect(Expect::CWD_CURR,"~"));
+		  cwd_count++;
+	       }
+	    } else if(!real_cwd || strcmp(real_cwd,path2)) {
 	       conn->SendCmd2("CWD",path2);
 	       expect->Push(new Expect(Expect::CWD_CURR,path2));
 	       cwd_count++;
@@ -1086,6 +1093,7 @@ bool Ftp::AbsolutePath(const char *s) const
       return false;
    int dev_len=device_prefix_len(s);
    return(s[0]=='/'
+      || (s[0]=='~' && s[1]!=0 && s[1]!='/')
       || (((conn->dos_path && dev_len==3) || (conn->vms_path && dev_len>2))
 	  && s[dev_len-1]=='/'));
 }
@@ -2287,6 +2295,7 @@ int   Ftp::Do()
 	 else if(charset && *charset)
 	    conn->data_iobuf->SetTranslation(charset,true);
       }
+      conn->data_iobuf->SetMaxBuffered(max_buf);
    /* fallthrough */
    case(DATA_OPEN_STATE):
    {
@@ -2374,7 +2383,7 @@ int   Ftp::Do()
 	    conn->data_iobuf->Suspend();
 	    m=MOVED;
 	 }
-	 else if(conn->data_iobuf->IsSuspended())
+	 else if(conn->data_iobuf->IsSuspended() && !IsSuspended())
 	 {
 	    conn->data_iobuf->Resume();
 	    if(conn->data_iobuf->Size()>0)
@@ -3587,7 +3596,6 @@ int   Ftp::Read(void *buf,int size)
 {
    int shift;
 
-   Resume();
    if(Error())
       return(error_code);
 
@@ -3656,7 +3664,6 @@ int   Ftp::Write(const void *buf,int size)
    if(mode!=STORE)
       return(0);
 
-   Resume();
    if(Error())
       return(error_code);
 
@@ -3682,9 +3689,10 @@ int   Ftp::Write(const void *buf,int size)
    conn->data_iobuf->Put((const char*)buf,size);
 
    if(retries+persist_retries>0
-   && conn->data_iobuf->GetPos()-conn->data_iobuf->Size()>Buffered()+0x10000)
+   && conn->data_iobuf->GetPos()>Buffered()+0x20000)
    {
       // reset retry count if some data were actually written to server.
+      LogNote(10,"resetting retry count");
       TrySuccess();
    }
 
@@ -4471,8 +4479,6 @@ bool  Ftp::SameLocationAs(const FileAccess *fa) const
 
 int   Ftp::Done()
 {
-   Resume();
-
    if(Error())
       return(error_code);
 

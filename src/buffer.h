@@ -196,6 +196,7 @@ protected:
    virtual int PutEOF_LL() { return 0; }
 
    Time event_time; // used to detect timeouts
+   int max_buf;
 
 public:
    IOBuffer(dir_t m);
@@ -223,6 +224,8 @@ public:
    void Put(char c) { Put(&c,1); }
    // anchor to PutEOF_LL
    void PutEOF() { DirectedBuffer::PutEOF(); PutEOF_LL(); }
+
+   void SetMaxBuffered(int m) { max_buf=m; }
 };
 
 class IOBufferStacked : public IOBuffer
@@ -231,6 +234,9 @@ class IOBufferStacked : public IOBuffer
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
+
+   void SuspendInternal();
+   void ResumeInternal();
 
 public:
    IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()), down(b) {}
@@ -271,11 +277,12 @@ class IOBufferFileAccess : public IOBuffer
 
    int Get_LL(int size);
 
+   void SuspendInternal();
+   void ResumeInternal();
+
 public:
    IOBufferFileAccess(const FileAccessRef& i) : IOBuffer(GET), session(i) {}
 
-   void SuspendInternal();
-   void ResumeInternal();
    const char *Status();
 };
 
