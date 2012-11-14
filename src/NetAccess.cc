@@ -343,6 +343,7 @@ bool NetAccess::CheckRetries()
       return false;
    }
    try_time=now;
+   LogNote(10,"attempt number %d",retries);
    return true;
 }
 void NetAccess::TrySuccess()
