@@ -1,3 +1,7 @@
+2012-11-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	Job.cc: fixed status message.
+
 2012-09-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: add support for base32 btih in magnet.

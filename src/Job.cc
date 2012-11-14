@@ -382,7 +382,7 @@ xstring& SessionJob::FormatStatus(xstring& s,int v,const char *prefix)
       s.append(prefix);
       s.append(url);
    }
-   return s;
+   return s.append('\n');
 }
 
 void SessionJob::Fg()
