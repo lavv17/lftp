@@ -328,11 +328,13 @@ void Torrent::Shutdown()
 void Torrent::PrepareToDie()
 {
    peers.unset();
-   RemoveTorrent(this);
-   if(GetTorrentsCount()==0) {
-      StopListener();
-      fd_cache=0;
-      black_list=0;
+   if(info_hash && this==FindTorrent(info_hash)) {
+      RemoveTorrent(this);
+      if(GetTorrentsCount()==0) {
+	 StopListener();
+	 fd_cache=0;
+	 black_list=0;
+      }
    }
 }
 
