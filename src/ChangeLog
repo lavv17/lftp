@@ -1,3 +1,7 @@
+2012-12-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: remove obsolete assert.
+
 2012-12-03  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: fixed coredump after trying to start a duplicate torrent.

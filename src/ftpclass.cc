@@ -4037,10 +4037,8 @@ void Ftp::CheckResp(int act)
    case Expect::CWD_CURR:
       if(is2XX(act))
       {
-	 if(cc==Expect::CWD) {
-	    assert(!strcmp(arg,file));
+	 if(cc==Expect::CWD)
 	    cwd.Set(file,false,file_url,device_prefix_len(file));
-	 }
 	 set_real_cwd(arg);
 	 cache->SetDirectory(this, arg, true);
 	 break;
