@@ -537,7 +537,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line && status_line->CanShowNow())
+      if(status_line && interactive && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       return m;
    }
@@ -581,7 +581,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line && status_line->CanShowNow())
+      if(status_line && interactive && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       if(m != STALL || interactive || waiting_num >= max_waiting)
 	 return m;
@@ -607,7 +607,7 @@ try_get_cmd:
 	       last_bg=-1;
 	 }
 
-	 if(status_line)
+	 if(status_line && interactive)
 	 {
 	    const char *def_title = FormatPrompt(ResMgr::Query("cmd:default-title",getenv("TERM")));
 	    status_line->DefaultTitle(def_title);
