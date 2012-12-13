@@ -27,6 +27,18 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
 fi
 
+dnl POSIXCHECK is worthwhile for maintainers, but adds several seconds
+dnl (more than 10% execution time) to ./configure, with no benefit for
+dnl most users.  Using it to look for bugs requires:
+dnl   GNULIB_POSIXCHECK=1 autoreconf -f
+dnl   ./configure
+dnl   make
+dnl   make -C src clean
+dnl   make CFLAGS=-DGNULIB_POSIXCHECK=1
+m4_syscmd([test "${GNULIB_POSIXCHECK+set}" = set])
+m4_if(m4_sysval, [0], [], [dnl
+gl_ASSERT_NO_GNULIB_POSIXCHECK])
+
 AC_SYS_LARGEFILE
 
 AC_ARG_WITH(debug,
