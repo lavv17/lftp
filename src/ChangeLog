@@ -1,3 +1,7 @@
+2012-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, commands.cc, lftp.cc: make cmd:interactive tri-bool.
+
 2012-12-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc: don't show status line unless interactive.

@@ -789,7 +789,6 @@ Job *CmdExec::builtin_lftp()
    {
       SetCmdFeeder(lftp_feeder);
       lftp_feeder=0;
-      SetInteractive(isatty(0));
       FeedCmd("||command exit\n");   // if the command fails, quit
    }
 

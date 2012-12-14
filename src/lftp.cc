@@ -121,6 +121,10 @@ public:
 	    lftp_rl_write_history();
       }
    }
+   bool IsInteractive() const
+   {
+      return tty;
+   }
    bool RealEOF()
    {
       return !tty || eof_count>3;
@@ -565,7 +569,7 @@ revived:
       }
       if(move_to_background())
       {
-	 top_exec->SetInteractive(true);
+	 top_exec->SetInteractive();
 	 top_exec->SetStatusLine(new StatusLine(1));
 	 top_exec->SetCmdFeeder(new ReadlineFeeder(args));
 	 goto revived;

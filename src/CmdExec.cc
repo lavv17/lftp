@@ -61,7 +61,7 @@ static ResType lftp_cmd_vars[] = {
    {"cmd:at-queue-finish",	 "",	  0,0},
    {"cmd:fail-exit",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:verbose",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
-   {"cmd:interactive",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:interactive",		 "auto",  ResMgr::TriBoolValidate,ResMgr::NoClosure},
    {"cmd:move-background",	 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:move-background-detach","yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:set-term-status",	 "no",	  ResMgr::BoolValidate,0},
@@ -320,6 +320,7 @@ void CmdExec::RemoveFeeder()
       queue_feeder=0;
    delete replace_value(feeder,feeder->prev);
    Reconfig(0);
+   SetInteractive();
 }
 
 void CmdExec::ReuseSavedSession()
@@ -921,10 +922,9 @@ void CmdExec::Reconfig(const char *name)
    verify_path_cached=ResMgr::QueryBool("cmd:verify-path-cached",c);
    verify_host=ResMgr::QueryBool("cmd:verify-host",c);
    verbose=ResMgr::QueryBool("cmd:verbose",0);
-   // only allow explicit setting of cmd:interactive to change interactiveness.
-   if(top_level && name && !strcmp(name,"cmd:interactive"))
-      SetInteractive(ResMgr::QueryBool("cmd:interactive",0));
    max_waiting=ResMgr::Query(queue_feeder?"cmd:queue-parallel":"cmd:parallel",c);
+   if(name && !strcmp(name,"cmd:interactive"))
+      SetInteractive();
 }
 
 void CmdExec::pre_stdout()
@@ -948,6 +948,7 @@ void CmdExec::SetCmdFeeder(CmdFeeder *new_feeder)
    new_feeder->saved_buf.set(cmd_buf.Get());
    feeder=new_feeder;
    cmd_buf.Empty();
+   SetInteractive();
 }
 
 int CmdExec::AcceptSig(int sig)
@@ -1028,6 +1029,13 @@ void CmdExec::SetInteractive(bool i)
       SignalHook::Restore(SIGTSTP);
    }
    interactive=i;
+}
+void CmdExec::SetInteractive()
+{
+   if(!top_level)
+      return;
+   bool def=feeder?feeder->IsInteractive():false;
+   SetInteractive(ResMgr::QueryTriBool("cmd:interactive",0,def));
 }
 
 xstring& xstring::append_quoted(const char *str,int len)

@@ -54,6 +54,8 @@ public:
 
    virtual void Fg() {}
    virtual void Bg() {}
+
+   virtual bool IsInteractive() const { return false; }
 };
 
 extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command
@@ -220,10 +222,12 @@ public:
    void top_vfprintf(FILE *file,const char *f,va_list v);
 
    void SetInteractive(bool i);
+   void SetInteractive();
    void SetTopLevel()
       {
 	 top_level=true;
 	 Reconfig(0);
+	 SetInteractive();
       }
    void SetStatusLine(StatusLine *s) { status_line=s; }
    void SetAutoTerminateInBackground(bool b) { auto_terminate_in_bg=b; }
