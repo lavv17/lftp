@@ -1029,9 +1029,9 @@ with just host name without protocol. Default is `ftp'.
 .BR cmd:fail-exit \ (boolean)
 if true, exit when an unconditional (without || and && at begin) command fails.
 .TP
-.BR cmd:interactive \ (boolean)
+.BR cmd:interactive \ (tri-boolean)
 when true, lftp acts interactively, handles terminal signals and outputs
-some extra messages. Default depends on stdin being a terminal.
+some extra messages. Default is auto and depends on stdin being a terminal.
 .TP
 .BR cmd:long-running \ (seconds)
 time of command execution, which is
