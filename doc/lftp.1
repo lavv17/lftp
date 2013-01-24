@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.0.
+This man page documents lftp version 4.4.1.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -2006,6 +2006,11 @@ Used to locate the directory that stores user-specific configuration files.  If
 unset, \fI~/.lftp\fR will be used.
 .IP "\fBLS_COLORS\fP"
 used to set initial color:dir-colors variable.
+.IP "\fBXDG_CONFIG_DIR\fP, \fBXDG_DATA_DIR\fP, \fBXDG_CACHE_DIR\fP"
+Used to locate the directories for user-specific files when \fI~/.lftp\fR
+(or \fB$LFTP_HOME\fP directory) does not exist. Defaults are
+\fI~/.config\fR, \fI~/.local/share\fR and \fI~/.cache\fR respectively. The
+suffix \fI/lftp\fR is appended to make the full path to the directories.
 
 .SH FILES
 .TP
