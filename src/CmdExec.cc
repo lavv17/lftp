@@ -57,6 +57,7 @@ static ResType lftp_cmd_vars[] = {
    {"cmd:verify-host",		 "yes",	  ResMgr::BoolValidate,0},
    {"cmd:at-exit",		 "",	  0,0},
    {"cmd:at-exit-bg",		 "",	  0,0},
+   {"cmd:at-exit-fg",		 "",	  0,0},
    {"cmd:at-finish",		 "",	  0,0},
    {"cmd:at-queue-finish",	 "",	  0,0},
    {"cmd:fail-exit",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
@@ -1114,6 +1115,11 @@ void CmdExec::AtExit()
 void CmdExec::AtExitBg()
 {
    FeedCmd(ResMgr::Query("cmd:at-exit-bg",0));
+   FeedCmd("\n");
+}
+void CmdExec::AtExitFg()
+{
+   FeedCmd(ResMgr::Query("cmd:at-exit-fg",0));
    FeedCmd("\n");
 }
 

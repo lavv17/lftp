@@ -167,6 +167,7 @@ public:
    void Exit(int);
    void AtExit();
    void AtExitBg();
+   void AtExitFg();
    void EmptyCmds();
    bool WriteCmds(int fd) const;
    bool ReadCmds(int fd); // does not clear queue before reading (appends)

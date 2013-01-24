@@ -1,6 +1,7 @@
 2013-01-24	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document XDG_* environment variables.
+	* lftp.1: document cmd:at-exit-fg.
 
 2012-12-14	Alexander V. Lukyanov <lav@yars.free.net>
 

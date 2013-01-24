@@ -1008,10 +1008,13 @@ save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
 Off by default.
 .TP
 .BR cmd:at-exit \ (string)
-the commands in string are executed before lftp exits.
+the commands in string are executed before lftp exits or moves to background.
 .TP
 .BR cmd:at-exit-bg \ (string)
 the commands in string are executed before backgrounded lftp exits.
+.TP
+.BR cmd:at-exit-fg \ (string)
+the commands in string are executed before foreground lftp exits.
 .TP
 .BR cmd:at-finish \ (string)
 the commands in string are executed once when all jobs are done.
