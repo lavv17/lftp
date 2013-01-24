@@ -38,7 +38,7 @@ History::History()
    stamp=0;
    fd=-1;
    modified=false;
-   const char *home=get_lftp_home();
+   const char *home=get_lftp_data_dir();
    if(home)
       file.vset(home,"/cwd_history",NULL);
 }

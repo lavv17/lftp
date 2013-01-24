@@ -1,3 +1,9 @@
+2013-01-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, Torrent.cc, attach.h, bookmark.cc, history.cc,
+	  lftp.cc, lftp_rl.c, misc.cc, misc.h:
+	  (get_lftp_{config,data,cache}_dir) new functions; use them.
+
 2012-12-14  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h, commands.cc, lftp.cc: make cmd:interactive tri-bool.

@@ -387,7 +387,7 @@ static void detach()
    SignalHook::Ignore(SIGHUP);
    SignalHook::Ignore(SIGTSTP);
 
-   const char *home=get_lftp_home();
+   const char *home=get_lftp_data_dir();
    if(home)
    {
       xstring& log=xstring::get_tmp(home);
@@ -535,7 +535,7 @@ int   main(int argc,char **argv)
    const char *home=getenv("HOME");
    if(home)
       source_if_exist(dir_file(home,".lftprc"));
-   home=get_lftp_home();
+   home=get_lftp_config_dir();
    if(home)
       source_if_exist(dir_file(home,"rc"));
    top_exec->WaitDone();

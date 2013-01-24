@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <pwd.h>
 
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
@@ -769,30 +770,101 @@ bool temporary_network_error(int err)
    return false;
 }
 
-const char *get_lftp_home()
+const char *get_home()
 {
    static char *home=NULL;
-
    if(home)
       return home;
+   home=getenv("HOME");
+   if(home)
+      return home;
+   struct passwd *pw=getpwuid(getuid());
+   if(pw && pw->pw_dir)
+      return home=pw->pw_dir;
+   return NULL;
+}
 
-   home=getenv("LFTP_HOME");
-   if(!home)
+const char *get_lftp_home_nocreate()
+{
+   static char *lftp_home=NULL;
+
+   if(lftp_home)
+      return *lftp_home?lftp_home:NULL;
+
+   lftp_home=getenv("LFTP_HOME");
+   if(!lftp_home)
    {
-      home=getenv("HOME");
-      if(home)
-         home=xstring::cat(home,"/.lftp",NULL).borrow();
+      const char *h=get_home();
+      if(h)
+         lftp_home=xstring::cat(h,"/.lftp",NULL).borrow();
       else
          return NULL;
    }
    else
-      home=xstrdup(home);
+      lftp_home=xstrdup(lftp_home);
 
-   if(!*home)
+   return *lftp_home?lftp_home:NULL;
+}
+const char *get_lftp_home_if_exists()
+{
+   const char *home=get_lftp_home_nocreate();
+   struct stat st;
+   if(stat(home,&st)==-1 || !S_ISDIR(st.st_mode))
       return NULL;
-
-   mkdir(home,0755);
    return home;
+}
+
+// new XDG directories
+const char *get_lftp_dir(char *&cached_dir,const char *env,const char *def)
+{
+   if(cached_dir)
+      return cached_dir;
+
+   // use old existing directory for compatibility
+   const char *dir=get_lftp_home_if_exists();
+   if(dir)
+      return cached_dir=xstrdup(dir);
+
+   // use explicit directory if specified, otherwise use default under home
+   const char *home=getenv(env);
+   if(home) {
+      // explicit XDG dir
+      (void)mkdir(home,0755);
+      dir=xstring::cat(home,"/lftp",NULL);
+   } else {
+      home=get_home();
+      if(!home)
+	 return NULL;
+      xstring& path=xstring::get_tmp(home);
+      path.append('/');
+      const char *slash=strchr(def,'/');
+      if(slash) {
+	 path.append(def,slash-def);
+	 (void)mkdir(path,0755);
+	 path.append(slash);
+      } else {
+	 path.append(def);
+      }
+      (void)mkdir(path,0755);
+      dir=path.append("/lftp");
+   }
+   (void)mkdir(dir,0755);
+   return cached_dir=xstrdup(dir);
+}
+const char *get_lftp_config_dir()
+{
+   static char *config_dir;
+   return get_lftp_dir(config_dir,"XDG_CONFIG_HOME",".config");
+}
+const char *get_lftp_data_dir()
+{
+   static char *data_dir;
+   return get_lftp_dir(data_dir,"XDG_DATA_HOME",".local/share");
+}
+const char *get_lftp_cache_dir()
+{
+   static char *cache_dir;
+   return get_lftp_dir(cache_dir,"XDG_CACHE_HOME",".cache");
 }
 
 const char *memrchr(const char *buf,char c,size_t len)

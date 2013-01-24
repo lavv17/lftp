@@ -141,7 +141,7 @@ public:
    static xstring& get_sock_path(int pid=0) {
       if(!pid)
 	 pid=getpid();
-      const char *home=get_lftp_home();
+      const char *home=get_lftp_data_dir();
       mkdir(xstring::format("%s/bg",home),0700);
       return xstring::format("%s/bg/%s-%d",home,get_nodename(),pid);
    }

@@ -113,7 +113,10 @@ void base64_encode (const char *s, char *store, int length);
 
 bool temporary_network_error(int e);
 
-CDECL const char *get_lftp_home();
+CDECL const char *get_home();
+CDECL const char *get_lftp_config_dir();
+CDECL const char *get_lftp_data_dir();
+CDECL const char *get_lftp_cache_dir();
 
 const char *memrchr(const char *buf,char c,size_t len);
 static inline char *memrchr(char *buf,char c,size_t len) {

@@ -38,7 +38,7 @@ ResDecl res_auto_sync("bmk:auto-sync","yes",ResMgr::BoolValidate,ResMgr::NoClosu
 
 Bookmark::Bookmark()
 {
-   const char *home=get_lftp_home();
+   const char *home=get_lftp_data_dir();
    if(home)
       bm_file.vset(home,"/bookmarks",NULL);
    bm_fd=-1;

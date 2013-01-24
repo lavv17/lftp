@@ -196,7 +196,7 @@ void lftp_rl_set_prompt(const char *p)
    rl_set_prompt(p);
 }
 
-extern char *get_lftp_home();
+extern char *get_lftp_data_dir();
 
 static char *lftp_history_file;
 void lftp_rl_read_history()
@@ -204,7 +204,7 @@ void lftp_rl_read_history()
    if(!lftp_history_file)
    {
       const char *add="/rl_history";
-      const char *home=get_lftp_home();
+      const char *home=get_lftp_data_dir();
       if(!home)
 	 return;
       lftp_history_file=(char*)malloc(strlen(home)+strlen(add)+1);

@@ -153,7 +153,7 @@ void Torrent::StartDHT()
 
    StartListenerUDP();
 
-   const char *home=get_lftp_home();
+   const char *home=get_lftp_cache_dir();
    const char *nodename=get_nodename();
 
    mkdir(xstring::format("%s/DHT",home),0700);
