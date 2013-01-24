@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# This script moves ~/.lftp (or $LFTP_HOME) files to XDG directories.
+# ~/.lftp should be removed after execution of this script.
+#
+
+src=${LFTP_HOME:-$HOME/.lftp}
+if ! [ -d "$src" ]; then
+   echo "Nothing to move (no $src directory found)." >&2
+   exit 0
+fi
+
+function move() {
+   test -a "$src/$1" || return
+   test -d "$2" || mkdir -p "$2" || exit 1
+   mv "$src/$1" "$2/"
+}
+
+function move_data() {
+   move "$1" "${XDG_DATA_HOME:-$HOME/.local/share}/lftp"
+}
+function move_config() {
+   move "$1" "${XDG_CONFIG_HOME:-$HOME/.config}/lftp"
+}
+function move_cache() {
+   move "$1" "${XDG_CACHE_HOME:-$HOME/.cache}/lftp"
+}
+
+move_data bg
+move_data bookmarks
+move_data cwd_history
+move_cache DHT
+move_data log
+move_config rc
+move_data rl_history
+move_data transfer_log
+
+rmdir "$src"
