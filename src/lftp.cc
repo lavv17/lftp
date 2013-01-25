@@ -575,8 +575,11 @@ revived:
 	 goto revived;
       }
    }
-   top_exec->AtExitFg();
-   top_exec->WaitDone();
+   else
+   {
+      top_exec->AtExitFg();
+      top_exec->WaitDone();
+   }
    top_exec->KillAll();
    top_exec=0;
 

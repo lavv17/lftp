@@ -1,3 +1,7 @@
+2013-01-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc: don't run at-exit-fg when backgrounded.
+
 2013-01-24  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, Torrent.cc, attach.h, bookmark.cc, history.cc,
