@@ -1,7 +1,8 @@
 2013-01-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: don't run at-exit-fg when backgrounded.
-	* xstring.cc: (append(const char*,size_t)) fixed a bug.
+	* xstring.cc: (append(const char*,size_t)) fixed a bug;
+	  (url_decode) decode plus to space.
 
 2013-01-24  Alexander V. Lukyanov <lav@yars.free.net>
 

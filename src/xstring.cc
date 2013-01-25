@@ -514,6 +514,13 @@ int xstring0::_url_decode(size_t len)
 	    continue;
 	 }
       }
+      else if(*p=='+')
+      {
+	 *store++=' ';
+	 p++;
+	 rest--;
+	 continue;
+      }
       *store++=*p++;
       rest--;
    }
