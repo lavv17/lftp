@@ -152,7 +152,7 @@ xstring& xstring::move_here(xstring& o)
 
 xstring& xstring::append(const char *s,size_t s_len)
 {
-   if(!s || !*s)
+   if(!s || s_len==0)
       return *this;
    get_space(len+s_len);
    memcpy(buf+len,s,s_len);
