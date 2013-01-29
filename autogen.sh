@@ -160,14 +160,9 @@ do
   fi
 done
 
-conf_flags="--enable-maintainer-mode --enable-compile-warnings --cache-file=config.cache" #--enable-iso-c
-if [ `uname` = SunOS ]; then
-   conf_flags="$conf_flags --with-included-gettext"
-fi
-
 if test x$NOCONFIGURE = x; then
-  echo Running $srcdir/configure $conf_flags "$@" ...
-  $srcdir/configure $conf_flags "$@" \
+  echo Running $srcdir/configure "$@" ...
+  $srcdir/configure "$@" \
   && echo Now type \`make\' to compile $PKG_NAME
 else
   echo Skipping configure process.
