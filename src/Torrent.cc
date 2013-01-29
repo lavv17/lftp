@@ -202,7 +202,7 @@ void Torrent::StartListener()
       return;
 
    listener=new TorrentListener(AF_INET);
-   listener->Do(); // try to allocate ipv4 port first
+   listener->Roll(); // try to allocate ipv4 port first
 #if INET6
    listener_ipv6=new TorrentListener(AF_INET6);
 #endif
@@ -286,6 +286,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
       for(int i=0; i<10; i++)
 	 my_key.appendf("%02x",unsigned(random()/13%256));
    }
+   dht_announce_timer.Stop();
 }
 
 bool Torrent::TrackersDone() const
@@ -696,8 +697,6 @@ void Torrent::StartTrackers()
    for(int i=0; i<trackers.count(); i++) {
       trackers[i]->Start();
    }
-   if(!is_private)
-      AnnounceDHT();
 }
 
 int Torrent::GetPort()
@@ -720,6 +719,8 @@ int Torrent::GetPort()
 
 void Torrent::AnnounceDHT()
 {
+   if(is_private)
+      return;
    if(dht)
       dht->AnnouncePeer(this);
 #if INET6
@@ -907,6 +908,7 @@ void Torrent::ParseMagnet(const char *m0)
       if(!v)
 	 continue;
       *v++=0;
+      v=url::decode(v).get_non_const();
       if(!strcmp(p,"xt")) {
 	 if(strncmp(v,"urn:btih:",9)) {
 	    SetError("Only BitTorrent magnet links are supported");

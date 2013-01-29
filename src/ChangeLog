@@ -2,6 +2,11 @@
 
 	* xstring.cc: (_url_decode) fixed decoding plus sign.
 	* Timer.cc, Timer.h: (StopDelayed) new method.
+	* Torrent.cc: don't call AnnounceDHT in StartTrackers, do it
+	  only by timer; stop dht_announce_timer at the start; use Roll
+	  method to set log context; decode magnet URL values properly.
+	* DHT.cc: refresh routes after loading the node cache; load the
+	  cache quickly using Roll; add some debug log messages.
 
 2013-01-25  Alexander V. Lukyanov <lav@yars.free.net>
 

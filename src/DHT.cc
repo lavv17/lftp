@@ -636,6 +636,7 @@ void DHT::Search::ContinueOn(DHT *d,const Node *n)
 }
 void DHT::StartSearch(Search *s)
 {
+   LogNote(9,"starting search for %s",s->target_id.hexdump());
    xarray<Node*> n;
    FindNodes(s->target_id,n,K,true);
    if(n.count()==0) {
@@ -815,8 +816,10 @@ try_again:
    if(nodes.count()>=K) {
       int q_num=PingQuestionable(nodes,nodes.count()-K+1);
       // check if we have already candidates for the questionable nodes
-      if(nodes.count()>=K+q_num)
+      if(nodes.count()>=K+q_num) {
+	 LogNote(9,"skipping node %s (too many in route bucket %d)",n->GetName(),i);
 	 return;
+      }
    }
    r->SetFresh();
    LogNote(3,"adding node %s to route bucket %d (prefix=%s)",n->GetName(),i,r->to_string());
@@ -1027,6 +1030,9 @@ void DHT::Load(const SMTaskRef<IOBuffer>& buf)
       len-=node_len;
       FoundNode(id,a,false);
    }
+   // refresh routes after loading
+   for(int i=0; i<routes.count(); i++)
+      routes[i]->fresh_timer.StopDelayed(i+3);
 }
 void DHT::Save()
 {
@@ -1046,6 +1052,8 @@ void DHT::Load()
    FileStream *f=new FileStream(state_file,O_RDONLY);
    f->set_lock();
    state_io=new IOBufferFDStream(f,IOBuffer::GET);
+   state_io->Roll();
+   Roll();
 }
 
 void DHT::Reconfig(const char *name)
