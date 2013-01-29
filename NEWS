@@ -1,3 +1,13 @@
+Version 4.4.1 - 2013-01-29
+
+* use XDG directories if ~/.lftp (or $LFTP_HOME) does not exist.
+* fixed non-interactive mode to skip showing status line.
+* fixed assert in ftpclass.cc.
+* fixed coredump after trying to start a duplicate torrent.
+* fixed verbose status message of some jobs.
+* fixed some buffers to limit the buffer size.
+* fixed DHT cache saving.
+
 Version 4.4.0 - 2012-09-27
 
 * implemented bittorrent extensions (FAST, DHT, LTEP, ut_metadata, ut_pex).

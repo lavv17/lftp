@@ -289,7 +289,6 @@
 /timespec.c
 /xsize.c
 /math.c
-/stdio.c
 /sys_socket.c
 /unistd.c
 /wctype-h.c
