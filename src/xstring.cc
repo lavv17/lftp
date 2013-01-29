@@ -496,14 +496,12 @@ int xstring0::_url_decode(size_t len)
 {
    if(!buf)
       return 0;
-   char *store=(char*)memchr(buf,'%',len);
-   if(!store)
-      return len;
-   const char *p=store;
-   int rest=len-(p-buf);
-   while(rest>=3)
+   char *store=buf;
+   const char *p=buf;
+   int rest=len;
+   while(rest>0)
    {
-      if(*p=='%' && c_isxdigit(p[1]) && c_isxdigit(p[2]))
+      if(rest>=3 && *p=='%' && c_isxdigit(p[1]) && c_isxdigit(p[2]))
       {
 	 int n;
 	 if(sscanf(p+1,"%2x",&n)==1)
@@ -521,10 +519,6 @@ int xstring0::_url_decode(size_t len)
 	 rest--;
 	 continue;
       }
-      *store++=*p++;
-      rest--;
-   }
-   while(rest>0) {
       *store++=*p++;
       rest--;
    }

@@ -1,8 +1,12 @@
+2013-01-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc: (_url_decode) fixed decoding plus sign.
+
 2013-01-25  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.cc: don't run at-exit-fg when backgrounded.
 	* xstring.cc: (append(const char*,size_t)) fixed a bug;
-	  (url_decode) decode plus to space.
+	  (_url_decode) decode plus to space.
 
 2013-01-24  Alexander V. Lukyanov <lav@yars.free.net>
 
