@@ -63,6 +63,7 @@ public:
    void Reset() { Reset(SMTask::now); }
    void Reset(const Timer &t) { Reset(t.GetStartTime()); }
    void ResetDelayed(int s);
+   void StopDelayed(int s);
    const TimeInterval& GetLastSetting() const { return last_setting; }
    TimeDiff TimePassed() const { return SMTask::now-start; }
    TimeInterval TimeLeft() const;

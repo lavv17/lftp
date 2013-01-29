@@ -88,6 +88,11 @@ void Timer::ResetDelayed(int s)
 {
    Reset(SMTask::now+TimeDiff(s,0));
 }
+void Timer::StopDelayed(int s)
+{
+   stop=SMTask::now+TimeDiff(s,0);
+   re_sort();
+}
 void Timer::SetResource(const char *r,const char *c)
 {
    if(resource!=r || closure!=c)

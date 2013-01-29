@@ -1,6 +1,7 @@
 2013-01-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc: (_url_decode) fixed decoding plus sign.
+	* Timer.cc, Timer.h: (StopDelayed) new method.
 
 2013-01-25  Alexander V. Lukyanov <lav@yars.free.net>
 
