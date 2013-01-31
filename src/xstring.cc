@@ -492,7 +492,7 @@ const char *xstring::dump_to(xstring& buf) const
    return buf;
 }
 
-int xstring0::_url_decode(size_t len)
+int xstring0::_url_decode(size_t len,int flags)
 {
    if(!buf)
       return 0;
@@ -512,7 +512,7 @@ int xstring0::_url_decode(size_t len)
 	    continue;
 	 }
       }
-      else if(*p=='+')
+      else if(*p=='+' && (flags&URL_DECODE_PLUS))
       {
 	 *store++=' ';
 	 p++;
@@ -544,14 +544,14 @@ int xstring0::_hex_decode(size_t len)
    return store-buf;
 }
 
-xstring& xstring::url_decode()
+xstring& xstring::url_decode(int flags)
 {
-   set_length(_url_decode(length()));
+   set_length(_url_decode(length(),flags));
    return *this;
 }
-xstring_c& xstring_c::url_decode()
+xstring_c& xstring_c::url_decode(int flags)
 {
-   set_length(_url_decode(length()));
+   set_length(_url_decode(length(),flags));
    return *this;
 }
 

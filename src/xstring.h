@@ -73,6 +73,8 @@ size_t xstrlen(const char *s);
 /* this is a small and fast dynamic string class */
 /* mostly used as xstrdup/xfree replacement */
 
+enum { URL_DECODE_PLUS=1 };
+
 class xstring0 // base class
 {
 protected:
@@ -80,7 +82,7 @@ protected:
    xstring0() {}
    xstring0(const xstring0&); // disable cloning
 
-   int _url_decode(size_t len);
+   int _url_decode(size_t len,int flags);
    int _hex_decode(size_t len);
 public:
    ~xstring0() { xfree(buf); }
@@ -118,7 +120,7 @@ public:
    void unset() { xfree(buf); buf=0; }
    void _set(const char *s) { buf=xstrdup(s); }
 
-   xstring_c& url_decode();
+   xstring_c& url_decode(int flags=0);
 };
 class xstring_ca : public xstring_c
 {
@@ -221,7 +223,7 @@ public:
    const char *hexdump_to(xstring &out) const;
    const char *hexdump() const;
 
-   xstring& url_decode();
+   xstring& url_decode(int flags=0);
    xstring& append_url_encoded(const char *s,int len,const char *unsafe);
    xstring& append_url_encoded(const char *s,const char *unsafe) { return append_url_encoded(s,strlen(s),unsafe); }
    xstring& append_url_encoded(const xstring& s,const char *unsafe) { return append_url_encoded(s,s.length(),unsafe); }

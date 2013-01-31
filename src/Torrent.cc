@@ -908,7 +908,7 @@ void Torrent::ParseMagnet(const char *m0)
       if(!v)
 	 continue;
       *v++=0;
-      v=url::decode(v).get_non_const();
+      v=xstring::get_tmp(v).url_decode(URL_DECODE_PLUS).get_non_const();
       if(!strcmp(p,"xt")) {
 	 if(strncmp(v,"urn:btih:",9)) {
 	    SetError("Only BitTorrent magnet links are supported");
