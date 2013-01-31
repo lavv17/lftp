@@ -2,6 +2,7 @@
 
 	* xstring.cc, xstring.h: add flags in url_decode.
 	* Torrent.cc: pass URL_DECODE_PLUS flag to decode '+' into space.
+	* Makefile.am: add uninstall-hook to remove modules and some empty directories.
 
 2013-01-29  Alexander V. Lukyanov <lav@yars.free.net>
 

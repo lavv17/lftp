@@ -1,4 +1,3 @@
-localedir = $(datadir)/locale
 pkgverlibdir = $(pkglibdir)/$(VERSION)
 
 bin_PROGRAMS = lftp
@@ -118,4 +117,13 @@ if WITH_MODULES
 	esac
 else
 	-rmdir $(DESTDIR)$(pkgverlibdir) 2>/dev/null || :
+endif
+
+# without *.la files libtool does not remove the *.so files.
+uninstall-hook:
+	-rmdir "$(DESTDIR)$(pkgdatadir)" 2>/dev/null || :
+if WITH_MODULES
+	for m in $(pkgverlib_LTLIBRARIES); do rm -f "$(DESTDIR)$(pkgverlibdir)/$${m%.la}.so"; done
+	-rmdir "$(DESTDIR)$(pkgverlibdir)" 2>/dev/null || :
+	-rmdir "$(DESTDIR)$(pkglibdir)" 2>/dev/null || :
 endif
