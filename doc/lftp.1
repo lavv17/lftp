@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "29 Jan 2013"
+.TH lftp 1 "31 Jan 2013"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.1.
+This man page documents lftp version 4.4.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1015,6 +1015,12 @@ the commands in string are executed before backgrounded lftp exits.
 .TP
 .BR cmd:at-exit-fg \ (string)
 the commands in string are executed before foreground lftp exits.
+.TP
+.BR cmd:at-background \ (string)
+the commands in string are executed before lftp moves to background.
+.TP
+.BR cmd:at-terminate \ (string)
+the commands in string are executed before lftp terminates (either backgrounded or foreground).
 .TP
 .BR cmd:at-finish \ (string)
 the commands in string are executed once when all jobs are done.

@@ -58,6 +58,8 @@ static ResType lftp_cmd_vars[] = {
    {"cmd:at-exit",		 "",	  0,0},
    {"cmd:at-exit-bg",		 "",	  0,0},
    {"cmd:at-exit-fg",		 "",	  0,0},
+   {"cmd:at-background",	 "",	  0,0},
+   {"cmd:at-terminate",		 "",	  0,0},
    {"cmd:at-finish",		 "",	  0,0},
    {"cmd:at-queue-finish",	 "",	  0,0},
    {"cmd:fail-exit",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
@@ -1120,6 +1122,16 @@ void CmdExec::AtExitBg()
 void CmdExec::AtExitFg()
 {
    FeedCmd(ResMgr::Query("cmd:at-exit-fg",0));
+   FeedCmd("\n");
+}
+void CmdExec::AtBackground()
+{
+   FeedCmd(ResMgr::Query("cmd:at-background",0));
+   FeedCmd("\n");
+}
+void CmdExec::AtTerminate()
+{
+   FeedCmd(ResMgr::Query("cmd:at-terminate",0));
    FeedCmd("\n");
 }
 

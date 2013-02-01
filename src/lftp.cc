@@ -429,6 +429,11 @@ static int move_to_background()
    if(Job::NumberOfJobs()==0)
       return 0;
 
+   top_exec->AtBackground();
+   top_exec->WaitDone();
+   if(Job::NumberOfJobs()==0)
+      return 0;
+
    fflush(stdout);
    fflush(stderr);
 
@@ -457,6 +462,7 @@ static int move_to_background()
 	    return 1;
       }
       top_exec->AtExitBg();
+      top_exec->AtTerminate();
       top_exec->WaitDone();
       printf(_("[%u] Finished. %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
       return 0;
@@ -578,6 +584,7 @@ revived:
    else
    {
       top_exec->AtExitFg();
+      top_exec->AtTerminate();
       top_exec->WaitDone();
    }
    top_exec->KillAll();
