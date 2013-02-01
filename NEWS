@@ -1,3 +1,9 @@
+Version 4.4.2 - 2013-02-01
+
+* new settings cmd:at-background, cmd:at-terminate.
+* fixed plus sign handling in URLs.
+* fixed uninstall to remove modules.
+
 Version 4.4.1 - 2013-01-29
 
 * use XDG directories if ~/.lftp (or $LFTP_HOME) does not exist.

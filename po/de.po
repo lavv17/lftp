@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-01-29 11:16+0400\n"
+"POT-Creation-Date: 2013-02-01 12:38+0400\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -143,90 +143,90 @@ msgid "Failed to change mode of `%s' because no old mode is available.\n"
 msgstr ""
 "Konnte den Modus von »%s« nicht ändern, da kein alter Modus zugänglich war.\n"
 
-#: src/CmdExec.cc:103
+#: src/CmdExec.cc:105
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
 msgstr "Warnung: chdir(%s) fehlgeschlagen: %s\n"
 
-#: src/CmdExec.cc:205
+#: src/CmdExec.cc:207
 #, c-format
 msgid "Unknown command `%s'.\n"
 msgstr "Unbekannter Befehl »%s«.\n"
 
-#: src/CmdExec.cc:207
+#: src/CmdExec.cc:209
 #, c-format
 msgid "Ambiguous command `%s'.\n"
 msgstr "Mehrdeutiger Befehl »%s«.\n"
 
-#: src/CmdExec.cc:226
+#: src/CmdExec.cc:228
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr "Das Modul für den Befehl »%s« hat den Befehl nicht registriert.\n"
 
-#: src/CmdExec.cc:382
+#: src/CmdExec.cc:384
 #, c-format
 msgid "cd ok, cwd=%s\n"
 msgstr "Verzeichniswechsel OK, cwd=%s\n"
 
-#: src/CmdExec.cc:403 src/MirrorJob.cc:570
+#: src/CmdExec.cc:405 src/MirrorJob.cc:570
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:406 src/FileCopy.cc:1064
+#: src/CmdExec.cc:408 src/FileCopy.cc:1064
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
-#: src/CmdExec.cc:514 src/CmdExec.cc:571
+#: src/CmdExec.cc:516 src/CmdExec.cc:573
 msgid "Interrupt"
 msgstr "Abbruch"
 
-#: src/CmdExec.cc:636
+#: src/CmdExec.cc:638
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Warnung: unvollständiger Befehl verworfen\n"
 
-#: src/CmdExec.cc:734
+#: src/CmdExec.cc:736
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tEingebautes»%s« wird ausgeführt [%s]\n"
 
-#: src/CmdExec.cc:739
+#: src/CmdExec.cc:741
 msgid "Queue is stopped."
 msgstr "Warteschlange wurde angehalten."
 
-#: src/CmdExec.cc:744
+#: src/CmdExec.cc:746
 msgid "Now executing:"
 msgstr "Momentan läuft:"
 
-#: src/CmdExec.cc:755
+#: src/CmdExec.cc:757
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\t Warte auf Beendigung von Job [%d]\n"
 
-#: src/CmdExec.cc:758
+#: src/CmdExec.cc:760
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tWarte auf Erledigung der Jobs: "
 
-#: src/CmdExec.cc:767
+#: src/CmdExec.cc:769
 msgid "\tRunning\n"
 msgstr "\tWird ausgeführt\n"
 
-#: src/CmdExec.cc:769
+#: src/CmdExec.cc:771
 msgid "\tWaiting for command\n"
 msgstr "\tWarten auf Befehl\n"
 
-#: src/CmdExec.cc:1238
+#: src/CmdExec.cc:1250
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: Befehl »%s« wurde nicht mitkompiliert.\n"
 
-#: src/CmdExec.cc:1245
+#: src/CmdExec.cc:1257
 #, fuzzy, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "Benutzung: %s module [Argumente..]\n"
 
-#: src/CmdExec.cc:1251
+#: src/CmdExec.cc:1263
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr ""
@@ -2453,26 +2453,26 @@ msgstr "Empfange Daten/TLS"
 msgid "[%u] Terminated by signal %d. %s\n"
 msgstr "[%lu] Beendet durch Signal %d. %s"
 
-#: src/lftp.cc:446
+#: src/lftp.cc:451
 #, fuzzy, c-format
 msgid "[%u] Started.  %s\n"
 msgstr "[%lu] Begonnen. %s"
 
-#: src/lftp.cc:461
+#: src/lftp.cc:467
 #, fuzzy, c-format
 msgid "[%u] Finished. %s\n"
 msgstr "[%lu] Beendet. %s"
 
-#: src/lftp.cc:465
+#: src/lftp.cc:471
 #, fuzzy, c-format
 msgid "[%u] Moving to background to complete transfers...\n"
 msgstr "[%lu] Gehe in den Hintergrund um Übertragungen zu beenden...\n"
 
-#: src/lftp.cc:519
+#: src/lftp.cc:525
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr "history -w Datei|-r Datei|-c|-l [Zahl]"
 
-#: src/lftp.cc:520
+#: src/lftp.cc:526
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2488,21 +2488,21 @@ msgstr ""
 "Das entbehrliche Argument »Zahl« gibt die Anzahl der aufzulistenden\n"
 "Verlaufszeilen an. »all« gibt alle Einträge aus.\n"
 
-#: src/lftp.cc:527
+#: src/lftp.cc:533
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
 msgstr ""
 
-#: src/lftp.cc:563
+#: src/lftp.cc:569
 #, fuzzy, c-format
 msgid "[%u] Detaching from the terminal to complete transfers...\n"
 msgstr "[%lu] Gehe in den Hintergrund um Übertragungen zu beenden...\n"
 
-#: src/lftp.cc:568
+#: src/lftp.cc:574
 #, c-format
 msgid "[%u] Detached from terminal. %s\n"
 msgstr ""
 
-#: src/lftp.cc:587
+#: src/lftp.cc:594
 #, c-format
 msgid "[%u] Exiting and detaching from the terminal.\n"
 msgstr ""
