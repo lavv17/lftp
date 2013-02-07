@@ -711,12 +711,14 @@ int IOBufferFileAccess::Get_LL(int size)
 
 void IOBufferFileAccess::SuspendInternal()
 {
+   super::SuspendInternal();
    session->SuspendSlave();
 }
 void IOBufferFileAccess::ResumeInternal()
 {
    if(!max_buf || Size()<max_buf)
       session->ResumeSlave();
+   super::ResumeInternal();
 }
 const char *IOBufferFileAccess::Status()
 {

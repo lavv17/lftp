@@ -2178,6 +2178,7 @@ const char *SFtpDirList::Status()
 
 void SFtpDirList::SuspendInternal()
 {
+   super::SuspendInternal();
    if(ubuf)
       ubuf->SuspendSlave();
 }
@@ -2185,6 +2186,7 @@ void SFtpDirList::ResumeInternal()
 {
    if(ubuf)
       ubuf->ResumeSlave();
+   super::ResumeInternal();
 }
 
 

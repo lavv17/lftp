@@ -916,9 +916,11 @@ void FileCopyPeerFA::SuspendInternal()
       return;
    if(session->IsOpen())
       session->SuspendSlave();
+   super::SuspendInternal();
 }
 void FileCopyPeerFA::ResumeInternal()
 {
+   super::ResumeInternal();
    session->ResumeSlave();
 }
 
