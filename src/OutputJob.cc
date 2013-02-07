@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -428,6 +428,7 @@ void OutputJob::Bg()
 
 void OutputJob::SuspendInternal()
 {
+   super::SuspendInternal();
    if(input)
       input->SuspendSlave();
    if(output && input != output)
@@ -440,6 +441,7 @@ void OutputJob::ResumeInternal()
       input->ResumeSlave();
    if(output && input != output)
       output->ResumeSlave();
+   super::ResumeInternal();
 }
 
 bool OutputJob::Full()

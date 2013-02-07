@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1364,6 +1364,7 @@ const char *HttpDirList::Status()
 
 void HttpDirList::SuspendInternal()
 {
+   super::SuspendInternal();
    if(ubuf)
       ubuf->SuspendSlave();
 }
@@ -1371,8 +1372,9 @@ void HttpDirList::ResumeInternal()
 {
    if(ubuf)
       ubuf->ResumeSlave();
+   super::ResumeInternal();
 }
-
+#undef super
 
 // HttpListInfo implementation
 FileSet *HttpListInfo::Parse(const char *b,int len)

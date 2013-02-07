@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,6 +376,7 @@ int clsJob::Do()
 
 void clsJob::SuspendInternal()
 {
+   super::SuspendInternal();
    if(list_info)
       list_info->SuspendSlave();
    session->SuspendSlave();
@@ -386,6 +387,7 @@ void clsJob::ResumeInternal()
    if(list_info)
       list_info->ResumeSlave();
    session->ResumeSlave();
+   super::ResumeInternal();
 }
 
 void clsJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)

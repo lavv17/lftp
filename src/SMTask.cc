@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,9 @@
 #include "Timer.h"
 #include "misc.h"
 
-SMTask	 *SMTask::chain=0;
-SMTask	 *SMTask::current=0;
+SMTask	 *SMTask::chain;
+SMTask	 *SMTask::chain_ready;
+SMTask	 *SMTask::current;
 xarray<SMTask*>	SMTask::stack;
 PollVec	 SMTask::block;
 TimeDate SMTask::now;
@@ -41,26 +42,47 @@ TimeDate SMTask::now;
 static int task_count=0;
 static SMTask *init_task=new SMTaskInit;
 
+void SMTask::AddToReadyList()
+{
+   if(prev_next_ready)
+      return;
+   if(current && current->prev_next_ready) {
+      // insert it so that it would be scanned next
+      prev_next_ready=&(current->next_ready);
+   } else {
+      prev_next_ready=&chain_ready;
+   }
+   next_ready=*prev_next_ready;
+   if(*prev_next_ready)
+      (*prev_next_ready)->prev_next_ready=&next_ready;
+   *prev_next_ready=this;
+}
+void SMTask::RemoveFromReadyList()
+{
+   if(!prev_next_ready)
+      return;
+   if(next_ready)
+      next_ready->prev_next_ready=prev_next_ready;
+   *prev_next_ready=next_ready;
+   prev_next_ready=0;
+   next_ready=0;
+}
+
 SMTask::SMTask()
 {
    // insert in the chain
-   if(current)
-   {
-      // insert it so that it would be scanned next
-      next=current->next;
-      current->next=this;
-   }
-   else
-   {
-      next=chain;
-      chain=this;
-   }
+   next=chain;
+   chain=this;
+
+   next_ready=0;
+   prev_next_ready=0;
    suspended=false;
    suspended_slave=false;
    running=0;
    ref_count=0;
    deleting=false;
    task_count++;
+   AddToReadyList();
 #ifdef TASK_DEBUG
    printf("new SMTask %p (count=%d)\n",this,task_count);
 #endif
@@ -115,6 +137,7 @@ SMTask::~SMTask()
       abort();
    }
    assert(!ref_count);
+   RemoveFromReadyList();
    // remove from the chain
    SMTask **scan=&chain;
    while(*scan)
@@ -229,7 +252,7 @@ void SMTask::Schedule()
       block.SetTimeout(timer_timeout);
 
    int res=STALL;
-   for(scan=chain; scan; scan=scan->next)
+   for(scan=chain_ready; scan; scan=scan->next_ready)
    {
       if(scan->running || scan->IsSuspended())
 	 continue;

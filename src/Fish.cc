@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -963,6 +963,7 @@ int Fish::Done()
 
 void Fish::SuspendInternal()
 {
+   super::SuspendInternal();
    if(recv_buf)
       recv_buf->SuspendSlave();
    if(send_buf)
@@ -974,6 +975,7 @@ void Fish::ResumeInternal()
       recv_buf->ResumeSlave();
    if(send_buf)
       send_buf->ResumeSlave();
+   super::ResumeInternal();
 }
 
 const char *Fish::CurrentStatus()
@@ -1162,6 +1164,7 @@ const char *FishDirList::Status()
 
 void FishDirList::SuspendInternal()
 {
+   super::SuspendInternal();
    if(ubuf)
       ubuf->SuspendSlave();
 }
@@ -1169,6 +1172,7 @@ void FishDirList::ResumeInternal()
 {
    if(ubuf)
       ubuf->ResumeSlave();
+   super::ResumeInternal();
 }
 
 static FileSet *ls_to_FileSet(const char *b,int len)

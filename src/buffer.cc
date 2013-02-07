@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -558,12 +558,14 @@ bool IOBufferStacked::Done()
 
 void IOBufferStacked::SuspendInternal()
 {
+   super::SuspendInternal();
    down->SuspendSlave();
 }
 void IOBufferStacked::ResumeInternal()
 {
    if(!max_buf || Size()<max_buf)
       down->ResumeSlave();
+   super::ResumeInternal();
 }
 
 // IOBufferFDStream implementation

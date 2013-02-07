@@ -1,3 +1,10 @@
+2013-02-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileSetOutput.cc, Fish.cc, FtpDirList.cc, Http.cc, HttpDir.cc,
+	  OutputJob.cc, SFtp.cc, SMTask.cc, SMTask.h, buffer.cc, ftpclass.cc:
+	  add ready task list to optimize Schedule when there are too many suspended
+	  tasks.
+
 2013-01-31  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* xstring.cc, xstring.h: add flags in url_decode.

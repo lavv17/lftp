@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,17 @@ class SMTask
 {
    virtual int Do() = 0;
 
+   // all tasks list
    SMTask *next;
-
    static SMTask *chain;
+
+   // ready (not suspended) tasks list
+   SMTask *next_ready;
+   SMTask **prev_next_ready;
+   static SMTask *chain_ready;
+   void AddToReadyList();
+   void RemoveFromReadyList();
+
    static PollVec block;
    static xarray<SMTask*> stack;
 
@@ -50,8 +58,8 @@ protected:
    };
 
    // SuspendInternal and ResumeInternal usually suspend and resume slave tasks
-   virtual void SuspendInternal() {}
-   virtual void ResumeInternal() {}
+   virtual void SuspendInternal() { RemoveFromReadyList(); }
+   virtual void ResumeInternal() { AddToReadyList(); }
    virtual void PrepareToDie() {}  // it is called from Delete no matter of running and ref_count
 
 public:

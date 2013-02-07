@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,6 +130,7 @@ const char *FtpDirList::Status()
 
 void FtpDirList::SuspendInternal()
 {
+   super::SuspendInternal();
    if(ubuf)
       ubuf->SuspendSlave();
 }
@@ -137,6 +138,7 @@ void FtpDirList::ResumeInternal()
 {
    if(ubuf)
       ubuf->ResumeSlave();
+   super::ResumeInternal();
 }
 
 void FtpDirList::FormatGeneric(FileInfo *fi)

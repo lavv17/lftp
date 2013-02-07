@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3583,6 +3583,7 @@ bool  Ftp::IOReady()
 
 void Ftp::SuspendInternal()
 {
+   super::SuspendInternal();
    if(conn)
       conn->SuspendInternal();
 }
@@ -3590,6 +3591,7 @@ void Ftp::ResumeInternal()
 {
    if(conn)
       conn->ResumeInternal();
+   super::ResumeInternal();
 }
 
 int   Ftp::Read(void *buf,int size)

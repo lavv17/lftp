@@ -440,6 +440,7 @@ FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 }
 void FileCopy::SuspendInternal()
 {
+   super::SuspendInternal();
    if(get) get->SuspendSlave();
    if(put) put->SuspendSlave();
 }
@@ -447,6 +448,7 @@ void FileCopy::ResumeInternal()
 {
    if(get) get->ResumeSlave();
    if(put) put->ResumeSlave();
+   super::ResumeInternal();
 }
 void FileCopy::Fg()
 {

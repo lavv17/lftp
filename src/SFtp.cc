@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1274,6 +1274,7 @@ int SFtp::Done()
 
 void SFtp::SuspendInternal()
 {
+   super::SuspendInternal();
    if(recv_buf)
       recv_buf->SuspendSlave();
    if(send_buf)
@@ -1293,6 +1294,7 @@ void SFtp::ResumeInternal()
       pty_send_buf->ResumeSlave();
    if(pty_recv_buf)
       pty_recv_buf->ResumeSlave();
+   super::ResumeInternal();
 }
 
 const char *SFtp::CurrentStatus()
