@@ -1,3 +1,7 @@
+2013-02-15	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document cmd:show-status.
+
 2013-02-01	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document cmd:at-background and cmd:at-terminate settings.

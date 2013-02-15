@@ -65,6 +65,7 @@ static ResType lftp_cmd_vars[] = {
    {"cmd:fail-exit",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:verbose",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:interactive",		 "auto",  ResMgr::TriBoolValidate,ResMgr::NoClosure},
+   {"cmd:show-status",		 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:move-background",	 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:move-background-detach","yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:set-term-status",	 "no",	  ResMgr::BoolValidate,0},
@@ -541,7 +542,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line && interactive && status_line->CanShowNow())
+      if(status_line && show_status && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       return m;
    }
@@ -585,7 +586,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line && interactive && status_line->CanShowNow())
+      if(status_line && show_status && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       if(m != STALL || interactive || waiting_num >= max_waiting)
 	 return m;
@@ -611,7 +612,7 @@ try_get_cmd:
 	       last_bg=-1;
 	 }
 
-	 if(status_line && interactive)
+	 if(status_line && show_status)
 	 {
 	    const char *def_title = FormatPrompt(ResMgr::Query("cmd:default-title",getenv("TERM")));
 	    status_line->DefaultTitle(def_title);
@@ -781,6 +782,7 @@ void CmdExec::init(LocalDirectory *c)
    background=false;
 
    interactive=false;
+   show_status=true;
    top_level=false;
    auto_terminate_in_bg=false;
    feeder=0;
@@ -928,6 +930,7 @@ void CmdExec::Reconfig(const char *name)
    max_waiting=ResMgr::Query(queue_feeder?"cmd:queue-parallel":"cmd:parallel",c);
    if(name && !strcmp(name,"cmd:interactive"))
       SetInteractive();
+   show_status=ResMgr::QueryBool("cmd:show-status",0);
 }
 
 void CmdExec::pre_stdout()

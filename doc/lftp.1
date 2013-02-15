@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "31 Jan 2013"
+.TH lftp 1 "15 Feb 2013"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.2.
+This man page documents lftp version 4.4.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1137,6 +1137,9 @@ allowing to do ``cd -'' after lftp restart. Default is true.
 .BR cmd:save-rl-history \ (boolean)
 when true, lftp saves readline history to \fI~/.lftp/rl_history\fR on exit.
 Default is true.
+.TP
+.BR cmd:show-status \ (booleam)
+when false, lftp does not show status line on terminal. Default is true.
 .TP
 .BR cmd:set-term-status \ (boolean)
 when true, lftp updates terminal status if supported (e.g. xterm). The closure

@@ -193,6 +193,7 @@ public:
    const char *MakePrompt();
 
    bool interactive;
+   bool show_status;
    bool top_level;
    bool verbose;
    bool auto_terminate_in_bg;

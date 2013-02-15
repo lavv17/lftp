@@ -1,3 +1,7 @@
+2013-02-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h: (cmd:show-status) new setting.
+
 2013-02-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc, FileSetOutput.cc, Fish.cc, FtpDirList.cc, Http.cc, HttpDir.cc,
