@@ -266,8 +266,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -a  all types\n")},
    {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
-   {"jobs",    cmd_jobs,   "jobs [-v]",
-	 N_("List running jobs. -v means verbose, several -v can be specified.\n")},
+   {"jobs",    cmd_jobs,   "jobs [-v] [<job_no...>]",
+	 N_("List running jobs. -v means verbose, several -v can be specified.\n"
+	    "If <job_no> is specified, only list a job with that number.\n")},
    {"kill",    cmd_kill,   N_("kill all|<job_no>"),
 	 N_("Delete specified job with <job_no> or all jobs\n")},
    {"lcd",     cmd_lcd,    N_("lcd <ldir>"),

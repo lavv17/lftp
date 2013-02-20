@@ -1,3 +1,7 @@
+2013-02-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: add "jobs" command arguments description.
+
 2013-02-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* CmdExec.cc, CmdExec.h: (cmd:show-status) new setting.
