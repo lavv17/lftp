@@ -1,3 +1,9 @@
+2013-02-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h, TorrentTracker.cc, TorrentTracker.h:
+	  split off TorrentTracker; add TrackerBackend class; prepare
+	  for udp tracker implementation.
+
 2013-02-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: add "jobs" command arguments description.

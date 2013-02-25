@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* $Id: Torrent.cc,v 1.54 2011/08/01 09:51:51 lav Exp $ */
-
 #include <config.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -33,6 +31,7 @@
 #include <sha1.h>
 
 #include "Torrent.h"
+#include "TorrentTracker.h"
 #include "DHT.h"
 #include "log.h"
 #include "url.h"
@@ -116,29 +115,6 @@ SMTaskRef<DHT> Torrent::dht_ipv6;
 #endif
 Ref<FDCache> Torrent::fd_cache;
 Ref<TorrentBlackList> Torrent::black_list;
-
-void TorrentTracker::AddURL(const char *url)
-{
-   LogNote(4,"Tracker URL is `%s'",url);
-   ParsedURL u(url,true);
-   if(u.proto.ne("http") && u.proto.ne("https")) {
-      LogError(1,"unsupported tracker protocol `%s', must be http or https",u.proto.get());
-      return;
-   }
-   xstring& tracker_url=*new xstring(url);
-   // fix the URL: append either ? or & if missing.
-   if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
-      tracker_url.append(tracker_url.instr('?')>=0?'&':'?');
-   tracker_urls.append(&tracker_url);
-}
-
-TorrentTracker::TorrentTracker(Torrent *p,const char *url)
-   : parent(p), current_tracker(0),
-     tracker_timer(600), tracker_timeout_timer(120),
-     started(false), tracker_no(0)
-{
-   AddURL(url);
-}
 
 void Torrent::StartDHT()
 {
@@ -292,7 +268,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
 bool Torrent::TrackersDone() const
 {
    for(int i=0; i<trackers.count(); i++) {
-      if(trackers[i]->tracker_reply)
+      if(trackers[i]->IsActive())
 	 return false;
    }
    return true;
@@ -302,14 +278,6 @@ int Torrent::Done() const
    return (shutting_down && TrackersDone());
 }
 
-void TorrentTracker::Shutdown()
-{
-   if(Failed()) // don't stop a failed tracker
-      return;
-   // stop if have started or at least processing a start request
-   if(started || tracker_reply)
-      SendTrackerRequest("stopped");
-}
 void Torrent::ShutdownTrackers() const
 {
    for(int i=0; i<trackers.count(); i++) {
@@ -501,152 +469,6 @@ bool Torrent::SeededEnough() const
       || seed_timer.Stopped();
 }
 
-void TorrentTracker::SetError(const char *e)
-{
-   if(tracker_urls.count()<=1)
-      error=new Error(-1,e,true);
-   else {
-      LogError(3,"Tracker error: %s, using next tracker URL",e);
-      tracker_urls.remove(current_tracker--);
-      NextTracker();
-   }
-}
-int TorrentTracker::HandleTrackerReply()
-{
-   if(tracker_reply->Error()) {
-      SetError(tracker_reply->ErrorText());
-      t_session->Close();
-      tracker_reply=0;
-      tracker_timer.Reset();
-      return MOVED;
-   }
-   if(!tracker_reply->Eof()) {
-      if(tracker_timeout_timer.Stopped()) {
-	 t_session->Close();
-	 tracker_reply=0;
-	 tracker_timer.Reset();
-	 LogError(3,"Tracker timeout");
-	 NextTracker();
-	 return MOVED;
-      }
-      return STALL;
-   }
-   t_session->Close();
-   int rest;
-   Ref<BeNode> reply(BeNode::Parse(tracker_reply->Get(),tracker_reply->Size(),&rest));
-   if(!reply) {
-      LogError(3,"Tracker reply parse error (data: %s)",tracker_reply->Dump());
-      tracker_reply=0;
-      tracker_timer.Reset();
-      NextTracker();
-      return MOVED;
-   }
-   LogNote(10,"Received tracker reply:");
-   Log::global->Write(10,reply->Format());
-
-   if(parent->ShuttingDown()) {
-      tracker_reply=0;
-      t_session=0;
-      return MOVED;
-   }
-   started=true;
-
-   if(reply->type!=BeNode::BE_DICT) {
-      SetError("Reply: wrong reply type, must be DICT");
-      tracker_reply=0;
-      return MOVED;
-   }
-
-   BeNode *b_failure_reason=reply->lookup("failure reason");
-   if(b_failure_reason) {
-      if(b_failure_reason->type==BeNode::BE_STR)
-	 SetError(b_failure_reason->str);
-      else
-	 SetError("Reply: wrong `failure reason' type, must be STR");
-      tracker_reply=0;
-      return MOVED;
-   }
-
-   BeNode *b_interval=reply->lookup("interval",BeNode::BE_INT);
-   if(b_interval) {
-      LogNote(4,"Tracker interval is %llu",b_interval->num);
-      tracker_timer.Set(b_interval->num);
-   }
-
-   if(!tracker_id)
-      tracker_id.set(reply->lookup_str("tracker id"));
-
-   int peers_count=0;
-   BeNode *b_peers=reply->lookup("peers");
-   if(b_peers) {
-      if(b_peers->type==BeNode::BE_STR) { // binary model
-	 const char *data=b_peers->str;
-	 int len=b_peers->str.length();
-	 LogNote(9,"peers have binary model, length=%d",len);
-	 while(len>=6) {
-	    sockaddr_u a;
-	    a.set_compact(data,6);
-	    data+=6;
-	    len-=6;
-	    parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
-	    peers_count++;
-	 }
-      } else if(b_peers->type==BeNode::BE_LIST) { // dictionary model
-	 int count=b_peers->list.count();
-	 LogNote(9,"peers have dictionary model, count=%d",count);
-	 for(int p=0; p<count; p++) {
-	    BeNode *b_peer=b_peers->list[p];
-	    if(b_peer->type!=BeNode::BE_DICT)
-	       continue;
-	    BeNode *b_ip=b_peer->lookup("ip",BeNode::BE_STR);
-	    if(!b_ip)
-	       continue;
-	    BeNode *b_port=b_peer->lookup("port",BeNode::BE_INT);
-	    if(!b_port)
-	       continue;
-	    sockaddr_u a;
-#if INET6
-	    if(b_ip->str.instr(':')>=0) {
-	       a.sa.sa_family=AF_INET6;
-	       if(inet_pton(AF_INET6,b_ip->str,&a.in6.sin6_addr)<=0)
-		  continue;
-	       a.set_port(b_port->num);
-	    } else
-#endif
-	    {
-	       a.sa.sa_family=AF_INET;
-	       if(!inet_aton(b_ip->str,&a.in.sin_addr))
-		  continue;
-	       a.set_port(b_port->num);
-	    }
-	    parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
-	    peers_count++;
-	 }
-      }
-      LogNote(4,plural("Received valid info about %d peer$|s$",peers_count),peers_count);
-   }
-#if INET6
-   peers_count=0;
-   b_peers=reply->lookup("peers6",BeNode::BE_STR);
-   if(b_peers) { // binary model
-      const char *data=b_peers->str;
-      int len=b_peers->str.length();
-      while(len>=18) {
-	 sockaddr_u a;
-	 a.set_compact(data,18);
-	 data+=18;
-	 len-=18;
-	 parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
-	 peers_count++;
-      }
-      LogNote(4,plural("Received valid info about %d IPv6 peer$|s$",peers_count),peers_count);
-   }
-#endif//INET6
-   tracker_timer.Reset();
-   tracker_reply=0;
-   return MOVED;
-}
-
 void Torrent::CleanPeers()
 {
    // remove uninteresting peers and request more
@@ -658,38 +480,6 @@ void Torrent::CleanPeers()
 	 peers.remove(i--);
       }
    }
-}
-
-int TorrentTracker::Do()
-{
-   int m=STALL;
-   if(Failed())
-      return m;
-   if(tracker_reply) {
-      m|=HandleTrackerReply();
-   } else {
-      if(tracker_timer.Stopped()) {
-	 parent->CleanPeers();
-	 SendTrackerRequest(0);
-      }
-   }
-   return m;
-}
-void TorrentTracker::NextTracker()
-{
-   current_tracker++;
-   if(current_tracker>=tracker_urls.count())
-      current_tracker=0;
-   ParsedURL u(GetURL(),true);
-   t_session=FileAccess::New(&u);
-}
-void TorrentTracker::Start()
-{
-   if(t_session || Failed())
-      return;
-   ParsedURL u(GetURL(),true);
-   t_session=FileAccess::New(&u);
-   SendTrackerRequest("started");
 }
 
 void Torrent::StartTrackers()
@@ -1238,51 +1028,6 @@ int Torrent::GetWantedPeersCount() const
 	 numwant=(numwant+trackers_count-1)/trackers_count;
    }
    return numwant;
-}
-
-void TorrentTracker::SendTrackerRequest(const char *event)
-{
-   if(!t_session)
-      return;
-
-   xstring request(GetURL());
-   request.appendf("info_hash=%s",url::encode(parent->GetInfoHash(),URL_PATH_UNSAFE).get());
-   request.appendf("&peer_id=%s",url::encode(parent->GetMyPeerId(),URL_PATH_UNSAFE).get());
-   request.appendf("&port=%d",parent->GetPort());
-   request.appendf("&uploaded=%llu",parent->GetTotalSent());
-   request.appendf("&downloaded=%llu",parent->GetTotalRecv());
-   if(parent->HasMetadata())
-      request.appendf("&left=%llu",parent->GetTotalLeft());
-   request.append("&compact=1&no_peer_id=1");
-   if(event)
-      request.appendf("&event=%s",event);
-   const char *ip=ResMgr::Query("torrent:ip",0);
-   if(ip && ip[0])
-      request.appendf("&ip=%s",ip);
-
-#if INET6
-   int port=Torrent::GetPortIPv4();
-   int port_ipv6=Torrent::GetPortIPv6();
-   const char *ipv6=ResMgr::Query("torrent:ipv6",0);
-   if(port && ip && ip[0])
-      request.appendf("&ipv4=%s:%d",ip,port);
-   if(port_ipv6)
-      request.appendf("&ipv6=[%s]:%d",ipv6&&ipv6[0]?ipv6:Torrent::GetAddressIPv6(),port_ipv6);
-#endif
-
-   int numwant=parent->GetWantedPeersCount();
-   if(numwant>=0)
-      request.appendf("&numwant=%d",numwant);
-   const xstring& my_key=parent->GetMyKey();
-   if(my_key)
-      request.appendf("&key=%s",my_key.get());
-   if(tracker_id)
-      request.appendf("&trackerid=%s",url::encode(tracker_id,URL_PATH_UNSAFE).get());
-   LogSend(4,request);
-   t_session->Open(url::path_ptr(request),FA::RETRIEVE);
-   t_session->SetFileURL(request);
-   tracker_reply=new IOBufferFileAccess(t_session);
-   tracker_timeout_timer.Reset();
 }
 
 const char *Torrent::MakePath(BeNode *p) const
@@ -3672,15 +3417,6 @@ int TorrentJob::Do()
       return MOVED;
    }
    return STALL;
-}
-
-const char *TorrentTracker::Status() const
-{
-   if(!t_session)
-      return "";
-   if(t_session->IsOpen())
-      return t_session->CurrentStatus();
-   return xstring::format(_("next request in %s"),NextRequestIn());
 }
 
 xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id: Torrent.h,v 1.32 2011/05/10 05:55:14 lav Exp $ */
 
 #ifndef TORRENT_H
 #define TORRENT_H
@@ -93,50 +91,7 @@ public:
    bool MaySendUDP();
 };
 
-class TorrentTracker : public SMTask, protected ProtoLog
-{
-   friend class Torrent;
-
-   Torrent *parent;
-
-   xarray_p<xstring> tracker_urls;
-   int current_tracker;
-   FileAccessRef t_session;
-   Timer tracker_timer;
-   Timer tracker_timeout_timer;
-   SMTaskRef<IOBuffer> tracker_reply;
-   xstring tracker_id;
-   bool started;
-   Ref<Error> error;
-   int tracker_no;
-
-   TorrentTracker(Torrent *p,const char *url);
-   void AddURL(const char *url);
-   int Do();
-
-   void Start();
-   void Shutdown();
-
-   void SendTrackerRequest(const char *event);
-   int HandleTrackerReply();
-
-   void SetError(const char *e);
-   bool Failed() const { return error!=0 || tracker_urls.count()==0; }
-   const char *ErrorText() const { return error->Text(); }
-
-   void NextTracker();
-
-public:
-   ~TorrentTracker() {}
-   const char *NextRequestIn() const {
-      return tracker_timer.TimeLeft().toString(
-	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
-   }
-   const char *GetURL() const {
-      return tracker_urls[current_tracker]->get();
-   }
-   const char *Status() const;
-};
+class TorrentTracker;
 
 class Torrent : public SMTask, protected ProtoLog, public ResClient
 {

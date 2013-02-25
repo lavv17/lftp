@@ -1,0 +1,345 @@
+/*
+ * lftp - file transfer program
+ *
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <config.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#include "Torrent.h"
+#include "TorrentTracker.h"
+#include "log.h"
+#include "url.h"
+#include "misc.h"
+#include "plural.h"
+
+void TorrentTracker::AddURL(const char *url)
+{
+   LogNote(4,"Tracker URL is `%s'",url);
+   ParsedURL u(url,true);
+   if(u.proto.ne("http") && u.proto.ne("https")) {
+      LogError(1,"unsupported tracker protocol `%s', must be http or https",u.proto.get());
+      return;
+   }
+   xstring& tracker_url=*new xstring(url);
+   // fix the URL: append either ? or & if missing.
+   if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
+      tracker_url.append(tracker_url.instr('?')>=0?'&':'?');
+   tracker_urls.append(&tracker_url);
+}
+
+TorrentTracker::TorrentTracker(Torrent *p,const char *url)
+   : parent(p), current_tracker(0),
+     tracker_timer(600), tracker_timeout_timer(120),
+     started(false), tracker_no(0)
+{
+   AddURL(url);
+}
+
+bool TorrentTracker::IsActive() const
+{
+   return backend && backend->IsActive();
+}
+void TorrentTracker::Shutdown()
+{
+   if(Failed()) // don't stop a failed tracker
+      return;
+   // stop if have started or at least processing a start request
+   if(started || IsActive())
+      SendTrackerRequest("stopped");
+}
+void TorrentTracker::SetError(const char *e)
+{
+   if(tracker_urls.count()<=1)
+      error=new Error(-1,e,true);
+   else {
+      LogError(3,"Tracker error: %s, using next tracker URL",e);
+      tracker_urls.remove(current_tracker--);
+      NextTracker();
+      // retry immediately
+      tracker_timer.Stop();
+   }
+}
+bool TorrentTracker::AddPeerCompact(const char *compact_addr,int len) const
+{
+   sockaddr_u a;
+   if(!a.set_compact(compact_addr,len))
+      return false;
+   parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
+   return true;
+}
+bool TorrentTracker::AddPeer(const xstring& addr,int port) const
+{
+   sockaddr_u a;
+#if INET6
+   if(addr.instr(':')>=0) {
+      a.sa.sa_family=AF_INET6;
+      if(inet_pton(AF_INET6,addr,&a.in6.sin6_addr)<=0)
+	 return false;
+   } else
+#endif
+   {
+      a.sa.sa_family=AF_INET;
+      if(!inet_aton(addr,&a.in.sin_addr))
+	 return false;
+   }
+   a.set_port(port);
+   parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
+   return true;
+}
+int TorrentTracker::Do()
+{
+   int m=STALL;
+   if(Failed())
+      return m;
+   if(backend && backend->IsActive()) {
+      if(tracker_timeout_timer.Stopped()) {
+	 LogError(3,"Tracker timeout");
+	 NextTracker();
+	 return MOVED;
+      }
+   } else {
+      if(tracker_timer.Stopped()) {
+	 parent->CleanPeers();
+	 SendTrackerRequest(0);
+      }
+   }
+   return m;
+}
+void TorrentTracker::CreateTrackerBackend()
+{
+   backend=0;
+   ParsedURL u(GetURL(),true);
+   if(u.proto.eq("udp")) {
+//      xxx
+   } else if(u.proto.eq("http") || u.proto.eq("https")) {
+      backend=new HttpTracker(this,&u);
+   }
+}
+void TorrentTracker::NextTracker()
+{
+   current_tracker++;
+   if(current_tracker>=tracker_urls.count())
+      current_tracker=0;
+   tracker_timer.Reset();
+
+   CreateTrackerBackend();
+}
+void TorrentTracker::Start()
+{
+   if(backend || Failed())
+      return;
+   CreateTrackerBackend();
+   SendTrackerRequest("started");
+}
+void TorrentTracker::SendTrackerRequest(const char *event)
+{
+   backend->SendTrackerRequest(event);
+   tracker_timeout_timer.Reset();
+}
+const char *TorrentTracker::Status() const
+{
+   if(!backend)
+      return "";
+   if(backend->IsActive())
+      return backend->Status();
+   return xstring::format(_("next request in %s"),NextRequestIn());
+}
+
+
+// TrackerBackend
+const char *TrackerBackend::GetInfoHash() const { return master->parent->GetInfoHash(); }
+const char *TrackerBackend::GetMyPeerId() const { return master->parent->GetMyPeerId(); }
+int TrackerBackend::GetPort() const { return master->parent->GetPort(); }
+unsigned long long TrackerBackend::GetTotalSent() const { return master->parent->GetTotalSent(); }
+unsigned long long TrackerBackend::GetTotalRecv() const { return master->parent->GetTotalRecv(); }
+unsigned long long TrackerBackend::GetTotalLeft() const { return master->parent->GetTotalLeft(); }
+bool TrackerBackend::HasMetadata() const { return master->parent->HasMetadata(); }
+int TrackerBackend::GetWantedPeersCount() const { return master->parent->GetWantedPeersCount(); }
+const xstring& TrackerBackend::GetMyKey() const { return master->parent->GetMyKey(); }
+const char *TrackerBackend::GetTrackerId() const { return master->tracker_id; }
+bool TrackerBackend::ShuttingDown() const { return master->parent->ShuttingDown(); }
+void TrackerBackend::Started() const { master->started=true; }
+void TrackerBackend::TrackerRequestFinished() const { master->tracker_timer.Reset(); }
+
+// HttpTracker
+#define super TrackerBackend
+int HttpTracker::HandleTrackerReply()
+{
+   if(tracker_reply->Error()) {
+      SetError(tracker_reply->ErrorText());
+      t_session->Close();
+      tracker_reply=0;
+      return MOVED;
+   }
+   if(!tracker_reply->Eof())
+      return STALL;
+   t_session->Close();
+   int rest;
+   Ref<BeNode> reply(BeNode::Parse(tracker_reply->Get(),tracker_reply->Size(),&rest));
+   if(!reply) {
+      LogError(3,"Tracker reply parse error (data: %s)",tracker_reply->Dump());
+      tracker_reply=0;
+      NextTracker();
+      return MOVED;
+   }
+   LogNote(10,"Received tracker reply:");
+   Log::global->Write(10,reply->Format());
+
+   if(ShuttingDown()) {
+      tracker_reply=0;
+      t_session=0;
+      return MOVED;
+   }
+   Started();
+
+   if(reply->type!=BeNode::BE_DICT) {
+      SetError("Reply: wrong reply type, must be DICT");
+      tracker_reply=0;
+      return MOVED;
+   }
+
+   BeNode *b_failure_reason=reply->lookup("failure reason");
+   if(b_failure_reason) {
+      if(b_failure_reason->type==BeNode::BE_STR)
+	 SetError(b_failure_reason->str);
+      else
+	 SetError("Reply: wrong `failure reason' type, must be STR");
+      tracker_reply=0;
+      return MOVED;
+   }
+
+   BeNode *b_interval=reply->lookup("interval",BeNode::BE_INT);
+   if(b_interval)
+      SetInterval(b_interval->num);
+   SetTrackerID(reply->lookup_str("tracker id"));
+
+   int peers_count=0;
+   BeNode *b_peers=reply->lookup("peers");
+   if(b_peers) {
+      if(b_peers->type==BeNode::BE_STR) { // binary model
+	 const char *data=b_peers->str;
+	 int len=b_peers->str.length();
+	 LogNote(9,"peers have binary model, length=%d",len);
+	 while(len>=6) {
+	    if(AddPeerCompact(data,6))
+	       peers_count++;
+	    data+=6;
+	    len-=6;
+	 }
+      } else if(b_peers->type==BeNode::BE_LIST) { // dictionary model
+	 int count=b_peers->list.count();
+	 LogNote(9,"peers have dictionary model, count=%d",count);
+	 for(int p=0; p<count; p++) {
+	    BeNode *b_peer=b_peers->list[p];
+	    if(b_peer->type!=BeNode::BE_DICT)
+	       continue;
+	    BeNode *b_ip=b_peer->lookup("ip",BeNode::BE_STR);
+	    if(!b_ip)
+	       continue;
+	    BeNode *b_port=b_peer->lookup("port",BeNode::BE_INT);
+	    if(!b_port)
+	       continue;
+	    if(AddPeer(b_ip->str,b_port->num))
+	       peers_count++;
+	 }
+      }
+      LogNote(4,plural("Received valid info about %d peer$|s$",peers_count),peers_count);
+   }
+#if INET6
+   peers_count=0;
+   b_peers=reply->lookup("peers6",BeNode::BE_STR);
+   if(b_peers) { // binary model
+      const char *data=b_peers->str;
+      int len=b_peers->str.length();
+      while(len>=18) {
+	 if(AddPeerCompact(data,18))
+	    peers_count++;
+	 data+=18;
+	 len-=18;
+      }
+      LogNote(4,plural("Received valid info about %d IPv6 peer$|s$",peers_count),peers_count);
+   }
+#endif//INET6
+   tracker_reply=0;
+   TrackerRequestFinished();
+   return MOVED;
+}
+
+int HttpTracker::Do()
+{
+   int m=STALL;
+   if(!IsActive())
+      return m;
+   if(tracker_reply)
+      m|=HandleTrackerReply();
+   return m;
+}
+
+void HttpTracker::SendTrackerRequest(const char *event)
+{
+   if(!t_session)
+      return;
+
+   xstring request(GetURL());
+   request.appendf("info_hash=%s",url::encode(GetInfoHash(),URL_PATH_UNSAFE).get());
+   request.appendf("&peer_id=%s",url::encode(GetMyPeerId(),URL_PATH_UNSAFE).get());
+   request.appendf("&port=%d",GetPort());
+   request.appendf("&uploaded=%llu",GetTotalSent());
+   request.appendf("&downloaded=%llu",GetTotalRecv());
+   if(HasMetadata())
+      request.appendf("&left=%llu",GetTotalLeft());
+   request.append("&compact=1&no_peer_id=1");
+   if(event)
+      request.appendf("&event=%s",event);
+   const char *ip=ResMgr::Query("torrent:ip",0);
+   if(ip && ip[0])
+      request.appendf("&ip=%s",ip);
+
+#if INET6
+   int port=Torrent::GetPortIPv4();
+   int port_ipv6=Torrent::GetPortIPv6();
+   const char *ipv6=ResMgr::Query("torrent:ipv6",0);
+   if(port && ip && ip[0])
+      request.appendf("&ipv4=%s:%d",ip,port);
+   if(port_ipv6)
+      request.appendf("&ipv6=[%s]:%d",ipv6&&ipv6[0]?ipv6:Torrent::GetAddressIPv6(),port_ipv6);
+#endif
+
+   int numwant=GetWantedPeersCount();
+   if(numwant>=0)
+      request.appendf("&numwant=%d",numwant);
+   const xstring& my_key=GetMyKey();
+   if(my_key)
+      request.appendf("&key=%s",my_key.get());
+   const char *tracker_id=GetTrackerId();
+   if(tracker_id)
+      request.appendf("&trackerid=%s",url::encode(tracker_id,URL_PATH_UNSAFE).get());
+   LogSend(4,request);
+   t_session->Open(url::path_ptr(request),FA::RETRIEVE);
+   t_session->SetFileURL(request);
+   tracker_reply=new IOBufferFileAccess(t_session);
+}
