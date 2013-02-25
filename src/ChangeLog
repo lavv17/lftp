@@ -3,6 +3,7 @@
 	* Torrent.cc, Torrent.h, TorrentTracker.cc, TorrentTracker.h:
 	  split off TorrentTracker; add TrackerBackend class; prepare
 	  for udp tracker implementation.
+	* ResMgr.cc: include stdlib.h for strtoll.
 
 2013-02-20  Alexander V. Lukyanov <lav@yars.free.net>
 
