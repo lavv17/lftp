@@ -84,6 +84,8 @@ int DHT::Do()
 	    if(n) {
 	       n->LostPing();
 	       LogNote(4,"DHT node %s has lost %d packets",n->GetName(),n->ping_lost_count);
+	       n->requests_in_flight--;
+	       assert(n->requests_in_flight>=0);
 	    }
 	    sent_req.remove(sent_req.each_key());
 	 }
@@ -106,10 +108,19 @@ int DHT::Do()
       }
       if(nodes.count()>MAX_NODES) {
 	 // remove some nodes.
+	 int to_remove=nodes.count()-MAX_NODES;
 	 for(Node *n=nodes.each_begin(); n; n=nodes.each_next()) {
 	    if(!n->IsGood() && !n->in_routes) {
-	       LogNote(9,"removing node %s",n->GetName());
+	       LogNote(9,"removing node %s (not good)",n->GetName());
 	       RemoveNode(n);
+	       to_remove--;
+	    }
+	 }
+	 for(Node *n=nodes.each_begin(); n && to_remove>0; n=nodes.each_next()) {
+	    if(!n->in_routes && !n->responded && n->requests_in_flight<=0) {
+	       LogNote(9,"removing node %s (never responded)",n->GetName());
+	       RemoveNode(n);
+	       to_remove--;
 	    }
 	 }
 	 LogNote(9,"node count=%d",nodes.count());
@@ -259,6 +270,9 @@ void DHT::SendMessage(Request *req)
    if(res!=-1 && q->lookup_str("y").eq("q")) {
       sent_req.add(q->lookup_str("t"),req);
       rate_limit.BytesPut(res);
+      Node *n=nodes.lookup(req->GetNodeId());
+      if(n)
+	 n->requests_in_flight++;
    } else {
       delete req;
    }
@@ -485,6 +499,11 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       LogError(2,"got DHT reply with unknown `t' from %s",src.to_string());
       return;
    }
+   Node *n=nodes.lookup(req->GetNodeId());
+   if(n) {
+      n->requests_in_flight--;
+      assert(n->requests_in_flight>=0);
+   }
    const xstring& q=req->data->lookup_str("q");
 
    if(y.eq("r")) {
@@ -695,6 +714,12 @@ void DHT::RemoveNode(Node *n)
    for(int i=0; i<search.count(); i++) {
       if(search[i]->best_node==n)
 	 search.remove(i--);
+   }
+   if(n->requests_in_flight>0) {
+      for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
+	 if(r->node_id.eq(n->id))
+	    sent_req.remove(sent_req.each_key());
+      }
    }
    node_by_addr.remove(n->addr.compact());
    nodes.remove(n->id);
@@ -1029,6 +1054,12 @@ void DHT::Load(const SMTaskRef<IOBuffer>& buf)
       data+=node_len;
       len-=node_len;
       FoundNode(id,a,false);
+      // loaded node is not good by default (learned long ago).
+      Node *n=DHT::nodes.lookup(id);
+      if(n) {
+	 n->good_timer.Stop();
+	 n->ping_timer.Stop();
+      }
    }
    // refresh routes after loading
    for(int i=0; i<routes.count(); i++)

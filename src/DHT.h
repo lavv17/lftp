@@ -45,6 +45,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       bool responded; // has ever responded to our query
       bool in_routes; // belongs to the routing table;
       int ping_lost_count;
+      int requests_in_flight;
 
       bool IsGood() const { return !good_timer.Stopped(); }
       void SetGood() { good_timer.Reset(); }
@@ -57,7 +58,8 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
 
       Node(const xstring& i,const sockaddr_u& a,bool r)
 	 : id(i.copy()), addr(a), good_timer(15*60), token_timer(5*60),
-	   ping_timer(30), responded(r), in_routes(false), ping_lost_count(0) {
+	   ping_timer(30), responded(r), in_routes(false), ping_lost_count(0),
+	   requests_in_flight(0) {
 	 good_timer.AddRandom(5);
 	 ping_timer.Stop();
 	 ping_timer.AddRandom(5);

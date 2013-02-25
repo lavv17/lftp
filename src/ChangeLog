@@ -4,6 +4,8 @@
 	  split off TorrentTracker; add TrackerBackend class; prepare
 	  for udp tracker implementation.
 	* ResMgr.cc: include stdlib.h for strtoll.
+	* DHT.cc, DHT.h: add requests_in_flight node counter; clean up
+	  nodes more aggresively; make just loaded nodes non-good.
 
 2013-02-20  Alexander V. Lukyanov <lav@yars.free.net>
 
