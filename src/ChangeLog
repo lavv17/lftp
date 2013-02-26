@@ -1,6 +1,7 @@
 2013-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc, Torrent.h: add numeric key for udp tracker.
+	* buffer.cc, buffer.h: (Append(xstring)) new method.
 
 2013-02-25  Alexander V. Lukyanov <lav@yars.free.net>
 

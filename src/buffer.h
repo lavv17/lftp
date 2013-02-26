@@ -79,6 +79,7 @@ public:
    void Skip(int len); // Get(); consume; Skip()
    void UnSkip(int len); // this only works if there were no Put's.
    void Append(const char *buf,int size);
+   void Append(const xstring& s) { Append(s.get(),s.length()); }
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void Put(const xstring &s) { Put(s.get(),s.length()); }
