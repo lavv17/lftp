@@ -104,6 +104,7 @@ void Torrent::ClassInit()
 
 xstring Torrent::my_peer_id;
 xstring Torrent::my_key;
+unsigned Torrent::my_key_num;
 xmap<Torrent*> Torrent::torrents;
 SMTaskRef<TorrentListener> Torrent::listener;
 SMTaskRef<TorrentListener> Torrent::listener_udp;
@@ -261,6 +262,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    if(!my_key) {
       for(int i=0; i<10; i++)
 	 my_key.appendf("%02x",unsigned(random()/13%256));
+      my_key_num=random();
    }
    dht_announce_timer.Stop();
 }

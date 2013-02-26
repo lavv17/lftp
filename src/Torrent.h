@@ -112,6 +112,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static const unsigned PEER_ID_LEN = 20;
    static xstring my_peer_id;
    static xstring my_key;
+   static unsigned my_key_num;
    static xmap<Torrent*> torrents;
    static SMTaskRef<TorrentListener> listener;
    static SMTaskRef<TorrentListener> listener_udp;
@@ -335,6 +336,7 @@ public:
    int GetWantedPeersCount() const;
    static const xstring& GetMyPeerId() { return my_peer_id; }
    static const xstring& GetMyKey() { return my_key; }
+   static unsigned GetMyKeyNum() { return my_key_num; }
 
    unsigned long long GetTotalSent() { return total_sent; }
    unsigned long long GetTotalRecv() { return total_recv; }
