@@ -2,6 +2,7 @@
 
 	* Torrent.cc, Torrent.h: add numeric key for udp tracker.
 	* buffer.cc, buffer.h: (Append(xstring)) new method.
+	* TorrentTracker.cc, TorrentTracker.h: add udp tracker support.
 
 2013-02-25  Alexander V. Lukyanov <lav@yars.free.net>
 

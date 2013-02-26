@@ -40,14 +40,18 @@ void TorrentTracker::AddURL(const char *url)
 {
    LogNote(4,"Tracker URL is `%s'",url);
    ParsedURL u(url,true);
-   if(u.proto.ne("http") && u.proto.ne("https")) {
-      LogError(1,"unsupported tracker protocol `%s', must be http or https",u.proto.get());
+   if(u.proto.ne("http") && u.proto.ne("https") && u.proto.ne("udp")) {
+      LogError(1,"unsupported tracker protocol `%s', must be http, https or udp",u.proto.get());
       return;
    }
    xstring& tracker_url=*new xstring(url);
-   // fix the URL: append either ? or & if missing.
-   if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
-      tracker_url.append(tracker_url.instr('?')>=0?'&':'?');
+   if(u.proto.ne("udp")) {
+      if(!u.path || !u.path[0])
+	 tracker_url.append('/');
+      // fix the URL: append either ? or & if missing.
+      if(tracker_url.last_char()!='?' && tracker_url.last_char()!='&')
+	 tracker_url.append(tracker_url.instr('?')>=0?'&':'?');
+   }
    tracker_urls.append(&tracker_url);
 }
 
@@ -134,7 +138,7 @@ void TorrentTracker::CreateTrackerBackend()
    backend=0;
    ParsedURL u(GetURL(),true);
    if(u.proto.eq("udp")) {
-//      xxx
+      backend=new UdpTracker(this,&u);
    } else if(u.proto.eq("http") || u.proto.eq("https")) {
       backend=new HttpTracker(this,&u);
    }
@@ -180,6 +184,7 @@ unsigned long long TrackerBackend::GetTotalLeft() const { return master->parent-
 bool TrackerBackend::HasMetadata() const { return master->parent->HasMetadata(); }
 int TrackerBackend::GetWantedPeersCount() const { return master->parent->GetWantedPeersCount(); }
 const xstring& TrackerBackend::GetMyKey() const { return master->parent->GetMyKey(); }
+unsigned TrackerBackend::GetMyKeyNum() const { return master->parent->GetMyKeyNum(); }
 const char *TrackerBackend::GetTrackerId() const { return master->tracker_id; }
 bool TrackerBackend::ShuttingDown() const { return master->parent->ShuttingDown(); }
 void TrackerBackend::Started() const { master->started=true; }
@@ -342,4 +347,250 @@ void HttpTracker::SendTrackerRequest(const char *event)
    t_session->Open(url::path_ptr(request),FA::RETRIEVE);
    t_session->SetFileURL(request);
    tracker_reply=new IOBufferFileAccess(t_session);
+}
+
+
+// UdpTracker
+int UdpTracker::Do()
+{
+   int m=STALL;
+   if(!peer) {
+      // need to resolve addresses
+      if(!resolver) {
+	 resolver=new Resolver(hostname,portname);
+	 resolver->Roll();
+	 m=MOVED;
+      }
+      if(!resolver->Done())
+	 return m;
+      if(resolver->Error())
+      {
+	 SetError(resolver->ErrorMsg());
+	 return(MOVED);
+      }
+      peer.set(resolver->Result());
+      peer_curr=0;
+      resolver=0;
+      try_number=0;
+      m=MOVED;
+   }
+   if(!IsActive())
+      return m;
+   if(sock==-1) {
+      // need to create the socket
+      sock=SocketCreate(peer[peer_curr].sa.sa_family,SOCK_DGRAM,IPPROTO_UDP,hostname);
+      if(sock==-1) {
+	 int saved_errno=errno;
+	 LogError(9,"socket: %s",strerror(saved_errno));
+	 if(NonFatalError(saved_errno))
+	    return m;
+	 xstring& str=xstring::format(_("cannot create socket of address family %d"),
+		     peer[peer_curr].sa.sa_family);
+	 str.appendf(" (%s)",strerror(saved_errno));
+	 SetError(str);
+	 return MOVED;
+      }
+   }
+   if(current_action!=a_none) {
+      if(!RecvReply()) {
+	 if(timeout_timer.Stopped()) {
+	    LogError(3,"request timeout");
+	    NextPeer();
+	    return MOVED;
+	 }
+	 return m;
+      }
+      return MOVED;
+   }
+   if(!has_connection_id) {
+      // need to get connection id
+      SendConnectRequest();
+      return MOVED;
+   }
+   SendEventRequest();
+   return MOVED;
+}
+
+void UdpTracker::NextPeer() {
+   current_action=a_none;
+   has_connection_id=false;
+   connection_id=0;
+   peer_curr++;
+   if(peer_curr>=peer.count()) {
+      peer_curr=0;
+      try_number++;
+   }
+}
+
+bool UdpTracker::RecvReply() {
+   Buffer buf;
+   const int max_len=0x1000;
+   sockaddr_u addr;
+   socklen_t addr_len=sizeof(addr);
+   int len=recvfrom(sock,buf.GetSpace(max_len),max_len,0,&addr.sa,&addr_len);
+   if(len<0) {
+      int saved_errno=errno;
+      if(NonFatalError(saved_errno)) {
+	 Block(sock,POLLIN);
+	 return false;
+      }
+      SetError(xstring::format("recvfrom: %s",strerror(saved_errno)));
+      return false;
+   }
+   if(len==0) {
+      SetError("recvfrom: EOF?");
+      return false;
+   }
+   buf.SpaceAdd(len);
+   LogRecv(10,xstring::format("got a packet from %s of length %d {%s}",addr.to_string(),len,buf.Dump()));
+   if(len<16) {
+      LogError(9,"ignoring too short packet");
+      return false;
+   }
+   unsigned tid=buf.UnpackUINT32BE(4);
+   if(tid!=transaction_id) {
+      LogError(9,"ignoring mismatching transaction packet (0x%08X!=0x%08X)",tid,transaction_id);
+      return false;
+   }
+   int action=buf.UnpackUINT32BE(0);
+   if(action!=current_action) {
+      LogError(9,"ignoring mismatching action packet (%d!=%d)",action,current_action);
+      return false;
+   }
+   int peers_count=0;
+   switch(current_action) {
+   case a_none:
+      abort();
+   case a_connect:
+      connection_id=buf.UnpackUINT64BE(8);
+      has_connection_id=true;
+      LogNote(9,"connected");
+      break;
+   case a_announce:
+      SetInterval(buf.UnpackUINT32BE(8));
+      if(buf.Size()>=20)
+	 LogNote(9,"leechers=%u seeders=%u",buf.UnpackUINT32BE(12),buf.UnpackUINT32BE(16));
+      for(int i=20; i<buf.Size(); i+=6) {
+	 if(AddPeerCompact(buf.Get()+i,6))
+	    peers_count++;
+      }
+      LogNote(4,plural("Received valid info about %d peer$|s$",peers_count),peers_count);
+      current_event=ev_idle;
+      TrackerRequestFinished();
+      break;
+   case a_scrape:
+      // not implemented
+      break;
+   case a_error:
+      SetError(buf.Get()+8);
+      break;
+   }
+   current_action=a_none;
+   try_number=0;
+   return true;
+}
+
+bool UdpTracker::SendPacket(Buffer& req)
+{
+   LogSend(10,xstring::format("sending a packet to %s of length %d {%s}",peer[peer_curr].to_string(),req.Size(),req.Dump()));
+   int len=sendto(sock,req.Get(),req.Size(),0,&peer[peer_curr].sa,peer[peer_curr].addr_len());
+   if(len<0) {
+      int saved_errno=errno;
+      if(NonFatalError(saved_errno)) {
+	 Block(sock,POLLOUT);
+	 return false;
+      }
+      SetError(xstring::format("sendto: %s",strerror(saved_errno)));
+      return false;
+   }
+   if(len<req.Size()) {
+      LogError(9,"could not send complete datagram of size %d",req.Size());
+      Block(sock,POLLOUT);
+      return false;
+   }
+   timeout_timer.Set(60*(1<<try_number));
+   return true;
+}
+
+bool UdpTracker::SendConnectRequest()
+{
+   LogNote(9,"connecting...");
+   Buffer req;
+   req.PackUINT64BE(connect_magic);
+   req.PackUINT32BE(a_connect);
+   req.PackUINT32BE(NewTransactionId());
+   if(!SendPacket(req))
+      return false;
+   current_action=a_connect;
+   return true;
+}
+
+const char *UdpTracker::EventToString(event_t e)
+{
+   const char *map[]={
+      "",
+      "completed",
+      "started",
+      "stopped",
+   };
+   if(e>=0 && e<=3)
+      return map[e];
+   return "???";
+}
+
+bool UdpTracker::SendEventRequest()
+{
+   LogNote(9,"announce %s",EventToString(current_event));
+   assert(has_connection_id);
+   assert(current_event!=ev_idle);
+   Buffer req;
+   req.PackUINT64BE(connection_id);
+   req.PackUINT32BE(a_announce);
+   req.PackUINT32BE(NewTransactionId());
+   req.Append(GetInfoHash());
+   req.Append(GetMyPeerId());
+   req.PackUINT64BE(GetTotalRecv());
+   req.PackUINT64BE(GetTotalLeft());
+   req.PackUINT64BE(GetTotalSent());
+   req.PackUINT32BE(current_event);
+
+   const char *ip=ResMgr::Query("torrent:ip",0);
+   char ip_packed[4];
+   memset(ip_packed,0,4);
+   if(ip && ip[0])
+      inet_pton(AF_INET,ip,ip_packed);
+   req.Append(ip_packed,4);
+
+   req.PackUINT32BE(GetMyKeyNum());
+   req.PackUINT32BE(GetWantedPeersCount());
+   req.PackUINT16BE(GetPort());
+
+   if(!SendPacket(req))
+      return false;
+   current_action=a_announce;
+   return true;
+}
+
+const char *UdpTracker::Status() const
+{
+   if(resolver)
+      return(_("Resolving host address..."));
+   if(!has_connection_id)
+      return(_("Connecting..."));
+   if(current_action!=a_none)
+      return _("Waiting for response...");
+   return "";
+}
+
+void UdpTracker::SendTrackerRequest(const char *event)
+{
+   current_event=ev_none;
+   if(!event)
+      return;
+   if(!strcmp(event,"started"))
+      current_event=ev_started;
+   else if(!strcmp(event,"stopped"))
+      current_event=ev_stopped;
+   else if(!strcmp(event,"completed"))
+      current_event=ev_completed;
 }

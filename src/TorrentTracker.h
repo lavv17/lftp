@@ -20,6 +20,8 @@
 #ifndef TORRENTTRACKER_H
 #define TORRENTTRACKER_H
 
+#include "url.h"
+
 class TrackerBackend;
 class TorrentTracker : public SMTask, protected ProtoLog
 {
@@ -98,6 +100,7 @@ protected:
    bool HasMetadata() const;
    int GetWantedPeersCount() const;
    const xstring& GetMyKey() const;
+   unsigned GetMyKeyNum() const;
    const char *GetTrackerId() const;
    void SetTrackerID(const xstring& id) const { master->SetTrackerID(id); }
    void SetInterval(unsigned i) const { master->SetInterval(i); }
@@ -130,8 +133,70 @@ public:
    int Do();
    const char *Status() const { return t_session->CurrentStatus(); }
 };
-class UdpTracker : public TrackerBackend
+class UdpTracker : public TrackerBackend, protected Networker
 {
+   xstring_c hostname;
+   xstring_c portname;
+
+   SMTaskRef<Resolver> resolver;
+
+   xarray<sockaddr_u> peer;
+   int peer_curr;
+   void	 NextPeer();
+
+   int sock;   // udp socket for packet exchange
+
+   Timer timeout_timer;
+   int try_number;   // timeout = 60 * 2^try_number
+
+   bool has_connection_id;
+   unsigned long long connection_id;
+
+   enum action_t {
+      a_none=-1,
+      a_connect=0,
+      a_announce=1,
+      a_scrape=2,
+      a_error=3,
+   };
+   enum event_t {
+      ev_idle=-1,
+      ev_none=0,
+      ev_completed=1,
+      ev_started=2,
+      ev_stopped=3,
+   };
+   enum magic_t {
+      connect_magic=0x41727101980ULL,
+   };
+   static const char *EventToString(event_t e);
+
+   unsigned transaction_id;
+   action_t current_action;
+   event_t current_event;
+
+   bool SendPacket(Buffer& req);
+   bool SendConnectRequest();
+   bool SendEventRequest();
+   bool RecvReply();
+
+   unsigned NewTransactionId() { return transaction_id=random(); }
+
+public:
+   UdpTracker(TorrentTracker *m,ParsedURL *u)
+      : TrackerBackend(m),
+        hostname(u->host.get()), portname(u->port.get()),
+        peer_curr(0), sock(-1), timeout_timer(60), try_number(0),
+        has_connection_id(false), connection_id(0),
+	current_action(a_none), current_event(ev_idle) {}
+   ~UdpTracker() {
+      if(sock!=-1)
+	 close(sock);
+   }
+   int Do();
+   bool IsActive() const { return current_event!=ev_idle; }
+   void SendTrackerRequest(const char *event);
+   const char *Status() const;
 };
 
 #endif // TORRENTTRACKER_H
