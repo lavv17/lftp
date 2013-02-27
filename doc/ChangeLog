@@ -1,3 +1,7 @@
+2013-02-27	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: add udp tracker reference.
+
 2013-02-20	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document "jobs" command arguments.
