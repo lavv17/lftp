@@ -473,6 +473,7 @@ bool Torrent::SeededEnough() const
 
 void Torrent::CleanPeers()
 {
+   Enter();
    // remove uninteresting peers and request more
    for(int i=0; i<peers.count(); i++) {
       const TorrentPeer *peer=peers[i];
@@ -482,6 +483,7 @@ void Torrent::CleanPeers()
 	 peers.remove(i--);
       }
    }
+   Leave();
 }
 
 void Torrent::StartTrackers()

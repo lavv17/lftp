@@ -4,6 +4,7 @@
 	* commands.cc, NetAccess.cc: add cls -a option; don't filter out
 	  . and .. by default.
 	* TorrentTracker.cc: Enter/Leave parent for proper debug context.
+	* Torrent.cc: use Enter/Leave for proper debug context.
 
 2013-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
