@@ -92,7 +92,9 @@ bool TorrentTracker::AddPeerCompact(const char *compact_addr,int len) const
    sockaddr_u a;
    if(!a.set_compact(compact_addr,len))
       return false;
+   Enter(parent);
    parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
+   Leave(parent);
    return true;
 }
 bool TorrentTracker::AddPeer(const xstring& addr,int port) const
@@ -111,7 +113,9 @@ bool TorrentTracker::AddPeer(const xstring& addr,int port) const
 	 return false;
    }
    a.set_port(port);
+   Enter(parent);
    parent->AddPeer(new TorrentPeer(parent,&a,tracker_no));
+   Leave(parent);
    return true;
 }
 int TorrentTracker::Do()
