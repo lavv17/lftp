@@ -1,6 +1,6 @@
 2013-02-27	Alexander V. Lukyanov <lav@yars.free.net>
 
-	* lftp.1: add udp tracker reference.
+	* lftp.1: add udp tracker reference; add ssl:use-sni description.
 
 2013-02-20	Alexander V. Lukyanov <lav@yars.free.net>
 
