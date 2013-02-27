@@ -274,6 +274,11 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
    if(auth && !strncmp(auth, "SSL", 3))
       gnutls_priority_set_direct(session, "NORMAL:+SSL3.0:-TLS1.0:-TLS1.1:-TLS1.2",0);
+
+   if(h && ResMgr::QueryBool("ssl:use-sni",h)) {
+      if(gnutls_server_name_set(session, GNUTLS_NAME_DNS, h, xstrlen(h)) < 0)
+	 fprintf(stderr,"WARNING: failed to configure server name indication (SNI) TLS extension\n");
+   }
 }
 void lftp_ssl_gnutls::load_keys()
 {
@@ -825,6 +830,11 @@ lftp_ssl_openssl::lftp_ssl_openssl(int fd1,handshake_mode_t m,const char *h)
    ssl=SSL_new(instance->ssl_ctx);
    SSL_set_fd(ssl,fd);
    SSL_ctrl(ssl,SSL_CTRL_MODE,SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER,0);
+
+   if(h && ResMgr::QueryBool("ssl:use-sni",h)) {
+      if(!SSL_set_tlsext_host_name(ssl, h))
+	 fprintf(stderr,"WARNING: failed to configure server name indication (SNI) TLS extension\n");
+   }
 }
 void lftp_ssl_openssl::load_keys()
 {

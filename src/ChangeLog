@@ -1,3 +1,7 @@
+2013-02-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc, resource.cc: add SNI support.
+
 2013-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc, Torrent.h: add numeric key for udp tracker.

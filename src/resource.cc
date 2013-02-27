@@ -355,6 +355,7 @@ static ResType lftp_vars[] = {
    {"ssl:cert-file",		 "",	  ResMgr::FileReadable,0},
    {"ssl:check-hostname",	 "yes",	  ResMgr::BoolValidate,0},
    {"ssl:verify-certificate",	 "yes",	  ResMgr::BoolValidate,0},
+   {"ssl:use-sni",		 "yes",	  ResMgr::BoolValidate,0},
 # if USE_OPENSSL
    {"ssl:ca-path",		 "",	  ResMgr::DirReadable,ResMgr::NoClosure},
    {"ssl:crl-path",		 "",	  ResMgr::DirReadable,ResMgr::NoClosure},
