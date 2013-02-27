@@ -1551,9 +1551,9 @@ const xstring& Torrent::Status()
 	 recv_rate.GetETAStrFromSize((off_t)(total_pieces-validate_index-1)*piece_length+last_piece_length).get());
    }
    if(shutting_down) {
-      if(trackers.count()==0)
-	 return xstring::get_tmp("");
       for(int i=0; i<trackers.count(); i++) {
+	 if(!trackers[i]->IsActive())
+	    continue;
 	 const char *status=trackers[i]->Status();
 	 if(status[0]) {
 	    xstring &s=xstring::get_tmp(_("Shutting down: "));
