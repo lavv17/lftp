@@ -172,6 +172,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	     * exception; they both seem to be options used manually, so I made
 	     * them align with GNU ls options. */
 	    " -1                   - single-column output\n"
+	    " -a, --all            - show dot files\n"
 	    " -B, --basename       - show basename of files only\n"
 	    "     --block-size=SIZ - use SIZ-byte blocks\n"
 	    " -d, --directory      - list directory entries instead of contents\n"
@@ -1402,6 +1403,7 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
       OPT_USER
    };
    static struct option cls_options[] = {
+      {"all",no_argument,0,'a'},
       {"basename",no_argument,0,'B'},
       {"directory",no_argument,0,'d'},
       {"human-readable",no_argument,0,'h'},
@@ -1431,7 +1433,7 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
    const char *time_style=ResMgr::Query("cmd:time-style",0);
 
    int opt;
-   while((opt=a->getopt_long(":1BdFhiklqsDISrt", cls_options))!=EOF)
+   while((opt=a->getopt_long(":a1BdFhiklqsDISrt", cls_options))!=EOF)
    {
       switch(opt) {
       case OPT_SORT:
@@ -1470,6 +1472,9 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 	 output_block_size = atoi(optarg);
 	 if(output_block_size == 0)
 	    return _("invalid block size");
+	 break;
+      case('a'):
+	 showdots = true;
 	 break;
       case('1'):
 	 single_column = true;

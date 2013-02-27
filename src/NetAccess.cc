@@ -524,7 +524,6 @@ got_fileset:
       if(!result)
 	 result=new FileSet;
 
-      result->ExcludeDots();
       result->Exclude(exclude_prefix,exclude);
       result->rewind();
       for(file=result->curr(); file!=0; file=result->next())

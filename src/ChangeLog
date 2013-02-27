@@ -1,6 +1,8 @@
 2013-02-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp_ssl.cc, resource.cc: add SNI support.
+	* commands.cc, NetAccess.cc: add cls -a option; don't filter out
+	  . and .. by default.
 
 2013-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
