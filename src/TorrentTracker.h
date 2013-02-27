@@ -98,6 +98,7 @@ protected:
    unsigned long long GetTotalRecv() const;
    unsigned long long GetTotalLeft() const;
    bool HasMetadata() const;
+   bool Complete() const;
    int GetWantedPeersCount() const;
    const xstring& GetMyKey() const;
    unsigned GetMyKeyNum() const;

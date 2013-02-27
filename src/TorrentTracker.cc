@@ -186,6 +186,7 @@ unsigned long long TrackerBackend::GetTotalSent() const { return master->parent-
 unsigned long long TrackerBackend::GetTotalRecv() const { return master->parent->GetTotalRecv(); }
 unsigned long long TrackerBackend::GetTotalLeft() const { return master->parent->GetTotalLeft(); }
 bool TrackerBackend::HasMetadata() const { return master->parent->HasMetadata(); }
+bool TrackerBackend::Complete() const { return master->parent->Complete(); }
 int TrackerBackend::GetWantedPeersCount() const { return master->parent->GetWantedPeersCount(); }
 const xstring& TrackerBackend::GetMyKey() const { return master->parent->GetMyKey(); }
 unsigned TrackerBackend::GetMyKeyNum() const { return master->parent->GetMyKeyNum(); }
@@ -461,7 +462,6 @@ bool UdpTracker::RecvReply() {
       LogError(9,"ignoring mismatching action packet (%d!=%d)",action,current_action);
       return false;
    }
-   int peers_count=0;
    switch(current_action) {
    case a_none:
       abort();
@@ -470,11 +470,18 @@ bool UdpTracker::RecvReply() {
       has_connection_id=true;
       LogNote(9,"connected");
       break;
-   case a_announce:
+   case a_announce: {
       SetInterval(buf.UnpackUINT32BE(8));
-      if(buf.Size()>=20)
-	 LogNote(9,"leechers=%u seeders=%u",buf.UnpackUINT32BE(12),buf.UnpackUINT32BE(16));
+      if(buf.Size()<20)
+	 break;
+      unsigned leachers=buf.UnpackUINT32BE(12);
+      unsigned seeders=buf.UnpackUINT32BE(16);
+      LogNote(9,"leechers=%u seeders=%u",leachers,seeders);
+      unsigned max_peers=Complete()?leachers:leachers+seeders;
+      int peers_count=0;
       for(int i=20; i<buf.Size(); i+=6) {
+	 if(--max_peers==0)
+	    break;
 	 if(AddPeerCompact(buf.Get()+i,6))
 	    peers_count++;
       }
@@ -482,6 +489,7 @@ bool UdpTracker::RecvReply() {
       current_event=ev_idle;
       TrackerRequestFinished();
       break;
+   }
    case a_scrape:
       // not implemented
       break;
