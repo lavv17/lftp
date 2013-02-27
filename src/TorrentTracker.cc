@@ -383,14 +383,14 @@ int UdpTracker::Do()
       return m;
    if(sock==-1) {
       // need to create the socket
-      sock=SocketCreate(peer[peer_curr].sa.sa_family,SOCK_DGRAM,IPPROTO_UDP,hostname);
+      sock=SocketCreate(peer[peer_curr].family(),SOCK_DGRAM,IPPROTO_UDP,hostname);
       if(sock==-1) {
 	 int saved_errno=errno;
 	 LogError(9,"socket: %s",strerror(saved_errno));
 	 if(NonFatalError(saved_errno))
 	    return m;
 	 xstring& str=xstring::format(_("cannot create socket of address family %d"),
-		     peer[peer_curr].sa.sa_family);
+		     peer[peer_curr].family());
 	 str.appendf(" (%s)",strerror(saved_errno));
 	 SetError(str);
 	 return MOVED;
@@ -420,10 +420,16 @@ void UdpTracker::NextPeer() {
    current_action=a_none;
    has_connection_id=false;
    connection_id=0;
+   int old_peer=peer_curr;
    peer_curr++;
    if(peer_curr>=peer.count()) {
       peer_curr=0;
       try_number++;
+   }
+   // check if we need to create a socket of different address family
+   if(old_peer!=peer_curr && peer[old_peer].family()!=peer[peer_curr].family()) {
+      close(sock);
+      sock=-1;
    }
 }
 
@@ -458,11 +464,11 @@ bool UdpTracker::RecvReply() {
       return false;
    }
    int action=buf.UnpackUINT32BE(0);
-   if(action!=current_action) {
+   if(action!=current_action && action!=a_error) {
       LogError(9,"ignoring mismatching action packet (%d!=%d)",action,current_action);
       return false;
    }
-   switch(current_action) {
+   switch(action) {
    case a_none:
       abort();
    case a_connect:
@@ -470,7 +476,9 @@ bool UdpTracker::RecvReply() {
       has_connection_id=true;
       LogNote(9,"connected");
       break;
-   case a_announce: {
+   case a_announce:
+   case a_announce6:
+   {
       SetInterval(buf.UnpackUINT32BE(8));
       if(buf.Size()<20)
 	 break;
@@ -478,8 +486,11 @@ bool UdpTracker::RecvReply() {
       unsigned seeders=buf.UnpackUINT32BE(16);
       LogNote(9,"leechers=%u seeders=%u",leachers,seeders);
       int peers_count=0;
-      for(int i=20; i<buf.Size(); i+=6) {
-	 if(AddPeerCompact(buf.Get()+i,6))
+      int compact_addr_size=6;
+      if(current_action==a_announce6)
+	 compact_addr_size=18;
+      for(int i=20; i+compact_addr_size<=buf.Size(); i+=compact_addr_size) {
+	 if(AddPeerCompact(buf.Get()+i,compact_addr_size))
 	    peers_count++;
       }
       LogNote(4,plural("Received valid info about %d peer$|s$",peers_count),peers_count);
@@ -549,12 +560,20 @@ const char *UdpTracker::EventToString(event_t e)
 
 bool UdpTracker::SendEventRequest()
 {
-   LogNote(9,"announce %s",EventToString(current_event));
+   action_t action=a_announce;
+   const char *a_name="announce";
+#if INET6
+   if(peer[peer_curr].family()==AF_INET6) {
+      action=a_announce6;
+      a_name="announce6";
+   }
+#endif
+   LogNote(9,"%s %s",a_name,EventToString(current_event));
    assert(has_connection_id);
    assert(current_event!=ev_idle);
    Buffer req;
    req.PackUINT64BE(connection_id);
-   req.PackUINT32BE(a_announce);
+   req.PackUINT32BE(action);
    req.PackUINT32BE(NewTransactionId());
    req.Append(GetInfoHash());
    req.Append(GetMyPeerId());
@@ -563,12 +582,24 @@ bool UdpTracker::SendEventRequest()
    req.PackUINT64BE(GetTotalSent());
    req.PackUINT32BE(current_event);
 
-   const char *ip=ResMgr::Query("torrent:ip",0);
-   char ip_packed[4];
-   memset(ip_packed,0,4);
-   if(ip && ip[0])
-      inet_pton(AF_INET,ip,ip_packed);
-   req.Append(ip_packed,4);
+#if INET6
+   if(action==a_announce6) {
+      const char *ip=ResMgr::Query("torrent:ipv6",0);
+      char ip_packed[16];
+      memset(ip_packed,0,16);
+      if(ip && ip[0])
+	 inet_pton(AF_INET6,ip,ip_packed);
+      req.Append(ip_packed,16);
+   } else
+#endif
+   {
+      const char *ip=ResMgr::Query("torrent:ip",0);
+      char ip_packed[4];
+      memset(ip_packed,0,4);
+      if(ip && ip[0])
+	 inet_pton(AF_INET,ip,ip_packed);
+      req.Append(ip_packed,4);
+   }
 
    req.PackUINT32BE(GetMyKeyNum());
    req.PackUINT32BE(GetWantedPeersCount());
@@ -576,7 +607,7 @@ bool UdpTracker::SendEventRequest()
 
    if(!SendPacket(req))
       return false;
-   current_action=a_announce;
+   current_action=action;
    return true;
 }
 

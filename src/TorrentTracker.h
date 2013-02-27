@@ -159,6 +159,7 @@ class UdpTracker : public TrackerBackend, protected Networker
       a_announce=1,
       a_scrape=2,
       a_error=3,
+      a_announce6=4,
    };
    enum event_t {
       ev_idle=-1,

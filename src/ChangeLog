@@ -6,6 +6,8 @@
 	* TorrentTracker.cc: Enter/Leave parent for proper debug context.
 	* Torrent.cc: use Enter/Leave for proper debug context.
 	* Torrent.cc: better status when shutting down.
+	* TorrentTracker.{cc,h}: add UDP tracker IPv6 support as action 4;
+	  fixed error handling; fixed loop range.
 
 2013-02-26  Alexander V. Lukyanov <lav@yars.free.net>
 
