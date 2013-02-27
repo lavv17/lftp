@@ -477,11 +477,8 @@ bool UdpTracker::RecvReply() {
       unsigned leachers=buf.UnpackUINT32BE(12);
       unsigned seeders=buf.UnpackUINT32BE(16);
       LogNote(9,"leechers=%u seeders=%u",leachers,seeders);
-      unsigned max_peers=Complete()?leachers:leachers+seeders;
       int peers_count=0;
       for(int i=20; i<buf.Size(); i+=6) {
-	 if(--max_peers==0)
-	    break;
 	 if(AddPeerCompact(buf.Get()+i,6))
 	    peers_count++;
       }
