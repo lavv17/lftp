@@ -55,4 +55,6 @@ src/plural.c
 src/resource.cc
 src/rmJob.cc
 src/Torrent.cc
+src/TorrentTracker.cc
+src/DHT.cc
 src/attach.h

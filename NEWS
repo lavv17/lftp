@@ -1,5 +1,8 @@
-Version 4.4.4 - 2013-02-20
+Version 4.4.4 - 2013-02-27
 
+* added support for TLS SNI extension.
+* added UDP tracker support.
+* added cls -a option to show dot files.
 * new setting cmd:show-status.
 
 Version 4.4.3 - 2013-02-07
