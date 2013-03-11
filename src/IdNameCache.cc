@@ -68,7 +68,7 @@ IdNamePair *IdNameCache::lookup(int id)
 IdNamePair *IdNameCache::lookup(const char *name)
 {
    unsigned h=hash(name);
-   for(IdNamePair *scan=table_id[h]; scan; scan=scan->next)
+   for(IdNamePair *scan=table_name[h]; scan; scan=scan->next)
       if(!xstrcmp(name,scan->name))
 	 return scan;
    IdNamePair *r=get_record(name);

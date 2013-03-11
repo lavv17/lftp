@@ -2,6 +2,7 @@
 
 	* commands.cc: list all jobs from the top.
 	* Job.cc: don't add empty line for no-session jobs.
+	* IdNameCache.cc: fixed lookup by name.
 
 2013-02-27  Alexander V. Lukyanov <lav@yars.free.net>
 
