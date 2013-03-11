@@ -1913,7 +1913,7 @@ CMD(jobs)
    const char *arg=args->getnext();
    xstring s("");
    if(!arg) {
-      parent->FormatJobs(s,v);
+      parent->top->FormatJobs(s,v);
    } else {
       for(; arg; arg=args->getnext()) {
 	 if(!isdigit((unsigned char)*arg)) {
