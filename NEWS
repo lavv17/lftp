@@ -1,3 +1,7 @@
+Version 4.4.5 - 2013-03-13
+
+* user/group name lookup performance fixed.
+
 Version 4.4.4 - 2013-02-27
 
 * added support for TLS SNI extension.
