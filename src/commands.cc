@@ -251,7 +251,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"get",     cmd_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
-	 " -c  continue, reget\n"
+	 " -c  continue, resume transfer\n"
 	 " -E  delete remote files after successful transfer\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
@@ -299,7 +299,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "See also `help cls'.\n")},
    {"mget",    cmd_get,	   N_("mget [OPTS] <files>"),
 	 N_("Gets selected files with expanded wildcards\n"
-	 " -c  continue, reget\n"
+	 " -c  continue, resume transfer\n"
 	 " -d  create directories the same as in file names and get the\n"
 	 "     files into them instead of current directory\n"
 	 " -E  delete remote files after successful transfer\n"
