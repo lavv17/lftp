@@ -1,4 +1,4 @@
-%define version 4.4.4
+%define version 4.4.5
 %define release 1
 %define use_modules 0
 
