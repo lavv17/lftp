@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
@@ -349,7 +346,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 }
 	 if(target_is_local && !script_only)
 	 {
-	    if(lstat(target_name,&st)!=-1)
+	    if((flags&RETR_SYMLINKS?stat:lstat)(target_name,&st)!=-1)
 	    {
 	       if(S_ISDIR(st.st_mode))
 	       {
@@ -694,7 +691,7 @@ int   MirrorJob::Do()
       if(target_is_local)
       {
 	 struct stat st;
-	 if(lstat(target_dir,&st)!=-1)
+	 if((flags&RETR_SYMLINKS?stat:lstat)(target_dir,&st)!=-1)
 	 {
 	    if(S_ISDIR(st.st_mode))
 	    {
@@ -1657,8 +1654,10 @@ CMD(mirror)
 	 {
 	    // user wants source dir name appended.
 	    const char *base=basename_ptr(source_dir);
-	    if(base[0]!='/' && strcmp(base,basename_ptr(arg)))
+	    if(base[0]!='/' && strcmp(base,basename_ptr(arg))) {
 	       target_dir=xstring::cat(target_dir,base,NULL);
+	       target_dir=alloca_strdup(target_dir); // save the buffer
+	    }
 	 }
       }
       else
@@ -1666,8 +1665,10 @@ CMD(mirror)
 	 target_dir=basename_ptr(source_dir);
 	 if(target_dir[0]=='/')
 	    target_dir=".";
-	 else if(target_dir[0]=='~')
-	    target_dir=alloca_strdup(dir_file(".",target_dir));
+	 else if(target_dir[0]=='~') {
+	    target_dir=dir_file(".",target_dir);
+	    target_dir=alloca_strdup(target_dir); // save the buffer
+	 }
       }
    }
 

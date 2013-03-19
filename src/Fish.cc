@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 2000-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -219,7 +218,7 @@ int Fish::Do()
 	 if(xstrcmp(path_queue.LastString(),cwd))
 	 {
 	    Send("#CWD %s\n"
-		 "cd %s; echo '### 000'\n",cwd.path.get(),shell_encode(cwd));
+		 "cd %s; echo '### 000'\n",cwd.path.get(),shell_encode(cwd).get());
 	    PushExpect(EXPECT_CWD);
 	    PushDirectory(cwd);
 	 }
@@ -565,7 +564,7 @@ int Fish::HandleReplies()
 	 const char *eol=strchr(err,'\n');
 	 if(eol) {
 	    xstring &e=xstring::get_tmp(err,eol-err);
-	    LogError(0,e);
+	    LogError(0,"%s",e.get());
 	    SetError(NO_FILE,e);
 	    if(pty_recv_buf)
 	       pty_recv_buf->Skip(eol-err+1);
@@ -964,6 +963,7 @@ int Fish::Done()
 
 void Fish::SuspendInternal()
 {
+   super::SuspendInternal();
    if(recv_buf)
       recv_buf->SuspendSlave();
    if(send_buf)
@@ -975,6 +975,7 @@ void Fish::ResumeInternal()
       recv_buf->ResumeSlave();
    if(send_buf)
       send_buf->ResumeSlave();
+   super::ResumeInternal();
 }
 
 const char *Fish::CurrentStatus()
@@ -1163,6 +1164,7 @@ const char *FishDirList::Status()
 
 void FishDirList::SuspendInternal()
 {
+   super::SuspendInternal();
    if(ubuf)
       ubuf->SuspendSlave();
 }
@@ -1170,6 +1172,7 @@ void FishDirList::ResumeInternal()
 {
    if(ubuf)
       ubuf->ResumeSlave();
+   super::ResumeInternal();
 }
 
 static FileSet *ls_to_FileSet(const char *b,int len)

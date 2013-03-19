@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1999-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 /* FileCopyPeer behaviour:
     1) when suspended, does nothing
@@ -441,6 +438,7 @@ FileCopy *FileCopy::New(FileCopyPeer *s,FileCopyPeer *d,bool c)
 }
 void FileCopy::SuspendInternal()
 {
+   super::SuspendInternal();
    if(get) get->SuspendSlave();
    if(put) put->SuspendSlave();
 }
@@ -448,6 +446,7 @@ void FileCopy::ResumeInternal()
 {
    if(get) get->ResumeSlave();
    if(put) put->ResumeSlave();
+   super::ResumeInternal();
 }
 void FileCopy::Fg()
 {
@@ -631,7 +630,7 @@ void FileCopy::LogTransfer()
    {
       const char *fname = ResMgr::Query("xfer:log-file", 0);
       if(!fname || !*fname)
-	 fname = dir_file(get_lftp_home(),"transfer_log");
+	 fname = dir_file(get_lftp_data_dir(),"transfer_log");
       int fd = open(fname,O_WRONLY|O_APPEND|O_CREAT,0600);
       if(fd==-1)
 	 return;
@@ -915,9 +914,11 @@ void FileCopyPeerFA::SuspendInternal()
       return;
    if(session->IsOpen())
       session->SuspendSlave();
+   super::SuspendInternal();
 }
 void FileCopyPeerFA::ResumeInternal()
 {
+   super::ResumeInternal();
    session->ResumeSlave();
 }
 
@@ -1562,6 +1563,10 @@ int FileCopyPeerFDStream::Get_LL(int len)
       {
 	 SetDate(st.st_mtime);
 	 SetSize(st.st_size);
+#ifndef NATIVE_CRLF
+	 if(ascii)
+	    SetSize(NO_SIZE);
+#endif
       }
    }
 

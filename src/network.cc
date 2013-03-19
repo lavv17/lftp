@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2008-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <stdio.h>
@@ -49,11 +46,6 @@
 #include "ProtoLog.h"
 #include "xstring.h"
 
-sockaddr_u::sockaddr_u()
-{
-   memset(this,0,sizeof(*this));
-}
-
 const char *sockaddr_u::address() const
 {
 #ifdef HAVE_GETNAMEINFO
@@ -80,8 +72,17 @@ int sockaddr_u::port() const
 #endif
    return 0;
 }
+void sockaddr_u::set_port(int port)
+{
+   if(sa.sa_family==AF_INET)
+      in.sin_port=htons(port);
+#if INET6
+   if(sa.sa_family==AF_INET6)
+      in6.sin6_port=htons(port);
+#endif
+}
 
-const xstring& sockaddr_u::to_string() const
+const xstring& sockaddr_u::to_xstring() const
 {
    return xstring::format("[%s]:%d",address(),port());
 }
@@ -95,6 +96,13 @@ bool sockaddr_u::is_reserved() const
 	  || (a[0]==127 && !is_loopback())
 	  || (a[0]>=240);
    }
+#if INET6
+   if(family()==AF_INET6) {
+      return IN6_IS_ADDR_UNSPECIFIED(&in6.sin6_addr)
+	  || IN6_IS_ADDR_V4MAPPED(&in6.sin6_addr)
+	  || IN6_IS_ADDR_V4COMPAT(&in6.sin6_addr);
+   }
+#endif
    return false;
 }
 
@@ -105,6 +113,10 @@ bool sockaddr_u::is_multicast() const
       unsigned char *a=(unsigned char *)&in.sin_addr;
       return (a[0]>=224 && a[0]<240);
    }
+#if INET6
+   if(family()==AF_INET6)
+      return IN6_IS_ADDR_MULTICAST(&in6.sin6_addr);
+#endif
    return false;
 }
 
@@ -115,8 +127,15 @@ bool sockaddr_u::is_private() const
       unsigned char *a=(unsigned char *)&in.sin_addr;
       return (a[0]==10)
 	  || (a[0]==172 && a[1]>=16 && a[1]<32)
-	  || (a[0]==192 && a[1]==168);
+	  || (a[0]==192 && a[1]==168)
+	  || (a[0]==169 && a[1]==254); // self-assigned
    }
+#if INET6
+   if(family()==AF_INET6) {
+      return IN6_IS_ADDR_SITELOCAL(&in6.sin6_addr)
+	  || IN6_IS_ADDR_LINKLOCAL(&in6.sin6_addr);
+   }
+#endif
    return false;
 }
 bool sockaddr_u::is_loopback() const
@@ -131,6 +150,64 @@ bool sockaddr_u::is_loopback() const
       return IN6_IS_ADDR_LOOPBACK(&in6.sin6_addr);
 #endif
    return false;
+}
+bool sockaddr_u::is_compatible(const sockaddr_u& o) const
+{
+   return family()==o.family()
+      && !is_multicast() && !o.is_multicast()
+      && !is_reserved() && !o.is_reserved()
+      && is_private()==o.is_private()
+      && is_loopback()==o.is_loopback();
+}
+
+bool sockaddr_u::set_compact(const char *c,size_t len)
+{
+   if(len==4) {
+      sa.sa_family=AF_INET;
+      memcpy(&in.sin_addr,c,4);
+      in.sin_port=0;
+      return true;
+#if INET6
+   } else if(len==16) {
+      sa.sa_family=AF_INET6;
+      memcpy(&in6.sin6_addr,c,16);
+      return true;
+#endif
+   } else if(len==6) {
+      sa.sa_family=AF_INET;
+      memcpy(&in.sin_addr,c,4);
+      in.sin_port=htons((c[5]&255)|((c[4]&255)<<8));
+      return true;
+#if INET6
+   } else if(len==18) {
+      sa.sa_family=AF_INET6;
+      memcpy(&in6.sin6_addr,c,16);
+      in6.sin6_port=htons((c[17]&255)|((c[16]&255)<<8));
+      return true;
+#endif
+   }
+   return false;
+}
+const sockaddr_compact& sockaddr_u::compact() const
+{
+   sockaddr_compact& c=compact_addr();
+   int p=port();
+   if(c.length() && p) {
+      c.append(char(p>>8));
+      c.append(char(p&255));
+   }
+   return c;
+}
+sockaddr_compact& sockaddr_u::compact_addr() const
+{
+   sockaddr_compact& c=sockaddr_compact::get_tmp();
+   if(family()==AF_INET)
+      c.append((const char*)&in.sin_addr,4);
+#if INET6
+   else if(family()==AF_INET6)
+      c.append((const char*)&in6.sin6_addr,16);
+#endif
+   return c;
 }
 
 void Networker::NonBlock(int fd)
@@ -228,7 +305,7 @@ void Networker::SocketBindStd(int s,int af,const char *hostname,int port)
    if(bind_addr.set_defaults(af,hostname,port))
    {
       if(bind_addr.bind_to(s)==-1)
-	 ProtoLog::LogError(0,"bind(%s): %s",bind_addr.to_string().get(),strerror(errno));
+	 ProtoLog::LogError(0,"bind(%s): %s",bind_addr.to_string(),strerror(errno));
    }
 }
 int Networker::SocketCreate(int af,int type,int proto,const char *hostname)

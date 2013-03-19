@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.3.1], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.4.5], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -8,8 +8,8 @@ AC_CONFIG_SRCDIR([src/ftpclass.cc])
 AM_CONFIG_HEADER([lib/config.h])
 AM_INIT_AUTOMAKE
 
-# This doesn't *require* GNU extensions; it merely enables them if
-# they're there.
+dnl This doesn't *require* GNU extensions; it merely enables them if
+dnl they're there.
 AC_GNU_SOURCE
 
 test -z "$CXX"	     && DEFAULT_CXX=yes
@@ -26,6 +26,18 @@ AC_PROG_YACC
 if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
 fi
+
+dnl POSIXCHECK is worthwhile for maintainers, but adds several seconds
+dnl (more than 10% execution time) to ./configure, with no benefit for
+dnl most users.  Using it to look for bugs requires:
+dnl   GNULIB_POSIXCHECK=1 autoreconf -f
+dnl   ./configure
+dnl   make
+dnl   make -C src clean
+dnl   make CFLAGS=-DGNULIB_POSIXCHECK=1
+m4_syscmd([test "${GNULIB_POSIXCHECK+set}" = set])
+m4_if(m4_sysval, [0], [], [dnl
+gl_ASSERT_NO_GNULIB_POSIXCHECK])
 
 AC_SYS_LARGEFILE
 
@@ -74,12 +86,12 @@ if test x$with_debug = xno; then
 fi
 
 if test x$with_debug = xyes; then
-   # m4 will mangle brackets
+   dnl m4 will mangle brackets
    if test x$DEFAULT_CFLAGS = xyes; then
-      CFLAGS="`echo $CFLAGS | sed 's/-O[[0-9]]\?//'`"
+      CFLAGS="`echo $CFLAGS | sed 's/-O@<:@0-9@:>@\?//'`"
    fi
    if test x$DEFAULT_CXXFLAGS = xyes; then
-      CXXFLAGS="`echo $CXXFLAGS | sed 's/-O[[0-9]]\?//'`"
+      CXXFLAGS="`echo $CXXFLAGS | sed 's/-O@<:@0-9@:>@\?//'`"
    fi
 fi
 
@@ -146,15 +158,15 @@ AC_ARG_WITH(pager,
 AC_DEFINE_UNQUOTED([DEFAULT_PAGER], "$with_pager", [Default pager command])
 
 AC_ARG_WITH(socks,
-   AS_HELP_STRING([--with-socks[[=/path]]], [build with SOCKSv4 library]),
+   AS_HELP_STRING([--with-socks@<:@=/path@:>@], [build with SOCKSv4 library]),
 [  with_socks=$withval;	],
 [  with_socks=no;	])
 AC_ARG_WITH(socks5,
-   AS_HELP_STRING([--with-socks5[[=/path]]], [build with SOCKSv5 library]),
+   AS_HELP_STRING([--with-socks5@<:@=/path@:>@], [build with SOCKSv5 library]),
 [  with_socks5=$withval;],
 [  with_socks5=no;	])
 AC_ARG_WITH(socksdante,
-   AS_HELP_STRING([--with-socksdante[[=/path]]], [build with SOCKS-Dante library]),
+   AS_HELP_STRING([--with-socksdante@<:@=/path@:>@], [build with SOCKS-Dante library]),
 [  with_socksdante=$withval;],
 [  with_socksdante=no;	])
 
@@ -225,7 +237,14 @@ fi
 AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 
+AC_LANG_PUSH(C++)
 gl_INIT
+AC_LANG_POP(C++)
+
+if test x$ac_cv_func_wcwidth != xyes || test x$REPLACE_WCWIDTH = x1; then
+   gl_LIBOBJ([wcwidth])
+   AC_DEFINE([REPLACE_WCWIDTH], 1, [Define when using wcwidth replacement])
+fi
 
 dnl Checks for libraries.
 dnl LFTP_CHECK_LIBM
@@ -255,7 +274,7 @@ READLINE_CHECK
 AC_ARG_WITH(gnutls, AS_HELP_STRING([--without-gnutls], [don't use GNUTLS library]),
       [with_gnutls=$withval], [with_gnutls=yes])
 AC_ARG_WITH(openssl,
-AS_HELP_STRING([--with-openssl[[=/path]]], [use OpenSSL [at /path]])
+AS_HELP_STRING([--with-openssl@<:@=/path@:>@], [use OpenSSL @<:@at /path@:>@])
 AS_HELP_STRING([--without-openssl], [don't use OpenSSL (default)]),
       [with_openssl=$withval], [with_openssl=no])
 case "$with_openssl" in
@@ -291,7 +310,7 @@ if test "x$want_dnssec" = "xyes"; then
     if test "$ac_cv_header_validator_validator_h" != yes; then
         AC_MSG_ERROR(Can't find validator.h (from dnssec-tools))
     fi
-    AC_CHECK_LIB(ssl, SHA1_Init)
+    AC_SEARCH_LIBS([SHA1_Init], [crypto ssl])
     AC_CHECK_LIB(sres, query_send)
     if test "$ac_cv_lib_sres_query_send" != yes; then
         AC_MSG_ERROR(Can't find libsres (from dnssec-tools))

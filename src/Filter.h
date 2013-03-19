@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef FILTER_H
 #define FILTER_H
@@ -135,6 +132,8 @@ public:
 class FileStream : public FDStream
 {
    int mode;
+   int create_mode;
+   bool do_lock;
 public:
    FileStream(const char *fname,int open_mode);
    ~FileStream();
@@ -146,6 +145,8 @@ public:
    int getfd();
    bool can_seek();
    off_t get_size();
+   void set_lock() { do_lock=true; }
+   void set_create_mode(int m) { create_mode=m; }
 };
 
 #endif /* FILTER_H */

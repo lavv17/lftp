@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <sys/types.h>
@@ -60,6 +57,10 @@ int  StatusLine::GetWidth()
 
 StatusLine::StatusLine(int new_fd)
 {
+   to_status_line = get_string_term_cap("tsl", "ts");
+   from_status_line = get_string_term_cap("fsl", "fs");
+   prev_line = get_string_term_cap("cuu1","up");
+
    fd=new_fd;
    update_delayed=false;
    next_update_title_only=false;
@@ -132,9 +133,9 @@ void StatusLine::ShowN(const char *const* newstr,int n)
    }
 }
 
-const char *StatusLine::to_status_line = get_string_term_cap("tsl", "ts");
-const char *StatusLine::from_status_line = get_string_term_cap("fsl", "fs");
-const char *StatusLine::prev_line = get_string_term_cap("cuu1","up");
+const char *StatusLine::to_status_line;
+const char *StatusLine::from_status_line;
+const char *StatusLine::prev_line;
 
 void StatusLine::WriteTitle(const char *s, int fd) const
 {

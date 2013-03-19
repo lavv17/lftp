@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1999-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <stdio.h>
@@ -34,10 +31,15 @@ void lftp_line_complete();
 void lftp_add_history_nodups(const char *cmd_buf)
 {
    HIST_ENTRY *temp;
+   char ts[24];
+   if(cmd_buf[0]==' ')
+      return;
    using_history();
    temp=previous_history();
    if(temp==0 || strcmp(temp->line,cmd_buf))
       add_history(cmd_buf);
+   sprintf(ts," %lld",(long long)time(0));
+   add_history_time(ts);
    using_history();
 }
 
@@ -78,8 +80,15 @@ void lftp_history_list(int cnt)
    i = history_base + st->length - cnt;
    if(cnt == -1 || i < history_base) i = history_base;
 
-   while((hist = history_get(i)))
-      printf("%5d%c %s\n", i++, hist->data?'*':' ', hist->line);
+   char ts_str[24];
+   while((hist = history_get(i))) {
+      ts_str[0]=0;
+      if(hist->timestamp[0]) {
+	 time_t ts=atol(hist->timestamp+1);
+	 strftime(ts_str,sizeof(ts_str),"%Y-%m-%d %H:%M:%S",localtime(&ts));
+      }
+      printf("%5d%c %s  %s\n", i++, hist->data?'*':' ', ts_str, hist->line);
+   }
 }
 
 void lftp_history_clear()
@@ -164,6 +173,9 @@ void lftp_rl_init(
    rl_char_is_quoted_p               =(rl_linebuf_func_t*)char_is_quoted_p;
 
    rl_completion_display_matches_hook = lftp_rl_display_match_list;
+
+   history_write_timestamps=1;
+   history_comment_char=' ';
 }
 
 void lftp_rl_add_defun(const char *name,int (*func)(int,int),int key)
@@ -182,7 +194,7 @@ void lftp_rl_set_prompt(const char *p)
    rl_set_prompt(p);
 }
 
-extern char *get_lftp_home();
+extern char *get_lftp_data_dir();
 
 static char *lftp_history_file;
 void lftp_rl_read_history()
@@ -190,7 +202,7 @@ void lftp_rl_read_history()
    if(!lftp_history_file)
    {
       const char *add="/rl_history";
-      const char *home=get_lftp_home();
+      const char *home=get_lftp_data_dir();
       if(!home)
 	 return;
       lftp_history_file=(char*)malloc(strlen(home)+strlen(add)+1);

@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
@@ -46,13 +43,13 @@
 #include "misc.h"
 #include "strftime.h"
 
-#define TELNET_IAC	255		/* interpret as command: */
-#define	TELNET_IP	244		/* interrupt process--permanently */
-#define	TELNET_DM	242		/* for telfunc calls */
-#define	TELNET_WILL	251
-#define	TELNET_WONT	252
-#define	TELNET_DO	253
-#define	TELNET_DONT	254
+#define TELNET_IAC	'\377'	 //255	/* interpret as command: */
+#define TELNET_IP	'\364'	 //244	/* interrupt process--permanently */
+#define TELNET_DM	'\362'	 //242	/* for telfunc calls */
+#define TELNET_WILL	'\373'	 //251
+#define TELNET_WONT	'\374'	 //252
+#define TELNET_DO	'\375'	 //253
+#define TELNET_DONT	'\376'	 //254
 
 #include <errno.h>
 #include <time.h>
@@ -302,12 +299,8 @@ bool Ftp::Transient5XX(int act) const
    if(!is5XX(act))
       return false;
 
-   if(act==530 && expect->FirstIs(Expect::PASS)) {
-      if(re_match(all_lines,Query("retry-530",hostname),REG_ICASE))
-	 return true;
-      if(!user && re_match(all_lines,Query("retry-530-anonymous",hostname),REG_ICASE))
-	 return true;
-   }
+   if(act==530 && expect->FirstIs(Expect::PASS) && Retry530())
+      return true;
 
    // retry on these errors (ftp server ought to send 4xx code instead)
    if(ServerSaid("Broken pipe") || ServerSaid("Too many")
@@ -430,28 +423,32 @@ simulate_eof:
    return;
 }
 
+bool Ftp::Retry530() const
+{
+   const char *rexp=Query("retry-530",hostname);
+   if(re_match(all_lines,rexp,REG_ICASE))
+   {
+      LogNote(9,_("Server reply matched ftp:retry-530, retrying"));
+      return true;
+   }
+   if(!user)
+   {
+      rexp=Query("retry-530-anonymous",hostname);
+      if(re_match(all_lines,rexp,REG_ICASE))
+      {
+	 LogNote(9,_("Server reply matched ftp:retry-530-anonymous, retrying"));
+	 return true;
+      }
+   }
+   return false;
+}
+
 void Ftp::LoginCheck(int act)
 {
    if(conn->ignore_pass)
       return;
-   if(act==530) // login incorrect or overloaded server
-   {
-      const char *rexp=Query("retry-530",hostname);
-      if(re_match(all_lines,rexp,REG_ICASE))
-      {
-	 LogNote(9,_("Server reply matched ftp:retry-530, retrying"));
-	 goto retry;
-      }
-      if(!user)
-      {
-	 rexp=Query("retry-530-anonymous",hostname);
-	 if(re_match(all_lines,rexp,REG_ICASE))
-	 {
-	    LogNote(9,_("Server reply matched ftp:retry-530-anonymous, retrying"));
-	    goto retry;
-	 }
-      }
-   }
+   if(act==530 && Retry530()) // overloaded server?
+      goto retry;
    if(is5XX(act))
    {
       SetError(LOGIN_FAILED,all_lines);
@@ -500,22 +497,8 @@ void Ftp::NoPassReqCheck(int act) // for USER command
 
    if(is3XX(act))
       return;
-   if(act==530)	  // no such user or overloaded server
-   {
-      // Unfortunately, at this point we cannot tell if it is
-      // really incorrect login or overloaded server, because
-      // many overloaded servers return hard error 530...
-      // So try to check the message for `user unknown'.
-      // NOTE: modern ftp servers don't say `user unknown', they wait for
-      // PASS and then say `Login incorrect'.
-      if(strstr(line,"unknown")) // Don't translate!!!
-      {
-	 LogNote(9,_("Saw `unknown', assume failed login"));
-	 SetError(LOGIN_FAILED,all_lines);
-	 return;
-      }
-      goto def_ret;
-   }
+   if(act==530 && Retry530()) // overloaded server?
+      goto retry;
    if(is5XX(act))
    {
       // proxy interprets USER as user@host, so we check for host name validity
@@ -528,7 +511,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       SetError(LOGIN_FAILED,all_lines);
       return;
    }
-def_ret:
+retry:
    Disconnect();
    try_time=now;	// count the reconnect-interval from this moment
    last_connection_failed=true;
@@ -641,60 +624,84 @@ char *Ftp::ExtractPWD()
    return xstrdup(pwd);
 }
 
-void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
+int Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 {
-   if(conn->tvfs_supported) {
+   int cwd_count=0;
+   if(QueryTriBool("ftp:use-tvfs",0,conn->tvfs_supported)) {
       conn->SendCmd2("CWD",path);
       expect->Push(new Expect(Expect::CWD_CURR,path));
+      cwd_count++;
    } else if(path_url) {
       path_url=url::path_ptr(path_url);
       if(path_url[0]=='/')
 	 path_url++;
-      if(path_url[0]=='~')
-	 path_url+=1+(path_url[1]=='/');
+      if(path_url[0]=='~') {
+	 if(path_url[1]==0)
+	    path_url++;
+	 else if(path_url[1]=='/')
+	    path_url+=2;
+      }
       LogNote(9,"using URL path `%s'",path_url);
       char *path_url1=alloca_strdup(path_url); // to split it
-      char *path2=alloca_strdup(path_url);
-      strcpy(path2,"~");
-      int path2_len=1;
+      xstring path2("~");
       for(char *dir_url=strtok(path_url1,"/"); dir_url; dir_url=strtok(NULL,"/")) {
 	 const char *dir=url::decode(dir_url);
 	 if(dir[0]=='/')
-	    path2_len=0;
-	 if(path2_len>0 && path2[path2_len-1]!='/') {
-	    strcpy(path2+path2_len,"/");
-	    path2_len++;
-	 }
-	 strcpy(path2+path2_len,dir);
-	 path2_len+=strlen(dir);
+	    path2.truncate();
+	 if(path2.length()>0 && path2.last_char()!='/')
+	    path2.append('/');
+	 path2.append(dir);
 	 conn->SendCmd2("CWD",dir);
 	 expect->Push(new Expect(Expect::CWD_CURR,path2));
+	 cwd_count++;
       }
    } else {
       char *path1=alloca_strdup(path); // to split it
       char *path2=alloca_strdup(path); // to re-assemble
       if(AbsolutePath(path)) {
-	 if(!strncmp(real_cwd,path,real_cwd.length())
+	 if(real_cwd && !strncmp(real_cwd,path,real_cwd.length())
 	 && path[real_cwd.length()]=='/') {
 	    path1+=real_cwd.length()+1;
 	    path2[real_cwd.length()]=0;
 	 } else {
 	    int dev_len=device_prefix_len(path);
 	    dev_len+=(path2[dev_len]=='/');
+	    if(dev_len==1 && path[0]=='/' && real_cwd.ne("/")) {
+	       // just a root directory, append first path component
+	       const char *slash=strchr(path+1,'/');
+	       if(slash)
+		  dev_len=slash-path;
+	       else
+		  dev_len=strlen(path);
+	    }
 	    path2[dev_len]=0;
 	    path1+=dev_len;
-	    if(strcmp(real_cwd,path2)) {
+	    if(!path2[0]) {
+	       if(real_cwd && strcmp(real_cwd,"~")
+	       && (!home.path || strcmp(real_cwd,home.path))) {
+		  conn->SendCmd("CWD");
+		  expect->Push(new Expect(Expect::CWD_CURR,"~"));
+		  cwd_count++;
+	       }
+	    } else if(!real_cwd || strcmp(real_cwd,path2)) {
 	       conn->SendCmd2("CWD",path2);
 	       expect->Push(new Expect(Expect::CWD_CURR,path2));
+	       cwd_count++;
 	    }
 	 }
       } else {
 	 strcpy(path2,"~");
-	 if(path1[0]=='~')
-	    path1+=1+(path1[1]=='/');
-	 if(strcmp(real_cwd,"~")) {
+	 if(path1[0]=='~') {
+	    if(path1[1]==0)
+	       path1++;
+	    else if(path1[1]=='/')
+	       path1+=2;
+	 }
+	 if(real_cwd && strcmp(real_cwd,"~")
+	 && (!home.path || strcmp(real_cwd,home.path))) {
 	    conn->SendCmd("CWD");
 	    expect->Push(new Expect(Expect::CWD_CURR,"~"));
+	    cwd_count++;
 	 }
       }
       int path2_len=strlen(path2);
@@ -707,6 +714,7 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	 path2_len+=strlen(dir);
 	 conn->SendCmd2("CWD",dir);
 	 expect->Push(new Expect(Expect::CWD_CURR,path2));
+	 cwd_count++;
       }
    }
    Expect *last_cwd=expect->FindLastCWD();
@@ -715,6 +723,7 @@ void Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
       LogNote(9,"CWD path to be sent is `%s'",last_cwd->arg.get());
       last_cwd->check_case=c;
    }
+   return cwd_count;
 }
 
 Ftp::pasv_state_t Ftp::Handle_PASV()
@@ -1078,10 +1087,11 @@ Ftp::~Ftp()
 
 bool Ftp::AbsolutePath(const char *s) const
 {
-   if(!s)
+   if(!s || !*s)
       return false;
    int dev_len=device_prefix_len(s);
    return(s[0]=='/'
+      || (s[0]=='~' && s[1]!=0 && s[1]!='/')
       || (((conn->dos_path && dev_len==3) || (conn->vms_path && dev_len>2))
 	  && s[dev_len-1]=='/'));
 }
@@ -1867,10 +1877,9 @@ int   Ftp::Do()
             append_file=true;
          break;
       case(CHANGE_DIR):
-	 if(!xstrcmp(real_cwd,file))
-	    cwd.Set(real_cwd,false,0,device_prefix_len(real_cwd));
-	 else
-	    SendCWD(file,file_url,Expect::CWD);
+	 if((real_cwd && !xstrcmp(real_cwd,file))
+	 || SendCWD(file,file_url,Expect::CWD)==0)
+	    cwd.Set(file,false,file_url,device_prefix_len(file));
 	 goto pre_WAITING_STATE;
       case(MAKE_DIR):
 	 command="MKD";
@@ -2284,6 +2293,7 @@ int   Ftp::Do()
 	 else if(charset && *charset)
 	    conn->data_iobuf->SetTranslation(charset,true);
       }
+      conn->data_iobuf->SetMaxBuffered(max_buf);
    /* fallthrough */
    case(DATA_OPEN_STATE):
    {
@@ -2371,7 +2381,7 @@ int   Ftp::Do()
 	    conn->data_iobuf->Suspend();
 	    m=MOVED;
 	 }
-	 else if(conn->data_iobuf->IsSuspended())
+	 else if(conn->data_iobuf->IsSuspended() && !IsSuspended())
 	 {
 	    conn->data_iobuf->Resume();
 	    if(conn->data_iobuf->Size()>0)
@@ -2557,11 +2567,7 @@ void Ftp::SendAuth(const char *auth)
    conn->SendCmd2("AUTH",auth);
    expect->Push(Expect::AUTH_TLS);
    conn->auth_sent=true;
-   if(!strcmp(auth,"TLS")
-   || !strcmp(auth,"TLS-C"))
-      conn->prot='C';
-   else
-      conn->prot='P';
+   conn->prot='\0'; // send PROT command always, for non-conforming servers
 }
 void Ftp::SendPROT(char want_prot)
 {
@@ -2855,8 +2861,16 @@ int  Ftp::ReceiveResp()
 	 continue; // The space is required to terminate multiline reply
       conn->multiline_code=0;
 
-      if(conn->sync_wait>0 && !is1XX(code))
-	 conn->sync_wait--; // clear the flag to send next command
+      if(!is1XX(code)) {
+	 if(conn->sync_wait>0)
+	    conn->sync_wait--; // clear the flag to send next command
+	 else {
+	    if(code!=421) {
+	       LogError(3,_("extra server response"));
+	       return m;
+	    }
+	 }
+      }
 
       CheckResp(code);
       m=MOVED;
@@ -3208,14 +3222,14 @@ int Ftp::Connection::FlushSendQueueOneCmd()
       {
 	 if(*s==0)
 	    log.append("<NUL>");
-	 else if((unsigned char)*s==TELNET_IAC && telnet_layer_send)
+	 else if(*s==TELNET_IAC && telnet_layer_send)
 	 {
 	    s++;
-	    if((unsigned char)*s==TELNET_IAC)
+	    if(*s==TELNET_IAC)
 	       log.append('\377');
-	    else if((unsigned char)*s==TELNET_IP)
+	    else if(*s==TELNET_IP)
 	       log.append("<IP>");
-	    else if((unsigned char)*s==TELNET_DM)
+	    else if(*s==TELNET_DM)
 	       log.append("<DM>");
 	 }
 	 else
@@ -3565,11 +3579,23 @@ bool  Ftp::IOReady()
       && real_pos!=-1 && IsOpen();
 }
 
+void Ftp::SuspendInternal()
+{
+   super::SuspendInternal();
+   if(conn)
+      conn->SuspendInternal();
+}
+void Ftp::ResumeInternal()
+{
+   if(conn)
+      conn->ResumeInternal();
+   super::ResumeInternal();
+}
+
 int   Ftp::Read(void *buf,int size)
 {
    int shift;
 
-   Resume();
    if(Error())
       return(error_code);
 
@@ -3638,7 +3664,6 @@ int   Ftp::Write(const void *buf,int size)
    if(mode!=STORE)
       return(0);
 
-   Resume();
    if(Error())
       return(error_code);
 
@@ -3664,9 +3689,10 @@ int   Ftp::Write(const void *buf,int size)
    conn->data_iobuf->Put((const char*)buf,size);
 
    if(retries+persist_retries>0
-   && conn->data_iobuf->GetPos()-conn->data_iobuf->Size()>Buffered()+0x10000)
+   && conn->data_iobuf->GetPos()>Buffered()+0x20000)
    {
       // reset retry count if some data were actually written to server.
+      LogNote(10,"resetting retry count");
       TrySuccess();
    }
 
@@ -3709,6 +3735,7 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    assert(o->conn->data_iobuf==0);
 
    conn=o->conn.borrow();
+   conn->ResumeInternal();
    o->state=INITIAL_STATE;
 
    if(peer_curr>=peer.count())
@@ -4011,13 +4038,19 @@ void Ftp::CheckResp(int act)
       if(is2XX(act))
       {
 	 if(cc==Expect::CWD)
-	    cwd.Set(arg,false,0,device_prefix_len(arg));
+	    cwd.Set(file,false,file_url,device_prefix_len(file));
 	 set_real_cwd(arg);
 	 cache->SetDirectory(this, arg, true);
 	 break;
       }
       if(is5XX(act))
       {
+	 if(!strcmp(arg,"~")) {
+	    // reconnect will change CWD to home directory
+	    Disconnect();
+	    try_time=0;
+	    break;
+	 }
 	 SetError(NO_FILE,all_lines);
 	 cache->SetDirectory(this, arg, false);
 	 break;
@@ -4071,6 +4104,8 @@ void Ftp::CheckResp(int act)
    case Expect::ALLO:
       if(cmd_unsupported(act) || act==202)
 	 ResMgr::Set("ftp:use-allo",hostname,"no");
+      else if(is5XX(act))
+	 SetError(NO_FILE,all_lines);
       break;
 
    case Expect::PASV:
@@ -4442,8 +4477,6 @@ bool  Ftp::SameLocationAs(const FileAccess *fa) const
 
 int   Ftp::Done()
 {
-   Resume();
-
    if(Error())
       return(error_code);
 
@@ -4840,7 +4873,7 @@ void TelnetDecode::PutTranslated(Buffer *target,const char *put_buf,int size)
 	    Put(put_buf,put_size); // remember incomplete sequence
 	 return;
       }
-      switch((unsigned char)iac[1])
+      switch(iac[1])
       {
       // 3-byte commands
       case TELNET_WILL:

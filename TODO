@@ -10,7 +10,6 @@ implemented.
  * mirror --config <file.cf>
 
  * update process title
- * at-exit-bg
 
  * implement Queueing in FileAccess. fa->AddQueue(new FAQueueOp(args)).
    (Done()==true when queue is empty)
@@ -55,3 +54,5 @@ implemented.
  * mirror: multiple source and target dirs.
 
  * APPE support.
+
+ * better debug message subsystem

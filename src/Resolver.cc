@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
@@ -727,11 +724,17 @@ void Resolver::LookupOne(const char *name)
       bool require_trust=ResMgr::QueryBool("dns:strict-dnssec",name);
       ainfo_res	= val_getaddrinfo(NULL, name, NULL, &a_hint, &ainfo,
                                   &val_status);
-      if(VAL_GETADDRINFO_HAS_STATUS(ainfo_res)
-      && !val_istrusted(val_status) && require_trust) {
-          // untrusted answer
-          error = _("DNS resoloution not trusted.");
-          break;
+      if(VAL_GETADDRINFO_HAS_STATUS(ainfo_res) && !val_istrusted(val_status))
+      {
+          if(require_trust) {
+              // untrusted answer
+              error = _("DNS resolution not trusted.");
+              break;
+          } else {
+              fprintf(stderr,"\nWARNING: DNS lookup failed validation: %s\n",
+                      p_val_status(val_status));
+	      fflush(stderr);
+          }
       }
 #endif
 

@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2008 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -215,12 +214,12 @@ decode:
       if(!bm || !bm[0])
 	 return;
       const char *new_url=0;
+      xstring u(bm);
       if(orig_url)
       {
 	 const char *new_path=orig_url+url::path_index(orig_url);
 	 if(new_path[0]=='/')
 	    new_path++;
-	 xstring u(bm);
 	 if(new_path[0]=='/' || new_path[0]=='~')
 	    u.truncate(url::path_index(u));
 	 assert(u[0]);

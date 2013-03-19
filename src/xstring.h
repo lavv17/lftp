@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef XSTRING_H
@@ -74,6 +73,8 @@ size_t xstrlen(const char *s);
 /* this is a small and fast dynamic string class */
 /* mostly used as xstrdup/xfree replacement */
 
+enum { URL_DECODE_PLUS=1 };
+
 class xstring0 // base class
 {
 protected:
@@ -81,7 +82,8 @@ protected:
    xstring0() {}
    xstring0(const xstring0&); // disable cloning
 
-   int _url_decode(size_t len);
+   int _url_decode(size_t len,int flags);
+   int _hex_decode(size_t len);
 public:
    ~xstring0() { xfree(buf); }
    operator const char *() const { return buf; }
@@ -109,6 +111,7 @@ public:
    const char *vset(...) ATTRIBUTE_SENTINEL;
    void truncate(size_t n=0) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
+   bool begins_with(const char *s) const { return !strncmp(buf,s,strlen(s)); };
    bool eq(const char *s) { return !xstrcmp(buf,s); }
    bool ne(const char *s) { return !eq(s); }
    size_t length() const { return xstrlen(buf); }
@@ -117,7 +120,7 @@ public:
    void unset() { xfree(buf); buf=0; }
    void _set(const char *s) { buf=xstrdup(s); }
 
-   xstring_c& url_decode();
+   xstring_c& url_decode(int flags=0);
 };
 class xstring_ca : public xstring_c
 {
@@ -127,6 +130,7 @@ public:
    xstring_ca(char *s) { buf=s; }
 };
 
+class xstring_clonable;
 // full implementation
 class xstring : public xstring0
 {
@@ -140,13 +144,17 @@ class xstring : public xstring0
    // make xstring = xstrdup() fail:
    xstring& operator=(char *);
    const char *operator=(const char *s) { return set(s); }
-   const char *operator=(const xstring& s) { return set(s.get()); }
+   const char *operator=(const xstring& s) { return set(s); }
    xstring(const xstring&); // disable cloning
 
 public:
    xstring() { init(); }
    xstring(const char *s) { init(s); }
    xstring(const char *s,int l) { init(s,l); }
+
+   // explicit cloning
+   xstring(const xstring_clonable& c);
+   const xstring_clonable& copy() const { return *(xstring_clonable*)(this); }
 
    void get_space(size_t s);
    void get_space2(size_t s,size_t g);
@@ -159,6 +167,7 @@ public:
    xstring& set(const char *s);
    xstring& nset(const char *s,int len);
    xstring& set_allocated(char *s);
+   xstring& move_here(xstring&);
    xstring& set_substr(int start,size_t sublen,const char *,size_t);
    xstring& set_substr(int start,size_t sublen,const char *);
    xstring& set_substr(int start,size_t sublen,const xstring &s) { return set_substr(start,sublen,s.get(),s.length()); }
@@ -190,6 +199,10 @@ public:
       with get_space+get_non_const. */
    void set_length(size_t n) { if(buf) buf[len=n]=0; }
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
+   bool begins_with(const char *o_buf,size_t o_len) const;
+   bool begins_with(const char *s) const { return begins_with(s,strlen(s)); };
+   bool ends_with(const char *o_buf,size_t o_len) const;
+   bool ends_with(const char *s) const { return ends_with(s,strlen(s)); };
    bool eq(const char *o_buf,size_t o_len) const;
    bool eq(const char *s) const { return eq(s,strlen(s)); }
    bool eq(const xstring&o) const { return eq(o.get(),o.length()); }
@@ -197,7 +210,8 @@ public:
    bool chomp(char c='\n');
    void rtrim(char c=' ');
    char last_char() const { return len>0?buf[len-1]:0; }
-   unsigned skip_all(unsigned i,char c);
+   unsigned skip_all(unsigned i,char c) const;
+   int instr(char c) const;
 
    void _clear() { init(); }
    void _set(const char *s) { init(s); }
@@ -206,8 +220,10 @@ public:
    bool is_binary() const;
    const char *dump_to(xstring &out) const;
    const char *dump() const;
+   const char *hexdump_to(xstring &out) const;
+   const char *hexdump() const;
 
-   xstring& url_decode();
+   xstring& url_decode(int flags=0);
    xstring& append_url_encoded(const char *s,int len,const char *unsafe);
    xstring& append_url_encoded(const char *s,const char *unsafe) { return append_url_encoded(s,strlen(s),unsafe); }
    xstring& append_url_encoded(const xstring& s,const char *unsafe) { return append_url_encoded(s,s.length(),unsafe); }
@@ -215,8 +231,11 @@ public:
    xstring& append_quoted(const char *s,int len);
    xstring& append_quoted(const char *s) { return append_quoted(s,strlen(s)); }
 
+   xstring& hex_decode();
+
    static xstring null;
 };
+class xstring_clonable : public xstring {};
 
 static inline size_t strlen(const xstring& s) { return s.length(); }
 static inline size_t xstrlen(const xstring& s) { return s.length(); }

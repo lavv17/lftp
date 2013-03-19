@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef FTPCLASS_H
 #define FTPCLASS_H
@@ -172,6 +169,20 @@ class Ftp : public NetAccess
       void SendCmd2(const char *cmd,int v);
       void SendCmdF(const char *fmt,...) PRINTF_LIKE(2,3);
       int FlushSendQueueOneCmd(); // sends single command from send_cmd_buffer
+
+      void SuspendInternal()
+      {
+	 if(control_send) control_send->SuspendSlave();
+	 if(control_recv) control_recv->SuspendSlave();
+	 if(data_iobuf)	data_iobuf->SuspendSlave();
+      }
+      void ResumeInternal()
+      {
+	 if(control_send) control_send->ResumeSlave();
+	 if(control_recv) control_recv->ResumeSlave();
+	 if(data_iobuf)	data_iobuf->ResumeSlave();
+      }
+
    };
 
    Ref<Connection> conn;
@@ -263,13 +274,14 @@ class Ftp : public NetAccess
    void	 RestCheck(int);
    void  NoFileCheck(int);
    void	 TransferCheck(int);
+   bool	 Retry530() const;
    void	 LoginCheck(int);
    void	 NoPassReqCheck(int);
    void	 proxy_LoginCheck(int);
    void	 proxy_NoPassReqCheck(int);
    void	 CheckFEAT(char *reply);
    char *ExtractPWD();
-   void  SendCWD(const char *path,const char *path_url,Expect::expect_t c);
+   int   SendCWD(const char *path,const char *path_url,Expect::expect_t c);
    void	 CatchDATE(int);
    void	 CatchDATE_opt(int);
    void	 CatchSIZE(int);
@@ -528,6 +540,9 @@ public:
 	 CheckTimeout();
       }
    bool AnonymousQuietMode();
+
+   void SuspendInternal();
+   void ResumeInternal();
 };
 
 class FtpS : public Ftp

@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2011 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef ATTACH_H
 #define ATTACH_H
@@ -32,7 +29,6 @@
 #include <fcntl.h>
 #include <locale.h>
 #include <ctype.h>
-#include <sys/utsname.h>
 #include <sys/un.h>
 #if HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
@@ -143,11 +139,9 @@ public:
    static xstring& get_sock_path(int pid=0) {
       if(!pid)
 	 pid=getpid();
-      struct utsname u;
-      uname(&u);
-      const char *home=get_lftp_home();
+      const char *home=get_lftp_data_dir();
       mkdir(xstring::format("%s/bg",home),0700);
-      return xstring::format("%s/bg/%s-%d",home,u.nodename,pid);
+      return xstring::format("%s/bg/%s-%d",home,get_nodename(),pid);
    }
    void do_listen() {
       const char *path=get_sock_path();

@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1999-2001 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include "trio.h"
@@ -117,14 +114,22 @@ lftp_module_info *lftp_module_info::base;
 
 static ResDecl res_mod_path("module:path", PKGLIBDIR"/"VERSION":"PKGLIBDIR, 0,0);
 
+/* dlopen can take a file without extension and automatically do the
+ * right thing, however that doesn't fit with this code that tries to
+ * stat before the dlopen call, hence need some help here */
+#if defined(__MACH__) && defined(__APPLE__)
+static const char ext[] = ".bundle";
+#else
+static const char ext[] = ".so";
+#endif
+
 static int access_so(xstring &fullpath)
 {
    int res=access(fullpath,F_OK);
    if(res==-1)
    {
-      int len=fullpath.length();
-      if(len>3 && strcmp(fullpath+len-3,".so"))
-	 fullpath.append(".so");
+      if(!fullpath.ends_with(ext))
+	 fullpath.append(ext);
       res=access(fullpath,F_OK);
    }
    return res;

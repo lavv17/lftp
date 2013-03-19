@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2009 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <assert.h>
@@ -39,13 +36,17 @@ _xmap::_xmap(int vs)
    hash_size=1;
    new_map();
 }
-_xmap::~_xmap()
+void _xmap::_empty()
 {
    for(int i=0; i<hash_size; i++) {
       while(map[i])
 	 _remove(&map[i]);
    }
    assert(entry_count==0);
+}
+_xmap::~_xmap()
+{
+   _empty();
 }
 
 int _xmap::make_hash(const xstring& s) const
@@ -157,6 +158,7 @@ _xmap::entry *_xmap::_each_next()
       }
       each_entry=map[++each_hash];
    }
+   last_entry=0;
    return 0;
 }
 

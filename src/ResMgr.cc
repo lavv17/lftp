@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,17 +14,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
 #include <fnmatch.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,6 +38,7 @@ CDECL_END
 #include "SMTask.h"
 #include "misc.h"
 #include "StringSet.h"
+#include "log.h"
 
 ResMgr::Resource  *ResMgr::chain=0;
 ResType		  *ResMgr::type_chain=0;
@@ -427,7 +426,7 @@ static const char power_letter[] =
 static unsigned long long get_power_multiplier(char p)
 {
    const char *scan=power_letter;
-   int scale=1024;
+   const int scale=1024;
    unsigned long long mul=1;
    p=toupper(p);
    while(scan<power_letter+sizeof(power_letter)) {
@@ -479,7 +478,7 @@ const char *ResMgr::UNumberValidate(xstring_c *value)
 
    return 0;
 }
-unsigned long long ResValue::to_unumber(unsigned long long max)
+unsigned long long ResValue::to_unumber(unsigned long long max) const
 {
    if (is_nil())
       return 0;
@@ -491,7 +490,7 @@ unsigned long long ResValue::to_unumber(unsigned long long max)
       return max;
    return vm;
 }
-long long ResValue::to_number(long long min,long long max)
+long long ResValue::to_number(long long min,long long max) const
 {
    if (is_nil())
       return 0;
@@ -507,21 +506,27 @@ long long ResValue::to_number(long long min,long long max)
       return min;
    return vm;
 }
-ResValue::operator int()
+ResValue::operator int() const
 {
    return to_number(INT_MIN,INT_MAX);
 }
-ResValue::operator long()
+ResValue::operator long() const
 {
    return to_number(LONG_MIN,LONG_MAX);
 }
-ResValue::operator unsigned()
+ResValue::operator unsigned() const
 {
    return to_unumber(UINT_MAX);
 }
-ResValue::operator unsigned long()
+ResValue::operator unsigned long() const
 {
    return to_unumber(ULONG_MAX);
+}
+bool ResValue::to_tri_bool(bool a) const
+{
+   if(*s=='a' || *s=='A')
+      return a;
+   return to_bool();
 }
 
 ResMgr::Resource::Resource(Resource *next,const ResType *type,const char *closure,const char *value)
@@ -538,8 +543,16 @@ bool ResMgr::Resource::ClosureMatch(const char *cl_data)
       return true;
    if(!(closure && cl_data))
       return false;
-   return 0==fnmatch(closure,cl_data,FNM_PATHNAME)
-      || (closure[0]=='*' && closure[1]=='.' && !strcmp(closure+2,cl_data));
+   // a special case for domain name match (i.e. example.org matches *.example.org)
+   if(closure[0]=='*' && closure[1]=='.' && !strcmp(closure+2,cl_data))
+      return true;
+   if(0==fnmatch(closure,cl_data,FNM_PATHNAME))
+      return true;
+   // try to match basename; helps matching torrent metadata url to *.torrent
+   const char *bn=basename_ptr(cl_data);
+   if(bn!=cl_data && 0==fnmatch(closure,bn,FNM_PATHNAME))
+      return true;
+   return false;
 }
 
 const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **ptr)
@@ -657,24 +670,14 @@ ResType::~ResType()
 
    {
       // remove all resources of this type
-      bool modified=false;
       ResMgr::Resource **scan=&ResMgr::chain;
       while(*scan)
       {
 	 if((*scan)->type==this)
-	 {
 	    delete replace_value(*scan,(*scan)->next);
-	    modified=true;
-	 }
 	 else
-	 {
 	    scan=&(*scan)->next;
-	 }
       }
-#if 0 // this makes trouble at exit.
-      if(modified)
-	 SMTask::ReconfigAll(this->name);
-#endif
    }
 }
 
@@ -731,71 +734,75 @@ const char *ResMgr::TimeIntervalValidate(xstring_c *s)
    return 0;
 }
 
-Range::Range(const char *s)
+void NumberPair::init(char sep1,const char *s)
 {
-   start=end=0;
-   no_start=no_end=true;
+   sep=sep1;
+   Set(s);
+}
+long long NumberPair::parse1(const char *s)
+{
+   if(!s || !*s)
+      return 0;
+   const char *end=s;
+   long long v=strtoll(s,const_cast<char**>(&end),0);
+   long long m=get_power_multiplier(*end);
+   if(s==end || m==0 || end[m>1]) {
+      error_text=_("invalid number");
+      return 0;
+   }
+   long long vm=v*m;
+   if(vm/m!=v) {
+      error_text=_("integer overflow");
+      return 0;
+   }
+   return vm;
+}
+void NumberPair::Set(const char *s0)
+{
+   n1=n2=0;
+   no_n1=no_n2=true;
    error_text=0;
 
-   if(!strcasecmp(s,"full") || !strcasecmp(s,"any"))
+   if(!s0)
       return;
 
-   int n;
-   int len=strlen(s);
-   char start_k=0,end_k=0;
-   if(sscanf(s,"%lld-%n",&start,&n)==1 && n==len)
-      no_start=false;
-   else if(sscanf(s,"-%lld%n",&end,&n)==1 && n==len)
-      no_end=false;
-   else if(sscanf(s,"%lld-%lld%n",&start,&end,&n)==2 && n==len)
-      no_start=no_end=false;
-   else if(sscanf(s,"%lld%c-%n",&start,&start_k,&n)==2 && n==len)
-      no_start=false;
-   else if(sscanf(s,"-%lld%c%n",&end,&end_k,&n)==2 && n==len)
-      no_end=false;
-   else if(sscanf(s,"%lld%c-%lld%n",&start,&start_k,&end,&n)==3 && n==len)
-      no_start=no_end=false;
-   else if(sscanf(s,"%lld-%lld%c%n",&start,&end,&end_k,&n)==3 && n==len)
-      no_start=no_end=false;
-   else if(sscanf(s,"%lld%c-%lld%c%n",&start,&start_k,&end,&end_k,&n)==4 && n==len)
-      no_start=no_end=false;
+   char *s1=alloca_strdup(s0);
+   char *s2=s1;
+   while(*s2 && *s2!=sep && *s2!=':')
+      s2++;
+   if(*s2)
+      *s2++=0;
    else
-   {
-      error_text=_("Invalid range format. Format is min-max, e.g. 10-20.");
-      return;
+      s2=0;
+
+   n1=parse1(s1);
+   no_n1=!*s1;
+   n2=(s2?parse1(s2):n1);
+   no_n2=(s2 && !*s2);
+
+   if(!error_text) {
+      Log::global->Format(10,"%s translated to pair %lld%c%lld (%d,%d)\n",
+	 s0,n1,sep,n2,no_n1,no_n2);
    }
-   if(start_k)
-      error_text=scale(&start,start_k);
-   if(!error_text && end_k)
-      error_text=scale(&end,end_k);
-   if(!no_start && !no_end && start>end)
-      start=replace_value(end,start);
 }
 
-const char *Range::scale(long long *value,char suf)
+Range::Range(const char *s) : NumberPair('-')
 {
-   // kilo, Mega, Giga, Tera, Peta, Exa, Zetta, Yotta
-   static const char s[]="kMGTPEZY";
-   const char *match=strchr(s,suf);
-   if(!match)
-      return _("Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y");
-   unsigned shift=10*(match-s+1);
-   if(((*value<<shift)>>shift)!=*value)
-      return _("Integer overflow");
-   *value<<=shift;
-   return 0;
+   if(!strcasecmp(s,"full") || !strcasecmp(s,"any"))
+      return;
+   Set(s);
 }
 
 long long Range::Random()
 {
    random_init();
 
-   if(no_start && no_end)
+   if(no_n1 && no_n2)
       return random();
-   if(no_end)
-      return start+random();
+   if(no_n2)
+      return n1+random();
 
-   return start + (long long)((end-start+1)*random01());
+   return n1 + (long long)((n2-n1+1)*random01());
 }
 
 const char *ResMgr::RangeValidate(xstring_c *s)
@@ -803,6 +810,9 @@ const char *ResMgr::RangeValidate(xstring_c *s)
    Range r(*s);
    if(r.Error())
       return r.ErrorText();
+   char *colon=strchr(s->get_non_const(),':');
+   if(colon)
+      *colon='-';
    return 0;
 }
 
@@ -925,26 +935,19 @@ const char *ResMgr::NoClosure(xstring_c *)
 
 const char *ResMgr::UNumberPairValidate(xstring_c *value)
 {
-   int n=0;
-
-   unsigned a,b;
-   if(2>sscanf(value->get(),"%u%*c%u%n",&a,&b,&n))
-   {
-      if(UNumberValidate(value))
-	 return _("invalid pair of numbers");
-      return 0;
-   }
-
-   value->truncate(n);
-
+   NumberPair pair(':',*value);
+   if(pair.Error())
+      return pair.ErrorText();
    return 0;
 }
-void ResValue::ToNumberPair(int &a,int &b)
+void ResValue::ToNumberPair(int &a,int &b) const
 {
-   switch(sscanf(s,"%d%*c%d",&a,&b))
-   {
-   case 0: a=0;
-   case 1: b=a;
+   NumberPair pair(':',s);
+   if(pair.Error()) {
+      a=b=0;
+   } else {
+      a=pair.N1();
+      b=pair.HasN2()?pair.N2():a;
    }
 }
 
@@ -986,4 +989,16 @@ bool ResMgr::QueryBool(const char *name,const char *closure)
 bool ResClient::QueryBool(const char *name,const char *closure) const
 {
    return Query(name,closure).to_bool();
+}
+bool ResType::QueryTriBool(const char *closure,bool a) const
+{
+   return Query(closure).to_tri_bool(a);
+}
+bool ResMgr::QueryTriBool(const char *name,const char *closure,bool a)
+{
+   return Query(name,closure).to_tri_bool(a);
+}
+bool ResClient::QueryTriBool(const char *name,const char *closure,bool a) const
+{
+   return Query(name,closure).to_tri_bool(a);
 }

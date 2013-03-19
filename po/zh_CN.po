@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2011-06-28 13:36+0400\n"
+"POT-Creation-Date: 2013-03-14 12:53+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: lib/argmatch.c:133
 #, fuzzy, c-format
 msgid "invalid argument %s for %s"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
 #: lib/argmatch.c:134
 #, c-format
@@ -27,11 +27,10 @@ msgid "ambiguous argument %s for %s"
 msgstr ""
 
 #: lib/argmatch.c:153
-#, c-format
 msgid "Valid arguments are:"
 msgstr ""
 
-#: lib/error.c:185
+#: lib/error.c:188
 msgid "Unknown system error"
 msgstr ""
 
@@ -58,62 +57,64 @@ msgstr ""
 #: lib/getopt.c:742 lib/getopt.c:745
 #, fuzzy, c-format
 msgid "%s: unrecognized option '--%s'\n"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
 #: lib/getopt.c:753 lib/getopt.c:756
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%c%s'\n"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
 #: lib/getopt.c:805 lib/getopt.c:808
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
-#: lib/getopt.c:858 lib/getopt.c:875 lib/getopt.c:1083 lib/getopt.c:1101
+#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr ""
 
-#: lib/getopt.c:931 lib/getopt.c:947
+#: lib/getopt.c:934 lib/getopt.c:950
 #, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr ""
 
-#: lib/getopt.c:971 lib/getopt.c:989
+#: lib/getopt.c:974 lib/getopt.c:992
 #, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: lib/getopt.c:1010 lib/getopt.c:1028
+#: lib/getopt.c:1013 lib/getopt.c:1031
 #, c-format
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr ""
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
-#.
 #. The message catalog should translate "`" to a left
 #. quotation mark suitable for the locale, and similarly for
-#. "'".  If the catalog has no translation,
-#. locale_quoting_style quotes `like this', and
-#. clocale_quoting_style quotes "like this".
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
 #.
-#. For example, an American English Unicode locale should
-#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
-#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
-#. MARK).  A British English Unicode locale should instead
-#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK)
-#. and U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:271
+#: lib/quotearg.c:312
 msgid "`"
 msgstr ""
 
-#: lib/quotearg.c:272
+#: lib/quotearg.c:313
 msgid "'"
 msgstr ""
 
@@ -121,825 +122,822 @@ msgstr ""
 msgid "memory exhausted"
 msgstr ""
 
-#: src/ChmodJob.cc:83
+#: src/ChmodJob.cc:82
 #, c-format
 msgid "Failed to change mode of `%s' to %04o (%s).\n"
 msgstr ""
 
-#: src/ChmodJob.cc:86
+#: src/ChmodJob.cc:85
 #, c-format
 msgid "Mode of `%s' changed to %04o (%s).\n"
 msgstr ""
 
-#: src/ChmodJob.cc:91
+#: src/ChmodJob.cc:90
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
 msgstr ""
 
-#: src/CmdExec.cc:100
+#: src/CmdExec.cc:106
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
-msgstr "警告: chdir(%s) 失败: %s\n"
+msgstr "戮炉赂忙: chdir(%s) 脢搂掳脺: %s\n"
 
-#: src/CmdExec.cc:200
+#: src/CmdExec.cc:208
 #, c-format
 msgid "Unknown command `%s'.\n"
-msgstr "未知命令 `%s'.\n"
+msgstr "脦麓脰陋脙眉脕卯 `%s'.\n"
 
-#: src/CmdExec.cc:202
+#: src/CmdExec.cc:210
 #, c-format
 msgid "Ambiguous command `%s'.\n"
-msgstr "不明确的命令 `%s'.\n"
+msgstr "虏禄脙梅脠路碌脛脙眉脕卯 `%s'.\n"
 
-#: src/CmdExec.cc:221
+#: src/CmdExec.cc:229
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
 msgstr ""
 
-#: src/CmdExec.cc:365
+#: src/CmdExec.cc:385
 #, c-format
 msgid "cd ok, cwd=%s\n"
-msgstr "cd 成功, 当前目录=%s\n"
+msgstr "cd 鲁脡鹿娄, 碌卤脟掳脛驴脗录=%s\n"
 
-#: src/CmdExec.cc:386 src/MirrorJob.cc:571
+#: src/CmdExec.cc:406 src/MirrorJob.cc:570
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:389 src/FileCopy.cc:1065
+#: src/CmdExec.cc:409 src/FileCopy.cc:1068
 msgid "Too many redirections"
 msgstr ""
 
-#: src/CmdExec.cc:497 src/CmdExec.cc:554
+#: src/CmdExec.cc:517 src/CmdExec.cc:574
 msgid "Interrupt"
-msgstr "中断"
+msgstr "脰脨露脧"
 
-#: src/CmdExec.cc:619
+#: src/CmdExec.cc:639
 #, c-format
 msgid "Warning: discarding incomplete command\n"
-msgstr "警告: 放弃未完成的命令\n"
+msgstr "戮炉赂忙: 路脜脝煤脦麓脥锚鲁脡碌脛脙眉脕卯\n"
 
-#: src/CmdExec.cc:712
+#: src/CmdExec.cc:737
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
-msgstr "\t执行内建的 `%s' [%s]\n"
+msgstr "\t脰麓脨脨脛脷陆篓碌脛 `%s' [%s]\n"
 
-#: src/CmdExec.cc:717
+#: src/CmdExec.cc:742
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:722
+#: src/CmdExec.cc:747
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:733
+#: src/CmdExec.cc:758
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
-msgstr "\t等待任务 [%d] 中止\n"
+msgstr "\t碌脠麓媒脠脦脦帽 [%d] 脰脨脰鹿\n"
 
-#: src/CmdExec.cc:736
+#: src/CmdExec.cc:761
 #, fuzzy
 msgid "\tWaiting for termination of jobs: "
-msgstr "等待过滤器中止"
+msgstr "碌脠麓媒鹿媒脗脣脝梅脰脨脰鹿"
 
-#: src/CmdExec.cc:745
+#: src/CmdExec.cc:770
 msgid "\tRunning\n"
-msgstr "\t正在运行\n"
+msgstr "\t脮媒脭脷脭脣脨脨\n"
 
-#: src/CmdExec.cc:747
+#: src/CmdExec.cc:772
 #, fuzzy
 msgid "\tWaiting for command\n"
-msgstr "parse: 缺少过滤器命令\n"
+msgstr "parse: 脠卤脡脵鹿媒脗脣脝梅脙眉脕卯\n"
 
-#: src/CmdExec.cc:1196
+#: src/CmdExec.cc:1253
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
 
-#: src/CopyJob.cc:80
+#: src/CmdExec.cc:1260
+#, fuzzy, c-format
+msgid "Usage: %s cmd [args...]\n"
+msgstr "脫脙路篓: %s module [args...]\n"
+
+#: src/CmdExec.cc:1266
+#, c-format
+msgid "%s: cannot create local session\n"
+msgstr ""
+
+#: src/CopyJob.cc:79
 #, fuzzy, c-format
 msgid "`%s' at %lld %s%s%s%s"
-msgstr "`%s' 在 %lu %s%s%s[%s]"
+msgstr "`%s' 脭脷 %lu %s%s%s[%s]"
 
-#: src/CopyJob.cc:157
+#: src/CopyJob.cc:156
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
-msgstr "%ld 字节, 在 %ld 秒中传输完毕 (%g 字节/秒)\n"
+msgstr "%ld 脳脰陆脷, 脭脷 %ld 脙毛脰脨麓芦脢盲脥锚卤脧 (%g 脳脰陆脷/脙毛)\n"
 
-#: src/CopyJob.cc:165
+#: src/CopyJob.cc:164
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
-msgstr "传输 %ld 字节\n"
+msgstr "麓芦脢盲 %ld 脳脰陆脷\n"
 
-#: src/CopyJob.cc:265
+#: src/CopyJob.cc:264
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
-msgstr "传输 %d/%d 文件失败\n"
+msgstr "麓芦脢盲 %d/%d 脦脛录镁脢搂掳脺\n"
 
-#: src/CopyJob.cc:271
+#: src/CopyJob.cc:270
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
-msgstr "总共传输 %d 个文件\n"
+msgstr "脳脺鹿虏麓芦脢盲 %d 赂枚脦脛录镁\n"
 
-#: src/DummyProto.cc:66 src/MirrorJob.cc:1635 src/MirrorJob.cc:1651
-#: src/commands.cc:986 src/commands.cc:2129
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1634 src/MirrorJob.cc:1650
+#: src/commands.cc:986 src/commands.cc:2109
 #, fuzzy
 msgid " - not supported protocol"
-msgstr "%s: %s - 不支持的协议\n"
+msgstr "%s: %s - 虏禄脰搂鲁脰碌脛脨颅脪茅\n"
 
-#: src/FileAccess.cc:162
+#: src/FileAccess.cc:161
 #, fuzzy
 msgid "Access failed: "
-msgstr "访问失败: %s"
+msgstr "路脙脦脢脢搂掳脺: %s"
 
-#: src/FileAccess.cc:163
+#: src/FileAccess.cc:162
 msgid "File cannot be accessed"
-msgstr "不能访问文件"
+msgstr "虏禄脛脺路脙脦脢脦脛录镁"
 
-#: src/FileAccess.cc:165 src/Fish.cc:987 src/SFtp.cc:1306 src/ftpclass.cc:4298
-#: src/ftpclass.cc:4307 src/Torrent.cc:2278
+#: src/FileAccess.cc:164 src/Fish.cc:988 src/SFtp.cc:1307 src/ftpclass.cc:4335
+#: src/ftpclass.cc:4344 src/Torrent.cc:2959
 msgid "Not connected"
-msgstr "没有连接上"
+msgstr "脙禄脫脨脕卢陆脫脡脧"
 
-#: src/FileAccess.cc:168 src/FileAccess.cc:169
+#: src/FileAccess.cc:167 src/FileAccess.cc:168
 msgid "Fatal error"
-msgstr "严重错误"
+msgstr "脩脧脰脴麓铆脦贸"
 
-#: src/FileAccess.cc:171
+#: src/FileAccess.cc:170
 msgid "Store failed - you have to reput"
-msgstr "保存失败 - 你必须重新上传"
+msgstr "卤拢麓忙脢搂掳脺 - 脛茫卤脴脨毛脰脴脨脗脡脧麓芦"
 
-#: src/FileAccess.cc:174 src/FileAccess.cc:175
+#: src/FileAccess.cc:173 src/FileAccess.cc:174
 msgid "Login failed"
-msgstr "登录失败"
+msgstr "碌脟脗录脢搂掳脺"
 
-#: src/FileAccess.cc:178 src/FileAccess.cc:179
+#: src/FileAccess.cc:177 src/FileAccess.cc:178
 msgid "Operation not supported"
-msgstr "不支持的操作"
+msgstr "虏禄脰搂鲁脰碌脛虏脵脳梅"
 
-#: src/FileAccess.cc:182
+#: src/FileAccess.cc:181
 msgid "File moved"
 msgstr ""
 
-#: src/FileAccess.cc:184
+#: src/FileAccess.cc:183
 msgid "File moved to `"
 msgstr ""
 
-#: src/FileAccess.cc:888 src/buffer.cc:231
+#: src/FileAccess.cc:887 src/buffer.cc:230
 msgid " [cached]"
 msgstr ""
 
-#: src/FileCopy.cc:133
+#: src/FileCopy.cc:132
 msgid "copy: destination file is already complete\n"
 msgstr ""
 
-#: src/FileCopy.cc:173
+#: src/FileCopy.cc:172
 msgid "copy: put is broken\n"
 msgstr ""
 
-#: src/FileCopy.cc:192
+#: src/FileCopy.cc:191
 #, fuzzy
 msgid "seek failed"
-msgstr "登录失败"
+msgstr "碌脟脗录脢搂掳脺"
 
-#: src/FileCopy.cc:219
+#: src/FileCopy.cc:218
 msgid "cannot seek on data source"
 msgstr ""
 
-#: src/FileCopy.cc:222
+#: src/FileCopy.cc:221
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:235
+#: src/FileCopy.cc:234
 msgid "copy: all data received, but get rolled back\n"
 msgstr ""
 
-#: src/FileCopy.cc:251
+#: src/FileCopy.cc:250
 #, c-format
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1062
+#: src/FileCopy.cc:1065
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1247
+#: src/FileCopy.cc:1250
 #, fuzzy
 msgid "file name missed in URL"
-msgstr "缺少文件名. "
+msgstr "脠卤脡脵脦脛录镁脙没. "
 
-#: src/FileCopy.cc:1900
+#: src/FileCopy.cc:1907
 msgid "Verify command failed without a message"
 msgstr ""
 
-#: src/FileCopy.h:280
+#: src/FileCopy.h:279
 msgid "Verifying..."
 msgstr ""
 
-#: src/FileCopyFtp.cc:98
+#: src/FileCopyFtp.cc:97
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
 msgstr ""
 
-#: src/FileCopyFtp.cc:105
+#: src/FileCopyFtp.cc:104
 msgid "**** FXP: trying to reverse ftp:fxp-passive-sscn\n"
 msgstr ""
 
-#: src/FileCopyFtp.cc:113
+#: src/FileCopyFtp.cc:112
 msgid "**** FXP: trying to reverse ftp:ssl-protect-fxp\n"
 msgstr ""
 
-#: src/FileCopyFtp.cc:119
+#: src/FileCopyFtp.cc:118
 msgid "**** FXP: giving up, reverting to plain copy\n"
 msgstr ""
 
-#: src/FileCopyFtp.cc:128
+#: src/FileCopyFtp.cc:127
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr ""
 
-#: src/FileSetOutput.cc:234
+#: src/FileSetOutput.cc:229
 msgid "non-option arguments found"
 msgstr ""
 
-#: src/Filter.cc:141
+#: src/Filter.cc:140
 #, fuzzy
 msgid "pipe() failed: "
-msgstr "execlp(%s) 失败: %s\n"
+msgstr "execlp(%s) 脢搂掳脺: %s\n"
 
-#: src/Filter.cc:175 src/PtyShell.cc:138
+#: src/Filter.cc:174 src/PtyShell.cc:137
 #, fuzzy, c-format
 msgid "chdir(%s) failed: %s\n"
-msgstr "警告: chdir(%s) 失败: %s\n"
+msgstr "戮炉赂忙: chdir(%s) 脢搂掳脺: %s\n"
 
-#: src/Filter.cc:183
+#: src/Filter.cc:182
 #, fuzzy, c-format
 msgid "execvp(%s) failed: %s\n"
-msgstr "execlp(%s) 失败: %s\n"
+msgstr "execlp(%s) 脢搂掳脺: %s\n"
 
-#: src/Filter.cc:188 src/PtyShell.cc:150
+#: src/Filter.cc:187 src/PtyShell.cc:149
 #, fuzzy, c-format
 msgid "execl(/bin/sh) failed: %s\n"
-msgstr "execlp(%s) 失败: %s\n"
+msgstr "execlp(%s) 脢搂掳脺: %s\n"
 
-#: src/FindJobDu.cc:102
+#: src/FindJobDu.cc:101
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:76 src/Http.cc:906 src/SFtp.cc:80 src/ftpclass.cc:1209
+#: src/Fish.cc:75 src/Http.cc:930 src/SFtp.cc:79 src/ftpclass.cc:1221
 msgid "Closing idle connection"
-msgstr "关闭发呆的连接"
+msgstr "鹿脴卤脮路垄麓么碌脛脕卢陆脫"
 
-#: src/Fish.cc:156 src/SFtp.cc:182
+#: src/Fish.cc:155 src/SFtp.cc:181
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:592 src/Http.cc:1112 src/SFtp.cc:731 src/SFtp.cc:1053
-#: src/ftpclass.cc:2715 src/ftpclass.cc:2925
+#: src/Fish.cc:591 src/Http.cc:1136 src/SFtp.cc:730 src/SFtp.cc:1052
+#: src/ftpclass.cc:2723 src/ftpclass.cc:2941
 msgid "Peer closed connection"
-msgstr "对端关闭连接"
+msgstr "露脭露脣鹿脴卤脮脕卢陆脫"
 
-#: src/Fish.cc:636 src/SFtp.cc:1078 src/ftpclass.cc:3943
+#: src/Fish.cc:635 src/SFtp.cc:1077 src/ftpclass.cc:2871 src/ftpclass.cc:3972
 msgid "extra server response"
-msgstr "额外的服务器应答"
+msgstr "露卯脥芒碌脛路镁脦帽脝梅脫娄麓冒"
 
-#: src/Fish.cc:992 src/Http.cc:1820 src/Http.cc:1827 src/SFtp.cc:1312
-#: src/ftpclass.cc:4310 src/Torrent.cc:2280
+#: src/Fish.cc:993 src/Http.cc:1850 src/Http.cc:1857 src/SFtp.cc:1313
+#: src/ftpclass.cc:4347 src/Torrent.cc:2961 src/TorrentTracker.cc:619
 msgid "Connecting..."
-msgstr "正在连接..."
+msgstr "脮媒脭脷脕卢陆脫..."
 
-#: src/Fish.cc:994 src/SFtp.cc:1314 src/ftpclass.cc:4316
+#: src/Fish.cc:995 src/SFtp.cc:1315 src/ftpclass.cc:4353
 #, fuzzy
 msgid "Connected"
-msgstr "没有连接上"
+msgstr "脙禄脫脨脕卢陆脫脡脧"
 
-#: src/Fish.cc:996 src/Http.cc:1829 src/SFtp.cc:1316 src/ftpclass.cc:4293
-#: src/ftpclass.cc:4321 src/ftpclass.cc:4335
+#: src/Fish.cc:997 src/Http.cc:1859 src/SFtp.cc:1317 src/ftpclass.cc:4330
+#: src/ftpclass.cc:4358 src/ftpclass.cc:4372 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
-msgstr "正等待应答..."
+msgstr "脮媒碌脠麓媒脫娄麓冒..."
 
-#: src/Fish.cc:998 src/Http.cc:1832 src/SFtp.cc:1318 src/ftpclass.cc:4355
+#: src/Fish.cc:999 src/Http.cc:1862 src/SFtp.cc:1319 src/ftpclass.cc:4392
 msgid "Receiving data"
-msgstr "正接收数据"
+msgstr "脮媒陆脫脢脮脢媒戮脻"
 
-#: src/Fish.cc:1000 src/Http.cc:1825 src/SFtp.cc:1320 src/ftpclass.cc:4353
+#: src/Fish.cc:1001 src/Http.cc:1855 src/SFtp.cc:1321 src/ftpclass.cc:4390
 msgid "Sending data"
-msgstr "正发送数据"
+msgstr "脮媒路垄脣脥脢媒戮脻"
 
-#: src/Fish.cc:1002 src/SFtp.cc:1322
+#: src/Fish.cc:1003 src/SFtp.cc:1323
 #, fuzzy
 msgid "Done"
-msgstr "\t完成\n"
+msgstr "\t脥锚鲁脡\n"
 
-#: src/Fish.cc:1158 src/FtpDirList.cc:126 src/HttpDir.cc:1361 src/SFtp.cc:2173
-#: src/SFtp.cc:2252
+#: src/Fish.cc:1159 src/FtpDirList.cc:125 src/HttpDir.cc:1360 src/SFtp.cc:2174
+#: src/SFtp.cc:2255
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
-msgstr "正在获取文件列表 (%ld) [%s]"
+msgstr "脮媒脭脷禄帽脠隆脦脛录镁脕脨卤铆 (%ld) [%s]"
 
-#: src/GetJob.cc:81
+#: src/GetJob.cc:80
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
 
-#: src/Http.cc:149
+#: src/Http.cc:163
 #, fuzzy
 msgid "Closing HTTP connection"
-msgstr "关闭发呆的连接"
+msgstr "鹿脴卤脮路垄麓么碌脛脕卢陆脫"
 
-#: src/Http.cc:157
+#: src/Http.cc:170
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:987
+#: src/Http.cc:1011
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1035 src/ftpclass.cc:1332 src/Torrent.cc:2012
-#: src/Torrent.cc:2464
+#: src/Http.cc:1061 src/ftpclass.cc:1344 src/Torrent.cc:2639
+#: src/Torrent.cc:3161 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/Http.cc:1128
+#: src/Http.cc:1152
 #, fuzzy
 msgid "Sending request..."
-msgstr "正在发送命令..."
+msgstr "脮媒脭脷路垄脣脥脙眉脕卯..."
 
-#: src/Http.cc:1172
+#: src/Http.cc:1196
 #, fuzzy
 msgid "Hit EOF while fetching headers"
-msgstr "正在取得头..."
+msgstr "脮媒脭脷脠隆碌脙脥路..."
 
-#: src/Http.cc:1282
+#: src/Http.cc:1306
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1313
+#: src/Http.cc:1337
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1463
+#: src/Http.cc:1495
 #, fuzzy
 msgid "Receiving body..."
-msgstr "正接收数据"
+msgstr "脮媒陆脫脢脮脢媒戮脻"
 
-#: src/Http.cc:1597
+#: src/Http.cc:1627
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1600
+#: src/Http.cc:1630
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1610
+#: src/Http.cc:1640
 #, fuzzy
 msgid "Received all"
-msgstr "正接收数据"
+msgstr "脮媒陆脫脢脮脢媒戮脻"
 
-#: src/Http.cc:1615
+#: src/Http.cc:1645
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1639 src/Http.cc:1661
+#: src/Http.cc:1669 src/Http.cc:1691
 msgid "chunked format violated"
-msgstr "块格式冲突"
+msgstr "驴茅赂帽脢陆鲁氓脥禄"
 
-#: src/Http.cc:1648
+#: src/Http.cc:1678
 #, fuzzy
 msgid "Received last chunk"
-msgstr "正接收数据"
+msgstr "脮媒陆脫脢脮脢媒戮脻"
 
-#: src/Http.cc:1814 src/Resolver.cc:171 src/Resolver.cc:213
-#: src/ftpclass.cc:4303
+#: src/Http.cc:1844 src/Resolver.cc:170 src/Resolver.cc:212
+#: src/ftpclass.cc:4340 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
-msgstr "正在解析主机地址..."
+msgstr "脮媒脭脷陆芒脦枚脰梅禄煤碌脴脰路..."
 
-#: src/Http.cc:1822 src/ftpclass.cc:4296
+#: src/Http.cc:1852 src/ftpclass.cc:4333
 msgid "Connection idle"
-msgstr "连接空闲"
+msgstr "脕卢陆脫驴脮脧脨"
 
-#: src/Http.cc:1830
+#: src/Http.cc:1860
 msgid "Fetching headers..."
-msgstr "正在取得头..."
+msgstr "脮媒脭脷脠隆碌脙脥路..."
 
-#: src/Job.cc:273
+#: src/Job.cc:272
 #, c-format
 msgid "[%d] Done (%s)"
-msgstr "[%d] 完成 (%s)"
+msgstr "[%d] 脥锚鲁脡 (%s)"
 
-#: src/LocalAccess.cc:620 src/NetAccess.cc:617
+#: src/LocalAccess.cc:619 src/NetAccess.cc:616
 #, fuzzy
 msgid "Getting directory contents"
-msgstr "正在读取目录内容 (%ld)"
+msgstr "脮媒脭脷露脕脠隆脛驴脗录脛脷脠脻 (%ld)"
 
-#: src/LocalAccess.cc:622 src/NetAccess.cc:621
+#: src/LocalAccess.cc:621 src/NetAccess.cc:620
 #, fuzzy
 msgid "Getting files information"
-msgstr "正在读取文件信息 (%d%%)"
+msgstr "脮媒脭脷露脕脠隆脦脛录镁脨脜脧垄 (%d%%)"
 
-#: src/LocalAccess.cc:658 src/commands.cc:3088
+#: src/LocalAccess.cc:657 src/commands.cc:3068
 #, fuzzy
 msgid "cannot get current directory"
-msgstr "正在改变远程目录..."
+msgstr "脮媒脭脷赂脛卤盲脭露鲁脤脛驴脗录..."
 
-#: src/LsCache.cc:183
+#: src/LsCache.cc:182
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
-msgstr "缓冲了 %ld 字节"
+msgstr "禄潞鲁氓脕脣 %ld 脳脰陆脷"
 
-#: src/LsCache.cc:187
+#: src/LsCache.cc:186
 msgid ", no size limit"
-msgstr ", 没有大小限制"
+msgstr ", 脙禄脫脨麓贸脨隆脧脼脰脝"
 
-#: src/LsCache.cc:189
+#: src/LsCache.cc:188
 #, c-format
 msgid ", maximum size %ld\n"
-msgstr ", 最大为 %ld\n"
+msgstr ", 脳卯麓贸脦陋 %ld\n"
 
-#: src/MirrorJob.cc:99
+#: src/MirrorJob.cc:98
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s全部: %d 个目录,%d 个文件, %d 个符号链接\n"
+msgstr "%s脠芦虏驴: %d 赂枚脛驴脗录,%d 赂枚脦脛录镁, %d 赂枚路没潞脜脕麓陆脫\n"
 
-#: src/MirrorJob.cc:103
+#: src/MirrorJob.cc:102
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
-msgstr "%s新建: %d 个文件, %d 个符号链接\n"
+msgstr "%s脨脗陆篓: %d 赂枚脦脛录镁, %d 赂枚路没潞脜脕麓陆脫\n"
 
-#: src/MirrorJob.cc:107
+#: src/MirrorJob.cc:106
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
-msgstr "%s修改过: %d 个文件, %d 个符号链接\n"
+msgstr "%s脨脼赂脛鹿媒: %d 赂枚脦脛录镁, %d 赂枚路没潞脜脕麓陆脫\n"
 
-#: src/MirrorJob.cc:114
+#: src/MirrorJob.cc:113
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s删除: %d 个目录, %d 个文件, %d 个符号链接\n"
+msgstr "%s脡戮鲁媒: %d 赂枚脛驴脗录, %d 赂枚脦脛录镁, %d 赂枚路没潞脜脕麓陆脫\n"
 
-#: src/MirrorJob.cc:119
+#: src/MirrorJob.cc:118
 #, fuzzy, c-format
 msgid "%s%d error$|s$ detected\n"
-msgstr "%s 成功, 建立 %d 个目录\n"
+msgstr "%s 鲁脡鹿娄, 陆篓脕垄 %d 赂枚脛驴脗录\n"
 
-#: src/MirrorJob.cc:253 src/MirrorJob.cc:438 src/MirrorJob.cc:957
+#: src/MirrorJob.cc:252 src/MirrorJob.cc:437 src/MirrorJob.cc:956
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
-msgstr "正在删除本地文件 `%s'"
+msgstr "脮媒脭脷脡戮鲁媒卤戮碌脴脦脛录镁 `%s'"
 
-#: src/MirrorJob.cc:263
+#: src/MirrorJob.cc:262
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:270
+#: src/MirrorJob.cc:269
 #, fuzzy, c-format
 msgid "Transferring file `%s'"
-msgstr "上传本地文件 '%s'"
+msgstr "脡脧麓芦卤戮碌脴脦脛录镁 '%s'"
 
-#: src/MirrorJob.cc:341
+#: src/MirrorJob.cc:340
 #, fuzzy, c-format
 msgid "Skipping directory `%s' (only-existing)"
-msgstr "建立远程目录 `%s'"
+msgstr "陆篓脕垄脭露鲁脤脛驴脗录 `%s'"
 
-#: src/MirrorJob.cc:361 src/MirrorJob.cc:470 src/MirrorJob.cc:708
+#: src/MirrorJob.cc:360 src/MirrorJob.cc:469 src/MirrorJob.cc:707
 #, c-format
 msgid "Removing old local file `%s'"
-msgstr "正在删除本地文件 `%s'"
+msgstr "脮媒脭脷脡戮鲁媒卤戮碌脴脦脛录镁 `%s'"
 
-#: src/MirrorJob.cc:409
+#: src/MirrorJob.cc:408
 #, fuzzy, c-format
 msgid "Mirroring directory `%s'"
-msgstr "建立远程目录 `%s'"
+msgstr "陆篓脕垄脭露鲁脤脛驴脗录 `%s'"
 
-#: src/MirrorJob.cc:483
+#: src/MirrorJob.cc:482
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:489
+#: src/MirrorJob.cc:488
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
-msgstr "建立符号链接 `%s' 指向 `%s'"
+msgstr "陆篓脕垄路没潞脜脕麓陆脫 `%s' 脰赂脧貌 `%s'"
 
-#: src/MirrorJob.cc:622
+#: src/MirrorJob.cc:621
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
-msgstr "镜像: 协议 `%s' 不适合进行镜像\n"
+msgstr "戮碌脧帽: 脨颅脪茅 `%s' 虏禄脢脢潞脧陆酶脨脨戮碌脧帽\n"
 
-#: src/MirrorJob.cc:729
+#: src/MirrorJob.cc:728
 #, fuzzy, c-format
 msgid "Making directory `%s'"
-msgstr "建立远程目录 `%s'"
+msgstr "陆篓脕垄脭露鲁脤脛驴脗录 `%s'"
 
-#: src/MirrorJob.cc:908
+#: src/MirrorJob.cc:907
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
-msgstr "没有删除旧的本地文件 `%s'"
+msgstr "脙禄脫脨脡戮鲁媒戮脡碌脛卤戮碌脴脦脛录镁 `%s'"
 
-#: src/MirrorJob.cc:911
+#: src/MirrorJob.cc:910
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
-msgstr "没有删除旧的本地文件 `%s'"
+msgstr "脙禄脫脨脡戮鲁媒戮脡碌脛卤戮碌脴脦脛录镁 `%s'"
 
-#: src/MirrorJob.cc:952
+#: src/MirrorJob.cc:951
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
-msgstr "删除旧的远程文件 `%s'"
+msgstr "脡戮鲁媒戮脡碌脛脭露鲁脤脦脛录镁 `%s'"
 
-#: src/MirrorJob.cc:1085
+#: src/MirrorJob.cc:1084
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1472
+#: src/MirrorJob.cc:1471
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1604 src/SleepJob.cc:147 src/SleepJob.cc:203
-#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1597
-#: src/commands.cc:1628 src/commands.cc:1731 src/commands.cc:2038
-#: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
-#: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
-#: src/commands.cc:2751 src/commands.cc:3071 src/lftp.cc:266
-#: src/Torrent.cc:2768
+#: src/MirrorJob.cc:1603 src/SleepJob.cc:146 src/SleepJob.cc:202
+#: src/commands.cc:1117 src/commands.cc:1205 src/commands.cc:1577
+#: src/commands.cc:1608 src/commands.cc:1711 src/commands.cc:2018
+#: src/commands.cc:2214 src/commands.cc:2376 src/commands.cc:2404
+#: src/commands.cc:2411 src/commands.cc:2697 src/commands.cc:2724
+#: src/commands.cc:2731 src/commands.cc:3051 src/lftp.cc:269
+#: src/Torrent.cc:3541
 #, c-format
 msgid "Try `help %s' for more information.\n"
-msgstr "请用 `help %s' 或得更多的信息.\n"
+msgstr "脟毛脫脙 `help %s' 禄貌碌脙赂眉露脿碌脛脨脜脧垄.\n"
 
-#: src/NetAccess.cc:131
+#: src/NetAccess.cc:130
 #, c-format
 msgid "Socket error (%s) - reconnecting"
-msgstr "Socket 错误 (%s) - 重新连接"
+msgstr "Socket 麓铆脦贸 (%s) - 脰脴脨脗脕卢陆脫"
 
-#: src/NetAccess.cc:164
+#: src/NetAccess.cc:163
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
-msgstr "正在连接到 %s%s (%s) 端口 %u"
+msgstr "脮媒脭脷脕卢陆脫碌陆 %s%s (%s) 露脣驴脷 %u"
 
-#: src/NetAccess.cc:220 src/Torrent.cc:2106
+#: src/NetAccess.cc:219 src/Torrent.cc:2756
 msgid "Timeout - reconnecting"
-msgstr "超时 - 重新连接"
+msgstr "鲁卢脢卤 - 脰脴脨脗脕卢陆脫"
 
-#: src/NetAccess.cc:316
+#: src/NetAccess.cc:315
 #, fuzzy
 msgid "Connection limit reached"
-msgstr "连接空闲"
+msgstr "脕卢陆脫驴脮脧脨"
 
-#: src/NetAccess.cc:321
+#: src/NetAccess.cc:320
 msgid "Delaying before reconnect"
-msgstr "重新连接前延时"
+msgstr "脰脴脨脗脕卢陆脫脟掳脩脫脢卤"
 
-#: src/NetAccess.cc:343
+#: src/NetAccess.cc:342
 msgid "max-retries exceeded"
-msgstr "达到最大重试次数"
+msgstr "麓茂碌陆脳卯麓贸脰脴脢脭麓脦脢媒"
 
-#: src/OutputJob.cc:146
+#: src/OutputJob.cc:145
 #, c-format
 msgid "%s (filter)"
 msgstr ""
 
-#: src/PollVec.cc:80
+#: src/PollVec.cc:79
 #, c-format
 msgid "%s: BUG - deadlock detected\n"
 msgstr ""
 
-#: src/PtyShell.cc:71
+#: src/PtyShell.cc:70
 msgid "pseudo-tty allocation failed: "
 msgstr ""
 
-#: src/QueueFeeder.cc:69
+#: src/QueueFeeder.cc:68
 msgid "Added job$|s$"
 msgstr ""
 
-#: src/QueueFeeder.cc:160 src/QueueFeeder.cc:181
+#: src/QueueFeeder.cc:164 src/QueueFeeder.cc:185
 #, c-format
 msgid "No queued jobs.\n"
 msgstr ""
 
-#: src/QueueFeeder.cc:162
+#: src/QueueFeeder.cc:166
 #, c-format
 msgid "No queued job #%i.\n"
 msgstr ""
 
-#: src/QueueFeeder.cc:167 src/QueueFeeder.cc:188
+#: src/QueueFeeder.cc:171 src/QueueFeeder.cc:192
 msgid "Deleted job$|s$"
 msgstr ""
 
-#: src/QueueFeeder.cc:183
+#: src/QueueFeeder.cc:187
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
 msgstr ""
 
-#: src/QueueFeeder.cc:208 src/QueueFeeder.cc:226
+#: src/QueueFeeder.cc:212 src/QueueFeeder.cc:230
 msgid "Moved job$|s$"
 msgstr ""
 
-#: src/QueueFeeder.cc:350
+#: src/QueueFeeder.cc:354
 msgid "Commands queued:"
 msgstr ""
 
-#: src/ResMgr.cc:121
+#: src/ResMgr.cc:122
 msgid "no such variable"
-msgstr "没有这个变量"
+msgstr "脙禄脫脨脮芒赂枚卤盲脕驴"
 
-#: src/ResMgr.cc:125
+#: src/ResMgr.cc:126
 msgid "ambiguous variable name"
-msgstr "不确切的变量名"
+msgstr "虏禄脠路脟脨碌脛卤盲脕驴脙没"
 
-#: src/ResMgr.cc:384
+#: src/ResMgr.cc:385
 msgid "invalid boolean value"
-msgstr "无效的布尔值"
+msgstr "脦脼脨搂碌脛虏录露没脰碌"
 
-#: src/ResMgr.cc:406
+#: src/ResMgr.cc:407
 #, fuzzy
 msgid "invalid boolean/auto value"
-msgstr "无效的布尔值"
+msgstr "脦脼脨搂碌脛虏录露没脰碌"
 
-#: src/ResMgr.cc:451
+#: src/ResMgr.cc:452 src/ResMgr.cc:752
 msgid "invalid number"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
-#: src/ResMgr.cc:464
+#: src/ResMgr.cc:465
 #, fuzzy
 msgid "invalid floating point number"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
-#: src/ResMgr.cc:478
+#: src/ResMgr.cc:479
 #, fuzzy
 msgid "invalid unsigned number"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
-#: src/ResMgr.cc:712
+#: src/ResMgr.cc:717
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr ""
 
-#: src/ResMgr.cc:720
+#: src/ResMgr.cc:725
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/ResMgr.cc:764 src/commands.cc:3231 src/commands.cc:3240
-msgid "Invalid range format. Format is min-max, e.g. 10-20."
+#: src/ResMgr.cc:757
+msgid "integer overflow"
 msgstr ""
 
-#: src/ResMgr.cc:781
-msgid "Invalid suffix. Valid suffixes are: k, M, G, T, P, E, Z, Y"
-msgstr ""
-
-#: src/ResMgr.cc:784
-msgid "Integer overflow"
-msgstr ""
-
-#: src/ResMgr.cc:832
+#: src/ResMgr.cc:844
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:843
+#: src/ResMgr.cc:855
 msgid "Invalid IPv6 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:913 src/ResMgr.cc:917
+#: src/ResMgr.cc:925 src/ResMgr.cc:929
 #, fuzzy
 msgid "this encoding is not supported"
-msgstr "不支持的操作"
+msgstr "虏禄脰搂鲁脰碌脛虏脵脳梅"
 
-#: src/ResMgr.cc:923
+#: src/ResMgr.cc:935
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/ResMgr.cc:934
-#, fuzzy
-msgid "invalid pair of numbers"
-msgstr "无效的数字"
-
-#: src/Resolver.cc:232
+#: src/Resolver.cc:231
 msgid "host name resolve timeout"
-msgstr "主机名解析超时"
+msgstr "脰梅禄煤脙没陆芒脦枚鲁卢脢卤"
 
-#: src/Resolver.cc:278
+#: src/Resolver.cc:277
 #, c-format
 msgid "%d address$|es$ found"
 msgstr ""
 
 #: src/Resolver.cc:733
-msgid "DNS resoloution not trusted."
+msgid "DNS resolution not trusted."
 msgstr ""
 
-#: src/Resolver.cc:834
+#: src/Resolver.cc:839
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/Resolver.cc:866
+#: src/Resolver.cc:871
 #, fuzzy, c-format
 msgid "no such %s service"
-msgstr "没有这个变量"
+msgstr "脙禄脫脨脮芒赂枚卤盲脕驴"
 
-#: src/Resolver.cc:887
+#: src/Resolver.cc:892
 msgid "No address found"
 msgstr ""
 
-#: src/SFtp.cc:1069
+#: src/SFtp.cc:1068
 #, fuzzy
 msgid "invalid server response format"
-msgstr "额外的服务器应答"
+msgstr "露卯脥芒碌脛路镁脦帽脝梅脫娄麓冒"
 
-#: src/SleepJob.cc:102
+#: src/SleepJob.cc:101
 msgid "Sleeping forever"
 msgstr ""
 
-#: src/SleepJob.cc:103
+#: src/SleepJob.cc:102
 msgid "Sleep time left: "
 msgstr ""
 
-#: src/SleepJob.cc:111
+#: src/SleepJob.cc:110
 #, c-format
 msgid "\tRepeat count: %d\n"
 msgstr ""
 
-#: src/SleepJob.cc:145
+#: src/SleepJob.cc:144
 #, c-format
 msgid "%s: argument required. "
-msgstr "%s: 需要参数. "
+msgstr "%s: 脨猫脪陋虏脦脢媒. "
 
-#: src/SleepJob.cc:265
+#: src/SleepJob.cc:264
 #, c-format
 msgid "%s: date-time specification missed\n"
 msgstr ""
 
-#: src/SleepJob.cc:272
+#: src/SleepJob.cc:271
 #, c-format
 msgid "%s: date-time parse error\n"
 msgstr ""
 
-#: src/Speedometer.cc:97
+#: src/Speedometer.cc:96
 #, fuzzy, c-format
 msgid "%.0fb/s"
 msgstr "%.0fb/s "
 
-#: src/Speedometer.cc:100
+#: src/Speedometer.cc:99
 #, fuzzy, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/s "
 
-#: src/Speedometer.cc:103
+#: src/Speedometer.cc:102
 #, fuzzy, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/s "
 
-#: src/Speedometer.cc:125
+#: src/Speedometer.cc:124
 msgid "eta:"
 msgstr "eta:"
 
-#: src/SysCmdJob.cc:76
+#: src/SysCmdJob.cc:75
 #, c-format
 msgid "execlp(%s) failed: %s\n"
-msgstr "execlp(%s) 失败: %s\n"
+msgstr "execlp(%s) 脢搂掳脺: %s\n"
 
-#: src/commands.cc:114
+#: src/commands.cc:113
 #, fuzzy
 msgid "!<shell-command>"
 msgstr "!<shell command>"
 
-#: src/commands.cc:115
+#: src/commands.cc:114
 msgid "Launch shell or shell command\n"
-msgstr "启动 shell 或 shell 命令\n"
+msgstr "脝么露炉 shell 禄貌 shell 脙眉脕卯\n"
 
-#: src/commands.cc:116
+#: src/commands.cc:115
 msgid "(commands)"
 msgstr "(commands)"
 
-#: src/commands.cc:117
+#: src/commands.cc:116
 msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
 msgstr ""
-"把多个要执行的命令编为一组成为一个命令\n"
-"你可以在后台启动这样一个组\n"
+"掳脩露脿赂枚脪陋脰麓脨脨碌脛脙眉脕卯卤脿脦陋脪禄脳茅鲁脡脦陋脪禄赂枚脙眉脕卯\n"
+"脛茫驴脡脪脭脭脷潞贸脤篓脝么露炉脮芒脩霉脪禄赂枚脳茅\n"
 
-#: src/commands.cc:120
+#: src/commands.cc:119
 msgid "alias [<name> [<value>]]"
 msgstr "alias [<name> [<value>]]"
 
-#: src/commands.cc:121
+#: src/commands.cc:120
 msgid ""
 "Define or undefine alias <name>. If <value> omitted,\n"
 "the alias is undefined, else is takes the value <value>.\n"
 "If no argument is given the current aliases are listed.\n"
 msgstr ""
-"定义或取消别名 <name>. 如果 <value> 被忽略,\n"
-"则取消别名定义, 否则定义其值为 <value>.\n"
-"如果没有参数, 列出当前的所有别名.\n"
+"露篓脪氓禄貌脠隆脧没卤冒脙没 <name>. 脠莽鹿没 <value> 卤禄潞枚脗脭,\n"
+"脭貌脠隆脧没卤冒脙没露篓脪氓, 路帽脭貌露篓脪氓脝盲脰碌脦陋 <value>.\n"
+"脠莽鹿没脙禄脫脨虏脦脢媒, 脕脨鲁枚碌卤脟掳碌脛脣霉脫脨卤冒脙没.\n"
 
-#: src/commands.cc:125
+#: src/commands.cc:124
 msgid "anon - login anonymously (by default)\n"
-msgstr "anon - 匿名登录(默认)\n"
+msgstr "anon - 脛盲脙没碌脟脗录(脛卢脠脧)\n"
 
-#: src/commands.cc:127
+#: src/commands.cc:126
 msgid "bookmark [SUBCMD]"
 msgstr "bookmark [SUBCMD]"
 
-#: src/commands.cc:128
+#: src/commands.cc:127
 msgid ""
 "bookmark command controls bookmarks\n"
 "\n"
@@ -951,20 +949,20 @@ msgid ""
 "  import <type>      - import foreign bookmarks\n"
 "  list               - list bookmarks (default)\n"
 msgstr ""
-"bookmark 命令控制书签\n"
+"bookmark 脙眉脕卯驴脴脰脝脢茅脟漏\n"
 "\n"
-"支持下面的子命令:\n"
-"  add <name> [<loc>] - 把当前位置或指定的位置加入书签,并使用给定名字\n"
-"  del <name>         - 删除指定名字的书签\n"
-"  edit               - 编辑书签文件\n"
-"  import <type>      - 导入其他程序的书签\n"
-"  list               - 列出书签 (默认)\n"
+"脰搂鲁脰脧脗脙忙碌脛脳脫脙眉脕卯:\n"
+"  add <name> [<loc>] - 掳脩碌卤脟掳脦禄脰脙禄貌脰赂露篓碌脛脦禄脰脙录脫脠毛脢茅脟漏,虏垄脢鹿脫脙赂酶露篓脙没脳脰\n"
+"  del <name>         - 脡戮鲁媒脰赂露篓脙没脳脰碌脛脢茅脟漏\n"
+"  edit               - 卤脿录颅脢茅脟漏脦脛录镁\n"
+"  import <type>      - 碌录脠毛脝盲脣没鲁脤脨貌碌脛脢茅脟漏\n"
+"  list               - 脕脨鲁枚脢茅脟漏 (脛卢脠脧)\n"
 
-#: src/commands.cc:137
+#: src/commands.cc:136
 msgid "cache [SUBCMD]"
 msgstr "cache [SUBCMD]"
 
-#: src/commands.cc:138
+#: src/commands.cc:137
 #, fuzzy
 msgid ""
 "cache command controls local memory cache\n"
@@ -977,52 +975,52 @@ msgid ""
 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 "                minutes (x=m) hours (x=h) or days (x=d)\n"
 msgstr ""
-"cache 命令控制本地的缓存\n"
+"cache 脙眉脕卯驴脴脰脝卤戮碌脴碌脛禄潞麓忙\n"
 "\n"
-"支持下列子命令:\n"
-"  stat        - 显示缓存的状态 (默认)\n"
-"  on|ff       - 打开/关闭缓存\n"
-"  flush       - 清除缓存\n"
-"  size <lim>  - 设置内存限制, -1 表示没有限制\n"
-"  expire <Nx> - 设置缓存过期的时间为 N 秒 (x=s)\n"
-"                分钟 (x=m) 小时 (x=h) 或天(x=d)\n"
+"脰搂鲁脰脧脗脕脨脳脫脙眉脕卯:\n"
+"  stat        - 脧脭脢戮禄潞麓忙碌脛脳麓脤卢 (脛卢脠脧)\n"
+"  on|ff       - 麓貌驴陋/鹿脴卤脮禄潞麓忙\n"
+"  flush       - 脟氓鲁媒禄潞麓忙\n"
+"  size <lim>  - 脡猫脰脙脛脷麓忙脧脼脰脝, -1 卤铆脢戮脙禄脫脨脧脼脰脝\n"
+"  expire <Nx> - 脡猫脰脙禄潞麓忙鹿媒脝脷碌脛脢卤录盲脦陋 N 脙毛 (x=s)\n"
+"                路脰脰脫 (x=m) 脨隆脢卤 (x=h) 禄貌脤矛(x=d)\n"
 
-#: src/commands.cc:146
+#: src/commands.cc:145
 #, fuzzy
 msgid "cat [-b] <files>"
 msgstr "cat [-u] <files>"
 
-#: src/commands.cc:147
+#: src/commands.cc:146
 #, fuzzy
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
 msgstr ""
-"cat - 输出远程文件内容到标准输出\n"
-" -u  使用 URL\n"
+"cat - 脢盲鲁枚脭露鲁脤脦脛录镁脛脷脠脻碌陆卤锚脳录脢盲鲁枚\n"
+" -u  脢鹿脫脙 URL\n"
 
-#: src/commands.cc:149
+#: src/commands.cc:148
 msgid "cd <rdir>"
 msgstr "cd <rdir>"
 
-#: src/commands.cc:150
+#: src/commands.cc:149
 msgid ""
 "Change current remote directory to <rdir>. The previous remote directory\n"
 "is stored as `-'. You can do `cd -' to change the directory back.\n"
 "The previous directory for each site is also stored on disk, so you can\n"
 "do `open site; cd -' even after lftp restart.\n"
 msgstr ""
-"改变当前的远程目录到 <rdir>. 先前的远程目录被存为 `-'. 你可以用 `cd -'\n"
-"回到先前的目录.\n"
-"每个站点的先前目录保存在磁盘上, 即使在 lftp 重启动后, 你也可以用\n"
-"`open site; cd -', 回到先前的目录\n"
+"赂脛卤盲碌卤脟掳碌脛脭露鲁脤脛驴脗录碌陆 <rdir>. 脧脠脟掳碌脛脭露鲁脤脛驴脗录卤禄麓忙脦陋 `-'. 脛茫驴脡脪脭脫脙 `cd -'\n"
+"禄脴碌陆脧脠脟掳碌脛脛驴脗录.\n"
+"脙驴赂枚脮戮碌茫碌脛脧脠脟掳脛驴脗录卤拢麓忙脭脷麓脜脜脤脡脧, 录麓脢鹿脭脷 lftp 脰脴脝么露炉潞贸, 脛茫脪虏驴脡脪脭脫脙\n"
+"`open site; cd -', 禄脴碌陆脧脠脟掳碌脛脛驴脗录\n"
 
-#: src/commands.cc:154
+#: src/commands.cc:153
 #, fuzzy
 msgid "chmod [OPTS] mode file..."
 msgstr "chmod mode file..."
 
-#: src/commands.cc:155
+#: src/commands.cc:154
 msgid ""
 "Change the mode of each FILE to MODE.\n"
 "\n"
@@ -1034,24 +1032,25 @@ msgid ""
 "MODE can be an octal number or symbolic mode (see chmod(1))\n"
 msgstr ""
 
-#: src/commands.cc:164
+#: src/commands.cc:163
 msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"关闭发呆的连接. 默认设置只关闭当前服务器的连接.\n"
-" -a  关闭所有服务器上的发呆连接\n"
+"鹿脴卤脮路垄麓么碌脛脕卢陆脫. 脛卢脠脧脡猫脰脙脰禄鹿脴卤脮碌卤脟掳路镁脦帽脝梅碌脛脕卢陆脫.\n"
+" -a  鹿脴卤脮脣霉脫脨路镁脦帽脝梅脡脧碌脛路垄麓么脕卢陆脫\n"
 
-#: src/commands.cc:166
+#: src/commands.cc:165
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr ""
 
-#: src/commands.cc:167
+#: src/commands.cc:166
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
 "\n"
 " -1                   - single-column output\n"
+" -a, --all            - show dot files\n"
 " -B, --basename       - show basename of files only\n"
 "     --block-size=SIZ - use SIZ-byte blocks\n"
 " -d, --directory      - list directory entries instead of contents\n"
@@ -1095,8 +1094,8 @@ msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file.\n"
 msgstr ""
-"设置调试级别或关闭调试功能.\n"
-" -o <file>  把调试信息输出重定向到文件中.\n"
+"脡猫脰脙碌梅脢脭录露卤冒禄貌鹿脴卤脮碌梅脢脭鹿娄脛脺.\n"
+" -o <file>  掳脩碌梅脢脭脨脜脧垄脢盲鲁枚脰脴露篓脧貌碌陆脦脛录镁脰脨.\n"
 
 #: src/commands.cc:219
 #, fuzzy
@@ -1140,10 +1139,10 @@ msgid ""
 "termination status. If omitted, exit code of last command is used.\n"
 "`bg' forces moving to background if cmd:move-background is false.\n"
 msgstr ""
-"exit - 从 lftp 中退出, 如果有任务活动则进入后台\n"
+"exit - 麓脫 lftp 脰脨脥脣鲁枚, 脠莽鹿没脫脨脠脦脦帽禄卯露炉脭貌陆酶脠毛潞贸脤篓\n"
 "\n"
-"如果没有活动任务, code 会被传给操作系统作为 lftp 的退出状态.\n"
-"如果忽略, 使用上个命令的退出码.\n"
+"脠莽鹿没脙禄脫脨禄卯露炉脠脦脦帽, code 禄谩卤禄麓芦赂酶虏脵脳梅脧碌脥鲁脳梅脦陋 lftp 碌脛脥脣鲁枚脳麓脤卢.\n"
+"脠莽鹿没潞枚脗脭, 脢鹿脫脙脡脧赂枚脙眉脕卯碌脛脥脣鲁枚脗毛.\n"
 
 #: src/commands.cc:246
 msgid ""
@@ -1163,16 +1162,16 @@ msgstr "get [OPTS] <rfile> [-o <lfile>]"
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 " -o <lfile> specifies local file name (default - basename of rfile)\n"
-" -c  continue, reget\n"
+" -c  continue, resume transfer\n"
 " -E  delete remote files after successful transfer\n"
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"下载远程文件 <rfile> 并保存为本地文件 <lfile>.\n"
-" -o <lfile> 指定本地文件名 (默认值 - rfile 的名字)\n"
-" -c 继续, 重取\n"
-" -e 传输完成后删除远程文件\n"
-" -u 文件名使用 URL\n"
+"脧脗脭脴脭露鲁脤脦脛录镁 <rfile> 虏垄卤拢麓忙脦陋卤戮碌脴脦脛录镁 <lfile>.\n"
+" -o <lfile> 脰赂露篓卤戮碌脴脦脛录镁脙没 (脛卢脠脧脰碌 - rfile 碌脛脙没脳脰)\n"
+" -c 录脤脨酶, 脰脴脠隆\n"
+" -e 麓芦脢盲脥锚鲁脡潞贸脡戮鲁媒脭露鲁脤脦脛录镁\n"
+" -u 脦脛录镁脙没脢鹿脫脙 URL\n"
 
 #: src/commands.cc:259
 msgid "glob [OPTS] <cmd> <args>"
@@ -1195,37 +1194,40 @@ msgstr "help [<cmd>]"
 
 #: src/commands.cc:269
 msgid "Print help for command <cmd>, or list of available commands\n"
-msgstr "显示命令 <cmd> 的帮助信息, 或者列出可用的命令\n"
+msgstr "脧脭脢戮脙眉脕卯 <cmd> 碌脛掳茂脰煤脨脜脧垄, 禄貌脮脽脕脨鲁枚驴脡脫脙碌脛脙眉脕卯\n"
 
 #: src/commands.cc:271
-msgid "List running jobs. -v means verbose, several -v can be specified.\n"
-msgstr "列出运行的任务. -v 表示更多信息, 可以指定多个 -v.\n"
+#, fuzzy
+msgid ""
+"List running jobs. -v means verbose, several -v can be specified.\n"
+"If <job_no> is specified, only list a job with that number.\n"
+msgstr "脕脨鲁枚脭脣脨脨碌脛脠脦脦帽. -v 卤铆脢戮赂眉露脿脨脜脧垄, 驴脡脪脭脰赂露篓露脿赂枚 -v.\n"
 
-#: src/commands.cc:272
+#: src/commands.cc:273
 msgid "kill all|<job_no>"
 msgstr "kill all|<job_no>"
 
-#: src/commands.cc:273
-msgid "Delete specified job with <job_no> or all jobs\n"
-msgstr "删除指定的任务号为 <job_no> 的任务, 或者所有的任务\n"
-
 #: src/commands.cc:274
+msgid "Delete specified job with <job_no> or all jobs\n"
+msgstr "脡戮鲁媒脰赂露篓碌脛脠脦脦帽潞脜脦陋 <job_no> 碌脛脠脦脦帽, 禄貌脮脽脣霉脫脨碌脛脠脦脦帽\n"
+
+#: src/commands.cc:275
 msgid "lcd <ldir>"
 msgstr "lcd <ldir>"
 
-#: src/commands.cc:275
+#: src/commands.cc:276
 msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
 msgstr ""
-"改变当前本地目录到 <ldir>. 先前的本地目录保存为 `-'.\n"
-"你可以使用 `lcd -' 切换回先前的目录.\n"
+"赂脛卤盲碌卤脟掳卤戮碌脴脛驴脗录碌陆 <ldir>. 脧脠脟掳碌脛卤戮碌脴脛驴脗录卤拢麓忙脦陋 `-'.\n"
+"脛茫驴脡脪脭脢鹿脫脙 `lcd -' 脟脨禄禄禄脴脧脠脟掳碌脛脛驴脗录.\n"
 
-#: src/commands.cc:277
+#: src/commands.cc:278
 msgid "lftp [OPTS] <site>"
 msgstr "lftp [OPTS] <site>"
 
-#: src/commands.cc:278
+#: src/commands.cc:279
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -1238,32 +1240,32 @@ msgid ""
 " -p <port>           use the port for connection\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"`lftp' 是在 rc 文件执行后 lftp 执行的第一个命令\n"
-" -f <file>           执行文件中的命令后退出\n"
-" -c <cmd>            执行命令后退出\n"
-" --help              显示帮助信息后退出\n"
-" --version           显示 lftp 版本后退出\n"
-" 其他的选项同 `open' 命令\n"
-" -e <cmd>            在选择后执行命令\n"
-" -u <user>[,<pass>]  使用指定的用户名/口令进行验证\n"
-" -p <port>           连接指定的端口\n"
-" <site>              主机名, URL 或书签的名字\n"
+"`lftp' 脢脟脭脷 rc 脦脛录镁脰麓脨脨潞贸 lftp 脰麓脨脨碌脛碌脷脪禄赂枚脙眉脕卯\n"
+" -f <file>           脰麓脨脨脦脛录镁脰脨碌脛脙眉脕卯潞贸脥脣鲁枚\n"
+" -c <cmd>            脰麓脨脨脙眉脕卯潞贸脥脣鲁枚\n"
+" --help              脧脭脢戮掳茂脰煤脨脜脧垄潞贸脥脣鲁枚\n"
+" --version           脧脭脢戮 lftp 掳忙卤戮潞贸脥脣鲁枚\n"
+" 脝盲脣没碌脛脩隆脧卯脥卢 `open' 脙眉脕卯\n"
+" -e <cmd>            脭脷脩隆脭帽潞贸脰麓脨脨脙眉脕卯\n"
+" -u <user>[,<pass>]  脢鹿脫脙脰赂露篓碌脛脫脙禄搂脙没/驴脷脕卯陆酶脨脨脩茅脰陇\n"
+" -p <port>           脕卢陆脫脰赂露篓碌脛露脣驴脷\n"
+" <site>              脰梅禄煤脙没, URL 禄貌脢茅脟漏碌脛脙没脳脰\n"
 
-#: src/commands.cc:288
+#: src/commands.cc:289
 #, fuzzy
 msgid "ln [-s] <file1> <file2>"
 msgstr "mv <file1> <file2>"
 
-#: src/commands.cc:289
+#: src/commands.cc:290
 #, fuzzy
 msgid "Link <file1> to <file2>\n"
-msgstr "把文件 <file1> 更名为 <file2>\n"
+msgstr "掳脩脦脛录镁 <file1> 赂眉脙没脦陋 <file2>\n"
 
-#: src/commands.cc:293
+#: src/commands.cc:294
 msgid "ls [<args>]"
 msgstr "ls [<args>]"
 
-#: src/commands.cc:294
+#: src/commands.cc:295
 #, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
@@ -1272,38 +1274,38 @@ msgid ""
 "`cache flush'.\n"
 "See also `help cls'.\n"
 msgstr ""
-"列出远程文件. 你可以把这个命令的输出重定向到文件, 或通过管道\n"
-"输出到外部命令.\n"
-"默认的, ls 的输出是缓存的, 如果需要看到新的列表, 使用 `rels' 或\n"
+"脕脨鲁枚脭露鲁脤脦脛录镁. 脛茫驴脡脪脭掳脩脮芒赂枚脙眉脕卯碌脛脢盲鲁枚脰脴露篓脧貌碌陆脦脛录镁, 禄貌脥篓鹿媒鹿脺碌脌\n"
+"脢盲鲁枚碌陆脥芒虏驴脙眉脕卯.\n"
+"脛卢脠脧碌脛, ls 碌脛脢盲鲁枚脢脟禄潞麓忙碌脛, 脠莽鹿没脨猫脪陋驴麓碌陆脨脗碌脛脕脨卤铆, 脢鹿脫脙 `rels' 禄貌\n"
 "`cache flush'.\n"
 
-#: src/commands.cc:299
+#: src/commands.cc:300
 #, fuzzy
 msgid "mget [OPTS] <files>"
 msgstr "more [-u] <files>"
 
-#: src/commands.cc:300
+#: src/commands.cc:301
 #, fuzzy
 msgid ""
 "Gets selected files with expanded wildcards\n"
-" -c  continue, reget\n"
+" -c  continue, resume transfer\n"
 " -d  create directories the same as in file names and get the\n"
 "     files into them instead of current directory\n"
 " -E  delete remote files after successful transfer\n"
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"使用展开的通配符来下载选中的文件\n"
-" -c  继续, 重传\n"
-" -d  建立文件名中包含的目录, 把文件下载到这些目录中, 而不是\n"
-"     下载到当前目录\n"
-" -e  传输完后删除远程文件\n"
+"脢鹿脫脙脮鹿驴陋碌脛脥篓脜盲路没脌麓脧脗脭脴脩隆脰脨碌脛脦脛录镁\n"
+" -c  录脤脨酶, 脰脴麓芦\n"
+" -d  陆篓脕垄脦脛录镁脙没脰脨掳眉潞卢碌脛脛驴脗录, 掳脩脦脛录镁脧脗脭脴碌陆脮芒脨漏脛驴脗录脰脨, 露酶虏禄脢脟\n"
+"     脧脗脭脴碌陆碌卤脟掳脛驴脗录\n"
+" -e  麓芦脢盲脥锚潞贸脡戮鲁媒脭露鲁脤脦脛录镁\n"
 
-#: src/commands.cc:307
+#: src/commands.cc:308
 msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [OPTS] [remote [local]]"
 
-#: src/commands.cc:308
+#: src/commands.cc:309
 #, fuzzy
 msgid ""
 "\n"
@@ -1337,43 +1339,43 @@ msgid ""
 "used.\n"
 msgstr ""
 "\n"
-"把指定的远程目录镜像到本地\n"
+"掳脩脰赂露篓碌脛脭露鲁脤脛驴脗录戮碌脧帽碌陆卤戮碌脴\n"
 "\n"
-" -c, --continue         如果可能, 继续一个镜像任务\n"
-" -e, --delete           删除在远程站点不存在的文件\n"
-" -s, --allow-suid       根据远程站点设置相应的 suid/sgid 位\n"
-" -n, --only-newer       只下载新的文件 (-c 没有作用)\n"
-" -r, --no-recursion     不下载子目录\n"
-" -p, --no-perms         不设置文件权限\n"
-"     --no-umask         不在文件上使用umask\n"
-" -R, --reverse          反向镜像 (上传文件)\n"
-" -L, --dereference      下载符号链接指向的文件\n"
-" -N, --newer-than FILE  只下载比文件 FILE 更新的文件\n"
-" -i RX, --include RX    包括匹配的文件 (只能使用一次)\n"
-" -x RX, --exclude RX    不包括匹配的文件 (只能使用一次)\n"
-"                        RX 是括展的正则表达式\n"
-" -t Nx, --time-prec Nx  设置时间精度为 N 秒 (x=s) 分钟 (x=m)\n"
-"                        小时 (x=h) 或者天 (x=d)\n"
-"                        默认值 - 12 小时\n"
-" -v, --verbose          冗长输出\n"
+" -c, --continue         脠莽鹿没驴脡脛脺, 录脤脨酶脪禄赂枚戮碌脧帽脠脦脦帽\n"
+" -e, --delete           脡戮鲁媒脭脷脭露鲁脤脮戮碌茫虏禄麓忙脭脷碌脛脦脛录镁\n"
+" -s, --allow-suid       赂霉戮脻脭露鲁脤脮戮碌茫脡猫脰脙脧脿脫娄碌脛 suid/sgid 脦禄\n"
+" -n, --only-newer       脰禄脧脗脭脴脨脗碌脛脦脛录镁 (-c 脙禄脫脨脳梅脫脙)\n"
+" -r, --no-recursion     虏禄脧脗脭脴脳脫脛驴脗录\n"
+" -p, --no-perms         虏禄脡猫脰脙脦脛录镁脠篓脧脼\n"
+"     --no-umask         虏禄脭脷脦脛录镁脡脧脢鹿脫脙umask\n"
+" -R, --reverse          路麓脧貌戮碌脧帽 (脡脧麓芦脦脛录镁)\n"
+" -L, --dereference      脧脗脭脴路没潞脜脕麓陆脫脰赂脧貌碌脛脦脛录镁\n"
+" -N, --newer-than FILE  脰禄脧脗脭脴卤脠脦脛录镁 FILE 赂眉脨脗碌脛脦脛录镁\n"
+" -i RX, --include RX    掳眉脌篓脝楼脜盲碌脛脦脛录镁 (脰禄脛脺脢鹿脫脙脪禄麓脦)\n"
+" -x RX, --exclude RX    虏禄掳眉脌篓脝楼脜盲碌脛脦脛录镁 (脰禄脛脺脢鹿脫脙脪禄麓脦)\n"
+"                        RX 脢脟脌篓脮鹿碌脛脮媒脭貌卤铆麓茂脢陆\n"
+" -t Nx, --time-prec Nx  脡猫脰脙脢卤录盲戮芦露脠脦陋 N 脙毛 (x=s) 路脰脰脫 (x=m)\n"
+"                        脨隆脢卤 (x=h) 禄貌脮脽脤矛 (x=d)\n"
+"                        脛卢脠脧脰碌 - 12 脨隆脢卤\n"
+" -v, --verbose          脠脽鲁陇脢盲鲁枚\n"
 
-#: src/commands.cc:335
+#: src/commands.cc:336
 msgid "mkdir [-p] <dirs>"
 msgstr "mkdir [-p] <dirs>"
 
-#: src/commands.cc:336
+#: src/commands.cc:337
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
 msgstr ""
-"建立远程目录\n"
-" -p  建立各级路径\n"
+"陆篓脕垄脭露鲁脤脛驴脗录\n"
+" -p  陆篓脕垄赂梅录露脗路戮露\n"
 
-#: src/commands.cc:338
+#: src/commands.cc:339
 msgid "module name [args]"
 msgstr "module name [args]"
 
-#: src/commands.cc:339
+#: src/commands.cc:340
 #, fuzzy
 msgid ""
 "Load module (shared object). The module should contain function\n"
@@ -1381,29 +1383,29 @@ msgid ""
 "If name contains a slash, then the module is searched in current\n"
 "directory, otherwise in directories specified by setting module:path.\n"
 msgstr ""
-"装载模块 (共享对象). 模块应该包含函数\n"
+"脳掳脭脴脛拢驴茅 (鹿虏脧铆露脭脧贸). 脛拢驴茅脫娄赂脙掳眉潞卢潞炉脢媒\n"
 "   void module_init(int argc,const char *const *argv)\n"
-"如果名字中包含 `/', 那么模块在当前路径中寻找, 否则在\n"
-"PKGLIBDIR 中.\n"
+"脠莽鹿没脙没脳脰脰脨掳眉潞卢 `/', 脛脟脙麓脛拢驴茅脭脷碌卤脟掳脗路戮露脰脨脩掳脮脪, 路帽脭貌脭脷\n"
+"PKGLIBDIR 脰脨.\n"
 
-#: src/commands.cc:343
+#: src/commands.cc:344
 #, fuzzy
 msgid "more <files>"
 msgstr "mrm <files>"
 
-#: src/commands.cc:344
+#: src/commands.cc:345
 #, fuzzy
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
-"和 `cat <files> | more' 相同. 如果设置了 PAGER, 它被用来做过滤\n"
-" -u  使用 URL\n"
+"潞脥 `cat <files> | more' 脧脿脥卢. 脠莽鹿没脡猫脰脙脕脣 PAGER, 脣眉卤禄脫脙脌麓脳枚鹿媒脗脣\n"
+" -u  脢鹿脫脙 URL\n"
 
-#: src/commands.cc:345
+#: src/commands.cc:346
 #, fuzzy
 msgid "mput [OPTS] <files>"
 msgstr "mput [-c] [-d] <files>"
 
-#: src/commands.cc:346
+#: src/commands.cc:347
 #, fuzzy
 msgid ""
 "Upload files with wildcard expansion\n"
@@ -1414,50 +1416,50 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"使用展开的通配符来下载选中的文件\n"
-" -c  继续, 重传\n"
-" -d  建立文件名中包含的目录, 把文件下载到这些目录中, 而不是\n"
-"     下载到当前目录\n"
-" -e  传输完后删除远程文件\n"
+"脢鹿脫脙脮鹿驴陋碌脛脥篓脜盲路没脌麓脧脗脭脴脩隆脰脨碌脛脦脛录镁\n"
+" -c  录脤脨酶, 脰脴麓芦\n"
+" -d  陆篓脕垄脦脛录镁脙没脰脨掳眉潞卢碌脛脛驴脗录, 掳脩脦脛录镁脧脗脭脴碌陆脮芒脨漏脛驴脗录脰脨, 露酶虏禄脢脟\n"
+"     脧脗脭脴碌陆碌卤脟掳脛驴脗录\n"
+" -e  麓芦脢盲脥锚潞贸脡戮鲁媒脭露鲁脤脦脛录镁\n"
 
-#: src/commands.cc:353
+#: src/commands.cc:354
 msgid "mrm <files>"
 msgstr "mrm <files>"
 
-#: src/commands.cc:354
-msgid "Removes specified files with wildcard expansion\n"
-msgstr "使用通配符展开来删除指定的文件\n"
-
 #: src/commands.cc:355
+msgid "Removes specified files with wildcard expansion\n"
+msgstr "脢鹿脫脙脥篓脜盲路没脮鹿驴陋脌麓脡戮鲁媒脰赂露篓碌脛脦脛录镁\n"
+
+#: src/commands.cc:356
 msgid "mv <file1> <file2>"
 msgstr "mv <file1> <file2>"
 
-#: src/commands.cc:356
-msgid "Rename <file1> to <file2>\n"
-msgstr "把文件 <file1> 更名为 <file2>\n"
-
 #: src/commands.cc:357
+msgid "Rename <file1> to <file2>\n"
+msgstr "掳脩脦脛录镁 <file1> 赂眉脙没脦陋 <file2>\n"
+
+#: src/commands.cc:358
 #, fuzzy
 msgid "[re]nlist [<args>]"
 msgstr "renlist [<args>]"
 
-#: src/commands.cc:358
+#: src/commands.cc:359
 #, fuzzy
 msgid ""
 "List remote file names.\n"
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
 "`cache flush'.\n"
 msgstr ""
-"列出远程文件. 你可以把这个命令的输出重定向到文件, 或通过管道\n"
-"输出到外部命令.\n"
-"默认的, ls 的输出是缓存的, 如果需要看到新的列表, 使用 `rels' 或\n"
+"脕脨鲁枚脭露鲁脤脦脛录镁. 脛茫驴脡脪脭掳脩脮芒赂枚脙眉脕卯碌脛脢盲鲁枚脰脴露篓脧貌碌陆脦脛录镁, 禄貌脥篓鹿媒鹿脺碌脌\n"
+"脢盲鲁枚碌陆脥芒虏驴脙眉脕卯.\n"
+"脛卢脠脧碌脛, ls 碌脛脢盲鲁枚脢脟禄潞麓忙碌脛, 脠莽鹿没脨猫脪陋驴麓碌陆脨脗碌脛脕脨卤铆, 脢鹿脫脙 `rels' 禄貌\n"
 "`cache flush'.\n"
 
-#: src/commands.cc:361
+#: src/commands.cc:362
 msgid "open [OPTS] <site>"
 msgstr "open [OPTS] <site>"
 
-#: src/commands.cc:362
+#: src/commands.cc:363
 #, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
@@ -1467,17 +1469,17 @@ msgid ""
 " -s <slot>           assign the connection to this slot\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"选择一个服务器, URL 或书签\n"
-" -e <cmd>            在选中后执行命令\n"
-" -u <user>[,<pass>]  使用指定的用户名/口令进行验证\n"
-" -p <port>           连接指定端口\n"
-" <site>              主机名, URL 或书签名\n"
+"脩隆脭帽脪禄赂枚路镁脦帽脝梅, URL 禄貌脢茅脟漏\n"
+" -e <cmd>            脭脷脩隆脰脨潞贸脰麓脨脨脙眉脕卯\n"
+" -u <user>[,<pass>]  脢鹿脫脙脰赂露篓碌脛脫脙禄搂脙没/驴脷脕卯陆酶脨脨脩茅脰陇\n"
+" -p <port>           脕卢陆脫脰赂露篓露脣驴脷\n"
+" <site>              脰梅禄煤脙没, URL 禄貌脢茅脟漏脙没\n"
 
-#: src/commands.cc:368
+#: src/commands.cc:369
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [OPTS] <rfile> [-o <lfile>]"
 
-#: src/commands.cc:369
+#: src/commands.cc:370
 #, fuzzy
 msgid ""
 "Gets the specified file using several connections. This can speed up "
@@ -1491,20 +1493,20 @@ msgid ""
 "     pget:default-n setting)\n"
 " -O <base> specifies base directory where files should be placed\n"
 msgstr ""
-"使用多个连接下载指定的文件. 这可以加快传输的速度,\n"
-"但是给网络增加了负担, 显著地影响其他用户. 只在你真正\n"
-"需要尽快下载文件的时候使用, 否则其他的用户会发疯的 :)\n"
+"脢鹿脫脙露脿赂枚脕卢陆脫脧脗脭脴脰赂露篓碌脛脦脛录镁. 脮芒驴脡脪脭录脫驴矛麓芦脢盲碌脛脣脵露脠,\n"
+"碌芦脢脟赂酶脥酶脗莽脭枚录脫脕脣赂潞碌拢, 脧脭脰酶碌脴脫掳脧矛脝盲脣没脫脙禄搂. 脰禄脭脷脛茫脮忙脮媒\n"
+"脨猫脪陋戮隆驴矛脧脗脭脴脦脛录镁碌脛脢卤潞貌脢鹿脫脙, 路帽脭貌脝盲脣没碌脛脫脙禄搂禄谩路垄路猫碌脛 :)\n"
 "\n"
-"选项:\n"
-" -n <maxconn>  设置最大连接数 (默认为 5)\n"
-" -u            使用 URL\n"
+"脩隆脧卯:\n"
+" -n <maxconn>  脡猫脰脙脳卯麓贸脕卢陆脫脢媒 (脛卢脠脧脦陋 5)\n"
+" -u            脢鹿脫脙 URL\n"
 
-#: src/commands.cc:377
+#: src/commands.cc:378
 #, fuzzy
 msgid "put [OPTS] <lfile> [-o <rfile>]"
 msgstr "put [-c] <lfile> [-o <rfile>]"
 
-#: src/commands.cc:378
+#: src/commands.cc:379
 #, fuzzy
 msgid ""
 "Upload <lfile> with remote name <rfile>.\n"
@@ -1515,23 +1517,23 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"上传 <lfile> 成为远程文件 <rfile>.\n"
-" -o <rfile> 指定远程文件名 (默认值 - lfile 的名字)\n"
-" -c 继续, 重传\n"
-"    这需要有覆盖远程文件的权限\n"
+"脡脧麓芦 <lfile> 鲁脡脦陋脭露鲁脤脦脛录镁 <rfile>.\n"
+" -o <rfile> 脰赂露篓脭露鲁脤脦脛录镁脙没 (脛卢脠脧脰碌 - lfile 碌脛脙没脳脰)\n"
+" -c 录脤脨酶, 脰脴麓芦\n"
+"    脮芒脨猫脪陋脫脨赂虏赂脟脭露鲁脤脦脛录镁碌脛脠篓脧脼\n"
 
-#: src/commands.cc:386
+#: src/commands.cc:387
 #, fuzzy
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
-msgstr "显示当前远程目录\n"
+msgstr "脧脭脢戮碌卤脟掳脭露鲁脤脛驴脗录\n"
 
-#: src/commands.cc:388
+#: src/commands.cc:389
 msgid "queue [OPTS] [<cmd>]"
 msgstr ""
 
-#: src/commands.cc:389
+#: src/commands.cc:390
 msgid ""
 "\n"
 "       queue [-n num] <command>\n"
@@ -1557,54 +1559,54 @@ msgid ""
 "                     Useful with --delete.\n"
 msgstr ""
 
-#: src/commands.cc:410
+#: src/commands.cc:411
 msgid "quote <cmd>"
 msgstr "quote <cmd>"
 
-#: src/commands.cc:411
+#: src/commands.cc:412
 msgid ""
 "Send the command uninterpreted. Use with caution - it can lead to\n"
 "unknown remote state and thus will cause reconnect. You cannot\n"
 "be sure that any change of remote state because of quoted command\n"
 "is solid - it can be reset by reconnect at any time.\n"
 msgstr ""
-"发出未经本地解释的命令. 小心使用 - 它可能会导致远程的\n"
-"未知状态, 这样会引起重新连接. 你不能保证 quote 命令\n"
-"引起的远程状态的改变是一致的 - 可以通过重新连接来复位.\n"
+"路垄鲁枚脦麓戮颅卤戮碌脴陆芒脢脥碌脛脙眉脕卯. 脨隆脨脛脢鹿脫脙 - 脣眉驴脡脛脺禄谩碌录脰脗脭露鲁脤碌脛\n"
+"脦麓脰陋脳麓脤卢, 脮芒脩霉禄谩脪媒脝冒脰脴脨脗脕卢陆脫. 脛茫虏禄脛脺卤拢脰陇 quote 脙眉脕卯\n"
+"脪媒脝冒碌脛脭露鲁脤脳麓脤卢碌脛赂脛卤盲脢脟脪禄脰脗碌脛 - 驴脡脪脭脥篓鹿媒脰脴脨脗脕卢陆脫脌麓赂麓脦禄.\n"
 
-#: src/commands.cc:416
+#: src/commands.cc:417
 #, fuzzy
 msgid ""
 "recls [<args>]\n"
 "Same as `cls', but don't look in cache\n"
-msgstr "同 `ls', 但不在缓存中查找\n"
+msgstr "脥卢 `ls', 碌芦虏禄脭脷禄潞麓忙脰脨虏茅脮脪\n"
 
-#: src/commands.cc:419
+#: src/commands.cc:420
 #, fuzzy
 msgid ""
 "Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
 "Same as `get -c'\n"
 msgstr "reget [OPTS] <rfile> [-o <lfile>]"
 
-#: src/commands.cc:422
+#: src/commands.cc:423
 #, fuzzy
 msgid ""
 "Usage: rels [<args>]\n"
 "Same as `ls', but don't look in cache\n"
-msgstr "同 `ls', 但不在缓存中查找\n"
+msgstr "脥卢 `ls', 碌芦虏禄脭脷禄潞麓忙脰脨虏茅脮脪\n"
 
-#: src/commands.cc:425
+#: src/commands.cc:426
 #, fuzzy
 msgid ""
 "Usage: renlist [<args>]\n"
 "Same as `nlist', but don't look in cache\n"
-msgstr "同 `nlist', 但不在缓存中查找\n"
+msgstr "脥卢 `nlist', 碌芦虏禄脭脷禄潞麓忙脰脨虏茅脮脪\n"
 
-#: src/commands.cc:427
+#: src/commands.cc:428
 msgid "repeat [OPTS] [delay] [command]"
 msgstr ""
 
-#: src/commands.cc:428
+#: src/commands.cc:429
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
 "Default delay is one second, default command is empty.\n"
@@ -1615,50 +1617,50 @@ msgid ""
 " --weak      stop when lftp moves to background.\n"
 msgstr ""
 
-#: src/commands.cc:436
+#: src/commands.cc:437
 #, fuzzy
 msgid ""
 "Usage: reput <lfile> [-o <rfile>]\n"
 "Same as `put -c'\n"
 msgstr "reput <lfile> [-o <rfile>]"
 
-#: src/commands.cc:438
+#: src/commands.cc:439
 #, fuzzy
 msgid "rm [-r] [-f] <files>"
 msgstr "rm [-r] <files>"
 
-#: src/commands.cc:439
+#: src/commands.cc:440
 #, fuzzy
 msgid ""
 "Remove remote files\n"
 " -r  recursive directory removal, be careful\n"
 " -f  work quietly\n"
 msgstr ""
-"删除远程文件\n"
-" -r  递归删除目录, 请谨慎使用\n"
+"脡戮鲁媒脭露鲁脤脦脛录镁\n"
+" -r  碌脻鹿茅脡戮鲁媒脛驴脗录, 脟毛陆梅脡梅脢鹿脫脙\n"
 
-#: src/commands.cc:442
+#: src/commands.cc:443
 #, fuzzy
 msgid "rmdir [-f] <dirs>"
 msgstr "mkdir [-p] <dirs>"
 
-#: src/commands.cc:443
-msgid "Remove remote directories\n"
-msgstr "删除远程目录\n"
-
 #: src/commands.cc:444
+msgid "Remove remote directories\n"
+msgstr "脡戮鲁媒脭露鲁脤脛驴脗录\n"
+
+#: src/commands.cc:445
 msgid "scache [<session_no>]"
 msgstr "scache [<session_no>]"
 
-#: src/commands.cc:445
-msgid "List cached sessions or switch to specified session number\n"
-msgstr "列出缓存的会话, 或者切换到指定的会话\n"
-
 #: src/commands.cc:446
+msgid "List cached sessions or switch to specified session number\n"
+msgstr "脕脨鲁枚禄潞麓忙碌脛禄谩禄掳, 禄貌脮脽脟脨禄禄碌陆脰赂露篓碌脛禄谩禄掳\n"
+
+#: src/commands.cc:447
 msgid "set [OPT] [<var> [<val>]]"
 msgstr "set [OPT] [<var> [<val>]]"
 
-#: src/commands.cc:447
+#: src/commands.cc:448
 msgid ""
 "Set variable to given value. If the value is omitted, unset the variable.\n"
 "Variable name has format ``name/closure'', where closure can specify\n"
@@ -1668,145 +1670,145 @@ msgid ""
 " -a  list all settings, including default values\n"
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
-"设置变量为指定的值. 如果值忽略, 取消变量.\n"
-"变量名的格式为 ``名字/约束'', 约束可以指定设置的\n"
-"应用范围. 请查看 lftp(1) 获得细节.\n"
-"如果不带变量使用 set, 只有改动过的设置才被列出.\n"
-"这可以通过下列选项来改变:\n"
-" -a  列出所有的设置, 包括默认设置\n"
-" -d  只列出默认值, 不一定是正在用的\n"
+"脡猫脰脙卤盲脕驴脦陋脰赂露篓碌脛脰碌. 脠莽鹿没脰碌潞枚脗脭, 脠隆脧没卤盲脕驴.\n"
+"卤盲脕驴脙没碌脛赂帽脢陆脦陋 ``脙没脳脰/脭录脢酶'', 脭录脢酶驴脡脪脭脰赂露篓脡猫脰脙碌脛\n"
+"脫娄脫脙路露脦搂. 脟毛虏茅驴麓 lftp(1) 禄帽碌脙脧赂陆脷.\n"
+"脠莽鹿没虏禄麓酶卤盲脕驴脢鹿脫脙 set, 脰禄脫脨赂脛露炉鹿媒碌脛脡猫脰脙虏脜卤禄脕脨鲁枚.\n"
+"脮芒驴脡脪脭脥篓鹿媒脧脗脕脨脩隆脧卯脌麓赂脛卤盲:\n"
+" -a  脕脨鲁枚脣霉脫脨碌脛脡猫脰脙, 掳眉脌篓脛卢脠脧脡猫脰脙\n"
+" -d  脰禄脕脨鲁枚脛卢脠脧脰碌, 虏禄脪禄露篓脢脟脮媒脭脷脫脙碌脛\n"
 
-#: src/commands.cc:455
+#: src/commands.cc:456
 #, fuzzy
 msgid "site <site-cmd>"
 msgstr "site <site_cmd>"
 
-#: src/commands.cc:456
+#: src/commands.cc:457
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
 msgstr ""
-"执行 site 命令 <site_cmd> 并输出结果\n"
-"你可以重定向它的输出\n"
+"脰麓脨脨 site 脙眉脕卯 <site_cmd> 虏垄脢盲鲁枚陆谩鹿没\n"
+"脛茫驴脡脪脭脰脴露篓脧貌脣眉碌脛脢盲鲁枚\n"
 
-#: src/commands.cc:459
+#: src/commands.cc:460
 msgid ""
 "Usage: sleep <time>[unit]\n"
 "Sleep for given amount of time. The time argument can be optionally\n"
 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 "By default time is assumed to be seconds.\n"
 msgstr ""
-"用法: sleep <time>[unit]\n"
-"休眠给定的时间. 时间参数可加上指定的单位:\n"
-"d - 天, h - 小时, m - 分钟, s - 秒.\n"
-"默认的时间单位为秒.\n"
+"脫脙路篓: sleep <time>[unit]\n"
+"脨脻脙脽赂酶露篓碌脛脢卤录盲. 脢卤录盲虏脦脢媒驴脡录脫脡脧脰赂露篓碌脛碌楼脦禄:\n"
+"d - 脤矛, h - 脨隆脢卤, m - 路脰脰脫, s - 脙毛.\n"
+"脛卢脠脧碌脛脢卤录盲碌楼脦禄脦陋脙毛.\n"
 
-#: src/commands.cc:464
+#: src/commands.cc:465
 msgid ""
 "Usage: slot [<label>]\n"
 "List assigned slots.\n"
 "If <label> is specified, switch to the slot named <label>.\n"
 msgstr ""
 
-#: src/commands.cc:467
+#: src/commands.cc:468
 msgid "source <file>"
 msgstr "source <file>"
 
-#: src/commands.cc:468
+#: src/commands.cc:469
 msgid "Execute commands recorded in file <file>\n"
-msgstr "执行文件 <file> 中的命令\n"
+msgstr "脰麓脨脨脦脛录镁 <file> 脰脨碌脛脙眉脕卯\n"
 
-#: src/commands.cc:470
+#: src/commands.cc:471
 msgid "torrent [-O <dir>] <file|URL>..."
 msgstr ""
 
-#: src/commands.cc:471
+#: src/commands.cc:472
 #, fuzzy
 msgid "user <user|URL> [<pass>]"
 msgstr "user <user> [<pass>]"
 
-#: src/commands.cc:472
+#: src/commands.cc:473
 msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
 msgstr ""
 
-#: src/commands.cc:475
-msgid "Shows lftp version\n"
-msgstr "显示 lftp 的版本\n"
-
 #: src/commands.cc:476
+msgid "Shows lftp version\n"
+msgstr "脧脭脢戮 lftp 碌脛掳忙卤戮\n"
+
+#: src/commands.cc:477
 #, fuzzy
 msgid "wait [<jobno>]"
 msgstr "wait <jobno>"
 
-#: src/commands.cc:477
+#: src/commands.cc:478
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
 msgstr ""
 
-#: src/commands.cc:479
+#: src/commands.cc:480
 #, fuzzy
 msgid "zcat <files>"
 msgstr "zcat [-u] <files>"
 
-#: src/commands.cc:480
-msgid "Same as cat, but filter each file through zcat\n"
-msgstr "同 cat, 但使用 zcat 过滤每个文件\n"
-
 #: src/commands.cc:481
+msgid "Same as cat, but filter each file through zcat\n"
+msgstr "脥卢 cat, 碌芦脢鹿脫脙 zcat 鹿媒脗脣脙驴赂枚脦脛录镁\n"
+
+#: src/commands.cc:482
 #, fuzzy
 msgid "zmore <files>"
 msgstr "zmore [-u] <files>"
 
-#: src/commands.cc:482
+#: src/commands.cc:483
 msgid "Same as more, but filter each file through zcat\n"
-msgstr "同 more, 但使用 zcat 过滤每个文件\n"
+msgstr "脥卢 more, 碌芦脢鹿脫脙 zcat 鹿媒脗脣脙驴赂枚脦脛录镁\n"
 
-#: src/commands.cc:484
+#: src/commands.cc:485
 #, fuzzy
 msgid "Same as cat, but filter each file through bzcat\n"
-msgstr "同 cat, 但使用 zcat 过滤每个文件\n"
+msgstr "脥卢 cat, 碌芦脢鹿脫脙 zcat 鹿媒脗脣脙驴赂枚脦脛录镁\n"
 
-#: src/commands.cc:486
+#: src/commands.cc:487
 #, fuzzy
 msgid "Same as more, but filter each file through bzcat\n"
-msgstr "同 more, 但使用 zcat 过滤每个文件\n"
+msgstr "脥卢 more, 碌芦脢鹿脫脙 zcat 鹿媒脗脣脙驴赂枚脦脛录镁\n"
 
-#: src/commands.cc:537
+#: src/commands.cc:538
 #, c-format
 msgid "Usage: %s local-dir\n"
-msgstr "用法: %s local-dir\n"
+msgstr "脫脙路篓: %s local-dir\n"
 
-#: src/commands.cc:573
+#: src/commands.cc:574
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
-msgstr "lcd 成功, 本地目录=%s\n"
+msgstr "lcd 鲁脡鹿娄, 卤戮碌脴脛驴脗录=%s\n"
 
-#: src/commands.cc:589
+#: src/commands.cc:590
 #, c-format
 msgid "Usage: cd remote-dir\n"
-msgstr "用法: cd remote-dir\n"
+msgstr "脫脙路篓: cd remote-dir\n"
 
-#: src/commands.cc:601
+#: src/commands.cc:602
 #, c-format
 msgid "%s: no old directory for this site\n"
-msgstr "%s: 这个站点没有保存的旧目录\n"
+msgstr "%s: 脮芒赂枚脮戮碌茫脙禄脫脨卤拢麓忙碌脛戮脡脛驴脗录\n"
 
-#: src/commands.cc:679
+#: src/commands.cc:680
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
-msgstr "用法: %s [<exit_code>]\n"
+msgstr "脫脙路篓: %s [<exit_code>]\n"
 
-#: src/commands.cc:688
+#: src/commands.cc:689
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
 "jobs.\n"
 msgstr ""
 
-#: src/commands.cc:703
+#: src/commands.cc:704
 msgid ""
 "\n"
 "lftp now tricks the shell to move it to background process group.\n"
@@ -1815,224 +1817,224 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:889 src/commands.cc:3357
+#: src/commands.cc:889 src/commands.cc:3337
 #, c-format
 msgid "Try `%s --help' for more information\n"
-msgstr "请用 `%s --help' 获取更多的信息\n"
+msgstr "脟毛脫脙 `%s --help' 禄帽脠隆赂眉露脿碌脛脨脜脧垄\n"
 
 #: src/commands.cc:891
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
-msgstr "用法: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
+msgstr "脫脙路篓: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
-#: src/commands.cc:1018 src/commands.cc:2113
+#: src/commands.cc:1018 src/commands.cc:2093
 msgid "Password: "
-msgstr "口令: "
+msgstr "驴脷脕卯: "
 
 #: src/commands.cc:1020
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
-msgstr "%s: GetPass() 失败 -- 使用匿名登录\n"
+msgstr "%s: GetPass() 脢搂掳脺 -- 脢鹿脫脙脛盲脙没碌脟脗录\n"
 
 #: src/commands.cc:1125
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] command args...\n"
-msgstr "用法: %s command args...\n"
+msgstr "脫脙路篓: %s command args...\n"
 
 #: src/commands.cc:1175
 #, fuzzy, c-format
 msgid "%s: -n: positive number expected. "
-msgstr "%s: -n: 需要数字. "
+msgstr "%s: -n: 脨猫脪陋脢媒脳脰. "
 
 #: src/commands.cc:1227
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr ""
 
-#: src/commands.cc:1270 src/commands.cc:1300
+#: src/commands.cc:1270 src/commands.cc:1298
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr ""
 
-#: src/commands.cc:1292
+#: src/commands.cc:1290
 #, fuzzy, c-format
 msgid "%s: -m: Number expected as second argument. "
-msgstr "%s: -n: 需要数字. "
+msgstr "%s: -n: 脨猫脪陋脢媒脳脰. "
 
-#: src/commands.cc:1345
+#: src/commands.cc:1342
 #, fuzzy, c-format
 msgid "Usage: %s <cmd>\n"
-msgstr "用法: %s <raw_cmd>\n"
+msgstr "脫脙路篓: %s <raw_cmd>\n"
 
-#: src/commands.cc:1455
+#: src/commands.cc:1444
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1485
+#: src/commands.cc:1474
 #, fuzzy
 msgid "invalid block size"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
-#: src/commands.cc:1637
+#: src/commands.cc:1617
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] files...\n"
-msgstr "用法: %s files...\n"
+msgstr "脫脙路篓: %s files...\n"
 
-#: src/commands.cc:1709
+#: src/commands.cc:1689
 #, c-format
 msgid "%s: -n: Number expected. "
-msgstr "%s: -n: 需要数字. "
+msgstr "%s: -n: 脨猫脪陋脢媒脳脰. "
 
-#: src/commands.cc:1742
+#: src/commands.cc:1722
 #, c-format
 msgid "File name missed. "
-msgstr "缺少文件名. "
+msgstr "脠卤脡脵脦脛录镁脙没. "
 
-#: src/commands.cc:1840
+#: src/commands.cc:1820
 #, fuzzy, c-format
 msgid "Usage: %s %s[-f] files...\n"
-msgstr "用法: %s [-v] [-v] ...\n"
+msgstr "脫脙路篓: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1883
+#: src/commands.cc:1863
 #, fuzzy, c-format
 msgid "Usage: %s [-e] <file|command>\n"
-msgstr "用法: %s <file>\n"
+msgstr "脫脙路篓: %s <file>\n"
 
-#: src/commands.cc:1926
+#: src/commands.cc:1906
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
-msgstr "用法: %s [-v] [-v] ...\n"
+msgstr "脫脙路篓: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1940 src/commands.cc:2200 src/commands.cc:2323
-#: src/commands.cc:2493 src/commands.cc:2882 src/commands.cc:2958
-#: src/lftp.cc:278
+#: src/commands.cc:1920 src/commands.cc:2180 src/commands.cc:2303
+#: src/commands.cc:2473 src/commands.cc:2862 src/commands.cc:2938
+#: src/lftp.cc:281
 #, c-format
 msgid "%s: %s - not a number\n"
-msgstr "%s: %s - 不是一个数字\n"
+msgstr "%s: %s - 虏禄脢脟脪禄赂枚脢媒脳脰\n"
 
-#: src/commands.cc:1947 src/commands.cc:2179 src/commands.cc:2209
-#: src/commands.cc:2341
+#: src/commands.cc:1927 src/commands.cc:2159 src/commands.cc:2189
+#: src/commands.cc:2321
 #, c-format
 msgid "%s: %d - no such job\n"
-msgstr "%s: %d - 没有这个任务\n"
+msgstr "%s: %d - 脙禄脫脨脮芒赂枚脠脦脦帽\n"
 
-#: src/commands.cc:1979
+#: src/commands.cc:1959
 #, fuzzy, c-format
 msgid "Usage: %s [-p]\n"
-msgstr "用法: %s\n"
+msgstr "脫脙路篓: %s\n"
 
-#: src/commands.cc:2080
+#: src/commands.cc:2060
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
-msgstr "调试级别为 %d, 输出到 %s\n"
+msgstr "碌梅脢脭录露卤冒脦陋 %d, 脢盲鲁枚碌陆 %s\n"
 
-#: src/commands.cc:2083
+#: src/commands.cc:2063
 #, c-format
 msgid "debug is off\n"
-msgstr "调试功能关闭\n"
+msgstr "碌梅脢脭鹿娄脛脺鹿脴卤脮\n"
 
-#: src/commands.cc:2094
+#: src/commands.cc:2074
 #, fuzzy, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "user <user> [<pass>]"
 
-#: src/commands.cc:2169 src/commands.cc:2333
+#: src/commands.cc:2149 src/commands.cc:2313
 #, c-format
 msgid "%s: no current job\n"
-msgstr "%s: 没有当前任务\n"
+msgstr "%s: 脙禄脫脨碌卤脟掳脠脦脦帽\n"
 
-#: src/commands.cc:2181
+#: src/commands.cc:2161
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
-msgstr "用法: %s <jobno> ... | all\n"
+msgstr "脫脙路篓: %s <jobno> ... | all\n"
 
-#: src/commands.cc:2263
+#: src/commands.cc:2243
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
-msgstr "%s: %s. 使用 `set -a' 查看所有的变量.\n"
+msgstr "%s: %s. 脢鹿脫脙 `set -a' 虏茅驴麓脣霉脫脨碌脛卤盲脕驴.\n"
 
-#: src/commands.cc:2307
+#: src/commands.cc:2287
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
-msgstr "用法: %s [<jobno>]\n"
+msgstr "脫脙路篓: %s [<jobno>]\n"
 
-#: src/commands.cc:2346
+#: src/commands.cc:2326
 #, c-format
 msgid "%s: some other job waits for job %d\n"
-msgstr "%s: 某个任务在等待任务 %d 结束\n"
+msgstr "%s: 脛鲁赂枚脠脦脦帽脭脷碌脠麓媒脠脦脦帽 %d 陆谩脢酶\n"
 
-#: src/commands.cc:2351
+#: src/commands.cc:2331
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr ""
 
-#: src/commands.cc:2375
+#: src/commands.cc:2355
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
-msgstr "用法: mv <file1> <file2>\n"
+msgstr "脫脙路篓: mv <file1> <file2>\n"
 
-#: src/commands.cc:2423 src/commands.cc:2743
+#: src/commands.cc:2403 src/commands.cc:2723
 #, c-format
 msgid "Invalid command. "
-msgstr "无效的命令. "
+msgstr "脦脼脨搂碌脛脙眉脕卯. "
 
-#: src/commands.cc:2430 src/commands.cc:2750
+#: src/commands.cc:2410 src/commands.cc:2730
 #, c-format
 msgid "Ambiguous command. "
-msgstr "不确切的命令. "
+msgstr "虏禄脠路脟脨碌脛脙眉脕卯. "
 
-#: src/commands.cc:2449
+#: src/commands.cc:2429
 #, c-format
 msgid "%s: Operand missed for size\n"
-msgstr "%s: size 缺少操作数\n"
+msgstr "%s: size 脠卤脡脵虏脵脳梅脢媒\n"
 
-#: src/commands.cc:2466
+#: src/commands.cc:2446
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
-msgstr "%s: `expire' 缺少操作数\n"
+msgstr "%s: `expire' 脠卤脡脵虏脵脳梅脢媒\n"
 
-#: src/commands.cc:2499
+#: src/commands.cc:2479
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr "%s: %s - 没有这个缓存的会话. 使用 `scache' 列出会话列表.\n"
+msgstr "%s: %s - 脙禄脫脨脮芒赂枚禄潞麓忙碌脛禄谩禄掳. 脢鹿脫脙 `scache' 脕脨鲁枚禄谩禄掳脕脨卤铆.\n"
 
-#: src/commands.cc:2516
+#: src/commands.cc:2496
 #, c-format
 msgid "Sorry, no help for %s\n"
-msgstr "抱歉, 没有针对 %s 的帮助信息\n"
+msgstr "卤搂脟赂, 脙禄脫脨脮毛露脭 %s 碌脛掳茂脰煤脨脜脧垄\n"
 
-#: src/commands.cc:2521
+#: src/commands.cc:2501
 #, c-format
 msgid "%s is a built-in alias for %s\n"
-msgstr "%s 是 %s 的一个内建别名\n"
+msgstr "%s 脢脟 %s 碌脛脪禄赂枚脛脷陆篓卤冒脙没\n"
 
-#: src/commands.cc:2526
+#: src/commands.cc:2506
 #, c-format
 msgid "Usage: %s\n"
-msgstr "用法: %s\n"
+msgstr "脫脙路篓: %s\n"
 
-#: src/commands.cc:2534
+#: src/commands.cc:2514
 #, c-format
 msgid "%s is an alias to `%s'\n"
-msgstr "%s 是 `%s' 的别名\n"
+msgstr "%s 脢脟 `%s' 碌脛卤冒脙没\n"
 
-#: src/commands.cc:2538
+#: src/commands.cc:2518
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
-msgstr "没有 `%s' 这个命令. 请用 `help' 列出可用的命令.\n"
+msgstr "脙禄脫脨 `%s' 脮芒赂枚脙眉脕卯. 脟毛脫脙 `help' 脕脨鲁枚驴脡脫脙碌脛脙眉脕卯.\n"
 
-#: src/commands.cc:2540
+#: src/commands.cc:2520
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
-msgstr "不确切的命令 `%s'. 请用 `help' 列出可用的命令.\n"
+msgstr "虏禄脠路脟脨碌脛脙眉脕卯 `%s'. 脟毛脫脙 `help' 脕脨鲁枚驴脡脫脙碌脛脙眉脕卯.\n"
 
-#: src/commands.cc:2603
+#: src/commands.cc:2583
 #, fuzzy, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2606
+#: src/commands.cc:2586
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2049,287 +2051,287 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2620
+#: src/commands.cc:2600
 #, fuzzy, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Send bug reports and questions to <%s>.\n"
 
-#: src/commands.cc:2626
+#: src/commands.cc:2606
 msgid "Libraries used: "
 msgstr ""
 
-#: src/commands.cc:2766 src/commands.cc:2797
+#: src/commands.cc:2746 src/commands.cc:2777
 #, c-format
 msgid "%s: bookmark name required\n"
-msgstr "%s: 需要书签名\n"
+msgstr "%s: 脨猫脪陋脢茅脟漏脙没\n"
 
-#: src/commands.cc:2786
+#: src/commands.cc:2766
 #, fuzzy, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
-msgstr "%s: 需要书签名\n"
+msgstr "%s: 脨猫脪陋脢茅脟漏脙没\n"
 
-#: src/commands.cc:2799
+#: src/commands.cc:2779
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
-msgstr "%s: 没有 `%s' 这个书签\n"
+msgstr "%s: 脙禄脫脨 `%s' 脮芒赂枚脢茅脟漏\n"
 
-#: src/commands.cc:2815
+#: src/commands.cc:2795
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
-msgstr "%s: 需要导入类型(netscape,ncftp)\n"
+msgstr "%s: 脨猫脪陋碌录脠毛脌脿脨脥(netscape,ncftp)\n"
 
-#: src/commands.cc:2888
+#: src/commands.cc:2868
 #, fuzzy, c-format
 msgid "Usage: %s [-d #] dir\n"
-msgstr "用法: %s\n"
+msgstr "脫脙路篓: %s\n"
 
-#: src/commands.cc:2991
+#: src/commands.cc:2971
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
-#: src/commands.cc:3000
+#: src/commands.cc:2980
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
-msgstr "用法: %s\n"
+msgstr "脫脙路篓: %s\n"
 
-#: src/commands.cc:3006
+#: src/commands.cc:2986
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:3010
+#: src/commands.cc:2990
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:3058
+#: src/commands.cc:3038
 #, c-format
 msgid "Usage: %s command args...\n"
-msgstr "用法: %s command args...\n"
+msgstr "脫脙路篓: %s command args...\n"
 
-#: src/commands.cc:3070
+#: src/commands.cc:3050
 #, c-format
 msgid "Usage: %s module [args...]\n"
-msgstr "用法: %s module [args...]\n"
+msgstr "脫脙路篓: %s module [args...]\n"
+
+#: src/commands.cc:3132
+#, fuzzy, c-format
+msgid "Usage: %s [OPTS] mode file...\n"
+msgstr "脫脙路篓: %s files...\n"
 
 #: src/commands.cc:3152
 #, fuzzy, c-format
-msgid "Usage: %s [OPTS] mode file...\n"
-msgstr "用法: %s files...\n"
-
-#: src/commands.cc:3172
-#, fuzzy, c-format
 msgid "invalid mode string: %s\n"
-msgstr "无效的数字"
+msgstr "脦脼脨搂碌脛脢媒脳脰"
 
-#: src/commands.cc:3246
+#: src/commands.cc:3211 src/commands.cc:3220
+msgid "Invalid range format. Format is min-max, e.g. 10-20."
+msgstr ""
+
+#: src/commands.cc:3226
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] file\n"
-msgstr "用法: %s <file>\n"
+msgstr "脫脙路篓: %s <file>\n"
 
-#: src/ftpclass.cc:206
+#: src/ftpclass.cc:205
 msgid "Data connection peer has wrong port number"
-msgstr "数据连接对端的端口号是错的"
+msgstr "脢媒戮脻脕卢陆脫露脭露脣碌脛露脣驴脷潞脜脢脟麓铆碌脛"
 
-#: src/ftpclass.cc:212
+#: src/ftpclass.cc:211
 msgid "Data connection peer has mismatching address"
-msgstr "数据连接对端的地址不对"
+msgstr "脢媒戮脻脕卢陆脫露脭露脣碌脛碌脴脰路虏禄露脭"
 
-#: src/ftpclass.cc:234 src/ftpclass.cc:259
+#: src/ftpclass.cc:233 src/ftpclass.cc:258
 #, fuzzy
 msgid "Switching to NOREST mode"
-msgstr "正在关闭被动模式"
+msgstr "脮媒脭脷鹿脴卤脮卤禄露炉脛拢脢陆"
 
-#: src/ftpclass.cc:442
+#: src/ftpclass.cc:433
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:450
+#: src/ftpclass.cc:441
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:475
+#: src/ftpclass.cc:474
 msgid "Account is required, set ftp:acct variable"
 msgstr ""
 
-#: src/ftpclass.cc:492
+#: src/ftpclass.cc:491
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 
-#: src/ftpclass.cc:513
-msgid "Saw `unknown', assume failed login"
-msgstr "发现 `未知', 登录失败"
-
-#: src/ftpclass.cc:524
+#: src/ftpclass.cc:509
 msgid "assuming failed host name lookup"
-msgstr "名字查询失败"
+msgstr "脙没脳脰虏茅脩炉脢搂掳脺"
 
-#: src/ftpclass.cc:806
+#: src/ftpclass.cc:817
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1061
+#: src/ftpclass.cc:1072
 msgid "Closing control socket"
-msgstr "关闭控制连接"
+msgstr "鹿脴卤脮驴脴脰脝脕卢陆脫"
 
-#: src/ftpclass.cc:1258
+#: src/ftpclass.cc:1270
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1263
+#: src/ftpclass.cc:1275
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1607
+#: src/ftpclass.cc:1619
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1612
+#: src/ftpclass.cc:1624
 msgid "MLST and MLSD are not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:2070
+#: src/ftpclass.cc:2081
 #, fuzzy
 msgid "unsupported network protocol"
-msgstr "%s: %s - 不支持的协议\n"
+msgstr "%s: %s - 虏禄脰搂鲁脰碌脛脨颅脪茅\n"
 
-#: src/ftpclass.cc:2147
+#: src/ftpclass.cc:2158
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
-msgstr "正在建立数据连接到 (%s) 端口 %u"
+msgstr "脮媒脭脷陆篓脕垄脢媒戮脻脕卢陆脫碌陆 (%s) 露脣驴脷 %u"
 
-#: src/ftpclass.cc:2189
+#: src/ftpclass.cc:2200
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
-msgstr "正在建立数据连接到 (%s) 端口 %u"
+msgstr "脮媒脭脷陆篓脕垄脢媒戮脻脕卢陆脫碌陆 (%s) 露脣驴脷 %u"
 
-#: src/ftpclass.cc:2195
+#: src/ftpclass.cc:2206
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
-msgstr "正在建立数据连接到 (%s) 端口 %u"
+msgstr "脮媒脭脷陆篓脕垄脢媒戮脻脕卢陆脫碌陆 (%s) 露脣驴脷 %u"
 
-#: src/ftpclass.cc:2216 src/ftpclass.cc:4117
+#: src/ftpclass.cc:2227 src/ftpclass.cc:4154
 msgid "Switching passive mode off"
-msgstr "正在关闭被动模式"
+msgstr "脮媒脭脷鹿脴卤脮卤禄露炉脛拢脢陆"
 
-#: src/ftpclass.cc:2224
+#: src/ftpclass.cc:2235
 #, fuzzy
 msgid "Data connection established"
-msgstr "数据连接对端的地址不对"
+msgstr "脢媒戮脻脕卢陆脫露脭露脣碌脛碌脴脰路虏禄露脭"
 
-#: src/ftpclass.cc:2529 src/ftpclass.cc:4247
+#: src/ftpclass.cc:2541 src/ftpclass.cc:4284
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2871
+#: src/ftpclass.cc:2887
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:3138
+#: src/ftpclass.cc:3154
 msgid "Closing data socket"
-msgstr "关闭数据连接"
+msgstr "鹿脴卤脮脢媒戮脻脕卢陆脫"
 
-#: src/ftpclass.cc:3160
+#: src/ftpclass.cc:3176
 #, fuzzy
 msgid "Closing aborted data socket"
-msgstr "关闭数据连接"
+msgstr "鹿脴卤脮脢媒戮脻脕卢陆脫"
 
-#: src/ftpclass.cc:3927
+#: src/ftpclass.cc:3956
 msgid "saw file size in response"
-msgstr "看到应答中的文件大小"
+msgstr "驴麓碌陆脫娄麓冒脰脨碌脛脦脛录镁麓贸脨隆"
 
-#: src/ftpclass.cc:3957 src/ftpclass.cc:3984
+#: src/ftpclass.cc:3986 src/ftpclass.cc:4013
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:4137
+#: src/ftpclass.cc:4174
 #, fuzzy
 msgid "Switching passive mode on"
-msgstr "正在关闭被动模式"
+msgstr "脮媒脭脷鹿脴卤脮卤禄露炉脛拢脢陆"
 
-#: src/ftpclass.cc:4284
+#: src/ftpclass.cc:4321
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4291
+#: src/ftpclass.cc:4328
 msgid "Sending commands..."
-msgstr "正在发送命令..."
+msgstr "脮媒脭脷路垄脣脥脙眉脕卯..."
 
-#: src/ftpclass.cc:4295
+#: src/ftpclass.cc:4332
 #, fuzzy
 msgid "Delaying before retry"
-msgstr "重新连接前延时"
+msgstr "脰脴脨脗脕卢陆脫脟掳脩脫脢卤"
 
-#: src/ftpclass.cc:4314
+#: src/ftpclass.cc:4351
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4318
+#: src/ftpclass.cc:4355
 msgid "Logging in..."
-msgstr "正在登录..."
+msgstr "脮媒脭脷碌脟脗录..."
 
-#: src/ftpclass.cc:4322
+#: src/ftpclass.cc:4359
 msgid "Making data connection..."
-msgstr "正在建立数据连接..."
+msgstr "脮媒脭脷陆篓脕垄脢媒戮脻脕卢陆脫..."
 
-#: src/ftpclass.cc:4325
+#: src/ftpclass.cc:4362
 msgid "Changing remote directory..."
-msgstr "正在改变远程目录..."
+msgstr "脮媒脭脷赂脛卤盲脭露鲁脤脛驴脗录..."
 
-#: src/ftpclass.cc:4331
+#: src/ftpclass.cc:4368
 #, fuzzy
 msgid "Waiting for other copy peer..."
-msgstr "正等待应答..."
+msgstr "脮媒碌脠麓媒脫娄麓冒..."
 
-#: src/ftpclass.cc:4333 src/ftpclass.cc:4357
+#: src/ftpclass.cc:4370 src/ftpclass.cc:4394
 msgid "Waiting for transfer to complete"
-msgstr "正等待传输完成"
+msgstr "脮媒碌脠麓媒麓芦脢盲脥锚鲁脡"
 
-#: src/ftpclass.cc:4337
+#: src/ftpclass.cc:4374
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
-msgstr "正等待应答..."
+msgstr "脮媒碌脠麓媒脫娄麓冒..."
 
-#: src/ftpclass.cc:4339
+#: src/ftpclass.cc:4376
 msgid "Waiting for data connection..."
-msgstr "正等待数据连接..."
+msgstr "脮媒碌脠麓媒脢媒戮脻脕卢陆脫..."
 
-#: src/ftpclass.cc:4345
+#: src/ftpclass.cc:4382
 #, fuzzy
 msgid "Sending data/TLS"
-msgstr "正发送数据"
+msgstr "脮媒路垄脣脥脢媒戮脻"
 
-#: src/ftpclass.cc:4347
+#: src/ftpclass.cc:4384
 #, fuzzy
 msgid "Receiving data/TLS"
-msgstr "正接收数据"
+msgstr "脮媒陆脫脢脮脢媒戮脻"
 
-#: src/lftp.cc:353
+#: src/lftp.cc:372
 #, fuzzy, c-format
 msgid "[%u] Terminated by signal %d. %s\n"
-msgstr "[%lu] 被信号 %d 中止. %s"
+msgstr "[%lu] 卤禄脨脜潞脜 %d 脰脨脰鹿. %s"
 
-#: src/lftp.cc:427
+#: src/lftp.cc:451
 #, fuzzy, c-format
 msgid "[%u] Started.  %s\n"
-msgstr "[%lu] 启动. %s"
+msgstr "[%lu] 脝么露炉. %s"
 
-#: src/lftp.cc:440
+#: src/lftp.cc:467
 #, fuzzy, c-format
 msgid "[%u] Finished. %s\n"
-msgstr "[%lu] 完成. %s"
+msgstr "[%lu] 脥锚鲁脡. %s"
 
-#: src/lftp.cc:444
+#: src/lftp.cc:471
 #, fuzzy, c-format
 msgid "[%u] Moving to background to complete transfers...\n"
-msgstr "[%lu] 转到后台完成传输...\n"
+msgstr "[%lu] 脳陋碌陆潞贸脤篓脥锚鲁脡麓芦脢盲...\n"
 
-#: src/lftp.cc:498
+#: src/lftp.cc:525
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr ""
 
-#: src/lftp.cc:499
+#: src/lftp.cc:526
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2339,329 +2341,341 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/lftp.cc:506
+#: src/lftp.cc:533
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
 msgstr ""
 
-#: src/lftp.cc:542
+#: src/lftp.cc:569
 #, fuzzy, c-format
 msgid "[%u] Detaching from the terminal to complete transfers...\n"
-msgstr "[%lu] 转到后台完成传输...\n"
+msgstr "[%lu] 脳陋碌陆潞贸脤篓脥锚鲁脡麓芦脢盲...\n"
 
-#: src/lftp.cc:547
+#: src/lftp.cc:574
 #, c-format
 msgid "[%u] Detached from terminal. %s\n"
 msgstr ""
 
-#: src/lftp.cc:561
+#: src/lftp.cc:594
 #, c-format
 msgid "[%u] Exiting and detaching from the terminal.\n"
 msgstr ""
 
-#: src/mgetJob.cc:121 src/mgetJob.cc:205
+#: src/mgetJob.cc:120 src/mgetJob.cc:204
 #, fuzzy, c-format
 msgid "%s: %s: no files found\n"
-msgstr "%s: 没有找到文件\n"
+msgstr "%s: 脙禄脫脨脮脪碌陆脦脛录镁\n"
 
-#: src/mkdirJob.cc:122
+#: src/mkdirJob.cc:121
 #, c-format
 msgid "%s ok, `%s' created\n"
-msgstr "%s 成功, 建立 `%s'\n"
+msgstr "%s 鲁脡鹿娄, 陆篓脕垄 `%s'\n"
 
-#: src/mkdirJob.cc:124 src/rmJob.cc:54
+#: src/mkdirJob.cc:123 src/rmJob.cc:53
 #, fuzzy, c-format
 msgid "%s failed for %d of %d director$y|ies$\n"
-msgstr "%s 失败, %d/%d 个目录\n"
+msgstr "%s 脢搂掳脺, %d/%d 赂枚脛驴脗录\n"
 
-#: src/mkdirJob.cc:127
+#: src/mkdirJob.cc:126
 #, c-format
 msgid "%s ok, %d director$y|ies$ created\n"
-msgstr "%s 成功, 建立 %d 个目录\n"
+msgstr "%s 鲁脡鹿娄, 陆篓脕垄 %d 赂枚脛驴脗录\n"
 
-#: src/module.cc:184
+#: src/module.cc:191
 #, c-format
 msgid "depend module `%s': %s\n"
 msgstr ""
 
-#: src/module.cc:204
+#: src/module.cc:211
 msgid "modules are not supported on this system"
 msgstr ""
 
-#: src/mvJob.cc:93
+#: src/mvJob.cc:92
 #, c-format
 msgid "rename successful\n"
-msgstr "重命名成功\n"
+msgstr "脰脴脙眉脙没鲁脡鹿娄\n"
 
-#: src/parsecmd.cc:293
+#: src/parsecmd.cc:292
 msgid "parse: missing filter command\n"
-msgstr "parse: 缺少过滤器命令\n"
+msgstr "parse: 脠卤脡脵鹿媒脗脣脝梅脙眉脕卯\n"
 
-#: src/parsecmd.cc:295
+#: src/parsecmd.cc:294
 msgid "parse: missing redirection filename\n"
-msgstr "parse: 缺少重定向文件名\n"
+msgstr "parse: 脠卤脡脵脰脴露篓脧貌脦脛录镁脙没\n"
 
-#: src/pgetJob.cc:129
+#: src/pgetJob.cc:128
 msgid "pget: falling back to plain get"
 msgstr ""
 
-#: src/pgetJob.cc:133
+#: src/pgetJob.cc:132
 #, fuzzy
 msgid "the target file is remote"
-msgstr "没有删除旧的远程文件 `%s'"
+msgstr "脙禄脫脨脡戮鲁媒戮脡碌脛脭露鲁脤脦脛录镁 `%s'"
 
-#: src/pgetJob.cc:138
+#: src/pgetJob.cc:137
 msgid "the source file size is unknown"
 msgstr ""
 
-#: src/pgetJob.cc:222
+#: src/pgetJob.cc:221
 #, fuzzy, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
-msgstr "`%s', 下载 %lu/%lu (%d%%) %s%s"
+msgstr "`%s', 脧脗脭脴 %lu/%lu (%d%%) %s%s"
 
 #: src/plural.c:98
 msgid "=1 =0|>1"
 msgstr ""
 
-#: src/resource.cc:53 src/resource.cc:84
+#: src/resource.cc:52 src/resource.cc:83
 msgid "Proxy protocol unsupported"
-msgstr "不支持代理协议"
+msgstr "虏禄脰搂鲁脰麓煤脌铆脨颅脪茅"
 
-#: src/resource.cc:57
+#: src/resource.cc:56
 msgid "ftp:proxy password: "
 msgstr ""
 
-#: src/resource.cc:68
+#: src/resource.cc:67
 msgid ""
 "ftp:proxy-auth-type must be one of: user, joined, joined-acct, open, proxy-"
 "user@host"
 msgstr ""
 
-#: src/resource.cc:92
+#: src/resource.cc:91
 msgid "only PUT and POST values allowed"
 msgstr ""
 
-#: src/resource.cc:124
+#: src/resource.cc:123
 #, c-format
 msgid "unknown address family `%s'"
-msgstr "未知的地址族 `%s'"
+msgstr "脦麓脰陋碌脛碌脴脰路脳氓 `%s'"
 
-#: src/resource.cc:147
+#: src/resource.cc:146
 msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
 msgstr ""
 
-#: src/resource.cc:164
+#: src/resource.cc:163
 msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
-#: src/rmJob.cc:50
+#: src/rmJob.cc:49
 #, c-format
 msgid "%s ok, `%s' removed\n"
-msgstr "%s 成功, 删除 `%s'\n"
+msgstr "%s 鲁脡鹿娄, 脡戮鲁媒 `%s'\n"
 
-#: src/rmJob.cc:57
+#: src/rmJob.cc:56
 #, fuzzy, c-format
 msgid "%s failed for %d of %d file$|s$\n"
-msgstr "%s 失败, %d/%d 个文件\n"
+msgstr "%s 脢搂掳脺, %d/%d 赂枚脦脛录镁\n"
 
-#: src/rmJob.cc:63
+#: src/rmJob.cc:62
 #, c-format
 msgid "%s ok, %d director$y|ies$ removed\n"
-msgstr "%s 成功, 删除 %d 个目录\n"
+msgstr "%s 鲁脡鹿娄, 脡戮鲁媒 %d 赂枚脛驴脗录\n"
 
-#: src/rmJob.cc:66
+#: src/rmJob.cc:65
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
-msgstr "%s 成功, 删除 %d 个文件\n"
+msgstr "%s 鲁脡鹿娄, 脡戮鲁媒 %d 赂枚脦脛录镁\n"
 
-#: src/Torrent.cc:483
-#, c-format
-msgid "Received valid info about %d peer$|s$"
-msgstr ""
-
-#: src/Torrent.cc:500
-#, c-format
-msgid "Received valid info about %d IPv6 peer$|s$"
-msgstr ""
-
-#: src/Torrent.cc:1396
+#: src/Torrent.cc:1541 src/Torrent.cc:1547
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1398
+#: src/Torrent.cc:1544
+#, fuzzy
+msgid "Waiting for meta-data..."
+msgstr "parse: 脠卤脡脵鹿媒脗脣脝梅脙眉脕卯\n"
+
+#: src/Torrent.cc:1549
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1408
+#: src/Torrent.cc:1559
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2015
+#: src/Torrent.cc:2642
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
-msgstr "正在连接到 %s%s (%s) 端口 %u"
+msgstr "脮媒脭脷脕卢陆脫碌陆 %s%s (%s) 露脣驴脷 %u"
 
-#: src/Torrent.cc:2065 src/Torrent.cc:2152
+#: src/Torrent.cc:2692 src/Torrent.cc:2805
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
-msgstr "对端关闭连接"
+msgstr "露脭露脣鹿脴卤脮脕卢陆脫"
 
-#: src/Torrent.cc:2067
+#: src/Torrent.cc:2694
 #, fuzzy
 msgid "peer closed connection (before handshake)"
-msgstr "对端关闭连接"
+msgstr "露脭露脣鹿脴卤脮脕卢陆脫"
 
-#: src/Torrent.cc:2140
+#: src/Torrent.cc:2790
 #, fuzzy
 msgid "peer closed connection"
-msgstr "对端关闭连接"
+msgstr "露脭露脣鹿脴卤脮脕卢陆脫"
 
-#: src/Torrent.cc:2154
+#: src/Torrent.cc:2807
 #, fuzzy
 msgid "invalid peer response format"
-msgstr "额外的服务器应答"
+msgstr "露卯脥芒碌脛路镁脦帽脝梅脫娄麓冒"
 
-#: src/Torrent.cc:2282
+#: src/Torrent.cc:2963
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:2517
+#: src/Torrent.cc:3216
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:2545
+#: src/Torrent.cc:3266
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
-msgstr "正在建立数据连接到 (%s) 端口 %u"
+msgstr "脮媒脭脷陆篓脕垄脢媒戮脻脕卢陆脫碌陆 (%s) 露脣驴脷 %u"
 
-#: src/Torrent.cc:2579
+#: src/Torrent.cc:3352
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:2591
+#: src/Torrent.cc:3364
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:2593
+#: src/Torrent.cc:3366
 #, fuzzy
 msgid "peer closed just accepted connection"
-msgstr "对端关闭连接"
+msgstr "露脭露脣鹿脴卤脮脕卢陆脫"
 
-#: src/Torrent.cc:2644
+#: src/Torrent.cc:3417
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
-msgstr "正在发送命令..."
+msgstr "脮媒脭脷路垄脣脥脙眉脕卯..."
 
-#: src/Torrent.cc:2659
-#, c-format
-msgid "next request in %s"
-msgstr ""
-
-#: src/Torrent.cc:2810
+#: src/Torrent.cc:3585
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""
 
-#: src/attach.h:124
+#: src/TorrentTracker.cc:177
+#, c-format
+msgid "next request in %s"
+msgstr ""
+
+#: src/TorrentTracker.cc:280 src/TorrentTracker.cc:496
+#, c-format
+msgid "Received valid info about %d peer$|s$"
+msgstr ""
+
+#: src/TorrentTracker.cc:294
+#, c-format
+msgid "Received valid info about %d IPv6 peer$|s$"
+msgstr ""
+
+#: src/attach.h:126
 #, fuzzy, c-format
 msgid "[%u] Attached to terminal %s. %s\n"
-msgstr "[%lu] 被信号 %d 中止. %s"
+msgstr "[%lu] 卤禄脨脜潞脜 %d 脰脨脰鹿. %s"
 
-#: src/attach.h:136
+#: src/attach.h:138
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr ""
 
+#, fuzzy
+#~ msgid "invalid pair of numbers"
+#~ msgstr "脦脼脨搂碌脛脢媒脳脰"
+
+#~ msgid "Saw `unknown', assume failed login"
+#~ msgstr "路垄脧脰 `脦麓脰陋', 碌脟脗录脢搂掳脺"
+
 #~ msgid "day"
-#~ msgstr "天"
+#~ msgstr "脤矛"
 
 #~ msgid "hour"
-#~ msgstr "小时"
+#~ msgstr "脨隆脢卤"
 
 #~ msgid "minute"
-#~ msgstr "分钟"
+#~ msgstr "路脰脰脫"
 
 #~ msgid "second"
-#~ msgstr "秒"
+#~ msgstr "脙毛"
 
 #, fuzzy
 #~ msgid "block size"
-#~ msgstr "无效的数字"
+#~ msgstr "脦脼脨搂碌脛脢媒脳脰"
 
 #, fuzzy
 #~ msgid "Disconnecting"
-#~ msgstr "正在连接..."
+#~ msgstr "脮媒脭脷脕卢陆脫..."
 
 #, fuzzy
 #~ msgid "Password required"
-#~ msgstr "口令: "
+#~ msgstr "驴脷脕卯: "
 
 #~ msgid "Fatal error: %s"
-#~ msgstr "严重错误: %s"
+#~ msgstr "脩脧脰脴麓铆脦贸: %s"
 
 #~ msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-#~ msgstr "%s要删除: %d 个目录, %d 个文件, %d 个符号链接\n"
+#~ msgstr "%s脪陋脡戮鲁媒: %d 赂枚脛驴脗录, %d 赂枚脦脛录镁, %d 赂枚路没潞脜脕麓陆脫\n"
 
 #~ msgid "Usage: %s userid [pass]\n"
-#~ msgstr "用法: %s userid [pass]\n"
+#~ msgstr "脫脙路篓: %s userid [pass]\n"
 
 #~ msgid "Cache is on"
-#~ msgstr "缓冲打开了"
+#~ msgstr "禄潞鲁氓麓貌驴陋脕脣"
 
 #~ msgid "Cache is off"
-#~ msgstr "缓冲关闭了"
+#~ msgstr "禄潞鲁氓鹿脴卤脮脕脣"
 
 #~ msgid "Cache entries do not expire"
-#~ msgstr "缓冲条目不过期"
+#~ msgstr "禄潞鲁氓脤玫脛驴虏禄鹿媒脝脷"
 
 #~ msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-#~ msgstr "缓冲条目在 %ld 秒内过期\n"
+#~ msgstr "禄潞鲁氓脤玫脛驴脭脷 %ld 脙毛脛脷鹿媒脝脷\n"
 
 #~ msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-#~ msgstr "缓冲条目在 %ld 分钟内过期\n"
+#~ msgstr "禄潞鲁氓脤玫脛驴脭脷 %ld 路脰脰脫脛脷鹿媒脝脷\n"
 
 #~ msgid ""
 #~ "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for "
 #~ "details.\n"
-#~ msgstr "这是一个不提供任何保证的自由软件. 查看 COPYING 获得更多信息.\n"
+#~ msgstr "脮芒脢脟脪禄赂枚虏禄脤谩鹿漏脠脦潞脦卤拢脰陇碌脛脳脭脫脡脠铆录镁. 虏茅驴麓 COPYING 禄帽碌脙赂眉露脿脨脜脧垄.\n"
 
 #, fuzzy
 #~ msgid "%s: %s: %s\n"
-#~ msgstr "用法: %s\n"
+#~ msgstr "脫脙路篓: %s\n"
 
 #~ msgid "%s: Invalid number for size\n"
-#~ msgstr "%s: size 使用了无效的数字\n"
+#~ msgstr "%s: size 脢鹿脫脙脕脣脦脼脨搂碌脛脢媒脳脰\n"
 
 #~ msgid "Warning: getcwd() failed: %s\n"
-#~ msgstr "警告: getcwd() 失败: %s\n"
+#~ msgstr "戮炉赂忙: getcwd() 脢搂掳脺: %s\n"
 
 #~ msgid "Usage: %s mode file...\n"
-#~ msgstr "用法: %s mode 文件...\n"
+#~ msgstr "脫脙路篓: %s mode 脦脛录镁...\n"
 
 #~ msgid "%s: %s - not an octal number\n"
-#~ msgstr "%s: %s - 不是八进制数\n"
+#~ msgstr "%s: %s - 虏禄脢脟掳脣陆酶脰脝脢媒\n"
 
 #~ msgid "Removing old remote file `%s'"
-#~ msgstr "删除旧的远程文件 `%s'"
+#~ msgstr "脡戮鲁媒戮脡碌脛脭露鲁脤脦脛录镁 `%s'"
 
 #~ msgid "Retrieving remote file `%s'"
-#~ msgstr "正在下载远程文件 `%s'"
+#~ msgstr "脮媒脭脷脧脗脭脴脭露鲁脤脦脛录镁 `%s'"
 
 #~ msgid "nlist [<args>]"
 #~ msgstr "nlist [<args>]"
 
 #~ msgid "List remote file names\n"
-#~ msgstr "列出远程文件名\n"
+#~ msgstr "脕脨鲁枚脭露鲁脤脦脛录镁脙没\n"
 
 #~ msgid "Same as `get -c'\n"
-#~ msgstr "同 `get -c'\n"
+#~ msgstr "脥卢 `get -c'\n"
 
 #~ msgid "rels [<args>]"
 #~ msgstr "rels [<args>]"
 
 #~ msgid "Same as `put -c'\n"
-#~ msgstr "同 `put -c'\n"
+#~ msgstr "脥卢 `put -c'\n"
 
 #, fuzzy
 #~ msgid "bzcat <files>"
@@ -2672,68 +2686,68 @@ msgstr ""
 #~ msgstr "zmore [-u] <files>"
 
 #~ msgid "child returned invalid data"
-#~ msgstr "子进程返回无效的数据"
+#~ msgstr "脳脫陆酶鲁脤路碌禄脴脦脼脨搂碌脛脢媒戮脻"
 
 #, fuzzy
 #~ msgid "Usage: %s -e|-s|command args...\n"
-#~ msgstr "用法: %s command args...\n"
+#~ msgstr "脫脙路篓: %s command args...\n"
 
 #~ msgid "Saw `Login incorrect', assume failed login"
-#~ msgstr "发现 `Login incorrect', 登录失败"
+#~ msgstr "路垄脧脰 `Login incorrect', 碌脟脗录脢搂掳脺"
 
 #~ msgid "%s: cannot add empty bookmark\n"
-#~ msgstr "%s: 不能添加空的书签\n"
+#~ msgstr "%s: 虏禄脛脺脤铆录脫驴脮碌脛脢茅脟漏\n"
 
 #, fuzzy
 #~ msgid "%s: cannot get current directory\n"
-#~ msgstr "%s: 没有当前任务\n"
+#~ msgstr "%s: 脙禄脫脨碌卤脟掳脠脦脦帽\n"
 
 #~ msgid "Fatal protocol error occured"
-#~ msgstr "出现严重的协议错误"
+#~ msgstr "鲁枚脧脰脩脧脰脴碌脛脨颅脪茅麓铆脦贸"
 
 #~ msgid "rmdir <dirs>"
 #~ msgstr "rmdir <dirs>"
 
 #~ msgid "Usage: %s files...\n"
-#~ msgstr "用法: %s files...\n"
+#~ msgstr "脫脙路篓: %s files...\n"
 
 #~ msgid "Use specified info for remote login\n"
-#~ msgstr "指定远程登录的信息\n"
+#~ msgstr "脰赂露篓脭露鲁脤碌脟脗录碌脛脨脜脧垄\n"
 
 #~ msgid "Sorry, %s can work with only ftp protocol\n"
-#~ msgstr "抱歉, %s 只能用在 ftp 协议上\n"
+#~ msgstr "卤搂脟赂, %s 脰禄脛脺脫脙脭脷 ftp 脨颅脪茅脡脧\n"
 
 #~ msgid "Usage: %s [-c] [-p] <source> <dest>\n"
-#~ msgstr "用法: %s [-c] [-p] <source> <dest>\n"
+#~ msgstr "脫脙路篓: %s [-c] [-p] <source> <dest>\n"
 
 #~ msgid "Getting size of `%s' [%s]"
-#~ msgstr "得到 `%s' 的大小 [%s]"
+#~ msgstr "碌脙碌陆 `%s' 碌脛麓贸脨隆 [%s]"
 
 #~ msgid "Copying of `%s' in progress (%c)"
-#~ msgstr "正在进行 `%s' 的复制 (%c)"
+#~ msgstr "脮媒脭脷陆酶脨脨 `%s' 碌脛赂麓脰脝 (%c)"
 
 #, fuzzy
 #~ msgid "%s: no such files\n"
-#~ msgstr "%s: 没有找到文件\n"
+#~ msgstr "%s: 脙禄脫脨脮脪碌陆脦脛录镁\n"
 
 #, fuzzy
 #~ msgid " - not supported protocol\n"
-#~ msgstr "%s: %s - 不支持的协议\n"
+#~ msgstr "%s: %s - 虏禄脰搂鲁脰碌脛脨颅脪茅\n"
 
 #~ msgid "%s: %s - not supported protocol\n"
-#~ msgstr "%s: %s - 不支持的协议\n"
+#~ msgstr "%s: %s - 虏禄脰搂鲁脰碌脛脨颅脪茅\n"
 
 #~ msgid "remote rm(%s) - %s\n"
-#~ msgstr "远程删除(%s) - %s\n"
+#~ msgstr "脭露鲁脤脡戮鲁媒(%s) - %s\n"
 
 #~ msgid "\tNo files transferred successfully :(\n"
-#~ msgstr "\t没有一个文件传输成功 :(\n"
+#~ msgstr "\t脙禄脫脨脪禄赂枚脦脛录镁麓芦脢盲鲁脡鹿娄 :(\n"
 
 #~ msgid "Average transfer rate %g bytes/s\n"
-#~ msgstr "平均传输速率 %g 字节/秒\n"
+#~ msgstr "脝陆戮霉麓芦脢盲脣脵脗脢 %g 脳脰陆脷/脙毛\n"
 
 #~ msgid "%s: cannot write -- disk full?\n"
-#~ msgstr "%s: 不能写 - 磁盘已满 ?\n"
+#~ msgstr "%s: 虏禄脛脺脨麓 - 麓脜脜脤脪脩脗煤 ?\n"
 
 #~ msgid "mget [-c] [-d] [-e] <files>"
 #~ msgstr "mget [-c] [-d] [-e] <files>"
@@ -2744,16 +2758,16 @@ msgstr ""
 #~ " -d  create directories the same as in file names and put the\n"
 #~ "     files into them instead of current directory\n"
 #~ msgstr ""
-#~ "使用通配符展开上传文件\n"
-#~ " -c  继续, 重传\n"
-#~ " -d  建立文件名中的目录, 把文件上传到这些目录中, 而不是\n"
-#~ "     放到当前的目录\n"
+#~ "脢鹿脫脙脥篓脜盲路没脮鹿驴陋脡脧麓芦脦脛录镁\n"
+#~ " -c  录脤脨酶, 脰脴麓芦\n"
+#~ " -d  陆篓脕垄脦脛录镁脙没脰脨碌脛脛驴脗录, 掳脩脦脛录镁脡脧麓芦碌陆脮芒脨漏脛驴脗录脰脨, 露酶虏禄脢脟\n"
+#~ "     路脜碌陆碌卤脟掳碌脛脛驴脗录\n"
 
 #~ msgid "Wait for specified job to terminate.\n"
-#~ msgstr "等待指定的任务结束.\n"
+#~ msgstr "碌脠麓媒脰赂露篓碌脛脠脦脦帽陆谩脢酶.\n"
 
 #~ msgid "Usage: site <site_cmd>\n"
-#~ msgstr "用法: site <site_cmd>\n"
+#~ msgstr "脫脙路篓: site <site_cmd>\n"
 
 #~ msgid ""
 #~ "FtpGet | Version %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"
@@ -2774,31 +2788,31 @@ msgstr ""
 #~ "\n"
 #~ "-o  output to local file `local' (default - base name of filename)\n"
 #~ msgstr ""
-#~ "用法: ftpget [OPTIONS] host filename [-o local] [filename...]\n"
+#~ "脫脙路篓: ftpget [OPTIONS] host filename [-o local] [filename...]\n"
 #~ "\n"
-#~ "-p  --port         设置端口号\n"
-#~ "-u  --user         指定登录用户名\n"
-#~ "-l  --list         列出指定目录的内容\n"
-#~ "-c  --continue     重新下载指定的文件\n"
-#~ "-q  --quiet        静默模式(无输出)\n"
-#~ "-v  --verbose      冗长输出(很多输出)\n"
-#~ "    --async-mode   使用异步模式(更快)\n"
-#~ "    --sync-mode    使用同步模式(和某些缺陷兼容)\n"
+#~ "-p  --port         脡猫脰脙露脣驴脷潞脜\n"
+#~ "-u  --user         脰赂露篓碌脟脗录脫脙禄搂脙没\n"
+#~ "-l  --list         脕脨鲁枚脰赂露篓脛驴脗录碌脛脛脷脠脻\n"
+#~ "-c  --continue     脰脴脨脗脧脗脭脴脰赂露篓碌脛脦脛录镁\n"
+#~ "-q  --quiet        戮虏脛卢脛拢脢陆(脦脼脢盲鲁枚)\n"
+#~ "-v  --verbose      脠脽鲁陇脢盲鲁枚(潞脺露脿脢盲鲁枚)\n"
+#~ "    --async-mode   脢鹿脫脙脪矛虏陆脛拢脢陆(赂眉驴矛)\n"
+#~ "    --sync-mode    脢鹿脫脙脥卢虏陆脛拢脢陆(潞脥脛鲁脨漏脠卤脧脻录忙脠脻)\n"
 #~ "\n"
-#~ "-o  输出到本地文件 `local' (默认值 - filename)\n"
+#~ "-o  脢盲鲁枚碌陆卤戮碌脴脦脛录镁 `local' (脛卢脠脧脰碌 - filename)\n"
 
 #~ msgid "Usage: %s [-c] [-d] [-e] pattern ...\n"
-#~ msgstr "用法: %s [-c] [-d] [-e] pattern ...\n"
+#~ msgstr "脫脙路篓: %s [-c] [-d] [-e] pattern ...\n"
 
 #~ msgid "\tat %ld (%d%%) [%s]\n"
-#~ msgstr "\t在 %ld (%d%%) [%s]\n"
+#~ msgstr "\t脭脷 %ld (%d%%) [%s]\n"
 
 #~ msgid "%s: %s - invalid time precision\n"
-#~ msgstr "%s: %s - 无效的时间精度\n"
+#~ msgstr "%s: %s - 脦脼脨搂碌脛脢卤录盲戮芦露脠\n"
 
 #~ msgid ""
 #~ "%s: Invalid expire period (use Ns - in sec, Nm - in min, Nh - in hours)\n"
-#~ msgstr "%s: 无效的过期周期 ( use Ns - 秒, Nm - 分钟, Nh - 小时)\n"
+#~ msgstr "%s: 脦脼脨搂碌脛鹿媒脝脷脰脺脝脷 ( use Ns - 脙毛, Nm - 路脰脰脫, Nh - 脨隆脢卤)\n"
 
 #~ msgid "%s: invalid delay. "
-#~ msgstr "%s: 无效的延时. "
+#~ msgstr "%s: 脦脼脨搂碌脛脩脫脢卤. "

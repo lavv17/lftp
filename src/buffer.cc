@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1998-2008 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -385,7 +384,7 @@ void DirectedBuffer::EmbraceNewData(int len)
 
 
 IOBuffer::IOBuffer(dir_t m)
-   : DirectedBuffer(m), event_time(now)
+   : DirectedBuffer(m), event_time(now), max_buf(0)
 {
 }
 IOBuffer::~IOBuffer()
@@ -529,6 +528,12 @@ int IOBufferStacked::Put_LL(const char *buf,int size)
 
 int IOBufferStacked::Get_LL(int)
 {
+   if(max_buf && Size()>=max_buf) {
+      down->SuspendSlave();
+      return 0;
+   }
+   down->ResumeSlave();
+
    const char *b;
    int size;
    down->Get(&b,&size);
@@ -549,6 +554,18 @@ bool IOBufferStacked::Done()
    if(super::Done())
       return down->Done();
    return false;
+}
+
+void IOBufferStacked::SuspendInternal()
+{
+   super::SuspendInternal();
+   down->SuspendSlave();
+}
+void IOBufferStacked::ResumeInternal()
+{
+   if(!max_buf || Size()<max_buf)
+      down->ResumeSlave();
+   super::ResumeInternal();
 }
 
 // IOBufferFDStream implementation
@@ -609,6 +626,9 @@ stream_err:
 
 int IOBufferFDStream::Get_LL(int size)
 {
+   if(max_buf && Size()>=max_buf)
+      return 0;
+
    int res=0;
 
    int fd=stream->getfd();
@@ -668,6 +688,12 @@ IOBufferFDStream::~IOBufferFDStream() {}
 #define super IOBuffer
 int IOBufferFileAccess::Get_LL(int size)
 {
+   if(max_buf && Size()>=max_buf) {
+      session->SuspendSlave();
+      return 0;
+   }
+   session->ResumeSlave();
+
    int res=0;
 
    res=session->Read(GetSpace(size),size);
@@ -685,11 +711,14 @@ int IOBufferFileAccess::Get_LL(int size)
 
 void IOBufferFileAccess::SuspendInternal()
 {
+   super::SuspendInternal();
    session->SuspendSlave();
 }
 void IOBufferFileAccess::ResumeInternal()
 {
-   session->ResumeSlave();
+   if(!max_buf || Size()<max_buf)
+      session->ResumeSlave();
+   super::ResumeInternal();
 }
 const char *IOBufferFileAccess::Status()
 {

@@ -1,9 +1,8 @@
-localedir = $(datadir)/locale
 pkgverlibdir = $(pkglibdir)/$(VERSION)
 
 bin_PROGRAMS = lftp
 bin_SCRIPTS = lftpget
-pkgdata_SCRIPTS = import-ncftp import-netscape verify-file convert-mozilla-cookies
+pkgdata_SCRIPTS = import-ncftp import-netscape verify-file convert-mozilla-cookies xdg-move
 noinst_SCRIPTS = ftpget
 
 EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS)
@@ -36,7 +35,8 @@ proto_fish_la_SOURCES = Fish.cc Fish.h
 proto_sftp_la_SOURCES = SFtp.cc SFtp.h
 cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
 cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
-cmd_torrent_la_SOURCES= Torrent.cc Torrent.h Bencode.cc Bencode.h
+cmd_torrent_la_SOURCES= Torrent.cc Torrent.h TorrentTracker.cc TorrentTracker.h\
+ DHT.cc DHT.h Bencode.cc Bencode.h
 liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h RateLimit.cc RateLimit.h\
@@ -81,7 +81,9 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
-liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(TRIO) $(GNULIB) $(INET_PTON_LIB) $(LIB_CLOCK_GETTIME) $(SOCKSLIBS) $(LTLIBINTL) $(LTLIBICONV)
+liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(TRIO) $(GNULIB) $(INET_PTON_LIB)\
+ $(LIB_CLOCK_GETTIME) $(SOCKSLIBS) $(LIBSOCKET) $(LIB_POLL) $(LIB_SELECT)\
+ $(LTLIBINTL) $(LTLIBICONV)
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
@@ -116,4 +118,13 @@ if WITH_MODULES
 	esac
 else
 	-rmdir $(DESTDIR)$(pkgverlibdir) 2>/dev/null || :
+endif
+
+# without *.la files libtool does not remove the *.so files.
+uninstall-hook:
+	-rmdir "$(DESTDIR)$(pkgdatadir)" 2>/dev/null || :
+if WITH_MODULES
+	for m in $(pkgverlib_LTLIBRARIES); do rm -f "$(DESTDIR)$(pkgverlibdir)/$${m%.la}.so"; done
+	-rmdir "$(DESTDIR)$(pkgverlibdir)" 2>/dev/null || :
+	-rmdir "$(DESTDIR)$(pkglibdir)" 2>/dev/null || :
 endif

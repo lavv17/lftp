@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 2000-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -274,7 +273,12 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    // hack for some ftp servers
    const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
    if(auth && !strncmp(auth, "SSL", 3))
-      gnutls_priority_set_direct(session, "NORMAL:+SSL3.0:-TLS1.0:-TLS1.1:-TLS1.2");
+      gnutls_priority_set_direct(session, "NORMAL:+SSL3.0:-TLS1.0:-TLS1.1:-TLS1.2",0);
+
+   if(h && ResMgr::QueryBool("ssl:use-sni",h)) {
+      if(gnutls_server_name_set(session, GNUTLS_NAME_DNS, h, xstrlen(h)) < 0)
+	 fprintf(stderr,"WARNING: failed to configure server name indication (SNI) TLS extension\n");
+   }
 }
 void lftp_ssl_gnutls::load_keys()
 {
@@ -351,8 +355,12 @@ void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,
    /* Check if the name in the first certificate matches our destination!
     */
    bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
-   if(check_hostname && !gnutls_x509_crt_check_hostname(cert[0], hostname))
-      set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)));
+   if(check_hostname) {
+      if(!gnutls_x509_crt_check_hostname(cert[0], hostname))
+	 set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)));
+   } else {
+      Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled\n");
+   }
 
    for (i = 0; i < cert_chain_length; i++)
       gnutls_x509_crt_deinit(cert[i]);
@@ -496,8 +504,9 @@ bool lftp_ssl_gnutls::check_fatal(int res)
    if(!gnutls_error_is_fatal(res))
       return false;
    if((res==GNUTLS_E_UNEXPECTED_PACKET_LENGTH
-       || res==GNUTLS_E_PUSH_ERROR || res==GNUTLS_E_PULL_ERROR)
-   && temporary_network_error(errno))
+       || res==GNUTLS_E_PUSH_ERROR || res==GNUTLS_E_PULL_ERROR
+       || res==GNUTLS_E_DECRYPTION_FAILED)
+   && (!errno || temporary_network_error(errno)))
       return false;
    return true;
 }
@@ -821,6 +830,11 @@ lftp_ssl_openssl::lftp_ssl_openssl(int fd1,handshake_mode_t m,const char *h)
    ssl=SSL_new(instance->ssl_ctx);
    SSL_set_fd(ssl,fd);
    SSL_ctrl(ssl,SSL_CTRL_MODE,SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER,0);
+
+   if(h && ResMgr::QueryBool("ssl:use-sni",h)) {
+      if(!SSL_set_tlsext_host_name(ssl, h))
+	 fprintf(stderr,"WARNING: failed to configure server name indication (SNI) TLS extension\n");
+   }
 }
 void lftp_ssl_openssl::load_keys()
 {
@@ -1235,6 +1249,12 @@ void lftp_ssl_openssl::check_certificate()
                  quotearg_style (escape_quoting_style, hostname)));
       return;
     }
+
+  bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
+  if(!check_hostname) {
+    Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled\n");
+    return;
+  }
 
   int matched = -1; /* -1 is no alternative match yet, 1 means match and 0
                        means mismatch */

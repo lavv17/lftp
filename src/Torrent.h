@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2009-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef TORRENT_H
 #define TORRENT_H
@@ -29,6 +26,8 @@
 #include "ProtoLog.h"
 #include "network.h"
 #include "RateLimit.h"
+#include "Resolver.h"
+#include "DHT.h"
 
 class FDCache;
 class TorrentBlackList;
@@ -73,65 +72,38 @@ class TorrentListener : public SMTask, protected ProtoLog, protected Networker
 {
    Ref<Error> error;
    int af;
+   int type;
    int sock;
    sockaddr_u addr;
    Speedometer rate;
    void FillAddress(int port);
+   Time last_sent_udp;
+   int  last_sent_udp_count;
 public:
-   TorrentListener(int a);
+   TorrentListener(int a,int type=SOCK_STREAM);
    ~TorrentListener();
    int Do();
    int GetPort() const { return addr.port(); }
    const char *GetAddress() const { return addr.address(); }
+   const char *GetLogContext() { return type==SOCK_DGRAM?(af==AF_INET?"torrent(udp)":"torrent(udp6)"):"torrent"; }
+
+   int SendUDP(const sockaddr_u& a,const xstring& buf);
+   bool MaySendUDP();
 };
 
-class TorrentTracker : public SMTask, protected ProtoLog
-{
-   friend class Torrent;
-
-   Torrent *parent;
-
-   xstring tracker_url;
-   FileAccessRef t_session;
-   Timer tracker_timer;
-   SMTaskRef<IOBuffer> tracker_reply;
-   xstring tracker_id;
-   bool started;
-   Ref<Error> error;
-   int tracker_no;
-
-   TorrentTracker(Torrent *p,const char *url);
-   void AddURL(const char *url);
-   int Do();
-
-   void Start();
-   void Shutdown();
-
-   void SendTrackerRequest(const char *event);
-   int HandleTrackerReply();
-
-   void SetError(const char *e) { error=new Error(-1,e,true); }
-   bool Failed() const { return error!=0; }
-   const char *ErrorText() const { return error->Text(); }
-
-public:
-   ~TorrentTracker() {}
-   const char *NextRequestIn() const {
-      return tracker_timer.TimeLeft().toString(
-	 TimeInterval::TO_STR_TRANSLATE|TimeInterval::TO_STR_TERSE);
-   }
-   const char *GetURL() const { return tracker_url; }
-   const char *Status() const;
-};
+class TorrentTracker;
 
 class Torrent : public SMTask, protected ProtoLog, public ResClient
 {
    friend class TorrentPeer;
    friend class TorrentDispatcher;
+   friend class TorrentListener;
+   friend class DHT;
 
    bool shutting_down;
    bool complete;
    bool end_game;
+   bool is_private;
    bool validating;
    bool force_valid;
    unsigned validate_index;
@@ -140,37 +112,80 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static const unsigned PEER_ID_LEN = 20;
    static xstring my_peer_id;
    static xstring my_key;
+   static unsigned my_key_num;
    static xmap<Torrent*> torrents;
-   static Ref<TorrentListener> listener;
-   static Ref<TorrentListener> listener_ipv6;
+   static SMTaskRef<TorrentListener> listener;
+   static SMTaskRef<TorrentListener> listener_udp;
+   static SMTaskRef<DHT> dht;
+#if INET6
+   static SMTaskRef<TorrentListener> listener_ipv6;
+   static SMTaskRef<TorrentListener> listener_ipv6_udp;
+   static SMTaskRef<DHT> dht_ipv6;
+#endif
    static Ref<FDCache> fd_cache;
    static Ref<TorrentBlackList> black_list;
+
+   static const SMTaskRef<DHT>& GetDHT(int af)
+   {
+#if INET6
+      if(af==AF_INET6 && dht_ipv6)
+	 return dht_ipv6;
+#endif
+      return dht;
+   }
+   static const SMTaskRef<DHT>& GetDHT(const sockaddr_u& a) { return GetDHT(a.family()); }
+   static const SMTaskRef<TorrentListener>& GetUDPSocket(int af)
+   {
+#if INET6
+      if(af==AF_INET6)
+	 return listener_ipv6_udp;
+#endif
+      return listener_udp;
+   }
+   static const SMTaskRef<TorrentListener>& GetUDPSocket(const sockaddr_u& a) { return GetUDPSocket(a.family()); }
 
    static Torrent *FindTorrent(const xstring& info_hash) { return torrents.lookup(info_hash); }
    static void AddTorrent(Torrent *t) { torrents.add(t->GetInfoHash(),t); }
    static void RemoveTorrent(Torrent *t) { torrents.remove(t->GetInfoHash()); }
    static int GetTorrentsCount() { return torrents.count(); }
    static void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
+   static void DispatchUDP(const char *buf,int len,const sockaddr_u& src);
+
+   xstring md_download;
+   size_t metadata_size;
+   void StartMetadataDownload() { md_download.nset("",0); }
+   void MetadataDownloaded();
+   void SetMetadata(const xstring& md);
+   void ParseMagnet(const char *p);
 
    xstring_c metainfo_url;
    FileAccessRef metainfo_fa;
    SMTaskRef<IOBuffer> metainfo_data;
    Ref<BeNode> metainfo_tree;
    BeNode *info;
+   xstring metadata;
    xstring info_hash;
    const xstring *pieces;
-   const xstring *name;
+   xstring name;
 
    Ref<DirectedBuffer> recv_translate;
+   Ref<DirectedBuffer> recv_translate_utf8;
    void InitTranslation();
    void TranslateString(BeNode *node) const;
+   void TranslateStringFromUTF8(BeNode *node) const;
 
    TaskRefArray<TorrentTracker> trackers;
    bool TrackersDone() const;
-   bool TrackersFailed() const;
-   void StartTrackers() const;
+   void StartTrackers();
    void ShutdownTrackers() const;
    void SendTrackersRequest(const char *e) const;
+   static void StartListener();
+   static void StartListenerUDP();
+   static void StopListener();
+   static void StopListenerUDP();
+   static void StartDHT();
+   static void StopDHT();
+   void AnnounceDHT();
 
    bool single_file;
    unsigned piece_length;
@@ -241,6 +256,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Timer peers_scan_timer;
    Timer am_interested_timer;
 
+   Timer dht_announce_timer;
+
    static const int max_uploaders = 20;
    static const int min_uploaders = 1;
    static const int max_downloaders = 20;
@@ -298,10 +315,11 @@ public:
    int GetCompletePeersCount() const { return complete_peers_count; }
 
    bool Complete() const { return complete; }
+   bool Private() const { return is_private; }
    double GetRatio() const;
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
-   const char *GetName() const { return name?name->get():metainfo_url.get(); }
+   const char *GetName() const { return name?name.get():metainfo_url.get(); }
 
    void Reconfig(const char *name);
    const char *GetLogContext() { return GetName(); }
@@ -311,17 +329,28 @@ public:
 
    static int GetPort();
    static int GetPortIPv4() { return listener?listener->GetPort():0; }
+#if INET6
    static int GetPortIPv6() { return listener_ipv6?listener_ipv6->GetPort():0; }
    static const char *GetAddressIPv6() { return listener_ipv6?listener_ipv6->GetAddress():"::"; }
+#endif
    int GetWantedPeersCount() const;
    static const xstring& GetMyPeerId() { return my_peer_id; }
    static const xstring& GetMyKey() { return my_key; }
+   static unsigned GetMyKeyNum() { return my_key_num; }
 
    unsigned long long GetTotalSent() { return total_sent; }
    unsigned long long GetTotalRecv() { return total_recv; }
    unsigned long long GetTotalLeft() { return total_left; }
 
    const TaskRefArray<TorrentTracker>& Trackers() { return trackers; }
+   bool HasMetadata() { return metadata!=0; }
+   void DisconnectPeers();
+
+   static void BootstrapDHT(const char *n) {
+      StartDHT();
+      if(dht)
+	 dht->AddBootstrapNode(n);
+   }
 };
 
 class FDCache : public SMTask, public ResClient
@@ -361,6 +390,7 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
 
    sockaddr_u addr;
    int sock;
+   int udp_port;
    bool connected;
    bool passive;
 
@@ -371,8 +401,8 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    Timer interest_timer;
    Timer activity_timer;
 
-   Ref<IOBuffer> recv_buf;
-   Ref<IOBuffer> send_buf;
+   SMTaskRef<IOBuffer> recv_buf;
+   SMTaskRef<IOBuffer> send_buf;
 
    unsigned long long peer_recv;
    unsigned long long peer_sent;
@@ -381,16 +411,27 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    Speedometer peer_send_rate;
 
    xstring peer_id;
+   unsigned char extensions[8];
    TorrentPeer *duplicate;
    bool myself;
+
+   bool FastExtensionEnabled() const { return extensions[7]&0x04; }
+   bool LTEPExtensionEnabled() const { return extensions[5]&0x10; }
+   bool DHT_Enabled() const { return extensions[7]&0x01; }
 
    bool am_choking;
    bool am_interested;
    bool peer_choking;
    bool peer_interested;
 
+   bool upload_only;
+
    Ref<BitField> peer_bitfield;
    unsigned peer_complete_pieces;
+
+   xqueue<unsigned,xarray<unsigned> > fast_set;
+   bool InFastSet(unsigned) const;
+   xqueue<unsigned,xarray<unsigned> > suggested_set;
 
    enum packet_type
    {
@@ -404,9 +445,28 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
       MSG_REQUEST=6,
       MSG_PIECE=7,
       MSG_CANCEL=8,
-      MSG_PORT=9
+      MSG_PORT=9,
+      MSG_SUGGEST_PIECE=13,
+      MSG_HAVE_ALL=14,
+      MSG_HAVE_NONE=15,
+      MSG_REJECT_REQUEST=16,
+      MSG_ALLOWED_FAST=17,
+      MSG_EXTENDED=20,
+   };
+   enum msg_ext_id
+   {
+      MSG_EXT_HANDSHAKE=0,
+      MSG_EXT_PEX=1,
+      MSG_EXT_METADATA=2,
+   };
+   enum ut_metadata_msg_id
+   {
+      UT_METADATA_REQUEST=0,
+      UT_METADATA_DATA=1,
+      UT_METADATA_REJECT=2,
    };
 public:
+   enum { TR_ACCEPTED=-1, TR_DHT=-2, TR_PEX=-3 };  // special values for tracker_no
    enum unpack_status_t
    {
       UNPACK_SUCCESS=0,
@@ -418,7 +478,9 @@ public:
    {
       static bool is_valid_reply(int p)
       {
-	 return p>=0 && p<=MSG_PORT;
+	 return (p>=0 && p<=MSG_PORT)
+	    || (p>=MSG_SUGGEST_PIECE && p<=MSG_ALLOWED_FAST)
+	    || p==MSG_EXTENDED;
       }
    protected:
       int length;
@@ -428,20 +490,21 @@ public:
       Packet(packet_type t);
       Packet() { length=0; }
       virtual void ComputeLength() { length=(type>=0); }
-      virtual void Pack(Ref<IOBuffer>& b);
+      virtual void Pack(SMTaskRef<IOBuffer>& b);
       virtual unpack_status_t Unpack(const Buffer *b);
       virtual ~Packet() {}
       int GetLength() const { return length; }
       packet_type GetPacketType() const { return type; }
       const char *GetPacketTypeText() const;
-      void DropData(Ref<IOBuffer>& b) { b->Skip(4+length); }
+      void DropData(SMTaskRef<IOBuffer>& b) { b->Skip(4+length); }
       bool TypeIs(packet_type t) const { return type==t; }
+      static unpack_status_t UnpackBencoded(const Buffer *b,int *offset,int limit,Ref<BeNode> *out);
    };
-   class PacketHave : public Packet
+   class _PacketPiece : public Packet
    {
    public:
       unsigned piece;
-      PacketHave(unsigned p=0) : Packet(MSG_HAVE), piece(p) { length+=4; }
+      _PacketPiece(packet_type t,unsigned p) : Packet(t), piece(p) { length+=4; }
       unpack_status_t Unpack(const Buffer *b)
 	 {
 	    unpack_status_t res;
@@ -453,7 +516,11 @@ public:
 	    return UNPACK_SUCCESS;
 	 }
       void ComputeLength() { Packet::ComputeLength(); length+=4; }
-      void Pack(Ref<IOBuffer>& b) { Packet::Pack(b); b->PackUINT32BE(piece); }
+      void Pack(SMTaskRef<IOBuffer>& b) { Packet::Pack(b); b->PackUINT32BE(piece); }
+   };
+   class PacketHave : public _PacketPiece {
+   public:
+      PacketHave(unsigned p=0) : _PacketPiece(MSG_HAVE,p) {}
    };
    class PacketBitField : public Packet
    {
@@ -464,22 +531,27 @@ public:
       ~PacketBitField();
       unpack_status_t Unpack(const Buffer *b);
       void ComputeLength();
-      void Pack(Ref<IOBuffer>& b);
+      void Pack(SMTaskRef<IOBuffer>& b);
    };
-   class PacketRequest : public Packet
+   class _PacketIBL : public Packet
    {
    public:
-      Timer expire;
       unsigned index,begin,req_length;
-      PacketRequest(unsigned i=0,unsigned b=0,unsigned l=0);
+      _PacketIBL(packet_type t,unsigned i,unsigned b,unsigned l);
       unpack_status_t Unpack(const Buffer *b);
       void ComputeLength();
-      void Pack(Ref<IOBuffer>& b);
+      void Pack(SMTaskRef<IOBuffer>& b);
    };
-   class PacketCancel : public PacketRequest {
+   class PacketRequest : public _PacketIBL
+   {
+   public:
+      PacketRequest(unsigned i=0,unsigned b=0,unsigned l=0)
+	 : _PacketIBL(MSG_REQUEST,i,b,l) {}
+   };
+   class PacketCancel : public _PacketIBL {
    public:
       PacketCancel(unsigned i=0,unsigned b=0,unsigned l=0)
-      : PacketRequest(i,b,l) { type=MSG_CANCEL; }
+	 : _PacketIBL(MSG_CANCEL,i,b,l) {}
    };
    class PacketPiece : public Packet
    {
@@ -503,7 +575,7 @@ public:
 	    return UNPACK_SUCCESS;
 	 }
       void ComputeLength() { Packet::ComputeLength(); length+=8+data.length(); }
-      void Pack(Ref<IOBuffer>& b) {
+      void Pack(SMTaskRef<IOBuffer>& b) {
 	 Packet::Pack(b);
 	 b->PackUINT32BE(index);
 	 b->PackUINT32BE(begin);
@@ -526,12 +598,52 @@ public:
 	    return UNPACK_SUCCESS;
 	 }
       void ComputeLength() { Packet::ComputeLength(); length+=2; }
-      void Pack(Ref<IOBuffer>& b) { Packet::Pack(b); b->PackUINT16BE(port); }
+      void Pack(SMTaskRef<IOBuffer>& b) { Packet::Pack(b); b->PackUINT16BE(port); }
+   };
+   class PacketSuggestPiece : public _PacketPiece {
+   public:
+      PacketSuggestPiece(unsigned p=0) : _PacketPiece(MSG_SUGGEST_PIECE,p) {}
+   };
+   class PacketAllowedFast : public _PacketPiece {
+   public:
+      PacketAllowedFast(unsigned p=0) : _PacketPiece(MSG_ALLOWED_FAST,p) {}
+   };
+   class PacketRejectRequest : public _PacketIBL {
+   public:
+      PacketRejectRequest(unsigned i=0,unsigned b=0,unsigned l=0)
+	 : _PacketIBL(MSG_REJECT_REQUEST,i,b,l) {}
+   };
+   class PacketExtended : public Packet
+   {
+   public:
+      unsigned char code;
+      Ref<BeNode> data;
+      xstring appendix;
+      PacketExtended(unsigned char c='\0',BeNode *d=0)
+	 : Packet(MSG_EXTENDED), code(c), data(d) { length++; if(data) length+=data->ComputeLength(); }
+      unpack_status_t Unpack(const Buffer *b)
+	 {
+	    unpack_status_t res;
+	    res=Packet::Unpack(b);
+	    if(res!=UNPACK_SUCCESS)
+	       return res;
+	    code=b->UnpackUINT8(unpacked); unpacked++;
+	    res=UnpackBencoded(b,&unpacked,length+4,&data);
+	    if(unpacked<length+4) {
+	       appendix.nset(b->Get()+unpacked,length+4-unpacked);
+	       unpacked=length+4;
+	    }
+	    return res;
+	 }
+      void ComputeLength() { Packet::ComputeLength(); length++; if(data) length+=data->ComputeLength(); length+=appendix.length(); }
+      void Pack(SMTaskRef<IOBuffer>& b) { Packet::Pack(b); b->PackUINT8(code); if(data) data->Pack(b); }
+      void SetAppendix(const char *s,int len) { appendix.nset(s,len); length+=len; }
    };
 
 private:
-   unpack_status_t UnpackPacket(Ref<IOBuffer>& ,Packet **);
+   unpack_status_t UnpackPacket(SMTaskRef<IOBuffer>& ,Packet **);
    void HandlePacket(Packet *);
+   void HandleExtendedMessage(PacketExtended *);
 
    static const int MAX_QUEUE_LEN = 16;
    RefQueue<PacketRequest> recv_queue;
@@ -554,6 +666,7 @@ private:
    void SetError(const char *);
    void SendHandshake();
    unpack_status_t RecvHandshake();
+   void SendExtensions();
    void Disconnect();
    int SendDataRequests(unsigned p);
    void SendDataRequests();
@@ -573,9 +686,26 @@ private:
    void BytesGot(int b) { BytesUsed(b,RateLimit::GET); }
    void BytesPut(int b) { BytesUsed(b,RateLimit::PUT); }
 
+   int msg_ext_metadata;
+   int msg_ext_pex;
+
+   size_t metadata_size;
+   void SendMetadataRequest();
+
+   struct ut_pex_data
+   {
+      xmap<char> sent; // key is compact addr
+      Timer send_timer;
+      Timer recv_timer;
+      enum flags { ENCRYPTION=1, SEED=2, UTP=4, HOLEPUNCH=8, CONNECTABLE=16 };
+      ut_pex_data() : send_timer(60), recv_timer(59) {}
+   } pex;
+   void AddPEXPeers(BeNode *added,BeNode *added_f,int addr_size);
+   void SendPEXPeers();
+
 public:
    int Do();
-   TorrentPeer(Torrent *p,const sockaddr_u *a,int tracker_no=-1);
+   TorrentPeer(Torrent *p,const sockaddr_u *a,int tracker_no);
    ~TorrentPeer();
    void PrepareToDie();
    void Connect(int s,IOBuffer *rb);
@@ -591,6 +721,7 @@ public:
    bool Connected() const { return peer_id && send_buf && recv_buf; }
    bool Active() const { return Connected() && (am_interested || peer_interested); }
    bool Complete() const { return peer_complete_pieces==parent->total_pieces; }
+   bool Seed() const { return Complete() || upload_only; }
    bool AddressEq(const TorrentPeer *o) const;
    bool IsPassive() const { return passive; }
    const sockaddr_u& GetAddress() const { return addr; }
@@ -611,12 +742,13 @@ class TorrentDispatcher : public SMTask, protected ProtoLog
 {
    int sock;
    const sockaddr_u addr;
-   Ref<IOBuffer> recv_buf;
+   SMTaskRef<IOBuffer> recv_buf;
    Timer timeout_timer;
 public:
    TorrentDispatcher(int s,const sockaddr_u *a);
    ~TorrentDispatcher();
    int Do();
+   const char *GetLogContext() { return "torrent"; }
 };
 
 #include "Job.h"

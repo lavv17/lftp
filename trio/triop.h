@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * $Id$
+ * $Id: triop.h,v 1.12 2002/06/23 11:58:06 breese Exp $
  *
  * Copyright (C) 2000 Bjorn Reese and Daniel Stenberg.
  *

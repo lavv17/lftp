@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2011 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
@@ -173,6 +170,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	     * exception; they both seem to be options used manually, so I made
 	     * them align with GNU ls options. */
 	    " -1                   - single-column output\n"
+	    " -a, --all            - show dot files\n"
 	    " -B, --basename       - show basename of files only\n"
 	    "     --block-size=SIZ - use SIZ-byte blocks\n"
 	    " -d, --directory      - list directory entries instead of contents\n"
@@ -251,7 +249,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"get",     cmd_get,    N_("get [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 	 " -o <lfile> specifies local file name (default - basename of rfile)\n"
-	 " -c  continue, reget\n"
+	 " -c  continue, resume transfer\n"
 	 " -E  delete remote files after successful transfer\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
@@ -267,8 +265,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -a  all types\n")},
    {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
-   {"jobs",    cmd_jobs,   "jobs [-v]",
-	 N_("List running jobs. -v means verbose, several -v can be specified.\n")},
+   {"jobs",    cmd_jobs,   "jobs [-v] [<job_no...>]",
+	 N_("List running jobs. -v means verbose, several -v can be specified.\n"
+	    "If <job_no> is specified, only list a job with that number.\n")},
    {"kill",    cmd_kill,   N_("kill all|<job_no>"),
 	 N_("Delete specified job with <job_no> or all jobs\n")},
    {"lcd",     cmd_lcd,    N_("lcd <ldir>"),
@@ -298,7 +297,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "See also `help cls'.\n")},
    {"mget",    cmd_get,	   N_("mget [OPTS] <files>"),
 	 N_("Gets selected files with expanded wildcards\n"
-	 " -c  continue, reget\n"
+	 " -c  continue, resume transfer\n"
 	 " -d  create directories the same as in file names and get the\n"
 	 "     files into them instead of current directory\n"
 	 " -E  delete remote files after successful transfer\n"
@@ -790,7 +789,6 @@ Job *CmdExec::builtin_lftp()
    {
       SetCmdFeeder(lftp_feeder);
       lftp_feeder=0;
-      SetInteractive(isatty(0));
       FeedCmd("||command exit\n");   // if the command fails, quit
    }
 
@@ -1045,11 +1043,11 @@ Job *CmdExec::builtin_open()
       if(old)
       {
 	 bool is_file=false;
-	 const char *url=0;
+	 const char *old_url=0;
 	 if(url::is_url(old))
 	 {
 	    ParsedURL u(old,true);
-	    url=old;
+	    old_url=old;
 	    old=alloca_strdup(u.path);
 	    if(url::dir_needs_trailing_slash(u.proto))
 	       is_file=(last_char(old)!='/');
@@ -1059,7 +1057,7 @@ Job *CmdExec::builtin_open()
 	    if(url::dir_needs_trailing_slash(session->GetProto()))
 	       is_file=(last_char(old)!='/');
 	 }
-	 session->SetCwd(FileAccess::Path(old,is_file,url));
+	 session->SetCwd(FileAccess::Path(old,is_file,old_url));
       }
 
       const char *cd_arg=(url && url->orig_url)?url->orig_url.get():path;
@@ -1230,7 +1228,7 @@ Job *CmdExec::builtin_queue()
 	    }
 	    else
 	    {
-	       xstring buf("");
+	       xstring& buf=xstring::get_tmp("");
 	       queue->FormatStatus(buf,2,"");
 	       printf("%s",buf.get());
 	    }
@@ -1272,13 +1270,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(!arg)
-	    queue->queue_feeder->DelJob(-1, verbose); /* delete the last job */
+	    exit_code=!queue->queue_feeder->DelJob(-1, verbose); /* delete the last job */
 	 else if(atoi(arg) != 0)
-	    queue->queue_feeder->DelJob(atoi(arg)-1, verbose);
+	    exit_code=!queue->queue_feeder->DelJob(atoi(arg)-1, verbose);
 	 else
-	    queue->queue_feeder->DelJob(arg, verbose);
-
-	 exit_code=0;
+	    exit_code=!queue->queue_feeder->DelJob(arg, verbose);
       }
       break;
 
@@ -1302,12 +1298,11 @@ Job *CmdExec::builtin_queue()
 	 }
 
 	 if(atoi(arg) != 0) {
-	    queue->queue_feeder->MoveJob(atoi(arg)-1, to, verbose);
+	    exit_code=!queue->queue_feeder->MoveJob(atoi(arg)-1, to, verbose);
 	    break;
 	 }
 
-	 queue->queue_feeder->MoveJob(arg, to, verbose);
-	 exit_code=0;
+	 exit_code=!queue->queue_feeder->MoveJob(arg, to, verbose);
       }
       break;
    }
@@ -1358,22 +1353,13 @@ CMD(ls)
    if(!nlist && args->count()==1 && var_ls[0])
       args->Append(var_ls);
 
-   bool use_color=false;
-   if(!nlist)
-   {
-      ResValue color=ResMgr::Query("color:use-color",0);
-      if(!strcasecmp(color,"auto"))
-	 use_color=!output && isatty(1);
-      else
-	 use_color=color.to_bool();
-   }
    bool no_status=(!output || output->usesfd(1));
 
    FileCopyPeer *src_peer=0;
    if(!nlist)
    {
       FileCopyPeerDirList *dir_list=new FileCopyPeerDirList(session->Clone(),args.borrow());
-      dir_list->UseColor(use_color);
+      dir_list->UseColor(ResMgr::QueryTriBool("color:use-color",0,(!output && isatty(1))));
       src_peer=dir_list;
    }
    else
@@ -1415,6 +1401,7 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
       OPT_USER
    };
    static struct option cls_options[] = {
+      {"all",no_argument,0,'a'},
       {"basename",no_argument,0,'B'},
       {"directory",no_argument,0,'d'},
       {"human-readable",no_argument,0,'h'},
@@ -1444,7 +1431,7 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
    const char *time_style=ResMgr::Query("cmd:time-style",0);
 
    int opt;
-   while((opt=a->getopt_long(":1BdFhiklqsDISrt", cls_options))!=EOF)
+   while((opt=a->getopt_long(":a1BdFhiklqsDISrt", cls_options))!=EOF)
    {
       switch(opt) {
       case OPT_SORT:
@@ -1483,6 +1470,9 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 	 output_block_size = atoi(optarg);
 	 if(output_block_size == 0)
 	    return _("invalid block size");
+	 break;
+      case('a'):
+	 showdots = true;
 	 break;
       case('1'):
 	 single_column = true;
@@ -1541,6 +1531,8 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 
    time_fmt.set(0);
    if(time_style && time_style[0]) {
+      if (mode & DATE)
+	 need_exact_time=true;
       if(time_style[0]=='+')
 	 time_fmt.set(time_style+1);
       else if(!strcmp(time_style,"full-iso"))
@@ -1552,20 +1544,6 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
 	 time_fmt.set("%Y-%m-%d \n%m-%d %H:%M");
       else
 	 time_fmt.set(time_style);
-      need_exact_time=false;
-      if(time_fmt) {
-	 static const char exact_fmts[][3]={"%H","%M","%S","%N",""};
-	 int sep=strcspn(time_fmt,"\n|");
-	 for(int i=0; exact_fmts[i][0]; i++) {
-	    const char *f=strstr(time_fmt,exact_fmts[i]);
-	    if(!f)
-	       continue;
-	    if(i>1 || sep>f-time_fmt) {
-	       need_exact_time=true;
-	       break;
-	    }
-	 }
-      }
    }
 
    // remove parsed options.
@@ -1933,7 +1911,7 @@ CMD(jobs)
    const char *arg=args->getnext();
    xstring s("");
    if(!arg) {
-      parent->FormatJobs(s,v);
+      parent->top->FormatJobs(s,v);
    } else {
       for(; arg; arg=args->getnext()) {
 	 if(!isdigit((unsigned char)*arg)) {
@@ -2600,7 +2578,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"),VERSION,2011);
+      _("LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"),VERSION,2013);
    printf("\n");
    printf(
       _("LFTP is free software: you can redistribute it and/or modify\n"

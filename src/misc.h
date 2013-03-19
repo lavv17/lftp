@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef MISC_H
 #define MISC_H
@@ -114,19 +111,24 @@ void base64_encode (const char *s, char *store, int length);
 
 bool temporary_network_error(int e);
 
-CDECL const char *get_lftp_home();
+CDECL const char *get_home();
+CDECL const char *get_lftp_config_dir();
+CDECL const char *get_lftp_data_dir();
+CDECL const char *get_lftp_cache_dir();
 
 const char *memrchr(const char *buf,char c,size_t len);
 static inline char *memrchr(char *buf,char c,size_t len) {
    return const_cast<char*>(memrchr(const_cast<const char*>(buf),c,len));
 }
 
-const char *shell_encode(const char *);
+const xstring& shell_encode(const char *);
 void remove_tags(char *buf);
 void rtrim(char *s);
 
 void random_init();
 double random01();
+
+const char *get_nodename();
 
 #define ListAdd(type,chain,this,next)  \
 do {				       \

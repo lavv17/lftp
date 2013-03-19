@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2009 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <stdio.h>
@@ -28,8 +25,14 @@
 BeNode::BeNode(long long n)
    : type(BE_INT),num(n)
 {}
+BeNode::BeNode(const xstring& s)
+   : type(BE_STR),str(s.get(),s.length())
+{}
 BeNode::BeNode(const char *s,int len)
    : type(BE_STR),str(s,len)
+{}
+BeNode::BeNode(const char *s)
+   : type(BE_STR),str(s)
 {}
 BeNode::BeNode(xarray_p<BeNode> *a)
    : type(BE_LIST)
@@ -44,8 +47,10 @@ BeNode::BeNode(xmap_p<BeNode> *m)
 
 BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
 {
-   if(s_len<2)
+   if(s_len<2) {
+      *rest=0;
       return 0;
+   }
    switch(*s)
    {
    case 'i':
@@ -58,23 +63,30 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
 	 s++;
 	 s_len--;
       }
-      if(s_len<2)
+      if(s_len<2) {
+	 *rest=0;
 	 return 0;
+      }
       if(c_isdigit(*s))
       {
-	 if(*s=='0' && s[1]!='e')
+	 if(*s=='0' && s[1]!='e') {
+	    *rest=s_len;
 	    return 0;
+	 }
 	 long long n=*s++-'0';
 	 s_len--;
 	 while(s_len>1 && c_isdigit(*s)) {
 	    n=n*10+*s++-'0';
 	    s_len--;
 	 }
-	 if(s_len<1 || *s!='e')
+	 if(s_len<1 || *s!='e') {
+	    *rest=s_len;
 	    return 0;
+	 }
 	 *rest=s_len-1;
 	 return new BeNode(neg?-n:n);
       }
+      *rest=s_len;
       return 0;
    }
    case 'l':
@@ -86,14 +98,18 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
       {
 	 int rest1;
 	 BeNode *n=Parse(s,s_len,&rest1);
-	 if(!n)
+	 if(!n) {
+	    *rest=rest1;
 	    return 0;
+	 }
 	 a.append(n);
 	 s+=(s_len-rest1);
 	 s_len=rest1;
       }
-      if(s_len<1 || *s!='e')
+      if(s_len<1 || *s!='e') {
+	 *rest=s_len;
 	 return 0;
+      }
       *rest=s_len-1;
       return new BeNode(&a);
    }
@@ -107,20 +123,30 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
       {
 	 int rest1;
 	 BeNode *n=Parse(s,s_len,&rest1);
-	 if(!n || n->type!=BE_STR)
+	 if(!n) {
+	    *rest=rest1;
 	    return 0;
+	 }
+	 if(n->type!=BE_STR) {
+	    *rest=s_len;
+	    return 0;
+	 }
 	 s+=(s_len-rest1);
 	 s_len=rest1;
 	 BeNode *v=Parse(s,s_len,&rest1);
-	 if(!v)
+	 if(!v) {
+	    *rest=rest1;
 	    return 0;
+	 }
 	 map.add(n->str,v);
 	 delete n;
 	 s+=(s_len-rest1);
 	 s_len=rest1;
       }
-      if(s_len<1 || *s!='e')
+      if(s_len<1 || *s!='e') {
+	 *rest=s_len;
 	 return 0;
+      }
       s++;
       s_len--;
       *rest=s_len;
@@ -134,20 +160,27 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
 	 int n=*s++-'0';
 	 s_len--;
 	 while(s_len>0 && c_isdigit(*s)) {
-	    if(n>=s_len)
+	    if(n>=s_len) {
+	       *rest=0;
 	       return 0;
+	    }
 	    n=n*10+*s++-'0';
 	    s_len--;
 	 }
-	 if(s_len<1 || *s!=':')
+	 if(s_len<1 || *s!=':') {
+	    *rest=s_len;
 	    return 0;
+	 }
 	 s++;
 	 s_len--;
-	 if(s_len<n)
+	 if(s_len<n) {
+	    *rest=0;
 	    return 0;
+	 }
 	 *rest=s_len-n;
 	 return new BeNode(s,n);
       }
+      *rest=s_len;
       return 0;
    }
 }
@@ -191,7 +224,7 @@ void BeNode::Format(xstring &buf,int level)
       {
 	 for(i=0; i<level+1; i++)
 	    buf.append('\t');
-	 buf.appendf("KEY=%s:\n",dict.each_key()->get());
+	 buf.appendf("KEY=%s:\n",dict.each_key().get());
 	 e->Format(buf,level+2);
       }
       break;
@@ -206,6 +239,69 @@ const char *BeNode::Format()
    return buf;
 }
 
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
+void BeNode::Format1(xstring &buf)
+{
+   int i;
+   switch(type)
+   {
+   case BE_STR:
+      buf.append('"');
+      (str_lc?str_lc:str).dump_to(buf);
+      buf.append('"');
+      break;
+   case BE_INT:
+      buf.appendf("%lld",num);
+      break;
+   case BE_LIST:
+      buf.append('[');
+      for(i=0; i<list.count(); i++) {
+	 if(i>0)
+	    buf.append(", ");
+	 list[i]->Format1(buf);
+      }
+      buf.append(']');
+      break;
+   case BE_DICT:
+      buf.append('{');
+      i=0;
+      for(BeNode *e=dict.each_begin(); e; e=dict.each_next(), i++)
+      {
+	 if(i>0)
+	    buf.append(", ");
+	 const xstring& key=dict.each_key();
+	 buf.appendf("\"%s\":",key.get());
+	 if(e->type==BE_STR) {
+	    char tmp[40];
+	    if(e->str.length()==4 && (key.eq("ip",2) || key.eq("ipv4",4) || key.eq("yourip",6))) {
+	       inet_ntop(AF_INET,e->str.get(),tmp,sizeof(tmp));
+	       buf.append(tmp);
+	       continue;
+	    }
+#if INET6
+	    else if(e->str.length()==16 && (key.eq("ip",2) || key.eq("ipv6",4) || key.eq("yourip",6))) {
+	       inet_ntop(AF_INET6,e->str.get(),tmp,sizeof(tmp));
+	       buf.append(tmp);
+	       continue;
+	    }
+#endif//INET6
+	 }
+	 e->Format1(buf);
+      }
+      buf.append('}');
+      break;
+   }
+}
+const char *BeNode::Format1()
+{
+   static xstring buf;
+   buf.set("");
+   Format1(buf);
+   return buf;
+}
+
 const char *BeNode::TypeName(be_type_t t)
 {
    static const char *table[]={
@@ -215,4 +311,94 @@ const char *BeNode::TypeName(be_type_t t)
       "DICT"
    };
    return table[t];
+}
+
+int BeNode::ComputeLength()
+{
+   int len=0;
+   int i;
+   switch(type)
+   {
+   case BE_STR:
+      i=str.length();
+      len+=1+i; // ':' + string
+      while(i>=10) {
+	 len++;
+	 i/=10;
+      }
+      len++; // last digit
+      break;
+   case BE_INT:
+      len+=1+xstring::format("%lld",num).length()+1; // 'i' + number + 'e'
+      break;
+   case BE_LIST:
+      len++; // 'l'
+      for(i=0; i<list.count(); i++)
+	 len+=list[i]->ComputeLength();
+      len++; // 'e'
+      break;
+   case BE_DICT:
+      len++; // 'd'
+      for(BeNode *e=dict.each_begin(); e; e=dict.each_next())
+      {
+	 const xstring &key=dict.each_key();
+	 i=key.length();
+	 len+=1+i; // ':' + string
+	 while(i>=10) {
+	    len++;
+	    i/=10;
+	 }
+	 len++; // last digit
+	 len+=e->ComputeLength();
+      }
+      len++; // 'e'
+      break;
+   }
+   return len;
+}
+
+void BeNode::Pack(const SMTaskRef<IOBuffer> &buf)
+{
+   xstring &tmp=xstring::get_tmp("");
+   Pack(tmp);
+   buf->Put(tmp);
+}
+void BeNode::Pack(xstring &buf)
+{
+   int i;
+   switch(type)
+   {
+   case BE_STR:
+      i=str.length();
+      buf.appendf("%d:",i);
+      buf.append(str);
+      break;
+   case BE_INT:
+      buf.appendf("i%llde",num);
+      break;
+   case BE_LIST:
+      buf.append('l');
+      for(i=0; i<list.count(); i++)
+	 list[i]->Pack(buf);
+      buf.append('e');
+      break;
+   case BE_DICT:
+      buf.append('d');
+      for(BeNode *e=dict.each_begin(); e; e=dict.each_next())
+      {
+	 const xstring &key=dict.each_key();
+	 i=key.length();
+	 buf.appendf("%d:",i);
+	 buf.append(key);
+	 e->Pack(buf);
+      }
+      buf.append('e');
+      break;
+   }
+}
+const xstring& BeNode::Pack()
+{
+   xstring& tmp=xstring::get_tmp("");
+   Pack(tmp);
+   return tmp;
 }

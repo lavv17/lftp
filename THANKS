@@ -10,6 +10,7 @@ Artur Frysiak <wiget@t17.ds.pwr.wroc.pl>
 Bozo Dragojevic <bozzo@hermes.si> for testing with an ftp proxy, patch.
 Brandon Hume <hume@Den.BOFH.Halifax.NS.Ca>
 Chmouel Boudjnah <chmouel@mandrakesoft.com>
+Christoph Junghans <ottxor@gentoo.org>
 Christoph Lameter <clameter@debian.org> for initial man pages
 Claus K. Larsen <ckl@bankdata.dk>
 Damon Harper <gnu@usrbin.ca>
@@ -58,7 +59,9 @@ Roger Pixley <skreech2@gmail.com>
 Ryan Thomas <ryan@coraid.com>
 Sam Steingold <sds@usa.net>
 Serge Bezzubov <gray@yars.free.net> for extensive testing.
+Simon Ruderich <simon@ruderich.org>
 Slama YA <slamaya@netscape.net>
+Solar Designer <solar@openwall.com>
 Thomas Glanzmann <sithglan@stud.uni-erlangen.de>
 Tillmann Steinbrecher <tillmann.steinbrecher@anandtech.com>
 Timur Sufiev <tsufiev@jet.msk.su>

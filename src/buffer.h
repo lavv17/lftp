@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1998-2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef BUFFER_H
 #define BUFFER_H
@@ -80,9 +77,11 @@ public:
    void Skip(int len); // Get(); consume; Skip()
    void UnSkip(int len); // this only works if there were no Put's.
    void Append(const char *buf,int size);
+   void Append(const xstring& s) { Append(s.get(),s.length()); }
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
    void Put(const xstring &s) { Put(s.get(),s.length()); }
+   void Put(char c) { Put(&c,1); }
    void Format(const char *f,...) PRINTF_LIKE(2,3);
    void vFormat(const char *f, va_list v);
    void PutEOF() { eof=true; }
@@ -196,6 +195,7 @@ protected:
    virtual int PutEOF_LL() { return 0; }
 
    Time event_time; // used to detect timeouts
+   int max_buf;
 
 public:
    IOBuffer(dir_t m);
@@ -220,8 +220,11 @@ public:
    void Put(const char *,int);
    void Put(const char *buf);
    void Put(const xstring &s) { Put(s.get(),s.length()); }
+   void Put(char c) { Put(&c,1); }
    // anchor to PutEOF_LL
    void PutEOF() { DirectedBuffer::PutEOF(); PutEOF_LL(); }
+
+   void SetMaxBuffered(int m) { max_buf=m; }
 };
 
 class IOBufferStacked : public IOBuffer
@@ -230,6 +233,9 @@ class IOBufferStacked : public IOBuffer
 
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
+
+   void SuspendInternal();
+   void ResumeInternal();
 
 public:
    IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()), down(b) {}
@@ -270,11 +276,12 @@ class IOBufferFileAccess : public IOBuffer
 
    int Get_LL(int size);
 
+   void SuspendInternal();
+   void ResumeInternal();
+
 public:
    IOBufferFileAccess(const FileAccessRef& i) : IOBuffer(GET), session(i) {}
 
-   void SuspendInternal();
-   void ResumeInternal();
    const char *Status();
 };
 

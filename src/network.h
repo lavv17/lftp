@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2008-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef NETWORK_H
 #define NETWORK_H
@@ -33,6 +30,32 @@
 #endif
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+class sockaddr_compact : public xstring
+{
+   void operator=(const sockaddr_compact&);   // disable assignment
+
+public:
+   int family() const {
+      if(length()==16 || length()==18)
+	 return AF_INET6;
+      if(length()==4 || length()==6)
+	 return AF_INET;
+      return 0;
+   }
+   int port() const {
+      if(length()==18 || length()==6)
+	 return ((buf[length()-2]&255)<<8)|(buf[length()-1]&255);
+      return 0;
+   }
+   static sockaddr_compact& get_tmp() {
+      return *(sockaddr_compact*)&xstring::get_tmp("",0);
+   }
+   static sockaddr_compact& cast(xstring& s) { return *(sockaddr_compact*)&s; }
+   static const sockaddr_compact& cast(const xstring& s) { return *(const sockaddr_compact*)&s; }
+   sockaddr_compact() {}
+   sockaddr_compact(const sockaddr_compact& c) : xstring(c.copy()) {}
+};
 
 union sockaddr_u
 {
@@ -57,14 +80,24 @@ union sockaddr_u
    const char *address() const;
    int port() const;
    int bind_to(int s) const { return bind(s,&sa,addr_len()); }
-   sockaddr_u();
+   void clear() { memset(this,0,sizeof(*this)); }
+   sockaddr_u() { clear(); }
+   sockaddr_u(const sockaddr_compact& c) { clear(); set_compact(c); }
    bool is_reserved() const;
    bool is_multicast() const;
    bool is_loopback() const;
    bool is_private() const;
-   const xstring& to_string() const;
+   bool is_compatible(const sockaddr_u&) const;
+   const xstring& to_xstring() const;
+   const char *to_string() const { return to_xstring(); }
    operator const char *() const { return to_string(); }
    bool set_defaults(int af,const char *hostname,int port);
+   void set_port(int port);
+   int family() const { return sa.sa_family; }
+   bool set_compact(const char *c,size_t len);
+   bool set_compact(const xstring& c) { return set_compact(c,c.length()); }
+   const sockaddr_compact& compact() const;
+   sockaddr_compact& compact_addr() const;
 };
 
 class Networker

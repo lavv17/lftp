@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <errno.h>
@@ -119,14 +116,14 @@ int LocalAccess::Do()
 	 if(mode==LIST)
 	 {
 	    if(file && file[0])
-	       cmd=xstring::cat("ls ",shell_encode(file),NULL);
+	       cmd=xstring::cat("ls ",shell_encode(file).get(),NULL);
 	    else
 	       cmd="ls";
 	 }
 	 else if(mode==LONG_LIST)
 	 {
 	    if(file && file[0])
-	       cmd=xstring::cat("ls -l",shell_encode(file),NULL);
+	       cmd=xstring::cat("ls -l",shell_encode(file).get(),NULL);
 	    else
 	       cmd="ls -la";
 	 }

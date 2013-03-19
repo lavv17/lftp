@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
@@ -1008,16 +1005,12 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
    // sanity check
    if(url)
    {
-      const char *url_path=url+path_index;
-      if(url_path[0]=='/' && url_path[1]=='~')
-	 url_path++;
-      url_path=url::decode(url_path);
-      int up_len=strlen(url_path);
-      if(up_len>1 && url_path[up_len-1]=='/')
-	 up_len--;
-      if(strncmp(url_path,path,up_len))
+      ParsedURL u(url);
+      if(u.path.length()>1)
+	 u.path.chomp('/');
+      if(!u.path.eq(path))
       {
-	 LogError(0,"(BUG?) URL mismatch %s vs %s, dropping URL\n",url.get(),path.get());
+	 LogError(0,"URL mismatch %s [%s] vs %s, dropping URL\n",url.get(),u.path.get(),path.get());
 	 url.set(0);
       }
    }

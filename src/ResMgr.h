@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef RESMGR_H
 #define RESMGR_H
@@ -45,6 +42,7 @@ struct ResType
 
    ResValue Query(const char *closure) const;
    bool QueryBool(const char *closure) const;
+   bool QueryTriBool(const char *closure,bool a) const;
 };
 
 class ResMgr
@@ -80,6 +78,7 @@ public:
    static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
    static bool QueryBool(const char *name,const char *closure);
+   static bool QueryTriBool(const char *name,const char *closure,bool a);
 
    enum CmpRes {
       EXACT_PREFIX=0x00,SUBSTR_PREFIX=0x01,
@@ -144,24 +143,25 @@ public:
       {
 	 s=s_new;
       }
-   bool to_bool()
+   bool to_bool() const
       {
 	 return ResMgr::str2bool(s);
       }
-   unsigned long long to_unumber(unsigned long long max);
-   long long to_number(long long min,long long max);
-   operator int();
-   operator long();
-   operator unsigned();
-   operator unsigned long();
-   operator double() { return atof(s); }
-   operator float()  { return atof(s); }
-   operator const char*()
+   bool to_tri_bool(bool a) const;
+   unsigned long long to_unumber(unsigned long long max) const;
+   long long to_number(long long min,long long max) const;
+   operator int() const;
+   operator long() const;
+   operator unsigned() const;
+   operator unsigned long() const;
+   operator double() const { return atof(s); }
+   operator float() const  { return atof(s); }
+   operator const char*() const
       {
 	 return s;
       }
-   bool is_nil() { return s==0; }
-   void ToNumberPair(int &a,int &b);
+   bool is_nil() const { return s==0; }
+   void ToNumberPair(int &a,int &b) const;
 };
 
 class TimeIntervalR : public TimeInterval
@@ -179,21 +179,37 @@ public:
    const char *ErrorText() const { return error_text; }
 };
 
-class Range
+class NumberPair
 {
-   long long start,end;
-   bool no_start,no_end;
+protected:
+   long long n1,n2;
+   bool no_n1,no_n2;
    const char *error_text;
+   char sep;
 
    static const char *scale(long long *value,char suf);
+   long long parse1(const char *s);
+
+   void init(char sep,const char *s);
 
 public:
-   Range(const char *s);
-   bool Match(long long n) const { return (no_start || n>=start) && (no_end || n<=end); }
-   bool IsFull() { return no_start && no_end; }
-   long long Random();
+   NumberPair(char sep) { init(sep,0); }
+   NumberPair(char sep,const char *s) { init(sep,s); }
+   void Set(const char *s);
    bool Error() { return error_text!=0; };
    const char *ErrorText() { return error_text; }
+   long long N1() { return n1; }
+   long long N2() { return n2; }
+   bool HasN1() { return !no_n1; }
+   bool HasN2() { return !no_n2; }
+};
+class Range : public NumberPair
+{
+public:
+   Range(const char *s);
+   bool Match(long long n) const { return (no_n1 || n>=n1) && (no_n2 || n<=n2); }
+   bool IsFull() { return no_n1 && no_n2; }
+   long long Random();
 };
 
 class ResClient
@@ -206,6 +222,7 @@ protected:
    virtual void Reconfig(const char *) {}
    ResValue Query(const char *name,const char *closure=0) const;
    bool QueryBool(const char *name,const char *closure=0) const;
+   bool QueryTriBool(const char *name,const char *closure,bool a) const;
    ResClient();
    virtual ~ResClient();
 public:

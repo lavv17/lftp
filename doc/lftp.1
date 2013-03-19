@@ -5,7 +5,7 @@
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
-.\" the Free Software Foundation; either version 3 of the License , or
+.\" the Free Software Foundation; either version 3 of the License, or
 .\" (at your option) any later version.
 .\"
 .\" This program is distributed in the hope that it will be useful,
@@ -14,10 +14,9 @@
 .\" GNU General Public License for more details.
 .\"
 .\" You should have received a copy of the GNU General Public License
-.\" along with this program; see the file COPYING.  If not, write to
-.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .\"
-.\" $Id$
+.\" $Id: lftp.1,v 1.149 2011/06/28 09:36:24 lav Exp $
 .\"
 .\"-------
 .\" Sp  space down the interparagraph distance
@@ -42,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 Jun 2011"
+.TH lftp 1 "26 Feb 2013"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -59,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.3.0.
+This man page documents lftp version 4.4.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -100,7 +99,7 @@ If you exit \fBlftp\fP when some jobs are not finished yet, \fBlftp\fP will move
 itself to nohup mode in background. The same happens when you have a
 real modem hangup or when you close an xterm.
 .PP
-\fBlftp\fP has builtin mirror which can download or update a whole directory
+\fBlftp\fP has built-in mirror which can download or update a whole directory
 tree. There is also reverse mirror (mirror \-R) which uploads or
 updates a directory tree on server. Mirror can also synchronize directories
 between two remote servers, using FXP if available.
@@ -161,6 +160,9 @@ Attach the terminal to specified backgrounded lftp process.
 .RI " [" subcommand ]
 .PP
 The bookmark command controls bookmarks.
+
+Site names can be used in the \fIopen\fP command directly as-is or in
+any command that accepts input URLs using the \fIbm:site/path\fP format.
 .Sp
 .in +0.5i
 .TS
@@ -281,7 +283,7 @@ lftp would fallback to plain copy (via client) if FXP transfer cannot be
 initiated or ftp:use-fxp is false.
 
 .BR get " [" \-E ]
-.RB [ \-a "] [" \-c "] [" \-O
+.RB [ \-a "] [" \-c "] [" \-e "] [" \-O
 .RB "\fIbase\fP] \fIrfile\fP [" \-o " \fIlfile\fP] ..."
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
@@ -295,6 +297,7 @@ instances of \fIrfile\fP (and \-o \fIlfile\fP). Does not expand wildcards, use
 l	lx	.
 \-c	continue, reget
 \-E	delete source files after successful transfer
+\-e	delete target file before the transfer
 \-a	use ascii mode (binary is the default)
 \-O <base>	T{
 specifies base directory or URL where files should be placed
@@ -356,9 +359,10 @@ Print help for \fIcmd\fP or if no \fIcmd\fP was specified print a list of
 available commands.
 
 .B jobs
-.RB [ \-v ]
+.RB [ \-v "] [" \fIjob_no...\fP ]
 .PP
 List running jobs. \-v means verbose, several \-v can be specified.
+If \fIjob_no\fP is specified, only list a job with that number.
 
 .B kill
 all|\fIjob_no\fP
@@ -569,9 +573,10 @@ Note that symbolic links are not created when uploading to remote server,
 because ftp protocol cannot do it. To upload files the links refer
 to, use `mirror \-RL' command (treat symbolic links as files).
 .PP
-For option \-\-newer\-than you can either specify a file or time specification
-like that used by \fBat\fR(1) command, e.g. `now-7days' or `week ago'. If you
-specify a file, then modification time of that file will be used.
+For options \-\-newer\-than and \-\-older\-than you can either specify a
+file or time specification like that used by \fBat\fR(1) command, e.g.
+`now-7days' or `week ago'. If you specify a file, then modification time of
+that file will be used.
 .PP
 Verbosity level can be selected using \-\-verbose=level option or by several
 \-v options, e.g. \-vvv. Levels are:
@@ -923,7 +928,8 @@ continue the process with shell's fg or bg commands.
 .BR torrent " [" OPTS "] " \fItorrent-files...\fP
 .PP
 Start BitTorrent process for the given \fItorrent-files\fP, which can be a
-local file or URL. Local wildcards are expanded. Existing files are first
+local file, URL, magnet link or plain \fIinfo_hash\fP written in hex.
+Local wildcards are expanded. Existing files are first
 validated unless \fI\-\-force\-valid\fP option is given. Missing pieces are
 downloaded. Files are stored in specified \fIdirectory\fP or current
 working directory by default. Seeding continues until ratio reachs
@@ -940,6 +946,10 @@ specifies base directory where files should be placed
 T}
 \-\-force\-valid	T{
 skip file validation (if you are sure they are ok).
+T}
+\-\-dht\-bootstrap=<node>	T{
+bootstrap DHT by sending a query to specified \fInode\fP. E.g. dht.transmissionbt.com:6881.
+This option should be used just once to fill local node cache.
 T}
 .TE
 .P
@@ -998,8 +1008,41 @@ has the following settable variables (you can also use
 save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
 Off by default.
 .TP
+.BR cache:cache-empty-listings \ (boolean)
+When false, empty listings are not cached.
+.TP
+.BR cache:enable \ (boolean)
+When false, cache is disabled.
+.TP
+.BR cache:expire " (time interval)"
+Positive cache entries expire in this time interval.
+.TP
+.BR cache:expire-negative " (time interval)"
+Negative cache entries expire in this time interval.
+.TP
+.BR cache:size " (number)"
+Maximum cache size. When exceeded, oldest cache entries will be removed from cache.
+.TP
 .BR cmd:at-exit \ (string)
-the commands in string are executed before lftp exits.
+the commands in string are executed before lftp exits or moves to background.
+.TP
+.BR cmd:at-exit-bg \ (string)
+the commands in string are executed before backgrounded lftp exits.
+.TP
+.BR cmd:at-exit-fg \ (string)
+the commands in string are executed before foreground lftp exits.
+.TP
+.BR cmd:at-background \ (string)
+the commands in string are executed before lftp moves to background.
+.TP
+.BR cmd:at-terminate \ (string)
+the commands in string are executed before lftp terminates (either backgrounded or foreground).
+.TP
+.BR cmd:at-finish \ (string)
+the commands in string are executed once when all jobs are done.
+.TP
+.BR cmd:at-queue-finish \ (string)
+the commands in string are executed once when all jobs in a queue are done.
 .TP
 .BR cmd:csh-history \ (boolean)
 enables csh-like history expansion.
@@ -1011,9 +1054,9 @@ with just host name without protocol. Default is `ftp'.
 .BR cmd:fail-exit \ (boolean)
 if true, exit when an unconditional (without || and && at begin) command fails.
 .TP
-.BR cmd:interactive \ (boolean)
+.BR cmd:interactive \ (tri-boolean)
 when true, lftp acts interactively, handles terminal signals and outputs
-some extra messages. Default depends on stdin being a terminal.
+some extra messages. Default is auto and depends on stdin being a terminal.
 .TP
 .BR cmd:long-running \ (seconds)
 time of command execution, which is
@@ -1103,6 +1146,13 @@ makes it inconsistent.
 .BR cmd:queue-parallel \ (number)
 Number of jobs run in parallel in a queue.
 .TP
+.BR cmd:remote-completion \ (boolean)
+a boolean to control whether or not lftp uses remote completion. When true,
+\fBTab\fP key guesses if the word being completed should be a remote file
+name. \fBMeta-Tab\fP does remote completion always. So you can force remote
+completion with \fBMeta-Tab\fP when \fBcmd:remote-completion\fP is false or
+when the guess is wrong.
+.TP
 .BR cmd:save-cwd-history \ (boolean)
 when true, lftp saves last CWD of each site to \fI~/.lftp/cwd_history\fR,
 allowing to do ``cd -'' after lftp restart. Default is true.
@@ -1110,6 +1160,9 @@ allowing to do ``cd -'' after lftp restart. Default is true.
 .BR cmd:save-rl-history \ (boolean)
 when true, lftp saves readline history to \fI~/.lftp/rl_history\fR on exit.
 Default is true.
+.TP
+.BR cmd:show-status \ (booleam)
+when false, lftp does not show status line on terminal. Default is true.
 .TP
 .BR cmd:set-term-status \ (boolean)
 when true, lftp updates terminal status if supported (e.g. xterm). The closure
@@ -1145,24 +1198,6 @@ This setting is the default value for cls \-\-time\-style option.
 .BR cmd:trace \ (boolean)
 when true, lftp prints the commands it executes (like sh \-x).
 .TP
-.BR cache:cache-empty-listings \ (boolean)
-When false, empty listings are not cached.
-.TP
-.BR cache:enable \ (boolean)
-When false, cache is disabled.
-.TP
-.BR cache:expire " (time interval)"
-Positive cache entries expire in this time interval.
-.TP
-.BR cache:expire-negative " (time interval)"
-Negative cache entries expire in this time interval.
-.TP
-.BR cache:size " (number)"
-Maximum cache size. When exceeded, oldest cache entries will be removed from cache.
-.TP
-.BR cmd:remote-completion \ (boolean)
-a boolean to control whether or not lftp uses remote completion.
-.TP
 .BR cmd:verify-host \ (boolean)
 if true, lftp resolves host name immediately in `open' command.
 It is also possible to skip the check for a single `open' command if `&' is given,
@@ -1182,8 +1217,9 @@ cd directory &
 When false, `cd' to a directory known from cache as existent will succeed immediately.
 Otherwise the verification will depend on cmd:verify-path setting.
 .TP
-.BR color:use-color " (boolean)"
+.BR color:use-color " (tri-boolean)"
 when true, cls command and completion output colored file listings according to color:dir-colors setting.
+When set to auto, colors are used when output is a terminal.
 .TP
 .BR color:dir-colors " (string)"
 file listing color description. By default the value of LS_COLORS environment variable is used. See dircolors(1).
@@ -1497,6 +1533,11 @@ as specified in RFC959. When false, it does not follow TELNET protocol and
 thus does not double 255 (0xFF, 0377) character and does not prefix ABOR and
 STAT commands with TELNET IP+SYNCH signal.
 .TP
+.BR ftp:use-tvfs " (tri-boolean)"
+When set to auto, usage of TVFS feature depends on FEAT server reply. Otherwise
+this setting tells whether use it or not. In short, if a server supports TVFS
+feature then it uses unix-like paths.
+.TP
 .BR ftp:use-quit " (boolean)"
 if true, lftp sends QUIT before disconnecting from ftp server. Default is true.
 .TP
@@ -1536,6 +1577,10 @@ Default value is taken from environment
 variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
 environment variable \fBhttp_proxy\fP.  If your ftp proxy
 requires authentication, specify user name and password in the URL.
+.TP
+.BR hftp:use-allprop \ (boolean)
+if true, lftp will send `<allprop/>' request body in `PROPFIND' requests,
+otherwise it will send an empty request body.
 .TP
 .BR hftp:use-authorization \ (boolean)
 if set to off, lftp will send password as part of URL to the proxy. This
@@ -1599,6 +1644,10 @@ Referer header.
 .TP
 .BR http:set-cookies " (boolean)"
 if true, lftp modifies http:cookie variables when Set-Cookie header is received.
+.TP
+.BR http:use-allprop \ (boolean)
+if true, lftp will send `<allprop/>' request body in `PROPFIND' requests,
+otherwise it will send an empty request body.
 .TP
 .BR http:use-mkcol \ (boolean)
 if set to off, lftp will try to use `PUT' instead of `MKCOL' to create
@@ -1671,6 +1720,7 @@ disconnect from server after this idle time. Default is 3 minutes.
 .BR net:limit-rate " (bytes per second)"
 limit transfer rate on data connection. 0 means unlimited. You can specify
 two numbers separated by colon to limit download and upload rate separately.
+Suffixes are supported, e.g. 100K means 102400.
 .TP
 .BR net:limit-max \ (bytes)
 limit accumulating of unused limit-rate. 0 means twice of limit-rate.
@@ -1795,6 +1845,9 @@ use specified file as your private key.
 .BR ssl:cert-file " (path to file)"
 use specified file as your certificate.
 .TP
+.BR ssl:use-sni \ (boolean)
+when true, use Server Name Indication (SNI) TLS extension.
+.TP
 .BR ssl:verify-certificate \ (boolean)
 if set to yes, then verify server's certificate to be signed by a known
 Certificate Authority and not be on Certificate Revocation List.
@@ -1813,6 +1866,9 @@ maintain this limit.
 port range to accept connections on. A single port is selected when a torrent
 starts.
 .TP
+.BR torrent:retracker \ (URL)
+explicit retracker URL, e.g. `http://retracker.local/announce'.
+.TP
 .BR torrent:seed-max-time " (time interval)"
 maximum seed time. After this period of time a complete torrent shuts down
 independently of ratio. It can be set to infinity if needed.
@@ -1823,6 +1879,9 @@ new peers are actively searched for.
 .TP
 .BR torrent:stop-on-ratio " (real number)"
 torrent stops when it's complete and ratio reached this number.
+.TP
+.BR torrent:use-dht \ (boolean)
+when true, DHT is used.
 .TP
 .BR xfer:clobber \ (boolean)
 if this setting is off, get commands will not overwrite existing
@@ -1845,7 +1904,7 @@ show terse ETA (only high order parts). Default is true.
 .BR xfer:log \ (boolean)
 when true, lftp logs transfers to a file from xfer:log-file setting.
 .TP
-.BR xfer:log-file \ (boolean)
+.BR xfer:log-file \ (path to file)
 the file to log transfers to. Default is \fI~/.lftp/transfer_log\fR.
 .TP
 .BR xfer:make-backup \ (boolean)
@@ -1890,6 +1949,8 @@ infinite interval. E.g. `sleep forever' or `set dns:cache-expire never'.
 Boolean settings can be one of (true, on, yes, 1, +) for a True value
 or one of (false, off, no, 0, -) for a False value.
 .PP
+Tri-boolean settings have either a boolean value or `auto'.
+.PP
 Integer settings can have a suffix: k - kibi, m - mebi, g - gigi, etc.
 They can also have a prefix: 0 - octal, 0x - hexadecimal.
 
@@ -1919,23 +1980,28 @@ several commands in one packet, and so cannot some broken routers.
 .SH OPTIONS
 .TP
 .B \-d
-Switch on debugging mode
+Switch on debugging mode.
 .TP
 .BI \-e " commands"
 Execute given commands and don't exit.
 .TP
 .BI \-p " port"
-Use the given port to connect
+Use the given port to connect.
 .TP
 .BI \-u " user\fR[\fP\fB,\fPpass\fR]\fP"
-Use the given username and password to connect
+Use the given username and password to connect. Remember to quote the password properly in the shell.
+Also note that it is not secure to specify the password on command line, use \fI~/.netrc\fP file.
+Alternatively you can use ssh-based protocols with authorized keys, so you don't have to enter a password.
+.PP
 .TP
 .BI \-f " script_file"
-Execute commands in the file and exit
+Execute commands in the file and exit.
+This option must be used alone without other arguments.
 .TP
 .BI \-c " commands"
 Execute the given commands and exit. Commands can be separated with
-a semicolon, `&&' or `||'.
+a semicolon, `&&' or `||'. Remember to quote the commands argument properly in the shell.
+This option must be used alone without other arguments.
 
 .SH ENVIRONMENT VARIABLES
 The following environment variables are processed by \fBlftp\fR:
@@ -1960,6 +2026,11 @@ Used to locate the directory that stores user-specific configuration files.  If
 unset, \fI~/.lftp\fR will be used.
 .IP "\fBLS_COLORS\fP"
 used to set initial color:dir-colors variable.
+.IP "\fBXDG_CONFIG_DIR\fP, \fBXDG_DATA_DIR\fP, \fBXDG_CACHE_DIR\fP"
+Used to locate the directories for user-specific files when \fI~/.lftp\fR
+(or \fB$LFTP_HOME\fP directory) does not exist. Defaults are
+\fI~/.config\fR, \fI~/.local/share\fR and \fI~/.cache\fR respectively. The
+suffix \fI/lftp\fR is appended to make the full path to the directories.
 
 .SH FILES
 .TP
@@ -1990,6 +2061,10 @@ The file is used to store last working directories for each site visited.
 .I "~/.lftp/bg/"
 The directory is used to store named sockets for backgrounded lftp processes.
 .TP
+.I "~/.lftp/DHT/""
+The directory is used to store DHT id and nodes cache for IPv4 and IPv6.
+File name suffix is the host name.
+.TP
 .I "~/.netrc"
 The file is consulted to get default login and password to ftp server.
 Passwords are also searched here if an URL with user name but with no
@@ -2010,7 +2085,16 @@ RFC2518 (WebDAV),
 RFC2616 (http/1.1),
 RFC2617 (http/1.1 authentication),
 RFC2640 (ftp i18n),
-RFC4217 (ftp over ssl).
+RFC4217 (ftp over ssl),
+BEP0003 (BitTorrent Protocol),
+BEP0005 (DHT Protocol),
+BEP0006 (Fast Extension),
+BEP0007 (IPv6 Tracker Extension),
+BEP0009 (Extension for Peers to Send Metadata Files),
+BEP0010 (Extension Protocol),
+BEP0012 (Multitracker Metadata Extension),
+BEP0023 (Tracker Returns Compact Peer Lists),
+BEP0032 (DHT Extensions for IPv6).
 .br
 .na
 http://www.ietf.org/internet-drafts/draft-ietf-ftpext-mlst-16.txt
@@ -2022,6 +2106,10 @@ http://www.ietf.org/internet-drafts/draft-ietf-secsh-filexfer-10.txt
 http://wiki.theory.org/BitTorrentSpecification
 .br
 http://www.bittornado.com/docs/multitracker-spec.txt
+.br
+http://www.rasterbar.com/products/libtorrent/dht_sec.html (DHT security extension)
+.br
+http://xbtt.sourceforge.net/udp_tracker_protocol.html (UDP tracker)
 .ad
 
 .SH AUTHOR

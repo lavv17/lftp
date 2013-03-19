@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2001-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef TIMER_H
@@ -64,6 +63,7 @@ public:
    void Reset() { Reset(SMTask::now); }
    void Reset(const Timer &t) { Reset(t.GetStartTime()); }
    void ResetDelayed(int s);
+   void StopDelayed(int s);
    const TimeInterval& GetLastSetting() const { return last_setting; }
    TimeDiff TimePassed() const { return SMTask::now-start; }
    TimeInterval TimeLeft() const;

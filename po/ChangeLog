@@ -1,3 +1,31 @@
+2013-02-20	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2013-01-29	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ru.po: update.
+
+2012-10-08	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
+2012-10-03	Petr PÃ­saÅ <petr.pisar@atlas.cz>
+
+	* cs.po: update.
+
+2012-01-26	Petr Pisar <petr.pisar@atlas.cz>
+
+	* cs.po: update.
+
+2011-09-22	Petr Pisar <petr.pisar@atlas.cz>
+
+	* cs.po: update.
+
+2011-09-19	Jakub Bogusz <qboosh@pld-linux.org>
+
+	* pl.po: update.
+
 2011-04-11	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ru.po: update.
@@ -14,7 +42,7 @@
 
 	* ru.po: update.
 
-2010-08-17	Noël Köthe <noel@debian.org>
+2010-08-17	NoÃ«l KÃ¶the <noel@debian.org>
 
 	* de.po: add missed comma; fix some minor translation.
 
@@ -337,7 +365,7 @@
 
 	* POTFILES.in: add Speedometer.cc (reported by Nicolas Noble)
 
-2000-08-25	Nicol�s Lichtmaier <nick@debian.org>
+2000-08-25	Nicolás Lichtmaier <nick@debian.org>
 
 	* es.po: update.
 
@@ -349,7 +377,7 @@
 
 	* de.po: update
 
-2000-07-17	Nicol�s Lichtmaier <nick@debian.org>
+2000-07-17	Nicolás Lichtmaier <nick@debian.org>
 
 	* es.po: update.
 
@@ -442,7 +470,7 @@
 
 	* ru.po: update for 2.0.1
 
-1999-06-27	Arkadiusz Mi�kiewicz <misiek@misiek.eu.org>
+1999-06-27	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
 
 	* pl.po: update
 
@@ -450,7 +478,7 @@
 
 	* de.po, es.po, pl.po, ru.po: translate "eta:"
 
-1999-06-25	Arkadiusz Mi�kiewicz <misiek@misiek.eu.org>
+1999-06-25	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
 
 	* pl.po: update
 
@@ -512,7 +540,7 @@
 
 	* de.po: update
 
-1999-02-19	Arkadiusz Mi�kiewicz <misiek@misiek.eu.org>
+1999-02-19	Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
 
 	* pl.po: updated for lftp-990204
 
@@ -529,7 +557,7 @@
 
 	* it.po: update for 1.2
 
-1998-12-10	Arkadiusz Mi�kiewicz <misiek@zsz2.starachowice.pl>
+1998-12-10	Arkadiusz Mi¶kiewicz <misiek@zsz2.starachowice.pl>
 
 	* pl.po: update
 
@@ -541,11 +569,11 @@
 
 	* it.po: update
 
-1998-09-27	Nicol�s Lichtmaier <nick@debian.org>
+1998-09-27	Nicolás Lichtmaier <nick@debian.org>
 
 	* es.po: update
 
-1998-09-14	Arkadiusz Mi�kiewicz <misiek@debian.eu.org>
+1998-09-14	Arkadiusz Mi¶kiewicz <misiek@debian.eu.org>
 
 	* pl.po: fixed typo (',' -> '|')
 
@@ -553,7 +581,7 @@
 
 	* pl.po: added #l# for some strings, add %s for eta
 
-1998-09-08	Arkadiusz Mi�kiewicz <misiek@debian.eu.org>
+1998-09-08	Arkadiusz Mi¶kiewicz <misiek@debian.eu.org>
 
 	* new pl.po
 

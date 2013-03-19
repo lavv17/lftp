@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2007 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef XARRAY_H
 #define XARRAY_H 1
@@ -187,7 +184,7 @@ class xarray_p : public xarray0
    xarray_p& operator=(const xarray_p&); // make assignment fail
    xarray_p(const xarray_p&);	       // disable cloning
 
-   void dispose(int i) { xfree(get_non_const()[i]); }
+   void dispose(int i) { delete(get_non_const()[i]); }
    void dispose(int i,int j) { while(i<j) dispose(i++); }
    void clear(int i) { get_non_const()[i]=0; }
    void clear(int i,int j) { while(i<j) clear(i++); }
@@ -246,6 +243,10 @@ public:
 };
 
 template<typename T,class A> class xqueue : public _xqueue<T,A,const T&>
+{
+};
+
+template<typename T> class xqueue_p : public _xqueue<T*,xarray_p<T>,T*>
 {
 };
 

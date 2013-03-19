@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2009 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef XMAP_H
 #define XMAP_H 1
@@ -59,11 +56,13 @@ public:
 
    entry *_each_begin();
    entry *_each_next();
-   const xstring *each_key() const { return &last_entry->key; }
+   const xstring& each_key() const { return last_entry->key; }
+   bool each_finished() const { return last_entry==0; }
 
    int count() const { return entry_count; }
 
    void _move_here(_xmap &o);
+   void _empty();
 };
 
 template<class T> class xmap : public _xmap
@@ -96,6 +95,8 @@ public:
    const T& each_begin() { entry *e=_each_begin(); return e?payload(e):zero; }
    const T& each_next()  { entry *e=_each_next();  return e?payload(e):zero; }
    void move_here(xmap<T> &o) { _move_here(o); }
+   void empty() { _empty(); }
+   bool exists(const xstring& key) const { return _lookup_c(key); }
 };
 
 template<class T> T xmap<T>::zero;
@@ -106,7 +107,7 @@ public:
    xmap_p() : _xmap(sizeof(T*)) {}
    ~xmap_p() {
       for(entry *e=_each_begin(); e; e=_each_next())
-	 xfree(payload(e));
+	 delete(payload(e));
    }
    T*& payload_Lv(entry *e) {
       return *(T**)(e+1);
@@ -131,17 +132,26 @@ public:
       return 0;
    }
    void remove(const xstring& key) {
-      xfree(borrow(key));
+      delete(borrow(key));
    }
    void add(const xstring& key,T *e0) {
       entry *e=_add(key);
-      xfree(payload(e));
+      delete(payload(e));
       payload_Lv(e)=e0;
    }
+   void add(const char *key,T *e0) { add(xstring::get_tmp(key),e0); }
    T *each_begin() { entry *e=_each_begin(); return e?payload(e):0; }
    T *each_next()  { entry *e=_each_next();  return e?payload(e):0; }
    void each_set(T *n) { payload_Lv(last_entry)=n; }
    void move_here(xmap_p<T> &o) { _move_here(o); }
+   void empty() {
+      for(int i=0; i<hash_size; i++) {
+	 while(map[i]) {
+	    delete(payload(map[i]));
+	    _remove(&map[i]);
+	 }
+      }
+   }
 };
 
 #endif // XMAP_H

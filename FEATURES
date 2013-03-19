@@ -15,6 +15,7 @@ LFTP includes the following features (some may be missed in this list):
 * HTTP/1.1 keep-alive support.
 * Partial WebDAV support.
 * BitTorrent protocol support (including IPv6).
+* BitTorrent extensions: Fast, DHT, PEX, Multi-tracker, Metadata, magnet.
 * Experimental support for SRV DNS records.
 * SOCKS support (configure option).
 

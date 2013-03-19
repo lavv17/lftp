@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2008 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
@@ -121,6 +118,10 @@ public:
 	 if(res_save_rl_history.QueryBool(0))
 	    lftp_rl_write_history();
       }
+   }
+   bool IsInteractive() const
+   {
+      return tty;
    }
    bool RealEOF()
    {
@@ -315,18 +316,34 @@ CMD(attach)
       path.append('*');
       glob_t g;
       glob(path, 0, NULL, &g);
-      if(g.gl_pathc==0) {
-      not_found:
+      for(size_t i=0; i<g.gl_pathc; i++) {
+	 const char *sock_path=g.gl_pathv[i];
+	 pid_s=strrchr(sock_path,'-');
+	 if(!pid_s)
+	    continue;
+	 pid_s++;
+	 int p=atoi(pid_s);
+	 if(p<=1) {
+	    pid_s=0;
+	    continue;
+	 }
+	 if(kill(p,0)==-1) {
+	    if(errno==ESRCH) {
+	       eprintf("%s: removing stale socket `%s'.\n",args->a0(),sock_path);
+	       if(unlink(sock_path)==-1)
+		  eprintf("%s: unlink(%s): %s\n",args->a0(),sock_path,strerror(errno));
+	    }
+	    pid_s=0;
+	    continue;
+	 }
+	 pid_s=alloca_strdup(pid_s);
+	 break;
+      }
+      globfree(&g);
+      if(!pid_s) {
 	 eprintf("%s: no backgrounded lftp processes found.\n",args->a0());
-	 globfree(&g);
 	 return 0;
       }
-      pid_s=strrchr(g.gl_pathv[0],'-');
-      if(pid_s)
-	 pid_s=alloca_strdup(pid_s+1);
-      globfree(&g);
-      if(!pid_s)
-	 goto not_found;
    }
    int pid=atoi(pid_s);
    SMTaskRef<SendTermFD> term_sender(new SendTermFD(pid));
@@ -368,7 +385,7 @@ static void detach()
    SignalHook::Ignore(SIGHUP);
    SignalHook::Ignore(SIGTSTP);
 
-   const char *home=get_lftp_home();
+   const char *home=get_lftp_data_dir();
    if(home)
    {
       xstring& log=xstring::get_tmp(home);
@@ -410,6 +427,11 @@ static int move_to_background()
    if(Job::NumberOfJobs()==0)
       return 0;
 
+   top_exec->AtBackground();
+   top_exec->WaitDone();
+   if(Job::NumberOfJobs()==0)
+      return 0;
+
    fflush(stdout);
    fflush(stderr);
 
@@ -437,6 +459,9 @@ static int move_to_background()
 	 if(term_acceptor->Accepted())
 	    return 1;
       }
+      top_exec->AtExitBg();
+      top_exec->AtTerminate();
+      top_exec->WaitDone();
       printf(_("[%u] Finished. %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
       return 0;
    }
@@ -514,7 +539,7 @@ int   main(int argc,char **argv)
    const char *home=getenv("HOME");
    if(home)
       source_if_exist(dir_file(home,".lftprc"));
-   home=get_lftp_home();
+   home=get_lftp_config_dir();
    if(home)
       source_if_exist(dir_file(home,"rc"));
    top_exec->WaitDone();
@@ -548,16 +573,22 @@ revived:
       }
       if(move_to_background())
       {
-	 top_exec->SetInteractive(true);
+	 top_exec->SetInteractive();
 	 top_exec->SetStatusLine(new StatusLine(1));
 	 top_exec->SetCmdFeeder(new ReadlineFeeder(args));
 	 goto revived;
       }
    }
+   else
+   {
+      top_exec->AtExitFg();
+      top_exec->AtTerminate();
+      top_exec->WaitDone();
+   }
    top_exec->KillAll();
    top_exec=0;
 
-   if(term_acceptor) {
+   if(term_acceptor && term_acceptor->Accepted()) {
       printf(_("[%u] Exiting and detaching from the terminal.\n"),(unsigned)getpid());
       fflush(stdout);
    }

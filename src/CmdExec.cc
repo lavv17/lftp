@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <stddef.h>
@@ -57,9 +54,16 @@ static ResType lftp_cmd_vars[] = {
    {"cmd:verify-path-cached",	 "no",	  ResMgr::BoolValidate,0},
    {"cmd:verify-host",		 "yes",	  ResMgr::BoolValidate,0},
    {"cmd:at-exit",		 "",	  0,0},
+   {"cmd:at-exit-bg",		 "",	  0,0},
+   {"cmd:at-exit-fg",		 "",	  0,0},
+   {"cmd:at-background",	 "",	  0,0},
+   {"cmd:at-terminate",		 "",	  0,0},
+   {"cmd:at-finish",		 "",	  0,0},
+   {"cmd:at-queue-finish",	 "",	  0,0},
    {"cmd:fail-exit",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:verbose",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
-   {"cmd:interactive",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"cmd:interactive",		 "auto",  ResMgr::TriBoolValidate,ResMgr::NoClosure},
+   {"cmd:show-status",		 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:move-background",	 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:move-background-detach","yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:set-term-status",	 "no",	  ResMgr::BoolValidate,0},
@@ -195,6 +199,8 @@ restart:
 
    const struct cmd_rec *c;
    const char *cmd_name=args->getarg(0);
+   if(!cmd_name)
+      return;
    int part=find_cmd(cmd_name,&c);
    if(part<=0)
       eprintf(_("Unknown command `%s'.\n"),cmd_name);
@@ -316,6 +322,7 @@ void CmdExec::RemoveFeeder()
       queue_feeder=0;
    delete replace_value(feeder,feeder->prev);
    Reconfig(0);
+   SetInteractive();
 }
 
 void CmdExec::ReuseSavedSession()
@@ -341,6 +348,17 @@ void CmdExec::ChangeSlot(const char *n)
       ConnectionSlot::Set(n,session);
    else
       ChangeSession(s->Clone());
+}
+
+void CmdExec::AtFinish()
+{
+   if(queue_feeder && queue_feeder->JobCount())
+      return;
+   if(!fed_at_finish && NumAwaitedJobs()==0 && cmd_buf.Size()==0) {
+      FeedCmd(ResMgr::Query(queue_feeder?"cmd:at-queue-finish":"cmd:at-finish",0));
+      FeedCmd("\n");
+      fed_at_finish=true;
+   }
 }
 
 int CmdExec::Do()
@@ -522,7 +540,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line && status_line->CanShowNow())
+      if(status_line && show_status && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       return m;
    }
@@ -566,7 +584,7 @@ int CmdExec::Do()
 	    return MOVED;
 	 }
       }
-      if(status_line && status_line->CanShowNow())
+      if(status_line && show_status && status_line->CanShowNow())
 	 ShowRunStatus(status_line);   // this is only for top level CmdExec.
       if(m != STALL || interactive || waiting_num >= max_waiting)
 	 return m;
@@ -592,7 +610,7 @@ try_get_cmd:
 	       last_bg=-1;
 	 }
 
-	 if(status_line)
+	 if(status_line && show_status)
 	 {
 	    const char *def_title = FormatPrompt(ResMgr::Query("cmd:default-title",getenv("TERM")));
 	    status_line->DefaultTitle(def_title);
@@ -634,6 +652,9 @@ try_get_cmd:
 	 {
 	    auto_terminate_in_bg=false;
 	    FeedCmd(cmd);
+	    Roll();
+	    if(!Idle())
+	       fed_at_finish=false;
 	    return MOVED;
 	 }
 	 else
@@ -666,8 +687,10 @@ try_get_cmd:
 	 feeder->Bg();
       break;
    }
-   if(args==0 || args->count()==0)
+   if(args==0 || args->count()==0) {
+      AtFinish();
       return MOVED;  // empty command
+   }
 
    if(interactive)
       session->DontSleep(); // We don't want to get a delay just after user
@@ -757,6 +780,7 @@ void CmdExec::init(LocalDirectory *c)
    background=false;
 
    interactive=false;
+   show_status=true;
    top_level=false;
    auto_terminate_in_bg=false;
    feeder=0;
@@ -771,6 +795,7 @@ void CmdExec::init(LocalDirectory *c)
    exit_code=0;
    failed_exit_code=0;
    last_bg=-1;
+   fed_at_finish=true;
 
    cwd=c;
    if(!cwd)
@@ -884,6 +909,7 @@ void CmdExec::beep_if_long()
    && now.UnixTime()>start_time+long_running
    && interactive && Idle() && isatty(1))
       write(1,"\007",1);
+   AtFinish();
 }
 
 void CmdExec::Reconfig(const char *name)
@@ -899,10 +925,10 @@ void CmdExec::Reconfig(const char *name)
    verify_path_cached=ResMgr::QueryBool("cmd:verify-path-cached",c);
    verify_host=ResMgr::QueryBool("cmd:verify-host",c);
    verbose=ResMgr::QueryBool("cmd:verbose",0);
-   // only allow explicit setting of cmd:interactive to change interactiveness.
-   if(top_level && name && !strcmp(name,"cmd:interactive"))
-      SetInteractive(ResMgr::QueryBool("cmd:interactive",0));
    max_waiting=ResMgr::Query(queue_feeder?"cmd:queue-parallel":"cmd:parallel",c);
+   if(name && !strcmp(name,"cmd:interactive"))
+      SetInteractive();
+   show_status=ResMgr::QueryBool("cmd:show-status",0);
 }
 
 void CmdExec::pre_stdout()
@@ -926,6 +952,7 @@ void CmdExec::SetCmdFeeder(CmdFeeder *new_feeder)
    new_feeder->saved_buf.set(cmd_buf.Get());
    feeder=new_feeder;
    cmd_buf.Empty();
+   SetInteractive();
 }
 
 int CmdExec::AcceptSig(int sig)
@@ -1007,6 +1034,13 @@ void CmdExec::SetInteractive(bool i)
    }
    interactive=i;
 }
+void CmdExec::SetInteractive()
+{
+   if(!top_level)
+      return;
+   bool def=feeder?feeder->IsInteractive():false;
+   SetInteractive(ResMgr::QueryTriBool("cmd:interactive",0,def));
+}
 
 xstring& xstring::append_quoted(const char *str,int len)
 {
@@ -1079,6 +1113,27 @@ void CmdExec::AtExit()
    /* Clear the title, and ensure we don't write anything else
     * to it in case we're being backgrounded. */
    status_line=0;
+}
+
+void CmdExec::AtExitBg()
+{
+   FeedCmd(ResMgr::Query("cmd:at-exit-bg",0));
+   FeedCmd("\n");
+}
+void CmdExec::AtExitFg()
+{
+   FeedCmd(ResMgr::Query("cmd:at-exit-fg",0));
+   FeedCmd("\n");
+}
+void CmdExec::AtBackground()
+{
+   FeedCmd(ResMgr::Query("cmd:at-background",0));
+   FeedCmd("\n");
+}
+void CmdExec::AtTerminate()
+{
+   FeedCmd(ResMgr::Query("cmd:at-terminate",0));
+   FeedCmd("\n");
 }
 
 void CmdExec::EmptyCmds()
@@ -1199,10 +1254,14 @@ Job *CmdExec::default_cmd()
 }
 Job *CmdExec::builtin_local()
 {
+   if(args->count()<2) {
+      eprintf(_("Usage: %s cmd [args...]\n"),args->a0());
+      return 0;
+   }
    saved_session=session.borrow();
    session=FileAccess::New("file");
    if(!session) {
-      eprintf("%s: cannot create local session\n",args->a0());
+      eprintf(_("%s: cannot create local session\n"),args->a0());
       RevertToSavedSession();
       return 0;
    }

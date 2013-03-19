@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef CMDEXEC_H
 #define CMDEXEC_H
@@ -55,6 +52,8 @@ public:
 
    virtual void Fg() {}
    virtual void Bg() {}
+
+   virtual bool IsInteractive() const { return false; }
 };
 
 extern CmdFeeder *lftp_feeder;	 // feeder to use after 'lftp' command
@@ -116,6 +115,9 @@ private:
    CmdFeeder *feeder;
    bool feeder_called;
 
+   bool fed_at_finish;
+   void AtFinish();
+
    enum builtins
    {
       BUILTIN_NONE=0,
@@ -162,6 +164,10 @@ public:
    void FeedQuoted(const char *c);
    void Exit(int);
    void AtExit();
+   void AtExitBg();
+   void AtExitFg();
+   void AtBackground();
+   void AtTerminate();
    void EmptyCmds();
    bool WriteCmds(int fd) const;
    bool ReadCmds(int fd); // does not clear queue before reading (appends)
@@ -185,6 +191,7 @@ public:
    const char *MakePrompt();
 
    bool interactive;
+   bool show_status;
    bool top_level;
    bool verbose;
    bool auto_terminate_in_bg;
@@ -217,10 +224,12 @@ public:
    void top_vfprintf(FILE *file,const char *f,va_list v);
 
    void SetInteractive(bool i);
+   void SetInteractive();
    void SetTopLevel()
       {
 	 top_level=true;
 	 Reconfig(0);
+	 SetInteractive();
       }
    void SetStatusLine(StatusLine *s) { status_line=s; }
    void SetAutoTerminateInBackground(bool b) { auto_terminate_in_bg=b; }

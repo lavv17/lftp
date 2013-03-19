@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -37,7 +36,7 @@ const char *FileFeeder::NextCmd(CmdExec *exec, const char *)
    }
    if(fg_data==0)
       fg_data=new FgData(in->GetProcGroup(),true);
-   int res=read(fd,buffer,buffer_size-1);
+   int res=read(fd,buffer,sizeof(buffer)-1);
    if(res==0)
    {
       return 0;

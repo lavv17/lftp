@@ -6,8 +6,6 @@
  * This file is in public domain.
  */
 
-/* $Id$ */
-
 #ifndef PLURAL_H
 #define PLURAL_H
 

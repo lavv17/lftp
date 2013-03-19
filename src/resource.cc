@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1999-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 
@@ -235,6 +232,7 @@ static ResType lftp_vars[] = {
    {"ftp:use-stat",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-stat-for-list",	 "no",	  ResMgr::BoolValidate,0},
    {"ftp:use-telnet-iac",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-tvfs",		 "auto",  ResMgr::TriBoolValidate,0},
    {"ftp:use-ip-tos",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:use-quit",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:verify-address",	 "no",    ResMgr::BoolValidate,0},
@@ -253,6 +251,7 @@ static ResType lftp_vars[] = {
    {"hftp:use-head",		 "yes",   ResMgr::BoolValidate,0},
    {"hftp:use-mkcol",		 "no",	  ResMgr::BoolValidate,0},
    {"hftp:use-propfind",	 "no",	  ResMgr::BoolValidate,0},
+   {"hftp:use-allprop",		 "no",	  ResMgr::BoolValidate,0},
    {"hftp:use-type",		 "yes",   ResMgr::BoolValidate,0},
    {"http:accept",		 "*/*",   0,0},
    {"http:accept-language",	 "",	  0,0},
@@ -263,6 +262,7 @@ static ResType lftp_vars[] = {
    {"http:proxy",		 "",	  HttpProxyValidate,0},
    {"http:use-mkcol",		 "yes",   ResMgr::BoolValidate,0},
    {"http:use-propfind",	 "no",    ResMgr::BoolValidate,0},
+   {"http:use-allprop",		 "no",	  ResMgr::BoolValidate,0},
    {"http:user-agent",		 PACKAGE"/"VERSION,0,0},
    {"http:cookie",		 "",	  0,0},
    {"http:set-cookies",		 "no",	  0,0},
@@ -353,6 +353,7 @@ static ResType lftp_vars[] = {
    {"ssl:cert-file",		 "",	  ResMgr::FileReadable,0},
    {"ssl:check-hostname",	 "yes",	  ResMgr::BoolValidate,0},
    {"ssl:verify-certificate",	 "yes",	  ResMgr::BoolValidate,0},
+   {"ssl:use-sni",		 "yes",	  ResMgr::BoolValidate,0},
 # if USE_OPENSSL
    {"ssl:ca-path",		 "",	  ResMgr::DirReadable,ResMgr::NoClosure},
    {"ssl:crl-path",		 "",	  ResMgr::DirReadable,ResMgr::NoClosure},

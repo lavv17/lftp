@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1999-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef HTTP_H
 #define HTTP_H
@@ -52,8 +49,36 @@ class Http : public NetAccess
 
    void	Send(const char *format,...) PRINTF_LIKE(2,3);
 
-   SMTaskRef<IOBuffer> send_buf;
-   SMTaskRef<IOBuffer> recv_buf;
+   class Connection
+   {
+      xstring_c closure;
+   public:
+      int sock;
+      SMTaskRef<IOBuffer> send_buf;
+      SMTaskRef<IOBuffer> recv_buf;
+      void MakeBuffers();
+#if USE_SSL
+      Ref<lftp_ssl> ssl;
+      void MakeSSLBuffers();
+#endif
+
+      void SuspendInternal()
+      {
+	 if(send_buf) send_buf->SuspendSlave();
+	 if(recv_buf) recv_buf->SuspendSlave();
+      }
+      void ResumeInternal()
+      {
+	 if(send_buf) send_buf->ResumeSlave();
+	 if(recv_buf) recv_buf->ResumeSlave();
+      }
+
+      Connection(int s,const char *c);
+      ~Connection();
+   };
+
+   Ref<Connection> conn;
+
    void SendMethod(const char *,const char *);
    const char *last_method;
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
@@ -77,22 +102,17 @@ class Http : public NetAccess
    void CookieMerge(xstring &c,const char *add);
    bool CookieClosureMatch(const char *closure,const char *host,const char *path);
 
-   int sock;
    void Disconnect();
    void ResetRequestData();
    void MoveConnectionHere(Http *o);
    int IsConnected() const
       {
-	 if(sock==-1)
+	 if(!conn)
 	    return 0;
 	 if(state==CONNECTING)
 	    return 1;
 	 return 2;
       }
-#if USE_SSL
-   Ref<lftp_ssl> ssl;
-   void MakeSSLBuffers();
-#endif
    void LogErrorText();
 
    xstring status;
@@ -122,6 +142,8 @@ class Http : public NetAccess
    bool no_cache_this;
 
    bool use_propfind_now;
+
+   long retry_after;
 
    const char *user_agent;
 

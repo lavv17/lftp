@@ -1,6 +1,107 @@
-Version 4.3.2 - 2011-08-??
+Version 4.4.5 - 2013-03-14
+
+* user/group name lookup performance fixed.
+
+Version 4.4.4 - 2013-02-27
+
+* added support for TLS SNI extension.
+* added UDP tracker support.
+* added cls -a option to show dot files.
+* new setting cmd:show-status.
+
+Version 4.4.3 - 2013-02-07
+
+* fixed an increased CPU usage in case of many cached directories.
+* fixed a configure problem with included regex.
+
+Version 4.4.2 - 2013-02-01
+
+* new settings cmd:at-background, cmd:at-terminate.
+* fixed plus sign handling in URLs.
+* fixed uninstall to remove modules.
+
+Version 4.4.1 - 2013-01-29
+
+* use XDG directories if ~/.lftp (or $LFTP_HOME) does not exist.
+* fixed non-interactive mode to skip showing status line.
+* fixed assert in ftpclass.cc.
+* fixed coredump after trying to start a duplicate torrent.
+* fixed verbose status message of some jobs.
+* fixed some buffers to limit the buffer size.
+* fixed DHT cache saving.
+
+Version 4.4.0 - 2012-09-27
+
+* implemented bittorrent extensions (FAST, DHT, LTEP, ut_metadata, ut_pex).
+* allow torrent downloading by magnet links.
+* new setting torrent:use-dht.
+* new torrent option --dht-bootstrap for manual bootstrapping.
+* add support for name.utf-8 and path.utf-8 in torrent metadata.
+* now net:limit-rate and net:limit-total-rate settings can use suffixes,
+  e.g. `set net:limit-total-rate 1M:500k'.
+* allow numeric user names.
+* don't try to upload if ALLO fails.
+* send PROT to ftp servers always when AUTH is activated.
+* fixed gnutls non-fatal error checking.
+* fixed execution of at-finish and at-queue-finish in certain cases.
+* fixed termcap coredump.
+* fixed opie on 64-bit machines.
+
+Version 4.3.8 - 2012-07-03
+
+* treat gnutls decryption error as non-fatal.
+* fixed core dump in `bm:' pseudo-URL opening.
+* fixed PROPFIND result parsing (WebDAV).
+
+Version 4.3.7 - 2012-05-30
+
+* fixed script execution.
+* cls fixed to show correct time always.
+* torrent fixed for large PIDs.
+* don't check hostname in openssl case with ssl:check-hostname off.
+
+Version 4.3.6 - 2012-04-01
+
+* added explicit retracker support (new setting torrent:retracker).
+* added support for http status code 429 Too Many Requests.
+* improved ftp login error handling.
+* fixed errors reported by -Werror=format-security.
+* fixed http error reporting.
+
+Version 4.3.5 - 2012-01-24
+
+* fixed ascii mode uploads to sftp.
+* fixed "local" command without arguments.
+* fixed compilation without ssl.
+* fixed https.
+* fixed large memory consumption in ftp when target disk is full.
+
+Version 4.3.4 - 2011-12-30
+
+* new settings cmd:at-exit-bg, cmd:at-finish, cmd:at-queue-finish.
+* added timestamps in readline history.
+* improved attach command to remove stale sockets.
+* fixed core dump when ftp server does not return valid PWD result.
+* fixed a special ftp cd case when real cwd equals to the new cwd.
+* fixed torrent status command line.
+* fixed torrent to open files with CLOEXEC flag.
+* fixed exit code of queue command.
+* fixed mirror to follow local symlinks with -L option.
+* fixed a crash with https.
+
+Version 4.3.3 - 2011-10-20
+
+* new setting ftp:use-tvfs (yes, no, auto).
+* improved ftp path handling for servers without TVFS feature.
+* improved closure matching, now *.EXT matches URLs ending with ".EXT".
+* updated man page.
+* updated translations.
+* fixed mirror target directory naming.
+
+Version 4.3.2 - 2011-09-16
 
 * fixed fish protocol synchronization when ls fails on the server.
+* fixed torrent shutting down when the tracker fails.
 * fixed compilation on Solaris.
 
 Version 4.3.1 - 2011-06-28
@@ -1175,7 +1276,7 @@ Version 2.3.1 - 2000-09-25
 * fixed passive mode IPv6 ftp (Arkadiusz Miskiewicz).
 * fixed module configuration for https and ftps.
 * allow ssl path to be specified in --with-ssl=/path (David Champion).
-* spanish translation updated (Nicolás Lichtmaier).
+* spanish translation updated (NicolÃ¡s Lichtmaier).
 
 Version 2.3.0 - 2000-09-18
 
@@ -1537,7 +1638,7 @@ Version 1.2.1 - 1998-12-17
 
 * updated translations:
    it (by Giovanni Bortolozzo),
-   pl (by Arkadiusz Mi¶kiewicz)
+   pl (by Arkadiusz MiÂ¶kiewicz)
 * fixed 'mirror -R' coredump
 
 Version 1.2 - 1998-12-08

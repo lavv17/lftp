@@ -1,9 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2001-2007 by Alexander V. Lukyanov (lav@yars.free.net)
- *
- * Portions from GNU fileutils.
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -208,9 +205,7 @@ void FileSetOutput::config(const OutputJob *o)
    width = o->GetWidth();
    if(width == -1)
       width = 80;
-
-   if(!strcasecmp(ResMgr::Query("color:use-color", 0), "auto")) color = o->IsTTY();
-   else color = ResMgr::QueryBool("color:use-color", 0);
+   color = ResMgr::QueryTriBool("color:use-color", 0, o->IsTTY());
 }
 
 void FileSetOutput::long_list()
@@ -381,6 +376,7 @@ int clsJob::Do()
 
 void clsJob::SuspendInternal()
 {
+   super::SuspendInternal();
    if(list_info)
       list_info->SuspendSlave();
    session->SuspendSlave();
@@ -391,6 +387,7 @@ void clsJob::ResumeInternal()
    if(list_info)
       list_info->ResumeSlave();
    session->ResumeSlave();
+   super::ResumeInternal();
 }
 
 void clsJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)

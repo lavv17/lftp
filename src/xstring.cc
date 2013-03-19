@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2007-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #include <config.h>
 #include <string.h>
@@ -116,20 +113,44 @@ xstring& xstring::set(const char *s)
    return nset(s,xstrlen(s));
 }
 
+xstring::xstring(const xstring_clonable& c)
+{
+   init();
+   if(!c.buf)
+      return;
+   len=c.len;
+   get_space(c.len);
+   memcpy(buf,c.buf,c.len);
+}
+
 xstring& xstring::set_allocated(char *s)
 {
-   if(!s)
-      return set(0);
+   if(!s) {
+      unset();
+      return *this;
+   }
    len=strlen(s);
    size=len+1;
    xfree(buf);
    buf=s;
    return *this;
 }
+xstring& xstring::move_here(xstring& o)
+{
+   if(!o) {
+      unset();
+      return *this;
+   }
+   len=o.len; o.len=0;
+   size=o.size; o.size=0;
+   xfree(buf);
+   buf=o.buf; o.buf=0;
+   return *this;
+}
 
 xstring& xstring::append(const char *s,size_t s_len)
 {
-   if(!s || !*s)
+   if(!s || s_len==0)
       return *this;
    get_space(len+s_len);
    memcpy(buf+len,s,s_len);
@@ -153,9 +174,9 @@ xstring& xstring::append_padding(int len,char c)
    return *this;
 }
 
-bool xstring::eq(const char *o_buf,size_t o_len) const
+bool xstring::begins_with(const char *o_buf,size_t o_len) const
 {
-   if(len!=o_len)
+   if(len<o_len)
       return false;
    if(buf==o_buf)
       return true;
@@ -164,6 +185,22 @@ bool xstring::eq(const char *o_buf,size_t o_len) const
    if(o_len==0)
       return true;
    return !memcmp(buf,o_buf,o_len);
+}
+bool xstring::ends_with(const char *o_buf,size_t o_len) const
+{
+   if(len<o_len)
+      return false;
+   if(buf+len-o_len==o_buf)
+      return true;
+   if(!buf || !o_buf)
+      return false;
+   if(o_len==0)
+      return true;
+   return !memcmp(buf+len-o_len,o_buf,o_len);
+}
+bool xstring::eq(const char *o_buf,size_t o_len) const
+{
+   return len==o_len && begins_with(o_buf,o_len);
 }
 
 static size_t vstrlen(va_list va0)
@@ -271,11 +308,18 @@ void xstring::rtrim(char c)
 {
    while(chomp(c));
 }
-unsigned xstring::skip_all(unsigned i,char c)
+unsigned xstring::skip_all(unsigned i,char c) const
 {
    while(i<len && buf[i]==c)
       i++;
    return i;
+}
+int xstring::instr(char c) const
+{
+   char *pos=(char*)memchr(buf,c,len);
+   if(!pos)
+      return -1;
+   return pos-buf;
 }
 
 xstring& xstring::vappendf(const char *format, va_list ap)
@@ -312,11 +356,17 @@ xstring& xstring::appendf(const char *format, ...)
    va_end(va);
    return *this;
 }
+// don't use it in nested loops
 xstring& xstring::get_tmp()
 {
    static xstring revolver[16];
    static int i;
-   return revolver[i=(i+1)&15];
+   int next=(i+1)&15;
+   xstring& tmp=revolver[i];
+   // keep the oldest tmp clear to trigger NULL dereference
+   tmp.move_here(revolver[next]);
+   i=next;
+   return tmp;
 }
 char *xstring::tmp_buf(int n)
 {
@@ -379,24 +429,38 @@ bool xstring::is_binary() const
       bin_count+=((unsigned char)buf[i] < 32);
    return bin_count*32>len;
 }
+const char *xstring::hexdump_to(xstring& buf) const
+{
+   int len=length();
+   const char *s=get();
+   while(len-->0)
+      buf.appendf("%02X",(unsigned char)*s++);
+   return buf;
+}
+const char *xstring::hexdump() const
+{
+   return hexdump_to(get_tmp(""));
+}
 const char *xstring::dump() const
 {
    return dump_to(get_tmp(""));
 }
 const char *xstring::dump_to(xstring& buf) const
 {
-   int len=length();
-   const char *s=get();
    if(is_binary()) {
-      if(len<128) {
-	 buf.append("<binary: 0x");
-	 while(len-->0)
-	    buf.appendf("%02X",(unsigned char)*s++);
+   binary:
+      if(len<1024) {
+	 buf.append("<binary:");
+	 hexdump_to(buf);
 	 buf.append('>');
       } else {
 	 buf.appendf("<long binary, %d bytes>",(int)length());
       }
    } else {
+      int old_buf_len=buf.length();
+      int len=length();
+      const char *s=get();
+      size_t invalid=0;
       while(len>0) {
 	 int ch_len=mblen(s,len);
 	 int ch_width=-1;
@@ -412,27 +476,30 @@ const char *xstring::dump_to(xstring& buf) const
 	       buf.appendf("\\%03o",(unsigned char)*s++);
 	       ch_len--;
 	       len--;
+	       invalid++;
 	    }
 	 }
 	 s+=ch_len;
 	 len-=ch_len;
       }
+      if(invalid*32>length()) {
+	 buf.truncate(old_buf_len);
+	 goto binary;
+      }
    }
    return buf;
 }
 
-int xstring0::_url_decode(size_t len)
+int xstring0::_url_decode(size_t len,int flags)
 {
    if(!buf)
       return 0;
-   char *store=(char*)memchr(buf,'%',len);
-   if(!store)
-      return len;
-   const char *p=store;
-   int rest=len-(p-buf);
-   while(rest>=3)
+   char *store=buf;
+   const char *p=buf;
+   int rest=len;
+   while(rest>0)
    {
-      if(*p=='%' && c_isxdigit(p[1]) && c_isxdigit(p[2]))
+      if(rest>=3 && *p=='%' && c_isxdigit(p[1]) && c_isxdigit(p[2]))
       {
 	 int n;
 	 if(sscanf(p+1,"%2x",&n)==1)
@@ -443,24 +510,52 @@ int xstring0::_url_decode(size_t len)
 	    continue;
 	 }
       }
-      *store++=*p++;
-      rest--;
-   }
-   while(rest>0) {
+      else if(*p=='+' && (flags&URL_DECODE_PLUS))
+      {
+	 *store++=' ';
+	 p++;
+	 rest--;
+	 continue;
+      }
       *store++=*p++;
       rest--;
    }
    return store-buf;
 }
-
-xstring& xstring::url_decode()
+int xstring0::_hex_decode(size_t len)
 {
-   set_length(_url_decode(length()));
+   if(!buf)
+      return 0;
+   char *store=buf;
+   const char *p=store;
+   int rest=len;
+   while(rest>=2)
+   {
+      int n;
+      if(!c_isxdigit(p[0]) || !c_isxdigit(p[1])
+      || sscanf(p,"%2x",&n)!=1)
+	 break;
+      *store++=n;
+      p+=2;
+      rest-=2;
+   }
+   return store-buf;
+}
+
+xstring& xstring::url_decode(int flags)
+{
+   set_length(_url_decode(length(),flags));
    return *this;
 }
-xstring_c& xstring_c::url_decode()
+xstring_c& xstring_c::url_decode(int flags)
 {
-   set_length(_url_decode(length()));
+   set_length(_url_decode(length(),flags));
+   return *this;
+}
+
+xstring& xstring::hex_decode()
+{
+   set_length(_hex_decode(length()));
    return *this;
 }
 

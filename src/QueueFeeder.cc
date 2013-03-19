@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* All indexes in this function start at 0; -1 is used contextually to
@@ -69,6 +68,14 @@ void QueueFeeder::QueueCmd(const char *cmd, const char *pwd, const char *lpwd, i
    PrintJobs(job, v, _("Added job$|s$"));
 }
 
+int QueueFeeder::JobCount(const QueueJob *j)
+{
+   int job_count=0;
+   for(; j; j=j->next)
+      job_count++;
+   return job_count;
+}
+
 /* verbose:
  * 0, quiet
  * 1, interactive
@@ -102,10 +109,7 @@ xstring& QueueFeeder::FormatJobs(xstring& s,const QueueJob *job, int v, const ch
       return s;
    }
 
-   int job_count=0;
-   for(const QueueJob *j = job; j; j=j->next)
-      job_count++;
-
+   int job_count=JobCount(job);
    if(job_count>1)
       s.appendf("%s:\n", plural(plur,job_count));
 

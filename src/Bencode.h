@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 2009 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef BENCODE_H
 #define BENCODE_H
 
 #include "xmap.h"
+#include "buffer.h"
 
 class BeNode
 {
@@ -43,14 +41,45 @@ public:
 
    static BeNode *Parse(const char *s,int len,int *rest);
 
+   BeNode(const xstring& s);
    BeNode(const char *s,int l);
+   BeNode(const char *s);
    BeNode(xarray_p<BeNode> *l);
    BeNode(xmap_p<BeNode> *d);
    BeNode(long long);
    ~BeNode();
 
+   BeNode *lookup(const char *key) {
+      return dict.lookup(key);
+   }
+   BeNode *lookup(const char *key,be_type_t t) {
+      BeNode *n=dict.lookup(key);
+      if(n && n->type!=t)
+	 n=0;
+      return n;
+   }
+   const xstring& lookup_str(const char *key) {
+      BeNode *n=dict.lookup(key);
+      if(!n || n->type!=BE_STR)
+	 return xstring::null;
+      return n->str;
+   }
+   long long lookup_int(const char *key) {
+      BeNode *n=dict.lookup(key);
+      if(!n || n->type!=BE_INT)
+	 return 0;
+      return n->num;
+   }
+
+   int ComputeLength();
+   const xstring& Pack();
+   void Pack(xstring &buf);
+   void Pack(const SMTaskRef<IOBuffer> &buf);
+
    void Format(xstring &buf,int level);
    const char *Format();
+   void Format1(xstring &buf);
+   const char *Format1();
 
    static const char *TypeName(be_type_t t);
 };

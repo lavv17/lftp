@@ -6,8 +6,6 @@
  * This file is in public domain.
  */
 
-/* $Id$ */
-
 /*
  * This file provides a function to transform a string with all plural forms
  * of a word to a string with concrete form depending on a number.

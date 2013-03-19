@@ -4,8 +4,6 @@
 # Copyright (c) 2000 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is covered by GNU GPL. See file COPYING for details.
 
-# $Id$
-
 usage()
 {
    echo "Usage: $0 [OPTS] host filename [-o local] [filename...]"

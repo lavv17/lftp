@@ -1,3 +1,364 @@
+2013-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: change reget to "resume transfer".
+
+2013-03-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: list all jobs from the top.
+	* Job.cc: don't add empty line for no-session jobs.
+	* IdNameCache.cc: fixed lookup by name.
+
+2013-02-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc, resource.cc: add SNI support.
+	* commands.cc, NetAccess.cc: add cls -a option; don't filter out
+	  . and .. by default.
+	* TorrentTracker.cc: Enter/Leave parent for proper debug context.
+	* Torrent.cc: use Enter/Leave for proper debug context.
+	* Torrent.cc: better status when shutting down.
+	* TorrentTracker.{cc,h}: add UDP tracker IPv6 support as action 4;
+	  fixed error handling; fixed loop range.
+
+2013-02-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h: add numeric key for udp tracker.
+	* buffer.cc, buffer.h: (Append(xstring)) new method.
+	* TorrentTracker.cc, TorrentTracker.h: add udp tracker support.
+
+2013-02-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h, TorrentTracker.cc, TorrentTracker.h:
+	  split off TorrentTracker; add TrackerBackend class; prepare
+	  for udp tracker implementation.
+	* ResMgr.cc: include stdlib.h for strtoll.
+	* DHT.cc, DHT.h: add requests_in_flight node counter; clean up
+	  nodes more aggresively; make just loaded nodes non-good.
+
+2013-02-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: add "jobs" command arguments description.
+
+2013-02-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h: (cmd:show-status) new setting.
+
+2013-02-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, FileSetOutput.cc, Fish.cc, FtpDirList.cc, Http.cc, HttpDir.cc,
+	  OutputJob.cc, SFtp.cc, SMTask.cc, SMTask.h, buffer.cc, ftpclass.cc:
+	  add ready task list to optimize Schedule when there are too many suspended
+	  tasks.
+
+2013-01-31  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: add flags in url_decode.
+	* Torrent.cc: pass URL_DECODE_PLUS flag to decode '+' into space.
+	* Makefile.am: add uninstall-hook to remove modules and some empty directories.
+
+2013-01-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc: (_url_decode) fixed decoding plus sign.
+	* Timer.cc, Timer.h: (StopDelayed) new method.
+	* Torrent.cc: don't call AnnounceDHT in StartTrackers, do it
+	  only by timer; stop dht_announce_timer at the start; use Roll
+	  method to set log context; decode magnet URL values properly.
+	* DHT.cc: refresh routes after loading the node cache; load the
+	  cache quickly using Roll; add some debug log messages.
+
+2013-01-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.cc: don't run at-exit-fg when backgrounded.
+	* xstring.cc: (append(const char*,size_t)) fixed a bug;
+	  (_url_decode) decode plus to space.
+
+2013-01-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc, Torrent.cc, attach.h, bookmark.cc, history.cc,
+	  lftp.cc, lftp_rl.c, misc.cc, misc.h:
+	  (get_lftp_{config,data,cache}_dir) new functions; use them.
+	* xdg-move: new script.
+	* CmdExec.cc, CmdExec.h, lftp.cc: (cmd:at-exit-fg) new setting.
+
+2012-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc, CmdExec.h, commands.cc, lftp.cc: make cmd:interactive tri-bool.
+
+2012-12-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: don't show status line unless interactive.
+
+2012-12-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: remove obsolete assert.
+
+2012-12-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: fixed coredump after trying to start a duplicate torrent.
+
+2012-11-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Job.cc: fixed status message.
+	* buffer.cc, buffer.h: limit maximum buffer size.
+	* ftpclass.cc: use buffer size limit; don't Resume on several methods;
+	  fixed CWD for certain paths; fixed try count resetting on uploading.
+
+2012-09-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: add support for base32 btih in magnet.
+
+2012-09-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: call AtFinish after parsing an empty command.
+
+2012-09-26  Christoph Junghans <ottxor@gentoo.org>
+
+	* module.cc: use ".bundle" for Darwin.
+
+2012-09-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* xstring.cc, xstring.h: (ends_with) new method.
+
+2012-09-24  Robert Story <rstory@tislabs.com>
+
+	* Resolver.cc: fix a typo in error message and add a warning for
+	  untrusted domains if dns:strict-dnssec is not set.
+
+2012-08-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_tinfo.cc: fixed termcap coredump.
+
+2012-08-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* DHT.cc, DHT.h: add rate limit; improve FindNodes by checking
+	  PrefixMatch on every next route bucket.
+	* Torrent.cc, Torrent.h: add name.utf-8 and path.utf-8 support.
+	* DHT.cc, DHT.h: remove name (unknown encoding); better printing
+	  of route prefix; (DHT::KnownTorrent::AddPeer) new method.
+
+2012-08-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* network.cc: fixed port byte order in compact.
+	* Torrent.cc, Torrent.h: split DHT off; save DHT to separate directory;
+	  check peer duplication and black-listing after setting port.
+	* DHT.cc, DHT.h: new files; send pings only when there is new node
+	  candidate and bucket is full; limit ping rate; change disk-cache
+	  format, save node_id too; handle changing node_id of remote nodes.
+	* network.cc, network.h: (sockaddr_compact) new class.
+	* StatusLine.cc: call termcap functions from StatusLine ctor, not _init.
+
+2012-08-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* network.cc: fixed set_compact for ipv6.
+	* Torrent.cc, Torrent.h: limit udp send rate; check POLLOUT before
+	  sending a udp packet; tune dht timers; improve logging;
+	  save node id in sent requests; try to send find request to all nodes
+	  if no good nodes found; fixed route bucket splitting.
+	* ResMgr.cc, ResMgr.h: (NumberPair) new type; support number power
+	  suffix in ranges and pairs.
+
+2012-08-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* network.cc, network.h; make set_compact return bool.
+	* Bencode.h: add lookup* methods.
+	* Torrent.cc, Torrent.h: init ping_lost_count properly; make ValidNodeId
+	  call MakeNodeId, move masks info MakeNodeId; fixed route table refreshing;
+	  check address type before using; use new lookup methods.
+
+2012-08-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: fixed ut_metadata total_size.
+	* xmap.cc, xmap.h: (each_finished, exists) new methods.
+	* network.cc, network.h: (set_compact(const char*,size_t)) new method.
+	* Torrent.cc, Torrent.h: added ut_pex extension; remember if the torrent
+	  is private; remember is a peer is upload_only; (Seed) new method;
+	  set tracker error only if last URL failed; disallow huge packets.
+	* network.cc, network.h: (is_compatible) new method.
+
+2012-08-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* network.cc: fixed typo.
+	* xstring.cc, xstring.h: (begins_with, instr, hexdump_to) new methods;
+	  improved dump() for invalid utf8 strings.
+	* xarray.h: (xqueue_p) new class.
+	* Torrent.cc, Torrent.h: added timeout for tracker requests;
+	  added support for tracker groups; new option --dht-bootstrap
+	  for manual bootstrapping.
+	* ftp-opie.c: use newer version from wget (fixes a bug on 64-bit hw).
+	* xstring.cc, xstring.h: (hex_decode) new method.
+	* Torrent.cc, Torrent.h: use hex_decode; allow pure hash instead of
+	  magnet links; make tracker Fail if no valid URLs found.
+
+2012-08-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Bencode.cc, Bencode.h: new ctor; Pack to xstring.
+	* Filter.cc, Filter.h: (set_create_mode, set_lock) new methods,
+	  do file locking if requested.
+	* misc.cc, misc.h, attach.h: (get_nodename) new function.
+	* xstring.cc, xstring.h: add explicit clone ctor; (move_here) new
+	  method.
+	* xmap.cc, xmap.h: (empty) new method; xmap_p now uses delete.
+	* xarray.h: xarray_p now uses delete.
+	* network.cc, network.h: (family, set_port, compact, compact_addr,
+	  set_compact) new methods.
+	* Torrent.cc, Torrent.h: add DHT and magnet support.
+
+2012-08-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc, Torrent.h: add mt_metadata extension.
+
+2012-08-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Bencode.cc, Bencode.h: new ctor BeNode(const char *);
+	  (ComputeLength, Pack, Format1) new methods.
+	* buffer.h: add Put(char) method.
+	* xmap.h: add add(const char*) method.
+	* Torrent.cc, Torrent.h: add LTEP and FAST Extensions.
+
+2012-07-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: send PROT after AUTH in any case, for servers
+	  requiring a PROT command.
+
+2012-07-25  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc: don't try to upload if ALLO fails.
+
+2012-07-19  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: fixed fatal error checking for gnutls.
+	* IdNameCache.cc, IdNameCache.h: allow numeric names.
+
+2012-07-03  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: tread decryption error as non-fatal.
+	* ftpclass.cc: define TELNET_* ad char constants, get rid of type casts.
+	* FileSet.cc: fixed buffer size (string was truncated).
+	* Http.cc, resource.cc: add use-allprop settings.
+	* HttpDirXML.cc: fixed PROPFIND result parsing.
+
+2012-05-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: don't Feed at-finish commands if the command buffer is
+	  not empty.
+	* FileFeeder.cc, FileFeeder.h: read by 4K.
+	* commands.cc: set need_exact_time=true when the time is needed at all,
+	  this removes complex and incomplete guess logic.
+
+2012-04-23  Solar Designer <solar@openwall.com>
+
+	* Torrent.cc: fix for large PIDs.
+
+2012-04-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_ssl.cc: don't check hostname in openssl case with ssl:check-hostname off;
+	  show a warning when hostname checking is disabled.
+
+2012-03-26  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Fish.cc, Job.h, SleepJob.cc, mgetJob.cc: Fix errors reported
+	  by -Werror=format-security (Simon Ruderich <simon@ruderich.org>)
+
+2012-03-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: check USER reply against retry-530 RExp;
+	  (Retry530) new method.
+	* complete.cc: add "edit" command to the list of remote commands.
+
+2012-03-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Http.h: add support for status "429 Too Many Requests"
+	  and Retry-After header; don't handle redirect for CONNECT method.
+	* ftpclass.cc: better handle extra server messages in sync mode.
+
+2012-02-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: fixed error reporting.
+	* Torrent.cc: add explicit retracker support.
+
+2012-01-24  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: resume connection when moving it.
+	* ftpclass.cc, ftpclass.h: add Suspend/Resume.
+
+2012-01-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc, Http.h: add Connection subclass.
+	* FileCopy.cc: fixed ascii mode size getting for local files.
+
+2012-01-20  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* CmdExec.cc: fixed core dump on "local" command without
+	  arguments.
+
+2012-01-17  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: fixed compilation without ssl.
+
+2011-12-28  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, ftpclass.h: fixed the case when home is unknown;
+	  accept new cwd when real_cwd equals the new cwd.
+
+2011-12-14  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* QueueFeeder.cc, QueueFeeder.h: (JobCount) new method.
+	* CmdExec.cc, CmdExec.h, lftp.cc: new settings cmd:at-exit-bg,
+	  cmd:at-finish, cmd:at-queue-finish.
+	* MirrorJob.h, mkdirJob.h: use 0,1 exit codes.
+	* Torrent.cc: fixed status command line.
+
+2011-12-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* commands.cc: fixed exit code of queue command.
+
+2011-12-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: follow local symlinks with -L option.
+
+2011-12-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: open files with CLOEXEC flag.
+	* misc.cc, misc.h, Fish.cc, LocalAccess.cc: (shell_encode) return xstring ref.
+
+2011-11-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* TimeDate.cc: fixed IsoDateTime (added seconds).
+	* lftp_rl.c: save timestamps in history; show them.
+
+2011-11-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc: fixed "URL mismatch" message for root directory.
+
+2011-11-09  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Http.cc: fixed NULL-crash on ssl.
+	* lftp.cc: (attach) check process existence; remove stale sockets.
+
+2011-10-06  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc: save the buffer of target_dir using alloca.
+	* ResMgr.cc, ResMgr.h: (ResValue::to_tri_bool, *::QueryTriBool)
+	  new methods; use const for const methods; remove ifdef0'ed code.
+	* FileSetOutput.cc, commands.cc: use QueryTriBool.
+	* ftpclass.cc, resource.cc: new setting ftp:use-tvfs.
+
+2011-09-22  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, FileAccess.cc, commands.cc:
+	  use ParsedURL for URL path verification; compare path to home
+	  dir ~ properly; send first path component together with root
+	  directory to ftp server; use reconnect if cannot change back to
+	  home dir.
+
+2011-09-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ResMgr.cc: (ResMgr::Resource::ClosureMatch) try to match basename,
+	  it helps matching torrent metadata urls to *.torrent pattern.
+
+2011-09-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: don't try to send stop to a failed tracker.
+
 2011-08-01  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: check for '###' before parsing ls line.

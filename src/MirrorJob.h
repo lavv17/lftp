@@ -1,7 +1,7 @@
 /*
- * lftp and utils
+ * lftp - file transfer program
  *
- * Copyright (c) 1996-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* $Id$ */
 
 #ifndef MIRRORJOB_H
 #define MIRRORJOB_H
@@ -179,7 +176,7 @@ public:
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
    xstring& FormatStatus(xstring&,int v,const char *);
    void	 SayFinal() { PrintStatus(0,""); }
-   int	 ExitCode() { return stats.error_count; }
+   int	 ExitCode() { return stats.error_count!=0; }
 
    void	 SetExclude(PatternSet *x) { my_exclude=x; exclude=my_exclude; }
    void	 SetExclude(const PatternSet *x) { exclude=x; }
