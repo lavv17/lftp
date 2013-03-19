@@ -292,3 +292,4 @@
 /sys_socket.c
 /unistd.c
 /wctype-h.c
+/locale.h
