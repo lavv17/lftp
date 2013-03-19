@@ -1008,6 +1008,21 @@ has the following settable variables (you can also use
 save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
 Off by default.
 .TP
+.BR cache:cache-empty-listings \ (boolean)
+When false, empty listings are not cached.
+.TP
+.BR cache:enable \ (boolean)
+When false, cache is disabled.
+.TP
+.BR cache:expire " (time interval)"
+Positive cache entries expire in this time interval.
+.TP
+.BR cache:expire-negative " (time interval)"
+Negative cache entries expire in this time interval.
+.TP
+.BR cache:size " (number)"
+Maximum cache size. When exceeded, oldest cache entries will be removed from cache.
+.TP
 .BR cmd:at-exit \ (string)
 the commands in string are executed before lftp exits or moves to background.
 .TP
@@ -1131,6 +1146,13 @@ makes it inconsistent.
 .BR cmd:queue-parallel \ (number)
 Number of jobs run in parallel in a queue.
 .TP
+.BR cmd:remote-completion \ (boolean)
+a boolean to control whether or not lftp uses remote completion. When true,
+\fBTab\fP key guesses if the word being completed should be a remote file
+name. \fBMeta-Tab\fP does remote completion always. So you can force remote
+completion with \fBMeta-Tab\fP when \fBcmd:remote-completion\fP is false or
+when the guess is wrong.
+.TP
 .BR cmd:save-cwd-history \ (boolean)
 when true, lftp saves last CWD of each site to \fI~/.lftp/cwd_history\fR,
 allowing to do ``cd -'' after lftp restart. Default is true.
@@ -1175,24 +1197,6 @@ This setting is the default value for cls \-\-time\-style option.
 .TP
 .BR cmd:trace \ (boolean)
 when true, lftp prints the commands it executes (like sh \-x).
-.TP
-.BR cache:cache-empty-listings \ (boolean)
-When false, empty listings are not cached.
-.TP
-.BR cache:enable \ (boolean)
-When false, cache is disabled.
-.TP
-.BR cache:expire " (time interval)"
-Positive cache entries expire in this time interval.
-.TP
-.BR cache:expire-negative " (time interval)"
-Negative cache entries expire in this time interval.
-.TP
-.BR cache:size " (number)"
-Maximum cache size. When exceeded, oldest cache entries will be removed from cache.
-.TP
-.BR cmd:remote-completion \ (boolean)
-a boolean to control whether or not lftp uses remote completion.
 .TP
 .BR cmd:verify-host \ (boolean)
 if true, lftp resolves host name immediately in `open' command.

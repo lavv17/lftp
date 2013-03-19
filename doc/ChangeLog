@@ -1,3 +1,7 @@
+2013-03-19	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document Meta-Tab key; restore settings abc order.
+
 2013-02-27	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: add udp tracker reference; add ssl:use-sni description.
