@@ -276,7 +276,6 @@ int GenericGlob::Do()
       if(li->Done() && !li->Error())
       {
 	 FileSet *set=li->GetResult();
-	 set->ExcludeDots();
 	 set->rewind();
 	 for(FileInfo *info=set->curr(); info!=NULL; info=set->next())
 	 {

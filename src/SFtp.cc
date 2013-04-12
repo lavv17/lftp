@@ -2230,7 +2230,6 @@ int SFtpListInfo::Do()
       if(!result && session->IsOpen())
 	 result=session.Cast<SFtp>()->GetFileSet();
       FileAccess::cache->Add(session,"",FA::LONG_LIST,FA::OK,ubuf,result);
-      result->ExcludeDots();
       result->Exclude(exclude_prefix,exclude);
       done=true;
       m=MOVED;

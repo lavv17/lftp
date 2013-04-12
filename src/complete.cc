@@ -716,7 +716,6 @@ static char **lftp_completion (const char *text,int start,int end)
 	 glob_res->Add(f);
       }
       globfree(&pglob);
-      glob_res->ExcludeDots();
 
       rl_filename_completion_desired=1;
       generator = file_generator;
