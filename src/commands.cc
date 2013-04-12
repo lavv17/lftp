@@ -1532,7 +1532,7 @@ const char *FileSetOutput::parse_argv(const Ref<ArgV>& a)
    time_fmt.set(0);
    if(time_style && time_style[0]) {
       if (mode & DATE)
-	 need_exact_time=true;
+	 need_exact_time=ResMgr::QueryBool("cmd:cls-exact-time",0);
       if(time_style[0]=='+')
 	 time_fmt.set(time_style+1);
       else if(!strcmp(time_style,"full-iso"))

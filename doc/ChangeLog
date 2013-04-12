@@ -1,3 +1,7 @@
+2013-04-12	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: document cmd:cls-* settings.
+
 2013-03-19	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document Meta-Tab key; restore settings abc order.

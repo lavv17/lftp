@@ -71,6 +71,7 @@ static ResType lftp_cmd_vars[] = {
    {"cmd:trace",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"cmd:parallel",		 "1",	  ResMgr::UNumberValidate,0},
    {"cmd:queue-parallel",	 "1",	  ResMgr::UNumberValidate,0},
+   {"cmd:cls-exact-time",	 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {0}
 };
 static ResDecls lftp_cmd_vars_register(lftp_cmd_vars);

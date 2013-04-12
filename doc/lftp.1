@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "26 Feb 2013"
+.TH lftp 1 "12 Apr 2013"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.4.
+This man page documents lftp version 4.4.6.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1043,6 +1043,19 @@ the commands in string are executed once when all jobs are done.
 .TP
 .BR cmd:at-queue-finish \ (string)
 the commands in string are executed once when all jobs in a queue are done.
+.TP
+.BR cmd:cls-completion-default \ (string)
+default \fBcls\fR options for displaying completion choices. For example,
+to make completion listings show file sizes, set cmd:cls-completion-default
+to `-s'.
+.TP
+.BR cmd:cls-default \ (string)
+default \fBcls\fR command options. They can be overridden by explicitly given
+options.
+.TP
+.BR cmd:cls-exact-time \ (boolean)
+when true, \fBcls\fR would try to get exact file modification time even if
+it means more requests to the server.
 .TP
 .BR cmd:csh-history \ (boolean)
 enables csh-like history expansion.
