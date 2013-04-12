@@ -315,6 +315,17 @@ void DHT::AnnouncePeer(const Torrent *t)
    StartSearch(s);
    Leave();
 }
+void DHT::DenouncePeer(const Torrent *t)
+{
+   const xstring& info_hash=t->GetInfoHash();
+   // remove any search for this torrent
+   for(int i=0; i<search.count(); i++) {
+      if(search[i]->target_id.eq(info_hash)) {
+	 search.remove(i);
+	 return;
+      }
+   }
+}
 int DHT::AddNodesToReply(xmap_p<BeNode> &r,const xstring& target,int max_count)
 {
    xarray<Node*> n;

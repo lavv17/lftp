@@ -293,6 +293,7 @@ void Torrent::Shutdown()
    LogNote(3,"Shutting down...");
    shutting_down=true;
    ShutdownTrackers();
+   DenounceDHT();
    PrepareToDie();
 }
 
@@ -522,6 +523,17 @@ void Torrent::AnnounceDHT()
       dht_ipv6->AnnouncePeer(this);
 #endif
    dht_announce_timer.Reset();
+}
+void Torrent::DenounceDHT()
+{
+   if(is_private)
+      return;
+   if(dht)
+      dht->DenouncePeer(this);
+#if INET6
+   if(dht_ipv6)
+      dht_ipv6->DenouncePeer(this);
+#endif
 }
 
 void Torrent::SetMetadata(const xstring& md)

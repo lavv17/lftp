@@ -1,3 +1,7 @@
+2013-04-12  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* DHT.cc, DHT.h, Torrent.cc, Torrent.h: (DenounceDHT) new method; use it.
+
 2013-03-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* commands.cc: change reget to "resume transfer".

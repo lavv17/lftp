@@ -214,6 +214,7 @@ public:
    void SendPing(Node *n);
    int PingQuestionable(const xarray<Node*>& nodes,int limit);
    void AnnouncePeer(const Torrent *);
+   void DenouncePeer(const Torrent *);
    void HandlePacket(BeNode *b,const sockaddr_u& src);
 
    void Save(const SMTaskRef<IOBuffer>& buf);

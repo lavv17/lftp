@@ -186,6 +186,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static void StartDHT();
    static void StopDHT();
    void AnnounceDHT();
+   void DenounceDHT();
 
    bool single_file;
    unsigned piece_length;
