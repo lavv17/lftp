@@ -47,7 +47,7 @@ CDECL_END
 
 
 ResDecl	res_default_cls         ("cmd:cls-default",  "-F", FileSetOutput::ValidateArgv,ResMgr::NoClosure),
-	res_default_comp_cls    ("cmd:cls-completion-default", "-FB",FileSetOutput::ValidateArgv,ResMgr::NoClosure);
+	res_default_comp_cls    ("cmd:cls-completion-default", "-FBa",FileSetOutput::ValidateArgv,ResMgr::NoClosure);
 
 ResDecl res_time_style	("cmd:time-style", "%b %e  %Y|%b %e %H:%M", 0, ResMgr::NoClosure);
 
