@@ -1,5 +1,6 @@
 2013-04-18  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* Http.cc, Http.h: improve DirFile; add slash for directories in ARRAY_INFO.
 	* FileAccess.cc, FileAccess.h, FileCopy.cc, FileCopy.h, FileSet.cc,
 	  FileSet.h, Fish.cc, GetFileInfo.cc, GetFileInfo.h, Http.cc,
 	  LocalAccess.cc, NetAccess.cc, NetAccess.h, SFtp.cc, SFtp.h,

@@ -404,22 +404,25 @@ bool Http::ModeSupported()
    abort(); // should not happen
 }
 
-void Http::DirFile(xstring& path,const char *ecwd,const char *efile)
+void Http::DirFile(xstring& path,const xstring& ecwd,const xstring& efile) const
 {
-   int base=path.length();
-   if(!strcmp(ecwd,"~") && !hftp)
-      ecwd="";
-   const char *sep=(last_char(ecwd)=='/'?"":"/");
-   if(efile[0]==0)
-      sep="";
-   const char *pre=(ecwd[0]=='/'?"":"/");
-   if(efile[0]=='/')
-      path.append(efile);
-   else if(efile[0]=='~')
-      path.vappend("/",efile,NULL);
-   else
-      path.vappend(pre,ecwd,sep,efile,NULL);
+   const int base=path.length();
 
+   if(efile[0]=='/') {
+      path.append(efile);
+   } else if(efile[0]=='~' || ecwd.length()==0 || (ecwd.eq("~") && !hftp)) {
+      path.append('/');
+      path.append(efile);
+   } else {
+      if(ecwd[0]!='/')
+	 path.append('/');
+      path.append(ecwd);
+      if(ecwd.last_char()!='/' && efile.length()>0)
+	 path.append('/');
+      path.append(efile);
+   }
+
+   // remove "/~" or "/~/"
    if(path[base+1]=='~' && path[base+2]==0)
       path.truncate(base+1);
    else if(path[base+1]=='~' && path[base+2]=='/')
@@ -696,9 +699,13 @@ void Http::SendArrayInfoRequest()
    while(array_send-fileset_for_info->curr_index()<m
    && array_send<fileset_for_info->count())
    {
-      SendRequest(array_send==fileset_for_info->count()-1 ? 0 : "keep-alive",
-	 (*fileset_for_info)[array_send]->name);
-      array_send++;
+      FileInfo *fi=(*fileset_for_info)[array_send++];
+      xstring *name=&fi->name;
+      if(fi->filetype==fi->DIRECTORY && name->last_char()!='/') {
+	 name=&xstring::get_tmp(*name);
+	 name->append('/');
+      }
+      SendRequest(array_send==fileset_for_info->count()-1 ? 0 : "keep-alive", *name);
    }
 }
 
