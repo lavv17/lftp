@@ -185,7 +185,7 @@ void Http::ResetRequestData()
    sent_eot=false;
    keep_alive=false;
    keep_alive_max=-1;
-   array_send=fileset_for_info->curr_index();
+   array_send=fileset_for_info?fileset_for_info->curr_index():0;
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
