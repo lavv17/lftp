@@ -66,16 +66,6 @@ public:
       SYMLINK,
    };
 
-   struct fileinfo
-   {
-      off_t size;
-      const char *file;
-      time_t time;
-      bool get_size:1;
-      bool get_time:1;
-      bool is_dir:1;
-   };
-
    class Path
    {
       void init();
@@ -132,12 +122,10 @@ protected:
    FileTimestamp *opt_date;
    off_t  *opt_size;
 
+   FileSet *fileset_for_info;
+
    time_t try_time;
    int retries;
-
-   fileinfo *array_for_info;
-   int	 array_ptr;
-   int	 array_cnt;
 
    bool	 mkdir_p;
 
@@ -238,13 +226,8 @@ public:
    void RemoveDir(const char *dir)  { Open(dir,REMOVE_DIR); }
    void Chmod(const char *file,int m);
 
-   void	 GetInfoArray(struct fileinfo *info,int count);
-   int	 InfoArrayPercentDone()
-      {
-	 if(array_cnt==0)
-	    return 100;
-	 return array_ptr*100/array_cnt;
-      }
+   void	 GetInfoArray(FileSet *info);
+   int	 InfoArrayPercentDone() { return fileset_for_info->curr_pct(); }
 
    virtual const char *CurrentStatus();
 

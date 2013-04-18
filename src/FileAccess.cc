@@ -63,12 +63,12 @@ void FileAccess::Init()
    retries=0;
    opt_date=0;
    opt_size=0;
+   fileset_for_info=0;
    error_code=OK;
    saved_errno=0;
    mkdir_p=false;
    ascii=false;
    norest_manual=false;
-   array_ptr=array_cnt=0;
 
    entity_size=NO_SIZE;
    entity_date=NO_DATE;
@@ -192,8 +192,7 @@ void FileAccess::Close()
    mode=CLOSED;
    opt_date=0;
    opt_size=0;
-   array_for_info=0;
-   array_ptr=array_cnt=0;
+   fileset_for_info=0;
    entity_size=NO_SIZE;
    entity_date=NO_DATE;
    ascii=false;
@@ -363,12 +362,11 @@ void FileAccess::SetPasswordGlobal(const char *p)
    }
 }
 
-void FileAccess::GetInfoArray(struct fileinfo *info,int count)
+void FileAccess::GetInfoArray(FileSet *info)
 {
    Open(0,ARRAY_INFO);
-   array_for_info=info;
-   array_ptr=0;
-   array_cnt=count;
+   fileset_for_info=info;
+   fileset_for_info->rewind();
 }
 
 static void expand_tilde(xstring &path, const char *home, int i=0)

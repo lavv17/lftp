@@ -46,6 +46,7 @@ struct FileTimestamp
 
 class FileInfo
 {
+   void def(unsigned m) { defined|=m; need&=~m; }
 public:
    xstring  name;
    xstring  longname;
@@ -66,7 +67,6 @@ public:
    };
    type	 filetype;
 
-   int	 defined;
    enum defined_bits
    {
       NAME=001,MODE=002,DATE=004,TYPE=010,SYMLINK_DEF=020,
@@ -77,6 +77,8 @@ public:
 
       ALL_INFO=NAME|MODE|DATE|TYPE|SYMLINK_DEF|SIZE|USER|GROUP|NLINKS
    };
+   unsigned defined;
+   unsigned need;
 
    int rank;
 
@@ -86,18 +88,18 @@ public:
    FileInfo(const char *n);
    ~FileInfo();
 
-   void SetName(const char *n) { name.set(n); defined|=NAME; }
+   void SetName(const char *n) { name.set(n); def(NAME); }
    void SetUser(const char *n);
    void SetGroup(const char *n);
    void LocalFile(const char *name, bool follow_symlinks);
    static FileInfo *parse_ls_line(const char *line,const char *tz);
 
-   void SetMode(mode_t m) { mode=m; defined|=MODE; }
-   void SetDate(time_t t,int prec) { date.set(t,prec); defined|=DATE; }
-   void SetType(type t) { filetype=t; defined|=TYPE; }
-   void SetSymlink(const char *s) { symlink.set(s); filetype=SYMLINK; defined|=TYPE|SYMLINK_DEF; }
-   void	SetSize(off_t s) { size=s; defined|=SIZE; }
-   void	SetNlink(int n) { nlinks=n; defined|=NLINKS; }
+   void SetMode(mode_t m) { mode=m; def(MODE); }
+   void SetDate(time_t t,int prec) { date.set(t,prec); def(DATE); }
+   void SetType(type t) { filetype=t; def(TYPE); }
+   void SetSymlink(const char *s) { symlink.set(s); filetype=SYMLINK; def(TYPE|SYMLINK_DEF); }
+   void	SetSize(off_t s) { size=s; def(SIZE); }
+   void	SetNlink(int n) { nlinks=n; def(NLINKS); }
 
    void	 Merge(const FileInfo&);
 
@@ -109,7 +111,7 @@ public:
    bool  SizeOutside(const Range *r) const;
 
    void	 SetAssociatedData(const void *d,int len) { data.nset((const char*)d,len); }
-   const void *GetAssociatedData() { return data; }
+   const void *GetAssociatedData() const { return data; }
 
    void SetRank(int r) { rank=r; }
    int GetRank() const { return rank; }
@@ -117,7 +119,14 @@ public:
    void SetLongName(const char *s) { longname.set(s); }
    const char *GetLongName() { if(!longname) MakeLongName(); return longname; }
 
-   operator const char *() { return name; }
+   operator const char *() const { return name; }
+
+   bool Has(unsigned m) const { return defined&m; }
+   bool HasAny(unsigned m) const { return defined&m; }
+   bool HasAll(unsigned m) const { return (defined&m)==m; }
+
+   void Need(unsigned m) { need|=m; }
+   void NoNeed(unsigned m) { need&=~m; }
 };
 
 class PatternSet;

@@ -296,21 +296,8 @@ int LocalAccess::Do()
 
 void LocalAccess::fill_array_info()
 {
-   for(int i=0; i<array_cnt; i++)
-   {
-      fileinfo *f = &array_for_info[i];
-      struct stat st;
-      if(stat(dir_file(cwd,f->file),&st)!=-1)
-      {
-	 f->size=st.st_size;
-	 f->time=st.st_mtime;
-      }
-      else
-      {
-	 f->size=NO_SIZE;
-	 f->time=NO_DATE;
-      }
-   }
+   for(FileInfo *fi=fileset_for_info->curr(); fi; fi=fileset_for_info->next())
+      fi->LocalFile(fi->name,(fi->filetype!=fi->SYMLINK));
 }
 
 int LocalAccess::Read(void *buf,int size)

@@ -385,23 +385,19 @@ int GetFileInfo::Do()
    case GETTING_INFO_ARRAY:
       if(session->IsClosed())
       {
-	 /* maybe FA::fileinfo should have "need" and a FileInfo?
-	  *
+	 /*
 	  * Try to get requested information with GetInfoArray.  This
 	  * also serves as a last attempt to see if the file exists--we
 	  * only get here if everything else thinks the path doesn't exist.
 	  */
-	 get_info.file=verify_fn;
-	 get_info.size=NO_SIZE_YET;
-	 get_info.get_size=need&FileInfo::SIZE;
-	 get_info.time=NO_DATE_YET;
-	 get_info.get_time=need&FileInfo::DATE;
-
+	 FileInfo *fi=new FileInfo(verify_fn);
+	 fi->need=need;
 	 /* We need to do at least one. */
-	 if(!get_info.get_size && !get_info.get_time)
-	    get_info.get_time=true;
-
-	 session->GetInfoArray(&get_info,1);
+	 if(!fi->need)
+	    fi->need=fi->DATE;
+	 get_info.Empty();
+	 get_info.Add(fi);
+	 session->GetInfoArray(&get_info);
       }
 
       res=session->Done();
@@ -417,36 +413,26 @@ int GetFileInfo::Do()
       }
 
       session->Close();
-      if(get_info.size==NO_SIZE && get_info.time==NO_DATE)
-      {
-	 /* We didn't get any information.  The file probably doesn't
-	  * exist.  Not necessarily: it might have been a directory
-	  * that we don't have access to CD into.  Some servers will
-	  * refuse to give even an MDTM for directories.  We could
-	  * scan the MDTM and/or SIZE responses for "not a plain file"
-	  * for some servers (proftpd). */
-	 state=CHANGE_DIR;
-	 return MOVED;
-      }
 
       {
-	 /* We got at least one, so the file exists. Fill in what we know. */
-	 FileInfo *fi = new FileInfo(verify_fn);
+	 FileInfo *fi=get_info[0];
+	 if(!fi->HasAny(fi->SIZE|fi->DATE))
+	 {
+	    /* We didn't get any information.  The file probably doesn't
+	     * exist.  Not necessarily: it might have been a directory
+	     * that we don't have access to CD into.  Some servers will
+	     * refuse to give even an MDTM for directories.  We could
+	     * scan the MDTM and/or SIZE responses for "not a plain file"
+	     * for some servers (proftpd). */
+	    state=CHANGE_DIR;
+	    return MOVED;
+	 }
+
+	 /* We got at least one, so the file exists. Return what we know. */
 	 was_directory = false;
 
-	 if(get_info.size!=NO_SIZE)
-	 {
-	    fi->SetSize(get_info.size);
-	    /* We got the size, so it's probably a file.  It could be a link,
-	     * though.  (If this is done, then always request size, even if we
-	     * don't Need it.) */
-	    // fi->SetType(fi->NORMAL);
-	 }
-	 if(get_info.time!=NO_DATE)
-	    fi->SetDate(get_info.time,0);
-
 	 result = new FileSet;
-	 result->Add(fi);
+	 result->Add(new FileInfo(*fi));
       }
       state=DONE;
       return MOVED;

@@ -1,3 +1,10 @@
+2013-04-18  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileAccess.cc, FileAccess.h, FileCopy.cc, FileCopy.h, FileSet.cc,
+	  FileSet.h, Fish.cc, GetFileInfo.cc, GetFileInfo.h, Http.cc,
+	  LocalAccess.cc, NetAccess.cc, NetAccess.h, SFtp.cc, SFtp.h,
+	  ftpclass.cc: use FileSet for ARRAY_INFO; add READLINK support in sftp.
+
 2013-04-12  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* DHT.cc, DHT.h, Torrent.cc, Torrent.h: (DenounceDHT) new method; use it.

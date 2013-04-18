@@ -111,8 +111,6 @@ public:
 class GenericParseListInfo : public ListInfo
 {
 protected:
-   xarray<FA::fileinfo> get_info;
-
    int mode;
    SMTaskRef<IOBuffer> ubuf;
 

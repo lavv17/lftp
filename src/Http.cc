@@ -185,7 +185,7 @@ void Http::ResetRequestData()
    sent_eot=false;
    keep_alive=false;
    keep_alive_max=-1;
-   array_send=array_ptr;
+   array_send=fileset_for_info->curr_index();
    chunked=false;
    chunk_size=-1;
    chunk_pos=0;
@@ -693,10 +693,11 @@ void Http::SendArrayInfoRequest()
       if(m==-1)
 	 m=100;
    }
-   while(array_send-array_ptr<m && array_send<array_cnt)
+   while(array_send-fileset_for_info->curr_index()<m
+   && array_send<fileset_for_info->count())
    {
-      SendRequest(array_send==array_cnt-1 ? 0 : "keep-alive",
-	 array_for_info[array_send].file);
+      SendRequest(array_send==fileset_for_info->count()-1 ? 0 : "keep-alive",
+	 (*fileset_for_info)[array_send]->name);
       array_send++;
    }
 }
@@ -743,8 +744,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 
       if(mode==ARRAY_INFO && H_20X(status_code))
       {
-	 array_for_info[array_ptr].size=body_size;
-	 array_for_info[array_ptr].get_size=false;
+	 FileInfo *fi=fileset_for_info->curr();
+	 fi->SetSize(body_size);
 	 TrySuccess();
       }
       return;
@@ -781,8 +782,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 
       if(mode==ARRAY_INFO && H_20X(status_code))
       {
-	 array_for_info[array_ptr].time=t;
-	 array_for_info[array_ptr].get_time=false;
+	 FileInfo *fi=fileset_for_info->curr();
+	 fi->SetDate(t,0);
 	 TrySuccess();
       }
       return;
@@ -1241,11 +1242,7 @@ int Http::Do()
 		  // we'll have to receive next header
 		  status.set(0);
 		  status_code=0;
-		  if(array_for_info[array_ptr].get_time)
-		     array_for_info[array_ptr].time=NO_DATE;
-		  if(array_for_info[array_ptr].get_size)
-		     array_for_info[array_ptr].size=NO_SIZE;
-		  if(++array_ptr>=array_cnt)
+		  if(!fileset_for_info->next())
 		  {
 		     state=DONE;
 		     return MOVED;

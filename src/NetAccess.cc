@@ -415,7 +415,7 @@ do_again:
    if(done)
       return m;
 
-   if(!ubuf && !get_info)
+   if(!ubuf && !result)
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
@@ -526,14 +526,12 @@ got_fileset:
       result->rewind();
       for(file=result->curr(); file!=0; file=result->next())
       {
-	 FA::fileinfo add;
-	 add.size=NO_SIZE;
-	 add.time=NO_DATE;
-	 add.get_size = need_size && !(file->defined & file->SIZE);
-	 add.get_time = need_time && (!(file->defined & file->DATE)
-				 || (file->date.ts_prec>0 && can_get_prec_time));
-	 add.is_dir=false;
-	 add.file=0;
+	 file->need=0;
+	 if(need_size && !file->Has(file->SIZE))
+	    file->Need(file->SIZE);
+	 if(need_time && (!file->Has(file->DATE)
+                          || (file->date.ts_prec>0 && can_get_prec_time)))
+	    file->Need(file->DATE);
 
 	 if(file->defined & file->TYPE)
 	 {
@@ -541,44 +539,29 @@ got_fileset:
 	    {
 	       //file->filetype=file->NORMAL;
 	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE|file->TYPE);
-	       add.get_size=true;
-	       add.get_time=true;
+	       file->Need(file->SIZE|file->DATE);
 	    }
-
-	    if(file->filetype==file->SYMLINK)
+	    else if(file->filetype==file->SYMLINK)
 	    {
 	       // don't need these for symlinks
-	       add.get_size=false;
-	       add.get_time=false;
+	       file->NoNeed(file->SIZE|file->DATE);
+	       // but need the link target
+	       if(!file->Has(file->SYMLINK_DEF))
+		  file->Need(file->SYMLINK_DEF);
 	    }
 	    else if(file->filetype==file->DIRECTORY)
 	    {
 	       if(!get_time_for_dirs)
 		  continue;
 	       // don't need size for directories
-	       add.get_size=false;
-	       add.is_dir=true;
+	       file->NoNeed(file->SIZE);
 	    }
 	 }
-
-	 if(add.get_size || add.get_time)
-	 {
-	    add.file=file->name;
-	    if(!add.get_size)
-	       add.size=NO_SIZE;
-	    if(!add.get_time)
-	       add.time=NO_DATE;
-	    get_info.append(add);
-	 }
       }
-      if(get_info.count()==0)
-      {
-	 done=true;
-	 return m;
-      }
-      session->GetInfoArray(get_info.get_non_const(),get_info.count());
+      session->GetInfoArray(result.get_non_const());
+      session->Roll();
    }
-   if(get_info)
+   if(session->OpenMode()==FA::ARRAY_INFO)
    {
       res=session->Done();
       if(res==FA::DO_AGAIN)
@@ -586,14 +569,6 @@ got_fileset:
       if(res==FA::IN_PROGRESS)
 	 return m;
       session->Close();
-      for(int i=0; i<get_info.count(); i++)
-      {
-	 if(get_info[i].time!=NO_DATE)
-	    result->SetDate(get_info[i].file,get_info[i].time,0);
-	 if(get_info[i].size!=NO_SIZE)
-	    result->SetSize(get_info[i].file,get_info[i].size);
-      }
-      get_info.unset();
       done=true;
       m=MOVED;
    }
@@ -614,7 +589,7 @@ const char *GenericParseListInfo::Status()
       return xstring::format("%s (%lld) %s[%s]",_("Getting directory contents"),
 		     (long long)session->GetPos(),
 		     ubuf->GetRateStrS(),session->CurrentStatus());
-   if(get_info)
+   if(session->OpenMode()==FA::ARRAY_INFO)
       return xstring::format("%s (%d%%) [%s]",_("Getting files information"),
 		     session->InfoArrayPercentDone(),
 		     session->CurrentStatus());

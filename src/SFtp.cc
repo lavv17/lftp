@@ -325,6 +325,9 @@ void SFtp::Disconnect()
    recv_translate=0;
    ssh_id=0;
    home_auto.set(FindHomeAuto());
+   // may have to resend file info queries.
+   if(fileset_for_info)
+      fileset_for_info->rewind();
 }
 
 void SFtp::Init()
@@ -661,13 +664,17 @@ void SFtp::SendRequest()
 
 void SFtp::SendArrayInfoRequests()
 {
-   while(array_ptr<array_cnt && RespQueueSize()<max_packets_in_flight)
+   for(FileInfo *fi=fileset_for_info->curr();
+      fi && RespQueueSize()<max_packets_in_flight;
+      fi=fileset_for_info->next())
    {
-      SendRequest(new Request_STAT(lc_to_utf8(dir_file(cwd,
-	       array_for_info[array_ptr].file)),
-	 SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME,
-	 protocol_version),Expect::INFO,array_ptr);
-      array_ptr++;
+      if(fi->need&(fi->SIZE|fi->DATE))
+	 SendRequest(new Request_STAT(lc_to_utf8(dir_file(cwd,fi->name)),
+	    SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME,
+	    protocol_version),Expect::INFO,fileset_for_info->curr_index());
+      if(fi->need&fi->SYMLINK_DEF && protocol_version>=3)
+	 SendRequest(new Request_READLINK(lc_to_utf8(dir_file(cwd,fi->name))),
+	    Expect::INFO_READLINK,fileset_for_info->curr_index());
    }
    if(RespQueueIsEmpty())
       state=DONE;
@@ -960,16 +967,27 @@ void SFtp::HandleExpect(Expect *e)
       }
       if(mode==ARRAY_INFO)
       {
-	 array_for_info[e->i].size=entity_size;
-	 array_for_info[e->i].get_size=false;
-	 array_for_info[e->i].time=entity_date;
-	 array_for_info[e->i].get_time=false;
+	 FileInfo *fi=(*fileset_for_info)[e->i];
+	 fi->SetSize(entity_size);
+	 fi->SetDate(entity_date,0);
 	 break;
       }
       if(opt_size)
 	 *opt_size=entity_size;
       if(opt_date)
 	 *opt_date=entity_date;
+      break;
+   case Expect::INFO_READLINK:
+      if(reply->TypeIs(SSH_FXP_NAME)) {
+	 Reply_NAME *r=(Reply_NAME*)reply;
+	 const NameAttrs *a=r->GetNameAttrs(0);
+	 LogNote(9,"file info: symlink=%s",a->name.get());
+	 if(mode==ARRAY_INFO)
+	 {
+	    FileInfo *fi=(*fileset_for_info)[e->i];
+	    fi->SetSymlink(a->name);
+	 }
+      }
       break;
    case Expect::WRITE_STATUS:
       if(reply->TypeIs(SSH_FXP_STATUS))
@@ -1134,6 +1152,7 @@ void SFtp::CloseExpectQueue()
 	 break;
       case Expect::CWD:
       case Expect::INFO:
+      case Expect::INFO_READLINK:
       case Expect::DEFAULT:
       case Expect::DATA:
       case Expect::WRITE_STATUS:
@@ -2195,7 +2214,7 @@ int SFtpListInfo::Do()
    int m=STALL;
    if(done)
       return m;
-   if(!ubuf)
+   if(!ubuf && !result)
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
@@ -2222,26 +2241,59 @@ int SFtpListInfo::Do()
 	    ubuf->Save(FileAccess::cache->SizeLimit());
       }
    }
-   const char *b;
-   int len;
-   ubuf->Get(&b,&len);
-   if(b==0) // eof
-   {
+   if(!result) {
+      const char *b;
+      int len;
+      ubuf->Get(&b,&len);
+      if(len>0)
+      {
+	 ubuf->Skip(len);
+	 return MOVED;
+      }
+      if(ubuf->Error())
+      {
+	 SetError(ubuf->ErrorText());
+	 return MOVED;
+      }
+      if(b)
+	 return MOVED;
+      // eof
       if(!result && session->IsOpen())
 	 result=session.Cast<SFtp>()->GetFileSet();
       FileAccess::cache->Add(session,"",FA::LONG_LIST,FA::OK,ubuf,result);
       result->Exclude(exclude_prefix,exclude);
+      m=MOVED;
+   }
+   if(result && session->OpenMode()!=FA::ARRAY_INFO)
+   {
+      ubuf=0;
+      result->rewind();
+      for(FileInfo *file=result->curr(); file!=0; file=result->next())
+      {
+	 file->need=0;
+	 if(file->defined & file->TYPE)
+	 {
+	    if(file->filetype==file->SYMLINK)
+	    {
+	       // need the link target
+	       if(!file->Has(file->SYMLINK_DEF))
+		  file->Need(file->SYMLINK_DEF);
+	    }
+	 }
+      }
+      session->GetInfoArray(result.get_non_const());
+      session->Roll();
+      m=MOVED;
+   }
+   if(session->OpenMode()==FA::ARRAY_INFO)
+   {
+      int res=session->Done();
+      if(res==FA::DO_AGAIN)
+	 return m;
+      if(res==FA::IN_PROGRESS)
+	 return m;
+      session->Close();
       done=true;
-      m=MOVED;
-   }
-   if(len>0)
-   {
-      ubuf->Skip(len);
-      m=MOVED;
-   }
-   if(ubuf->Error())
-   {
-      SetError(ubuf->ErrorText());
       m=MOVED;
    }
    return m;

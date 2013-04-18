@@ -786,10 +786,13 @@ int FileCopyPeerFA::Do()
    {
       if(session->IsClosed())
       {
-	 info.file=file;
-	 info.get_size=true;
-	 info.get_time=want_date;
-	 session->GetInfoArray(&info,1);
+	 FileInfo *fi=new FileInfo(file);
+	 fi->Need(fi->SIZE);
+	 if(want_date)
+	    fi->Need(fi->DATE);
+	 info.Empty();
+	 info.Add(fi);
+	 session->GetInfoArray(&info);
 	 m=MOVED;
       }
       res=session->Done();
@@ -801,8 +804,11 @@ int FileCopyPeerFA::Do()
 	 SetSize(NO_SIZE);
 	 return MOVED;
       }
-      SetSize(info.size);
-      SetDate(info.time);
+      FileInfo *fi=info[0];
+      if(fi->Has(fi->SIZE))
+	 SetSize(fi->size);
+      if(fi->Has(fi->DATE))
+	 SetDate(fi->date);
       session->Close();
       return MOVED;
    }

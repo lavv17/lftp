@@ -62,7 +62,7 @@ class GetFileInfo : public ListInfo
 
    xstring_c saved_error_text;
 
-   FA::fileinfo get_info;
+   FileSet get_info;
 
    void PrepareToDie();
 

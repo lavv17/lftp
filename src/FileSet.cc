@@ -73,7 +73,7 @@ void FileInfo::SetUser(const char *u)
    if(u==user)
       return;
    user=StringPool::Get(u);
-   defined|=USER;
+   def(USER);
 }
 
 void FileInfo::SetGroup(const char *g)
@@ -81,7 +81,7 @@ void FileInfo::SetGroup(const char *g)
    if(g==group)
       return;
    group=StringPool::Get(g);
-   defined|=GROUP;
+   def(GROUP);
 }
 
 void FileSet::add_before(int pos,FileInfo *fi)
@@ -632,6 +632,7 @@ void FileInfo::Init()
    size=NO_SIZE;
    nlinks=0;
    defined=0;
+   need=0;
    user=0; group=0;
    rank=0;
 }

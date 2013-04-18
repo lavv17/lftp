@@ -249,10 +249,7 @@ int Fish::Do()
       }
       if(RespQueueSize()==0)
       {
-	 if(mode==ARRAY_INFO && array_ptr<array_cnt)
-	    SendArrayInfoRequests();
-	 else
-	    state=DONE;
+	 state=DONE;
 	 m=MOVED;
       }
       break;
@@ -378,21 +375,15 @@ void Fish::Send(const char *format,...)
 
 void Fish::SendArrayInfoRequests()
 {
-   for(int i=array_ptr; i<array_cnt; i++)
+   for(int i=fileset_for_info->curr_index(); i<fileset_for_info->count(); i++)
    {
-      if(array_for_info[i].get_time || array_for_info[i].get_size)
+      FileInfo *fi=(*fileset_for_info)[i];
+      if(fi->need)
       {
-	 const char *e=shell_encode(array_for_info[i].file);
+	 const char *e=shell_encode(fi->name);
 	 Send("#INFO %s\n"
-	      "ls -lLd %s; echo '### 200'\n",array_for_info[i].file,e);
+	      "ls -lLd %s; echo '### 200'\n",fi->name.get(),e);
 	 PushExpect(EXPECT_INFO);
-      }
-      else
-      {
-	 if(i==array_ptr)
-	    array_ptr++;   // if it is first one, just skip it.
-	 else
-	    break;	   // otherwise, wait until it is first.
       }
    }
 }
@@ -708,18 +699,12 @@ int Fish::HandleReplies()
       break;
    case EXPECT_INFO:
    {
-      FileInfo *fi=FileInfo::parse_ls_line(message,"GMT");
-      if(fi && fi->defined&fi->SIZE)
-	 array_for_info[array_ptr].size=fi->size;
-      else
-	 array_for_info[array_ptr].size=NO_SIZE;
-      if(fi && fi->defined&fi->DATE)
-	 array_for_info[array_ptr].time=fi->date;
-      else
-	 array_for_info[array_ptr].time=NO_DATE;
-      array_for_info[array_ptr].get_size=false;
-      array_for_info[array_ptr].get_time=false;
-      array_ptr++;
+      Ref<FileInfo> new_info(FileInfo::parse_ls_line(message,"GMT"));
+      FileInfo *fi=fileset_for_info->curr();
+      while(!fi->need)
+	 fi=fileset_for_info->next();
+      fi->Merge(*new_info);
+      fi->need=0;
       break;
    }
    case EXPECT_RETR:

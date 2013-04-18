@@ -835,21 +835,22 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
 
 void Ftp::CatchDATE(int act)
 {
-   if(!array_for_info)
+   if(!fileset_for_info)
+      return;
+
+   FileInfo *fi=fileset_for_info->curr();
+   if(!fi)
       return;
 
    if(is2XX(act))
    {
       if(line.length()>4 && is_ascii_digit(line[4]))
-	 array_for_info[array_ptr].time=ConvertFtpDate(line+4);
-      else
-	 array_for_info[array_ptr].time=NO_DATE;
+	 fi->SetDate(ConvertFtpDate(line+4),0);
    }
    else	if(is5XX(act))
    {
       if(cmd_unsupported(act))
 	 conn->mdtm_supported=false;
-      array_for_info[array_ptr].time=NO_DATE;
    }
    else
    {
@@ -857,9 +858,9 @@ void Ftp::CatchDATE(int act)
       return;
    }
 
-   array_for_info[array_ptr].get_time=false;
-   if(!array_for_info[array_ptr].get_size)
-      array_ptr++;
+   fi->NoNeed(fi->DATE);
+   if(!(fi->need&fi->SIZE))
+      fileset_for_info->next();
 
    TrySuccess();
 }
@@ -883,7 +884,11 @@ void Ftp::CatchDATE_opt(int act)
 
 void Ftp::CatchSIZE(int act)
 {
-   if(!array_for_info)
+   if(!fileset_for_info)
+      return;
+
+   FileInfo *fi=fileset_for_info->curr();
+   if(!fi)
       return;
 
    long long size=NO_SIZE;
@@ -906,14 +911,11 @@ void Ftp::CatchSIZE(int act)
       return;
    }
 
-   if(size<1)
-      size=NO_SIZE;
-
-   array_for_info[array_ptr].size=size;
-
-   array_for_info[array_ptr].get_size=false;
-   if(!array_for_info[array_ptr].get_time)
-      array_ptr++;
+   if(size>=1)
+      fi->SetSize(size);
+   fi->NoNeed(fi->SIZE);
+   if(!(fi->need&fi->DATE))
+      fileset_for_info->next();
 
    TrySuccess();
 }
@@ -2427,7 +2429,7 @@ int   Ftp::Do()
          return MOVED;
 
       // more work to do?
-      if(expect->IsEmpty() && mode==ARRAY_INFO && array_ptr<array_cnt)
+      if(expect->IsEmpty() && mode==ARRAY_INFO && fileset_for_info->curr())
       {
 	 SendArrayInfoRequests();
 	 return MOVED;
@@ -2647,35 +2649,28 @@ void Ftp::SendSiteGroup()
 
 void Ftp::SendArrayInfoRequests()
 {
-   for(int i=array_ptr; i<array_cnt; i++)
+   for(int i=fileset_for_info->curr_index(); i<fileset_for_info->count(); i++)
    {
+      FileInfo *fi=(*fileset_for_info)[i];
       bool sent=false;
-      if(array_for_info[i].get_time && conn->mdtm_supported && use_mdtm)
+      if((fi->need&fi->DATE) && conn->mdtm_supported && use_mdtm)
       {
-	 conn->SendCmd2("MDTM",ExpandTildeStatic(array_for_info[i].file));
+	 conn->SendCmd2("MDTM",ExpandTildeStatic(fi->name));
 	 expect->Push(Expect::MDTM);
 	 sent=true;
       }
-      else
+      if((fi->need&fi->SIZE) && conn->size_supported && use_size)
       {
-	 array_for_info[i].time=NO_DATE;
-      }
-      if(array_for_info[i].get_size && conn->size_supported && use_size)
-      {
-	 conn->SendCmd2("SIZE",ExpandTildeStatic(array_for_info[i].file));
+	 conn->SendCmd2("SIZE",ExpandTildeStatic(fi->name));
 	 expect->Push(Expect::SIZE);
 	 sent=true;
       }
-      else
-      {
-	 array_for_info[i].size=NO_SIZE;
-      }
       if(!sent)
       {
-	 if(i==array_ptr)
-	    array_ptr++;   // if it is first one, just skip it.
+	 if(i==fileset_for_info->curr_index())
+	    fileset_for_info->next();   // if it is the first one, just skip it.
 	 else
-	    break;	   // otherwise, wait until it is first.
+	    break;	   // otherwise, wait until it is the first.
       }
       else
       {
@@ -4485,7 +4480,7 @@ int   Ftp::Done()
 
    if(mode==ARRAY_INFO)
    {
-      if(state==WAITING_STATE && expect->IsEmpty() && array_ptr==array_cnt)
+      if(state==WAITING_STATE && expect->IsEmpty() && !fileset_for_info->curr())
 	 return(OK);
       return(IN_PROGRESS);
    }

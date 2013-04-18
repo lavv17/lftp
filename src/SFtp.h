@@ -52,8 +52,8 @@ enum packet_type {
    SSH_FXP_RMDIR    =15,
    SSH_FXP_REALPATH =16,
    SSH_FXP_STAT     =17,
-   SSH_FXP_RENAME   =18,
-   SSH_FXP_READLINK =19,
+   SSH_FXP_RENAME   =18,   // v>=2
+   SSH_FXP_READLINK =19,   // v>=3
    SSH_FXP_SYMLINK  =20,   // v<=5
    SSH_FXP_LINK     =21,   // v>=6
    SSH_FXP_BLOCK    =22,   // v>=6
@@ -646,6 +646,11 @@ private:
       void ComputeLength();
       void Pack(Buffer *b);
    };
+   class Request_READLINK : public PacketSTRING
+   {
+   public:
+      Request_READLINK(const char *name) : PacketSTRING(SSH_FXP_READLINK,name) {}
+   };
    class Request_SYMLINK : public Packet
    {
       xstring oldpath;
@@ -689,6 +694,7 @@ private:
 	 HANDLE_STALE,
 	 DATA,
 	 INFO,
+	 INFO_READLINK,
 	 DEFAULT,
 	 WRITE_STATUS,
 	 IGNORE

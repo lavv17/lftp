@@ -289,7 +289,7 @@ class FileCopyPeerFA : public FileCopyPeer
    int Put_LL(const char *buf,int size);
    int PutEOF_LL();
 
-   FileAccess::fileinfo info;
+   FileSet info;
 
    bool fxp;   // FXP (ftp<=>ftp copy) active
 
