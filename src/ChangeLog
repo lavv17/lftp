@@ -1,3 +1,7 @@
+2013-05-07  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: fixed NULL dereference when use-dht is off.
+
 2013-04-18  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc, Http.h: improve DirFile; add slash for directories in ARRAY_INFO.

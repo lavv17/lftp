@@ -165,6 +165,8 @@ void Torrent::StartDHT()
 }
 void Torrent::StopDHT()
 {
+   if(!dht)
+      return;
    dht->Save();
    dht=0;
 #if INET6
