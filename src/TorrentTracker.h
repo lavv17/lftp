@@ -91,8 +91,8 @@ protected:
    void SetError(const char *e) { master->SetError(e); }
 
    const char *GetURL() const { return master->GetURL(); }
-   const char *GetInfoHash() const;
-   const char *GetMyPeerId() const;
+   const xstring& GetInfoHash() const;
+   const xstring& GetMyPeerId() const;
    int GetPort() const;
    unsigned long long GetTotalSent() const;
    unsigned long long GetTotalRecv() const;

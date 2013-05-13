@@ -179,8 +179,8 @@ const char *TorrentTracker::Status() const
 
 
 // TrackerBackend
-const char *TrackerBackend::GetInfoHash() const { return master->parent->GetInfoHash(); }
-const char *TrackerBackend::GetMyPeerId() const { return master->parent->GetMyPeerId(); }
+const xstring& TrackerBackend::GetInfoHash() const { return master->parent->GetInfoHash(); }
+const xstring& TrackerBackend::GetMyPeerId() const { return master->parent->GetMyPeerId(); }
 int TrackerBackend::GetPort() const { return master->parent->GetPort(); }
 unsigned long long TrackerBackend::GetTotalSent() const { return master->parent->GetTotalSent(); }
 unsigned long long TrackerBackend::GetTotalRecv() const { return master->parent->GetTotalRecv(); }

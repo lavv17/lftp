@@ -1,3 +1,8 @@
+2013-05-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+        * TorrentTracker.cc, TorrentTracker.h: use xstring for InfoHash and
+	  PeerId.
+
 2013-05-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: fixed NULL dereference when use-dht is off.
