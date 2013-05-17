@@ -1,3 +1,11 @@
+Version 4.4.6 - 2013-05-17
+
+* improved sftp backend with symlink info retrieving (readlink).
+* new cls option -a to show dot files.
+* new setting cmd:cls-exact-time.
+* fixed NULL dereference when torrent:use-dht is off.
+* fixed torrent for info_hash with NUL character (broken in 4.4.4).
+
 Version 4.4.5 - 2013-03-14
 
 * user/group name lookup performance fixed.
