@@ -341,9 +341,12 @@ void Fish::Close()
    switch(state)
    {
    case(DISCONNECTED):
-   case(WAITING):
    case(CONNECTED):
    case(DONE):
+      break;
+   case(WAITING):
+      if(mode==STORE || mode==RETRIEVE)
+	 Disconnect();
       break;
    case(FILE_SEND):
       if(!RespQueueIsEmpty())
@@ -757,14 +760,14 @@ void Fish::CloseExpectQueue()
       case EXPECT_PWD:
       case EXPECT_CWD:
 	 break;
-      case EXPECT_RETR_INFO:
       case EXPECT_INFO:
-      case EXPECT_RETR:
       case EXPECT_DIR:
-      case EXPECT_QUOTE:
       case EXPECT_DEFAULT:
 	 RespQueue[i]=EXPECT_IGNORE;
 	 break;
+      case EXPECT_QUOTE:
+      case EXPECT_RETR_INFO:
+      case EXPECT_RETR:
       case EXPECT_STOR_PRELIMINARY:
       case EXPECT_STOR:
 	 Disconnect();
