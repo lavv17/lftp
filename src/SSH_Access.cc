@@ -148,4 +148,7 @@ void SSH_Access::MoveConnectionHere(SSH_Access *o)
    recv_buf=o->recv_buf.borrow();
    pty_send_buf=o->pty_send_buf.borrow();
    pty_recv_buf=o->pty_recv_buf.borrow();
+   ssh=o->ssh.borrow();
+   received_greeting=o->received_greeting;
+   password_sent=o->password_sent;
 }
