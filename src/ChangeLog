@@ -1,3 +1,10 @@
+2013-05-21  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* FileCopy.cc: set size=NO_SIZE when the size could not be found.
+	* FileSet.cc: allow info merging for files with the same basename.
+	* Fish.cc: fixed file correption and garbage logging by requiring
+	  the file to have a size; improve error handling.
+
 2013-05-20  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Fish.cc: disconnect in more cases on Close.
