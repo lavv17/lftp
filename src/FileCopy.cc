@@ -805,8 +805,7 @@ int FileCopyPeerFA::Do()
 	 return MOVED;
       }
       FileInfo *fi=info[0];
-      if(fi->Has(fi->SIZE))
-	 SetSize(fi->size);
+      SetSize(fi->size);
       if(fi->Has(fi->DATE))
 	 SetDate(fi->date);
       session->Close();
