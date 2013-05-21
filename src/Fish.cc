@@ -571,6 +571,8 @@ int Fish::HandleReplies()
       }
       if(entity_size!=NO_SIZE && real_pos<entity_size)
 	 return m;
+      if(entity_size==NO_SIZE)
+	 return m;
    }
    recv_buf->Put(pty_recv_buf->Get(),pty_recv_buf->Size()); // join the messages.
    pty_recv_buf->Skip(pty_recv_buf->Size());
@@ -624,10 +626,6 @@ int Fish::HandleReplies()
       else {
 	 message.append('\n');
 	 message.append(line);
-	 if(state==FILE_RECV && mode==RETRIEVE) {
-	    SetError(NO_FILE,message);
-	    return MOVED;
-	 }
       }
       return m;
    }
