@@ -48,7 +48,7 @@
 
 void  FileInfo::Merge(const FileInfo& f)
 {
-   if(strcmp(name,f.name))
+   if(strcmp(basename_ptr(name),basename_ptr(f.name)))
       return;
 // int sim=defined&f.defined;
    int dif=(~defined)&f.defined;
