@@ -1749,8 +1749,8 @@ can try to set net:socket-buffer to relatively small value to avoid this.
 limit accumulating of unused limit-total-rate. 0 means twice of limit-total-rate.
 .TP
 .BR net:max-retries \ (number)
-the maximum number of sequential retries of an operation without success.
-0 means unlimited.
+the maximum number of sequential tries of an operation without success.
+0 means unlimited. 1 means no retries.
 .TP
 .BR net:no-proxy \ (string)
 contains comma separated list of domains for which proxy should not be used.
