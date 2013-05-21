@@ -624,7 +624,7 @@ int Fish::HandleReplies()
       else {
 	 message.append('\n');
 	 message.append(line);
-	 if(state==FILE_RECV) {
+	 if(state==FILE_RECV && mode==RETRIEVE) {
 	    SetError(NO_FILE,message);
 	    return MOVED;
 	 }
@@ -805,8 +805,6 @@ int Fish::Read(void *buf,int size)
       return 0;
    if(state==DONE)
       return 0;	  // eof
-   if(entity_size==NO_SIZE)
-      return DO_AGAIN;
    if(state==FILE_RECV && real_pos>=0)
    {
       const char *buf1;
