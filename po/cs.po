@@ -1,7 +1,7 @@
 # Czech translation of lftp.
 # Copyright (C) 2009 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is distributed under the same license as the lftp package.
-# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011, 2012.
+# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011, 2012, 2013.
 #
 # handshake → dojednání (spojení)
 # option → volba
@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.4.0\n"
+"Project-Id-Version: lftp 4.4.6\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2013-05-17 14:34+0400\n"
-"PO-Revision-Date: 2012-09-30 20:40+0200\n"
+"PO-Revision-Date: 2013-05-21 19:42+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -1050,7 +1050,6 @@ msgid "[re]cls [opts] [path/][pattern]"
 msgstr "[re]cls [volby] [cesta/][vzor]"
 
 #: src/commands.cc:164
-#, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -1094,6 +1093,7 @@ msgstr ""
 "nebo přes rouru do vnějšího příkazu.\n"
 "\n"
 " -1                   – jednosloupcový výstup\n"
+" -a, --all            - zobrazí tečkové soubory\n"
 " -B, --basename       – ukáže jen názvy souborů bez cesty\n"
 "     --block-size=VEL – použije bloky po VEL bajtech\n"
 " -d, --directory      – vypíše záznamy adresářů namísto jejich obsahu\n"
@@ -1226,7 +1226,6 @@ msgid "get [OPTS] <rfile> [-o <lfile>]"
 msgstr "get [VOLBY] <vzdálený_soubor> [-o <místní_soubor>]"
 
 #: src/commands.cc:250
-#, fuzzy
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -1239,7 +1238,7 @@ msgstr ""
 " -o <místní_soubor>\n"
 "     určí název místního souboru (implicitně je odvozen ze "
 "vzdáleného_souboru)\n"
-" -c  pokračuje v nedokončeném stahování, reget\n"
+" -c  pokračuje v nedokončeném stahování, obnoví přenos\n"
 " -E  po úspěšném přenosu vzdálené soubory smaže\n"
 " -a  použije režim ASCII (implicitní je binární)\n"
 " -O <základ>\n"
@@ -1276,11 +1275,12 @@ msgid "Print help for command <cmd>, or list of available commands\n"
 msgstr "Vypíše nápovědu k <příkazu>, nebo vypíše všechny dostupné příkazy\n"
 
 #: src/commands.cc:269
-#, fuzzy
 msgid ""
 "List running jobs. -v means verbose, several -v can be specified.\n"
 "If <job_no> is specified, only list a job with that number.\n"
-msgstr "Vypíše seznam běžících úloh. -v znamená podrobně, lze zadat více -v.\n"
+msgstr ""
+"Vypíše seznam běžících úloh. -v znamená podrobně, lze zadat více -v.\n"
+"Je-li zadáno <číslo_úlohy>, vypíše pouze úlohu s tímto číslem.\n"
 
 #: src/commands.cc:271
 msgid "kill all|<job_no>"
@@ -1361,7 +1361,6 @@ msgid "mget [OPTS] <files>"
 msgstr "mget [VOLBY] <soubory>"
 
 #: src/commands.cc:299
-#, fuzzy
 msgid ""
 "Gets selected files with expanded wildcards\n"
 " -c  continue, resume transfer\n"
@@ -1372,7 +1371,7 @@ msgid ""
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
 "Získá soubory vybrané expanzí žolíkových znaků\n"
-" -c  pokračuje v nedokončeném stahování, reget\n"
+" -c  pokračuje v nedokončeném stahování, obnoví přenos\n"
 " -d  vytvoří adresáře stejné jako jsou v názvech souborů a soubory umístí "
 "do\n"
 "     nich namísto do pracovního adresáře\n"
