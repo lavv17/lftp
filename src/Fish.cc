@@ -569,6 +569,8 @@ int Fish::HandleReplies()
 	 Disconnect();
 	 return MOVED;
       }
+      if(entity_size!=NO_SIZE && real_pos<entity_size)
+	 return m;
    }
    recv_buf->Put(pty_recv_buf->Get(),pty_recv_buf->Size()); // join the messages.
    pty_recv_buf->Skip(pty_recv_buf->Size());
@@ -619,8 +621,14 @@ int Fish::HandleReplies()
    {
       if(message==0)
 	 message.set(line);
-      else
-	 message.vappend("\n",line.get(),NULL);
+      else {
+	 message.append('\n');
+	 message.append(line);
+	 if(state==FILE_RECV) {
+	    SetError(NO_FILE,message);
+	    return MOVED;
+	 }
+      }
       return m;
    }
 
@@ -680,7 +688,7 @@ int Fish::HandleReplies()
       else if(message && message[0]!='#')
       {
 	 FileInfo *fi=FileInfo::parse_ls_line(message,"GMT");
-	 if(!fi)
+	 if(!fi || !strncmp(message,"ls: ",4))
 	 {
 	    SetError(NO_FILE,message);
 	    break;
@@ -797,6 +805,8 @@ int Fish::Read(void *buf,int size)
       return 0;
    if(state==DONE)
       return 0;	  // eof
+   if(entity_size==NO_SIZE)
+      return DO_AGAIN;
    if(state==FILE_RECV && real_pos>=0)
    {
       const char *buf1;
