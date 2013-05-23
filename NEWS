@@ -1,3 +1,10 @@
+Version 4.4.7 - 2013-05-23
+
+* translations update (pl, cs).
+* fixed "get -c" looping in some cases.
+* fixed translations encoding (pl, it, es, pt_BR).
+* fixed occasional file corruption and garbage logging in Fish protocol.
+
 Version 4.4.6 - 2013-05-17
 
 * improved sftp backend with symlink info retrieving (readlink).

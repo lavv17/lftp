@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-05-17 14:34+0400\n"
+"POT-Creation-Date: 2013-05-23 12:03+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -167,7 +167,7 @@ msgstr "cd 成功, 当前目录=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1072
+#: src/CmdExec.cc:408 src/FileCopy.cc:1071
 msgid "Too many redirections"
 msgstr ""
 
@@ -267,7 +267,7 @@ msgstr "访问失败: %s"
 msgid "File cannot be accessed"
 msgstr "不能访问文件"
 
-#: src/FileAccess.cc:162 src/Fish.cc:973 src/SFtp.cc:1324 src/ftpclass.cc:4328
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1324 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4337 src/Torrent.cc:2973
 msgid "Not connected"
 msgstr "没有连接上"
@@ -331,17 +331,17 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1069
+#: src/FileCopy.cc:1068
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1254
+#: src/FileCopy.cc:1253
 #, fuzzy
 msgid "file name missed in URL"
 msgstr "缺少文件名. "
 
-#: src/FileCopy.cc:1911
+#: src/FileCopy.cc:1910
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -405,44 +405,44 @@ msgstr "关闭发呆的连接"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:582 src/Http.cc:1142 src/SFtp.cc:735 src/SFtp.cc:1068
+#: src/Fish.cc:589 src/Http.cc:1142 src/SFtp.cc:735 src/SFtp.cc:1068
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2934
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
 
-#: src/Fish.cc:626 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
+#: src/Fish.cc:635 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
-#: src/Fish.cc:978 src/Http.cc:1852 src/Http.cc:1859 src/SFtp.cc:1330
+#: src/Fish.cc:987 src/Http.cc:1852 src/Http.cc:1859 src/SFtp.cc:1330
 #: src/ftpclass.cc:4340 src/Torrent.cc:2975 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "正在连接..."
 
-#: src/Fish.cc:980 src/SFtp.cc:1332 src/ftpclass.cc:4346
+#: src/Fish.cc:989 src/SFtp.cc:1332 src/ftpclass.cc:4346
 #, fuzzy
 msgid "Connected"
 msgstr "没有连接上"
 
-#: src/Fish.cc:982 src/Http.cc:1861 src/SFtp.cc:1334 src/ftpclass.cc:4323
+#: src/Fish.cc:991 src/Http.cc:1861 src/SFtp.cc:1334 src/ftpclass.cc:4323
 #: src/ftpclass.cc:4351 src/ftpclass.cc:4365 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/Fish.cc:984 src/Http.cc:1864 src/SFtp.cc:1336 src/ftpclass.cc:4385
+#: src/Fish.cc:993 src/Http.cc:1864 src/SFtp.cc:1336 src/ftpclass.cc:4385
 msgid "Receiving data"
 msgstr "正接收数据"
 
-#: src/Fish.cc:986 src/Http.cc:1857 src/SFtp.cc:1338 src/ftpclass.cc:4383
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1338 src/ftpclass.cc:4383
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/Fish.cc:988 src/SFtp.cc:1340
+#: src/Fish.cc:997 src/SFtp.cc:1340
 #, fuzzy
 msgid "Done"
 msgstr "\t完成\n"
 
-#: src/Fish.cc:1144 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
 #: src/SFtp.cc:2304
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"

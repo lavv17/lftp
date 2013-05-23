@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-05-17 14:34+0400\n"
+"POT-Creation-Date: 2013-05-23 12:03+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <community@linuxhall.org>\n"
@@ -166,7 +166,7 @@ msgstr "cd 成功，目前的目錄為 %s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s：將輸出結果重新導向至 ‘%s’\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1072
+#: src/CmdExec.cc:408 src/FileCopy.cc:1071
 msgid "Too many redirections"
 msgstr "重新導向次數太多"
 
@@ -263,7 +263,7 @@ msgstr "存取失敗：%s"
 msgid "File cannot be accessed"
 msgstr "無法存取檔案"
 
-#: src/FileAccess.cc:162 src/Fish.cc:973 src/SFtp.cc:1324 src/ftpclass.cc:4328
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1324 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4337 src/Torrent.cc:2973
 msgid "Not connected"
 msgstr "並未連線"
@@ -329,16 +329,16 @@ msgstr "複製：已收到所有資料，但回捲至檔案末端的位置\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "複製：讀入的位置回捲至 %lld, 調整寫出的位置\n"
 
-#: src/FileCopy.cc:1069
+#: src/FileCopy.cc:1068
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "複製：重新導向至‘%s’\n"
 
-#: src/FileCopy.cc:1254
+#: src/FileCopy.cc:1253
 msgid "file name missed in URL"
 msgstr "URL 裡缺少了檔案名稱"
 
-#: src/FileCopy.cc:1911
+#: src/FileCopy.cc:1910
 msgid "Verify command failed without a message"
 msgstr "確認指令失敗，但沒有錯誤訊息"
 
@@ -402,42 +402,42 @@ msgstr "關閉閒置連線"
 msgid "Running connect program"
 msgstr "正在執行進行連線的程式"
 
-#: src/Fish.cc:582 src/Http.cc:1142 src/SFtp.cc:735 src/SFtp.cc:1068
+#: src/Fish.cc:589 src/Http.cc:1142 src/SFtp.cc:735 src/SFtp.cc:1068
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2934
 msgid "Peer closed connection"
 msgstr "對方關閉了連線"
 
-#: src/Fish.cc:626 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
+#: src/Fish.cc:635 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/Fish.cc:978 src/Http.cc:1852 src/Http.cc:1859 src/SFtp.cc:1330
+#: src/Fish.cc:987 src/Http.cc:1852 src/Http.cc:1859 src/SFtp.cc:1330
 #: src/ftpclass.cc:4340 src/Torrent.cc:2975 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "嘗試連線……"
 
-#: src/Fish.cc:980 src/SFtp.cc:1332 src/ftpclass.cc:4346
+#: src/Fish.cc:989 src/SFtp.cc:1332 src/ftpclass.cc:4346
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/Fish.cc:982 src/Http.cc:1861 src/SFtp.cc:1334 src/ftpclass.cc:4323
+#: src/Fish.cc:991 src/Http.cc:1861 src/SFtp.cc:1334 src/ftpclass.cc:4323
 #: src/ftpclass.cc:4351 src/ftpclass.cc:4365 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正在等待回應……"
 
-#: src/Fish.cc:984 src/Http.cc:1864 src/SFtp.cc:1336 src/ftpclass.cc:4385
+#: src/Fish.cc:993 src/Http.cc:1864 src/SFtp.cc:1336 src/ftpclass.cc:4385
 msgid "Receiving data"
 msgstr "下載中"
 
-#: src/Fish.cc:986 src/Http.cc:1857 src/SFtp.cc:1338 src/ftpclass.cc:4383
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1338 src/ftpclass.cc:4383
 msgid "Sending data"
 msgstr "上傳中"
 
-#: src/Fish.cc:988 src/SFtp.cc:1340
+#: src/Fish.cc:997 src/SFtp.cc:1340
 msgid "Done"
 msgstr "完成"
 
-#: src/Fish.cc:1144 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
 #: src/SFtp.cc:2304
 #, c-format
 msgid "Getting file list (%lld) [%s]"

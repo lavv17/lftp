@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-05-17 14:34+0400\n"
+"POT-Creation-Date: 2013-05-23 12:03+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -165,7 +165,7 @@ msgstr ""
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1072
+#: src/CmdExec.cc:408 src/FileCopy.cc:1071
 msgid "Too many redirections"
 msgstr ""
 
@@ -265,7 +265,7 @@ msgstr "Falha no acesso: %s"
 msgid "File cannot be accessed"
 msgstr "Arquivo não pode ser acessado"
 
-#: src/FileAccess.cc:162 src/Fish.cc:973 src/SFtp.cc:1324 src/ftpclass.cc:4328
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1324 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4337 src/Torrent.cc:2973
 msgid "Not connected"
 msgstr "Não conectado"
@@ -330,16 +330,16 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1069
+#: src/FileCopy.cc:1068
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1254
+#: src/FileCopy.cc:1253
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/FileCopy.cc:1911
+#: src/FileCopy.cc:1910
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -403,43 +403,43 @@ msgstr ""
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:582 src/Http.cc:1142 src/SFtp.cc:735 src/SFtp.cc:1068
+#: src/Fish.cc:589 src/Http.cc:1142 src/SFtp.cc:735 src/SFtp.cc:1068
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2934
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/Fish.cc:626 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
+#: src/Fish.cc:635 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
 msgid "extra server response"
 msgstr ""
 
-#: src/Fish.cc:978 src/Http.cc:1852 src/Http.cc:1859 src/SFtp.cc:1330
+#: src/Fish.cc:987 src/Http.cc:1852 src/Http.cc:1859 src/SFtp.cc:1330
 #: src/ftpclass.cc:4340 src/Torrent.cc:2975 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr ""
 
-#: src/Fish.cc:980 src/SFtp.cc:1332 src/ftpclass.cc:4346
+#: src/Fish.cc:989 src/SFtp.cc:1332 src/ftpclass.cc:4346
 #, fuzzy
 msgid "Connected"
 msgstr "Não conectado"
 
-#: src/Fish.cc:982 src/Http.cc:1861 src/SFtp.cc:1334 src/ftpclass.cc:4323
+#: src/Fish.cc:991 src/Http.cc:1861 src/SFtp.cc:1334 src/ftpclass.cc:4323
 #: src/ftpclass.cc:4351 src/ftpclass.cc:4365 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/Fish.cc:984 src/Http.cc:1864 src/SFtp.cc:1336 src/ftpclass.cc:4385
+#: src/Fish.cc:993 src/Http.cc:1864 src/SFtp.cc:1336 src/ftpclass.cc:4385
 msgid "Receiving data"
 msgstr ""
 
-#: src/Fish.cc:986 src/Http.cc:1857 src/SFtp.cc:1338 src/ftpclass.cc:4383
+#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1338 src/ftpclass.cc:4383
 msgid "Sending data"
 msgstr ""
 
-#: src/Fish.cc:988 src/SFtp.cc:1340
+#: src/Fish.cc:997 src/SFtp.cc:1340
 msgid "Done"
 msgstr ""
 
-#: src/Fish.cc:1144 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
 #: src/SFtp.cc:2304
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -1031,8 +1031,8 @@ msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"Feche conexões sem atividade. Como padrão somente no servidor sendo "
-"acessado no\n"
+"Feche conexões sem atividade. Como padrão somente no servidor sendo acessado "
+"no\n"
 "momento.\n"
 " -a  feche conexões sem atividade em todos os servidores\n"
 
@@ -1202,8 +1202,8 @@ msgid ""
 "List running jobs. -v means verbose, several -v can be specified.\n"
 "If <job_no> is specified, only list a job with that number.\n"
 msgstr ""
-"Lista serviços sendo executados. -v significa detalhado, vários -v podem "
-"ser especificados.\n"
+"Lista serviços sendo executados. -v significa detalhado, vários -v podem ser "
+"especificados.\n"
 
 #: src/commands.cc:271
 msgid "kill all|<job_no>"
@@ -1212,8 +1212,7 @@ msgstr "kill all|<número_do_serviço>"
 #: src/commands.cc:272
 msgid "Delete specified job with <job_no> or all jobs\n"
 msgstr ""
-"Termina serviço especificado em <número_do_serviço> ou todos os "
-"serviços\n"
+"Termina serviço especificado em <número_do_serviço> ou todos os serviços\n"
 
 #: src/commands.cc:273
 msgid "lcd <ldir>"
@@ -1224,8 +1223,7 @@ msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
 msgstr ""
-"Muda o diretório corrente local para <diretório_local>. O diretório "
-"local\n"
+"Muda o diretório corrente local para <diretório_local>. O diretório local\n"
 "anterior é armazenado como `-'. Você pode executar `lcd -' para voltar ao\n"
 "diretório anterior.\n"
 
