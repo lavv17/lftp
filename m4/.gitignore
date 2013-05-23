@@ -236,3 +236,5 @@
 /wctomb.m4
 /yield.m4
 /extern-inline.m4
+/pthread.m4
+/sched_h.m4
