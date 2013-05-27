@@ -2256,7 +2256,7 @@ int SFtpListInfo::Do()
 	 return MOVED;
       }
       if(b)
-	 return MOVED;
+	 return m;
       // eof
       if(!result && session->IsOpen())
 	 result=session.Cast<SFtp>()->GetFileSet();

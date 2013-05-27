@@ -1,3 +1,7 @@
+2013-05-27  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: (SFtpListInfo::Do) fixed return value (prevents an endless loop).
+
 2013-05-21  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: set size=NO_SIZE when the size could not be found.
