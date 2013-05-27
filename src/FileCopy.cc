@@ -726,6 +726,7 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    want_date=false;
    start_transfer=true;
    size=NO_SIZE_YET;
+   date=NO_DATE_YET;
    e_size=NO_SIZE;
    seek_pos=0;
    can_seek=false;
@@ -782,12 +783,14 @@ int FileCopyPeerFA::Do()
       return m;
    }
 
-   if(want_size && size==NO_SIZE_YET && (mode==PUT || !start_transfer))
+   if(want_size && size==NO_SIZE_YET && (mode==PUT || !start_transfer)
+   || want_date && date==NO_DATE_YET)
    {
       if(session->IsClosed())
       {
 	 FileInfo *fi=new FileInfo(file);
-	 fi->Need(fi->SIZE);
+	 if(want_size)
+	    fi->Need(fi->SIZE);
 	 if(want_date)
 	    fi->Need(fi->DATE);
 	 info.Empty();
@@ -805,8 +808,9 @@ int FileCopyPeerFA::Do()
 	 return MOVED;
       }
       FileInfo *fi=info[0];
-      SetSize(fi->size);
-      if(fi->Has(fi->DATE))
+      if(want_size)
+	 SetSize(fi->size);
+      if(want_date)
 	 SetDate(fi->date);
       session->Close();
       return MOVED;

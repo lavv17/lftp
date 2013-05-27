@@ -1,6 +1,7 @@
 2013-05-27  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: (SFtpListInfo::Do) fixed return value (prevents an endless loop).
+	* FileCopy.cc: init date member; clean up date/size requesting in FileCopyPeerFA.
 
 2013-05-21  Alexander V. Lukyanov <lav@yars.free.net>
 
