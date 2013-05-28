@@ -167,7 +167,6 @@ protected:
       } state;
 
 private:
-   int max_buf;
    bool cont;
 
    xstring_c error_text;
@@ -411,6 +410,23 @@ public:
    void Bg() { session->SetPriority(0); }
    const char *GetStatus() { return session->CurrentStatus(); }
    void UseColor(bool c=true) { if(dl) dl->UseColor(c); }
+};
+
+class FileCopyPeerMemory : public FileCopyPeer
+{
+private:
+   int max_size;
+
+public:
+   FileCopyPeerMemory(int m) : FileCopyPeer(PUT), max_size(m) {}
+   FileCopyPeerMemory(const xstring& s) : FileCopyPeer(GET), max_size(0) {
+      Put(s);
+      PutEOF();
+      size=s.length();
+      pos=0;
+   }
+   int Do();
+   bool Done() { return true; }
 };
 
 #endif

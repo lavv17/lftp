@@ -251,7 +251,7 @@ int FileCopy::Do()
 	    return MOVED;
 	 }
       }
-      if(put->Size()>max_buf)
+      if(put->IsFull())
 	 get->Suspend(); // stall the get.
       get->Get(&b,&s);
       if(b==0) // eof
@@ -412,9 +412,11 @@ FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
    rate_for_eta(new Speedometer("xfer:eta-period"))
 {
    set_state(INITIAL);
-   max_buf=buffer_size.Query(0);
+   int max_buf=buffer_size.Query(0);
    if(max_buf<1)
       max_buf=1;
+   s->SetMaxBuffered(max_buf);
+   d->SetMaxBuffered(max_buf);
    put_buf=0;
    put_eof_pos=0;
    bytes_count=0;
@@ -783,8 +785,8 @@ int FileCopyPeerFA::Do()
       return m;
    }
 
-   if(want_size && size==NO_SIZE_YET && (mode==PUT || !start_transfer)
-   || want_date && date==NO_DATE_YET)
+   if((want_size && size==NO_SIZE_YET && (mode==PUT || !start_transfer))
+   || (want_date && date==NO_DATE_YET))
    {
       if(session->IsClosed())
       {
@@ -1826,6 +1828,21 @@ int FileCopyPeerDirList::Do()
    SpaceAdd(s);
    dl->Skip(s);
    return MOVED;
+}
+
+// FileCopyPeerMemory
+int FileCopyPeerMemory::Do()
+{
+   int m=STALL;
+   if(mode==PUT) {
+      max_buf=max_size+1;
+      if(Size()>max_size) {
+	 SetError("buffer limit exceeded");
+	 broken=true;
+	 return MOVED;
+      }
+   }
+   return m;
 }
 
 // FileVerificator
