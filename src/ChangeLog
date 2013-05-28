@@ -4,6 +4,7 @@
 	* Http.cc, Http.h: add support for gzip Content-Encoding.
 	* Makefile.am: buffer_zlib for proto-http.
 	* buffer.cc, buffer.h: (SetTranslator) translate unread data.
+	* buffer.h: (IsFull) new method.
 
 2013-05-27  Alexander V. Lukyanov <lav@yars.free.net>
 

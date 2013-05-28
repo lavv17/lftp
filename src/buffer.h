@@ -225,6 +225,7 @@ public:
    void PutEOF() { DirectedBuffer::PutEOF(); PutEOF_LL(); }
 
    void SetMaxBuffered(int m) { max_buf=m; }
+   bool IsFull() { return Size()+(translator?translator->Size():0) >= max_buf; }
 };
 
 class IOBufferStacked : public IOBuffer
