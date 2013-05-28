@@ -29,7 +29,7 @@ lib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la
 
 proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
  FtpDirList.cc FtpDirList.h ftp-opie.c netkey.c FileCopyFtp.cc FileCopyFtp.h
-proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h HttpDirXML.cc
+proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h HttpDirXML.cc buffer_zlib.cc buffer_zlib.h
 proto_file_la_SOURCES = LocalAccess.cc LocalAccess.h
 proto_fish_la_SOURCES = Fish.cc Fish.h
 proto_sftp_la_SOURCES = SFtp.cc SFtp.h
@@ -60,7 +60,7 @@ liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDF
 liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB)
 
 proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
-proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS)
+proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS) -lz
 proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
 cmd_torrent_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la

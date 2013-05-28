@@ -135,6 +135,8 @@ class Http : public NetAccess
    off_t chunk_pos;
    bool chunked_trailer;
 
+   Ref<DirectedBuffer> inflate;
+
    bool no_ranges;
    bool seen_ranges_bytes;
 
@@ -148,6 +150,7 @@ class Http : public NetAccess
    const char *user_agent;
 
    int _Read(void *,int);  // does not update pos, rate_limit, retries, does not check state.
+   void _Skip(int to_skip); // skip in recv_buf or inflate, update real_pos
 
 protected:
    bool hftp;  // ftp over http proxy.

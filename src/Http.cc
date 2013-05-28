@@ -36,6 +36,7 @@
 #include "HttpDir.h"
 #include "misc.h"
 #include "buffer_ssl.h"
+#include "buffer_zlib.h"
 
 #include "ascii_ctype.h"
 
@@ -190,6 +191,7 @@ void Http::ResetRequestData()
    chunk_size=-1;
    chunk_pos=0;
    chunked_trailer=false;
+   inflate=0;
    seen_ranges_bytes=false;
 }
 
@@ -682,6 +684,7 @@ void Http::SendRequest(const char *connection,const char *f)
    chunk_size=-1;
    chunk_pos=0;
    chunked_trailer=false;
+   inflate=0;
    no_ranges=false;
 
    conn->send_buf->SetPos(0);
@@ -744,9 +747,9 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(bs<0) // try to workaround broken servers
 	 bs+=0x100000000LL;
       body_size=bs;
-      if(pos==0 && mode!=STORE && mode!=MAKE_DIR)
+      if(pos==0 && mode!=STORE && mode!=MAKE_DIR && !inflate)
 	 entity_size=body_size;
-      if(pos==0 && opt_size && H_20X(status_code))
+      if(pos==0 && opt_size && H_20X(status_code) && !inflate)
 	 *opt_size=body_size;
 
       if(mode==ARRAY_INFO && H_20X(status_code))
@@ -837,8 +840,19 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 chunk_pos=0;
 	 chunked_trailer=false;
       }
-      // handle gzip?
       return;
+   }
+   if(!strcasecmp(name,"Content-Encoding"))
+   {
+      if(!strcasecmp(value,"gzip")) {
+	 // inflated size if unknown beforehand
+	 entity_size=NO_SIZE;
+	 if(opt_size)
+	    *opt_size=NO_SIZE;
+	 // start the inflation
+	 inflate=new DirectedBuffer(DirectedBuffer::GET);
+	 inflate->SetTranslator(new DataInflator());
+      }
    }
    if(!strcasecmp(name,"Accept-Ranges"))
    {
@@ -1610,6 +1624,18 @@ int Http::Read(void *buf,int size)
    }
    return res;
 }
+void Http::_Skip(int to_skip)
+{
+   if(inflate) {
+      inflate->Skip(to_skip);
+   } else {
+      conn->recv_buf->Skip(to_skip);
+      if(chunked)
+	 chunk_pos+=to_skip;
+      bytes_received+=to_skip;
+   }
+   real_pos+=to_skip;
+}
 int Http::_Read(void *buf,int size)
 {
    const char *buf1;
@@ -1637,7 +1663,8 @@ get_again:
    }
    if(!chunked)
    {
-      if(body_size>=0 && bytes_received>=body_size)
+      if(body_size>=0 && bytes_received>=body_size
+      && (!inflate || inflate->Size()==0))
       {
 	 LogNote(9,_("Received all"));
 	 return 0; // all received
@@ -1648,9 +1675,9 @@ get_again:
 	 return 0;
       }
    }
-   if(size1==0)
+   if(size1==0 && (!inflate || inflate->Size()==0))
       return DO_AGAIN;
-   if(chunked)
+   if(chunked && size1>0)
    {
       if(chunked_trailer && state==RECEIVING_HEADER)
 	 return DO_AGAIN;
@@ -1701,7 +1728,8 @@ get_again:
       if(size1>chunk_size-chunk_pos)
 	 size1=chunk_size-chunk_pos;
    }
-   else
+
+   if(!chunked)
    {
       // limit by body_size.
       if(body_size>=0 && size1+bytes_received>=body_size)
@@ -1711,8 +1739,23 @@ get_again:
    int bytes_allowed=0x10000000;
    if(rate_limit)
       bytes_allowed=rate_limit->BytesAllowedToGet();
-   if(size1>bytes_allowed)
-      size1=bytes_allowed;
+
+   if(inflate) {
+      // do the inflation, if there are not enough inflated data
+      if(size1>bytes_allowed)
+	 size1=bytes_allowed;
+      if(inflate->Size()<size && size1>0) {
+	 inflate->PutTranslated(buf1,size1);
+	 conn->recv_buf->Skip(size1);
+	 if(chunked)
+	    chunk_pos+=size1;
+	 bytes_received+=size1;
+      }
+      inflate->Get(&buf1,&size1);
+   } else {
+      if(size1>bytes_allowed)
+	 size1=bytes_allowed;
+   }
    if(size1==0)
       return DO_AGAIN;
    if(norest_manual && real_pos==0 && pos>0)
@@ -1722,21 +1765,13 @@ get_again:
       off_t to_skip=pos-real_pos;
       if(to_skip>size1)
 	 to_skip=size1;
-      conn->recv_buf->Skip(to_skip);
-      real_pos+=to_skip;
-      bytes_received+=to_skip;
-      if(chunked)
-	 chunk_pos+=to_skip;
+      _Skip(to_skip);
       goto get_again;
    }
    if(size>size1)
       size=size1;
    memcpy(buf,buf1,size);
-   conn->recv_buf->Skip(size);
-   if(chunked)
-      chunk_pos+=size;
-   real_pos+=size;
-   bytes_received+=size;
+   _Skip(size);
    return size;
 }
 
