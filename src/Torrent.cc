@@ -768,7 +768,7 @@ int Torrent::Do()
       return m;
    if(!metainfo_tree && metainfo_url && !md_download) {
       // retrieve metainfo if don't have already.
-      if(!metainfo_fa) {
+      if(!metainfo_copy) {
 	 if(metainfo_url.begins_with("magnet:?")) {
 	    ParseMagnet(metainfo_url+8);
 	    return MOVED;
@@ -791,26 +791,25 @@ int Torrent::Do()
 	 if(!u.proto)
 	    u.proto.set("file");
 	 LogNote(9,"Retrieving meta-data from `%s'...\n",metainfo_url.get());
-	 metainfo_fa=FileAccess::New(&u);
-	 metainfo_fa->Open(u.path,FA::RETRIEVE);
-	 metainfo_fa->SetFileURL(metainfo_url);
-	 metainfo_data=new IOBufferFileAccess(metainfo_fa);
+	 FileCopyPeer *metainfo_src=new FileCopyPeerFA(&u,FA::RETRIEVE);
+	 FileCopyPeer *metainfo_dst=new FileCopyPeerMemory(10000000);
+	 metainfo_copy=new FileCopy(metainfo_src,metainfo_dst,false);
 	 m=MOVED;
       }
-      if(metainfo_data->Error()) {
-	 SetError(new Error(-1,metainfo_data->ErrorText(),metainfo_data->ErrorFatal()));
-	 metainfo_fa->Close();
-	 metainfo_data=0;
+      if(metainfo_copy->Error()) {
+	 SetError(Error::Fatal(metainfo_copy->ErrorText()));
+	 metainfo_copy=0;
 	 return MOVED;
       }
-      if(!metainfo_data->Eof())
+      if(!metainfo_copy->Done())
       	 return m;
-      metainfo_fa->Close();
-      metainfo_fa=0;
       LogNote(9,"meta-data EOF\n");
       int rest;
-      metainfo_tree=BeNode::Parse(metainfo_data->Get(),metainfo_data->Size(),&rest);
-      metainfo_data=0;
+      const char *metainfo_buf;
+      int metainfo_len;
+      metainfo_copy->put->Get(&metainfo_buf,&metainfo_len);
+      metainfo_tree=BeNode::Parse(metainfo_buf,metainfo_len,&rest);
+      metainfo_copy=0;
       if(!metainfo_tree) {
 	 SetError("Meta-data parse error");
 	 return MOVED;
@@ -1550,6 +1549,8 @@ void Torrent::Reconfig(const char *name)
 
 const xstring& Torrent::Status()
 {
+   if(metainfo_copy)
+      return xstring::format(_("Getting meta-data: %s"),metainfo_copy->GetStatus());
    if(!metadata) {
       if(md_download.length()>0)
 	 return xstring::format(_("Getting meta-data: %s"),
@@ -1557,8 +1558,6 @@ const xstring& Torrent::Status()
       else
 	 return xstring::get_tmp(_("Waiting for meta-data..."));
    }
-   if(metainfo_data)
-      return xstring::format(_("Getting meta-data: %s"),metainfo_data->Status());
    if(validating) {
       return xstring::format(_("Validation: %u/%u (%u%%) %s%s"),validate_index,total_pieces,
 	 validate_index*100/total_pieces,recv_rate.GetStrS(),

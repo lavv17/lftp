@@ -7,6 +7,7 @@
 	* buffer.h: (IsFull) new method.
 	* FileCopy.cc, FileCopy.h: (FileCopyPeerMemory) new peer type;
 	  use IOBuffer::SetMaxBuffered and IsFull.
+	* Torrent.cc, Torrent.h: use FileCopy for metainfo fetching.
 
 2013-05-27  Alexander V. Lukyanov <lav@yars.free.net>
 

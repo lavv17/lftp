@@ -27,6 +27,7 @@
 #include "network.h"
 #include "RateLimit.h"
 #include "Resolver.h"
+#include "FileCopy.h"
 #include "DHT.h"
 
 class FDCache;
@@ -159,8 +160,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void ParseMagnet(const char *p);
 
    xstring_c metainfo_url;
-   FileAccessRef metainfo_fa;
-   SMTaskRef<IOBuffer> metainfo_data;
+   SMTaskRef<FileCopy> metainfo_copy;
    Ref<BeNode> metainfo_tree;
    BeNode *info;
    xstring metadata;
