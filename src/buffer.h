@@ -168,7 +168,7 @@ protected:
 
 public:
    DirectedBuffer(dir_t m) : mode(m) {}
-   void SetTranslator(DataTranslator *t) { translator=t; }
+   void SetTranslator(DataTranslator *t);
    void SetTranslation(const char *be_encoding,bool translit=true)
 #ifdef HAVE_ICONV
       ;

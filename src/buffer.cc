@@ -333,6 +333,20 @@ DataRecoder::DataRecoder(const char *from_code,const char *to_code,bool translit
    backend_translate=0;
 }
 
+void DirectedBuffer::SetTranslator(DataTranslator *t)
+{
+   if(mode==GET && !translator && Size()>0) {
+      // translate unread data
+      const char *data;
+      int len;
+      Get(&data,&len);
+      t->Put(data,len);
+      buffer.truncate(buffer_ptr);
+      t->AppendTranslated(this,0,0);
+   }
+   translator=t;
+}
+
 void DirectedBuffer::SetTranslation(const char *enc,bool translit)
 {
    if(!enc || !*enc)
