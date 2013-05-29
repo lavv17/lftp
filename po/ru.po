@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.5\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-05-23 12:03+0400\n"
+"POT-Creation-Date: 2013-05-29 10:53+0400\n"
 "PO-Revision-Date: 2013-03-14 12:56+0400\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -170,7 +170,7 @@ msgstr "cd ok, каталог=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1071
+#: src/CmdExec.cc:408 src/FileCopy.cc:1077
 msgid "Too many redirections"
 msgstr "Слишком много перенаправлений"
 
@@ -269,7 +269,7 @@ msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
 #: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1324 src/ftpclass.cc:4328
-#: src/ftpclass.cc:4337 src/Torrent.cc:2973
+#: src/ftpclass.cc:4337 src/Torrent.cc:2972
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -297,7 +297,7 @@ msgstr "Файл переместился"
 msgid "File moved to `"
 msgstr "Файл переместился в `"
 
-#: src/FileAccess.cc:883 src/buffer.cc:230
+#: src/FileAccess.cc:884 src/buffer.cc:230
 msgid " [cached]"
 msgstr " [из кэша]"
 
@@ -333,20 +333,20 @@ msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 "копирование: чтение откатилось на позицию %lld, позиционируем запись так же\n"
 
-#: src/FileCopy.cc:1068
+#: src/FileCopy.cc:1074
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "копирование: получено перенаправление на `%s'\n"
 
-#: src/FileCopy.cc:1253
+#: src/FileCopy.cc:1259
 msgid "file name missed in URL"
 msgstr "пропущено имя файла в URL"
 
-#: src/FileCopy.cc:1910
+#: src/FileCopy.cc:1931
 msgid "Verify command failed without a message"
 msgstr "Команда проверки вернула статус ошибки без сообщения"
 
-#: src/FileCopy.h:277
+#: src/FileCopy.h:276
 msgid "Verifying..."
 msgstr "Проверка..."
 
@@ -397,7 +397,7 @@ msgstr "функция execl(/bin/sh) не выполнена: %s\n"
 msgid "total"
 msgstr "всего"
 
-#: src/Fish.cc:75 src/Http.cc:936 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:950 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
@@ -405,7 +405,7 @@ msgstr "Закрытие неиспользуемого соединения"
 msgid "Running connect program"
 msgstr "Выполняется соединяющая программа"
 
-#: src/Fish.cc:589 src/Http.cc:1142 src/SFtp.cc:735 src/SFtp.cc:1068
+#: src/Fish.cc:589 src/Http.cc:1156 src/SFtp.cc:735 src/SFtp.cc:1068
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2934
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
@@ -414,8 +414,8 @@ msgstr "Соединение закрыто удаленной машиной"
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/Fish.cc:987 src/Http.cc:1852 src/Http.cc:1859 src/SFtp.cc:1330
-#: src/ftpclass.cc:4340 src/Torrent.cc:2975 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:1887 src/Http.cc:1894 src/SFtp.cc:1330
+#: src/ftpclass.cc:4340 src/Torrent.cc:2974 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -423,16 +423,16 @@ msgstr "Установка соединения..."
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/Fish.cc:991 src/Http.cc:1861 src/SFtp.cc:1334 src/ftpclass.cc:4323
+#: src/Fish.cc:991 src/Http.cc:1896 src/SFtp.cc:1334 src/ftpclass.cc:4323
 #: src/ftpclass.cc:4351 src/ftpclass.cc:4365 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Fish.cc:993 src/Http.cc:1864 src/SFtp.cc:1336 src/ftpclass.cc:4385
+#: src/Fish.cc:993 src/Http.cc:1899 src/SFtp.cc:1336 src/ftpclass.cc:4385
 msgid "Receiving data"
 msgstr "Получение данных"
 
-#: src/Fish.cc:995 src/Http.cc:1857 src/SFtp.cc:1338 src/ftpclass.cc:4383
+#: src/Fish.cc:995 src/Http.cc:1892 src/SFtp.cc:1338 src/ftpclass.cc:4383
 msgid "Sending data"
 msgstr "Отправка данных"
 
@@ -451,79 +451,79 @@ msgstr "Получение списка файлов (%lld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: файл уже существует и не задано xfer:clobber\n"
 
-#: src/Http.cc:161
+#: src/Http.cc:162
 msgid "Closing HTTP connection"
 msgstr "Закрытие соединения HTTP"
 
-#: src/Http.cc:168
+#: src/Http.cc:169
 msgid "POST method failed"
 msgstr "Метод POST завершился неудачей"
 
-#: src/Http.cc:1017
+#: src/Http.cc:1031
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp через http прокси не может работать без прокси, установите hftp:proxy."
 
-#: src/Http.cc:1067 src/ftpclass.cc:1344 src/Torrent.cc:2653
-#: src/Torrent.cc:3175 src/TorrentTracker.cc:392
+#: src/Http.cc:1081 src/ftpclass.cc:1344 src/Torrent.cc:2652
+#: src/Torrent.cc:3174 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "невозможно создать сокет для семейства адресов %d"
 
-#: src/Http.cc:1158
+#: src/Http.cc:1172
 msgid "Sending request..."
 msgstr "Передача запроса..."
 
-#: src/Http.cc:1202
+#: src/Http.cc:1216
 msgid "Hit EOF while fetching headers"
 msgstr "Получил конец файла (EOF) при чтении заголовков"
 
-#: src/Http.cc:1308
+#: src/Http.cc:1322
 msgid "Could not parse HTTP status line"
 msgstr "Невозможно разобрать строку статуса HTTP"
 
-#: src/Http.cc:1339
+#: src/Http.cc:1353
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Объект не в кэше, а http:cache-control содержит only-if-cached"
 
-#: src/Http.cc:1497
+#: src/Http.cc:1511
 msgid "Receiving body..."
 msgstr "Получение тела ответа..."
 
-#: src/Http.cc:1629
+#: src/Http.cc:1655
 msgid "Hit EOF"
 msgstr "Конец файла"
 
-#: src/Http.cc:1632
+#: src/Http.cc:1658
 msgid "Received not enough data, retrying"
 msgstr "Получено не достаточно данных - повторная попытка."
 
-#: src/Http.cc:1642
+#: src/Http.cc:1669
 msgid "Received all"
 msgstr "Все данные получены"
 
-#: src/Http.cc:1647
+#: src/Http.cc:1674
 msgid "Received all (total)"
 msgstr "Все данные получены (совсем все)"
 
-#: src/Http.cc:1671 src/Http.cc:1693
+#: src/Http.cc:1698 src/Http.cc:1720
 msgid "chunked format violated"
 msgstr "формат данных `chunked' нарушен"
 
-#: src/Http.cc:1680
+#: src/Http.cc:1707
 msgid "Received last chunk"
 msgstr "Получен последний фрагмент"
 
-#: src/Http.cc:1846 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:1881 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4333 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
-#: src/Http.cc:1854 src/ftpclass.cc:4326
+#: src/Http.cc:1889 src/ftpclass.cc:4326
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:1862
+#: src/Http.cc:1897
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 
@@ -666,7 +666,7 @@ msgstr "%s: регулярное выражение `%s': %s\n"
 #: src/commands.cc:2212 src/commands.cc:2374 src/commands.cc:2402
 #: src/commands.cc:2409 src/commands.cc:2695 src/commands.cc:2722
 #: src/commands.cc:2729 src/commands.cc:3049 src/lftp.cc:267
-#: src/Torrent.cc:3555
+#: src/Torrent.cc:3554
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
@@ -681,7 +681,7 @@ msgstr "Ошибка на сокете (%s) - повторное соедине�
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Соединение с %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2770
+#: src/NetAccess.cc:217 src/Torrent.cc:2769
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
@@ -2520,77 +2520,77 @@ msgstr "%s ok, %d каталог$|а|ов$ удалено\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d файл$|а|ов$ удалено\n"
 
-#: src/Torrent.cc:1555 src/Torrent.cc:1561
+#: src/Torrent.cc:1553 src/Torrent.cc:1556
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Получение мета-данных: %s"
 
-#: src/Torrent.cc:1558
+#: src/Torrent.cc:1559
 msgid "Waiting for meta-data..."
 msgstr "Ожидание метаданных..."
 
-#: src/Torrent.cc:1563
+#: src/Torrent.cc:1562
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Проверка: %u/%u (%u%%) %s%s"
 
-#: src/Torrent.cc:1573
+#: src/Torrent.cc:1572
 msgid "Shutting down: "
 msgstr "Останов: "
 
-#: src/Torrent.cc:2656
+#: src/Torrent.cc:2655
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Соединение с узлом %s, порт %u"
 
-#: src/Torrent.cc:2706 src/Torrent.cc:2819
+#: src/Torrent.cc:2705 src/Torrent.cc:2818
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "удалённый узел неожиданно закрыл соединение после %s"
 
-#: src/Torrent.cc:2708
+#: src/Torrent.cc:2707
 msgid "peer closed connection (before handshake)"
 msgstr "удалённый узел закрыл соединение (без обмена сообщениями)"
 
-#: src/Torrent.cc:2804
+#: src/Torrent.cc:2803
 msgid "peer closed connection"
 msgstr "удалённый узел закрыл соединение"
 
-#: src/Torrent.cc:2821
+#: src/Torrent.cc:2820
 msgid "invalid peer response format"
 msgstr "неверный формат ответа удалённого узла"
 
-#: src/Torrent.cc:2977
+#: src/Torrent.cc:2976
 msgid "Handshaking..."
 msgstr "Начало обмена сообщениями..."
 
-#: src/Torrent.cc:3230
+#: src/Torrent.cc:3229
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Не удалось выбрать порт из указанного диапазона torrent:port-range"
 
-#: src/Torrent.cc:3280
+#: src/Torrent.cc:3279
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Принято соединение от [%s]:%d"
 
-#: src/Torrent.cc:3366
+#: src/Torrent.cc:3365
 msgid "peer handshake timeout"
 msgstr "превышено время ожидания при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3378
+#: src/Torrent.cc:3377
 msgid "peer short handshake"
 msgstr "получено усечённое сообщение при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3380
+#: src/Torrent.cc:3379
 msgid "peer closed just accepted connection"
 msgstr "удалённый узел закрыл только что принятое соединение"
 
-#: src/Torrent.cc:3431
+#: src/Torrent.cc:3430
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Раздача продолжится в фоновом режиме...\n"
 
-#: src/Torrent.cc:3599
+#: src/Torrent.cc:3598
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Пожалуйста, укажите torrent-файл или URL.\n"

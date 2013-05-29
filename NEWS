@@ -1,3 +1,9 @@
+Version 4.4.8 - 2013-05-29
+
+* add support for redirections in torrent metainfo fetching.
+* add support for gzip Content-Encoding in http.
+* fixed an endless loop in mirror from sftp.
+
 Version 4.4.7 - 2013-05-23
 
 * translations update (pl, cs).
