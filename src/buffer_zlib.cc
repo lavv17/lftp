@@ -87,5 +87,5 @@ DataInflator::~DataInflator()
 }
 void DataInflator::ResetTranslation()
 {
-   z_err = inflateReset2(&z, 16+MAX_WBITS);
+   z_err = inflateReset(&z);
 }

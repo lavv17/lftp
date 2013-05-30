@@ -1,3 +1,8 @@
+2013-05-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp_tinfo.cc: fixed segfault when there is no TERM env var.
+	* buffer_zlib.cc: fixed compilation with older zlib.
+
 2013-05-28  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer_zlib.cc, buffer_zlib.h: implement inflator.
