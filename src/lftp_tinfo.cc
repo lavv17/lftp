@@ -54,7 +54,8 @@ static void init_terminfo()
       terminfo_ok = false;
 #elif defined(HAVE_TGETSTR)
    static char buf[2048];
-   if(tgetent(buf,getenv("TERM")) == -1)
+   const char *term=getenv("TERM");
+   if(!term || tgetent(buf,term) == -1)
       terminfo_ok = false;
 #endif
 }
