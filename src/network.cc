@@ -362,7 +362,7 @@ int Networker::SocketAccept(int fd,sockaddr_u *u,const char *hostname)
 
 void Networker::SocketSinglePF(int s,int pf)
 {
-#if INET6
+#if INET6 && defined(IPV6_V6ONLY)
    if(pf==PF_INET6) {
       int on = 1;
       if(-1==setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&on, sizeof(on)))

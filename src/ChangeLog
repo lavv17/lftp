@@ -1,5 +1,10 @@
 2013-07-04  Alexander V. Lukyanov <lav@yars.free.net>
 
+	* network.cc: don't use IPV6_V6ONLY if not defined.
+	  (from y-iida@secom.co.jp).
+
+2013-07-04  Alexander V. Lukyanov <lav@yars.free.net>
+
 	* FileSet.cc: recognize and ignore human readable sizes.
 
 2013-05-30  Alexander V. Lukyanov <lav@yars.free.net>
