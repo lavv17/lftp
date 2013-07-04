@@ -792,7 +792,8 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
       // it's size, so the previous was group:
       fi->SetGroup(group_or_size);
       long long size;
-      if(sscanf(t,"%lld",&size)==1)
+      int n;
+      if(sscanf(t,"%lld%n",&size,&n)==1 && t[n]==0)
 	 fi->SetSize(size);
       t = NEXT_TOKEN;
       if(!t)
@@ -802,7 +803,8 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
    {
       // it was month, so the previous was size:
       long long size;
-      if(sscanf(group_or_size,"%lld",&size)==1)
+      int n;
+      if(sscanf(group_or_size,"%lld%n",&size,&n)==1 && group_or_size[n]==0)
 	 fi->SetSize(size);
    }
 
