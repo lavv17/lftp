@@ -56,6 +56,8 @@ void  FileInfo::Merge(const FileInfo& f)
       SetMode(f.mode);
    if(dif&DATE || (defined&DATE && f.defined&DATE && f.date.ts_prec<date.ts_prec))
       SetDate(f.date,f.date.ts_prec);
+   if(dif&SIZE)
+      SetSize(f.size);
    if(dif&TYPE)
       SetType(f.filetype);
    if(dif&SYMLINK)

@@ -2,6 +2,7 @@
 
 	* network.cc: don't use IPV6_V6ONLY if not defined.
 	  (from y-iida@secom.co.jp).
+	* FileSet.cc: (FileInfo::Merge) copy size properly.
 
 2013-07-04  Alexander V. Lukyanov <lav@yars.free.net>
 
