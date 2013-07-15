@@ -50,13 +50,17 @@ class AcceptTermFD : public SMTask
 {
    int sock;
    int a_sock;
+   int recv_i;
+   int fds[3];
    bool accepted;
    bool detached;
 public:
-   AcceptTermFD() : sock(-1), a_sock(-1), accepted(false), detached(false) {
+   AcceptTermFD() : sock(-1), a_sock(-1), recv_i(0), accepted(false), detached(false) {
       do_listen();
    }
    ~AcceptTermFD() {
+      for(int i=0; i<recv_i; i++)
+	 close(fds[i]);
       if(sock!=-1) {
 	 close(sock);
 	 unlink(get_sock_path());
@@ -66,6 +70,8 @@ public:
    }
    int Do() {
       int m=STALL;
+      if(detached)
+	 return m;
       if(accepted) {
 	 char buf;
 	 int res=read(a_sock,&buf,1);
@@ -108,27 +114,31 @@ public:
 	 fcntl(a_sock,F_SETFD,FD_CLOEXEC);
 	 m=MOVED;
       }
-      int fd=recvfd(a_sock,0);
-      if(fd==-1 && E_RETRY(errno)) {
-	 Block(a_sock,POLLIN);
-	 return m;
+      while(recv_i<=2) {
+	 int fd=recvfd(a_sock,0);
+	 if(fd==-1 && E_RETRY(errno)) {
+	    Block(a_sock,POLLIN);
+	    return m;
+	 }
+	 if(fd==-1)
+	 {
+	    perror("recvfd");
+	    do_listen();
+	    TimeoutS(1);
+	    return m;
+	 }
+	 fcntl(fd,F_SETFD,FD_CLOEXEC);
+	 fds[recv_i]=fd;
+	 ++recv_i;
       }
-      if(fd==-1)
-      {
-	 perror("recvfd");
-	 do_listen();
-	 TimeoutS(1);
-	 return m;
-      }
-      fcntl(fd,F_SETFD,FD_CLOEXEC);
-      printf(_("[%u] Attached to terminal %s. %s\n"),(unsigned)getpid(),ttyname(fd),now.IsoDateTime());
+      printf(_("[%u] Attached to terminal %s. %s\n"),(unsigned)getpid(),ttyname(fds[1]),now.IsoDateTime());
       fflush(stdout);
       fflush(stderr);
-      dup2(fd,0);
-      dup2(fd,1);
-      dup2(fd,2);
-      if(fd>2)
-	 close(fd);
+      for(int i=0; i<recv_i; i++) {
+	 dup2(fds[i],i);
+	 if(fds[i]>=recv_i)
+	    close(fds[i]);
+      }
       close(sock);
       sock=-1;
       unlink(get_sock_path());
@@ -152,6 +162,9 @@ public:
 	 close(a_sock);
 	 a_sock=-1;
       }
+      for(int i=0; i<recv_i; i++)
+	 close(fds[i]);
+      recv_i=0;
       accepted=false;
       detached=false;
       sock=socket(AF_UNIX,SOCK_STREAM,0);
@@ -188,9 +201,10 @@ class SendTermFD : public SMTask
    int sock;
    bool connected;
    bool sent;
+   int send_i;
    bool detached;
 public:
-   SendTermFD(pid_t p) : pid(p), sock(-1), connected(false), sent(false), detached(false) {}
+   SendTermFD(pid_t p) : pid(p), sock(-1), connected(false), sent(false), send_i(0), detached(false) {}
    ~SendTermFD() {
       if(sock>=0)
 	 close(sock);
@@ -199,6 +213,24 @@ public:
       int m=STALL;
       if(error || detached)
 	 return m;
+      if(sent) {
+	 char buf;
+	 int res=read(sock,&buf,1);
+	 if(res==-1 && E_RETRY(errno)) {
+	    Block(sock,POLLIN);
+	    return m;
+	 }
+	 if(res<=0) {
+	    detached=true;
+	    close(sock);
+	    sock=-1;
+	    SignalHook::DoCount(SIGINT);
+	    SignalHook::Restore(SIGQUIT);
+	    SignalHook::DoCount(SIGTSTP);
+	    SignalHook::Restore(SIGWINCH);
+	 }
+	 return MOVED;
+      }
       if(sock==-1) {
 	 sock=socket(AF_UNIX,SOCK_STREAM,0);
 	 if(sock==-1) {
@@ -234,8 +266,8 @@ public:
 	 connected=true;
 	 m=MOVED;
       }
-      if(!sent) {
-	 if(sendfd(sock,1)<0) {
+      while(send_i<=2) {
+	 if(sendfd(sock,send_i)<0) {
 	    if(NonFatalError(errno)) {
 	       Block(sock,POLLOUT);
 	       return m;
@@ -245,29 +277,16 @@ public:
 	    sock=-1;
 	    return 0;
 	 }
-	 sent=true;
+	 ++send_i;
 	 m=MOVED;
-
-	 pass_pid=pid;
+      }
+      sent=true;
+      pass_pid=pid;
+      if(isatty(0)) {
 	 SignalHook::Handle(SIGINT,pass_sig);
 	 SignalHook::Handle(SIGQUIT,pass_sig);
 	 SignalHook::Handle(SIGTSTP,pass_sig);
 	 SignalHook::Handle(SIGWINCH,pass_sig);
-      }
-      char buf;
-      int res=read(sock,&buf,1);
-      if(res==-1 && E_RETRY(errno)) {
-	 Block(sock,POLLIN);
-	 return m;
-      }
-      if(res<=0) {
-	 detached=true;
-	 close(sock);
-	 sock=-1;
-	 SignalHook::DoCount(SIGINT);
-	 SignalHook::Restore(SIGQUIT);
-	 SignalHook::DoCount(SIGTSTP);
-	 SignalHook::Restore(SIGWINCH);
       }
       return MOVED;
    }
