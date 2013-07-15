@@ -1,3 +1,9 @@
+2013-07-15  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* attach.h: pass all three std fds.
+	* lftp.cc: simplify attach/detach logic; get rid of goto;
+	  handle Detached condition.
+
 2013-07-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* network.cc: don't use IPV6_V6ONLY if not defined.
