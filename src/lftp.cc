@@ -416,8 +416,7 @@ static void detach()
    SignalHook::Handle(SIGTERM,sig_term);
 }
 
-SMTaskRef<AcceptTermFD> term_acceptor;
-static int move_to_background()
+static void move_to_background()
 {
    // notify jobs
    Job::lftpMovesToBackground_ToAll();
@@ -425,45 +424,60 @@ static int move_to_background()
    SMTask::RollAll(TimeInterval(1,0));
    // if all jobs terminated, don't really move to bg.
    if(Job::NumberOfJobs()==0)
-      return 0;
+      return;
 
    top_exec->AtBackground();
    top_exec->WaitDone();
    if(Job::NumberOfJobs()==0)
-      return 0;
+      return;
 
    fflush(stdout);
    fflush(stderr);
 
-   static bool detached;
-   pid_t pid=0;
-   if(!detached)
-      pid=fork();
+   pid_t pid=fork();
    switch(pid)
    {
    case(0): // child
    {
-      if(!detached) {
-	 detach();
-	 detached=true;
-	 printf(_("[%u] Started.  %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
-      }
-      if(!term_acceptor)
-	 term_acceptor=new AcceptTermFD();
+      pid=getpid();
+      detach();
+      printf(_("[%u] Started.  %s\n"),(unsigned)pid,SMTask::now.IsoDateTime());
+      SMTaskRef<AcceptTermFD> term_acceptor(new AcceptTermFD());
       for(;;)
       {
 	 SMTask::Schedule();
 	 if(Job::NumberOfJobs()==0)
 	    break;
 	 SMTask::Block();
-	 if(term_acceptor->Accepted())
-	    return 1;
+	 if(term_acceptor->Accepted()) {
+	    hook_signals();
+	    top_exec->SetInteractive();
+	    top_exec->SetStatusLine(new StatusLine(1));
+	    top_exec->SetCmdFeeder(new ReadlineFeeder(0));
+	    for(;;)
+	    {
+	       SMTask::Schedule();
+	       if(top_exec->Done() || term_acceptor->Detached()) {
+		  if(Job::NumberOfJobs()>0) {
+		     printf(_("[%u] Detaching from the terminal to complete transfers...\n"),(unsigned)pid);
+		  } else if(top_exec->Done()) {
+		     printf(_("[%u] Exiting and detaching from the terminal.\n"),(unsigned)pid);
+		  }
+		  fflush(stdout);
+		  term_acceptor->Detach();
+		  detach();
+		  printf(_("[%u] Detached from terminal. %s\n"),(unsigned)pid,SMTask::now.IsoDateTime());
+		  break;
+	       }
+	       SMTask::Block();
+	    }
+	 }
       }
       top_exec->AtExitBg();
       top_exec->AtTerminate();
       top_exec->WaitDone();
-      printf(_("[%u] Finished. %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
-      return 0;
+      printf(_("[%u] Finished. %s\n"),(unsigned)pid,SMTask::now.IsoDateTime());
+      break;
    }
    default: // parent
       printf(_("[%u] Moving to background to complete transfers...\n"),
@@ -473,7 +487,6 @@ static int move_to_background()
    case(-1):
       perror("fork()");
    }
-   return 0;
 }
 
 int lftp_slot(int count,int key)
@@ -553,7 +566,6 @@ int   main(int argc,char **argv)
    lftp_feeder=new ReadlineFeeder(args);
 
    top_exec->ExecParsed(args.borrow());
-revived:
    top_exec->WaitDone();
    int exit_code=top_exec->ExitCode();
 
@@ -563,21 +575,7 @@ revived:
    if(Job::NumberOfJobs()>0)
    {
       top_exec->SetInteractive(false);
-      if(term_acceptor) {
-	 printf(_("[%u] Detaching from the terminal to complete transfers...\n"),
-	       (unsigned)getpid());
-	 fflush(stdout);
-	 term_acceptor->Detach();
-	 detach();
-	 printf(_("[%u] Detached from terminal. %s\n"),(unsigned)getpid(),SMTask::now.IsoDateTime());
-      }
-      if(move_to_background())
-      {
-	 top_exec->SetInteractive();
-	 top_exec->SetStatusLine(new StatusLine(1));
-	 top_exec->SetCmdFeeder(new ReadlineFeeder(args));
-	 goto revived;
-      }
+      move_to_background();
    }
    else
    {
@@ -587,11 +585,6 @@ revived:
    }
    top_exec->KillAll();
    top_exec=0;
-
-   if(term_acceptor && term_acceptor->Accepted()) {
-      printf(_("[%u] Exiting and detaching from the terminal.\n"),(unsigned)getpid());
-      fflush(stdout);
-   }
 
    Job::Cleanup();
    ConnectionSlot::Cleanup();
