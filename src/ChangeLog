@@ -3,6 +3,7 @@
 	* MirrorJob.cc, MirrorJob.h: add progress meter for parent mirrors.
 	* Job.cc, Job.h: (GetCmdLine) new virtual method.
 	* FileSet.cc, FileSet.h: (CountBytes) new method.
+	* ftpclass.cc: move line and all_lines along with connection.
 
 2013-07-15  Alexander V. Lukyanov <lav@yars.free.net>
 

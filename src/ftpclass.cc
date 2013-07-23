@@ -3733,6 +3733,9 @@ void  Ftp::MoveConnectionHere(Ftp *o)
    conn->ResumeInternal();
    o->state=INITIAL_STATE;
 
+   line.move_here(o->line);
+   all_lines.move_here(o->all_lines);
+
    if(peer_curr>=peer.count())
       peer_curr=0;
    timeout_timer.Reset(o->timeout_timer);
