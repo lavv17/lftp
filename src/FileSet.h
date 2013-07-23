@@ -193,6 +193,7 @@ public:
    void	 LocalChown(const char *dir);
 
    void Count(int *d,int *f,int *s,int *o) const;
+   void CountBytes(long long *b) const;
 
    int FindGEIndByName(const char *name) const;
    FileInfo *FindByName(const char *name) const;

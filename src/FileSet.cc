@@ -433,6 +433,15 @@ void FileSet::Count(int *d,int *f,int *s,int *o) const
    }
 }
 
+void FileSet::CountBytes(long long *b) const
+{
+   for(int i=0; i<fnum; i++)
+   {
+      if(files[i]->filetype==FileInfo::NORMAL && files[i]->Has(FileInfo::SIZE))
+	 (*b)+=files[i]->size;
+   }
+}
+
 /* assumes sorted by name. binary search for name, returning the first name
  * >= name; returns fnum if name is greater than all names. */
 int FileSet::FindGEIndByName(const char *name) const
