@@ -547,6 +547,9 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
       to_transfer->SubtractAny(to_rm_mismatched);
 
    to_transfer->SortByPatternList(ResMgr::Query("mirror:order",0));
+   to_transfer->CountBytes(&bytes_to_transfer);
+   if(parent_mirror)
+      parent_mirror->AddBytesToTransfer(bytes_to_transfer);
 }
 
 void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
@@ -815,7 +818,9 @@ int   MirrorJob::Do()
    case(WAITING_FOR_TRANSFER):
       while((j=FindDoneAwaitedJob())!=0)
       {
-	 stats.bytes+=j->GetBytesCount();
+	 long long bytes_count=j->GetBytesCount();
+	 AddBytesTransferred(bytes_count);
+	 stats.bytes+=bytes_count;
 	 stats.time +=j->GetTimeSpent();
 	 if(j->ExitCode()!=0)
 	    stats.error_count++;
@@ -1097,6 +1102,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    FileAccess *source,FileAccess *target,
    const char *new_source_dir,const char *new_target_dir)
  :
+   bytes_transferred(0), bytes_to_transfer(0),
    source_dir(new_source_dir), target_dir(new_target_dir),
    root_transfer_count(0),
    transfer_count(parent?parent->transfer_count:root_transfer_count)

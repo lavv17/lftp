@@ -24,6 +24,7 @@
 #include "FileSet.h"
 #include "Job.h"
 #include "PatternSet.h"
+#include "misc.h"
 
 class MirrorJob : public Job
 {
@@ -49,6 +50,8 @@ class MirrorJob : public Job
    bool target_is_local;
    bool source_is_local;
 
+   long long bytes_transferred;
+   long long bytes_to_transfer;
    Ref<FileSet> target_set;
    Ref<FileSet> source_set;
    Ref<FileSet> to_transfer;
@@ -58,6 +61,26 @@ class MirrorJob : public Job
    Ref<FileSet> old_files_set;
    Ref<FileSet> new_files_set;
    void	 InitSets(const FileSet *src,const FileSet *dst);
+
+   void AddBytesTransferred(long long b) {
+      bytes_transferred+=b;
+      if(parent_mirror)
+	 parent_mirror->AddBytesTransferred(b);
+   }
+   void AddBytesToTransfer(long long b) {
+      bytes_to_transfer+=b;
+      if(parent_mirror)
+	 parent_mirror->AddBytesToTransfer(b);
+   }
+
+   const xstring& GetCmdLine() const {
+      if(bytes_to_transfer>0) {
+	 return xstring::get_tmp(cmdline).appendf(" - %lld/%lld (%d%%)",
+	    bytes_transferred,bytes_to_transfer,
+	    percent(bytes_transferred,bytes_to_transfer));
+      }
+      return cmdline;
+   }
 
    void	 HandleFile(FileInfo *);
 
