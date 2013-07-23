@@ -267,8 +267,7 @@ void  Job::ListDoneJobs()
       if(scan->jobno>=0 && (scan->parent==this || scan->parent==0)
          && !scan->deleting && scan->Done())
       {
-	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,
-	    scan->cmdline?scan->cmdline.get():"?");
+	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,scan->GetCmdLine().get());
 	 const char *this_url=this->GetConnectURL();
 	 this_url=alloca_strdup(this_url); // save it from overwriting.
 	 const char *that_url=scan->GetConnectURL();
@@ -287,7 +286,7 @@ xstring& Job::FormatJobTitle(xstring& s,int indent,const char *suffix)
    s.append_padding(indent,' ');
    if(jobno>=0)
       s.appendf("[%d] ",jobno);
-   s.append(cmdline?cmdline.get():"?");
+   s.append(GetCmdLine());
    if(suffix) {
       s.append(' ');
       s.append(suffix);

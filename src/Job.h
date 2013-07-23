@@ -86,6 +86,7 @@ public:
 
    xstring cmdline;
 
+   virtual const xstring& GetCmdLine() const { return cmdline?cmdline:xstring::get_tmp("?",1); }
    xstring& FormatJobTitle(xstring& s,int indent=0,const char *suffix=0);
    xstring& FormatOneJob(xstring& s,int verbose,int indent=0,const char *suffix=0);
    xstring& FormatOneJobRecursively(xstring& s,int verbose,int indent=0);
