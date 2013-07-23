@@ -1,3 +1,9 @@
+2013-07-23  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* MirrorJob.cc, MirrorJob.h: add progress meter for parent mirrors.
+	* Job.cc, Job.h: (GetCmdLine) new virtual method.
+	* FileSet.cc, FileSet.h: (CountBytes) new method.
+
 2013-07-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* attach.h: pass all three std fds.
