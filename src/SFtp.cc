@@ -2273,7 +2273,12 @@ int SFtpListInfo::Do()
 	 file->need=0;
 	 if(file->defined & file->TYPE)
 	 {
-	    if(file->filetype==file->SYMLINK)
+	    if(file->filetype==file->SYMLINK && follow_symlinks)
+	    {
+	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE|file->TYPE);
+	       file->Need(file->SIZE|file->DATE);
+	    }
+	    else if(file->filetype==file->SYMLINK)
 	    {
 	       // need the link target
 	       if(!file->Has(file->SYMLINK_DEF))

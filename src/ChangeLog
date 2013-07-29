@@ -1,3 +1,7 @@
+2013-07-29  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: follow symlinks when requested.
+
 2013-07-23  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* MirrorJob.cc, MirrorJob.h: add progress meter for parent mirrors.
