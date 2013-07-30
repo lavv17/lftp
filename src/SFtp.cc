@@ -674,8 +674,7 @@ void SFtp::SendArrayInfoRequests()
 	 if(fi->need&fi->DATE) flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
 	 if(fi->need&fi->MODE) flags|=SSH_FILEXFER_ATTR_PERMISSIONS;
 	 if(fi->need&(fi->USER|fi->GROUP)) flags|=SSH_FILEXFER_ATTR_OWNERGROUP;
-	 SendRequest(new Request_STAT(WirePath(fi->name),
-	    flags,
+	 SendRequest(new Request_STAT(WirePath(fi->name),flags,
 	    protocol_version),Expect::INFO,fileset_for_info->curr_index());
       }
       if(fi->need&fi->SYMLINK_DEF && protocol_version>=3)
