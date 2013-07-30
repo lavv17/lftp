@@ -1,3 +1,7 @@
+2013-07-30  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc, SFtp.h: request more information about symlink targets.
+
 2013-07-29  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: follow symlinks when requested.

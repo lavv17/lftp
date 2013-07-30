@@ -668,12 +668,18 @@ void SFtp::SendArrayInfoRequests()
       fi && RespQueueSize()<max_packets_in_flight;
       fi=fileset_for_info->next())
    {
-      if(fi->need&(fi->SIZE|fi->DATE))
-	 SendRequest(new Request_STAT(lc_to_utf8(dir_file(cwd,fi->name)),
-	    SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME,
+      if(fi->need&(fi->SIZE|fi->DATE|fi->MODE|fi->TYPE|fi->USER|fi->GROUP)) {
+	 unsigned flags=0;
+	 if(fi->need&fi->SIZE) flags|=SSH_FILEXFER_ATTR_SIZE;
+	 if(fi->need&fi->DATE) flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
+	 if(fi->need&fi->MODE) flags|=SSH_FILEXFER_ATTR_PERMISSIONS;
+	 if(fi->need&(fi->USER|fi->GROUP)) flags|=SSH_FILEXFER_ATTR_OWNERGROUP;
+	 SendRequest(new Request_STAT(WirePath(fi->name),
+	    flags,
 	    protocol_version),Expect::INFO,fileset_for_info->curr_index());
+      }
       if(fi->need&fi->SYMLINK_DEF && protocol_version>=3)
-	 SendRequest(new Request_READLINK(lc_to_utf8(dir_file(cwd,fi->name))),
+	 SendRequest(new Request_READLINK(WirePath(fi->name)),
 	    Expect::INFO_READLINK,fileset_for_info->curr_index());
    }
    if(RespQueueIsEmpty())
@@ -954,6 +960,12 @@ void SFtp::HandleExpect(Expect *e)
       }
       break;
    case Expect::INFO:
+      if(mode==ARRAY_INFO)
+      {
+	 FileInfo *fi=(*fileset_for_info)[e->i];
+	 MergeAttrs(fi,((Reply_ATTRS*)reply)->GetAttrs());
+	 break;
+      }
       entity_size=NO_SIZE;
       entity_date=NO_DATE;
       if(reply->TypeIs(SSH_FXP_ATTRS))
@@ -964,13 +976,6 @@ void SFtp::HandleExpect(Expect *e)
 	 if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
 	    entity_date=a->mtime;
 	 LogNote(9,"file info: size=%lld, date=%s",(long long)entity_size,ctime(&entity_date));
-      }
-      if(mode==ARRAY_INFO)
-      {
-	 FileInfo *fi=(*fileset_for_info)[e->i];
-	 fi->SetSize(entity_size);
-	 fi->SetDate(entity_date,0);
-	 break;
       }
       if(opt_size)
 	 *opt_size=entity_size;
@@ -2003,6 +2008,36 @@ FileSet *SFtp::GetFileSet()
    return fset?fset:new FileSet;
 }
 
+void SFtp::MergeAttrs(FileInfo *fi,const FileAttrs *a)
+{
+   switch(a->type)
+   {
+   case SSH_FILEXFER_TYPE_REGULAR:  fi->SetType(fi->NORMAL);    break;
+   case SSH_FILEXFER_TYPE_DIRECTORY:fi->SetType(fi->DIRECTORY); break;
+   case SSH_FILEXFER_TYPE_SYMLINK:  fi->SetType(fi->SYMLINK);   break;
+   default: break;
+   }
+   if(a->flags&SSH_FILEXFER_ATTR_SIZE)
+      fi->SetSize(a->size);
+   if(a->flags&SSH_FILEXFER_ATTR_UIDGID)
+   {
+      char id[24];
+      snprintf(id,sizeof(id),"%u",a->uid);
+      fi->SetUser(id);
+      snprintf(id,sizeof(id),"%u",a->gid);
+      fi->SetGroup(id);
+   }
+   if(a->flags&SSH_FILEXFER_ATTR_OWNERGROUP)
+   {
+      fi->SetUser (utf8_to_lc(a->owner));
+      fi->SetGroup(utf8_to_lc(a->group));
+   }
+   if(a->flags&SSH_FILEXFER_ATTR_PERMISSIONS)
+      fi->SetMode(a->permissions&07777);
+   if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
+      fi->SetDate(a->mtime,0);
+}
+
 FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 {
    const FileAttrs *a=&na->attrs;
@@ -2020,30 +2055,16 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
    Ref<FileInfo> fi(new FileInfo(name));
    switch(a->type)
    {
-   case SSH_FILEXFER_TYPE_REGULAR:  fi->SetType(fi->NORMAL);    break;
-   case SSH_FILEXFER_TYPE_DIRECTORY:fi->SetType(fi->DIRECTORY); break;
-   case SSH_FILEXFER_TYPE_SYMLINK:  fi->SetType(fi->SYMLINK);   break;
+   case SSH_FILEXFER_TYPE_REGULAR:
+   case SSH_FILEXFER_TYPE_DIRECTORY:
+   case SSH_FILEXFER_TYPE_SYMLINK:
    case SSH_FILEXFER_TYPE_UNKNOWN: break;
    default: return 0;
    }
    if(longname)
       fi->SetLongName(longname);
-   if(a->flags&SSH_FILEXFER_ATTR_SIZE)
-      fi->SetSize(a->size);
-   if(a->flags&SSH_FILEXFER_ATTR_UIDGID)
-   {
-      char id[24];
-      snprintf(id,sizeof(id),"%u",a->uid);
-      fi->SetUser(id);
-      snprintf(id,sizeof(id),"%u",a->gid);
-      fi->SetGroup(id);
-   }
-   if(a->flags&SSH_FILEXFER_ATTR_OWNERGROUP)
-   {
-      fi->SetUser (utf8_to_lc(a->owner));
-      fi->SetGroup(utf8_to_lc(a->group));
-   }
-   else if(fi->longname)
+   MergeAttrs(fi.get_non_const(),a);
+   if(fi->longname && !a->owner)
    {
       // try to extract owner/group from long name.
       Ref<FileInfo> ls(FileInfo::parse_ls_line(fi->longname,0));
@@ -2057,10 +2078,6 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 	    fi->SetNlink(ls->nlinks);
       }
    }
-   if(a->flags&SSH_FILEXFER_ATTR_PERMISSIONS)
-      fi->SetMode(a->permissions&07777);
-   if(a->flags&SSH_FILEXFER_ATTR_MODIFYTIME)
-      fi->SetDate(a->mtime,0);
    return fi.borrow();
 }
 
@@ -2275,8 +2292,8 @@ int SFtpListInfo::Do()
 	 {
 	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
-	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE|file->TYPE);
-	       file->Need(file->SIZE|file->DATE);
+	       file->defined &= ~(file->SIZE|file->DATE|file->SYMLINK_DEF|file->MODE|file->TYPE|file->USER|file->GROUP);
+	       file->Need(file->SIZE|file->DATE|file->MODE|file->TYPE|file->USER|file->GROUP);
 	    }
 	    else if(file->filetype==file->SYMLINK)
 	    {

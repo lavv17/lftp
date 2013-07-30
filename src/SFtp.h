@@ -745,6 +745,7 @@ private:
    void	 RequestMoreData();
    off_t request_pos;
 
+   void MergeAttrs(FileInfo *fi,const FileAttrs *a);
    FileInfo *MakeFileInfo(const NameAttrs *a);
 
    int max_packets_in_flight;
