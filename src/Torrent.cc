@@ -788,8 +788,10 @@ int Torrent::Do()
 	    return MOVED;
 	 }
 	 ParsedURL u(metainfo_url,true);
-	 if(!u.proto)
+	 if(!u.proto) {
 	    u.proto.set("file");
+	    u.path.set(metainfo_url);  // undo %xx translation
+	 }
 	 LogNote(9,"Retrieving meta-data from `%s'...\n",metainfo_url.get());
 	 FileCopyPeer *metainfo_src=new FileCopyPeerFA(&u,FA::RETRIEVE);
 	 FileCopyPeer *metainfo_dst=new FileCopyPeerMemory(10000000);

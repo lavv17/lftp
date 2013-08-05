@@ -1,3 +1,7 @@
+2013-08-05  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: don't decode %xx for plain file names of meta-info.
+
 2013-07-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc, SFtp.h: request more information about symlink targets.
