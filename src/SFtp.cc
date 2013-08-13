@@ -815,8 +815,10 @@ void SFtp::HandleExpect(Expect *e)
       if(reply->TypeIs(SSH_FXP_ATTRS))
       {
 	 const FileAttrs *a=((Reply_ATTRS*)reply)->GetAttrs();
-	 if(a->type!=SSH_FILEXFER_TYPE_DIRECTORY)
+	 if(a->type!=SSH_FILEXFER_TYPE_DIRECTORY
+	 && a->type!=SSH_FILEXFER_TYPE_SYMLINK)	// workaround for RouterOS v6
 	 {
+	    LogError(1,"got file type %d",a->type);
 	    cache->SetDirectory(this,cwd,false);
 	    SetError(NO_FILE,strerror(ENOTDIR));
 	    break;
