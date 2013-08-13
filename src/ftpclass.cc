@@ -2801,7 +2801,8 @@ int  Ftp::ReceiveResp()
       && is_ascii_digit(line[1]) && is_ascii_digit(line[2]))
 	 sscanf(line,"%3d",&code);
 
-      if(conn->multiline_code && conn->multiline_code!=code)
+      if(conn->multiline_code && conn->multiline_code!=code
+      && QueryBool("ftp:strict-multiline",closure))
 	 code=0;  // reply can only terminate with the same code
 
       int log_prio=ReplyLogPriority(conn->multiline_code?conn->multiline_code:code);

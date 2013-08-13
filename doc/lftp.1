@@ -1460,6 +1460,11 @@ ssl protection layer on control connection.
 .BR ftp:stat-interval " (time interval)"
 interval between STAT commands. Default is 1 second.
 .TP
+.BR ftp:strict-multiline \ (boolean)
+when true, lftp strictly checks for multiline reply format (expects it to
+end with the same code as it started with). When false, this check is
+relaxed.
+.TP
 .BR ftp:sync-mode \ (boolean)
 if true, lftp will send one command at a time and wait for
 response. This might be useful if you are using a buggy ftp server or
