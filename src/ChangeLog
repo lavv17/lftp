@@ -1,3 +1,9 @@
+2013-08-13  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, resource.cc: add woraround for wrong multiline
+	  replies and ftp:strict-multiline setting.
+	* SFtp.cc: add a workaround for RouterOS v6 - symlink as the root dir.
+
 2013-08-05  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Torrent.cc: don't decode %xx for plain file names of meta-info.
