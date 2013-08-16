@@ -550,6 +550,10 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    to_transfer->CountBytes(&bytes_to_transfer);
    if(parent_mirror)
       parent_mirror->AddBytesToTransfer(bytes_to_transfer);
+
+   int dir_count=0;
+   to_transfer->Count(&dir_count,NULL,NULL,NULL);
+   only_dirs = (dir_count==to_transfer->count());
 }
 
 void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
@@ -794,7 +798,8 @@ int   MirrorJob::Do()
       if(FlagSet(DEPTH_FIRST) && source_set && !target_set)
       {
 	 // transfer directories first
-	 to_transfer=new FileSet(source_set);
+	 InitSets(source_set,NULL);
+	 to_transfer->Unsort();
 	 to_transfer->SubtractNotDirs();
 	 goto pre_WAITING_FOR_TRANSFER;
       }
@@ -846,8 +851,7 @@ int   MirrorJob::Do()
 
 	       // if we have not created any subdirs and there are only subdirs,
 	       // then the directory would be empty - skip it.
-	       if(FlagSet(NO_EMPTY_DIRS) && stats.dirs==0
-	       && source_set->get_fnum()==to_transfer->get_fnum())
+	       if(FlagSet(NO_EMPTY_DIRS) && stats.dirs==0 && only_dirs)
 		  goto pre_FINISHING;
 
 	       transfer_count+=root_transfer_count;

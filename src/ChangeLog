@@ -4,6 +4,9 @@
 	* FileCopy.cc: use Speedometer::GetStrProper for logging.
 	* FileCopy.cc, LocalDir.cc: use FD_CLOEXEC on descriptors.
 	* FtpListInfo.cc: fixed MLSD parsing for semicolons in file names.
+	* FileSet.cc: allow NULL sets in certain places.
+	* MirrorJob.cc, MirrorJob.h: don't create empty directories with
+	  --no-empty-dirs when all source files are filtered out.
 
 2013-08-13  Alexander V. Lukyanov <lav@yars.free.net>
 

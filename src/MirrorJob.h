@@ -61,6 +61,7 @@ class MirrorJob : public Job
    Ref<FileSet> old_files_set;
    Ref<FileSet> new_files_set;
    void	 InitSets(const FileSet *src,const FileSet *dst);
+   bool only_dirs;
 
    void AddBytesTransferred(long long b) {
       bytes_transferred+=b;

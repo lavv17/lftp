@@ -148,6 +148,10 @@ FileSet::~FileSet()
  * be a bit of a pain to implement. */
 FileSet::FileSet(FileSet const *set)
 {
+   if(!set) {
+      ind=0;
+      return;
+   }
    ind=set->ind;
    for(int i=0; i<set->fnum; i++)
       files.append(new FileInfo(*(set->files[i])));
@@ -244,6 +248,8 @@ void FileSet::Empty()
 
 void FileSet::SubtractSame(const FileSet *set,int ignore)
 {
+   if(!set)
+      return;
    for(int i=0; i<fnum; i++)
    {
       FileInfo *f=set->FindByName(files[i]->name);
@@ -254,6 +260,8 @@ void FileSet::SubtractSame(const FileSet *set,int ignore)
 
 void FileSet::SubtractAny(const FileSet *set)
 {
+   if(!set)
+      return;
    for(int i=0; i<fnum; i++)
       if(set->FindByName(files[i]->name))
 	 Sub(i--);
