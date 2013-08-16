@@ -725,10 +725,13 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
    bool type_known=false;
    int perms=-1;
 
-   /* NcFTPd does not put a semicolon after last fact, workaround it. */
-   if(!strstr(line,"; "))
-   {
-      char *space=strchr(line,' ');
+   char *space=strstr(line,"; ");
+   if(space) {
+      name=space+2;
+      *space=0;
+   } else {
+      /* NcFTPd does not put a semicolon after last fact, workaround it. */
+      space=strchr(line,' ');
       if(!space)
 	 ERR;
       name=space+1;
@@ -737,11 +740,6 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
 
    for(char *tok=strtok(line,";"); tok; tok=strtok(0,";"))
    {
-      if(tok[0]==' ')
-      {
-	 name=tok+1;
-	 break;
-      }
       if(!strcasecmp(tok,"Type=cdir")
       || !strcasecmp(tok,"Type=pdir")
       || !strcasecmp(tok,"Type=dir"))
