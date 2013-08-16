@@ -36,6 +36,7 @@ void LocalDirectory::SetFromCWD()
 {
    Unset();
    fd=open(".",O_RDONLY|O_DIRECTORY);
+   fcntl(fd,F_SETFD,FD_CLOEXEC);
    name.set_allocated(xgetcwd());
 }
 
@@ -81,8 +82,10 @@ LocalDirectory::LocalDirectory()
 LocalDirectory::LocalDirectory(const LocalDirectory *o)
 {
    fd=-1;
-   if(o->fd!=-1)
+   if(o->fd!=-1) {
       fd=dup(o->fd);
+      fcntl(fd,F_SETFD,FD_CLOEXEC);
+   }
    name.set(o->name);
 }
 

@@ -2,6 +2,7 @@
 
 	* Speedometer.cc, Speedometer.h: (GetStrProper) new method for proper unit names.
 	* FileCopy.cc: use Speedometer::GetStrProper for logging.
+	* FileCopy.cc, LocalDir.cc: use FD_CLOEXEC on descriptors.
 
 2013-08-13  Alexander V. Lukyanov <lav@yars.free.net>
 

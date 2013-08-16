@@ -636,6 +636,7 @@ void FileCopy::LogTransfer()
       int fd = open(fname,O_WRONLY|O_APPEND|O_CREAT,0600);
       if(fd==-1)
 	 return;
+      fcntl(fd,F_SETFD,FD_CLOEXEC);
       transfer_log=new Log;
       transfer_log->SetOutput(fd,true);
       transfer_log->ShowNothing();
