@@ -648,7 +648,7 @@ void FileCopy::LogTransfer()
    transfer_log->Format(0,"%s -> %s %lld-%lld %s\n",
       url::remove_password(src),url::remove_password(dst),
       (long long)GetRangeStart(),range_limit,
-      Speedometer::GetStr(GetBytesCount()/GetTimeSpent()).get());
+      Speedometer::GetStrProper(GetBytesCount()/GetTimeSpent()).get());
 }
 
 void FileCopy::SetRange(off_t s,off_t lim)

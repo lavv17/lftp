@@ -85,6 +85,7 @@ void Speedometer::Add(int b)
    if(rate<0)
       rate=0;
 }
+// These `incorrect' units are used to fit on status line
 xstring& Speedometer::GetStr(float r)
 {
    if(r<1)
@@ -93,11 +94,22 @@ xstring& Speedometer::GetStr(float r)
       // for translator: those are the units. This is 'byte per second'
       return xstring::format(_("%.0fb/s"),r);
    else if(r<1024*1024)
-      // for translator: This is 'kilobyte per second'
+      // for translator: This is 'Kibibyte per second'
       return xstring::format(_("%.1fK/s"),r/1024.);
    else
-      // for translator: This is 'Megabyte per second'
+      // for translator: This is 'Mebibyte per second'
       return xstring::format(_("%.2fM/s"),r/(1024.*1024));
+}
+xstring& Speedometer::GetStrProper(float r)
+{
+   if(r<1)
+      return xstring::get_tmp("");
+   if(r<1024)
+      return xstring::format(_("%.0f B/s"),r);
+   else if(r<1024*1024)
+      return xstring::format(_("%.1f KiB/s"),r/1024.);
+   else
+      return xstring::format(_("%.2f MiB/s"),r/(1024.*1024));
 }
 xstring& Speedometer::GetStr()
 {

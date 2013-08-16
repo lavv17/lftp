@@ -37,6 +37,7 @@ public:
    float Get();
    float Get() const { return rate; }
    static xstring& GetStr(float r);
+   static xstring& GetStrProper(float r);
    xstring& GetStr();
    static const char *GetStrS(float r);
    const char *GetStrS();

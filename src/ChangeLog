@@ -1,3 +1,8 @@
+2013-08-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Speedometer.cc, Speedometer.h: (GetStrProper) new method for proper unit names.
+	* FileCopy.cc: use Speedometer::GetStrProper for logging.
+
 2013-08-13  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, resource.cc: add woraround for wrong multiline
