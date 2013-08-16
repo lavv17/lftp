@@ -1,3 +1,7 @@
+2013-08-16	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.c: document ftp:ssl-auth.
+
 2013-04-12	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document cmd:cls-* settings.

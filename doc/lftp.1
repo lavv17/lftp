@@ -1431,6 +1431,10 @@ if true, try to negotiate SSL connection with ftp server for non-anonymous
 access. Default is true. This and other ssl settings are only available if lftp was compiled
 with an ssl/tls library.
 .TP
+.BR ftp:ssl-auth \ (string)
+the argument for AUTH command, can be one of SSL, TLS, TLS-P, TLS-C.
+See RFC4217 for explanations. By default TLS or SSL will be used, depending on FEAT reply.
+.TP
 .BR ftp:ssl-data-use-keys \ (boolean)
 if true, lftp loads ssl:key-file for protected data connection too. When false,
 it does not, and the server can match data and control connections by session ID.
