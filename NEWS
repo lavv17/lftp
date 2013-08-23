@@ -1,3 +1,19 @@
+Version 4.4.9 - 2013-08-23
+
+* implemented support for mirror -L in sftp.
+* pass all 3 std file descriptors when attaching to lftp instance.
+* ftp: added a workaround for incorrectly formatted multiline replies.
+* sftp: added a workaround for RouterOS v6.
+* fixed mirror --no-empty-dirs to skip directories with no included files.
+* fixed segfault when there is no TERM environment variable.
+* fixed torrent for meta-info files with % in their names.
+* fixed compilation when IPV6_V6ONLY if not defined.
+* fixed compilation with older zlib.
+* fixed FD_CLOEXEC flag on cwd and transfer_log.
+* fixed MLSD parsing for semicolons in file names.
+* new translation: Ukrainian (thanks to Yuri Chornoivan).
+* man page updated.
+
 Version 4.4.8 - 2013-05-29
 
 * add support for redirections in torrent metainfo fetching.
