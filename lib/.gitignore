@@ -293,6 +293,3 @@
 /unistd.c
 /wctype-h.c
 /locale.h
-/pthread.c
-/pthread.in.h
-/sched.in.h
