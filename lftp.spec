@@ -1,4 +1,4 @@
-%define version 4.4.8
+%define version 4.4.9
 %define release 1
 %define use_modules 0
 
@@ -59,5 +59,5 @@ rm -rf %{buildroot}
 %{_libdir}/*.so.*
 %endif
 %{_mandir}/man*/*
-%attr(- root root) %{_datadir}/lftp
+%attr(755 root root) %{_datadir}/lftp/*
 %{_datadir}/locale/*/*/*
