@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-05-29 10:53+0400\n"
+"POT-Creation-Date: 2013-08-23 13:54+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -161,12 +161,12 @@ msgstr "コマンド `%s' 用のモジュールがコマンドを登録しませんでした。\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功、cwd=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:568
+#: src/CmdExec.cc:405 src/MirrorJob.cc:575
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: `%s'へのリダイレクションを受け取りました\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1077
+#: src/CmdExec.cc:408 src/FileCopy.cc:1078
 msgid "Too many redirections"
 msgstr "リダイレクションが多すぎます"
 
@@ -249,7 +249,7 @@ msgstr "%d 個(%d ファイル中)の転送が失敗\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "計 %d ファイル転送済\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1632 src/MirrorJob.cc:1648
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1642 src/MirrorJob.cc:1658
 #: src/commands.cc:984 src/commands.cc:2107
 msgid " - not supported protocol"
 msgstr " - はサポートされていないプロトコルです"
@@ -263,8 +263,8 @@ msgstr "アクセス失敗: %s"
 msgid "File cannot be accessed"
 msgstr "ファイルにアクセスできません"
 
-#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1324 src/ftpclass.cc:4328
-#: src/ftpclass.cc:4337 src/Torrent.cc:2972
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1330 src/ftpclass.cc:4332
+#: src/ftpclass.cc:4341 src/Torrent.cc:2974
 msgid "Not connected"
 msgstr "接続されていません"
 
@@ -328,16 +328,16 @@ msgstr "copy: データをすべて受信しましたが、get は戻りました\n"
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr "copy: get は %lld に戻りました。適宜 put しています\n"
 
-#: src/FileCopy.cc:1074
+#: src/FileCopy.cc:1075
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: `%s' へのリダイレクションを受け取りました\n"
 
-#: src/FileCopy.cc:1259
+#: src/FileCopy.cc:1260
 msgid "file name missed in URL"
 msgstr "URL 中にファイル名がありません"
 
-#: src/FileCopy.cc:1931
+#: src/FileCopy.cc:1932
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -403,43 +403,43 @@ msgstr "アイドル状態の接続を閉じます"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1156 src/SFtp.cc:735 src/SFtp.cc:1068
-#: src/ftpclass.cc:2716 src/ftpclass.cc:2934
+#: src/Fish.cc:589 src/Http.cc:1156 src/SFtp.cc:740 src/SFtp.cc:1074
+#: src/ftpclass.cc:2716 src/ftpclass.cc:2935
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/Fish.cc:635 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
+#: src/Fish.cc:635 src/SFtp.cc:1099 src/ftpclass.cc:2865 src/ftpclass.cc:3969
 msgid "extra server response"
 msgstr "余分なサーバレスポンスです"
 
-#: src/Fish.cc:987 src/Http.cc:1887 src/Http.cc:1894 src/SFtp.cc:1330
-#: src/ftpclass.cc:4340 src/Torrent.cc:2974 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:1887 src/Http.cc:1894 src/SFtp.cc:1336
+#: src/ftpclass.cc:4344 src/Torrent.cc:2976 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/Fish.cc:989 src/SFtp.cc:1332 src/ftpclass.cc:4346
+#: src/Fish.cc:989 src/SFtp.cc:1338 src/ftpclass.cc:4350
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/Fish.cc:991 src/Http.cc:1896 src/SFtp.cc:1334 src/ftpclass.cc:4323
-#: src/ftpclass.cc:4351 src/ftpclass.cc:4365 src/TorrentTracker.cc:621
+#: src/Fish.cc:991 src/Http.cc:1896 src/SFtp.cc:1340 src/ftpclass.cc:4327
+#: src/ftpclass.cc:4355 src/ftpclass.cc:4369 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/Fish.cc:993 src/Http.cc:1899 src/SFtp.cc:1336 src/ftpclass.cc:4385
+#: src/Fish.cc:993 src/Http.cc:1899 src/SFtp.cc:1342 src/ftpclass.cc:4389
 msgid "Receiving data"
 msgstr "データ受信中"
 
-#: src/Fish.cc:995 src/Http.cc:1892 src/SFtp.cc:1338 src/ftpclass.cc:4383
+#: src/Fish.cc:995 src/Http.cc:1892 src/SFtp.cc:1344 src/ftpclass.cc:4387
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/Fish.cc:997 src/SFtp.cc:1340
+#: src/Fish.cc:997 src/SFtp.cc:1346
 msgid "Done"
 msgstr ""
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
-#: src/SFtp.cc:2304
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2209
+#: src/SFtp.cc:2327
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "ファイルリスト (%lld) [%s] を取得中"
@@ -464,8 +464,8 @@ msgstr ""
 "ftp over http はプロキシ無しでは利用できません。hftp:proxy をセットしてくださ"
 "い。"
 
-#: src/Http.cc:1081 src/ftpclass.cc:1344 src/Torrent.cc:2652
-#: src/Torrent.cc:3174 src/TorrentTracker.cc:392
+#: src/Http.cc:1081 src/ftpclass.cc:1344 src/Torrent.cc:2654
+#: src/Torrent.cc:3176 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
@@ -516,11 +516,11 @@ msgid "Received last chunk"
 msgstr "すべて受信しました"
 
 #: src/Http.cc:1881 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4333 src/TorrentTracker.cc:617
+#: src/ftpclass.cc:4337 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
-#: src/Http.cc:1889 src/ftpclass.cc:4326
+#: src/Http.cc:1889 src/ftpclass.cc:4330
 msgid "Connection idle"
 msgstr "接続アイドル"
 
@@ -588,7 +588,7 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s 成功、%d 個のディレクトリを作成しました\n"
 
-#: src/MirrorJob.cc:250 src/MirrorJob.cc:435 src/MirrorJob.cc:954
+#: src/MirrorJob.cc:250 src/MirrorJob.cc:435 src/MirrorJob.cc:963
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "古いローカルファイル `%s' を削除しています"
@@ -608,7 +608,7 @@ msgstr "ローカルファイル `%s' を送信しています"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "リモートディレクトリ `%s' を作成しています"
 
-#: src/MirrorJob.cc:358 src/MirrorJob.cc:467 src/MirrorJob.cc:705
+#: src/MirrorJob.cc:358 src/MirrorJob.cc:467 src/MirrorJob.cc:712
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "古いローカルファイル `%s' を削除しています"
@@ -628,48 +628,48 @@ msgstr ""
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "`%s' から `%s' へのシンボリックリンクを張っています"
 
-#: src/MirrorJob.cc:619
+#: src/MirrorJob.cc:626
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: プロトコル `%s' はミラーに適しません\n"
 
-#: src/MirrorJob.cc:726
+#: src/MirrorJob.cc:733
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "リモートディレクトリ `%s' を作成しています"
 
-#: src/MirrorJob.cc:905
+#: src/MirrorJob.cc:914
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "古いローカルファイル `%s' は削除されません"
 
-#: src/MirrorJob.cc:908
+#: src/MirrorJob.cc:917
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "古いローカルファイル `%s' は削除されません"
 
-#: src/MirrorJob.cc:949
+#: src/MirrorJob.cc:958
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "古いリモートディレクトリ `%s' を削除しています"
 
-#: src/MirrorJob.cc:1082
+#: src/MirrorJob.cc:1091
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1469
+#: src/MirrorJob.cc:1479
 #, fuzzy, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: %s の書き込みでエラー: %s\n"
 
-#: src/MirrorJob.cc:1601 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1611 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1115 src/commands.cc:1203 src/commands.cc:1575
 #: src/commands.cc:1606 src/commands.cc:1709 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2374 src/commands.cc:2402
 #: src/commands.cc:2409 src/commands.cc:2695 src/commands.cc:2722
 #: src/commands.cc:2729 src/commands.cc:3049 src/lftp.cc:267
-#: src/Torrent.cc:3554
+#: src/Torrent.cc:3556
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "`help %s' でより詳しい情報が得られます。\n"
@@ -684,7 +684,7 @@ msgstr "ソケットエラー (%s) - 再接続中"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "%s%s (%s) ポート %u に接続中"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2769
+#: src/NetAccess.cc:217 src/Torrent.cc:2771
 msgid "Timeout - reconnecting"
 msgstr "タイムアウト - 再接続中"
 
@@ -833,7 +833,7 @@ msgstr "%s などというサービスはありません"
 msgid "No address found"
 msgstr "アドレスが見つかりません"
 
-#: src/SFtp.cc:1084
+#: src/SFtp.cc:1090
 #, fuzzy
 msgid "invalid server response format"
 msgstr "余分なサーバレスポンスです"
@@ -866,22 +866,37 @@ msgstr ""
 msgid "%s: date-time parse error\n"
 msgstr ""
 
-#: src/Speedometer.cc:94
+#: src/Speedometer.cc:95
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fB/s"
 
-#: src/Speedometer.cc:97
+#: src/Speedometer.cc:98
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fKB/s"
 
-#: src/Speedometer.cc:100
+#: src/Speedometer.cc:101
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fMB/s"
 
-#: src/Speedometer.cc:122
+#: src/Speedometer.cc:108
+#, fuzzy, c-format
+msgid "%.0f B/s"
+msgstr "%.0fB/s"
+
+#: src/Speedometer.cc:110
+#, fuzzy, c-format
+msgid "%.1f KiB/s"
+msgstr "%.1fKB/s"
+
+#: src/Speedometer.cc:112
+#, fuzzy, c-format
+msgid "%.2f MiB/s"
+msgstr "%.2fMB/s"
+
+#: src/Speedometer.cc:134
 msgid "eta:"
 msgstr "eta:"
 
@@ -2290,7 +2305,7 @@ msgstr "データソケットを (%s) のポート %u に接続中"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/ftpclass.cc:2227 src/ftpclass.cc:4147
+#: src/ftpclass.cc:2227 src/ftpclass.cc:4151
 msgid "Switching passive mode off"
 msgstr "パッシヴモードをオフに切り替えました"
 
@@ -2299,90 +2314,90 @@ msgstr "パッシヴモードをオフに切り替えました"
 msgid "Data connection established"
 msgstr "データ接続ピアのアドレスが一致しません"
 
-#: src/ftpclass.cc:2541 src/ftpclass.cc:4277
+#: src/ftpclass.cc:2541 src/ftpclass.cc:4281
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "ftp:ssl-force がセットされていますが、サーバは SSL をサポートあるいは許可して"
 "いません"
 
-#: src/ftpclass.cc:2880
+#: src/ftpclass.cc:2881
 msgid "Persist and retry"
 msgstr "持続的に再試行します"
 
-#: src/ftpclass.cc:3147
+#: src/ftpclass.cc:3148
 msgid "Closing data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:3169
+#: src/ftpclass.cc:3170
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "データソケットを閉じています"
 
-#: src/ftpclass.cc:3949
+#: src/ftpclass.cc:3953
 msgid "saw file size in response"
 msgstr "レスポンス中にファイルサイズがありました"
 
-#: src/ftpclass.cc:3979 src/ftpclass.cc:4006
+#: src/ftpclass.cc:3983 src/ftpclass.cc:4010
 msgid "Turning on sync-mode"
 msgstr "sync モードを有効にしました"
 
-#: src/ftpclass.cc:4167
+#: src/ftpclass.cc:4171
 msgid "Switching passive mode on"
 msgstr "パッシヴモードをオンに切り替えました"
 
-#: src/ftpclass.cc:4314
+#: src/ftpclass.cc:4318
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:4321
+#: src/ftpclass.cc:4325
 msgid "Sending commands..."
 msgstr "コマンドを送信中..."
 
-#: src/ftpclass.cc:4325
+#: src/ftpclass.cc:4329
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "再接続を遅延しています"
 
-#: src/ftpclass.cc:4344
+#: src/ftpclass.cc:4348
 msgid "TLS negotiation..."
 msgstr "TLS ネゴシエーション..."
 
-#: src/ftpclass.cc:4348
+#: src/ftpclass.cc:4352
 msgid "Logging in..."
 msgstr "ログインしています..."
 
-#: src/ftpclass.cc:4352
+#: src/ftpclass.cc:4356
 msgid "Making data connection..."
 msgstr "データ接続を確立中..."
 
-#: src/ftpclass.cc:4355
+#: src/ftpclass.cc:4359
 msgid "Changing remote directory..."
 msgstr "リモートディレクトリを変更中..."
 
-#: src/ftpclass.cc:4361
+#: src/ftpclass.cc:4365
 msgid "Waiting for other copy peer..."
 msgstr "他のコピー相手を待っています..."
 
-#: src/ftpclass.cc:4363 src/ftpclass.cc:4387
+#: src/ftpclass.cc:4367 src/ftpclass.cc:4391
 msgid "Waiting for transfer to complete"
 msgstr "送受信の完了を待っています"
 
-#: src/ftpclass.cc:4367
+#: src/ftpclass.cc:4371
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "応答を待っています..."
 
-#: src/ftpclass.cc:4369
+#: src/ftpclass.cc:4373
 msgid "Waiting for data connection..."
 msgstr "データ接続を待っています..."
 
-#: src/ftpclass.cc:4375
+#: src/ftpclass.cc:4379
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "データ送信中"
 
-#: src/ftpclass.cc:4377
+#: src/ftpclass.cc:4381
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "データ受信中"
@@ -2392,26 +2407,41 @@ msgstr "データ受信中"
 msgid "[%u] Terminated by signal %d. %s\n"
 msgstr "[%lu] シグナル %d で中断しました。 %s"
 
-#: src/lftp.cc:449
+#: src/lftp.cc:444
 #, fuzzy, c-format
 msgid "[%u] Started.  %s\n"
 msgstr "[%lu] 開始。 %s"
 
-#: src/lftp.cc:465
+#: src/lftp.cc:462
+#, fuzzy, c-format
+msgid "[%u] Detaching from the terminal to complete transfers...\n"
+msgstr "[%lu] 転送を完了するためバックグラウンドに移行中です...\n"
+
+#: src/lftp.cc:464
+#, c-format
+msgid "[%u] Exiting and detaching from the terminal.\n"
+msgstr ""
+
+#: src/lftp.cc:469
+#, c-format
+msgid "[%u] Detached from terminal. %s\n"
+msgstr ""
+
+#: src/lftp.cc:479
 #, fuzzy, c-format
 msgid "[%u] Finished. %s\n"
 msgstr "[%lu] 完了。 %s"
 
-#: src/lftp.cc:469
+#: src/lftp.cc:483
 #, fuzzy, c-format
 msgid "[%u] Moving to background to complete transfers...\n"
 msgstr "[%lu] 転送を完了するためバックグラウンドに移行中です...\n"
 
-#: src/lftp.cc:523
+#: src/lftp.cc:536
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr "history -w file|-r file|-c|-l [cnt]"
 
-#: src/lftp.cc:524
+#: src/lftp.cc:537
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2427,23 +2457,8 @@ msgstr ""
 " オプション引数 cnt では列挙する履歴の行数を指定します。\"all\"を指定すると全"
 "てのエントリが列挙されます。\n"
 
-#: src/lftp.cc:531
+#: src/lftp.cc:544
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
-msgstr ""
-
-#: src/lftp.cc:567
-#, fuzzy, c-format
-msgid "[%u] Detaching from the terminal to complete transfers...\n"
-msgstr "[%lu] 転送を完了するためバックグラウンドに移行中です...\n"
-
-#: src/lftp.cc:572
-#, c-format
-msgid "[%u] Detached from terminal. %s\n"
-msgstr ""
-
-#: src/lftp.cc:592
-#, c-format
-msgid "[%u] Exiting and detaching from the terminal.\n"
 msgstr ""
 
 #: src/mgetJob.cc:118 src/mgetJob.cc:202
@@ -2562,82 +2577,82 @@ msgstr "%s 成功、%d 個のディレクトリを削除しました\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功、%d ファイルを削除しました\n"
 
-#: src/Torrent.cc:1553 src/Torrent.cc:1556
+#: src/Torrent.cc:1555 src/Torrent.cc:1558
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1559
+#: src/Torrent.cc:1561
 #, fuzzy
 msgid "Waiting for meta-data..."
 msgstr "\tコマンドを待っています\n"
 
-#: src/Torrent.cc:1562
+#: src/Torrent.cc:1564
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1572
+#: src/Torrent.cc:1574
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2655
+#: src/Torrent.cc:2657
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "%s%s (%s) ポート %u に接続中"
 
-#: src/Torrent.cc:2705 src/Torrent.cc:2818
+#: src/Torrent.cc:2707 src/Torrent.cc:2820
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "リモートエンドが接続を閉じました"
 
-#: src/Torrent.cc:2707
+#: src/Torrent.cc:2709
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "ピアが接続を閉じました"
 
-#: src/Torrent.cc:2803
+#: src/Torrent.cc:2805
 #, fuzzy
 msgid "peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/Torrent.cc:2820
+#: src/Torrent.cc:2822
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "余分なサーバレスポンスです"
 
-#: src/Torrent.cc:2976
+#: src/Torrent.cc:2978
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3229
+#: src/Torrent.cc:3231
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3279
+#: src/Torrent.cc:3281
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/Torrent.cc:3365
+#: src/Torrent.cc:3367
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3377
+#: src/Torrent.cc:3379
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3379
+#: src/Torrent.cc:3381
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/Torrent.cc:3430
+#: src/Torrent.cc:3432
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "コマンドを送信中..."
 
-#: src/Torrent.cc:3598
+#: src/Torrent.cc:3600
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""
@@ -2657,12 +2672,12 @@ msgstr ""
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr ""
 
-#: src/attach.h:124
+#: src/attach.h:134
 #, fuzzy, c-format
 msgid "[%u] Attached to terminal %s. %s\n"
 msgstr "[%lu] シグナル %d で中断しました。 %s"
 
-#: src/attach.h:136
+#: src/attach.h:146
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr ""

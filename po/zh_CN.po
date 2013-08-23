@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-05-29 10:53+0400\n"
+"POT-Creation-Date: 2013-08-23 13:54+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -162,12 +162,12 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功, 当前目录=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:568
+#: src/CmdExec.cc:405 src/MirrorJob.cc:575
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1077
+#: src/CmdExec.cc:408 src/FileCopy.cc:1078
 msgid "Too many redirections"
 msgstr ""
 
@@ -252,7 +252,7 @@ msgstr "传输 %d/%d 文件失败\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "总共传输 %d 个文件\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1632 src/MirrorJob.cc:1648
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1642 src/MirrorJob.cc:1658
 #: src/commands.cc:984 src/commands.cc:2107
 #, fuzzy
 msgid " - not supported protocol"
@@ -267,8 +267,8 @@ msgstr "访问失败: %s"
 msgid "File cannot be accessed"
 msgstr "不能访问文件"
 
-#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1324 src/ftpclass.cc:4328
-#: src/ftpclass.cc:4337 src/Torrent.cc:2972
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1330 src/ftpclass.cc:4332
+#: src/ftpclass.cc:4341 src/Torrent.cc:2974
 msgid "Not connected"
 msgstr "没有连接上"
 
@@ -331,17 +331,17 @@ msgstr ""
 msgid "copy: get rolled back to %lld, seeking put accordingly\n"
 msgstr ""
 
-#: src/FileCopy.cc:1074
+#: src/FileCopy.cc:1075
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1259
+#: src/FileCopy.cc:1260
 #, fuzzy
 msgid "file name missed in URL"
 msgstr "缺少文件名. "
 
-#: src/FileCopy.cc:1931
+#: src/FileCopy.cc:1932
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -405,45 +405,45 @@ msgstr "关闭发呆的连接"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1156 src/SFtp.cc:735 src/SFtp.cc:1068
-#: src/ftpclass.cc:2716 src/ftpclass.cc:2934
+#: src/Fish.cc:589 src/Http.cc:1156 src/SFtp.cc:740 src/SFtp.cc:1074
+#: src/ftpclass.cc:2716 src/ftpclass.cc:2935
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
 
-#: src/Fish.cc:635 src/SFtp.cc:1093 src/ftpclass.cc:2864 src/ftpclass.cc:3965
+#: src/Fish.cc:635 src/SFtp.cc:1099 src/ftpclass.cc:2865 src/ftpclass.cc:3969
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
-#: src/Fish.cc:987 src/Http.cc:1887 src/Http.cc:1894 src/SFtp.cc:1330
-#: src/ftpclass.cc:4340 src/Torrent.cc:2974 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:1887 src/Http.cc:1894 src/SFtp.cc:1336
+#: src/ftpclass.cc:4344 src/Torrent.cc:2976 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "正在连接..."
 
-#: src/Fish.cc:989 src/SFtp.cc:1332 src/ftpclass.cc:4346
+#: src/Fish.cc:989 src/SFtp.cc:1338 src/ftpclass.cc:4350
 #, fuzzy
 msgid "Connected"
 msgstr "没有连接上"
 
-#: src/Fish.cc:991 src/Http.cc:1896 src/SFtp.cc:1334 src/ftpclass.cc:4323
-#: src/ftpclass.cc:4351 src/ftpclass.cc:4365 src/TorrentTracker.cc:621
+#: src/Fish.cc:991 src/Http.cc:1896 src/SFtp.cc:1340 src/ftpclass.cc:4327
+#: src/ftpclass.cc:4355 src/ftpclass.cc:4369 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/Fish.cc:993 src/Http.cc:1899 src/SFtp.cc:1336 src/ftpclass.cc:4385
+#: src/Fish.cc:993 src/Http.cc:1899 src/SFtp.cc:1342 src/ftpclass.cc:4389
 msgid "Receiving data"
 msgstr "正接收数据"
 
-#: src/Fish.cc:995 src/Http.cc:1892 src/SFtp.cc:1338 src/ftpclass.cc:4383
+#: src/Fish.cc:995 src/Http.cc:1892 src/SFtp.cc:1344 src/ftpclass.cc:4387
 msgid "Sending data"
 msgstr "正发送数据"
 
-#: src/Fish.cc:997 src/SFtp.cc:1340
+#: src/Fish.cc:997 src/SFtp.cc:1346
 #, fuzzy
 msgid "Done"
 msgstr "\t完成\n"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2191
-#: src/SFtp.cc:2304
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2209
+#: src/SFtp.cc:2327
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在获取文件列表 (%ld) [%s]"
@@ -466,8 +466,8 @@ msgstr ""
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1081 src/ftpclass.cc:1344 src/Torrent.cc:2652
-#: src/Torrent.cc:3174 src/TorrentTracker.cc:392
+#: src/Http.cc:1081 src/ftpclass.cc:1344 src/Torrent.cc:2654
+#: src/Torrent.cc:3176 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -522,11 +522,11 @@ msgid "Received last chunk"
 msgstr "正接收数据"
 
 #: src/Http.cc:1881 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4333 src/TorrentTracker.cc:617
+#: src/ftpclass.cc:4337 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
-#: src/Http.cc:1889 src/ftpclass.cc:4326
+#: src/Http.cc:1889 src/ftpclass.cc:4330
 msgid "Connection idle"
 msgstr "连接空闲"
 
@@ -593,7 +593,7 @@ msgstr "%s删除: %d 个目录, %d 个文件, %d 个符号链接\n"
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s 成功, 建立 %d 个目录\n"
 
-#: src/MirrorJob.cc:250 src/MirrorJob.cc:435 src/MirrorJob.cc:954
+#: src/MirrorJob.cc:250 src/MirrorJob.cc:435 src/MirrorJob.cc:963
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "正在删除本地文件 `%s'"
@@ -613,7 +613,7 @@ msgstr "上传本地文件 '%s'"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:358 src/MirrorJob.cc:467 src/MirrorJob.cc:705
+#: src/MirrorJob.cc:358 src/MirrorJob.cc:467 src/MirrorJob.cc:712
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "正在删除本地文件 `%s'"
@@ -633,48 +633,48 @@ msgstr ""
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立符号链接 `%s' 指向 `%s'"
 
-#: src/MirrorJob.cc:619
+#: src/MirrorJob.cc:626
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "镜像: 协议 `%s' 不适合进行镜像\n"
 
-#: src/MirrorJob.cc:726
+#: src/MirrorJob.cc:733
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:905
+#: src/MirrorJob.cc:914
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:908
+#: src/MirrorJob.cc:917
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:949
+#: src/MirrorJob.cc:958
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "删除旧的远程文件 `%s'"
 
-#: src/MirrorJob.cc:1082
+#: src/MirrorJob.cc:1091
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1469
+#: src/MirrorJob.cc:1479
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1601 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1611 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1115 src/commands.cc:1203 src/commands.cc:1575
 #: src/commands.cc:1606 src/commands.cc:1709 src/commands.cc:2016
 #: src/commands.cc:2212 src/commands.cc:2374 src/commands.cc:2402
 #: src/commands.cc:2409 src/commands.cc:2695 src/commands.cc:2722
 #: src/commands.cc:2729 src/commands.cc:3049 src/lftp.cc:267
-#: src/Torrent.cc:3554
+#: src/Torrent.cc:3556
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
@@ -689,7 +689,7 @@ msgstr "Socket 错误 (%s) - 重新连接"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2769
+#: src/NetAccess.cc:217 src/Torrent.cc:2771
 msgid "Timeout - reconnecting"
 msgstr "超时 - 重新连接"
 
@@ -837,7 +837,7 @@ msgstr "没有这个变量"
 msgid "No address found"
 msgstr ""
 
-#: src/SFtp.cc:1084
+#: src/SFtp.cc:1090
 #, fuzzy
 msgid "invalid server response format"
 msgstr "额外的服务器应答"
@@ -870,22 +870,37 @@ msgstr ""
 msgid "%s: date-time parse error\n"
 msgstr ""
 
-#: src/Speedometer.cc:94
+#: src/Speedometer.cc:95
 #, fuzzy, c-format
 msgid "%.0fb/s"
 msgstr "%.0fb/s "
 
-#: src/Speedometer.cc:97
+#: src/Speedometer.cc:98
 #, fuzzy, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/s "
 
-#: src/Speedometer.cc:100
+#: src/Speedometer.cc:101
 #, fuzzy, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/s "
 
-#: src/Speedometer.cc:122
+#: src/Speedometer.cc:108
+#, fuzzy, c-format
+msgid "%.0f B/s"
+msgstr "%.0fb/s "
+
+#: src/Speedometer.cc:110
+#, fuzzy, c-format
+msgid "%.1f KiB/s"
+msgstr "%.1fK/s "
+
+#: src/Speedometer.cc:112
+#, fuzzy, c-format
+msgid "%.2f MiB/s"
+msgstr "%.2fM/s "
+
+#: src/Speedometer.cc:134
 msgid "eta:"
 msgstr "eta:"
 
@@ -2211,7 +2226,7 @@ msgstr "正在建立数据连接到 (%s) 端口 %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "正在建立数据连接到 (%s) 端口 %u"
 
-#: src/ftpclass.cc:2227 src/ftpclass.cc:4147
+#: src/ftpclass.cc:2227 src/ftpclass.cc:4151
 msgid "Switching passive mode off"
 msgstr "正在关闭被动模式"
 
@@ -2220,89 +2235,89 @@ msgstr "正在关闭被动模式"
 msgid "Data connection established"
 msgstr "数据连接对端的地址不对"
 
-#: src/ftpclass.cc:2541 src/ftpclass.cc:4277
+#: src/ftpclass.cc:2541 src/ftpclass.cc:4281
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2880
+#: src/ftpclass.cc:2881
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:3147
+#: src/ftpclass.cc:3148
 msgid "Closing data socket"
 msgstr "关闭数据连接"
 
-#: src/ftpclass.cc:3169
+#: src/ftpclass.cc:3170
 #, fuzzy
 msgid "Closing aborted data socket"
 msgstr "关闭数据连接"
 
-#: src/ftpclass.cc:3949
+#: src/ftpclass.cc:3953
 msgid "saw file size in response"
 msgstr "看到应答中的文件大小"
 
-#: src/ftpclass.cc:3979 src/ftpclass.cc:4006
+#: src/ftpclass.cc:3983 src/ftpclass.cc:4010
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:4167
+#: src/ftpclass.cc:4171
 #, fuzzy
 msgid "Switching passive mode on"
 msgstr "正在关闭被动模式"
 
-#: src/ftpclass.cc:4314
+#: src/ftpclass.cc:4318
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4321
+#: src/ftpclass.cc:4325
 msgid "Sending commands..."
 msgstr "正在发送命令..."
 
-#: src/ftpclass.cc:4325
+#: src/ftpclass.cc:4329
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "重新连接前延时"
 
-#: src/ftpclass.cc:4344
+#: src/ftpclass.cc:4348
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4348
+#: src/ftpclass.cc:4352
 msgid "Logging in..."
 msgstr "正在登录..."
 
-#: src/ftpclass.cc:4352
+#: src/ftpclass.cc:4356
 msgid "Making data connection..."
 msgstr "正在建立数据连接..."
 
-#: src/ftpclass.cc:4355
+#: src/ftpclass.cc:4359
 msgid "Changing remote directory..."
 msgstr "正在改变远程目录..."
 
-#: src/ftpclass.cc:4361
+#: src/ftpclass.cc:4365
 #, fuzzy
 msgid "Waiting for other copy peer..."
 msgstr "正等待应答..."
 
-#: src/ftpclass.cc:4363 src/ftpclass.cc:4387
+#: src/ftpclass.cc:4367 src/ftpclass.cc:4391
 msgid "Waiting for transfer to complete"
 msgstr "正等待传输完成"
 
-#: src/ftpclass.cc:4367
+#: src/ftpclass.cc:4371
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "正等待应答..."
 
-#: src/ftpclass.cc:4369
+#: src/ftpclass.cc:4373
 msgid "Waiting for data connection..."
 msgstr "正等待数据连接..."
 
-#: src/ftpclass.cc:4375
+#: src/ftpclass.cc:4379
 #, fuzzy
 msgid "Sending data/TLS"
 msgstr "正发送数据"
 
-#: src/ftpclass.cc:4377
+#: src/ftpclass.cc:4381
 #, fuzzy
 msgid "Receiving data/TLS"
 msgstr "正接收数据"
@@ -2312,26 +2327,41 @@ msgstr "正接收数据"
 msgid "[%u] Terminated by signal %d. %s\n"
 msgstr "[%lu] 被信号 %d 中止. %s"
 
-#: src/lftp.cc:449
+#: src/lftp.cc:444
 #, fuzzy, c-format
 msgid "[%u] Started.  %s\n"
 msgstr "[%lu] 启动. %s"
 
-#: src/lftp.cc:465
+#: src/lftp.cc:462
+#, fuzzy, c-format
+msgid "[%u] Detaching from the terminal to complete transfers...\n"
+msgstr "[%lu] 转到后台完成传输...\n"
+
+#: src/lftp.cc:464
+#, c-format
+msgid "[%u] Exiting and detaching from the terminal.\n"
+msgstr ""
+
+#: src/lftp.cc:469
+#, c-format
+msgid "[%u] Detached from terminal. %s\n"
+msgstr ""
+
+#: src/lftp.cc:479
 #, fuzzy, c-format
 msgid "[%u] Finished. %s\n"
 msgstr "[%lu] 完成. %s"
 
-#: src/lftp.cc:469
+#: src/lftp.cc:483
 #, fuzzy, c-format
 msgid "[%u] Moving to background to complete transfers...\n"
 msgstr "[%lu] 转到后台完成传输...\n"
 
-#: src/lftp.cc:523
+#: src/lftp.cc:536
 msgid "history -w file|-r file|-c|-l [cnt]"
 msgstr ""
 
-#: src/lftp.cc:524
+#: src/lftp.cc:537
 msgid ""
 " -w <file> Write history to file.\n"
 " -r <file> Read history from file; appends to current history.\n"
@@ -2341,23 +2371,8 @@ msgid ""
 "or \"all\" to list all entries.\n"
 msgstr ""
 
-#: src/lftp.cc:531
+#: src/lftp.cc:544
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
-msgstr ""
-
-#: src/lftp.cc:567
-#, fuzzy, c-format
-msgid "[%u] Detaching from the terminal to complete transfers...\n"
-msgstr "[%lu] 转到后台完成传输...\n"
-
-#: src/lftp.cc:572
-#, c-format
-msgid "[%u] Detached from terminal. %s\n"
-msgstr ""
-
-#: src/lftp.cc:592
-#, c-format
-msgid "[%u] Exiting and detaching from the terminal.\n"
 msgstr ""
 
 #: src/mgetJob.cc:118 src/mgetJob.cc:202
@@ -2475,82 +2490,82 @@ msgstr "%s 成功, 删除 %d 个目录\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功, 删除 %d 个文件\n"
 
-#: src/Torrent.cc:1553 src/Torrent.cc:1556
+#: src/Torrent.cc:1555 src/Torrent.cc:1558
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1559
+#: src/Torrent.cc:1561
 #, fuzzy
 msgid "Waiting for meta-data..."
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/Torrent.cc:1562
+#: src/Torrent.cc:1564
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1572
+#: src/Torrent.cc:1574
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2655
+#: src/Torrent.cc:2657
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/Torrent.cc:2705 src/Torrent.cc:2818
+#: src/Torrent.cc:2707 src/Torrent.cc:2820
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2707
+#: src/Torrent.cc:2709
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2803
+#: src/Torrent.cc:2805
 #, fuzzy
 msgid "peer closed connection"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2820
+#: src/Torrent.cc:2822
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "额外的服务器应答"
 
-#: src/Torrent.cc:2976
+#: src/Torrent.cc:2978
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3229
+#: src/Torrent.cc:3231
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3279
+#: src/Torrent.cc:3281
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "正在建立数据连接到 (%s) 端口 %u"
 
-#: src/Torrent.cc:3365
+#: src/Torrent.cc:3367
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3377
+#: src/Torrent.cc:3379
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3379
+#: src/Torrent.cc:3381
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:3430
+#: src/Torrent.cc:3432
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "正在发送命令..."
 
-#: src/Torrent.cc:3598
+#: src/Torrent.cc:3600
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""
@@ -2570,12 +2585,12 @@ msgstr ""
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr ""
 
-#: src/attach.h:124
+#: src/attach.h:134
 #, fuzzy, c-format
 msgid "[%u] Attached to terminal %s. %s\n"
 msgstr "[%lu] 被信号 %d 中止. %s"
 
-#: src/attach.h:136
+#: src/attach.h:146
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr ""
