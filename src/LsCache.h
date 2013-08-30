@@ -50,6 +50,7 @@ public:
    void SetData(int e,const char *d,int l,const FileSet *fs);
    void GetData(int *e,const char **d,int *l,const FileSet **fs);
    const FileSet *GetFileSet(const FileAccess *parser);
+   void UpdateFileSet(const FileSet *fs) { if(afset) afset->Merge(fs); }
    int EstimateSize() const { return data.length()+(afset?afset->EstimateMemory():0); }
 };
 
@@ -72,6 +73,7 @@ public:
    void Add(const FileAccess *p_loc,const char *a,int m,int err,const Buffer *ubuf,const FileSet *f=0);
    bool Find(const FileAccess *p_loc,const char *a,int m,int *err,const char **d, int *l,const FileSet **f=0);
    const FileSet *FindFileSet(const FileAccess *p_loc,const char *a,int m);
+   void UpdateFileSet(const FileAccess *p_loc,const char *a,int m,const FileSet *fs);
 
    int IsDirectory(const FileAccess *p_loc,const char *dir);
    void SetDirectory(const FileAccess *p_loc, const char *path, bool dir);

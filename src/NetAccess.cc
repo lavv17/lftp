@@ -570,6 +570,8 @@ got_fileset:
 	 return m;
       session->Close();
       done=true;
+      FileAccess::cache->UpdateFileSet(session,"",FA::MP_LIST,result);
+      FileAccess::cache->UpdateFileSet(session,"",FA::LONG_LIST,result);
       m=MOVED;
    }
    return m;

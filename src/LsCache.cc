@@ -169,6 +169,16 @@ const FileSet *LsCacheEntryData::GetFileSet(const FileAccess *parser)
    return afset;
 }
 
+void LsCache::UpdateFileSet(const FileAccess *p_loc,const char *a,int m,const FileSet *fs)
+{
+   if(!fs)
+      return;
+   LsCacheEntry *c=Find(p_loc,a,m);
+   if(!c)
+      return;
+   c->UpdateFileSet(fs);
+}
+
 void LsCache::List()
 {
    Trim();
@@ -228,9 +238,9 @@ void LsCache::SetDirectory(const FileAccess *p_loc, const char *path, bool dir)
 
 int LsCache::IsDirectory(const FileAccess *p_loc,const char *dir_c)
 {
-   FileAccess::Path new_cwd = p_loc->GetCwd();
+   FileAccess::Path new_cwd(p_loc->GetCwd());
    new_cwd.Change(dir_c);
-   SMTaskRef<FileAccess> new_p_loc(p_loc->Clone());
+   FileAccessRef new_p_loc(p_loc->Clone());
    new_p_loc->SetCwd(new_cwd);
 
    int ret = -1;

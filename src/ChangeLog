@@ -3,6 +3,7 @@
 	* Http.cc: handle atotm parse error.
 	* TimeDate.cc, TimeDate.h: fixed localtime cacheing.
 	* commands.cc: (cd) automatically add slash if needed.
+	* LsCache.cc, LsCache.h, NetAccess.cc: (UpdateFileSet) new method; use it.
 
 2013-08-16  Alexander V. Lukyanov <lav@yars.free.net>
 
