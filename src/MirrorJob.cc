@@ -1323,6 +1323,49 @@ void MirrorJob::SetOnChange(const char *oc)
    on_change.set(oc);
 }
 
+const char *MirrorJob::AddPattern(Ref<PatternSet>& exclude,char opt,const char *optarg)
+{
+   PatternSet::Type type=
+      (opt=='x'||opt=='X'||opt=='\0'?PatternSet::EXCLUDE:PatternSet::INCLUDE);
+   PatternSet::Pattern *pattern=0;
+   if(opt=='x' || opt=='i')
+   {
+      Ref<PatternSet::Regex> rx(new PatternSet::Regex(optarg));
+      if(rx->Error())
+	 return xstring::get_tmp(rx->ErrorText());
+      pattern=rx.borrow();
+   }
+   else if(opt=='X' || opt=='I')
+   {
+      pattern=new PatternSet::Glob(optarg);
+   }
+   if(!exclude)
+   {
+      const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
+      const char *default_include=ResMgr::Query("mirror:include-regex",0);
+
+      // don't create default pattern set if not needed
+      if(!pattern && !(default_exclude && *default_exclude))
+	 return NULL;
+
+      exclude=new PatternSet;
+      /* Make default_exclude the first pattern so that it can be
+       * overridden by --include later, and do that only when first
+       * explicit pattern is for exclusion - otherwise all files are
+       * excluded by default and no default exclusion is needed. */
+      if(type==PatternSet::EXCLUDE && default_exclude && *default_exclude)
+      {
+	 exclude->Add(type,new PatternSet::Regex(default_exclude));
+	 if(default_include && *default_include)
+	    exclude->Add(PatternSet::INCLUDE,new PatternSet::Regex(default_include));
+      }
+   }
+   if(pattern)
+      exclude->Add(type,pattern);
+
+   return NULL; // no error
+}
+
 CMD(mirror)
 {
 #define args (parent->args)
@@ -1371,6 +1414,7 @@ CMD(mirror)
       {"reverse",no_argument,0,'R'},
       {"verbose",optional_argument,0,'v'},
       {"newer-than",required_argument,0,'N'},
+      {"file",required_argument,0,'f'},
       {"older-than",required_argument,0,OPT_OLDER_THAN},
       {"size-range",required_argument,0,OPT_SIZE_RANGE},
       {"dereference",no_argument,0,'L'},
@@ -1396,6 +1440,8 @@ CMD(mirror)
       {"no-empty-dirs",no_argument,0,OPT_NO_EMPTY_DIRS},
       {"depth-first",no_argument,0,OPT_DEPTH_FIRST},
       {"ascii",no_argument,0,OPT_ASCII},
+      {"target-directory",required_argument,0,'O'},
+      {"destination-directory",required_argument,0,'O'},
       {0}
    };
 
@@ -1423,16 +1469,17 @@ CMD(mirror)
    const char *on_change=0;
 
    Ref<PatternSet> exclude;
-   const char *default_exclude=ResMgr::Query("mirror:exclude-regex",0);
-   const char *default_include=ResMgr::Query("mirror:include-regex",0);
 
    if(!ResMgr::QueryBool("mirror:set-permissions",0))
       flags|=MirrorJob::NO_PERMS;
    if(ResMgr::QueryBool("mirror:dereference",0))
       flags|=MirrorJob::RETR_SYMLINKS;
 
+   const char *source_dir=NULL;
+   const char *target_dir=NULL;
+
    args->rewind();
-   while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LP:a",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LP:af:O:",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -1468,43 +1515,13 @@ CMD(mirror)
       case('X'):
       case('I'):
       {
-	 PatternSet::Type type=
-	    (opt=='x'||opt=='X'?PatternSet::EXCLUDE:PatternSet::INCLUDE);
-	 PatternSet::Pattern *pattern=0;
-	 if(opt=='x' || opt=='i')
+	 const char *err=MirrorJob::AddPattern(exclude,opt,optarg);
+	 if(err)
 	 {
-	    Ref<PatternSet::Regex> rx(new PatternSet::Regex(optarg));
-	    if(rx->Error())
-	    {
-	       eprintf(_("%s: regular expression `%s': %s\n"),
-		  args->a0(),optarg,rx->ErrorText());
-	       goto no_job;
-	    }
-	    pattern=rx.borrow();
+	    eprintf(_("%s: regular expression `%s': %s\n"),
+	       args->a0(),optarg,err);
+	    goto no_job;
 	 }
-	 else // X or I
-	 {
-	    pattern=new PatternSet::Glob(optarg);
-	 }
-	 if(!exclude)
-	 {
-	    exclude=new PatternSet;
-	    /* Make default_exclude the first pattern so that it can be
-	     * overridden by --include later, and do that only when first
-	     * explicit pattern is for exclusion - otherwise all files are
-	     * excluded by default and no default exclusion is needed. */
-	    if(type==PatternSet::EXCLUDE && default_exclude && *default_exclude)
-	    {
-	       exclude->Add(type,new PatternSet::Regex(default_exclude));
-	       if(default_include && *default_include)
-		  exclude->Add(PatternSet::INCLUDE,new PatternSet::Regex(default_include));
-	    }
-	    default_exclude=0;
-	    /* Users usually don't want to exclude all directories */
-	    if(type==PatternSet::INCLUDE)
-	       exclude->Add(type,new PatternSet::Regex("/$"));
-	 }
-	 exclude->Add(type,pattern);
 	 break;
       }
       case('R'):
@@ -1526,6 +1543,18 @@ CMD(mirror)
 	 break;
       case('N'):
 	 newer_than=optarg;
+	 break;
+      case('f'):
+      {
+	 // mirror for a single file (or glob pattern).
+	 flags|=MirrorJob::NO_RECURSION;
+	 MirrorJob::AddPattern(exclude,'I',basename_ptr(optarg));
+	 source_dir=dirname(optarg);
+	 source_dir=alloca_strdup(source_dir); // save the temp string
+	 break;
+      }
+      case('O'):
+	 target_dir=optarg;
 	 break;
       case(OPT_OLDER_THAN):
 	 older_than=optarg;
@@ -1614,23 +1643,28 @@ CMD(mirror)
       }
    }
 
-   /* add default exclusion if no explicit patterns were specified */
-   if(!exclude && default_exclude && *default_exclude)
+   if(exclude && !(flags&MirrorJob::NO_RECURSION))
    {
-      exclude=new PatternSet;
-      exclude->Add(PatternSet::EXCLUDE,new PatternSet::Regex(default_exclude));
-      if(default_include && *default_include)
-	 exclude->Add(PatternSet::INCLUDE,new PatternSet::Regex(default_include));
+      /* Users usually don't want to exclude all directories when recursing */
+      if(exclude->GetFirstType()==PatternSet::INCLUDE)
+	 exclude->AddFirst(PatternSet::INCLUDE,new PatternSet::Regex("/$"));
    }
 
-   args->back();
+   /* add default exclusion if no explicit patterns were specified */
+   if(!exclude)
+      MirrorJob::AddPattern(exclude,'\0',0);
 
-   const char *source_dir=".";
-   const char *target_dir=".";
+   args->back();
 
    const char *arg=args->getnext();
    if(arg)
    {
+      if(source_dir)
+      {
+	 eprintf(_("%s: ambiguous source directory (`%s' or `%s'?)\n"),args->a0(),
+	    source_dir,arg);
+	 goto no_job;
+      }
       source_dir=arg;
       ParsedURL source_url(source_dir);
       if(source_url.proto && source_url.path)
@@ -1647,6 +1681,12 @@ CMD(mirror)
       arg=args->getnext();
       if(arg)
       {
+	 if(target_dir)
+	 {
+	    eprintf(_("%s: ambiguous target directory (`%s' or `%s'?)\n"),args->a0(),
+	       target_dir,arg);
+	    goto no_job;
+	 }
 	 target_dir=arg;
 	 ParsedURL target_url(target_dir);
 	 if(target_url.proto && target_url.path)
@@ -1681,6 +1721,11 @@ CMD(mirror)
 	 }
       }
    }
+
+   if(!source_dir)
+      source_dir=".";
+   if(!target_dir)
+      target_dir=".";
 
    if(!reverse)
    {

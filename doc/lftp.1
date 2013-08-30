@@ -433,8 +433,8 @@ T}
 .RI [ OPTS "] [" source
 .RI "[" target "]]"
 .PP
-Mirror specified source directory to local target directory. If target
-directory ends with a slash, the source base name is appended to target
+Mirror specified source directory to local target directory. If the target
+directory ends with a slash (except the root), the source base name is appended to target
 directory name. Source and/or target can be URLs pointing to directories.
 .PP
 .Sp
@@ -501,9 +501,6 @@ T}
 \-N,	\-\-newer\-than=SPEC	T{
 download only files newer than specified time
 T}
-	\-\-on\-change=CMD	T{
-execute the command if anything has been changed
-T}
 	\-\-older\-than=SPEC	T{
 download only files older than specified time
 T}
@@ -516,28 +513,37 @@ T}
 	\-\-use-pget[\-n=N]	T{
 use pget to transfer every single file
 T}
+	\-\-on\-change=CMD	T{
+execute the command if anything has been changed
+T}
 	\-\-loop	T{
-loop until no changes found
+repeat mirror until no changes found
 T}
-\-i \fIRX\fP,	\-\-include \fIRX\fP	T{
+\-i \fIRX\fP,	\-\-include=\fIRX\fP	T{
 include matching files
 T}
-\-x \fIRX\fP,	\-\-exclude \fIRX\fP	T{
+\-x \fIRX\fP,	\-\-exclude=\fIRX\fP	T{
 exclude matching files
 T}
-\-I \fIGP\fP,	\-\-include\-glob \fIGP\fP	T{
+\-I \fIGP\fP,	\-\-include\-glob=\fIGP\fP	T{
 include matching files
 T}
-\-X \fIGP\fP,	\-\-exclude\-glob \fIGP\fP	T{
+\-X \fIGP\fP,	\-\-exclude\-glob=\fIGP\fP	T{
 exclude matching files
+T}
+\-f \fIFILE\fP,	\-\-file=\fIFILE\fP	T{
+mirror a single file or globbed group (e.g. /path/to/*.txt)
+T}
+\-O \fIDIR\fP,	\-\-target-directory=\fIDIR\fP	T{
+target base path or URL
 T}
 \-v,	\-\-verbose[=level]	T{
 verbose operation
 T}
-	\-\-log=FILE	T{
+	\-\-log=\fIFILE\fP	T{
 write lftp commands being executed to FILE
 T}
-	\-\-script=FILE	T{
+	\-\-script=\fIFILE\fP	T{
 write lftp commands to FILE, but don't execute them
 T}
 	\-\-just-print, \-\-dry-run	T{
@@ -554,11 +560,11 @@ same as \-\-allow-chown \-\-allow-suid \-\-no-umask
 T}
 .TE
 .P
-When using \-R, the first directory is local and the second is remote.
-If the second directory is omitted, base name of first directory is used.
+When using \-R, the source directory is local and the target is remote.
+If the target directory is omitted, base name of the source directory is used.
 If both directories are omitted, current local and remote directories are used.
-If target directory ends with a slash (except root directory) then base
-name of source directory is appended.
+If the target directory ends with a slash (except the root directory) then base
+name of the source directory is appended.
 .PP
 \fIRX\fP is an extended regular expression, just like in \fBegrep\fR(1).
 .PP

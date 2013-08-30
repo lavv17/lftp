@@ -5,6 +5,7 @@
 	* commands.cc: (cd) automatically add slash if needed.
 	* LsCache.cc, LsCache.h, NetAccess.cc: (UpdateFileSet) new method; use it.
 	* PatternSet.cc, PatternSet.h: (AddFirst, GetFirstType) new methods.
+	* MirrorJob.cc, MirrorJob.h: add --file/-f and --target-directory/-O options.
 
 2013-08-16  Alexander V. Lukyanov <lav@yars.free.net>
 
