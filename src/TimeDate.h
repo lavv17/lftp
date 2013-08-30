@@ -80,8 +80,8 @@ class TimeDate : public Time
    void set_local_time();
 
 public:
-   TimeDate() { SetToCurrentTime(); local_time_unix=0; }
-   TimeDate(time_t s,int ms=0) : Time(s,ms) { local_time_unix=0; }
+   TimeDate() { SetToCurrentTime(); local_time_unix=(time_t)-1; }
+   TimeDate(time_t s,int ms=0) : Time(s,ms) { local_time_unix=(time_t)-1; if(local_time_unix==s) --local_time_unix; }
 
    operator const struct tm *() { set_local_time(); return &local_time; }
    operator const struct tm &() { set_local_time(); return local_time; }

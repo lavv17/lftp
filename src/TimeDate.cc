@@ -73,10 +73,14 @@ bool Time::Passed(int s) const
 }
 void TimeDate::set_local_time()
 {
-   if(local_time_unix==UnixTime())
-      return;
+   // avoid repeating localtime calls by caching the result.
+   // localtime in some implementation has very bad performance,
+   // e.g. it can re-read /etc/localtime on every call.
    time_t t=UnixTime();
+   if(local_time_unix==t)
+      return;
    local_time=*localtime(&t);
+   local_time_unix=t;
 }
 const char *TimeDate::IsoDateTime()
 {
