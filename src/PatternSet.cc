@@ -24,11 +24,28 @@
 PatternSet::PatternSet()
 {
    chain=0;
+   first=0;
 }
 void PatternSet::Add(Type t,Pattern *p)
 {
    chain=new PatternLink(t,p,chain);
+   if(!first)
+      first=chain;
 }
+
+void PatternSet::AddFirst(Type t,Pattern *p)
+{
+   PatternLink *new_link=new PatternLink(t,p,NULL);
+   if(!first)
+      first=chain=new_link;
+   else
+      first->next=new_link;
+}
+PatternSet::Type PatternSet::GetFirstType() const
+{
+   return first->type;
+}
+
 PatternSet::~PatternSet()
 {
    while(chain)

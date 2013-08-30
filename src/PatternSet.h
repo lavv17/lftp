@@ -61,12 +61,15 @@ private:
    };
 
    PatternLink *chain;
+   PatternLink *first;
 
 public:
    PatternSet();
    ~PatternSet();
 
    void	Add(Type,Pattern *);
+   void	AddFirst(Type,Pattern *);
+   Type GetFirstType() const;
 
    bool Match(Type t,const char *str) const;
    bool MatchExclude(const char *str) const { return Match(EXCLUDE,str); }
