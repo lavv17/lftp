@@ -7,6 +7,13 @@
 	* PatternSet.cc, PatternSet.h: (AddFirst, GetFirstType) new methods.
 	* MirrorJob.cc, MirrorJob.h: add --file/-f and --target-directory/-O options.
 	* buffer.h: allow IOBufferFileAccess creation with plain pointer.
+	* Http.cc, Http.h: don't log empty commands;
+	  handle PROPFIND result of CHANGE_DIR op; add "quote PROPFIND" support
+	  (mostly for debugging); don't send Content-Type for PROPFIND requests
+	  if there is no request body; don't request file info if not needed in
+	  ARRAY_INFO mode.
+	* HttpDir.cc: automatically detect xml file listing.
+	* HttpDirXML.cc: handle atotm errors.
 
 2013-08-16  Alexander V. Lukyanov <lav@yars.free.net>
 

@@ -64,8 +64,6 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #define EINPROGRESS -1
 #endif
 
-static const time_t ATOTM_ERROR = -1;
-
 Http::Connection::Connection(int s,const char *c)
    : closure(c), sock(s)
 {
@@ -193,6 +191,7 @@ void Http::ResetRequestData()
    chunk_size=-1;
    chunk_pos=0;
    chunked_trailer=false;
+   propfind=0;
    inflate=0;
    seen_ranges_bytes=false;
 }
@@ -245,6 +244,8 @@ void Http::Send(const char *format,...)
    va_start(va,format);
    xstring& str=xstring::vformat(format,va);
    va_end(va);
+   if(str.length()==0)
+      return;
    LogSend(5,str);
    conn->send_buf->Put(str);
 }
@@ -539,6 +540,10 @@ void Http::SendRequest(const char *connection,const char *f)
 	 SendMethod(special==HTTP_MOVE?"MOVE":"COPY",efile);
 	 Send("Destination: %s\r\n",special_data.get());
 	 break;
+      case HTTP_PROPFIND:
+	 SendMethod("PROPFIND",efile);
+	 Send("Depth: 1\r\n"); // directory listing required
+	 break;
       case HTTP_NONE:
 	 abort(); // cannot happen
       }
@@ -611,9 +616,11 @@ void Http::SendRequest(const char *connection,const char *f)
 	 {
 	    SendMethod("PROPFIND",efile);
 	    Send("Depth: 0\r\n"); // no directory listing required
-	    Send("Content-Type: text/xml\r\n");
 	    if(allprop_len>0)
+	    {
+	       Send("Content-Type: text/xml\r\n");
 	       Send("Content-Length: %d\r\n",allprop_len);
+	    }
 	 }
 	 else
 	    SendMethod("HEAD",efile);
@@ -635,9 +642,11 @@ void Http::SendRequest(const char *connection,const char *f)
       {
 	 SendMethod("PROPFIND",efile);
 	 Send("Depth: 1\r\n"); // directory listing required
-	 Send("Content-Type: text/xml\r\n");
 	 if(allprop_len>0)
+	 {
+	    Send("Content-Type: text/xml\r\n");
 	    Send("Content-Length: %d\r\n",allprop_len);
+	 }
 	 pos=0;
       }
       break;
@@ -678,7 +687,8 @@ void Http::SendRequest(const char *connection,const char *f)
    }
    else if(mode==MP_LIST || (mode==CHANGE_DIR && use_propfind_now))
    {
-      Send("%s",allprop);
+      if(allprop_len>0)
+	 Send("%s",allprop);
    }
 
    keep_alive=false;
@@ -692,8 +702,18 @@ void Http::SendRequest(const char *connection,const char *f)
    conn->send_buf->SetPos(0);
 }
 
-void Http::SendArrayInfoRequest()
+int Http::SendArrayInfoRequest()
 {
+   // skip to next needed file
+   for(FileInfo *fi=fileset_for_info->curr(); fi; fi=fileset_for_info->next())
+      if(fi->need)
+	 break;
+   if(array_send<fileset_for_info->curr_index())
+      array_send=fileset_for_info->curr_index();
+
+   if(state!=CONNECTED)
+      return 0;
+
    int m=1;
    if(keep_alive && use_head)
    {
@@ -701,17 +721,22 @@ void Http::SendArrayInfoRequest()
       if(m==-1)
 	 m=100;
    }
+   int req_count=0;
    while(array_send-fileset_for_info->curr_index()<m
    && array_send<fileset_for_info->count())
    {
       FileInfo *fi=(*fileset_for_info)[array_send++];
+      if(fi->need==0)
+	 continue;
       xstring *name=&fi->name;
       if(fi->filetype==fi->DIRECTORY && name->last_char()!='/') {
 	 name=&xstring::get_tmp(*name);
 	 name->append('/');
       }
       SendRequest(array_send==fileset_for_info->count()-1 ? 0 : "keep-alive", *name);
+      req_count++;
    }
+   return req_count;
 }
 
 static const char *extract_quoted_header_value(const char *value)
@@ -967,6 +992,37 @@ int Http::Do()
    if(Error())
       return m;
 
+   if(propfind && mode==CHANGE_DIR)
+   {
+      if(propfind->Eof())
+      {
+	 const char *b;
+	 int len;
+	 propfind->Get(&b,&len);
+	 FileSet *fs=HttpListInfo::ParseProps(b,len,GetCwd());
+	 if(fs)
+	 {
+	    FileInfo *fi=fs->curr();
+	    if(fi && fi->Has(fi->TYPE))
+	    {
+	       new_cwd->is_file=(fi->filetype!=fi->DIRECTORY);
+	       fi->MakeLongName();
+	       LogNote(9,"%s",fi->longname.get());
+	    }
+	 }
+	 cwd.Set(new_cwd);
+	 cache->SetDirectory(this, "", !cwd.is_file);
+	 state=DONE;
+	 propfind=0;
+	 return MOVED;
+      }
+      if(propfind->Error()) {
+	 SetError(NO_FILE,propfind->ErrorText());
+	 propfind=0;
+	 return MOVED;
+      }
+   }
+
    switch(state)
    {
    case DISCONNECTED:
@@ -976,6 +1032,16 @@ int Http::Do()
       {
 	 state=DONE;
 	 return MOVED;
+      }
+      if(mode==ARRAY_INFO)
+      {
+	 // check if we have anything to request
+	 SendArrayInfoRequest();
+	 if(!fileset_for_info->curr())
+	 {
+	    state=DONE;
+	    return MOVED;
+	 }
       }
       if(!hftp && mode==QUOTE_CMD && !special)
       {
@@ -988,6 +1054,8 @@ int Http::Do()
 	    special=HTTP_COPY;
 	 else if(file && !strncasecmp(file,"MOVE ",5))
 	    special=HTTP_MOVE;
+	 else if(file && !strncasecmp(file,"PROPFIND ",9))
+	    special=HTTP_PROPFIND;
 	 else
 	 {
 	    SetError(NOT_SUPP,0);
@@ -996,7 +1064,9 @@ int Http::Do()
 	 if(special)
 	 {
 	    // METHOD encoded_path data
-	    const char *scan=file+5;
+	    const char *scan=file;
+	    while(*scan && *scan!=' ')
+	       scan++;
 	    while(*scan==' ')
 	       scan++;
 	    file_url.set(https?"https://":"http://");
@@ -1177,13 +1247,17 @@ int Http::Do()
 	 state=DONE;
 	 return MOVED;
       }
-      LogNote(9,_("Sending request..."));
       if(mode==ARRAY_INFO)
       {
-	 SendArrayInfoRequest();
+	 if(SendArrayInfoRequest()==0) {
+	    // nothing to do
+	    state=DONE;
+	    return MOVED;
+	 }
       }
       else
       {
+	 LogNote(9,_("Sending request..."));
 	 SendRequest();
       }
 
@@ -1271,8 +1345,16 @@ int Http::Do()
 		  // we'll have to receive next header
 		  status.set(0);
 		  status_code=0;
-		  if(!fileset_for_info->next())
+		  for(;;)
 		  {
+		     // skip to next needed file
+		     FileInfo *fi=fileset_for_info->next();
+		     if(!fi || fi->need)
+			break;
+		  }
+		  if(!fileset_for_info->curr())
+		  {
+		     // received all requested info.
 		     state=DONE;
 		     return MOVED;
 		  }
@@ -1510,10 +1592,14 @@ int Http::Do()
       }
       if(mode==CHANGE_DIR)
       {
-	 cwd.Set(new_cwd);
-	 cache->SetDirectory(this, "", !cwd.is_file);
-	 state=DONE;
-	 return MOVED;
+	 if(xstrcmp(last_method,"PROPFIND"))
+	 {
+	    cwd.Set(new_cwd);
+	    cache->SetDirectory(this, "", !cwd.is_file);
+	    state=DONE;
+	    return MOVED;
+	 }
+	 propfind=new IOBufferFileAccess(this);
       }
 
       LogNote(9,_("Receiving body..."));
@@ -1530,6 +1616,7 @@ int Http::Do()
       }
       state=RECEIVING_BODY;
       m=MOVED;
+      /*passthrough*/
    case RECEIVING_BODY:
       if(conn->recv_buf->Error() || conn->send_buf->Error())
 	 goto handle_buf_error;

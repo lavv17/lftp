@@ -1392,6 +1392,9 @@ FileSet *Http::ParseLongList(const char *b,int len,int *err) const
    if(err)
       *err=0;
 
+   if(len>5 && !strncmp(b,"<?xml",5))
+      return HttpListInfo::ParseProps(b,len,GetCwd());
+
    FileSet *set=new FileSet;
    ParsedURL prefix(GetConnectURL());
    xstring_c base_href;

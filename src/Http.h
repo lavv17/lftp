@@ -81,7 +81,7 @@ class Http : public NetAccess
 
    void SendMethod(const char *,const char *);
    const char *last_method;
-   enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY } special;
+   enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY, HTTP_PROPFIND } special;
    xstring special_data;
    void DirFile(xstring& path,const xstring& ecwd,const xstring& efile) const;
    void SendAuth();
@@ -93,7 +93,7 @@ class Http : public NetAccess
       {
 	 SendRequest(connection,file);
       }
-   void SendArrayInfoRequest();
+   int SendArrayInfoRequest(); // returns count of sent requests
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
    void GetBetterConnection(int level);
@@ -136,6 +136,7 @@ class Http : public NetAccess
    bool chunked_trailer;
 
    Ref<DirectedBuffer> inflate;
+   Ref<IOBuffer> propfind;
 
    bool no_ranges;
    bool seen_ranges_bytes;
@@ -202,6 +203,7 @@ public:
    void Cleanup();
    void CleanupThis();
 
+   static const time_t ATOTM_ERROR = -1;
    static time_t atotm (const char *time_string);
 };
 

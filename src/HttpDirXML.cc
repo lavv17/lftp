@@ -120,7 +120,9 @@ static void chardata_handle(void *data, const char *chardata, int len)
    }
    else if(!strcmp(tag,"DAV:getlastmodified"))
    {
-      ctx->fi->SetDate(Http::atotm(s),0);
+      time_t tm=Http::atotm(s);
+      if(tm!=Http::ATOTM_ERROR)
+	 ctx->fi->SetDate(tm,0);
    }
    else if(!strcmp(tag,"DAV:creator-displayname"))
    {
