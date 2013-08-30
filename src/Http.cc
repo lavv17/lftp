@@ -64,6 +64,8 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #define EINPROGRESS -1
 #endif
 
+static const time_t ATOTM_ERROR = -1;
+
 Http::Connection::Connection(int s,const char *c)
    : closure(c), sock(s)
 {
@@ -786,11 +788,17 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    }
    if(!strcasecmp(name,"Last-Modified"))
    {
+      if(!H_20X(status_code))
+	 return;
+
       time_t t=Http::atotm(value);
-      if(opt_date && H_20X(status_code))
+      if(t==ATOTM_ERROR)
+	 return;
+
+      if(opt_date)
 	 *opt_date=t;
 
-      if(mode==ARRAY_INFO && H_20X(status_code))
+      if(mode==ARRAY_INFO)
       {
 	 FileInfo *fi=fileset_for_info->curr();
 	 fi->SetDate(t,0);
@@ -2292,7 +2300,7 @@ check_end (const char *p)
    The routine should probably be even more forgiving (as recommended
    by RFC2068), but I do not have the time to write one.
 
-   Return the computed time_t representation, or -1 if all the
+   Return the computed time_t representation, or ATOTM_ERROR if all the
    schemes fail.
 
    Needless to say, what we *really* need here is something like
@@ -2336,7 +2344,7 @@ Http::atotm (const char *time_string)
      whitespace instead of just one (it works that way on all the
      systems I've tested it on).  */
 
-   time_t ut=-1;
+   time_t ut=ATOTM_ERROR;
 
    setlocale(LC_TIME,"C"); // we need english month and week day names
 
