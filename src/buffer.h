@@ -274,6 +274,7 @@ public:
 class IOBufferFileAccess : public IOBuffer
 {
    const FileAccessRef& session;
+   FileAccessRef session_ref;
 
    int Get_LL(int size);
 
@@ -282,6 +283,11 @@ class IOBufferFileAccess : public IOBuffer
 
 public:
    IOBufferFileAccess(const FileAccessRef& i) : IOBuffer(GET), session(i) {}
+   IOBufferFileAccess(FileAccess *fa) : IOBuffer(GET), session(session_ref), session_ref(fa) {}
+   ~IOBufferFileAccess() {
+      // we don't want to delete the session
+      session_ref.borrow();
+   }
 
    const char *Status();
 };
