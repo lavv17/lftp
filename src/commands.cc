@@ -604,6 +604,7 @@ Job *CmdExec::builtin_cd()
       dir=args->getarg(1);
    }
 
+   bool dir_needs_slash=false;
    if(url::is_url(dir))
    {
       ParsedURL u(dir,true);
@@ -614,18 +615,23 @@ Job *CmdExec::builtin_cd()
 	 return builtin_open();
       url=dir;
       dir=alloca_strdup(u.path);
-      if(url::dir_needs_trailing_slash(u.proto))
-	 is_file=(last_char(dir)!='/');
+      dir_needs_slash=url::dir_needs_trailing_slash(u.proto);
    }
    else
    {
-      if(url::dir_needs_trailing_slash(session->GetProto()))
-	 is_file=(last_char(dir)!='/');
+      dir_needs_slash=url::dir_needs_trailing_slash(session->GetProto());
    }
+
+   if(dir_needs_slash)
+      is_file=(last_char(dir)!='/');
 
    int cache_is_dir=FileAccess::cache->IsDirectory(session,dir);
    if(cache_is_dir==1)
+   {
+      if(is_file && dir_needs_slash)
+	 dir=xstring::get_tmp(dir).append('/');
       is_file=false;
+   }
    else if(cache_is_dir==0)
       is_file=true;
 

@@ -2,6 +2,7 @@
 
 	* Http.cc: handle atotm parse error.
 	* TimeDate.cc, TimeDate.h: fixed localtime cacheing.
+	* commands.cc: (cd) automatically add slash if needed.
 
 2013-08-16  Alexander V. Lukyanov <lav@yars.free.net>
 
