@@ -227,8 +227,10 @@ PtyShell::~PtyShell()
       close(pipe_in);
    if(pipe_out!=-1)
       close(pipe_out);
-   if(w)
+   if(w) {
+      w->Kill();
       w.borrow()->Auto();
+   }
 }
 
 bool PtyShell::Done()
