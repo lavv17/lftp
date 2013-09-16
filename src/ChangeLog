@@ -1,3 +1,12 @@
+2013-09-16  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* buffer.cc: compile in SetTranslator unconditionslly (for Ftp).
+	* Http.cc, Http.h: use PROPFIND for ARRAY_INFO if supported.
+	* Torrent.cc, Torrent.h, DHT.cc: count dht announces, show the counters
+	  in the status; don't count a peer complete until the metadata are
+	  known; show next dht announce time.
+	* PtyShell.cc: kill the shell in dtor.
+
 2013-08-30  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: handle atotm parse error.
