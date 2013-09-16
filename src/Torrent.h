@@ -258,6 +258,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Timer am_interested_timer;
 
    Timer dht_announce_timer;
+   int dht_announce_count;
+   int dht_announce_count_ipv6;
 
    static const int max_uploaders = 20;
    static const int min_uploaders = 1;
@@ -352,6 +354,27 @@ public:
       if(dht)
 	 dht->AddBootstrapNode(n);
    }
+
+   static bool HasDHT() {
+#if INET6
+      if(dht_ipv6)
+	 return true;
+#endif
+      if(dht)
+	 return true;
+      return false;
+   }
+   static bool HasDHT(int af) {
+#if INET6
+      if(af==AF_INET6 && dht_ipv6)
+	 return true;
+#endif
+      if(af==AF_INET && dht)
+	 return true;
+      return false;
+   }
+   const char *DHT_Status() const;
+   void DHT_Announced(int af);	 // called from DHT to count announces
 };
 
 class FDCache : public SMTask, public ResClient
@@ -721,7 +744,7 @@ public:
    bool Disconnected() const { return passive && NotConnected(); }
    bool Connected() const { return peer_id && send_buf && recv_buf; }
    bool Active() const { return Connected() && (am_interested || peer_interested); }
-   bool Complete() const { return peer_complete_pieces==parent->total_pieces; }
+   bool Complete() const { return peer_complete_pieces==parent->total_pieces && parent->total_pieces>0; }
    bool Seed() const { return Complete() || upload_only; }
    bool AddressEq(const TorrentPeer *o) const;
    bool IsPassive() const { return passive; }

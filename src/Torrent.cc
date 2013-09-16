@@ -216,7 +216,8 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
      cwd(c), output_dir(od), rate_limit(mf),
      seed_timer("torrent:seed-max-time",0),
      optimistic_unchoke_timer(30), peers_scan_timer(1),
-     am_interested_timer(1), dht_announce_timer(10*60)
+     am_interested_timer(1), dht_announce_timer(10*60),
+     dht_announce_count(0), dht_announce_count_ipv6(0)
 {
    shutting_down=false;
    complete=false;
@@ -536,6 +537,39 @@ void Torrent::DenounceDHT()
    if(dht_ipv6)
       dht_ipv6->DenouncePeer(this);
 #endif
+}
+void Torrent::DHT_Announced(int af)
+{
+   if(af==AF_INET)
+      dht_announce_count++;
+#if INET6
+   else if(af==AF_INET6)
+      dht_announce_count_ipv6++;
+#endif
+}
+const char *Torrent::DHT_Status() const
+{
+   if(!HasDHT() || Private())
+      return "";
+   static xstring status;
+   status.nset("",0);
+   if(dht_announce_count || dht_announce_count_ipv6) {
+      status.append(_("announced via "));
+      if(dht_announce_count)
+	 status.appendf("ipv4:%d",dht_announce_count);
+      if(dht_announce_count_ipv6) {
+	 if(dht_announce_count)
+	    status.append(", ");
+	 status.appendf("ipv6:%d",dht_announce_count_ipv6);
+      }
+   }
+   if(!dht_announce_timer.Stopped() && !validating) {
+      if(status.length()>0)
+	 status.append("; ");
+      status.appendf(_("next announce in %s"),
+	 dht_announce_timer.TimeLeft().toString(TimeInterval::TO_STR_TRANSLATE));
+   }
+   return status;
 }
 
 void Torrent::SetMetadata(const xstring& md)
@@ -915,6 +949,8 @@ int Torrent::Do()
       if(Done())
 	 return m;
    }
+   if(peers_scan_timer.Stopped())
+      ScanPeers();
    if(validating) {
       ValidatePiece(validate_index++);
       if(validate_index<total_pieces) {
@@ -933,14 +969,11 @@ int Torrent::Do()
    }
    if(GetPort())
       StartTrackers();
-
-   if(peers_scan_timer.Stopped())
-      ScanPeers();
-   if(optimistic_unchoke_timer.Stopped())
-      OptimisticUnchoke();
-
    if(dht_announce_timer.Stopped())
       AnnounceDHT();
+
+   if(optimistic_unchoke_timer.Stopped())
+      OptimisticUnchoke();
 
    // count peers
    connected_peers_count=0;
@@ -2646,6 +2679,8 @@ int TorrentPeer::Do()
 	 return m;
       if(!retry_timer.Stopped())
 	 return m;
+      if(parent->IsValidating())
+	 return m;
       sock=SocketCreateTCP(addr.sa.sa_family,0);
       if(sock==-1)
       {
@@ -3466,6 +3501,9 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
 		  torrent->Trackers()[i]->Status());
 	 }
       }
+      const char *dht_status=torrent->DHT_Status();
+      if(*dht_status)
+	 s.appendf("%sDHT: %s\n",tab,dht_status);
    }
 
    if(torrent->ShuttingDown())

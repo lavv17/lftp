@@ -575,6 +575,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    if(torrent->Complete())
 	       a.add("seed",new BeNode(1));
 	    SendMessage(NewQuery("announce_peer",a),src,id);
+	    torrent->DHT_Announced(src.family());
 	 }
       }
       if(q.eq("find_node") || q.eq("get_peers")) {
