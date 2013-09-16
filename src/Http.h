@@ -94,6 +94,8 @@ class Http : public NetAccess
 	 SendRequest(connection,file);
       }
    int SendArrayInfoRequest(); // returns count of sent requests
+   void SendPropfind(const xstring& efile,int depth);
+   void SendPropfindBody();
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
    void GetBetterConnection(int level);
@@ -145,6 +147,8 @@ class Http : public NetAccess
    bool no_cache_this;
 
    bool use_propfind_now;
+   const char *allprop;
+   int allprop_len;
 
    long retry_after;
 

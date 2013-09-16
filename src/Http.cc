@@ -114,6 +114,8 @@ void Http::Init()
    no_cache=false;
 
    use_propfind_now=true;
+   allprop="";
+   allprop_len=0;
 
    retry_after=0;
 
@@ -434,6 +436,22 @@ void Http::DirFile(xstring& path,const xstring& ecwd,const xstring& efile) const
       path.set_substr(base,2,"");
 }
 
+void Http::SendPropfind(const xstring& efile,int depth)
+{
+   SendMethod("PROPFIND",efile);
+   Send("Depth: %d\r\n",depth);
+   if(allprop_len>0)
+   {
+      Send("Content-Type: text/xml\r\n");
+      Send("Content-Length: %d\r\n",allprop_len);
+   }
+}
+void Http::SendPropfindBody()
+{
+   if(allprop_len>0)
+      Send("%s",allprop);
+}
+
 void Http::SendRequest(const char *connection,const char *f)
 {
    xstring efile;
@@ -471,15 +489,6 @@ void Http::SendRequest(const char *connection,const char *f)
    }
    if(mode==CHANGE_DIR && new_cwd && !new_cwd->url)
       add_slash=!new_cwd->is_file;
-
-   const char *allprop=	// PROPFIND request
-      "<?xml version=\"1.0\" ?>"
-      "<propfind xmlns=\"DAV:\">"
-        "<allprop/>"
-      "</propfind>\r\n";
-   if(!QueryBool("use-allprop",hostname))
-      allprop="";
-   int allprop_len=strlen(allprop);
 
    xstring pfile;
    if(proxy && !https)
@@ -613,15 +622,7 @@ void Http::SendRequest(const char *connection,const char *f)
       if(mode==CHANGE_DIR)
       {
 	 if(use_propfind_now)
-	 {
-	    SendMethod("PROPFIND",efile);
-	    Send("Depth: 0\r\n"); // no directory listing required
-	    if(allprop_len>0)
-	    {
-	       Send("Content-Type: text/xml\r\n");
-	       Send("Content-Length: %d\r\n",allprop_len);
-	    }
-	 }
+	    SendPropfind(efile,0);
 	 else
 	    SendMethod("HEAD",efile);
       }
@@ -640,13 +641,7 @@ void Http::SendRequest(const char *connection,const char *f)
       }
       else if(mode==MP_LIST)
       {
-	 SendMethod("PROPFIND",efile);
-	 Send("Depth: 1\r\n"); // directory listing required
-	 if(allprop_len>0)
-	 {
-	    Send("Content-Type: text/xml\r\n");
-	    Send("Content-Length: %d\r\n",allprop_len);
-	 }
+	 SendPropfind(efile,1);
 	 pos=0;
       }
       break;
@@ -659,7 +654,10 @@ void Http::SendRequest(const char *connection,const char *f)
       break;
 
    case ARRAY_INFO:
-      SendMethod("HEAD",efile);
+      if(use_propfind_now)
+	 SendPropfind(efile,0);
+      else
+	 SendMethod("HEAD",efile);
       break;
 
    case RENAME:
@@ -685,11 +683,8 @@ void Http::SendRequest(const char *connection,const char *f)
 	 Send("%s",special_data.get());
       entity_size=NO_SIZE;
    }
-   else if(mode==MP_LIST || (mode==CHANGE_DIR && use_propfind_now))
-   {
-      if(allprop_len>0)
-	 Send("%s",allprop);
-   }
+   else if(!xstrcmp(last_method,"PROPFIND"))
+      SendPropfindBody();
 
    keep_alive=false;
    chunked=false;
@@ -1569,7 +1564,8 @@ int Http::Do()
 		  if(!xstrcmp(last_method,"MKCOL"))
 		     ResMgr::Set("http:use-mkcol",hostname,"no");
 	       }
-	       if(mode==CHANGE_DIR && !xstrcmp(last_method,"PROPFIND"))
+	       if((mode==CHANGE_DIR || mode==ARRAY_INFO)
+	       && !xstrcmp(last_method,"PROPFIND"))
 	       {
 		  use_propfind_now=false;
 		  try_time=0;
@@ -1592,14 +1588,15 @@ int Http::Do()
       }
       if(mode==CHANGE_DIR)
       {
-	 if(xstrcmp(last_method,"PROPFIND"))
+	 if(!xstrcmp(last_method,"PROPFIND"))
+	    propfind=new IOBufferFileAccess(this);
+	 else
 	 {
 	    cwd.Set(new_cwd);
 	    cache->SetDirectory(this, "", !cwd.is_file);
 	    state=DONE;
 	    return MOVED;
 	 }
-	 propfind=new IOBufferFileAccess(this);
       }
 
       LogNote(9,_("Receiving body..."));
@@ -2036,6 +2033,15 @@ void Http::Reconfig(const char *name)
 
    user_agent=ResMgr::Query("http:user-agent",c);
    use_propfind_now=(use_propfind_now && QueryBool("use-propfind",c));
+
+   allprop=	// PROPFIND request
+      "<?xml version=\"1.0\" ?>"
+      "<propfind xmlns=\"DAV:\">"
+        "<allprop/>"
+      "</propfind>\r\n";
+   if(!QueryBool("use-allprop",c))
+      allprop="";
+   allprop_len=strlen(allprop);
 }
 
 bool Http::SameSiteAs(const FileAccess *fa) const
