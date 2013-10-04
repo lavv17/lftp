@@ -415,7 +415,21 @@ do_again:
    if(done)
       return m;
 
-   if(!ubuf && !result)
+   if(session->OpenMode()==FA::ARRAY_INFO)
+   {
+      res=session->Done();
+      if(res==FA::DO_AGAIN)
+	 return m;
+      if(res==FA::IN_PROGRESS)
+	 return m;
+      session->Close();
+      FileAccess::cache->UpdateFileSet(session,"",FA::MP_LIST,result);
+      FileAccess::cache->UpdateFileSet(session,"",FA::LONG_LIST,result);
+      done=true;
+      return MOVED;
+   }
+
+   if(!ubuf)
    {
       const char *cache_buffer=0;
       int cache_buffer_size=0;
@@ -560,19 +574,6 @@ got_fileset:
       }
       session->GetInfoArray(result.get_non_const());
       session->Roll();
-   }
-   if(session->OpenMode()==FA::ARRAY_INFO)
-   {
-      res=session->Done();
-      if(res==FA::DO_AGAIN)
-	 return m;
-      if(res==FA::IN_PROGRESS)
-	 return m;
-      session->Close();
-      done=true;
-      FileAccess::cache->UpdateFileSet(session,"",FA::MP_LIST,result);
-      FileAccess::cache->UpdateFileSet(session,"",FA::LONG_LIST,result);
-      m=MOVED;
    }
    return m;
 }

@@ -1,3 +1,8 @@
+2013-10-04  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* NetAccess.cc: fixed occasional hang in GenericParseListInfo,
+	  when result!=NULL && old_mode!=mode.
+
 2013-09-16  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* buffer.cc: compile in SetTranslator unconditionslly (for Ftp).
