@@ -1,3 +1,7 @@
+2013-10-08	Alexander V. Lukyanov <lav@yars.free.net>
+
+	* lftp.1: (ftp:use-utf8) new setting; minor wording changes.
+
 2013-08-30	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: document mirror -f and -O options.

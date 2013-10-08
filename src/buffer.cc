@@ -356,6 +356,8 @@ void DirectedBuffer::SetTranslation(const char *enc,bool translit)
       return;
    const char *from_code=(mode==GET?enc:local_code);
    const char *to_code  =(mode==GET?local_code:enc);
+   if(!strcasecmp(from_code,to_code))
+      return;
    SetTranslator(new DataRecoder(from_code,to_code,translit));
 }
 #endif //HAVE_ICONV

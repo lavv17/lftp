@@ -3809,7 +3809,7 @@ void Ftp::TuneConnectionAfterFEAT()
 	 conn->SendCmd("LANG");
       expect->Push(Expect::LANG);
    }
-   if(conn->utf8_supported)
+   if(conn->utf8_supported && QueryBool("use-utf8",hostname))
    {
       // some non-RFC2640 servers require this command.
       conn->SendCmd("OPTS UTF8 ON");

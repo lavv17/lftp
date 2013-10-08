@@ -1,3 +1,9 @@
+2013-10-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* ftpclass.cc, resource.cc: (ftp:use-utf8) new setting.
+	* buffer.cc: don't start translation if source and target encodings
+	  are the same.
+
 2013-10-04  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* NetAccess.cc: fixed occasional hang in GenericParseListInfo,

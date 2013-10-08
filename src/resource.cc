@@ -235,6 +235,7 @@ static ResType lftp_vars[] = {
    {"ftp:use-telnet-iac",	 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-tvfs",		 "auto",  ResMgr::TriBoolValidate,0},
    {"ftp:use-ip-tos",		 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:use-utf8",		 "yes",	  ResMgr::BoolValidate,0},
    {"ftp:use-quit",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:verify-address",	 "no",    ResMgr::BoolValidate,0},
    {"ftp:verify-port",		 "no",    ResMgr::BoolValidate,0},

@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 Aug 2013"
+.TH lftp 1 "08 Oct 2013"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.9.
+This man page documents lftp version 4.4.10.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -79,8 +79,8 @@ Besides FTP-like protocols, lftp has support for BitTorrent protocol
 as `torrent' command. Seeding is also supported.
 
 .PP
-Every operation in \fBlftp\fP is reliable, that is any not fatal error is
-ignored and the operation is repeated. So if downloading breaks, it
+Every operation in \fBlftp\fP is reliable, that is any non-fatal error is
+handled properly and the operation is repeated. So if downloading breaks, it
 will be restarted from the point automatically. Even if ftp server
 does not support REST command, \fBlftp\fP will try to retrieve the file from
 the very beginning until the file is transferred completely.
@@ -1565,6 +1565,11 @@ STAT commands with TELNET IP+SYNCH signal.
 When set to auto, usage of TVFS feature depends on FEAT server reply. Otherwise
 this setting tells whether use it or not. In short, if a server supports TVFS
 feature then it uses unix-like paths.
+.TP
+.BR ftp:use-utf8 \ (boolean)
+if true, lftp sends `OPTS UTF8 ON' to the server to activate UTF-8 encoding
+(if supported). Disable it if the file names have a different encoding and
+the server has a trouble with it.
 .TP
 .BR ftp:use-quit " (boolean)"
 if true, lftp sends QUIT before disconnecting from ftp server. Default is true.
