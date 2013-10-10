@@ -37,6 +37,9 @@
 #include "url.h"
 #include "misc.h"
 #include "plural.h"
+CDECL_BEGIN
+#include "human.h"
+CDECL_END
 
 static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
@@ -1615,8 +1618,14 @@ const xstring& Torrent::Status()
    }
    if(total_length==0)
       return xstring::get_tmp("");
-   xstring& buf=xstring::format("dn:%llu %sup:%llu %scomplete:%u/%u (%u%%)",
-      total_recv,recv_rate.GetStrS(),total_sent,send_rate.GetStrS(),
+
+   char dn_buf[LONGEST_HUMAN_READABLE + 1];
+   char up_buf[LONGEST_HUMAN_READABLE + 1];
+   xstring& buf=xstring::format("dn:%s %sup:%s %scomplete:%u/%u (%u%%)",
+      human_readable(total_recv, dn_buf, human_autoscale|human_SI, 1, 1),
+      recv_rate.GetStrS(),
+      human_readable(total_sent, up_buf, human_autoscale|human_SI, 1, 1),
+      send_rate.GetStrS(),
       complete_pieces,total_pieces,
       unsigned((total_length-total_left)*100/total_length));
    if(end_game)

@@ -1,3 +1,7 @@
+2013-10-10  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: use human_readable for up/dn counters.
+
 2013-10-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* ftpclass.cc, resource.cc: (ftp:use-utf8) new setting.
