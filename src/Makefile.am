@@ -107,7 +107,7 @@ example2_LDADD = liblftp-tasks.la
 
 CLEANFILES = *.la
 
-INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/trio $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/trio $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
 # libtool does not strip modules, do it here.
 install-data-hook:
