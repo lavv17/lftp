@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-08-23 13:54+0400\n"
+"POT-Creation-Date: 2013-10-11 10:29+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -252,8 +252,8 @@ msgstr "传输 %d/%d 文件失败\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "总共传输 %d 个文件\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1642 src/MirrorJob.cc:1658
-#: src/commands.cc:984 src/commands.cc:2107
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1676 src/MirrorJob.cc:1698
+#: src/commands.cc:990 src/commands.cc:2113
 #, fuzzy
 msgid " - not supported protocol"
 msgstr "%s: %s - 不支持的协议\n"
@@ -268,7 +268,7 @@ msgid "File cannot be accessed"
 msgstr "不能访问文件"
 
 #: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1330 src/ftpclass.cc:4332
-#: src/ftpclass.cc:4341 src/Torrent.cc:2974
+#: src/ftpclass.cc:4341 src/Torrent.cc:3018
 msgid "Not connected"
 msgstr "没有连接上"
 
@@ -397,7 +397,7 @@ msgstr "execlp(%s) 失败: %s\n"
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:75 src/Http.cc:950 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:978 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
@@ -405,7 +405,7 @@ msgstr "关闭发呆的连接"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1156 src/SFtp.cc:740 src/SFtp.cc:1074
+#: src/Fish.cc:589 src/Http.cc:1229 src/SFtp.cc:740 src/SFtp.cc:1074
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2935
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
@@ -414,8 +414,8 @@ msgstr "对端关闭连接"
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
-#: src/Fish.cc:987 src/Http.cc:1887 src/Http.cc:1894 src/SFtp.cc:1336
-#: src/ftpclass.cc:4344 src/Torrent.cc:2976 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:1979 src/Http.cc:1986 src/SFtp.cc:1336
+#: src/ftpclass.cc:4344 src/Torrent.cc:3020 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "正在连接..."
 
@@ -424,16 +424,16 @@ msgstr "正在连接..."
 msgid "Connected"
 msgstr "没有连接上"
 
-#: src/Fish.cc:991 src/Http.cc:1896 src/SFtp.cc:1340 src/ftpclass.cc:4327
+#: src/Fish.cc:991 src/Http.cc:1988 src/SFtp.cc:1340 src/ftpclass.cc:4327
 #: src/ftpclass.cc:4355 src/ftpclass.cc:4369 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/Fish.cc:993 src/Http.cc:1899 src/SFtp.cc:1342 src/ftpclass.cc:4389
+#: src/Fish.cc:993 src/Http.cc:1991 src/SFtp.cc:1342 src/ftpclass.cc:4389
 msgid "Receiving data"
 msgstr "正接收数据"
 
-#: src/Fish.cc:995 src/Http.cc:1892 src/SFtp.cc:1344 src/ftpclass.cc:4387
+#: src/Fish.cc:995 src/Http.cc:1984 src/SFtp.cc:1344 src/ftpclass.cc:4387
 msgid "Sending data"
 msgstr "正发送数据"
 
@@ -453,84 +453,84 @@ msgstr "正在获取文件列表 (%ld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
 
-#: src/Http.cc:162
+#: src/Http.cc:164
 #, fuzzy
 msgid "Closing HTTP connection"
 msgstr "关闭发呆的连接"
 
-#: src/Http.cc:169
+#: src/Http.cc:171
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:1031
+#: src/Http.cc:1104
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1081 src/ftpclass.cc:1344 src/Torrent.cc:2654
-#: src/Torrent.cc:3176 src/TorrentTracker.cc:392
+#: src/Http.cc:1154 src/ftpclass.cc:1344 src/Torrent.cc:2698
+#: src/Torrent.cc:3220 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/Http.cc:1172
+#: src/Http.cc:1255
 #, fuzzy
 msgid "Sending request..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1216
+#: src/Http.cc:1293
 #, fuzzy
 msgid "Hit EOF while fetching headers"
 msgstr "正在取得头..."
 
-#: src/Http.cc:1322
+#: src/Http.cc:1407
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1353
+#: src/Http.cc:1438
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1511
+#: src/Http.cc:1602
 #, fuzzy
 msgid "Receiving body..."
 msgstr "正接收数据"
 
-#: src/Http.cc:1655
+#: src/Http.cc:1747
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1658
+#: src/Http.cc:1750
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1669
+#: src/Http.cc:1761
 #, fuzzy
 msgid "Received all"
 msgstr "正接收数据"
 
-#: src/Http.cc:1674
+#: src/Http.cc:1766
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1698 src/Http.cc:1720
+#: src/Http.cc:1790 src/Http.cc:1812
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1707
+#: src/Http.cc:1799
 #, fuzzy
 msgid "Received last chunk"
 msgstr "正接收数据"
 
-#: src/Http.cc:1881 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:1973 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4337 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
-#: src/Http.cc:1889 src/ftpclass.cc:4330
+#: src/Http.cc:1981 src/ftpclass.cc:4330
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/Http.cc:1897
+#: src/Http.cc:1989
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 
@@ -539,31 +539,31 @@ msgstr "正在取得头..."
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完成 (%s)"
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:589
+#: src/LocalAccess.cc:604 src/NetAccess.cc:592
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "正在读取目录内容 (%ld)"
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:593
+#: src/LocalAccess.cc:606 src/NetAccess.cc:596
 #, fuzzy
 msgid "Getting files information"
 msgstr "正在读取文件信息 (%d%%)"
 
-#: src/LocalAccess.cc:642 src/commands.cc:3066
+#: src/LocalAccess.cc:642 src/commands.cc:3072
 #, fuzzy
 msgid "cannot get current directory"
 msgstr "正在改变远程目录..."
 
-#: src/LsCache.cc:180
+#: src/LsCache.cc:190
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
 msgstr "缓冲了 %ld 字节"
 
-#: src/LsCache.cc:184
+#: src/LsCache.cc:194
 msgid ", no size limit"
 msgstr ", 没有大小限制"
 
-#: src/LsCache.cc:186
+#: src/LsCache.cc:196
 #, c-format
 msgid ", maximum size %ld\n"
 msgstr ", 最大为 %ld\n"
@@ -663,21 +663,31 @@ msgstr "删除旧的远程文件 `%s'"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1479
+#: src/MirrorJob.cc:1521
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1611 src/SleepJob.cc:144 src/SleepJob.cc:200
-#: src/commands.cc:1115 src/commands.cc:1203 src/commands.cc:1575
-#: src/commands.cc:1606 src/commands.cc:1709 src/commands.cc:2016
-#: src/commands.cc:2212 src/commands.cc:2374 src/commands.cc:2402
-#: src/commands.cc:2409 src/commands.cc:2695 src/commands.cc:2722
-#: src/commands.cc:2729 src/commands.cc:3049 src/lftp.cc:267
-#: src/Torrent.cc:3556
+#: src/MirrorJob.cc:1640 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/commands.cc:1121 src/commands.cc:1209 src/commands.cc:1581
+#: src/commands.cc:1612 src/commands.cc:1715 src/commands.cc:2022
+#: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
+#: src/commands.cc:2415 src/commands.cc:2701 src/commands.cc:2728
+#: src/commands.cc:2735 src/commands.cc:3055 src/lftp.cc:267
+#: src/Torrent.cc:3603
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
+
+#: src/MirrorJob.cc:1664
+#, c-format
+msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
+msgstr ""
+
+#: src/MirrorJob.cc:1686
+#, c-format
+msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
+msgstr ""
 
 #: src/NetAccess.cc:128
 #, c-format
@@ -689,7 +699,7 @@ msgstr "Socket 错误 (%s) - 重新连接"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2771
+#: src/NetAccess.cc:217 src/Torrent.cc:2815
 msgid "Timeout - reconnecting"
 msgstr "超时 - 重新连接"
 
@@ -1811,19 +1821,19 @@ msgstr "用法: cd remote-dir\n"
 msgid "%s: no old directory for this site\n"
 msgstr "%s: 这个站点没有保存的旧目录\n"
 
-#: src/commands.cc:678
+#: src/commands.cc:684
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "用法: %s [<exit_code>]\n"
 
-#: src/commands.cc:687
+#: src/commands.cc:693
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
 "jobs.\n"
 msgstr ""
 
-#: src/commands.cc:702
+#: src/commands.cc:708
 msgid ""
 "\n"
 "lftp now tricks the shell to move it to background process group.\n"
@@ -1832,224 +1842,224 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:887 src/commands.cc:3335
+#: src/commands.cc:893 src/commands.cc:3341
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "请用 `%s --help' 获取更多的信息\n"
 
-#: src/commands.cc:889
+#: src/commands.cc:895
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "用法: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
-#: src/commands.cc:1016 src/commands.cc:2091
+#: src/commands.cc:1022 src/commands.cc:2097
 msgid "Password: "
 msgstr "口令: "
 
-#: src/commands.cc:1018
+#: src/commands.cc:1024
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() 失败 -- 使用匿名登录\n"
 
-#: src/commands.cc:1123
+#: src/commands.cc:1129
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "用法: %s command args...\n"
 
-#: src/commands.cc:1173
+#: src/commands.cc:1179
 #, fuzzy, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s: -n: 需要数字. "
 
-#: src/commands.cc:1225
+#: src/commands.cc:1231
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr ""
 
-#: src/commands.cc:1268 src/commands.cc:1296
+#: src/commands.cc:1274 src/commands.cc:1302
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr ""
 
-#: src/commands.cc:1288
+#: src/commands.cc:1294
 #, fuzzy, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -n: 需要数字. "
 
-#: src/commands.cc:1340
+#: src/commands.cc:1346
 #, fuzzy, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "用法: %s <raw_cmd>\n"
 
-#: src/commands.cc:1442
+#: src/commands.cc:1448
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1472
+#: src/commands.cc:1478
 #, fuzzy
 msgid "invalid block size"
 msgstr "无效的数字"
 
-#: src/commands.cc:1615
+#: src/commands.cc:1621
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "用法: %s files...\n"
 
-#: src/commands.cc:1687
+#: src/commands.cc:1693
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: 需要数字. "
 
-#: src/commands.cc:1720
+#: src/commands.cc:1726
 #, c-format
 msgid "File name missed. "
 msgstr "缺少文件名. "
 
-#: src/commands.cc:1818
+#: src/commands.cc:1824
 #, fuzzy, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "用法: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1861
+#: src/commands.cc:1867
 #, fuzzy, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "用法: %s <file>\n"
 
-#: src/commands.cc:1904
+#: src/commands.cc:1910
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "用法: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:1918 src/commands.cc:2178 src/commands.cc:2301
-#: src/commands.cc:2471 src/commands.cc:2860 src/commands.cc:2936
+#: src/commands.cc:1924 src/commands.cc:2184 src/commands.cc:2307
+#: src/commands.cc:2477 src/commands.cc:2866 src/commands.cc:2942
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - 不是一个数字\n"
 
-#: src/commands.cc:1925 src/commands.cc:2157 src/commands.cc:2187
-#: src/commands.cc:2319
+#: src/commands.cc:1931 src/commands.cc:2163 src/commands.cc:2193
+#: src/commands.cc:2325
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - 没有这个任务\n"
 
-#: src/commands.cc:1957
+#: src/commands.cc:1963
 #, fuzzy, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2058
+#: src/commands.cc:2064
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "调试级别为 %d, 输出到 %s\n"
 
-#: src/commands.cc:2061
+#: src/commands.cc:2067
 #, c-format
 msgid "debug is off\n"
 msgstr "调试功能关闭\n"
 
-#: src/commands.cc:2072
+#: src/commands.cc:2078
 #, fuzzy, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "user <user> [<pass>]"
 
-#: src/commands.cc:2147 src/commands.cc:2311
+#: src/commands.cc:2153 src/commands.cc:2317
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: 没有当前任务\n"
 
-#: src/commands.cc:2159
+#: src/commands.cc:2165
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "用法: %s <jobno> ... | all\n"
 
-#: src/commands.cc:2241
+#: src/commands.cc:2247
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. 使用 `set -a' 查看所有的变量.\n"
 
-#: src/commands.cc:2285
+#: src/commands.cc:2291
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "用法: %s [<jobno>]\n"
 
-#: src/commands.cc:2324
+#: src/commands.cc:2330
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: 某个任务在等待任务 %d 结束\n"
 
-#: src/commands.cc:2329
+#: src/commands.cc:2335
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr ""
 
-#: src/commands.cc:2353
+#: src/commands.cc:2359
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "用法: mv <file1> <file2>\n"
 
-#: src/commands.cc:2401 src/commands.cc:2721
+#: src/commands.cc:2407 src/commands.cc:2727
 #, c-format
 msgid "Invalid command. "
 msgstr "无效的命令. "
 
-#: src/commands.cc:2408 src/commands.cc:2728
+#: src/commands.cc:2414 src/commands.cc:2734
 #, c-format
 msgid "Ambiguous command. "
 msgstr "不确切的命令. "
 
-#: src/commands.cc:2427
+#: src/commands.cc:2433
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: size 缺少操作数\n"
 
-#: src/commands.cc:2444
+#: src/commands.cc:2450
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: `expire' 缺少操作数\n"
 
-#: src/commands.cc:2477
+#: src/commands.cc:2483
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s: %s - 没有这个缓存的会话. 使用 `scache' 列出会话列表.\n"
 
-#: src/commands.cc:2494
+#: src/commands.cc:2500
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "抱歉, 没有针对 %s 的帮助信息\n"
 
-#: src/commands.cc:2499
+#: src/commands.cc:2505
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s 是 %s 的一个内建别名\n"
 
-#: src/commands.cc:2504
+#: src/commands.cc:2510
 #, c-format
 msgid "Usage: %s\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2512
+#: src/commands.cc:2518
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s 是 `%s' 的别名\n"
 
-#: src/commands.cc:2516
+#: src/commands.cc:2522
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "没有 `%s' 这个命令. 请用 `help' 列出可用的命令.\n"
 
-#: src/commands.cc:2518
+#: src/commands.cc:2524
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "不确切的命令 `%s'. 请用 `help' 列出可用的命令.\n"
 
-#: src/commands.cc:2581
+#: src/commands.cc:2587
 #, fuzzy, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "Lftp | Version %s | Copyright (c) 1996-1999 Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2584
+#: src/commands.cc:2590
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2066,85 +2076,85 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2598
+#: src/commands.cc:2604
 #, fuzzy, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Send bug reports and questions to <%s>.\n"
 
-#: src/commands.cc:2604
+#: src/commands.cc:2610
 msgid "Libraries used: "
 msgstr ""
 
-#: src/commands.cc:2744 src/commands.cc:2775
+#: src/commands.cc:2750 src/commands.cc:2781
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: 需要书签名\n"
 
-#: src/commands.cc:2764
+#: src/commands.cc:2770
 #, fuzzy, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: 需要书签名\n"
 
-#: src/commands.cc:2777
+#: src/commands.cc:2783
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: 没有 `%s' 这个书签\n"
 
-#: src/commands.cc:2793
+#: src/commands.cc:2799
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: 需要导入类型(netscape,ncftp)\n"
 
-#: src/commands.cc:2866
+#: src/commands.cc:2872
 #, fuzzy, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2969
+#: src/commands.cc:2975
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "无效的数字"
 
-#: src/commands.cc:2978
+#: src/commands.cc:2984
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "用法: %s\n"
 
-#: src/commands.cc:2984
+#: src/commands.cc:2990
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:2988
+#: src/commands.cc:2994
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:3036
+#: src/commands.cc:3042
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "用法: %s command args...\n"
 
-#: src/commands.cc:3048
+#: src/commands.cc:3054
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "用法: %s module [args...]\n"
 
-#: src/commands.cc:3130
+#: src/commands.cc:3136
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "用法: %s files...\n"
 
-#: src/commands.cc:3150
+#: src/commands.cc:3156
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "无效的数字"
 
-#: src/commands.cc:3209 src/commands.cc:3218
+#: src/commands.cc:3215 src/commands.cc:3224
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/commands.cc:3224
+#: src/commands.cc:3230
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "用法: %s <file>\n"
@@ -2490,82 +2500,91 @@ msgstr "%s 成功, 删除 %d 个目录\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功, 删除 %d 个文件\n"
 
-#: src/Torrent.cc:1555 src/Torrent.cc:1558
+#: src/Torrent.cc:560
+msgid "announced via "
+msgstr ""
+
+#: src/Torrent.cc:572
+#, c-format
+msgid "next announce in %s"
+msgstr ""
+
+#: src/Torrent.cc:1591 src/Torrent.cc:1594
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1561
+#: src/Torrent.cc:1597
 #, fuzzy
 msgid "Waiting for meta-data..."
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/Torrent.cc:1564
+#: src/Torrent.cc:1600
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1574
+#: src/Torrent.cc:1610
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2657
+#: src/Torrent.cc:2701
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/Torrent.cc:2707 src/Torrent.cc:2820
+#: src/Torrent.cc:2751 src/Torrent.cc:2864
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2709
+#: src/Torrent.cc:2753
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2805
+#: src/Torrent.cc:2849
 #, fuzzy
 msgid "peer closed connection"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2822
+#: src/Torrent.cc:2866
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "额外的服务器应答"
 
-#: src/Torrent.cc:2978
+#: src/Torrent.cc:3022
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3231
+#: src/Torrent.cc:3275
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3281
+#: src/Torrent.cc:3325
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "正在建立数据连接到 (%s) 端口 %u"
 
-#: src/Torrent.cc:3367
+#: src/Torrent.cc:3411
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3379
+#: src/Torrent.cc:3423
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3381
+#: src/Torrent.cc:3425
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:3432
+#: src/Torrent.cc:3476
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "正在发送命令..."
 
-#: src/Torrent.cc:3600
+#: src/Torrent.cc:3647
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""

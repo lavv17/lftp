@@ -1,3 +1,14 @@
+Version 4.4.10 - 2013-10-11
+
+* mirror new option --file/-f to mirror a single file.
+* mirror new option -O for get/put similarity.
+* WebDAV fixes and improvements.
+* new setting ftp:use-utf8 to disable utf-8 activation.
+* fixed handling of incorrect encoding of file names.
+* fixed compilation without libiconv.
+* fixed occasional hang in mirror.
+* kill ssh when terminating fish or sftp connection.
+
 Version 4.4.9 - 2013-08-23
 
 * implemented support for mirror -L in sftp.
