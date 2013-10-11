@@ -293,3 +293,4 @@
 /unistd.c
 /wctype-h.c
 /locale.h
+glthread
