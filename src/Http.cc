@@ -1356,7 +1356,9 @@ int Http::Do()
 		  // we can avoid reconnection if server supports it.
 		  if(keep_alive && (keep_alive_max>1 || keep_alive_max==-1) && use_head)
 		  {
-		     SendArrayInfoRequest();
+		     state=CONNECTED;
+		     if(SendArrayInfoRequest()==0)
+			state=DONE;
 		  }
 		  else
 		  {
