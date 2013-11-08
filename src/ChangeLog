@@ -1,6 +1,7 @@
 2013-11-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: check reply type before casting, fixes a coredump.
+	* Torrent.cc: improve status of complete torrents by showing ratio.
 
 2013-11-07  Alexander V. Lukyanov <lav@yars.free.net>
 

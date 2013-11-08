@@ -1621,17 +1621,21 @@ const xstring& Torrent::Status()
 
    char dn_buf[LONGEST_HUMAN_READABLE + 1];
    char up_buf[LONGEST_HUMAN_READABLE + 1];
-   xstring& buf=xstring::format("dn:%s %sup:%s %scomplete:%u/%u (%u%%)",
+   xstring& buf=xstring::format("dn:%s %sup:%s %s",
       human_readable(total_recv, dn_buf, human_autoscale|human_SI, 1, 1),
       recv_rate.GetStrS(),
       human_readable(total_sent, up_buf, human_autoscale|human_SI, 1, 1),
-      send_rate.GetStrS(),
-      complete_pieces,total_pieces,
-      unsigned((total_length-total_left)*100/total_length));
-   if(end_game)
-      buf.append(" end-game");
-   buf.append(' ');
-   buf.append(recv_rate.GetETAStrFromSize(total_left));
+      send_rate.GetStrS());
+   if(!complete) {
+      buf.appendf("complete:%u/%u (%u%%)",complete_pieces,total_pieces,
+	 unsigned((total_length-total_left)*100/total_length));
+      buf.append(' ');
+      buf.append(recv_rate.GetETAStrFromSize(total_left));
+      if(end_game)
+	 buf.append(" end-game");
+   } else {
+      buf.appendf("complete, ratio:%f",GetRatio());
+   }
    return buf;
 }
 
@@ -3488,7 +3492,7 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
    if(name)
       s.appendf("%sName: %s\n",tab,name);
    s.appendf("%s%s\n",tab,torrent->Status().get());
-   if(torrent->GetRatio()>0)
+   if(!torrent->Complete() && torrent->GetRatio()>0)
       s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
 
    if(v>2) {
