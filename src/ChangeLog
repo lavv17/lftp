@@ -1,3 +1,7 @@
+2013-11-08  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* SFtp.cc: check reply type before casting, fixes a coredump.
+
 2013-11-07  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* Http.cc: fixed a hang in ARRAY_INFO mode.

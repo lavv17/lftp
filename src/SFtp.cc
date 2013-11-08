@@ -963,8 +963,10 @@ void SFtp::HandleExpect(Expect *e)
    case Expect::INFO:
       if(mode==ARRAY_INFO)
       {
-	 FileInfo *fi=(*fileset_for_info)[e->i];
-	 MergeAttrs(fi,((Reply_ATTRS*)reply)->GetAttrs());
+	 if(reply->TypeIs(SSH_FXP_ATTRS)) {
+	    FileInfo *fi=(*fileset_for_info)[e->i];
+	    MergeAttrs(fi,((Reply_ATTRS*)reply)->GetAttrs());
+	 }
 	 break;
       }
       entity_size=NO_SIZE;
