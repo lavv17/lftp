@@ -1,3 +1,7 @@
+2013-11-11  Alexander V. Lukyanov <lav@yars.free.net>
+
+	* Torrent.cc: don't show verbose 100% peer completeness.
+
 2013-11-08  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* SFtp.cc: check reply type before casting, fixes a coredump.

@@ -3034,9 +3034,13 @@ const char *TorrentPeer::Status()
       buf.append("am-interested ");
    if(am_choking)
       buf.append("am-choking ");
-   if(parent->HasMetadata())
-      buf.appendf("complete:%u/%u (%u%%)",peer_complete_pieces,parent->total_pieces,
-	 peer_complete_pieces*100/parent->total_pieces);
+   if(parent->HasMetadata()) {
+      if(peer_complete_pieces<parent->total_pieces)
+	 buf.appendf("complete:%u/%u (%u%%)",peer_complete_pieces,parent->total_pieces,
+	    peer_complete_pieces*100/parent->total_pieces);
+      else
+	 buf.append("complete");
+   }
    return buf;
 }
 
