@@ -1,3 +1,8 @@
+Version 4.4.11 - 2013-11-11
+
+* fixed a slow down in mirror from http (thanks to OGAWA Hirofumi).
+* fixed a coredump in sftp when accessing an inexistent file.
+
 Version 4.4.10 - 2013-10-11
 
 * mirror new option --file/-f to mirror a single file.

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.3.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-10-11 10:29+0400\n"
+"POT-Creation-Date: 2013-11-11 16:02+0400\n"
 "PO-Revision-Date: 2002-04-12 00:06+0900\n"
 "Last-Translator: Masayuki Hatta <mhatta@gnu.org>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -263,8 +263,8 @@ msgstr "アクセス失敗: %s"
 msgid "File cannot be accessed"
 msgstr "ファイルにアクセスできません"
 
-#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1330 src/ftpclass.cc:4332
-#: src/ftpclass.cc:4341 src/Torrent.cc:3018
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1332 src/ftpclass.cc:4332
+#: src/ftpclass.cc:4341 src/Torrent.cc:3022
 msgid "Not connected"
 msgstr "接続されていません"
 
@@ -403,43 +403,43 @@ msgstr "アイドル状態の接続を閉じます"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1229 src/SFtp.cc:740 src/SFtp.cc:1074
+#: src/Fish.cc:589 src/Http.cc:1229 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2935
 msgid "Peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/Fish.cc:635 src/SFtp.cc:1099 src/ftpclass.cc:2865 src/ftpclass.cc:3969
+#: src/Fish.cc:635 src/SFtp.cc:1101 src/ftpclass.cc:2865 src/ftpclass.cc:3969
 msgid "extra server response"
 msgstr "余分なサーバレスポンスです"
 
-#: src/Fish.cc:987 src/Http.cc:1979 src/Http.cc:1986 src/SFtp.cc:1336
-#: src/ftpclass.cc:4344 src/Torrent.cc:3020 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:1981 src/Http.cc:1988 src/SFtp.cc:1338
+#: src/ftpclass.cc:4344 src/Torrent.cc:3024 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/Fish.cc:989 src/SFtp.cc:1338 src/ftpclass.cc:4350
+#: src/Fish.cc:989 src/SFtp.cc:1340 src/ftpclass.cc:4350
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/Fish.cc:991 src/Http.cc:1988 src/SFtp.cc:1340 src/ftpclass.cc:4327
+#: src/Fish.cc:991 src/Http.cc:1990 src/SFtp.cc:1342 src/ftpclass.cc:4327
 #: src/ftpclass.cc:4355 src/ftpclass.cc:4369 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "応答を待っています..."
 
-#: src/Fish.cc:993 src/Http.cc:1991 src/SFtp.cc:1342 src/ftpclass.cc:4389
+#: src/Fish.cc:993 src/Http.cc:1993 src/SFtp.cc:1344 src/ftpclass.cc:4389
 msgid "Receiving data"
 msgstr "データ受信中"
 
-#: src/Fish.cc:995 src/Http.cc:1984 src/SFtp.cc:1344 src/ftpclass.cc:4387
+#: src/Fish.cc:995 src/Http.cc:1986 src/SFtp.cc:1346 src/ftpclass.cc:4387
 msgid "Sending data"
 msgstr "データ送信中"
 
-#: src/Fish.cc:997 src/SFtp.cc:1346
+#: src/Fish.cc:997 src/SFtp.cc:1348
 msgid "Done"
 msgstr ""
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2209
-#: src/SFtp.cc:2327
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2211
+#: src/SFtp.cc:2329
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "ファイルリスト (%lld) [%s] を取得中"
@@ -464,8 +464,8 @@ msgstr ""
 "ftp over http はプロキシ無しでは利用できません。hftp:proxy をセットしてくださ"
 "い。"
 
-#: src/Http.cc:1154 src/ftpclass.cc:1344 src/Torrent.cc:2698
-#: src/Torrent.cc:3220 src/TorrentTracker.cc:392
+#: src/Http.cc:1154 src/ftpclass.cc:1344 src/Torrent.cc:2702
+#: src/Torrent.cc:3228 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "アドレスファミリ %d のソケットを作れません"
@@ -478,53 +478,53 @@ msgstr "リクエストを送信中..."
 msgid "Hit EOF while fetching headers"
 msgstr "ヘッダの取得中に EOF に達しました"
 
-#: src/Http.cc:1407
+#: src/Http.cc:1409
 msgid "Could not parse HTTP status line"
 msgstr "HTTP ステータスラインを解析できませんでした"
 
-#: src/Http.cc:1438
+#: src/Http.cc:1440
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1602
+#: src/Http.cc:1604
 msgid "Receiving body..."
 msgstr "ボディを受信中..."
 
-#: src/Http.cc:1747
+#: src/Http.cc:1749
 msgid "Hit EOF"
 msgstr "EOF に達しました"
 
-#: src/Http.cc:1750
+#: src/Http.cc:1752
 msgid "Received not enough data, retrying"
 msgstr "十分なデータを受信できなかったので、再試行します"
 
-#: src/Http.cc:1761
+#: src/Http.cc:1763
 msgid "Received all"
 msgstr "すべて受信しました"
 
-#: src/Http.cc:1766
+#: src/Http.cc:1768
 msgid "Received all (total)"
 msgstr "すべて受信しました (合計)"
 
-#: src/Http.cc:1790 src/Http.cc:1812
+#: src/Http.cc:1792 src/Http.cc:1814
 msgid "chunked format violated"
 msgstr "chunked フォーマットに違反しています"
 
-#: src/Http.cc:1799
+#: src/Http.cc:1801
 #, fuzzy
 msgid "Received last chunk"
 msgstr "すべて受信しました"
 
-#: src/Http.cc:1973 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:1975 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4337 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "ホストアドレスを解決しています..."
 
-#: src/Http.cc:1981 src/ftpclass.cc:4330
+#: src/Http.cc:1983 src/ftpclass.cc:4330
 msgid "Connection idle"
 msgstr "接続アイドル"
 
-#: src/Http.cc:1989
+#: src/Http.cc:1991
 msgid "Fetching headers..."
 msgstr "ヘッダを取得中..."
 
@@ -669,7 +669,7 @@ msgstr "%s: %s の書き込みでエラー: %s\n"
 #: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
 #: src/commands.cc:2415 src/commands.cc:2701 src/commands.cc:2728
 #: src/commands.cc:2735 src/commands.cc:3055 src/lftp.cc:267
-#: src/Torrent.cc:3603
+#: src/Torrent.cc:3611
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "`help %s' でより詳しい情報が得られます。\n"
@@ -694,7 +694,7 @@ msgstr "ソケットエラー (%s) - 再接続中"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "%s%s (%s) ポート %u に接続中"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2815
+#: src/NetAccess.cc:217 src/Torrent.cc:2819
 msgid "Timeout - reconnecting"
 msgstr "タイムアウト - 再接続中"
 
@@ -843,7 +843,7 @@ msgstr "%s などというサービスはありません"
 msgid "No address found"
 msgstr "アドレスが見つかりません"
 
-#: src/SFtp.cc:1090
+#: src/SFtp.cc:1092
 #, fuzzy
 msgid "invalid server response format"
 msgstr "余分なサーバレスポンスです"
@@ -2615,63 +2615,63 @@ msgstr ""
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2701
+#: src/Torrent.cc:2705
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "%s%s (%s) ポート %u に接続中"
 
-#: src/Torrent.cc:2751 src/Torrent.cc:2864
+#: src/Torrent.cc:2755 src/Torrent.cc:2868
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "リモートエンドが接続を閉じました"
 
-#: src/Torrent.cc:2753
+#: src/Torrent.cc:2757
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "ピアが接続を閉じました"
 
-#: src/Torrent.cc:2849
+#: src/Torrent.cc:2853
 #, fuzzy
 msgid "peer closed connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/Torrent.cc:2866
+#: src/Torrent.cc:2870
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "余分なサーバレスポンスです"
 
-#: src/Torrent.cc:3022
+#: src/Torrent.cc:3026
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3275
+#: src/Torrent.cc:3283
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3325
+#: src/Torrent.cc:3333
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "データソケットを (%s) のポート %u に接続中"
 
-#: src/Torrent.cc:3411
+#: src/Torrent.cc:3419
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3423
+#: src/Torrent.cc:3431
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3425
+#: src/Torrent.cc:3433
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "ピアが接続を閉じました"
 
-#: src/Torrent.cc:3476
+#: src/Torrent.cc:3484
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "コマンドを送信中..."
 
-#: src/Torrent.cc:3647
+#: src/Torrent.cc:3655
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""

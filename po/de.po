@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-10-11 10:29+0400\n"
+"POT-Creation-Date: 2013-11-11 16:02+0400\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -269,8 +269,8 @@ msgstr "Zugriff nicht möglich:"
 msgid "File cannot be accessed"
 msgstr "Zugriff auf Datei nicht möglich"
 
-#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1330 src/ftpclass.cc:4332
-#: src/ftpclass.cc:4341 src/Torrent.cc:3018
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1332 src/ftpclass.cc:4332
+#: src/ftpclass.cc:4341 src/Torrent.cc:3022
 msgid "Not connected"
 msgstr "Keine Verbindung"
 
@@ -404,43 +404,43 @@ msgstr "Schließe unbenutzte Verbindung"
 msgid "Running connect program"
 msgstr "Starte Verbindungsprogramm"
 
-#: src/Fish.cc:589 src/Http.cc:1229 src/SFtp.cc:740 src/SFtp.cc:1074
+#: src/Fish.cc:589 src/Http.cc:1229 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2935
 msgid "Peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Fish.cc:635 src/SFtp.cc:1099 src/ftpclass.cc:2865 src/ftpclass.cc:3969
+#: src/Fish.cc:635 src/SFtp.cc:1101 src/ftpclass.cc:2865 src/ftpclass.cc:3969
 msgid "extra server response"
 msgstr "zusätzliche Server Antwort"
 
-#: src/Fish.cc:987 src/Http.cc:1979 src/Http.cc:1986 src/SFtp.cc:1336
-#: src/ftpclass.cc:4344 src/Torrent.cc:3020 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:1981 src/Http.cc:1988 src/SFtp.cc:1338
+#: src/ftpclass.cc:4344 src/Torrent.cc:3024 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Verbinde..."
 
-#: src/Fish.cc:989 src/SFtp.cc:1338 src/ftpclass.cc:4350
+#: src/Fish.cc:989 src/SFtp.cc:1340 src/ftpclass.cc:4350
 msgid "Connected"
 msgstr "Verbunden"
 
-#: src/Fish.cc:991 src/Http.cc:1988 src/SFtp.cc:1340 src/ftpclass.cc:4327
+#: src/Fish.cc:991 src/Http.cc:1990 src/SFtp.cc:1342 src/ftpclass.cc:4327
 #: src/ftpclass.cc:4355 src/ftpclass.cc:4369 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Warte auf Antwort..."
 
-#: src/Fish.cc:993 src/Http.cc:1991 src/SFtp.cc:1342 src/ftpclass.cc:4389
+#: src/Fish.cc:993 src/Http.cc:1993 src/SFtp.cc:1344 src/ftpclass.cc:4389
 msgid "Receiving data"
 msgstr "Empfange Daten"
 
-#: src/Fish.cc:995 src/Http.cc:1984 src/SFtp.cc:1344 src/ftpclass.cc:4387
+#: src/Fish.cc:995 src/Http.cc:1986 src/SFtp.cc:1346 src/ftpclass.cc:4387
 msgid "Sending data"
 msgstr "Sende Daten"
 
-#: src/Fish.cc:997 src/SFtp.cc:1346
+#: src/Fish.cc:997 src/SFtp.cc:1348
 msgid "Done"
 msgstr "Fertig"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2209
-#: src/SFtp.cc:2327
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2211
+#: src/SFtp.cc:2329
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Hole Dateiliste (%lld) [%s]"
@@ -464,8 +464,8 @@ msgstr "POST - Methode fehlgeschlagen"
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP über HTTP funktioniert nur mit Proxy, hftp:proxy Option angeben."
 
-#: src/Http.cc:1154 src/ftpclass.cc:1344 src/Torrent.cc:2698
-#: src/Torrent.cc:3220 src/TorrentTracker.cc:392
+#: src/Http.cc:1154 src/ftpclass.cc:1344 src/Torrent.cc:2702
+#: src/Torrent.cc:3228 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "Kann kein Socket für die Adressfamilie %d anlegen"
@@ -478,54 +478,54 @@ msgstr "Schicke Anforderung..."
 msgid "Hit EOF while fetching headers"
 msgstr "Dateiende beim Lesen der Kopfzeilen erhalten"
 
-#: src/Http.cc:1407
+#: src/Http.cc:1409
 msgid "Could not parse HTTP status line"
 msgstr "Konnte HTTP Statusanzeige nicht auswerten"
 
-#: src/Http.cc:1438
+#: src/Http.cc:1440
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 "Objekt ist nicht zwischengespeichert und http:cache-control bestimmt only-if-"
 "cached (nur mit Zwischenspeicherung)"
 
-#: src/Http.cc:1602
+#: src/Http.cc:1604
 msgid "Receiving body..."
 msgstr "Empfange BODY..."
 
-#: src/Http.cc:1747
+#: src/Http.cc:1749
 msgid "Hit EOF"
 msgstr "Dateiende (EOF) angetroffen"
 
-#: src/Http.cc:1750
+#: src/Http.cc:1752
 msgid "Received not enough data, retrying"
 msgstr "Nicht genug Daten erhalten, neuer Versuch"
 
-#: src/Http.cc:1761
+#: src/Http.cc:1763
 msgid "Received all"
 msgstr "alles empfangen"
 
-#: src/Http.cc:1766
+#: src/Http.cc:1768
 msgid "Received all (total)"
 msgstr "Alles empfangen (insgesamt)"
 
-#: src/Http.cc:1790 src/Http.cc:1812
+#: src/Http.cc:1792 src/Http.cc:1814
 msgid "chunked format violated"
 msgstr "Blockformatierung verletzt"
 
-#: src/Http.cc:1799
+#: src/Http.cc:1801
 msgid "Received last chunk"
 msgstr "Letztes Teil empfangen"
 
-#: src/Http.cc:1973 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:1975 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4337 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Löse Hostadresse auf..."
 
-#: src/Http.cc:1981 src/ftpclass.cc:4330
+#: src/Http.cc:1983 src/ftpclass.cc:4330
 msgid "Connection idle"
 msgstr "Verbindung ruht"
 
-#: src/Http.cc:1989
+#: src/Http.cc:1991
 msgid "Fetching headers..."
 msgstr "Hole Kopfzeilen..."
 
@@ -666,7 +666,7 @@ msgstr "%s: Regulärer Ausdruck (regular expression) %s: %s\n"
 #: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
 #: src/commands.cc:2415 src/commands.cc:2701 src/commands.cc:2728
 #: src/commands.cc:2735 src/commands.cc:3055 src/lftp.cc:267
-#: src/Torrent.cc:3603
+#: src/Torrent.cc:3611
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "»help %s« gibt mehr Informationen aus.\n"
@@ -691,7 +691,7 @@ msgstr "Socket Fehler (%s) - erneutes Verbinden"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Verbinde mit %s%s (%s) Port %u"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2815
+#: src/NetAccess.cc:217 src/Torrent.cc:2819
 msgid "Timeout - reconnecting"
 msgstr "Zeitablauf - neu verbinden"
 
@@ -836,7 +836,7 @@ msgstr "kein derartiger %s Dienst"
 msgid "No address found"
 msgstr "Keine Adresse gefunden"
 
-#: src/SFtp.cc:1090
+#: src/SFtp.cc:1092
 msgid "invalid server response format"
 msgstr "unzulässiges Format der Serverantwort"
 
@@ -2684,63 +2684,63 @@ msgstr ""
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2701
+#: src/Torrent.cc:2705
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Verbinde mit %s%s (%s) Port %u"
 
-#: src/Torrent.cc:2751 src/Torrent.cc:2864
+#: src/Torrent.cc:2755 src/Torrent.cc:2868
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Torrent.cc:2753
+#: src/Torrent.cc:2757
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Torrent.cc:2849
+#: src/Torrent.cc:2853
 #, fuzzy
 msgid "peer closed connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Torrent.cc:2866
+#: src/Torrent.cc:2870
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "unzulässiges Format der Serverantwort"
 
-#: src/Torrent.cc:3022
+#: src/Torrent.cc:3026
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3275
+#: src/Torrent.cc:3283
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3325
+#: src/Torrent.cc:3333
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Datenverbindung von (%s) Port %u akzeptiert"
 
-#: src/Torrent.cc:3411
+#: src/Torrent.cc:3419
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3423
+#: src/Torrent.cc:3431
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3425
+#: src/Torrent.cc:3433
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "Gegenüber hat Verbindung beendet"
 
-#: src/Torrent.cc:3476
+#: src/Torrent.cc:3484
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "Schicke Befehle..."
 
-#: src/Torrent.cc:3647
+#: src/Torrent.cc:3655
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""
