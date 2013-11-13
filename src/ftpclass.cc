@@ -2743,6 +2743,7 @@ int Ftp::ReceiveOneLine()
       if(nl==resp+resp_size-1 && now-conn->control_recv->EventTime()>5)
       {
 	 LogError(1,"server bug: single <NL>");
+	 nl=find_char(resp,resp_size,'\n');
 	 line_len=nl-resp;
 	 skip_len=nl-resp+1;
 	 break;
