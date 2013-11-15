@@ -808,6 +808,7 @@ int FileCopyPeerFA::Do()
       {
 	 session->Close();
 	 SetSize(NO_SIZE);
+	 SetDate(NO_DATE);
 	 return MOVED;
       }
       FileInfo *fi=info[0];
