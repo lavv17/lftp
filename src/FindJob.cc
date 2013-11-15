@@ -360,24 +360,36 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
       fg_data=buf->GetFgData(fg);
    if(buf->Size()>0x10000)
       return PRF_LATER;
+
+   xstring path_to_show;
    if(ProcessingURL())
    {
       FileAccess::Path old_cwd=session->GetCwd();
       session->SetCwd(init_dir);
       session->Chdir(dir_file(d,fi->name),false);
-      buf->Put(session->GetConnectURL());
+      path_to_show.set(session->GetConnectURL());
       session->SetCwd(old_cwd);
    }
    else
-      buf->Put(dir_file(d,fi->name));
+      path_to_show.set(dir_file(d,fi->name));
    if((fi->defined&fi->TYPE) && fi->filetype==fi->DIRECTORY && strcmp(fi->name,"/"))
-      buf->Put("/");
+      path_to_show.append('/');
+
+   if(long_listing) {
+      FileInfo n(*fi);
+      n.SetName(path_to_show);
+      n.MakeLongName();
+      buf->Put(n.longname);
+   } else {
+      buf->Put(path_to_show);
+   }
+
    buf->Put("\n");
    return FinderJob::ProcessFile(d,fi);
 }
 
 FinderJob_List::FinderJob_List(FileAccess *s,ArgV *a,FDStream *o)
-   : FinderJob(s), args(a)
+   : FinderJob(s), args(a), long_listing(false)
 {
    if(o)
       buf=new IOBufferFDStream(o,IOBuffer::PUT);

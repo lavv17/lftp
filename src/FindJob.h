@@ -117,12 +117,14 @@ class FinderJob_List : public FinderJob
 {
    SMTaskRef<IOBuffer> buf;
    Ref<ArgV> args;
+   bool long_listing;
 protected:
    prf_res ProcessFile(const char *d,const FileInfo *fi);
    void Finish();
 
 public:
    FinderJob_List(FileAccess *s,ArgV *a,FDStream *o);
+   void DoLongListing(bool yes=true) { long_listing=yes; }
 
    int Done() { return FinderJob::Done() && buf->Done(); }
 };

@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "08 Oct 2013"
+.TH lftp 1 "15 Nov 2013"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.10.
+This man page documents lftp version 4.4.12.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -261,12 +261,19 @@ command is used.
 .PP
 Alias for `wait'.
 
-.B find
-.RI " [" directory "] "
+.BR find " [" OPTS "] " \fIdirectory...\fP
 .PP
 List files in the directory (current directory by default) recursively.
 This can help with servers lacking ls \-R support. You can redirect output
-of this command.
+of this command. Options:
+.Sp
+.in +0.5i
+.TS
+l1	l	lx	.
+\-d \fIMD\fP,	\-\-max\-depth=\fIMD\fP	specify maximum scan depth
+\-l,	\-\-list 	use long listing format
+.TE
+.PP
 
 .BR ftpcopy
 .PP

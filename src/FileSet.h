@@ -89,6 +89,7 @@ public:
    ~FileInfo();
 
    void SetName(const char *n) { name.set(n); def(NAME); }
+   void SetName(const xstring& n) { name.set(n); def(NAME); }
    void SetUser(const char *n);
    void SetGroup(const char *n);
    void LocalFile(const char *name, bool follow_symlinks);

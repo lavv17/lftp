@@ -2850,13 +2850,15 @@ CMD(find)
    static struct option find_options[]=
    {
       {"maxdepth",required_argument,0,'d'},
+      {"ls",no_argument,0,'l'},
       {0,0,0,0}
    };
    int opt;
    int maxdepth = -1;
+   bool long_listing=false;
    const char *op=args->a0();
 
-   while((opt=args->getopt_long("+d:",find_options))!=EOF)
+   while((opt=args->getopt_long("+d:l",find_options))!=EOF)
    {
       switch(opt)
       {
@@ -2868,6 +2870,9 @@ CMD(find)
 	 }
 	 maxdepth = atoi(optarg);
 	 break;
+      case 'l':
+	 long_listing=true;
+	 break;
       case '?':
 	 eprintf(_("Usage: %s [-d #] dir\n"),op);
 	 return 0;
@@ -2878,6 +2883,7 @@ CMD(find)
       args->Append(".");
    FinderJob_List *j=new class FinderJob_List(session->Clone(),args.borrow(),output.borrow());
    j->set_maxdepth(maxdepth);
+   j->DoLongListing(long_listing);
    return j;
 }
 
