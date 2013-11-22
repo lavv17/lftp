@@ -1,6 +1,8 @@
 2013-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: fixed spinning when GetArrayInfo gives an error.
+	* commands.cc, FindJob.cc, FindJob.h, FileSet.h: add find -l (--ls)
+	  option to show long listing.
 
 2013-11-11  Alexander V. Lukyanov <lav@yars.free.net>
 
