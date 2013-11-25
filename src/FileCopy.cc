@@ -673,8 +673,8 @@ bool FileCopy::CheckFileSizeAtEOF() const
    if(range_limit==FILE_END)
       range_limit=size;
 
-   const long long pos=get->GetRealPos();
-   if(pos==range_limit)
+   const long long pos=put_eof_pos;
+   if(pos>=range_limit)
       return true;
 
    debug((0,"expected pos=%lld, actual pos=%lld\n",range_limit,pos));
