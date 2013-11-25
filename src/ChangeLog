@@ -1,3 +1,11 @@
+2013-11-25  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Http.cc: add debug message on chunk sizes; handle 400/501 codes
+	  to turn off PROPFIND in ARRAY_INFO mode.
+	* FileCopy.cc: clean up GetArrayInfo call condition, don't call it
+	  if not needed.
+	* OutputJob.cc: free input and output in PrepareToDie.
+
 2013-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 
 	* FileCopy.cc: fixed spinning when GetArrayInfo gives an error.
