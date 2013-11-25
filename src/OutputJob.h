@@ -71,7 +71,7 @@ class OutputJob : public Job
 public:
    OutputJob(FDStream *output, const char *a0);
    OutputJob(const char *path, const char *a0, FA *fa=0);
-   ~OutputJob();
+   void PrepareToDie();
 
    /* Set the main filter: */
    void SetFilter(const char *f) { filter.set(f); }
