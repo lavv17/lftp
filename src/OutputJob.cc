@@ -228,7 +228,7 @@ OutputJob::OutputJob(const char *path, const char *a0, FileAccess *fa0)
    Init(a0);
 }
 
-OutputJob::~OutputJob()
+void OutputJob::PrepareToDie()
 {
    Bg();
    AcceptSig(SIGTERM);
@@ -236,6 +236,10 @@ OutputJob::~OutputJob()
    Delete(input);
    if(input != output)
       Delete(output);
+   input=0;
+   output=0;
+
+   super::PrepareToDie();
 }
 
 /* This is called to ask us "permission" to display a status line. */
