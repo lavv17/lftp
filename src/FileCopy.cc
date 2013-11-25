@@ -786,21 +786,23 @@ int FileCopyPeerFA::Do()
       return m;
    }
 
-   if((want_size && size==NO_SIZE_YET && (mode==PUT || !start_transfer))
-   || (want_date && date==NO_DATE_YET))
+   // if we need some info and cannot start the transfer (yet),
+   // then use ARRAY_INFO to fetch the file information.
+   if(((want_size && size==NO_SIZE_YET) || (want_date && date==NO_DATE_YET))
+   && (mode==PUT || !start_transfer) && session->IsClosed())
    {
-      if(session->IsClosed())
-      {
-	 FileInfo *fi=new FileInfo(file);
-	 if(want_size)
-	    fi->Need(fi->SIZE);
-	 if(want_date)
-	    fi->Need(fi->DATE);
-	 info.Empty();
-	 info.Add(fi);
-	 session->GetInfoArray(&info);
-	 m=MOVED;
-      }
+      FileInfo *fi=new FileInfo(file);
+      if(want_size)
+	 fi->Need(fi->SIZE);
+      if(want_date)
+	 fi->Need(fi->DATE);
+      info.Empty();
+      info.Add(fi);
+      session->GetInfoArray(&info);
+      m=MOVED;
+   }
+   if(session->OpenMode()==FA::ARRAY_INFO)
+   {
       res=session->Done();
       if(res==FA::IN_PROGRESS)
 	 return m;
