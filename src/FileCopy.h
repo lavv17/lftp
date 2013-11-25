@@ -187,23 +187,25 @@ private:
    Ref<Buffer> line_buffer;
    int  line_buffer_max;
 
+   bool CheckFileSizeAtEOF() const;
+
 protected:
    void RateAdd(int a);
    void RateReset();
    off_t bytes_count;
 
 public:
-   off_t GetPos();
-   off_t GetSize();
-   int  GetPercentDone();
-   const char *GetPercentDoneStr();
-   float GetRate();
-   const char *GetRateStr();
-   off_t GetBytesRemaining();
-   long GetETA() { return GetETA(GetBytesRemaining()); }
-   long GetETA(off_t b);
-   const char *GetETAStr();
-   const char *GetETAStrSFromTime(time_t t) { return rate_for_eta->GetETAStrSFromTime(t); }
+   off_t GetPos() const;
+   off_t GetSize() const;
+   int  GetPercentDone() const;
+   const char *GetPercentDoneStr() const;
+   float GetRate() const;
+   const char *GetRateStr() const;
+   off_t GetBytesRemaining() const;
+   long GetETA() const { return GetETA(GetBytesRemaining()); }
+   long GetETA(off_t b) const;
+   const char *GetETAStr() const;
+   const char *GetETAStrSFromTime(time_t t) const { return rate_for_eta->GetETAStrSFromTime(t); }
    const char *GetStatus();
    FgData *GetFgData(bool fg);
    pid_t GetProcGroup();
@@ -229,8 +231,8 @@ public:
    void FailIfCannotSeek() { fail_if_cannot_seek=true; }
    void SetRange(off_t s,off_t lim);
    void SetRangeLimit(off_t lim) { get->range_limit=lim; }
-   off_t GetRangeStart() { return get->range_start; }
-   off_t GetRangeLimit() { return get->range_limit; }
+   off_t GetRangeStart() const { return get->range_start; }
+   off_t GetRangeLimit() const { return get->range_limit; }
    void RemoveSourceLater() { remove_source_later=true; }
    void RemoveTargetFirst() { remove_target_first=true; put->Resume(); put->RemoveFile(); }
    void LineBuffered(int size=0x1000);

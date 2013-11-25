@@ -5,6 +5,7 @@
 	* FileCopy.cc: clean up GetArrayInfo call condition, don't call it
 	  if not needed.
 	* OutputJob.cc: free input and output in PrepareToDie.
+	* FileCopy.cc, FileCopy.h: add check for file size at EOF.
 
 2013-11-15  Alexander V. Lukyanov <lav@yars.free.net>
 

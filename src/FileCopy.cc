@@ -345,6 +345,11 @@ int FileCopy::Do()
       put_eof_pos=put->GetRealPos();
       debug((10,"copy: waiting for put confirmation\n"));
       set_state(CONFIRM_WAIT);
+      if(!CheckFileSizeAtEOF())
+      {
+	 SetError(_("file size decreased during transfer"));
+	 return MOVED;
+      }
       m=MOVED;
    case(CONFIRM_WAIT):
       if(put->Error())
@@ -475,7 +480,7 @@ void FileCopy::LineBuffered(int s)
    line_buffer_max=s;
 }
 
-off_t FileCopy::GetPos()
+off_t FileCopy::GetPos() const
 {
    if(put)
       return put->GetRealPos() - put->Buffered();
@@ -484,14 +489,14 @@ off_t FileCopy::GetPos()
    return 0;
 }
 
-off_t FileCopy::GetSize()
+off_t FileCopy::GetSize() const
 {
    if(get)
       return get->GetSize();
    return NO_SIZE;
 }
 
-int FileCopy::GetPercentDone()
+int FileCopy::GetPercentDone() const
 {
    if(!get || !put)
       return 100;
@@ -512,7 +517,7 @@ int FileCopy::GetPercentDone()
       return -1;
    return percent(ppos,psize);
 }
-const char *FileCopy::GetPercentDoneStr()
+const char *FileCopy::GetPercentDoneStr() const
 {
    int pct=GetPercentDone();
    if(pct==-1)
@@ -532,19 +537,19 @@ void FileCopy::RateReset()
    rate->Reset();
    rate_for_eta->Reset();
 }
-float FileCopy::GetRate()
+float FileCopy::GetRate() const
 {
    if(!rate->Valid() || !put)
       return 0;
    return rate->Get();
 }
-const char *FileCopy::GetRateStr()
+const char *FileCopy::GetRateStr() const
 {
    if(!rate->Valid() || !put)
       return "";
    return rate->GetStrS();
 }
-off_t FileCopy::GetBytesRemaining()
+off_t FileCopy::GetBytesRemaining() const
 {
    if(!get)
       return 0;
@@ -557,14 +562,14 @@ off_t FileCopy::GetBytesRemaining()
    }
    return get->range_limit-GetPos();
 }
-const char *FileCopy::GetETAStr()
+const char *FileCopy::GetETAStr() const
 {
    off_t b=GetBytesRemaining();
    if(b<0 || !put)
       return "";
    return rate_for_eta->GetETAStrSFromSize(b);
 }
-long FileCopy::GetETA(off_t b)
+long FileCopy::GetETA(off_t b) const
 {
    if(b<0 || !rate_for_eta->Valid())
       return -1;
@@ -658,6 +663,23 @@ void FileCopy::SetRange(off_t s,off_t lim)
    put->SetRange(s,lim);
 }
 
+bool FileCopy::CheckFileSizeAtEOF() const
+{
+   const long long size=GetSize();
+   if(size==NO_SIZE || size==NO_SIZE_YET)
+      return true;   // nothing to compare with.
+
+   long long range_limit=GetRangeLimit();
+   if(range_limit==FILE_END)
+      range_limit=size;
+
+   const long long pos=get->GetRealPos();
+   if(pos==range_limit)
+      return true;
+
+   debug((0,"expected pos=%lld, actual pos=%lld\n",range_limit,pos));
+   return false;
+}
 
 // FileCopyPeer implementation
 #undef super
