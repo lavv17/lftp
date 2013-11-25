@@ -64,6 +64,8 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #define EINPROGRESS -1
 #endif
 
+enum { CHUNK_SIZE_UNKNOWN=-1 };
+
 Http::Connection::Connection(int s,const char *c)
    : closure(c), sock(s)
 {
@@ -103,7 +105,7 @@ void Http::Init()
    array_send=0;
 
    chunked=false;
-   chunk_size=-1;
+   chunk_size=CHUNK_SIZE_UNKNOWN;
    chunk_pos=0;
    chunked_trailer=false;
 
@@ -190,7 +192,7 @@ void Http::ResetRequestData()
    keep_alive_max=-1;
    array_send=fileset_for_info?fileset_for_info->curr_index():0;
    chunked=false;
-   chunk_size=-1;
+   chunk_size=CHUNK_SIZE_UNKNOWN;
    chunk_pos=0;
    chunked_trailer=false;
    propfind=0;
@@ -688,7 +690,7 @@ void Http::SendRequest(const char *connection,const char *f)
 
    keep_alive=false;
    chunked=false;
-   chunk_size=-1;
+   chunk_size=CHUNK_SIZE_UNKNOWN;
    chunk_pos=0;
    chunked_trailer=false;
    inflate=0;
@@ -864,7 +866,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(!strcasecmp(value,"chunked"));
       {
 	 chunked=true;
-	 chunk_size=-1;	// to indicate "before first chunk"
+	 chunk_size=CHUNK_SIZE_UNKNOWN;	  // expecting first chunk
 	 chunk_pos=0;
 	 chunked_trailer=false;
       }
@@ -1337,6 +1339,15 @@ int Http::Do()
 	       }
 	       if(mode==ARRAY_INFO)
 	       {
+		  if((status_code==400 || status_code==501)
+		  && !xstrcmp(last_method,"PROPFIND"))
+		  {
+		     ResMgr::Set("http:use-propfind",hostname,"no");
+		     use_propfind_now=false;
+		     try_time=0;
+		     Disconnect();
+		     return MOVED;
+		  }
 		  // we'll have to receive next header
 		  status.set(0);
 		  status_code=0;
@@ -1566,8 +1577,7 @@ int Http::Do()
 		  if(!xstrcmp(last_method,"MKCOL"))
 		     ResMgr::Set("http:use-mkcol",hostname,"no");
 	       }
-	       if((mode==CHANGE_DIR || mode==ARRAY_INFO)
-	       && !xstrcmp(last_method,"PROPFIND"))
+	       if(mode==CHANGE_DIR && !xstrcmp(last_method,"PROPFIND"))
 	       {
 		  use_propfind_now=false;
 		  try_time=0;
@@ -1776,7 +1786,7 @@ get_again:
       if(chunked_trailer && state==RECEIVING_HEADER)
 	 return DO_AGAIN;
       const char *nl;
-      if(chunk_size==-1) // expecting first/next chunk
+      if(chunk_size==CHUNK_SIZE_UNKNOWN) // expecting first/next chunk
       {
 	 nl=(const char*)memchr(buf1,'\n',size1);
 	 if(nl==0)  // not yet
@@ -1794,6 +1804,7 @@ get_again:
 	 }
 	 conn->recv_buf->Skip(nl-buf1+1);
 	 chunk_pos=0;
+	 LogNote(9,"next chunk size: %ld",chunk_size);
 	 goto get_again;
       }
       if(chunk_size==0) // eof
@@ -1815,7 +1826,7 @@ get_again:
 	    return FATAL;
 	 }
 	 conn->recv_buf->Skip(2);
-	 chunk_size=-1;
+	 chunk_size=CHUNK_SIZE_UNKNOWN;
 	 goto get_again;
       }
       // ok, now we may get portion of data
