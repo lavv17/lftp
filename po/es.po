@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-11-26 10:01+0400\n"
+"POT-Creation-Date: 2013-11-26 11:00+0400\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -168,7 +168,7 @@ msgstr "cd ok, dir actual=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1104
+#: src/CmdExec.cc:408 src/FileCopy.cc:1106
 msgid "Too many redirections"
 msgstr "Demasiadas redirecciones"
 
@@ -335,16 +335,16 @@ msgstr ""
 msgid "file size decreased during transfer"
 msgstr ""
 
-#: src/FileCopy.cc:1101
+#: src/FileCopy.cc:1103
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: se recibió redirección a `%s'\n"
 
-#: src/FileCopy.cc:1286
+#: src/FileCopy.cc:1288
 msgid "file name missed in URL"
 msgstr "nombre de archivo no encontrado em URL"
 
-#: src/FileCopy.cc:1958
+#: src/FileCopy.cc:1960
 msgid "Verify command failed without a message"
 msgstr ""
 

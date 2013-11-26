@@ -1,3 +1,7 @@
+Version 4.4.13 - 2013-11-26
+
+* fixed a bug in file size checking code.
+
 Version 4.4.12 - 2013-11-26
 
 * new option -l (--ls) for find command.
@@ -7,6 +11,8 @@ Version 4.4.12 - 2013-11-26
 * don't pre-fetch file information in "get" when not needed.
 * fixed handling of 400/501 http codes for PROPFIND to switch to HEAD.
 * fixed a crash after cls.
+* added file size decrease checking.
+* used a newer libtool for ppc64le platform.
 
 Version 4.4.11 - 2013-11-11
 

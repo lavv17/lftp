@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-11-26 10:01+0400\n"
+"POT-Creation-Date: 2013-11-26 11:00+0400\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -170,7 +170,7 @@ msgstr "cd ok, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s : reçu une redirection vers « %s »\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1104
+#: src/CmdExec.cc:408 src/FileCopy.cc:1106
 msgid "Too many redirections"
 msgstr "Trop de redirections"
 
@@ -333,16 +333,16 @@ msgstr "copy : « get » est revenu à %lld, « put » s'y ajuste\n"
 msgid "file size decreased during transfer"
 msgstr ""
 
-#: src/FileCopy.cc:1101
+#: src/FileCopy.cc:1103
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy : reçu une redirection vers « %s »\n"
 
-#: src/FileCopy.cc:1286
+#: src/FileCopy.cc:1288
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
 
-#: src/FileCopy.cc:1958
+#: src/FileCopy.cc:1960
 msgid "Verify command failed without a message"
 msgstr "La commande verify a échoué sans message"
 

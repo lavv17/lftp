@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-11-26 10:01+0400\n"
+"POT-Creation-Date: 2013-11-26 11:00+0400\n"
 "PO-Revision-Date: 2008-03-29 14:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: German <kde-i18n-de@lists.kde.org>\n"
@@ -173,7 +173,7 @@ msgstr "Verzeichniswechsel OK, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: Umleitung nach »%s« empfangen\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1104
+#: src/CmdExec.cc:408 src/FileCopy.cc:1106
 msgid "Too many redirections"
 msgstr "Zu viele Umleitungen"
 
@@ -336,16 +336,16 @@ msgstr "copy: get wurde zurückgesetzt zu %lld, suche dementsprechendes put\n"
 msgid "file size decreased during transfer"
 msgstr ""
 
-#: src/FileCopy.cc:1101
+#: src/FileCopy.cc:1103
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: Umleitung nach »%s« empfangen\n"
 
-#: src/FileCopy.cc:1286
+#: src/FileCopy.cc:1288
 msgid "file name missed in URL"
 msgstr "Dateiname fehlt in der URL"
 
-#: src/FileCopy.cc:1958
+#: src/FileCopy.cc:1960
 msgid "Verify command failed without a message"
 msgstr "Überprüfung des Befehls fehlgeschlagen ohne Rückmeldung"
 

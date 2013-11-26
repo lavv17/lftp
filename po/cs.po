@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.7\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-11-26 10:01+0400\n"
+"POT-Creation-Date: 2013-11-26 11:00+0400\n"
 "PO-Revision-Date: 2013-05-25 07:49+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -174,7 +174,7 @@ msgstr "cd uspělo, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: přijato přesměrování na „%s“\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1104
+#: src/CmdExec.cc:408 src/FileCopy.cc:1106
 msgid "Too many redirections"
 msgstr "Příliš mnoho přesměrování"
 
@@ -342,16 +342,16 @@ msgstr ""
 msgid "file size decreased during transfer"
 msgstr ""
 
-#: src/FileCopy.cc:1101
+#: src/FileCopy.cc:1103
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "kopírování: obdrženo přesměrování na „%s“\n"
 
-#: src/FileCopy.cc:1286
+#: src/FileCopy.cc:1288
 msgid "file name missed in URL"
 msgstr "v URL chybí název souboru"
 
-#: src/FileCopy.cc:1958
+#: src/FileCopy.cc:1960
 msgid "Verify command failed without a message"
 msgstr "Příkaz verify (ověření) selhal bez vysvětlení"
 
