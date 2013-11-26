@@ -334,6 +334,11 @@ int FileCopy::Do()
 	 put->Put(b,s);
 	 line_buffer->Skip(s);
       }
+      if(!CheckFileSizeAtEOF())
+      {
+	 SetError(_("file size decreased during transfer"));
+	 return MOVED;
+      }
    pre_CONFIRM_WAIT:
       put->SetSuggestedFileName(get->GetSuggestedFileName());
       put->SetDate(get->GetDate());
@@ -345,11 +350,6 @@ int FileCopy::Do()
       put_eof_pos=put->GetRealPos();
       debug((10,"copy: waiting for put confirmation\n"));
       set_state(CONFIRM_WAIT);
-      if(!CheckFileSizeAtEOF())
-      {
-	 SetError(_("file size decreased during transfer"));
-	 return MOVED;
-      }
       m=MOVED;
    case(CONFIRM_WAIT):
       if(put->Error())
@@ -665,13 +665,14 @@ void FileCopy::SetRange(off_t s,off_t lim)
 
 bool FileCopy::CheckFileSizeAtEOF() const
 {
-   const long long size=GetSize();
-   if(size==NO_SIZE || size==NO_SIZE_YET)
-      return true;   // nothing to compare with.
-
    long long range_limit=GetRangeLimit();
    if(range_limit==FILE_END)
+   {
+      const long long size=GetSize();
+      if(size==NO_SIZE || size==NO_SIZE_YET)
+	 return true;   // nothing to compare with.
       range_limit=size;
+   }
 
    const long long pos=put_eof_pos;
    if(pos>=range_limit)

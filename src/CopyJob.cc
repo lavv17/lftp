@@ -38,7 +38,11 @@ int CopyJob::Do()
       return STALL;
    if(c->Error())
    {
-      eprintf("%s: %s\n",op.get(),c->ErrorText());
+      const char *error=c->ErrorText();
+      const char *name=GetDispName();
+      if(!strstr(error,name))
+	 error=xstring::cat(name,": ",error,NULL);
+      eprintf("%s: %s\n",op.get(),error);
       done=true;
       return MOVED;
    }
