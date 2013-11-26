@@ -1,3 +1,13 @@
+Version 4.4.12 - 2013-11-26
+
+* new option -l (--ls) for find command.
+* improve workaround for single NL replies from an FTP server.
+* Ukrainian translation updated (Yuri Chornoivan).
+* fixed spinning in "get" when no remote session is open.
+* don't pre-fetch file information in "get" when not needed.
+* fixed handling of 400/501 http codes for PROPFIND to switch to HEAD.
+* fixed a crash after cls.
+
 Version 4.4.11 - 2013-11-11
 
 * fixed a slow down in mirror from http (thanks to OGAWA Hirofumi).
