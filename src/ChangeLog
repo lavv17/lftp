@@ -3,6 +3,8 @@
 	* CopyJob.cc: show file name in error messages, if not there already.
 	* FileCopy.cc: don't check file size when the file is already complete;
 	  handle the case of defined limit without file size.
+	* FileCopy.cc: use max of get/put positions in size checking, since
+	  put_eof_pos is uninitialized yet.
 
 2013-11-25  Alexander V. Lukyanov <lavv17f@gmail.com>
 
