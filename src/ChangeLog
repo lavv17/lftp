@@ -1,3 +1,7 @@
+2013-11-27  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Http.cc: fixed ARRAY_INFO in keep-alive http connection.
+
 2013-11-26  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* CopyJob.cc: show file name in error messages, if not there already.

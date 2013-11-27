@@ -1360,6 +1360,7 @@ int Http::Do()
 		  }
 		  if(!fileset_for_info->curr())
 		  {
+		     LogNote(10,"that was the last file info");
 		     // received all requested info.
 		     state=DONE;
 		     return MOVED;
@@ -1368,8 +1369,8 @@ int Http::Do()
 		  if(keep_alive && (keep_alive_max>1 || keep_alive_max==-1) && use_head)
 		  {
 		     state=CONNECTED;
-		     if(SendArrayInfoRequest()==0)
-			state=DONE;
+		     SendArrayInfoRequest();
+		     state=RECEIVING_HEADER;
 		  }
 		  else
 		  {
