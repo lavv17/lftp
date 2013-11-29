@@ -50,11 +50,11 @@ class SMTask
    bool	 suspended;
    bool	 suspended_slave;
 
-protected:
    int	 running;
    int	 ref_count;
    bool	 deleting;
 
+protected:
    enum
    {
       STALL=0,
@@ -66,6 +66,8 @@ protected:
    virtual void SuspendInternal() { RemoveFromReadyList(); }
    virtual void ResumeInternal() { AddToReadyList(); }
    virtual void PrepareToDie() {}  // it is called from Delete no matter of running and ref_count
+
+   bool Deleted() const { return deleting; }
 
 public:
    static void Block(int fd,int mask) { block.AddFD(fd,mask); }

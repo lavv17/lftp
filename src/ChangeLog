@@ -5,6 +5,11 @@
 	* xarray.cc, xarray.h: optimize space allocation by inlining some code.
 	* SMTask.cc: don't spin on collected garbage.
 	* DirColors.h: no need to inherit SMTask, use ResClient.
+	* SMTask.h: make deleting, running and ref_count private;
+	  (Deleted) new method.
+	* IdNameCache.cc, Job.cc, ProcWait.cc, Resolver.cc, Torrent.cc:
+	  use public methods of SMTask, don't use `deleting' member directly.
+
 
 2013-11-27  Alexander V. Lukyanov <lavv17f@gmail.com>
 

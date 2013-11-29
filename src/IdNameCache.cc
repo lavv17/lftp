@@ -103,7 +103,7 @@ IdNameCache::~IdNameCache()
 int IdNameCache::Do()
 {
    if(expire_timer && expire_timer->Stopped())
-      deleting=true;
+      Delete(this);
    return STALL;
 }
 

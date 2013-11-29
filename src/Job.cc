@@ -208,7 +208,7 @@ int   Job::NumberOfJobs()
 {
    int count=0;
    ListScan(Job,chain,next)
-      if(!scan->running && !scan->Done())
+      if(!scan->Deleted() && !scan->Done())
 	 count++;
    return count;
 }
@@ -265,7 +265,7 @@ void  Job::ListDoneJobs()
    ListScan(Job,chain,next)
    {
       if(scan->jobno>=0 && (scan->parent==this || scan->parent==0)
-         && !scan->deleting && scan->Done())
+         && !scan->Deleted() && scan->Done())
       {
 	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,scan->GetCmdLine().get());
 	 const char *this_url=this->GetConnectURL();
@@ -339,7 +339,7 @@ void  Job::BuryDoneJobs()
    ListScan(Job,chain,next)
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
-		  && !scan->deleting && scan->Done())
+		  && !scan->Deleted() && scan->Done())
 	 scan->DeleteLater();
    }
    CollectGarbage();
@@ -517,13 +517,13 @@ bool Job::CheckForWaitLoop(Job *parent)
 
 void Job::WaitDone()
 {
-   ref_count++;	  // keep me in memory
+   IncRefCount();  // keep me in memory
    for(;;)
    {
       SMTask::Schedule();
-      if(deleting || Done())
+      if(Deleted() || Done())
 	 break;
       SMTask::Block();
    }
-   ref_count--;
+   DecRefCount();
 }

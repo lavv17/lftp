@@ -3417,7 +3417,7 @@ int TorrentDispatcher::Do()
    if(timeout_timer.Stopped())
    {
       LogError(1,_("peer handshake timeout"));
-      deleting=true;
+      Delete(this);
       return MOVED;
    }
 
@@ -3431,7 +3431,7 @@ int TorrentDispatcher::Do()
 	    LogError(1,_("peer short handshake"));
 	 else
 	    LogError(4,_("peer closed just accepted connection"));
-	 deleting=true;
+	 Delete(this);
 	 return MOVED;
       }
       return STALL;
@@ -3448,7 +3448,7 @@ int TorrentDispatcher::Do()
 
    Torrent::Dispatch(peer_info_hash,sock,&addr,recv_buf.borrow());
    sock=-1;
-   deleting=true;
+   Delete(this);
    return MOVED;
 }
 

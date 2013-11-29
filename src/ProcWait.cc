@@ -34,7 +34,7 @@ int ProcWait::Do()
    final:
       if(auto_die)
       {
-	 deleting=true;
+	 Delete(this);
 	 return MOVED;
       }
       return m;
@@ -157,5 +157,5 @@ void ProcWait::DeleteAll()
 {
    Signal(false);
    for(ProcWait *scan=chain; scan; scan=scan->next)
-      scan->deleting=true;
+      Delete(scan);
 }

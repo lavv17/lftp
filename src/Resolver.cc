@@ -210,7 +210,7 @@ int   Resolver::Do()
 	 LogNote(4,_("Resolving host address..."));
 	 buf=new IOBuffer(IOBuffer::GET);
 	 DoGethostbyname();
-	 if(deleting)
+	 if(Deleted())
 	    return MOVED;
       }
    }
@@ -490,7 +490,7 @@ void Resolver::LookupSRV_RR()
       if(!use_fork)
       {
 	 Schedule();
-	 if(deleting)
+	 if(Deleted())
 	    return;
       }
       time(&try_time);
@@ -688,7 +688,7 @@ void Resolver::LookupOne(const char *name)
       if(!use_fork)
       {
 	 Schedule();
-	 if(deleting)
+	 if(Deleted())
 	    return;
       }
 
@@ -875,12 +875,12 @@ void Resolver::DoGethostbyname()
    if(service && !portname && !isdigit((unsigned char)hostname[0]))
       LookupSRV_RR();
 
-   if(!use_fork && deleting)
+   if(!use_fork && Deleted())
       return;
 
    LookupOne(hostname);
 
-   if(!use_fork && deleting)
+   if(!use_fork && Deleted())
       return;
 
    if(addr.count()==0)
