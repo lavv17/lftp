@@ -3,6 +3,8 @@
 	* GetPass.cc, complete.cc: don't call SMTask dtor directly.
 	* SMTask.cc, SMTask.h: add deleting list; use static array for stack.
 	* xarray.cc, xarray.h: optimize space allocation by inlining some code.
+	* SMTask.cc: don't spin on collected garbage.
+	* DirColors.h: no need to inherit SMTask, use ResClient.
 
 2013-11-27  Alexander V. Lukyanov <lavv17f@gmail.com>
 
