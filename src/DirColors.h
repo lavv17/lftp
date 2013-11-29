@@ -26,7 +26,7 @@
 
 class FileInfo;
 
-class DirColors : public SMTask, public KeyValueDB
+class DirColors : public ResClient, public KeyValueDB
 {
    static DirColors *instance;
 
@@ -34,7 +34,6 @@ class DirColors : public SMTask, public KeyValueDB
    void Parse(const char *);
 
 public:
-   int Do() { return STALL; }
    void Reconfig(const char *name);
 
    DirColors();
