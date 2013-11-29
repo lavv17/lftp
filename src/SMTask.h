@@ -39,8 +39,13 @@ class SMTask
    void AddToReadyList();
    void RemoveFromReadyList();
 
+   SMTask *next_deleting;
+   static SMTask *chain_deleting;
+
    static PollVec block;
-   static xarray<SMTask*> stack;
+   enum { SMTASK_MAX_DEPTH=64 };
+   static SMTask *stack[SMTASK_MAX_DEPTH];
+   static int stack_ptr;
 
    bool	 suspended;
    bool	 suspended_slave;

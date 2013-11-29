@@ -40,15 +40,25 @@ private:
    xarray0(const xarray0&);	       // disable cloning
 
 protected:
-   void *get_ptr(int n) { return static_cast<char*>(buf)+n*element_size; }
+   void *get_ptr(int n) const { return static_cast<char*>(buf)+n*element_size; }
 
 public:
    xarray0(size_t e,int k=0) : element_size(e),keep_extra(k) { init(); }
    ~xarray0() { xfree(buf); }
 
-   // allocates s slots, with preferred granularity g
-   void get_space(size_t s,size_t g=32);
-   size_t get_element_size() { return element_size; }
+   // allocates s slots, with preferred granularity g, may shrink
+   void get_space_do(size_t s,size_t g=32);
+   void get_space(size_t s,size_t g=32) {
+      if(size<s+keep_extra || size/2>=s+keep_extra)
+	 get_space_do(s,g);
+   }
+   // only grows, not shrinks
+   void grow_space(size_t s,size_t g=32) {
+      if(size<s+keep_extra)
+	 get_space_do(s,g);
+   }
+
+   size_t get_element_size() const { return element_size; }
 
    int length() const { return len; }
    int count()  const { return len; }
@@ -57,7 +67,7 @@ public:
    void _nset(const void *s,int len);
    void _unset() { _nset(0,0); }
    void *_insert(int before);
-   void *_append();
+   void *_append() { grow_space(len+1); return get_ptr(len++); }
    void _remove(int i,int j);
    void _remove(int i) { _remove(i,i+1); }
    void _chop() { len--; }

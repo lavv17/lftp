@@ -70,7 +70,8 @@ char *readline_from_file(int fd)
    xstring line("");
    for(;;)
    {
-      CharReader r(fd);
+      SMTaskRef<CharReader> rr(new CharReader(fd));
+      CharReader& r=*rr.get_non_const();
       int c;
       for(;;)
       {

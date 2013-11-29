@@ -32,8 +32,10 @@
 
 SMTask	 *SMTask::chain;
 SMTask	 *SMTask::chain_ready;
+SMTask	 *SMTask::chain_deleting;
 SMTask	 *SMTask::current;
-xarray<SMTask*>	SMTask::stack;
+SMTask	 *SMTask::stack[SMTASK_MAX_DEPTH];
+int	 SMTask::stack_ptr;
 PollVec	 SMTask::block;
 TimeDate SMTask::now;
 
@@ -74,6 +76,7 @@ SMTask::SMTask()
 
    next_ready=0;
    prev_next_ready=0;
+   next_deleting=0;
    suspended=false;
    suspended_slave=false;
    running=0;
@@ -129,13 +132,15 @@ SMTask::~SMTask()
    {
       fprintf(stderr,"SMTask(%p).running=%d\n",this,running);
       fprintf(stderr,"SMTask stack:");
-      for(int i=0; i<stack.count(); i++)
+      for(int i=0; i<stack_ptr; i++)
 	 fprintf(stderr," %p",stack[i]);
       fprintf(stderr,"; current=%p\n",current);
       abort();
    }
    assert(!ref_count);
-   RemoveFromReadyList();
+   assert(!next_ready && !prev_next_ready);
+   assert(deleting);
+
    // remove from the chain
    SMTask **scan=&chain;
    while(*scan)
@@ -151,7 +156,12 @@ SMTask::~SMTask()
 
 void SMTask::DeleteLater()
 {
+   if(deleting)
+      return;
    deleting=true;
+   RemoveFromReadyList();
+   this->next_deleting=chain_deleting;
+   chain_deleting=this;
    PrepareToDie();
 }
 void SMTask::Delete(SMTask *task)
@@ -159,9 +169,7 @@ void SMTask::Delete(SMTask *task)
    if(!task)
       return;
    task->DeleteLater();
-   // if possible, delete now.
-   if(!task->running && !task->ref_count)
-      delete task;
+   // CollectGarbage will delete the task gracefully
 }
 SMTask *SMTask::_SetRef(SMTask *task,SMTask *new_task)
 {
@@ -172,7 +180,8 @@ SMTask *SMTask::_SetRef(SMTask *task,SMTask *new_task)
 
 void SMTask::Enter(SMTask *task)
 {
-   stack.append(current);
+   assert(stack_ptr<SMTASK_MAX_DEPTH);
+   stack[stack_ptr++]=current;
    current=task;
    current->running++;
 }
@@ -180,9 +189,8 @@ void SMTask::Leave(SMTask *task)
 {
    assert(current==task);
    current->running--;
-   assert(stack.count()>0);
-   current=stack.last();
-   stack.chop();
+   assert(stack_ptr>0);
+   current=stack[--stack_ptr];
 }
 
 int SMTask::Roll(SMTask *task)
@@ -209,13 +217,17 @@ int SMTask::CollectGarbage()
    int count=0;
    bool repeat_gc;
    do {
+      SMTask *new_chain_deleting=0;
       repeat_gc=false;
-      SMTask *scan=chain;
-      while(scan)
+      while(chain_deleting)
       {
-	 if(scan->running || !scan->deleting || scan->ref_count)
+	 SMTask *scan=chain_deleting;
+	 chain_deleting=scan->next;
+	 scan->next=0;
+	 if(scan->running || scan->ref_count)
 	 {
-	    scan=scan->next;
+	    scan->next=new_chain_deleting;
+	    new_chain_deleting=scan;
 	    continue;
 	 }
 	 repeat_gc=true;
@@ -232,9 +244,11 @@ int SMTask::CollectGarbage()
 	    break;
 	 }
       }
-   } while(repeat_gc);
+      chain_deleting=new_chain_deleting;
+   } while(repeat_gc && chain_deleting);
    return count;
 }
+
 
 void SMTask::Schedule()
 {
@@ -286,7 +300,8 @@ int SMTask::TaskCount()
 void SMTask::Cleanup()
 {
    CollectGarbage();
-   delete init_task;
+   Delete(init_task);
+   CollectGarbage();
 }
 
 #include <errno.h>

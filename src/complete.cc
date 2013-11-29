@@ -1234,7 +1234,8 @@ static int lftp_complete_remote(int count,int key)
 int lftp_rl_getc(FILE *file)
 {
    SignalHook::DoCount(SIGINT);
-   CharReader r(fileno(file));
+   SMTaskRef<CharReader> rr(new CharReader(fileno(file)));
+   CharReader& r=*rr.get_non_const();
    for(;;)
    {
       SMTask::Schedule();

@@ -21,7 +21,7 @@
 #include <assert.h>
 #include "xarray.h"
 
-void xarray0::get_space(size_t s,size_t g)
+void xarray0::get_space_do(size_t s,size_t g)
 {
    if(!buf)
       buf=xmalloc(element_size*(size=s+keep_extra));
@@ -54,16 +54,11 @@ void xarray0::_nset(const void *s,int len)
 void *xarray0::_insert(int before)
 {
    assert(before>=0 && before<=len);
-   get_space(len+1);
+   grow_space(len+1);
    if(before<len)
       memmove(get_ptr(before+1),get_ptr(before),element_size*(len-before));
    len++;
    return get_ptr(before);
-}
-void *xarray0::_append()
-{
-   get_space(len+1);
-   return get_ptr(len++);
 }
 void xarray0::_remove(int i,int j)
 {
