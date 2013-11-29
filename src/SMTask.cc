@@ -272,6 +272,7 @@ void SMTask::Schedule()
       res|=scan->Do();	   // let it run.
       Leave(scan);	   // unmark it running and change current.
    }
+   CollectGarbage();
    if(res)
       block.NoWait();
 }
