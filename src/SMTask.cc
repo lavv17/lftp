@@ -222,27 +222,17 @@ int SMTask::CollectGarbage()
       while(chain_deleting)
       {
 	 SMTask *scan=chain_deleting;
-	 chain_deleting=scan->next;
-	 scan->next=0;
+	 chain_deleting=scan->next_deleting;
+	 scan->next_deleting=0;
 	 if(scan->running || scan->ref_count)
 	 {
-	    scan->next=new_chain_deleting;
+	    scan->next_deleting=new_chain_deleting;
 	    new_chain_deleting=scan;
 	    continue;
 	 }
 	 repeat_gc=true;
 	 count++;
-	 if(scan->next)
-	 {
-	    Enter(scan->next); // protect it from deleting (in scan's dtor)
-	    delete scan;
-	    Leave(scan=current);
-	 }
-	 else
-	 {
-	    delete scan;
-	    break;
-	 }
+	 delete scan;
       }
       chain_deleting=new_chain_deleting;
    } while(repeat_gc && chain_deleting);
