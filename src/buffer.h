@@ -291,7 +291,7 @@ public:
    IOBufferFileAccess(FileAccess *fa) : IOBuffer(GET), session(session_ref), session_ref(fa) {}
    ~IOBufferFileAccess() {
       // we don't want to delete the session
-      session_ref.borrow();
+      (void)session_ref.borrow();
    }
 
    const char *Status();
