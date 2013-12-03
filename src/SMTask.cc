@@ -30,62 +30,36 @@
 #include "Timer.h"
 #include "misc.h"
 
-SMTask	 *SMTask::chain;
-SMTask	 *SMTask::chain_ready;
-SMTask	 *SMTask::chain_deleting;
+xlist<SMTask>  SMTask::all_tasks;
+xlist<SMTask>  SMTask::ready_tasks;
+xlist<SMTask>  SMTask::new_tasks;
+xlist<SMTask>  SMTask::deleted_tasks;
+
 SMTask	 *SMTask::current;
+
 SMTask	 *SMTask::stack[SMTASK_MAX_DEPTH];
 int	 SMTask::stack_ptr;
+
 PollVec	 SMTask::block;
 TimeDate SMTask::now;
 
-static int task_count=0;
 static SMTask *init_task=new SMTaskInit;
 
-void SMTask::AddToReadyList()
-{
-   if(prev_next_ready)
-      return;
-   if(current && current->prev_next_ready) {
-      // insert it so that it would be scanned next
-      prev_next_ready=&(current->next_ready);
-   } else {
-      prev_next_ready=&chain_ready;
-   }
-   next_ready=*prev_next_ready;
-   if(*prev_next_ready)
-      (*prev_next_ready)->prev_next_ready=&next_ready;
-   *prev_next_ready=this;
-}
-void SMTask::RemoveFromReadyList()
-{
-   if(!prev_next_ready)
-      return;
-   if(next_ready)
-      next_ready->prev_next_ready=prev_next_ready;
-   *prev_next_ready=next_ready;
-   prev_next_ready=0;
-   next_ready=0;
-}
-
 SMTask::SMTask()
+ : all_tasks_node(this), ready_tasks_node(this),
+   new_tasks_node(this), deleted_tasks_node(this)
 {
    // insert in the chain
-   next=chain;
-   chain=this;
+   all_tasks.add(all_tasks_node);
 
-   next_ready=0;
-   prev_next_ready=0;
-   next_deleting=0;
    suspended=false;
    suspended_slave=false;
    running=0;
    ref_count=0;
    deleting=false;
-   task_count++;
-   AddToReadyList();
+   new_tasks.add(new_tasks_node);
 #ifdef TASK_DEBUG
-   printf("new SMTask %p (count=%d)\n",this,task_count);
+   printf("new SMTask %p (count=%d)\n",this,all_tasks.count());
 #endif
 }
 
@@ -121,37 +95,29 @@ void  SMTask::ResumeSlave()
    if(!IsSuspended())
       ResumeInternal();
 }
+void SMTask::ResumeInternal()
+{
+   if(!new_tasks_node.listed() && !ready_tasks_node.listed())
+      new_tasks.add(new_tasks_node);
+}
 
 SMTask::~SMTask()
 {
 #ifdef TASK_DEBUG
-   printf("delete SMTask %p (count=%d)\n",this,task_count);
+   printf("delete SMTask %p (count=%d)\n",this,all_tasks.count());
 #endif
-   task_count--;
-   if(__builtin_expect(running,0))
-   {
-      fprintf(stderr,"SMTask(%p).running=%d\n",this,running);
-      fprintf(stderr,"SMTask stack:");
-      for(int i=0; i<stack_ptr; i++)
-	 fprintf(stderr," %p",stack[i]);
-      fprintf(stderr,"; current=%p\n",current);
-      abort();
-   }
+   assert(!running);
    assert(!ref_count);
-   assert(!next_ready && !prev_next_ready);
    assert(deleting);
 
+   if(ready_tasks_node.listed())
+      ready_tasks_node.remove();
+   if(new_tasks_node.listed())
+      new_tasks_node.remove();
+   assert(!deleted_tasks_node.listed());
+
    // remove from the chain
-   SMTask **scan=&chain;
-   while(*scan)
-   {
-      if(*scan==this)
-      {
-	 *scan=next;
-	 return;
-      }
-      scan=&((*scan)->next);
-   }
+   all_tasks_node.remove();
 }
 
 void SMTask::DeleteLater()
@@ -159,9 +125,7 @@ void SMTask::DeleteLater()
    if(deleting)
       return;
    deleting=true;
-   RemoveFromReadyList();
-   this->next_deleting=chain_deleting;
-   chain_deleting=this;
+   deleted_tasks.add_tail(deleted_tasks_node);
    PrepareToDie();
 }
 void SMTask::Delete(SMTask *task)
@@ -215,35 +179,52 @@ void SMTask::RollAll(const TimeInterval &max_time)
 int SMTask::CollectGarbage()
 {
    int count=0;
-   bool repeat_gc;
-   do {
-      SMTask *new_chain_deleting=0;
-      repeat_gc=false;
-      while(chain_deleting)
-      {
-	 SMTask *scan=chain_deleting;
-	 chain_deleting=scan->next_deleting;
-	 scan->next_deleting=0;
-	 if(scan->running || scan->ref_count)
-	 {
-	    scan->next_deleting=new_chain_deleting;
-	    new_chain_deleting=scan;
-	    continue;
-	 }
-	 repeat_gc=true;
-	 count++;
-	 delete scan;
-      }
-      chain_deleting=new_chain_deleting;
-   } while(repeat_gc && chain_deleting);
+   xlist_for_each_safe(SMTask,deleted_tasks,node,task,next)
+   {
+      if(task->running || task->ref_count)
+	 continue;
+      node->remove();
+      delete task;
+      count++;
+   }
    return count;
 }
 
+int SMTask::ScheduleThis()
+{
+   assert(ready_tasks_node.listed());
+   if(running)
+      return STALL;
+   if(deleting || IsSuspended())
+   {
+      ready_tasks_node.remove();
+      return STALL;
+   }
+   Enter();	   // mark it current and running.
+   int res=Do();   // let it run.
+   Leave();	   // unmark it running and change current.
+   return res;
+}
+
+int SMTask::ScheduleNew()
+{
+   int res=STALL;
+   xlist_for_each_safe(SMTask,new_tasks,node,task,next)
+   {
+      task->new_tasks_node.remove();
+      ready_tasks.add(task->ready_tasks_node);
+      SMTask *next_task=next->get_obj();
+      if(next_task)  // protect next from deleting
+	 next_task->IncRefCount();
+      res|=task->ScheduleThis();
+      if(next_task)
+	 next_task->DecRefCount();
+   }
+   return res;
+}
 
 void SMTask::Schedule()
 {
-   SMTask *scan;
-
    block.Empty();
 
    // get time once and assume Do() don't take much time
@@ -253,14 +234,16 @@ void SMTask::Schedule()
    if(timer_timeout>=0)
       block.SetTimeout(timer_timeout);
 
-   int res=STALL;
-   for(scan=chain_ready; scan; scan=scan->next_ready)
+   int res=ScheduleNew();
+   xlist_for_each_safe(SMTask,ready_tasks,node,task,next)
    {
-      if(scan->running || scan->IsSuspended())
-	 continue;
-      Enter(scan);	   // mark it current and running.
-      res|=scan->Do();	   // let it run.
-      Leave(scan);	   // unmark it running and change current.
+      SMTask *next_task=next->get_obj();
+      if(next_task)  // protect next from deleting
+	 next_task->IncRefCount();
+      res|=task->ScheduleThis();
+      res|=ScheduleNew(); // run just created tasks immediately
+      if(next_task)
+	 next_task->DecRefCount();
    }
    CollectGarbage();
    if(res)
@@ -282,10 +265,7 @@ SMTaskInit::~SMTaskInit()
 
 int SMTask::TaskCount()
 {
-   int count=0;
-   for(SMTask *scan=chain; scan; scan=scan->next)
-      count++;
-   return count;
+   return all_tasks.count();
 }
 
 void SMTask::Cleanup()
@@ -334,7 +314,7 @@ bool SMTask::TemporaryNetworkError(int err)
 
 void SMTask::PrintTasks()
 {
-   for(SMTask *scan=chain; scan; scan=scan->next)
+   xlist_for_each(SMTask,all_tasks,node,scan)
    {
       const char *c=scan->GetLogContext();
       if(!c) c="";

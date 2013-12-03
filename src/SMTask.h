@@ -23,24 +23,27 @@
 #include "PollVec.h"
 #include "TimeDate.h"
 #include "Ref.h"
+#include "xlist.h"
 
 class SMTask
 {
    virtual int Do() = 0;
 
    // all tasks list
-   SMTask *next;
-   static SMTask *chain;
+   static xlist<SMTask> all_tasks;
+   xlist<SMTask> all_tasks_node;
 
    // ready (not suspended) tasks list
-   SMTask *next_ready;
-   SMTask **prev_next_ready;
-   static SMTask *chain_ready;
-   void AddToReadyList();
-   void RemoveFromReadyList();
+   static xlist<SMTask> ready_tasks;
+   xlist<SMTask> ready_tasks_node;
 
-   SMTask *next_deleting;
-   static SMTask *chain_deleting;
+   // just created or resumed tasks
+   static xlist<SMTask> new_tasks;
+   xlist<SMTask> new_tasks_node;
+
+   // deleted and going to be destroyed tasks
+   static xlist<SMTask> deleted_tasks;
+   xlist<SMTask> deleted_tasks_node;
 
    static PollVec block;
    enum { SMTASK_MAX_DEPTH=64 };
@@ -54,6 +57,9 @@ class SMTask
    int	 ref_count;
    bool	 deleting;
 
+   int ScheduleThis();
+   static int ScheduleNew();
+
 protected:
    enum
    {
@@ -63,8 +69,8 @@ protected:
    };
 
    // SuspendInternal and ResumeInternal usually suspend and resume slave tasks
-   virtual void SuspendInternal() { RemoveFromReadyList(); }
-   virtual void ResumeInternal() { AddToReadyList(); }
+   virtual void SuspendInternal() {}
+   virtual void ResumeInternal();
    virtual void PrepareToDie() {}  // it is called from Delete no matter of running and ref_count
 
    bool Deleted() const { return deleting; }
