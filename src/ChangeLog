@@ -3,6 +3,9 @@
 	* buffer.cc, buffer.h: (TuneGetSize) new method.
 	* ProtoLog.cc: check Log::global for NULL.
 	* FileCopy.cc, FileCopy.h: use TuneGetSize, fixed `verify' type.
+	* FindJobDu.h, Fish.h, Http.h, HttpDir.h, PtyShell.h, SFtp.h:
+	  use SMTaskRef for tasks.
+	* SMTask.cc, SMTask.h: use new xlist; add `deleted' list; add `new' list.
 
 2013-12-02  Alexander V. Lukyanov <lavv17f@gmail.com>
 
