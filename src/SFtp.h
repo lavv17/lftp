@@ -802,7 +802,7 @@ public:
 
 class SFtpDirList : public DirList
 {
-   Ref<IOBuffer> ubuf;
+   SMTaskRef<IOBuffer> ubuf;
    const char *dir;
    bool use_file_set;
    Ref<FileSet> fset;

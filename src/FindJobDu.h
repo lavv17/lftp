@@ -23,7 +23,7 @@
 
 class FinderJob_Du : public FinderJob
 {
-   Ref<IOBuffer> buf;
+   SMTaskRef<IOBuffer> buf;
 
    /* We keep traversing deeper than this, but we never print a total
     * past this. */

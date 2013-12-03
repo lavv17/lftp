@@ -41,7 +41,7 @@ class ParsedURL;
 
 class HttpDirList : public DirList
 {
-   Ref<IOBuffer> ubuf;
+   SMTaskRef<IOBuffer> ubuf;
    const char *curr;
    Ref<ParsedURL> curr_url;
    FileSet all_links;
