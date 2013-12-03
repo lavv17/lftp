@@ -23,6 +23,8 @@
 
 void  ProtoLog::Log2(int level,xstring& str)
 {
+   if(!Log::global)
+      return;
    str.chomp('\n');
    str.chomp('\r');
    str.append('\n');
