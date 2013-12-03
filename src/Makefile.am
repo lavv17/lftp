@@ -76,7 +76,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  misc.h misc.cc fg.cc fg.h module.cc module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h Error.cc Error.h\
  ArgV.cc ArgV.h ascii_ctype.h keyvalue.cc keyvalue.h bookmark.cc bookmark.h\
- Speedometer.cc FileGlob.cc FileGlob.h\
+ Speedometer.cc FileGlob.cc FileGlob.h xlist.h\
  Speedometer.h netrc.cc netrc.h lftp_tinfo.cc lftp_tinfo.h\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
  StringPool.cc StringPool.h DirColors.cc DirColors.h IdNameCache.cc\
