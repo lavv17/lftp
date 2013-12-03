@@ -35,9 +35,6 @@ CDECL_BEGIN
 CDECL_END
 #endif
 
-#define GET_BUFSIZE 0x10000
-#define PUT_LL_MIN  0x2000
-
 class Buffer
 {
 protected:
@@ -196,6 +193,14 @@ protected:
 
    Time event_time; // used to detect timeouts
    int max_buf;
+   int get_size;
+   int last_got;
+   int TuneGetSize(int res);
+
+   enum {
+      GET_BUFSIZE=0x10000,
+      PUT_LL_MIN=0x2000,
+   };
 
 public:
    IOBuffer(dir_t m);

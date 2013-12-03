@@ -52,7 +52,7 @@
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMgr::NoClosure);
-ResDecl buffer_size  ("xfer:buffer-size","0x10000",ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl buffer_size  ("xfer:buffer-size","0x100000",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 // FileCopy
 #define super SMTask
@@ -920,7 +920,7 @@ int FileCopyPeerFA::Do()
 	 return m;
       if(fxp)
 	 return m;
-      res=Get_LL(GET_BUFSIZE);
+      res=TuneGetSize(Get_LL(get_size));
       if(res>0)
       {
 	 EmbraceNewData(res);
@@ -1514,7 +1514,7 @@ int FileCopyPeerFDStream::Do()
 	 return m;
       while(Size()<GET_BUFSIZE)
       {
-	 int res=Get_LL(GET_BUFSIZE);
+	 int res=TuneGetSize(Get_LL(get_size));
 	 if(res>0)
 	 {
 	    EmbraceNewData(res);

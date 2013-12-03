@@ -300,7 +300,7 @@ class FileCopyPeerFA : public FileCopyPeer
 
    int redirections;
 
-   Ref<FileVerificator> verify;
+   SMTaskRef<FileVerificator> verify;
 
 protected:
    void PrepareToDie();
@@ -361,7 +361,7 @@ class FileCopyPeerFDStream : public FileCopyPeer
    bool create_fg_data;
    bool need_seek;
 
-   Ref<FileVerificator> verify;
+   SMTaskRef<FileVerificator> verify;
 
 public:
    void Init();
