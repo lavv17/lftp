@@ -145,7 +145,7 @@ public:
 
 class FishDirList : public DirList
 {
-   Ref<IOBuffer> ubuf;
+   SMTaskRef<IOBuffer> ubuf;
    const xstring_ca pattern;
 
 public:

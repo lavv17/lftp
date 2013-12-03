@@ -138,7 +138,7 @@ class Http : public NetAccess
    bool chunked_trailer;
 
    Ref<DirectedBuffer> inflate;
-   Ref<IOBuffer> propfind;
+   SMTaskRef<IOBuffer> propfind;
 
    bool no_ranges;
    bool seen_ranges_bytes;
