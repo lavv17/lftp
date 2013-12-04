@@ -25,8 +25,7 @@
 #include "xstring.h"
 #include "ResMgr.h"
 
-#undef super
-#define super SMTask
+#define now SMTask::now
 
 Speedometer::Speedometer(const char *p)
 {
@@ -43,14 +42,10 @@ bool Speedometer::Valid()
 {
    return now>=start+TimeDiff(1,0) && now<last_bytes+TimeDiff(period,0);
 }
-int Speedometer::Do()
-{
-   TimeoutS(1);
-   return STALL;
-}
 float Speedometer::Get()
 {
    Add(0);
+   SMTask::current->Timeout(500);
    return rate;
 }
 void Speedometer::Add(int b)

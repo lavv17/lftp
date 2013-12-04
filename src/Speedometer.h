@@ -23,7 +23,7 @@
 #include "SMTask.h"
 #include "ResMgr.h"
 
-class Speedometer : public SMTask, public ResClient
+class Speedometer : public ResClient
 {
    int period;
    float rate;
@@ -51,7 +51,6 @@ public:
    void SetPeriod(int p) { period=p; }
    void SetPeriodName(const char *p) { period_resource=p; Reconfig(0); }
    void SetTerseETA(bool t) { terse=t; }
-   int Do();
    void Reconfig(const char *s);
 };
 
