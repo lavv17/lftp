@@ -1048,7 +1048,7 @@ void Torrent::Accept(int s,const sockaddr_u *addr,IOBuffer *rb)
 void Torrent::AddPeer(TorrentPeer *peer)
 {
    if(black_list->Listed(peer->GetAddress())) {
-      delete peer;
+      Delete(peer);
       return;
    }
    for(int i=0; i<peers.count(); i++) {
@@ -1056,7 +1056,7 @@ void Torrent::AddPeer(TorrentPeer *peer)
 	 if(peer->Connected() && !peers[i]->Connected()) {
 	    peers[i]=peer;
 	 } else {
-	    delete peer;
+	    Delete(peer);
 	 }
 	 return;
       }
@@ -3395,7 +3395,7 @@ void Torrent::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remot
       LogError(3,"peer %s sent unknown info_hash=%s in handshake",
 	 remote_addr->to_string(),info_hash.hexdump());
       close(sock);
-      delete recv_buf;
+      Delete(recv_buf);
       return;
    }
    t->Accept(sock,remote_addr,recv_buf);
