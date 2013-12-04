@@ -74,6 +74,7 @@ protected:
    virtual void PrepareToDie() {}  // it is called from Delete no matter of running and ref_count
 
    bool Deleted() const { return deleting; }
+   virtual ~SMTask();
 
 public:
    static void Block(int fd,int mask) { block.AddFD(fd,mask); }
@@ -100,7 +101,6 @@ public:
    virtual const char *GetLogContext() { return 0; }
 
    SMTask();
-   virtual ~SMTask();
 
    void DeleteLater();
    static void Delete(SMTask *);
@@ -137,17 +137,32 @@ public:
    ~SMTaskInit();
 };
 
-template<class T> class SMTaskRef : public Ref<T>
+template<class T> class SMTaskRef
 {
    SMTaskRef<T>(const SMTaskRef<T>&);  // disable cloning
    void operator=(const SMTaskRef<T>&);   // and assignment
 
+protected:
+   T *ptr;
+
 public:
    SMTaskRef() {}
-   SMTaskRef<T>(T *p) : Ref<T>(SMTask::MakeRef(p)) {}
-   ~SMTaskRef<T>() { SMTask::_DeleteRef(this->ptr); this->ptr=0; }
-   T *borrow() { if(this->ptr) this->ptr->DecRefCount(); return Ref<T>::borrow(); }
-   void operator=(T *p) { this->ptr=static_cast<T*>(SMTask::_SetRef(this->ptr,p)); }
+   SMTaskRef<T>(T *p) : ptr(SMTask::MakeRef(p)) {}
+   ~SMTaskRef<T>() { SMTask::_DeleteRef(ptr); ptr=0; }
+   void operator=(T *p) { ptr=static_cast<T*>(SMTask::_SetRef(ptr,p)); }
+   operator const T*() const { return ptr; }
+   T *operator->() const { return ptr; }
+   T *borrow() { if(ptr) ptr->DecRefCount(); return replace_value(ptr,(T*)0); }
+   const T *get() const { return ptr; }
+   T *get_non_const() const { return ptr; }
+
+   template<class C> const SMTaskRef<C>& Cast() const
+      { void(static_cast<C*>(ptr)); return *(const SMTaskRef<C>*)this; }
+
+   static const SMTaskRef<T> null;
+
+   void _set(T *p) { ptr=p; }
+   void _clear() { ptr=0; }
    void unset() { *this=0; }
 };
 
