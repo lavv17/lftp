@@ -46,6 +46,8 @@ protected:
 
    bool  handle_info(int info); // true if finished
 
+   ~ProcWait();
+
 public:
    int	 Do();
    State GetState() { return status; }
@@ -55,7 +57,6 @@ public:
    void Auto() { auto_die=true; }
 
    ProcWait(pid_t p);
-   ~ProcWait();
 
    static void SIGCHLD_handler(int);
 

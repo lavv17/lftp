@@ -178,6 +178,8 @@ protected:
 
    int device_prefix_len(const char *path) const;
 
+   virtual ~FileAccess();
+
 public:
    virtual const char *GetProto() const = 0; // http, ftp, file etc
    bool SameProtoAs(const FileAccess *fa) const { return !strcmp(GetProto(),fa->GetProto()); }
@@ -255,7 +257,6 @@ public:
    void Init();
    FileAccess() { Init(); }
    FileAccess(const FileAccess *);
-   virtual ~FileAccess();
 
    void	 DontSleep() { try_time=0; }
 
@@ -464,10 +465,10 @@ protected:
    bool follow_symlinks;
 
    void PrepareToDie();
+   ~ListInfo();
 
 public:
    ListInfo(FileAccess *session,const char *path);
-   ~ListInfo();
 
    void SetExclude(const char *p,const PatternSet *e) { exclude_prefix=p; exclude=e; }
 
@@ -500,10 +501,10 @@ protected:
    Ref<Buffer> buf;
    Ref<ArgV> args;
    bool color;
+   ~DirList();
 
 public:
    DirList(FileAccess *s,ArgV *a);
-   ~DirList();
 
    virtual int Do() = 0;
    virtual const char *Status() = 0;
