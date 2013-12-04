@@ -146,7 +146,7 @@ protected:
    T *ptr;
 
 public:
-   SMTaskRef() {}
+   SMTaskRef() { ptr=0; }
    SMTaskRef<T>(T *p) : ptr(SMTask::MakeRef(p)) {}
    ~SMTaskRef<T>() { SMTask::_DeleteRef(ptr); ptr=0; }
    void operator=(T *p) { ptr=static_cast<T*>(SMTask::_SetRef(ptr,p)); }
