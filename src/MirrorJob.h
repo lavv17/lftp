@@ -152,9 +152,9 @@ class MirrorJob : public Job
    int target_redirections;
 
    void HandleChdir(FileAccessRef& session, int &redirections);
-   void HandleListInfoCreation(const FileAccessRef& session,Ref<ListInfo>& list_info,
+   void HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<ListInfo>& list_info,
 	    const char *relative_dir);
-   void HandleListInfo(Ref<ListInfo>& list_info,Ref<FileSet>& set);
+   void HandleListInfo(SMTaskRef<ListInfo>& list_info,Ref<FileSet>& set);
 
 public:
    enum
