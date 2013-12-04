@@ -55,7 +55,7 @@ protected:
 
    off_t pos;
 
-   SMTaskRef<Speedometer> rate;
+   Ref<Speedometer> rate;
    void RateAdd(int n);
 
    void Allocate(int size);
@@ -197,9 +197,10 @@ protected:
    Time event_time; // used to detect timeouts
    int max_buf;
 
+   virtual ~IOBuffer();
+
 public:
    IOBuffer(dir_t m);
-   virtual ~IOBuffer();
    virtual const Time& EventTime()
       {
 	 if(IsSuspended())
