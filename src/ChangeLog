@@ -1,3 +1,14 @@
+2013-12-04  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Torrent.cc: use Delete method for peers.
+	* MirrorJob.cc, MirrorJob.h: use SMTaskRef for ListInfo.
+	* Speedometer.cc, Speedometer.h: don't inherit SMTask.
+	* FileCopy.cc, FileCopy.h: don't use SMTaskRef for Speedometer.
+	* SMTask.h: don't inherit SMTaskRef from Ref, make SMTask dtor
+	  protected.
+	* buffer.h: use plain Ref for Speedometer; make IOBuffer dtor protected.
+	* FileAccess.h, ProcWait.h: make SMTask heirs dtors protected.
+
 2013-12-03  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* buffer.cc, buffer.h: (TuneGetSize) new method.
