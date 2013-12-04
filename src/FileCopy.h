@@ -171,8 +171,8 @@ private:
 
    xstring_c error_text;
 
-   SMTaskRef<Speedometer> rate;
-   SMTaskRef<Speedometer> rate_for_eta;
+   Speedometer rate;
+   Speedometer rate_for_eta;
    int put_buf;
    off_t put_eof_pos;
 
@@ -199,13 +199,13 @@ public:
    off_t GetSize() const;
    int  GetPercentDone() const;
    const char *GetPercentDoneStr() const;
-   float GetRate() const;
-   const char *GetRateStr() const;
-   off_t GetBytesRemaining() const;
-   long GetETA() const { return GetETA(GetBytesRemaining()); }
-   long GetETA(off_t b) const;
-   const char *GetETAStr() const;
-   const char *GetETAStrSFromTime(time_t t) const { return rate_for_eta->GetETAStrSFromTime(t); }
+   float GetRate();
+   const char *GetRateStr();
+   off_t GetBytesRemaining();
+   long GetETA() { return GetETA(GetBytesRemaining()); }
+   long GetETA(off_t b);
+   const char *GetETAStr();
+   const char *GetETAStrSFromTime(time_t t) { return rate_for_eta.GetETAStrSFromTime(t); }
    const char *GetStatus();
    FgData *GetFgData(bool fg);
    pid_t GetProcGroup();
