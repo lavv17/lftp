@@ -609,7 +609,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
    if(res==FA::OK)
       session->Close();
 }
-void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,Ref<ListInfo>& list_info,const char *relative_dir)
+void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<ListInfo>& list_info,const char *relative_dir)
 {
    if(state!=GETTING_LIST_INFO)
       return;
@@ -643,7 +643,7 @@ void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,Ref<ListInfo
    list_info->Roll();
 }
 
-void MirrorJob::HandleListInfo(Ref<ListInfo>& list_info, Ref<FileSet>& set)
+void MirrorJob::HandleListInfo(SMTaskRef<ListInfo>& list_info, Ref<FileSet>& set)
 {
    if(!list_info)
       return;
