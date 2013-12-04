@@ -413,8 +413,8 @@ int FileCopy::Do()
 
 FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
    : get(s), put(d), cont(c),
-   rate(new Speedometer("xfer:rate-period")),
-   rate_for_eta(new Speedometer("xfer:eta-period"))
+   rate("xfer:rate-period"),
+   rate_for_eta("xfer:eta-period")
 {
    set_state(INITIAL);
    int max_buf=buffer_size.Query(0);
@@ -528,52 +528,52 @@ const char *FileCopy::GetPercentDoneStr() const
 }
 void FileCopy::RateAdd(int a)
 {
-   rate->Add(a);
-   rate_for_eta->Add(a);
+   rate.Add(a);
+   rate_for_eta.Add(a);
 }
 void FileCopy::RateReset()
 {
    start_time=now;
-   rate->Reset();
-   rate_for_eta->Reset();
+   rate.Reset();
+   rate_for_eta.Reset();
 }
-float FileCopy::GetRate() const
+float FileCopy::GetRate()
 {
-   if(!rate->Valid() || !put)
+   if(!rate.Valid() || !put)
       return 0;
-   return rate->Get();
+   return rate.Get();
 }
-const char *FileCopy::GetRateStr() const
+const char *FileCopy::GetRateStr()
 {
-   if(!rate->Valid() || !put)
+   if(!rate.Valid() || !put)
       return "";
-   return rate->GetStrS();
+   return rate.GetStrS();
 }
-off_t FileCopy::GetBytesRemaining() const
+off_t FileCopy::GetBytesRemaining()
 {
    if(!get)
       return 0;
    if(get->range_limit==FILE_END)
    {
       off_t size=get->GetSize();
-      if(size<=0 || size<get->GetRealPos() || !rate_for_eta->Valid())
+      if(size<=0 || size<get->GetRealPos() || !rate_for_eta.Valid())
 	 return -1;
       return(size-GetPos());
    }
    return get->range_limit-GetPos();
 }
-const char *FileCopy::GetETAStr() const
+const char *FileCopy::GetETAStr()
 {
    off_t b=GetBytesRemaining();
    if(b<0 || !put)
       return "";
-   return rate_for_eta->GetETAStrSFromSize(b);
+   return rate_for_eta.GetETAStrSFromSize(b);
 }
-long FileCopy::GetETA(off_t b) const
+long FileCopy::GetETA(off_t b)
 {
-   if(b<0 || !rate_for_eta->Valid())
+   if(b<0 || !rate_for_eta.Valid())
       return -1;
-   return (long)(double(b) / rate_for_eta->Get() + 0.5);
+   return (long)(double(b) / rate_for_eta.Get() + 0.5);
 }
 const char *FileCopy::GetStatus()
 {
