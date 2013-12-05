@@ -1,3 +1,8 @@
+2013-12-05  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Http.cc, Http.h: fixed ARRAY_INFO for the case of PROPFIND;
+	  use symbolic error codes.
+
 2013-12-04  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Torrent.cc: use Delete method for peers.
