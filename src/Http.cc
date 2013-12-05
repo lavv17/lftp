@@ -52,13 +52,65 @@ CDECL char *strptime(const char *buf, const char *format, struct tm *tm);
 #define HTTP_DEFAULT_PROXY_PORT	 "3128"
 #define HTTPS_DEFAULT_PORT	 "443"
 
+enum {
+   H_Continue=100,
+   H_Switching_Protocols=101,
+   H_Processing=102,
+   H_Ok=200,
+   H_Created=201,
+   H_Accepted=202,
+   H_Non_Authoritative_Information=203,
+   H_No_Content=204,
+   H_Reset_Content=205,
+   H_Partial_Content=206,
+   H_Multi_Status=207,
+   H_Moved_Permanently=301,
+   H_Found=302,
+   H_See_Other=303,
+   H_Not_Modified=304,
+   H_Use_Proxy=305,
+   H_Temporary_Redirect=307,
+   H_Bad_Request=400,
+   H_Unauthorized=401,
+   H_Payment_Required=402,
+   H_Forbidden=403,
+   H_Not_Found=404,
+   H_Method_Not_Allowed=405,
+   H_Not_Acceptable=406,
+   H_Proxy_Authentication_Required=407,
+   H_Request_Timeout=408,
+   H_Conflict=409,
+   H_Gone=410,
+   H_Length_Required=411,
+   H_Precondition_Failed=412,
+   H_Request_Entity_Too_Large=413,
+   H_Request_URI_Too_Long=414,
+   H_Unsupported_Media_Type=415,
+   H_Requested_Range_Not_Satisfiable=416,
+   H_Expectation_Failed=417,
+   H_Unprocessable_Entity=422,
+   H_Locked=423,
+   H_Failed_Dependency=424,
+   H_Too_Many_Requests=429,
+   H_Internal_Server_Error=500,
+   H_Not_Implemented=501,
+   H_Bad_Gateway=502,
+   H_Service_Unavailable=503,
+   H_Gateway_Timeout=504,
+   H_HTTP_Version_Not_Supported=505,
+   H_Insufficient_Storage=507,
+};
+
 /* Some status code validation macros: */
-#define H_20X(x)        (((x) >= 200) && ((x) < 300))
-#define H_PARTIAL(x)    ((x) == 206)
-#define H_REDIRECTED(x) (((x) == 301) || ((x) == 302) || ((x) == 303) || ((x) == 307))
-#define H_EMPTY(x)	(((x) == 204) || ((x) == 205))
-#define H_CONTINUE(x)	((x) == 100 || (x) == 102)
-#define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == 416)
+#define H_2XX(x)        (((x) >= 200) && ((x) <= 299))
+#define H_5XX(x)        (((x) >= 500) && ((x) <= 599))
+#define H_PARTIAL(x)    ((x) == H_Partial_Content)
+#define H_REDIRECTED(x) (((x) == H_Moved_Permanently) || ((x) == H_Found) || ((x) == H_See_Other) || ((x) == H_Temporary_Redirect))
+#define H_EMPTY(x)	(((x) == H_No_Content) || ((x) == H_Reset_Content))
+#define H_CONTINUE(x)	((x) == H_Continue || (x) == H_Processing)
+#define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == H_Requested_Range_Not_Satisfiable)
+#define H_TRANSIENT(x)	((x)==H_Request_Timeout || (x)==H_Bad_Gateway || (x)==H_Service_Unavailable || (x)==H_Gateway_Timeout)
+#define H_UNSUPPORTED(x) ((x)==H_Bad_Request || (x)==H_Not_Implemented)
 
 #ifndef EINPROGRESS
 #define EINPROGRESS -1
@@ -736,6 +788,41 @@ int Http::SendArrayInfoRequest()
    return req_count;
 }
 
+void Http::ProceedArrayInfo()
+{
+   for(;;)
+   {
+      // skip to next needed file
+      FileInfo *fi=fileset_for_info->next();
+      if(!fi || fi->need)
+	 break;
+   }
+   if(!fileset_for_info->curr())
+   {
+      LogNote(10,"that was the last file info");
+      // received all requested info.
+      state=DONE;
+      return;
+   }
+   // we can avoid reconnection if server supports it.
+   if(keep_alive && (keep_alive_max>1 || keep_alive_max==-1)
+   && (use_head || use_propfind_now))
+   {
+      // we'll have to receive next header, unset the status
+      status.set(0);
+      status_code=0;
+
+      state=CONNECTED;
+      SendArrayInfoRequest();
+      state=RECEIVING_HEADER;
+   }
+   else
+   {
+      Disconnect();
+      try_time=0;
+   }
+}
+
 static const char *extract_quoted_header_value(const char *value)
 {
    static xstring value1;
@@ -773,10 +860,10 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       body_size=bs;
       if(pos==0 && mode!=STORE && mode!=MAKE_DIR && !inflate)
 	 entity_size=body_size;
-      if(pos==0 && opt_size && H_20X(status_code) && !inflate)
+      if(pos==0 && opt_size && H_2XX(status_code) && !inflate)
 	 *opt_size=body_size;
 
-      if(mode==ARRAY_INFO && H_20X(status_code))
+      if(mode==ARRAY_INFO && H_2XX(status_code) && !propfind)
       {
 	 FileInfo *fi=fileset_for_info->curr();
 	 fi->SetSize(body_size);
@@ -804,13 +891,13 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 body_size=last-first+1;
       if(mode!=STORE && mode!=MAKE_DIR)
 	 entity_size=fsize;
-      if(opt_size && H_20X(status_code))
+      if(opt_size && H_2XX(status_code))
 	 *opt_size=fsize;
       return;
    }
    if(!strcasecmp(name,"Last-Modified"))
    {
-      if(!H_20X(status_code))
+      if(!H_2XX(status_code))
 	 return;
 
       time_t t=Http::atotm(value);
@@ -820,7 +907,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(opt_date)
 	 *opt_date=t;
 
-      if(mode==ARRAY_INFO)
+      if(mode==ARRAY_INFO && !propfind)
       {
 	 FileInfo *fi=fileset_for_info->curr();
 	 fi->SetDate(t,0);
@@ -989,34 +1076,51 @@ int Http::Do()
    if(Error())
       return m;
 
-   if(propfind && mode==CHANGE_DIR)
+   if(propfind)
    {
+      if(propfind->Error())
+      {
+	 propfind=0;
+	 if(mode==CHANGE_DIR)
+	 {
+	    SetError(NO_FILE,propfind->ErrorText());
+	    return MOVED;
+	 }
+	 if(propfind->ErrorFatal())
+	    fileset_for_info->next();
+	 Disconnect();
+	 return MOVED;
+      }
       if(propfind->Eof())
       {
 	 const char *b;
 	 int len;
 	 propfind->Get(&b,&len);
 	 FileSet *fs=HttpListInfo::ParseProps(b,len,GetCwd());
+	 propfind=0;
 	 if(fs)
 	 {
+	    if(mode==ARRAY_INFO)
+	       fileset_for_info->Merge(fs);
 	    FileInfo *fi=fs->curr();
 	    if(fi && fi->Has(fi->TYPE))
 	    {
-	       new_cwd->is_file=(fi->filetype!=fi->DIRECTORY);
+	       if(mode==CHANGE_DIR)
+		  new_cwd->is_file=(fi->filetype!=fi->DIRECTORY);
 	       fi->MakeLongName();
 	       LogNote(9,"%s",fi->longname.get());
 	    }
 	 }
-	 cwd.Set(new_cwd);
-	 cache->SetDirectory(this, "", !cwd.is_file);
+	 m=MOVED;
 	 state=DONE;
-	 propfind=0;
-	 return MOVED;
-      }
-      if(propfind->Error()) {
-	 SetError(NO_FILE,propfind->ErrorText());
-	 propfind=0;
-	 return MOVED;
+	 if(mode==CHANGE_DIR)
+	 {
+	    cwd.Set(new_cwd);
+	    cache->SetDirectory(this, "", !cwd.is_file);
+	    return m;
+	 }
+	 else if(mode==ARRAY_INFO)
+	    ProceedArrayInfo();
       }
    }
 
@@ -1266,7 +1370,7 @@ int Http::Do()
    case RECEIVING_HEADER:
       if(conn->send_buf->Error() || conn->recv_buf->Error())
       {
-	 if((mode==STORE || special) && status_code && !H_20X(status_code))
+	 if((mode==STORE || special) && status_code && !H_2XX(status_code))
 	    goto pre_RECEIVING_BODY;   // assume error.
       handle_buf_error:
 	 if(conn->send_buf->Error())
@@ -1312,7 +1416,7 @@ int Http::Do()
 	       conn->recv_buf->Skip(eol_size);
 	       if(tunnel_state==TUNNEL_WAITING)
 	       {
-		  if(H_20X(status_code))
+		  if(H_2XX(status_code))
 		  {
 #if USE_SSL
 		     if(https)
@@ -1328,7 +1432,12 @@ int Http::Do()
 	       {
 		  chunked_trailer=false;
 		  chunked=false;
-		  state=DONE;
+		  if(propfind)
+		     propfind->PutEOF();
+		  if(mode==ARRAY_INFO)
+		     state=CONNECTED;
+		  else
+		     state=DONE;
 		  return MOVED;
 	       }
 	       if(H_CONTINUE(status_code))
@@ -1339,56 +1448,31 @@ int Http::Do()
 	       }
 	       if(mode==ARRAY_INFO)
 	       {
-		  if((status_code==400 || status_code==501)
-		  && !xstrcmp(last_method,"PROPFIND"))
+		  if(!xstrcmp(last_method,"PROPFIND"))
 		  {
-		     ResMgr::Set("http:use-propfind",hostname,"no");
-		     use_propfind_now=false;
-		     try_time=0;
-		     Disconnect();
-		     return MOVED;
+		     if(H_UNSUPPORTED(status_code))
+		     {
+			ResMgr::Set("http:use-propfind",hostname,"no");
+			use_propfind_now=false;
+			try_time=0;
+			Disconnect();
+			return MOVED;
+		     }
+		     goto pre_RECEIVING_BODY;
 		  }
-		  // we'll have to receive next header
-		  status.set(0);
-		  status_code=0;
-		  for(;;)
-		  {
-		     // skip to next needed file
-		     FileInfo *fi=fileset_for_info->next();
-		     if(!fi || fi->need)
-			break;
-		  }
-		  if(!fileset_for_info->curr())
-		  {
-		     LogNote(10,"that was the last file info");
-		     // received all requested info.
-		     state=DONE;
-		     return MOVED;
-		  }
-		  // we can avoid reconnection if server supports it.
-		  if(keep_alive && (keep_alive_max>1 || keep_alive_max==-1) && use_head)
-		  {
-		     state=CONNECTED;
-		     SendArrayInfoRequest();
-		     state=RECEIVING_HEADER;
-		  }
-		  else
-		  {
-		     Disconnect();
-		     try_time=0;
-		  }
+		  ProceedArrayInfo();
 		  return MOVED;
 	       }
 	       else if(mode==STORE || mode==MAKE_DIR)
 	       {
-		  if((sent_eot || pos==entity_size) && H_20X(status_code))
+		  if((sent_eot || pos==entity_size) && H_2XX(status_code))
 		  {
 		     state=DONE;
 		     Disconnect();
 		     state=DONE;
 		     return MOVED;
 		  }
-		  if(H_20X(status_code))
+		  if(H_2XX(status_code))
 		  {
 		     // should never happen
 		     LogError(0,"Success, but did nothing??");
@@ -1417,7 +1501,7 @@ int Http::Do()
 	       {
 		  // simple 0.9 ?
 		  proto_version=0x09;
-		  status_code=200;
+		  status_code=H_Ok;
 		  LogError(0,_("Could not parse HTTP status line"));
 		  if(mode==STORE)
 		  {
@@ -1435,14 +1519,14 @@ int Http::Do()
 	       if(proto_version>=0x11)
 		  keep_alive=true;
 
-	       if(!H_20X(status_code))
+	       if(!H_2XX(status_code))
 	       {
 		  if(H_CONTINUE(status_code))
 		     return MOVED;
 
-		  if(status_code/100==5) // server failed, try another
+		  if(H_5XX(status_code)) // server failed, try another
 		     NextPeer();
-		  if(status_code==504) // Gateway Timeout
+		  if(status_code==H_Gateway_Timeout)
 		  {
 		     const char *cc=Query("cache-control");
 		     if(cc && strstr(cc,"only-if-cached"))
@@ -1452,19 +1536,16 @@ int Http::Do()
 			   SetError(NO_FILE,_("Object is not cached and http:cache-control has only-if-cached"));
 			   return MOVED;
 			}
-			status_code=406;  // so that no retry will be attempted
+			status_code=H_Not_Acceptable; // so that no retry will be attempted
 		     }
 		  }
 		  // check for retriable codes
-		  if(status_code==408  // Request Timeout
-		  || status_code==502  // Bad Gateway
-		  || status_code==503  // Service Unavailable
-		  || status_code==504) // Gateway Timeout
+		  if(H_TRANSIENT(status_code))
 		  {
 		     Disconnect();
 		     return MOVED;
 		  }
-		  if(status_code==429) // Too Many Requests
+		  if(status_code==H_Too_Many_Requests)
 		  {
 		     Disconnect();
 		     if(retry_after)
@@ -1519,7 +1600,7 @@ int Http::Do()
 	 return MOVED;
       }
 
-      if(!H_20X(status_code))
+      if(!H_2XX(status_code))
       {
 	 xstring err;
 	 int code=NO_FILE;
@@ -1567,11 +1648,9 @@ int Http::Do()
 	 else
 	 {
 	    const char *closure=file;
-	    if(status_code==400  // Bad request
-	    || status_code==405  // Method Not Allowed
-	    || status_code==501) // Not Implemented
+	    if(H_UNSUPPORTED(status_code) || status_code==H_Method_Not_Allowed)
 	    {
-	       if(status_code==400 || status_code==501)
+	       if(H_UNSUPPORTED(status_code))
 	       {
 		  if(!xstrcmp(last_method,"PROPFIND"))
 		     ResMgr::Set("http:use-propfind",hostname,"no");
@@ -1596,20 +1675,27 @@ int Http::Do()
 	 }
 	 state=RECEIVING_BODY;
 	 LogErrorText();
-	 SetError(code,err);
+	 if(mode==ARRAY_INFO)
+	 {
+	    if(!H_TRANSIENT(status_code))
+	       fileset_for_info->next();
+	    try_time=0;
+	    Disconnect();
+	 }
+	 else
+	    SetError(code,err);
 	 return MOVED;
       }
-      if(mode==CHANGE_DIR)
+      if(!xstrcmp(last_method,"PROPFIND")
+      && (mode==ARRAY_INFO || mode==CHANGE_DIR))
+	 propfind=new IOBufferFileAccess(this);
+
+      if(mode==CHANGE_DIR && !propfind)
       {
-	 if(!xstrcmp(last_method,"PROPFIND"))
-	    propfind=new IOBufferFileAccess(this);
-	 else
-	 {
-	    cwd.Set(new_cwd);
-	    cache->SetDirectory(this, "", !cwd.is_file);
-	    state=DONE;
-	    return MOVED;
-	 }
+	 cwd.Set(new_cwd);
+	 cache->SetDirectory(this, "", !cwd.is_file);
+	 state=DONE;
+	 return MOVED;
       }
 
       LogNote(9,_("Receiving body..."));
@@ -1619,7 +1705,7 @@ int Http::Do()
 	 if(mode!=STORE && mode!=MAKE_DIR && body_size>=0)
 	 {
 	    entity_size=body_size;
-	    if(opt_size && H_20X(status_code))
+	    if(opt_size && H_2XX(status_code))
 	       *opt_size=entity_size;
 	 }
 	 real_pos=0;
@@ -1633,7 +1719,7 @@ int Http::Do()
       if(conn->recv_buf->Size()>=rate_limit->BytesAllowedToGet())
       {
 	 conn->recv_buf->Suspend();
-	 Timeout(1000);
+	 TimeoutS(1);
       }
       else if(conn->recv_buf->Size()>=max_buf)
       {
