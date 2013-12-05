@@ -94,6 +94,7 @@ class Http : public NetAccess
 	 SendRequest(connection,file);
       }
    int SendArrayInfoRequest(); // returns count of sent requests
+   void ProceedArrayInfo();
    void SendPropfind(const xstring& efile,int depth);
    void SendPropfindBody();
    int status_code;
