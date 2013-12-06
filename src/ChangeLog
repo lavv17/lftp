@@ -1,3 +1,8 @@
+2013-12-06  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* xheap.h: min-heap implementation with random remove.
+	* Timer.cc, Timer.h, Makefile.am: use xheap and xlist for Timer.
+
 2013-12-05  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc, Http.h: fixed ARRAY_INFO for the case of PROPFIND;
