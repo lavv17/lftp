@@ -22,6 +22,8 @@
 
 #include "SMTask.h"
 #include "ResMgr.h"
+#include "xlist.h"
+#include "xheap.h"
 
 class Timer
 {
@@ -33,12 +35,11 @@ class Timer
    const char *closure;
 
    static int infty_count;
-   static Timer *chain_all;
-   Timer *next_all;
-   static Timer *chain_running;
-   Timer *next_running;
-   Timer *prev_running;
-   void remove_from_running_list();
+   static xlist<Timer> all_timers;
+   xlist<Timer> all_timers_node;
+   static xheap<Timer> running_timers;
+   xheap<Timer>::node running_timers_node;
+
    void re_sort();
    void re_set();
    void add_random();
@@ -72,5 +73,7 @@ public:
    static int GetTimeout();
    static void ReconfigAll(const char *);
 };
+
+bool operator<(const Timer& a,const Timer& b);
 
 #endif

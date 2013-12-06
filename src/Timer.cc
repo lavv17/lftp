@@ -25,17 +25,18 @@
 
 #define now SMTask::now
 
-Timer *Timer::chain_all;
-Timer *Timer::chain_running;
+xlist<Timer> Timer::all_timers;
+xheap<Timer> Timer::running_timers;
 int Timer::infty_count;
 
 int Timer::GetTimeout()
 {
-   while(chain_running && chain_running->Stopped())
-      chain_running->re_sort();
-   if(!chain_running)
+   Timer *t;
+   while((t=running_timers.get_min())!=0 && t->Stopped())
+      running_timers.pop_min();
+   if(!t)
       return infty_count?HOUR*1000:-1;
-   TimeDiff remains(chain_running->stop,now);
+   TimeDiff remains(t->stop,now);
    return remains.MilliSeconds();
 }
 TimeInterval Timer::TimeLeft() const
@@ -122,40 +123,29 @@ void Timer::init()
 {
    resource=0;
    closure=0;
-   next_running=prev_running=0;
    random_max=0;
-   next_all=chain_all;
-   chain_all=this;
-}
-void Timer::remove_from_running_list()
-{
-   if(next_running)
-      next_running->prev_running=prev_running;
-   if(prev_running)
-      prev_running->next_running=next_running;
-   if(chain_running==this)
-      chain_running=next_running;
+   all_timers.add(all_timers_node);
 }
 Timer::~Timer()
 {
-   remove_from_running_list();
+   running_timers.remove(running_timers_node);
+   all_timers_node.remove();
    infty_count-=IsInfty();
-   Timer **scan=&chain_all;
-   while(*scan!=this)
-      scan=&scan[0]->next_all;
-   *scan=next_all;
 }
-Timer::Timer() : last_setting(1,0)
+Timer::Timer() : last_setting(1,0),
+   all_timers_node(this), running_timers_node(this)
 {
    init();
 }
-Timer::Timer(const TimeInterval &d) : last_setting(d)
+Timer::Timer(const TimeInterval &d) : last_setting(d),
+   all_timers_node(this), running_timers_node(this)
 {
    init();
    infty_count+=IsInfty();
    re_set();
 }
-Timer::Timer(const char *r,const char *c) : last_setting(0,0)
+Timer::Timer(const char *r,const char *c) : last_setting(0,0),
+   all_timers_node(this), running_timers_node(this)
 {
    init();
    resource=r;
@@ -163,65 +153,25 @@ Timer::Timer(const char *r,const char *c) : last_setting(0,0)
    start=now;
    reconfig(r);
 }
-Timer::Timer(int s,int ms)
+Timer::Timer(int s,int ms) :
+   all_timers_node(this), running_timers_node(this)
 {
    init();
    Set(TimeInterval(s,ms));
 }
 void Timer::re_sort()
 {
-   if(now>=stop || IsInfty())
-   {
-      // make sure it is not in the list.
-      if(prev_running==0 && next_running==0 && chain_running!=this)
-	 return;
-      if(prev_running)
-	 prev_running->next_running=next_running;
-      if(next_running)
-	 next_running->prev_running=prev_running;
-      if(chain_running==this)
-	 chain_running=next_running;
-      next_running=prev_running=0;
-   }
-   else
-   {
-      // find new location in the list.
-      Timer *new_next=next_running;
-      Timer *new_prev=prev_running;
-
-      if(prev_running==0 && next_running==0 && chain_running!=this)
-	 new_next=chain_running; // it was not in the running list.
-      else if((!prev_running || prev_running->stop<stop)
-	   && (!next_running || stop<next_running->stop))
-	 return;  // it was already properly sorted.
-
-      remove_from_running_list();
-
-      // find new position in the list.
-      while(new_next && new_next->stop<stop)
-      {
-	 new_prev=new_next;
-	 new_next=new_next->next_running;
-      }
-      while(new_prev && stop<new_prev->stop)
-      {
-	 new_next=new_prev;
-	 new_prev=new_prev->prev_running;
-      }
-
-      // re-insert it.
-      next_running=new_next;
-      prev_running=new_prev;
-      if(new_next)
-	 new_next->prev_running=this;
-      if(new_prev)
-	 new_prev->next_running=this;
-      if(!new_prev)
-	 chain_running=this;
-   }
+   running_timers.remove(running_timers_node);
+   if(now<stop && !IsInfty())
+      running_timers.add(running_timers_node);
 }
 void Timer::ReconfigAll(const char *r)
 {
-   for(Timer *scan=chain_all; scan; scan=scan->next_all)
+   xlist_for_each(Timer,all_timers,node,scan)
       scan->reconfig(r);
+}
+
+bool operator<(const Timer& a,const Timer& b)
+{
+   return a.TimeLeft()<b.TimeLeft();
 }
