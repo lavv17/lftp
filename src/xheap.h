@@ -81,6 +81,21 @@ private:
       ptr(count())->heap_index=0;
       heap.chop();
    }
+   void fix(int i) {
+      siftdown(i);
+      siftup(i);
+   }
+   void remove(int i) {
+      if(i==count()) {
+	 chop();
+	 return;
+      }
+      assert(i>0 && i<count());
+      swap(i,count());
+      chop();
+      fix(i);
+      costly_assert(is_heap(1,count()));
+   }
 public:
    void add(node& n) {
       if(n.heap_index) {
@@ -93,6 +108,9 @@ public:
       siftup(n.heap_index=count());
       costly_assert(is_heap(1,count()));
    }
+   void fix(node& n) {
+      fix(n.heap_index);
+   }
    T *get_min() {
       return count()>0?ptr(1)->obj:0;
    }
@@ -100,23 +118,15 @@ public:
       T *m=get_min();
       if(!m)
 	 return 0;
-      swap(1,count());
-      chop();
-      siftdown(1);
-      costly_assert(is_heap(1,count()));
+      remove(1);
       return m;
    }
    void remove(node& x) {
       if(!x.heap_index)
 	 return;
-      int i=x.heap_index;
-      assert(i>0 && i<=count());
-      assert(ptr(i)==&x);
-      swap(i,count());
-      chop();
-      siftdown(i);
-      siftup(i);
-      costly_assert(is_heap(1,count()));
+      assert(ptr(x.heap_index)==&x);
+      remove(x.heap_index);
+      assert(!x.heap_index);
    }
 };
 
