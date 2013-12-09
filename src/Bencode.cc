@@ -122,7 +122,7 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
       while(s_len>1 && *s!='e')
       {
 	 int rest1;
-	 BeNode *n=Parse(s,s_len,&rest1);
+	 Ref<BeNode> n(Parse(s,s_len,&rest1));
 	 if(!n) {
 	    *rest=rest1;
 	    return 0;
@@ -139,7 +139,6 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
 	    return 0;
 	 }
 	 map.add(n->str,v);
-	 delete n;
 	 s+=(s_len-rest1);
 	 s_len=rest1;
       }
