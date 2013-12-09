@@ -1075,6 +1075,13 @@ void FileCopyPeerFA::RemoveFile()
 
 int FileCopyPeerFA::Get_LL(int len)
 {
+   if(get_delay>0)
+   {
+      if(!get_ll_timer.Stopped())
+	 return 0;
+      session->ResumeSlave();
+   }
+
    int res=0;
 
    if(session->IsClosed())
@@ -1090,6 +1097,7 @@ int FileCopyPeerFA::Get_LL(int len)
    res=session->Read(GetSpace(len),len);
    if(res<0)
    {
+      get_delay=0;
       if(res==FA::DO_AGAIN)
 	 return 0;
       if(res==FA::FILE_MOVED)
@@ -1168,13 +1176,21 @@ int FileCopyPeerFA::Get_LL(int len)
       SetError(session->StrError(res));
       return -1;
    }
-   if(res==0)
+   else if(res==0)
    {
       eof=true;
       FileAccess::cache->Add(session,file,FAmode,FA::OK,this);
       SetSuggestedFileName(session->GetSuggestedFileName());
       session->Close();
    }
+   else if(res<len/2 && get_delay<50)
+   {
+      get_delay++;
+      get_ll_timer.SetMilliSeconds(get_delay);
+      session->SuspendSlave();
+   }
+   else if(res==len && get_delay>0)
+      get_delay/=2;
    return res;
 }
 
@@ -1256,6 +1272,7 @@ off_t FileCopyPeerFA::GetRealPos()
 
 void FileCopyPeerFA::Init()
 {
+   get_delay=0;
    fxp=false;
    try_time=NO_DATE;
    retries=-1;

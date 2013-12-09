@@ -290,6 +290,10 @@ class FileCopyPeerFA : public FileCopyPeer
    int Put_LL(const char *buf,int size);
    int PutEOF_LL();
 
+   // to read data in larger quantities, delay the read op
+   Timer get_ll_timer;
+   int get_delay;
+
    FileSet info;
 
    bool fxp;   // FXP (ftp<=>ftp copy) active
