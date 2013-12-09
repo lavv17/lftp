@@ -1,3 +1,31 @@
+2013-12-09  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Bencode.cc: fixed a mem leak (thanks to David Binderman).
+	* FileCopyFtp.cc, FileCopy.cc: minor style changes.
+	* ResMgr.cc, HttpDir.cc: remove unused old code.
+
+2013-12-05  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Http.cc, Http.h: fixed ARRAY_INFO for the case of PROPFIND;
+	  use symbolic error codes.
+
+2013-12-04  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* MirrorJob.cc, MirrorJob.h: use SMTaskRef for ListInfo.
+	* Speedometer.cc, Speedometer.h: don't inherit SMTask.
+	* FileCopy.cc, FileCopy.h: don't use SMTaskRef for Speedometer.
+	* buffer.h: use plain Ref for Speedometer.
+
+2013-12-03  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* FindJobDu.h, Fish.h, Http.h, HttpDir.h, PtyShell.h, SFtp.h:
+	  use SMTaskRef for tasks.
+
+2013-11-29  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* GetPass.cc, complete.cc: don't call SMTask dtor directly.
+	* DirColors.h: no need to inherit SMTask, use ResClient.
+
 2013-11-27  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: fixed ARRAY_INFO in keep-alive http connection.

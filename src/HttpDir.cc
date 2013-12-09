@@ -378,7 +378,6 @@ static bool try_apache_unixlike(file_info &info,const char *buf,
 
    // Apache Unix-like listing (from apache proxy):
    //   Perms Nlnk user [group] size Mon DD (YYYY or hh:mm)
-   int perms_code;
    char year_or_time[6];
    int consumed;
 
@@ -391,7 +390,7 @@ static bool try_apache_unixlike(file_info &info,const char *buf,
       n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",info.perms,&info.nlink,
 	    info.user,&info.size,info.month_name,&info.day,year_or_time,&consumed);
    }
-   if(n>=7 && -1!=(perms_code=parse_perms(info.perms+1))
+   if(n>=7 && -1!=parse_perms(info.perms+1)
    && -1!=(info.month=parse_month(info.month_name))
    && -1!=parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
    {
@@ -499,7 +498,6 @@ static bool try_wwwoffle_ftp(file_info &info,const char *buf,
    info.clear();
 
    //   Perms Nlnk user [group] size Mon DD (YYYY or hh:mm)
-   int perms_code;
    char year_or_time[6];
    int consumed;
 
@@ -512,7 +510,7 @@ static bool try_wwwoffle_ftp(file_info &info,const char *buf,
       n=sscanf(buf,"%11s %d %31s %lld %3s %2d %5s%n",info.perms,&info.nlink,
 	    info.user,&info.size,info.month_name,&info.day,year_or_time,&consumed);
    }
-   if(n>=7 && -1!=(perms_code=parse_perms(info.perms+1))
+   if(n>=7 && -1!=parse_perms(info.perms+1)
    && -1!=(info.month=parse_month(info.month_name))
    && -1!=parse_year_or_time(year_or_time,&info.year,&info.hour,&info.minute))
    {
