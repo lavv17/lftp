@@ -44,7 +44,7 @@ void Log::Init()
 
 bool Log::WillOutput(int l)
 {
-   if(!enabled || l>level || output==-1)
+   if(!this || !enabled || l>level || output==-1)
       return false;
    if(tty)
    {
