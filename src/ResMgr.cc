@@ -212,26 +212,15 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
 
    int n=0;
    int dn=0;
-   int size=0;
    if(!only_defaults)
    {
       for(scan=chain; scan; scan=scan->next)
-      {
-	 size+=4+strlen(scan->type->name);
-	 if(scan->closure)
-	    size+=1+1+2*strlen(scan->closure)+1;
-	 size+=1+1+2*strlen(scan->value)+1+1;
 	 n++;
-      }
    }
    if(with_defaults || only_defaults)
    {
       for(dscan=type_chain; dscan; dscan=dscan->next)
-      {
-	 size+=4+strlen(dscan->name);
-	 size+=1+1+2*xstrlen(dscan->defvalue)+1+1;
 	 dn++;
-      }
    }
 
    xstring res("");

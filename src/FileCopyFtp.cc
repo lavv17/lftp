@@ -70,7 +70,7 @@ int FileCopyFtp::Do()
    {
       get->OpenSession();
       ftp_src->SetCopyMode(Ftp::COPY_SOURCE,passive_source,protect,
-	    !passive_source^passive_ssl_connect,src_retries,src_try_time);
+	    !(passive_source^passive_ssl_connect),src_retries,src_try_time);
       m=MOVED;
    }
    if(ftp_dst->IsClosed())

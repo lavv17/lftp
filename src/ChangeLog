@@ -2,6 +2,10 @@
 
 	* FileCopy.cc, FileCopy.h: add a delay when Read returns too small
 	  portions of data, it should decrease the number of syscalls.
+	* Bencode.cc: fixed a mem leak (thanks to David Binderman).
+	* FileCopyFtp.cc, FileCopy.cc: minor style changes.
+	* ResMgr.cc, HttpDir.cc: remove unused old code.
+	* log.cc: check Log::global for NULL, avoid SEGV on exit.
 
 2013-12-06  Alexander V. Lukyanov <lavv17f@gmail.com>
 
