@@ -1,3 +1,21 @@
+2013-12-11  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* xstring.cc, xstring.h: shrink buffer explicitly.
+	* PollVec.cc, PollVec.h: use select; (FDReady) new method.
+	* TimeDate.cc, TimeDate.h: change to microsecond resolution.
+	* Timer.cc, Timer.h: (GetTimeoutTV) new method.
+	* SMTask.cc, SMTask.h: use Timer::GetTimeoutTV; add resumed task to
+	  the tail of new_tasks list.
+	* buffer.cc, buffer.h: change buffer size tuning; remove last_got member;
+	  don't call down->Do in BufferStacked; use last select result
+	  to save a read() system call.
+	* ftpclass.h: don't suspend control_recv so that control_sock gets
+	  polled when delaying data read ops.
+	* CharReader.cc: check last select result before reading.
+	* FileCopy.cc: use microseconds for delaying reads; don't reset delay
+	  on data unavailability; don't increase delay when read returned
+	  enough data.
+
 2013-12-09  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* FileCopy.cc, FileCopy.h: add a delay when Read returns too small
