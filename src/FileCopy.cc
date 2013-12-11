@@ -54,6 +54,12 @@ ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::N
 ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl buffer_size  ("xfer:buffer-size","0x100000",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
+enum {
+   MAX_DELAY=30000,
+   DELAY_STEP=30,
+   MAX_READ_TO_DELAY=0x4000,
+};
+
 // FileCopy
 #define super SMTask
 
@@ -1097,7 +1103,6 @@ int FileCopyPeerFA::Get_LL(int len)
    res=session->Read(GetSpace(len),len);
    if(res<0)
    {
-      get_delay=0;
       if(res==FA::DO_AGAIN)
 	 return 0;
       if(res==FA::FILE_MOVED)
@@ -1183,10 +1188,10 @@ int FileCopyPeerFA::Get_LL(int len)
       SetSuggestedFileName(session->GetSuggestedFileName());
       session->Close();
    }
-   else if(res<len/2 && get_delay<50)
+   else if(res<len/2 && res<=MAX_READ_TO_DELAY && get_delay<MAX_DELAY)
    {
-      get_delay++;
-      get_ll_timer.SetMilliSeconds(get_delay);
+      get_delay+=DELAY_STEP;
+      get_ll_timer.SetMicroSeconds(get_delay);
       session->SuspendSlave();
    }
    else if(res==len && get_delay>0)
