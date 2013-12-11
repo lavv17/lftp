@@ -30,6 +30,11 @@ int CharReader::Do()
    int m=STALL;
    if(ch!=NOCHAR)
       return m;
+   if(!Ready(fd,POLLIN))
+   {
+      Block(fd,POLLIN);
+      return m;
+   }
 
    int oldfl=fcntl(fd,F_GETFL);
    if(!(oldfl&O_NONBLOCK))
