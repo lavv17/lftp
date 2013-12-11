@@ -65,9 +65,13 @@ void xstring::get_space2(size_t s,size_t g)
       buf=(char*)xmalloc(size=s+1);
    else if(size<s+1)
       buf=(char*)xrealloc(buf,size=(s|(g-1))+1);
-   else if(size>=g*8 && s+1<=size/2)
-      buf=(char*)xrealloc(buf,size/=2);
    buf[s]=0;
+}
+void xstring::shrink_space()
+{
+   enum { MIN_SIZE=128 };
+   if(buf && size>MIN_SIZE)
+      buf=(char*)xrealloc(buf,((len+1)|(MIN_SIZE-1))+1);
 }
 char *xstring::add_space(size_t s)
 {
@@ -361,6 +365,11 @@ xstring& xstring::get_tmp()
 {
    static xstring revolver[16];
    static int i;
+
+   enum { MAX_REVOLVER_SIZE=0x1000 };
+   if(revolver[i].size>MAX_REVOLVER_SIZE)
+      revolver[i].shrink_space();
+
    int next=(i+1)&15;
    xstring& tmp=revolver[i];
    // keep the oldest tmp clear to trigger NULL dereference

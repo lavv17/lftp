@@ -158,6 +158,7 @@ public:
 
    void get_space(size_t s);
    void get_space2(size_t s,size_t g);
+   void shrink_space();
    char *add_space(size_t s);
    void add_commit(int new_len) { len+=new_len; }
 
