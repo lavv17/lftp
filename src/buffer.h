@@ -194,7 +194,6 @@ protected:
    Time event_time; // used to detect timeouts
    int max_buf;
    int get_size;
-   int last_got;
    int TuneGetSize(int res);
 
    enum {

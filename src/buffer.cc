@@ -401,7 +401,7 @@ void DirectedBuffer::EmbraceNewData(int len)
 
 IOBuffer::IOBuffer(dir_t m)
    : DirectedBuffer(m), event_time(now),
-     max_buf(0), get_size(GET_BUFSIZE), last_got(0)
+     max_buf(0), get_size(GET_BUFSIZE)
 {
 }
 IOBuffer::~IOBuffer()
@@ -437,7 +437,7 @@ int IOBuffer::TuneGetSize(int res)
    {
       // buffer size tuning depending on data rate
       const int max_get_size=(max_buf?max_buf:0x100000);
-      if(get_size<=max_get_size/2 && Size()<last_got/2)
+      if(res>get_size/2 && Size()+get_size*2<=max_get_size)
 	 get_size*=2;
    }
    else
@@ -445,7 +445,6 @@ int IOBuffer::TuneGetSize(int res)
       if(get_size>=GET_BUFSIZE*2)
 	 get_size/=2;
    }
-   last_got=res;
    return res;
 }
 
@@ -528,7 +527,6 @@ int IOBufferStacked::Do()
       break;
 
    case GET:
-      m|=down->Do();
       if(eof)
 	 return m;
       res=Get_LL(/*unused*/0);
@@ -672,6 +670,12 @@ int IOBufferFDStream::Get_LL(int size)
       if(stream->error())
 	 goto stream_err;
       TimeoutS(1);
+      return 0;
+   }
+
+   if(!Ready(fd,POLLIN))
+   {
+      Block(fd,POLLIN);
       return 0;
    }
 
