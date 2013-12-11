@@ -29,16 +29,19 @@ xlist<Timer> Timer::all_timers;
 xheap<Timer> Timer::running_timers;
 int Timer::infty_count;
 
-int Timer::GetTimeout()
+timeval Timer::GetTimeoutTV()
 {
    Timer *t;
    while((t=running_timers.get_min())!=0 && t->Stopped())
       running_timers.pop_min();
-   if(!t)
-      return infty_count?HOUR*1000:-1;
+   if(!t) {
+      timeval tv={infty_count?HOUR:-1, 0};
+      return tv;
+   }
    TimeDiff remains(t->stop,now);
-   return remains.MilliSeconds();
+   return remains.toTimeval();
 }
+
 TimeInterval Timer::TimeLeft() const
 {
    if(IsInfty())

@@ -58,6 +58,7 @@ public:
    void Set(const TimeInterval&);
    void Set(time_t s,int ms=0) { Set(TimeInterval(s,ms)); }
    void SetMilliSeconds(int ms) { Set(TimeInterval(0,ms)); }
+   void SetMicroSeconds(int us) { Set(TimeInterval(0,0,us)); }
    void SetResource(const char *,const char *);
    void AddRandom(double r);
    void Reset(const Time &t);
@@ -70,7 +71,7 @@ public:
    TimeInterval TimeLeft() const;
    bool IsInfty() const { return last_setting.IsInfty(); }
    const Time &GetStartTime() const { return start; }
-   static int GetTimeout();
+   static timeval GetTimeoutTV();
    static void ReconfigAll(const char *);
 };
 

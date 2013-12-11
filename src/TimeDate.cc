@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#include <limits.h>
 #include "TimeDate.h"
 #include "misc.h"
 #include "SMTask.h"
@@ -25,42 +26,41 @@
 
 void time_tuple::normalize()
 {
-   if(msec>=1000 || msec<=-1000)
+   if(usec>=1000000 || usec<=-1000000)
    {
-      sec+=msec/1000;
-      msec%=1000;
+      sec+=usec/1000000;
+      usec%=1000000;
    }
-   if(msec<0)
+   if(usec<0)
    {
-      msec+=1000;
+      usec+=1000000;
       sec-=1;
    }
 }
-void time_tuple::add(time_t s,int ms)
+void time_tuple::addU(time_t s,int us)
 {
    sec+=s;
-   msec+=ms;
-   if(msec>=1000)
-      msec-=1000,sec++;
-   else if(msec<0)
-      msec+=1000,sec--;
+   usec+=us;
+   if(usec>=1000000)
+      usec-=1000000,sec++;
+   else if(usec<0)
+      usec+=1000000,sec--;
 }
 void time_tuple::add(double s)
 {
    time_t s_int=time_t(s);
-   add(s_int,int((s-s_int)*1000));
+   addU(s_int,int((s-s_int)*1000000));
 }
 double time_tuple::to_double() const
 {
-   return sec+msec/1000.;
+   return sec+usec/1000000.;
 }
 void Time::SetToCurrentTime()
 {
    time_t s;
-   int ms;
-   xgettimeofday(&s,&ms);
-   ms/=1000;
-   set(s,ms);
+   int us;
+   xgettimeofday(&s,&us);
+   set(s,0,us);
 }
 Time::Time()
 {
@@ -92,16 +92,24 @@ const char *TimeDate::IsoDateTime()
 }
 int TimeDiff::MilliSeconds() const
 {
+   if(get_seconds()>=INT_MAX/2000)
+      return INT_MAX/2;
    return get_seconds()*1000+get_milliseconds();
+}
+int TimeDiff::MicroSeconds() const
+{
+   if(get_seconds()>=INT_MAX/2000000)
+      return INT_MAX/2;
+   return get_seconds()*1000000+get_microseconds();
 }
 time_t TimeDiff::Seconds() const
 {
-   return get_seconds()+(get_milliseconds()+500)/1000;
+   return get_seconds()+(get_microseconds()+500000)/1000000;
 }
 void TimeDiff::Set(double s)
 {
    time_t s_int=(time_t)s;
-   set(s_int,int((s-s_int)*1000));
+   set(s_int,0,int((s-s_int)*1000000));
 }
 
 bool TimeInterval::Finished(const Time &base) const
@@ -113,17 +121,15 @@ bool TimeInterval::Finished(const Time &base) const
       return false;
    return true;
 }
-int TimeInterval::GetTimeout(const Time &base) const
+int TimeInterval::GetTimeoutU(const Time &base) const
 {
    if(infty)
-      return HOUR*1000;	// to avoid dead-lock message
+      return INT_MAX/2;	// to avoid dead-lock message
    TimeDiff elapsed(SMTask::now,base);
    if(lt(elapsed))
       return 0;
    elapsed-=*this;
-   if(-elapsed.Seconds()>HOUR)
-      return HOUR*1000;
-   return -elapsed.MilliSeconds();
+   return -elapsed.MicroSeconds();
 }
 
 static void append_Nc(xstring& buf,long N,const char *c)

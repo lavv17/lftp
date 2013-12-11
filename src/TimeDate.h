@@ -29,21 +29,22 @@
 class time_tuple
 {
    time_t sec;
-   int msec;
-   void add(time_t s,int ms);   // must be |ms|<1000
+   int usec;
+   void addU(time_t s,int us);   // must be |us|<1000000
 
 protected:
    time_t get_seconds()   const { return sec; }
-   int get_milliseconds() const { return msec; }
+   int get_milliseconds() const { return usec/1000; }
+   int get_microseconds() const { return usec; }
    void normalize();
    void add_sec(long s) { sec+=s; }
    void add(double);
-   void add(const time_tuple &o) { add(o.sec,o.msec); }
-   void sub(const time_tuple &o) { add(-o.sec,-o.msec); }
+   void add(const time_tuple &o) { addU(o.sec,o.usec); }
+   void sub(const time_tuple &o) { addU(-o.sec,-o.usec); }
    void sub(double o) { add(-o); }
-   void set(time_t s,int ms) { sec=s; msec=ms; normalize(); }
-   void set(const time_tuple &o) { sec=o.sec; msec=o.msec; }
-   bool lt(const time_tuple &o) const { return sec<o.sec || (sec==o.sec && msec<o.msec); }
+   void set(time_t s,int ms,int us) { sec=s; usec=ms*1000+us; normalize(); }
+   void set(const time_tuple &o) { sec=o.sec; usec=o.usec; }
+   bool lt(const time_tuple &o) const { return sec<o.sec || (sec==o.sec && usec<o.usec); }
    double to_double() const;
 };
 
@@ -53,12 +54,13 @@ class Time : public time_tuple
 {
 public:
    Time();
-   Time(time_t s,int ms=0)     { set(s,ms); }
-   void Set(time_t s,int ms=0) { set(s,ms); }
+   Time(time_t s,int ms=0,int us=0)     { set(s,ms,us); }
+   void Set(time_t s,int ms=0,int us=0) { set(s,ms,us); }
    void SetToCurrentTime();
 
    time_t UnixTime() const { return get_seconds(); }
    int MilliSecond() const { return get_milliseconds(); }
+   int MicroSecond() const { return get_microseconds(); }
 
    inline const Time& operator+=(const TimeDiff &o);
    inline const Time& operator-=(const TimeDiff &o);
@@ -81,7 +83,7 @@ class TimeDate : public Time
 
 public:
    TimeDate() { SetToCurrentTime(); local_time_unix=(time_t)-1; }
-   TimeDate(time_t s,int ms=0) : Time(s,ms) { local_time_unix=(time_t)-1; if(local_time_unix==s) --local_time_unix; }
+   TimeDate(time_t s,int ms=0,int us=0) : Time(s,ms,us) { local_time_unix=(time_t)-1; if(local_time_unix==s) --local_time_unix; }
 
    operator const struct tm *() { set_local_time(); return &local_time; }
    operator const struct tm &() { set_local_time(); return local_time; }
@@ -103,8 +105,8 @@ public:
    void SetDiff(const Time&a,const Time&b) { this->set(a); sub(b); }
    TimeDiff() {}
    TimeDiff(const Time&a,const Time&b) { SetDiff(a,b); }
-   TimeDiff(time_t s,int ms) { set(s,ms); }
-   void Set(time_t s,int ms) { set(s,ms); }
+   TimeDiff(time_t s,int ms,int us=0) { set(s,ms,us); }
+   void Set(time_t s,int ms,int us=0) { set(s,ms,us); }
    operator double() const { return to_double(); }
    void Set(double s);
 
@@ -116,10 +118,12 @@ public:
    const TimeDiff &operator-=(const TimeDiff &o) { sub(o); return *this; }
    const TimeDiff &operator+=(const TimeDiff &o) { add(o); return *this; }
 
+   int MicroSeconds() const;
    int MilliSeconds() const;
    time_t Seconds() const;
 
    static const TimeDiff& valueOf(double v);
+   timeval toTimeval() const { timeval tv={get_seconds(),get_microseconds()}; return tv; }
 };
 
 inline TimeDiff Time::operator-(const Time &o) const { return TimeDiff(*this,o); }
@@ -132,12 +136,13 @@ protected:
    bool infty;
 public:
    TimeInterval() : TimeDiff(0,0) { infty=true; }
-   TimeInterval(time_t s,int ms) : TimeDiff(s,ms) { infty=false; }
+   TimeInterval(time_t s,int ms,int us=0) : TimeDiff(s,ms,us) { infty=false; }
    TimeInterval(const TimeDiff &d) : TimeDiff(d) { infty=false; }
    void SetInfty(bool i=true) { infty=i; }
    bool IsInfty() const { return infty; }
    bool Finished(const Time &base) const;
-   int GetTimeout(const Time &base) const;
+   int GetTimeout(const Time &base) const { return GetTimeoutU(base)/1000; }
+   int GetTimeoutU(const Time &base) const;
    bool operator<(const TimeInterval &o) const { return infty<o.infty || lt(o); }
    bool operator>=(const TimeInterval &o) const { return !(*this<o); }
    bool operator<(int s) const { return !infty && get_seconds()<s; }

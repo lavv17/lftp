@@ -98,7 +98,7 @@ void  SMTask::ResumeSlave()
 void SMTask::ResumeInternal()
 {
    if(!new_tasks_node.listed() && !ready_tasks_node.listed())
-      new_tasks.add(new_tasks_node);
+      new_tasks.add_tail(new_tasks_node);
 }
 
 SMTask::~SMTask()
@@ -173,7 +173,7 @@ void SMTask::RollAll(const TimeInterval &max_time)
 {
    Timer limit_timer(max_time);
    do { Schedule(); }
-   while(block.GetTimeout()==0 && !limit_timer.Stopped());
+   while(block.WillNotBlock() && !limit_timer.Stopped());
 }
 
 int SMTask::CollectGarbage()
@@ -230,8 +230,8 @@ void SMTask::Schedule()
    // get time once and assume Do() don't take much time
    UpdateNow();
 
-   int timer_timeout=Timer::GetTimeout();
-   if(timer_timeout>=0)
+   timeval timer_timeout=Timer::GetTimeoutTV();
+   if(timer_timeout.tv_sec>=0)
       block.SetTimeout(timer_timeout);
 
    int res=ScheduleNew();

@@ -21,79 +21,57 @@
 #include "trio.h"
 #include "PollVec.h"
 
-void PollVec::Init()
+static inline bool operator<(const timeval& a,const timeval& b)
 {
-   timeout=-1;
+   if(a.tv_sec!=b.tv_sec)
+      return a.tv_sec<b.tv_sec;
+   return a.tv_usec<b.tv_usec;
 }
 
-PollVec::PollVec()
-{
-   Init();
-}
-
-void PollVec::SetTimeout(int t)
-{
-   if(t==0)
-      Empty();
-   timeout=t;
-}
-
-void PollVec::AddTimeout(int t)
+void PollVec::AddTimeoutU(unsigned t)
 {
    if(t<0)
       t=0;
-   if(timeout>=0 && timeout<t)
-      return;
-   SetTimeout(t);
+   struct timeval new_timeout={t/1000000,t%1000000};
+   if(new_timeout<tv_timeout)
+      SetTimeout(new_timeout);
 }
 
 void PollVec::AddFD(int fd,int mask)
 {
-   if(timeout==0)
-      return;
-   for(int i=0; i<fds.count(); i++)
-   {
-      if(fds[i].fd==fd)
-      {
-	 fds[i].events|=mask;
-	 return;
-      }
-   }
-   pollfd add;
-   memset(&add,0,sizeof(add));
-   add.fd=fd;
-   add.events=mask;
-   fds.append(add);
+   if(mask&IN)
+      FD_SET(fd,&in);
+   if(mask&OUT)
+      FD_SET(fd,&out);
+   if(nfds<=fd)
+      nfds=fd+1;
+}
+bool PollVec::FDReady(int fd,int mask)
+{
+   bool res=false;
+   if(mask&IN)
+      res|=(!FD_ISSET(fd,&in_polled) || FD_ISSET(fd,&in_ready));
+   if(mask&OUT)
+      res|=(!FD_ISSET(fd,&out_polled) || FD_ISSET(fd,&out_ready));
+   return res;
 }
 
 void  PollVec::Block()
 {
-   if(timeout==0)
+   if(WillNotBlock())
       return;
 
-   if(fds.count()==0)
+   if(nfds<1 && tv_timeout.tv_sec<0)
    {
-      if(/*async==0 && */ timeout<0)
-      {
-	 /* dead lock */
-	 fprintf(stderr,_("%s: BUG - deadlock detected\n"),"PollVec::Block");
-      	 poll(0,0,1000);
-	 return;
-      }
-      poll(0,0,timeout);
-      return;
+      /* dead lock */
+      fprintf(stderr,_("%s: BUG - deadlock detected\n"),"PollVec::Block");
+      tv_timeout.tv_sec=1;
    }
 
-   poll(fds.get_non_const(),fds.count(),timeout);
-   return;
-}
-
-void PollVec::Merge(const PollVec &p)
-{
-   if(p.timeout>=0)
-      AddTimeout(p.timeout);
-   if(timeout==0)
-      return;
-   for(int i=0; i<p.fds.count(); i++)
-      AddFD(p.fds[i].fd,p.fds[i].events);
+   in_ready=in_polled=in;
+   out_ready=out_polled=out;
+   timeval *select_timeout=0;
+   if(tv_timeout.tv_sec!=-1)
+      select_timeout=&tv_timeout;
+   select(nfds,&in_ready,&out_ready,0,select_timeout);
 }

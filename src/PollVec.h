@@ -21,39 +21,58 @@
 #define POLLVEC_H
 
 #include <sys/types.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <sys/select.h>
 CDECL_BEGIN
 #include <poll.h>
 CDECL_END
 
-#include "xarray.h"
-
 class PollVec
 {
-   xarray<pollfd> fds;
-   int timeout;
+   fd_set in;
+   fd_set out;
+   fd_set in_polled;
+   fd_set out_polled;
+   fd_set in_ready;
+   fd_set out_ready;
+   int nfds;
+   struct timeval tv_timeout;
 
 public:
-   void Init();
-   PollVec();
+   PollVec() {
+      Empty();
+      FD_ZERO(&in_polled);
+      FD_ZERO(&out_polled);
+      FD_ZERO(&in_ready);
+      FD_ZERO(&out_ready);
+   }
 
    void	 Empty()
       {
-	 fds.set_length(0);
-	 timeout=-1;
+	 FD_ZERO(&in);
+	 FD_ZERO(&out);
+	 nfds=0;
+	 tv_timeout.tv_sec=-1;
+	 tv_timeout.tv_usec=0;
       }
-   bool IsEmpty()
-      {
-	 return fds.length()==0 && timeout==-1;
-      }
-   void	 Merge(const PollVec&);
    void	 Block();
 
-   void SetTimeout(int t);
-   void AddTimeout(int t);
-   void AddFD(int fd,int events);
-   void NoWait() { SetTimeout(0); }
+   enum {
+      IN=1,
+      OUT=4,
+   };
 
-   int GetTimeout() { return timeout; }
+   void SetTimeout(const timeval &t) { tv_timeout=t; }
+   void SetTimeoutU(unsigned t) {
+      tv_timeout.tv_sec=t/1000000;
+      tv_timeout.tv_usec=t%1000000;
+   }
+   void AddTimeoutU(unsigned t);
+   void AddFD(int fd,int events);
+   bool FDReady(int fd,int events);
+   void NoWait() { tv_timeout.tv_sec=tv_timeout.tv_usec=0; }
+   bool WillNotBlock() { return tv_timeout.tv_sec==0 && tv_timeout.tv_usec==0; }
 };
 
 #endif /* POLLVEC_H */

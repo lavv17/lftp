@@ -23,6 +23,7 @@
 #include "PollVec.h"
 #include "TimeDate.h"
 #include "Ref.h"
+#include "xarray.h"
 #include "xlist.h"
 
 class SMTask
@@ -78,8 +79,10 @@ protected:
 
 public:
    static void Block(int fd,int mask) { block.AddFD(fd,mask); }
-   static void Timeout(int ms) { block.AddTimeout(ms); }
-   static void TimeoutS(int s) { Timeout(1000*s); }
+   static void TimeoutU(int us) { block.AddTimeoutU(us); }
+   static void Timeout(int ms) { TimeoutU(1000*ms); }
+   static void TimeoutS(int s) { TimeoutU(1000000*s); }
+   static bool Ready(int fd,int mask) { return block.FDReady(fd,mask); }
 
    static TimeDate now;
    static void UpdateNow() { now.SetToCurrentTime(); }
