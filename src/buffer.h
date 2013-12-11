@@ -197,10 +197,9 @@ protected:
    Time event_time; // used to detect timeouts
    int max_buf;
 
-   virtual ~IOBuffer();
-
 public:
    IOBuffer(dir_t m);
+   virtual ~IOBuffer();
    virtual const Time& EventTime()
       {
 	 if(IsSuspended())
