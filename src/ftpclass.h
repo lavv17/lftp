@@ -173,7 +173,7 @@ class Ftp : public NetAccess
       void SuspendInternal()
       {
 	 if(control_send) control_send->SuspendSlave();
-	 if(control_recv) control_recv->SuspendSlave();
+	 if(control_recv && !data_iobuf) control_recv->SuspendSlave();
 	 if(data_iobuf)	data_iobuf->SuspendSlave();
       }
       void ResumeInternal()

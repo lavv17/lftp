@@ -2335,7 +2335,7 @@ int   Ftp::Do()
       m|=ReceiveResp();
 
       if(state!=oldstate || Error())
-         return MOVED;
+	 return MOVED;
 
       timeout_timer.Reset(conn->data_iobuf->EventTime());
       if(conn->data_iobuf->Error() && conn->data_sock!=-1)
