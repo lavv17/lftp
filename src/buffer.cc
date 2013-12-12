@@ -440,11 +440,6 @@ int IOBuffer::TuneGetSize(int res)
       if(res>get_size/2 && Size()+get_size*2<=max_get_size)
 	 get_size*=2;
    }
-   else
-   {
-      if(get_size>=GET_BUFSIZE*2)
-	 get_size/=2;
-   }
    return res;
 }
 
