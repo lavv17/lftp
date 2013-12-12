@@ -73,8 +73,6 @@ CDECL_END
 const bool Ftp::ftps=false;
 #endif
 
-#define max_buf 0x10000
-
 #define FTP_DEFAULT_PORT "21"
 #define FTPS_DEFAULT_PORT "990"
 #define FTP_DATA_PORT 20
@@ -1033,6 +1031,8 @@ void Ftp::InitFtp()
    use_telnet_iac=true;
    use_pret=true;
    use_mlsd=false;
+
+   max_buf=0x10000;
 
    copy_mode=COPY_NONE;
    copy_addr_valid=false;
@@ -4563,6 +4563,8 @@ void Ftp::Reconfig(const char *name)
 
    use_telnet_iac = QueryBool("use-telnet-iac");
 
+   max_buf = Query("xfer:buffer-size");
+
    anon_user.set(Query("anon-user"));
    anon_pass.set(Query("anon-pass"));
 
@@ -4607,6 +4609,8 @@ void Ftp::Reconfig(const char *name)
       SetSocketBuffer(conn->control_sock);
    if(conn && conn->data_sock!=-1)
       SetSocketBuffer(conn->data_sock);
+   if(conn && conn->data_iobuf)
+      conn->data_iobuf->SetMaxBuffered(max_buf);
 }
 
 void Ftp::Cleanup()

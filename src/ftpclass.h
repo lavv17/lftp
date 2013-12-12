@@ -413,6 +413,8 @@ private:
 
    bool use_telnet_iac;
 
+   int max_buf;
+
    const char *get_protect_res();
    const char *encode_eprt(const sockaddr_u *);
 
