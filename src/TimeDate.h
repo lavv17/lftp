@@ -20,11 +20,9 @@
 #ifndef TIMEDATE_H
 #define TIMEDATE_H
 
+#include <sys/types.h>
+#include <sys/time.h>
 #include <time.h>
-#ifdef TM_IN_SYS_TIME
-# include <sys/types.h>
-# include <sys/time.h>
-#endif
 
 class time_tuple
 {
