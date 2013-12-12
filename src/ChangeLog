@@ -1,3 +1,9 @@
+2013-12-12  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* TimeDate.h: include sys/time.h to get struct timeval.
+	* buffer.cc: don't shrink read buffer size.
+	* ftpclass.cc, ftpclass.h: use xfer:buffer-size for max_buf size;
+
 2013-12-11  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* xstring.cc, xstring.h: shrink buffer explicitly.
