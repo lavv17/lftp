@@ -2,6 +2,7 @@
 
 	* RateLimit.cc, RateLimit.h, ftpclass.cc: use RateLimit settings
 	  to set maximum buffer size.
+	* xstring.cc, xstring.h: (swap, set_length_no_z) new methods.
 
 2013-12-12  Alexander V. Lukyanov <lavv17f@gmail.com>
 

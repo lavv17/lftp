@@ -151,6 +151,12 @@ xstring& xstring::move_here(xstring& o)
    buf=o.buf; o.buf=0;
    return *this;
 }
+void xstring::swap(xstring& o)
+{
+   buf=replace_value(o.buf,buf);
+   size=replace_value(o.size,size);
+   len=replace_value(o.len,len);
+}
 
 xstring& xstring::append(const char *s,size_t s_len)
 {
