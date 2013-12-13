@@ -2295,7 +2295,7 @@ int   Ftp::Do()
 	 else if(charset && *charset)
 	    conn->data_iobuf->SetTranslation(charset,true);
       }
-      conn->data_iobuf->SetMaxBuffered(max_buf);
+      rate_limit->SetBufferSize(conn->data_iobuf,max_buf);
    /* fallthrough */
    case(DATA_OPEN_STATE):
    {
@@ -4609,8 +4609,8 @@ void Ftp::Reconfig(const char *name)
       SetSocketBuffer(conn->control_sock);
    if(conn && conn->data_sock!=-1)
       SetSocketBuffer(conn->data_sock);
-   if(conn && conn->data_iobuf)
-      conn->data_iobuf->SetMaxBuffered(max_buf);
+   if(conn && conn->data_iobuf && rate_limit)
+      rate_limit->SetBufferSize(conn->data_iobuf,max_buf);
 }
 
 void Ftp::Cleanup()

@@ -146,3 +146,15 @@ void RateLimit::ReconfigTotal()
    total[PUT].Reset();
    total_reconfig_needed = false;
 }
+
+int RateLimit::LimitBufferSize(int size,dir_t d) const
+{
+   if(size>one[d].pool_max)
+      size=one[d].pool_max;
+   return size;
+}
+void RateLimit::SetBufferSize(IOBuffer *buf,int size) const
+{
+   dir_t d = (buf->GetDirection()==buf->GET ? GET : PUT);
+   buf->SetMaxBuffered(LimitBufferSize(size,d));
+}

@@ -21,6 +21,7 @@
 #define RATELIMIT_H
 
 #include "TimeDate.h"
+#include "buffer.h"
 
 class RateLimit
 {
@@ -61,6 +62,10 @@ public:
    bool Relaxed(dir_t dir);
 
    void Reconfig(const char *name,const char *c);
+
+   int LimitBufferSize(int size,dir_t d) const;
+   void SetBufferSize(IOBuffer *buf,int size) const;
+   void SetBufferSize(SMTaskRef<IOBuffer>& buf,int size) const { SetBufferSize(buf.get_non_const(),size); }
 };
 
 #endif // RATELIMIT_H
