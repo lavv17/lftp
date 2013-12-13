@@ -10,6 +10,7 @@
 	  Fish.h, Http.cc, Http.h, LocalAccess.cc, LocalAccess.h, SFtp.cc,
 	  SFtp.h, example1.cc, example2.cc, ftpclass.cc, ftpclass.h:
 	  change FA::Read to use Buffer and MoveDataHere.
+	* PollVec.cc, PollVec.h: (FDSetNotReady) new method.
 
 2013-12-12  Alexander V. Lukyanov <lavv17f@gmail.com>
 

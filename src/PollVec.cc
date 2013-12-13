@@ -55,6 +55,13 @@ bool PollVec::FDReady(int fd,int mask)
       res|=(!FD_ISSET(fd,&out_polled) || FD_ISSET(fd,&out_ready));
    return res;
 }
+void PollVec::FDSetNotReady(int fd,int mask)
+{
+   if(mask&IN)
+      FD_CLR(fd,&in_ready);
+   if(mask&OUT)
+      FD_CLR(fd,&out_ready);
+}
 
 void  PollVec::Block()
 {

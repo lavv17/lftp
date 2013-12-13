@@ -71,6 +71,7 @@ public:
    void AddTimeoutU(unsigned t);
    void AddFD(int fd,int events);
    bool FDReady(int fd,int events);
+   void FDSetNotReady(int fd,int events);
    void NoWait() { tv_timeout.tv_sec=tv_timeout.tv_usec=0; }
    bool WillNotBlock() { return tv_timeout.tv_sec==0 && tv_timeout.tv_usec==0; }
 };
