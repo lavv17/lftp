@@ -1,3 +1,8 @@
+Version 4.4.14 - 2013-12-13
+
+* fixed HEAD/PROPFIND handling in http.
+* a minor memory leak fixed.
+
 Version 4.4.13 - 2013-11-26
 
 * fixed a bug in file size checking code.

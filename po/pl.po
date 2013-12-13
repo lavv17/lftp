@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.6\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-11-26 11:00+0400\n"
+"POT-Creation-Date: 2013-12-13 13:55+0400\n"
 "PO-Revision-Date: 2013-05-19 08:40+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -344,7 +344,7 @@ msgstr "kopiowanie: otrzymano przekierowanie do `%s'\n"
 msgid "file name missed in URL"
 msgstr "brak nazwy pliku w URL"
 
-#: src/FileCopy.cc:1960
+#: src/FileCopy.cc:1962
 msgid "Verify command failed without a message"
 msgstr "Polecenie weryfikacji nie powiodło się bez komunikatu"
 
@@ -399,7 +399,7 @@ msgstr "execlp(/bin/sh) nieudane: %s\n"
 msgid "total"
 msgstr "razem"
 
-#: src/Fish.cc:75 src/Http.cc:980 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:1067 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego połączenia"
 
@@ -407,7 +407,7 @@ msgstr "Zamykanie bezczynnego połączenia"
 msgid "Running connect program"
 msgstr "Uruchamianie programu łączącego"
 
-#: src/Fish.cc:589 src/Http.cc:1231 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1335 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamknął połączenie"
@@ -416,7 +416,7 @@ msgstr "Komputer po drugiej stronie zamknął połączenie"
 msgid "extra server response"
 msgstr "dodatkowa odpowiedź serwera"
 
-#: src/Fish.cc:987 src/Http.cc:1992 src/Http.cc:1999 src/SFtp.cc:1338
+#: src/Fish.cc:987 src/Http.cc:2079 src/Http.cc:2086 src/SFtp.cc:1338
 #: src/ftpclass.cc:4345 src/Torrent.cc:3024 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Łączenie się..."
@@ -425,16 +425,16 @@ msgstr "Łączenie się..."
 msgid "Connected"
 msgstr "Połączono"
 
-#: src/Fish.cc:991 src/Http.cc:2001 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2088 src/SFtp.cc:1342 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowiedź..."
 
-#: src/Fish.cc:993 src/Http.cc:2004 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2091 src/SFtp.cc:1344 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "Otrzymuję dane"
 
-#: src/Fish.cc:995 src/Http.cc:1997 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2084 src/SFtp.cc:1346 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "Wysyłam dane"
 
@@ -442,7 +442,7 @@ msgstr "Wysyłam dane"
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2211
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2211
 #: src/SFtp.cc:2329
 #, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -453,78 +453,78 @@ msgstr "Pobieranie listy plików (%lld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: plik aktualnie istnieje i xfer:clobber jest nie ustawione\n"
 
-#: src/Http.cc:166
+#: src/Http.cc:218
 msgid "Closing HTTP connection"
 msgstr "Zamykanie połączenia HTTP"
 
-#: src/Http.cc:173
+#: src/Http.cc:225
 msgid "POST method failed"
 msgstr "nie powiodła się metoda POST"
 
-#: src/Http.cc:1106
+#: src/Http.cc:1210
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp poprzez http może nie działać bez proxy, ustaw hftp:proxy"
 
-#: src/Http.cc:1156 src/ftpclass.cc:1344 src/Torrent.cc:2702
+#: src/Http.cc:1260 src/ftpclass.cc:1344 src/Torrent.cc:2702
 #: src/Torrent.cc:3228 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie można utworzyć gniazda dla rodziny adresu %d"
 
-#: src/Http.cc:1257
+#: src/Http.cc:1361
 msgid "Sending request..."
 msgstr "Wysyłanie żądania..."
 
-#: src/Http.cc:1295
+#: src/Http.cc:1399
 msgid "Hit EOF while fetching headers"
 msgstr "Natrafiono na EOF podczas przesyłania nagłówków"
 
-#: src/Http.cc:1420
+#: src/Http.cc:1505
 msgid "Could not parse HTTP status line"
 msgstr "Nie można zanalizować linii statusu HTTP"
 
-#: src/Http.cc:1451
+#: src/Http.cc:1536
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Obiekt nie jest zapamiętany a http:cache-control ma only-if-cache"
 
-#: src/Http.cc:1614
+#: src/Http.cc:1701
 msgid "Receiving body..."
 msgstr "Otrzymuję dane..."
 
-#: src/Http.cc:1759
+#: src/Http.cc:1846
 msgid "Hit EOF"
 msgstr "Natrafiono na EOF"
 
-#: src/Http.cc:1762
+#: src/Http.cc:1849
 msgid "Received not enough data, retrying"
 msgstr "Przesłanie nie wystarczającą ilość danych, próbuję ponownie"
 
-#: src/Http.cc:1773
+#: src/Http.cc:1860
 msgid "Received all"
 msgstr "Przesłano wszystko"
 
-#: src/Http.cc:1778
+#: src/Http.cc:1865
 msgid "Received all (total)"
 msgstr "Przesłano wszystko (całość)"
 
-#: src/Http.cc:1802 src/Http.cc:1825
+#: src/Http.cc:1889 src/Http.cc:1912
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1812
+#: src/Http.cc:1899
 msgid "Received last chunk"
 msgstr "Przesłano ostatni fragment"
 
-#: src/Http.cc:1986 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2073 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4338 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
-#: src/Http.cc:1994 src/ftpclass.cc:4331
+#: src/Http.cc:2081 src/ftpclass.cc:4331
 msgid "Connection idle"
 msgstr "Połączenie bezczynne"
 
-#: src/Http.cc:2002
+#: src/Http.cc:2089
 msgid "Fetching headers..."
 msgstr "Przesyłam nagłówki..."
 
@@ -767,51 +767,51 @@ msgstr "nie ma takiej zmiennej"
 msgid "ambiguous variable name"
 msgstr "dwuznaczna nazwa zmiennej"
 
-#: src/ResMgr.cc:383
+#: src/ResMgr.cc:372
 msgid "invalid boolean value"
 msgstr "nieprawidłowa wartość zmiennej logicznej (bool)"
 
-#: src/ResMgr.cc:405
+#: src/ResMgr.cc:394
 msgid "invalid boolean/auto value"
 msgstr "nieprawidłowa wartość zmiennej bool/auto"
 
-#: src/ResMgr.cc:450 src/ResMgr.cc:750
+#: src/ResMgr.cc:439 src/ResMgr.cc:739
 msgid "invalid number"
 msgstr "nieprawidłowy numer"
 
-#: src/ResMgr.cc:463
+#: src/ResMgr.cc:452
 msgid "invalid floating point number"
 msgstr "nieprawidłowa liczba zmiennoprzecinkowa"
 
-#: src/ResMgr.cc:477
+#: src/ResMgr.cc:466
 msgid "invalid unsigned number"
 msgstr "nieprawidłowa liczba bez znaku"
 
-#: src/ResMgr.cc:715
+#: src/ResMgr.cc:704
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Nieprawidłowa litera-jednostka czasu, wyłącznie [shmd] są dozwolone."
 
-#: src/ResMgr.cc:723
+#: src/ResMgr.cc:712
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawidłowy format czasu. Format to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:755
+#: src/ResMgr.cc:744
 msgid "integer overflow"
 msgstr "przepełnienie liczby całkowitej"
 
-#: src/ResMgr.cc:842
+#: src/ResMgr.cc:831
 msgid "Invalid IPv4 numeric address"
 msgstr "Nieprawidłowy numeryczny adres IPv4"
 
-#: src/ResMgr.cc:853
+#: src/ResMgr.cc:842
 msgid "Invalid IPv6 numeric address"
 msgstr "Nieprawidłowy numeryczny adres IPv6"
 
-#: src/ResMgr.cc:923 src/ResMgr.cc:927
+#: src/ResMgr.cc:912 src/ResMgr.cc:916
 msgid "this encoding is not supported"
 msgstr "to kodowanie nie jest wspierane"
 
-#: src/ResMgr.cc:933
+#: src/ResMgr.cc:922
 msgid "no closure defined for this setting"
 msgstr "nie zdefiniowano zamknięcia dla tego ustawienia"
 
@@ -873,37 +873,37 @@ msgstr "%s: brak określenia daty-czasu\n"
 msgid "%s: date-time parse error\n"
 msgstr "%s: błąd składni daty-czasu\n"
 
-#: src/Speedometer.cc:95
+#: src/Speedometer.cc:90
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fb/s"
 
-#: src/Speedometer.cc:98
+#: src/Speedometer.cc:93
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fK/s"
 
-#: src/Speedometer.cc:101
+#: src/Speedometer.cc:96
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fM/s"
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:103
 #, fuzzy, c-format
 msgid "%.0f B/s"
 msgstr "%.0fb/s"
 
-#: src/Speedometer.cc:110
+#: src/Speedometer.cc:105
 #, fuzzy, c-format
 msgid "%.1f KiB/s"
 msgstr "%.1fK/s"
 
-#: src/Speedometer.cc:112
+#: src/Speedometer.cc:107
 #, fuzzy, c-format
 msgid "%.2f MiB/s"
 msgstr "%.2fM/s"
 
-#: src/Speedometer.cc:134
+#: src/Speedometer.cc:129
 msgid "eta:"
 msgstr "pozostało: "
 

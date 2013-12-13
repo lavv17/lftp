@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-11-26 11:00+0400\n"
+"POT-Creation-Date: 2013-12-13 13:55+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -342,7 +342,7 @@ msgstr "複製：重新導向至‘%s’\n"
 msgid "file name missed in URL"
 msgstr "URL 裏缺少了檔案名稱"
 
-#: src/FileCopy.cc:1960
+#: src/FileCopy.cc:1962
 msgid "Verify command failed without a message"
 msgstr "確認指令失敗，但沒有錯誤訊息"
 
@@ -398,7 +398,7 @@ msgstr "execl(/bin/sh) 失敗：%s\n"
 msgid "total"
 msgstr "總數"
 
-#: src/Fish.cc:75 src/Http.cc:980 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:1067 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "關閉閒置連線"
 
@@ -406,7 +406,7 @@ msgstr "關閉閒置連線"
 msgid "Running connect program"
 msgstr "正在執行進行連線的程式"
 
-#: src/Fish.cc:589 src/Http.cc:1231 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1335 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "對方關閉了連線"
@@ -415,7 +415,7 @@ msgstr "對方關閉了連線"
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/Fish.cc:987 src/Http.cc:1992 src/Http.cc:1999 src/SFtp.cc:1338
+#: src/Fish.cc:987 src/Http.cc:2079 src/Http.cc:2086 src/SFtp.cc:1338
 #: src/ftpclass.cc:4345 src/Torrent.cc:3024 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "嘗試連線……"
@@ -424,16 +424,16 @@ msgstr "嘗試連線……"
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/Fish.cc:991 src/Http.cc:2001 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2088 src/SFtp.cc:1342 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正在等待回應……"
 
-#: src/Fish.cc:993 src/Http.cc:2004 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2091 src/SFtp.cc:1344 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "下載中"
 
-#: src/Fish.cc:995 src/Http.cc:1997 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2084 src/SFtp.cc:1346 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "上傳中"
 
@@ -441,7 +441,7 @@ msgstr "上傳中"
 msgid "Done"
 msgstr "完成"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2211
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2211
 #: src/SFtp.cc:2329
 #, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -452,79 +452,79 @@ msgstr "正在擷取檔案清單 (%lld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s：%s：檔案早已存在，而且沒有設定 xfer:clobber 變數\n"
 
-#: src/Http.cc:166
+#: src/Http.cc:218
 msgid "Closing HTTP connection"
 msgstr "正在關閉 HTTP 連線"
 
-#: src/Http.cc:173
+#: src/Http.cc:225
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#: src/Http.cc:1106
+#: src/Http.cc:1210
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
-#: src/Http.cc:1156 src/ftpclass.cc:1344 src/Torrent.cc:2702
+#: src/Http.cc:1260 src/ftpclass.cc:1344 src/Torrent.cc:2702
 #: src/Torrent.cc:3228 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "無法建立地址族羣 %d 的 socket"
 
-#: src/Http.cc:1257
+#: src/Http.cc:1361
 msgid "Sending request..."
 msgstr "正在送出要求……"
 
-#: src/Http.cc:1295
+#: src/Http.cc:1399
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#: src/Http.cc:1420
+#: src/Http.cc:1505
 msgid "Could not parse HTTP status line"
 msgstr "無法分析 HTTP 狀態"
 
-#: src/Http.cc:1451
+#: src/Http.cc:1536
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "快取記憶中沒有該物件，但 http:cache-control 的設定為 only-if-cached"
 
-#: src/Http.cc:1614
+#: src/Http.cc:1701
 msgid "Receiving body..."
 msgstr "正在下載內容……"
 
-#: src/Http.cc:1759
+#: src/Http.cc:1846
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1762
+#: src/Http.cc:1849
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1773
+#: src/Http.cc:1860
 msgid "Received all"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1778
+#: src/Http.cc:1865
 msgid "Received all (total)"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1802 src/Http.cc:1825
+#: src/Http.cc:1889 src/Http.cc:1912
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1812
+#: src/Http.cc:1899
 msgid "Received last chunk"
 msgstr "已收到最後的片段"
 
-#: src/Http.cc:1986 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2073 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4338 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "正在解析主機地址……"
 
-#: src/Http.cc:1994 src/ftpclass.cc:4331
+#: src/Http.cc:2081 src/ftpclass.cc:4331
 msgid "Connection idle"
 msgstr "連線閒置"
 
-#: src/Http.cc:2002
+#: src/Http.cc:2089
 msgid "Fetching headers..."
 msgstr "正在讀取標頭資料……"
 
@@ -762,53 +762,53 @@ msgstr "這個變數不存在"
 msgid "ambiguous variable name"
 msgstr "變數名稱不明確"
 
-#: src/ResMgr.cc:383
+#: src/ResMgr.cc:372
 msgid "invalid boolean value"
 msgstr "邏輯值無效"
 
-#: src/ResMgr.cc:405
+#: src/ResMgr.cc:394
 msgid "invalid boolean/auto value"
 msgstr "邏輯值或自動變動值無效"
 
-#: src/ResMgr.cc:450 src/ResMgr.cc:750
+#: src/ResMgr.cc:439 src/ResMgr.cc:739
 msgid "invalid number"
 msgstr "數字無效"
 
-#: src/ResMgr.cc:463
+#: src/ResMgr.cc:452
 msgid "invalid floating point number"
 msgstr "浮點數無效"
 
-#: src/ResMgr.cc:477
+#: src/ResMgr.cc:466
 #, fuzzy
 msgid "invalid unsigned number"
 msgstr "數字無效"
 
-#: src/ResMgr.cc:715
+#: src/ResMgr.cc:704
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "時間單位無效，只允許使用 [smhd] 其中一個。"
 
-#: src/ResMgr.cc:723
+#: src/ResMgr.cc:712
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "時間格式無效。格式是 <time><unit>，例如：2h30m。"
 
-#: src/ResMgr.cc:755
+#: src/ResMgr.cc:744
 #, fuzzy
 msgid "integer overflow"
 msgstr "整數溢位"
 
-#: src/ResMgr.cc:842
+#: src/ResMgr.cc:831
 msgid "Invalid IPv4 numeric address"
 msgstr "IPv4 地址無效"
 
-#: src/ResMgr.cc:853
+#: src/ResMgr.cc:842
 msgid "Invalid IPv6 numeric address"
 msgstr "IPv6 地址無效"
 
-#: src/ResMgr.cc:923 src/ResMgr.cc:927
+#: src/ResMgr.cc:912 src/ResMgr.cc:916
 msgid "this encoding is not supported"
 msgstr "不支援這種編碼"
 
-#: src/ResMgr.cc:933
+#: src/ResMgr.cc:922
 msgid "no closure defined for this setting"
 msgstr "本設定值並沒有定義 closure"
 
@@ -870,37 +870,37 @@ msgstr ""
 msgid "%s: date-time parse error\n"
 msgstr ""
 
-#: src/Speedometer.cc:95
+#: src/Speedometer.cc:90
 #, c-format
 msgid "%.0fb/s"
 msgstr "每秒 %.0f 位元"
 
-#: src/Speedometer.cc:98
+#: src/Speedometer.cc:93
 #, c-format
 msgid "%.1fK/s"
 msgstr "每秒 %.1fK"
 
-#: src/Speedometer.cc:101
+#: src/Speedometer.cc:96
 #, c-format
 msgid "%.2fM/s"
 msgstr "每秒 %.2fM"
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:103
 #, fuzzy, c-format
 msgid "%.0f B/s"
 msgstr "每秒 %.0f 位元"
 
-#: src/Speedometer.cc:110
+#: src/Speedometer.cc:105
 #, fuzzy, c-format
 msgid "%.1f KiB/s"
 msgstr "每秒 %.1fK"
 
-#: src/Speedometer.cc:112
+#: src/Speedometer.cc:107
 #, fuzzy, c-format
 msgid "%.2f MiB/s"
 msgstr "每秒 %.2fM"
 
-#: src/Speedometer.cc:134
+#: src/Speedometer.cc:129
 msgid "eta:"
 msgstr "距離完成約:"
 

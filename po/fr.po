@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-11-26 11:00+0400\n"
+"POT-Creation-Date: 2013-12-13 13:55+0400\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -342,7 +342,7 @@ msgstr "copy : reçu une redirection vers « %s »\n"
 msgid "file name missed in URL"
 msgstr "nom de fichier manquant dans l'URL"
 
-#: src/FileCopy.cc:1960
+#: src/FileCopy.cc:1962
 msgid "Verify command failed without a message"
 msgstr "La commande verify a échoué sans message"
 
@@ -397,7 +397,7 @@ msgstr "execl(/bin/sh) a échoué : %s\n"
 msgid "total"
 msgstr "total"
 
-#: src/Fish.cc:75 src/Http.cc:980 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:1067 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
 
@@ -405,7 +405,7 @@ msgstr "Fermeture de la connexion inutile"
 msgid "Running connect program"
 msgstr "Exécution du programme de connexion"
 
-#: src/Fish.cc:589 src/Http.cc:1231 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1335 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "Connexion interrompue par le tiers"
@@ -414,7 +414,7 @@ msgstr "Connexion interrompue par le tiers"
 msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
-#: src/Fish.cc:987 src/Http.cc:1992 src/Http.cc:1999 src/SFtp.cc:1338
+#: src/Fish.cc:987 src/Http.cc:2079 src/Http.cc:2086 src/SFtp.cc:1338
 #: src/ftpclass.cc:4345 src/Torrent.cc:3024 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Connexion..."
@@ -423,16 +423,16 @@ msgstr "Connexion..."
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/Fish.cc:991 src/Http.cc:2001 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2088 src/SFtp.cc:1342 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/Fish.cc:993 src/Http.cc:2004 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2091 src/SFtp.cc:1344 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "Réception des données"
 
-#: src/Fish.cc:995 src/Http.cc:1997 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2084 src/SFtp.cc:1346 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "Émission des données"
 
@@ -440,7 +440,7 @@ msgstr "Émission des données"
 msgid "Done"
 msgstr "Terminé"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1358 src/SFtp.cc:2211
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2211
 #: src/SFtp.cc:2329
 #, c-format
 msgid "Getting file list (%lld) [%s]"
@@ -451,79 +451,79 @@ msgstr "Récupération de la liste des fichiers (%lld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s : %s : le fichier existe déjà et xfer:clobber n'est pas défini\n"
 
-#: src/Http.cc:166
+#: src/Http.cc:218
 msgid "Closing HTTP connection"
 msgstr "Fermeture de la connexion HTTP"
 
-#: src/Http.cc:173
+#: src/Http.cc:225
 msgid "POST method failed"
 msgstr "échec de la méthode POST"
 
-#: src/Http.cc:1106
+#: src/Http.cc:1210
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:1156 src/ftpclass.cc:1344 src/Torrent.cc:2702
+#: src/Http.cc:1260 src/ftpclass.cc:1344 src/Torrent.cc:2702
 #: src/Torrent.cc:3228 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
 
-#: src/Http.cc:1257
+#: src/Http.cc:1361
 msgid "Sending request..."
 msgstr "Émission des requêtes..."
 
-#: src/Http.cc:1295
+#: src/Http.cc:1399
 msgid "Hit EOF while fetching headers"
 msgstr "Reçu une fin de fichier en lisant les entêtes"
 
-#: src/Http.cc:1420
+#: src/Http.cc:1505
 msgid "Could not parse HTTP status line"
 msgstr "Ne peut analyser la ligne d'état HTTP"
 
-#: src/Http.cc:1451
+#: src/Http.cc:1536
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "L'objet n'est pas caché, et http:cache-control a only-if-cached"
 
-#: src/Http.cc:1614
+#: src/Http.cc:1701
 msgid "Receiving body..."
 msgstr "Réception du corps..."
 
-#: src/Http.cc:1759
+#: src/Http.cc:1846
 msgid "Hit EOF"
 msgstr "Fin de fichier atteinte"
 
-#: src/Http.cc:1762
+#: src/Http.cc:1849
 msgid "Received not enough data, retrying"
 msgstr "Pas assez de données reçues, nouvelle tentative"
 
-#: src/Http.cc:1773
+#: src/Http.cc:1860
 msgid "Received all"
 msgstr "Tout reçu"
 
-#: src/Http.cc:1778
+#: src/Http.cc:1865
 msgid "Received all (total)"
 msgstr "Tout reçu (total)"
 
-#: src/Http.cc:1802 src/Http.cc:1825
+#: src/Http.cc:1889 src/Http.cc:1912
 msgid "chunked format violated"
 msgstr "format en « chunk » violé"
 
-#: src/Http.cc:1812
+#: src/Http.cc:1899
 msgid "Received last chunk"
 msgstr "Dernier fragment reçu"
 
-#: src/Http.cc:1986 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2073 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4338 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
-#: src/Http.cc:1994 src/ftpclass.cc:4331
+#: src/Http.cc:2081 src/ftpclass.cc:4331
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/Http.cc:2002
+#: src/Http.cc:2089
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 
@@ -762,54 +762,54 @@ msgstr "variable inconnue"
 msgid "ambiguous variable name"
 msgstr "nom de variable ambigu"
 
-#: src/ResMgr.cc:383
+#: src/ResMgr.cc:372
 msgid "invalid boolean value"
 msgstr "valeur booléenne invalide"
 
-#: src/ResMgr.cc:405
+#: src/ResMgr.cc:394
 msgid "invalid boolean/auto value"
 msgstr "valeur booléenne/automatique invalide"
 
-#: src/ResMgr.cc:450 src/ResMgr.cc:750
+#: src/ResMgr.cc:439 src/ResMgr.cc:739
 msgid "invalid number"
 msgstr "nombre invalide"
 
-#: src/ResMgr.cc:463
+#: src/ResMgr.cc:452
 msgid "invalid floating point number"
 msgstr "nombre en virgule flottante invalide"
 
-#: src/ResMgr.cc:477
+#: src/ResMgr.cc:466
 #, fuzzy
 msgid "invalid unsigned number"
 msgstr "nombre invalide"
 
-#: src/ResMgr.cc:715
+#: src/ResMgr.cc:704
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Unité de temps invalide, seules [smhd] sont permises."
 
-#: src/ResMgr.cc:723
+#: src/ResMgr.cc:712
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 "Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
 
-#: src/ResMgr.cc:755
+#: src/ResMgr.cc:744
 #, fuzzy
 msgid "integer overflow"
 msgstr "Débordement de nombre entier"
 
-#: src/ResMgr.cc:842
+#: src/ResMgr.cc:831
 msgid "Invalid IPv4 numeric address"
 msgstr "Adresse numérique IPv4 invalide"
 
-#: src/ResMgr.cc:853
+#: src/ResMgr.cc:842
 msgid "Invalid IPv6 numeric address"
 msgstr "Adresse numérique IPv6 invalide"
 
-#: src/ResMgr.cc:923 src/ResMgr.cc:927
+#: src/ResMgr.cc:912 src/ResMgr.cc:916
 msgid "this encoding is not supported"
 msgstr "cet encodage n'est pas pris en charge"
 
-#: src/ResMgr.cc:933
+#: src/ResMgr.cc:922
 msgid "no closure defined for this setting"
 msgstr "aucune restriction pour ce paramètre"
 
@@ -871,37 +871,37 @@ msgstr ""
 msgid "%s: date-time parse error\n"
 msgstr ""
 
-#: src/Speedometer.cc:95
+#: src/Speedometer.cc:90
 #, c-format
 msgid "%.0fb/s"
 msgstr "%.0fo/s"
 
-#: src/Speedometer.cc:98
+#: src/Speedometer.cc:93
 #, c-format
 msgid "%.1fK/s"
 msgstr "%.1fKo/s"
 
-#: src/Speedometer.cc:101
+#: src/Speedometer.cc:96
 #, c-format
 msgid "%.2fM/s"
 msgstr "%.2fMo/s"
 
-#: src/Speedometer.cc:108
+#: src/Speedometer.cc:103
 #, fuzzy, c-format
 msgid "%.0f B/s"
 msgstr "%.0fo/s"
 
-#: src/Speedometer.cc:110
+#: src/Speedometer.cc:105
 #, fuzzy, c-format
 msgid "%.1f KiB/s"
 msgstr "%.1fKo/s"
 
-#: src/Speedometer.cc:112
+#: src/Speedometer.cc:107
 #, fuzzy, c-format
 msgid "%.2f MiB/s"
 msgstr "%.2fMo/s"
 
-#: src/Speedometer.cc:134
+#: src/Speedometer.cc:129
 msgid "eta:"
 msgstr "reste :"
 
