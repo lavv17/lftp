@@ -552,7 +552,6 @@ int IOBufferStacked::Do()
       {
 	 buffer_ptr+=res;
 	 m=MOVED;
-	 down->Do();
       }
       break;
 
@@ -702,6 +701,7 @@ int IOBufferFDStream::Get_LL(int size)
       saved_errno=errno;
       if(E_RETRY(saved_errno))
       {
+	 SetNotReady(fd,POLLIN);
 	 Block(fd,POLLIN);
 	 return 0;
       }
