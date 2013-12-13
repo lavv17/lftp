@@ -149,7 +149,7 @@ void RateLimit::ReconfigTotal()
 
 int RateLimit::LimitBufferSize(int size,dir_t d) const
 {
-   if(size>one[d].pool_max)
+   if(one[d].rate!=0 && size>one[d].pool_max)
       size=one[d].pool_max;
    return size;
 }
