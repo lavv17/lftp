@@ -29,7 +29,7 @@ public:
    int Done();
    const char *GetProto() const;
    FileAccess *Clone() const;
-   int Read(void *buf,int size);
+   int Read(Buffer *buf,int size);
    int Write(const void *buf,int size);
    int StoreStatus();
    void Reconfig(const char *) {}

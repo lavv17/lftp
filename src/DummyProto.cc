@@ -30,7 +30,7 @@ int DummyProto::Do() { return STALL; }
 int DummyProto::Done() { return NO_HOST; }
 const char *DummyProto::GetProto() const { return ""; }
 FileAccess *DummyProto::Clone() const { return new DummyProto; }
-int DummyProto::Read(void *buf,int size) { return NO_HOST; };
+int DummyProto::Read(Buffer *buf,int size) { return NO_HOST; };
 int DummyProto::Write(const void *buf,int size) { return NO_HOST; };
 int DummyProto::StoreStatus() { return NO_HOST; }
 

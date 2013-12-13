@@ -1103,7 +1103,7 @@ int FileCopyPeerFA::Get_LL(int len)
    if(GetRealPos()!=io_at) // GetRealPos can alter pos.
       return 0;
 
-   res=session->Read(GetSpace(len),len);
+   res=session->Read(this,len);
    if(res<0)
    {
       if(res==FA::DO_AGAIN)

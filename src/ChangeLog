@@ -6,6 +6,10 @@
 	* buffer.cc, buffer.h: (MoveDataHere) new method, optimize data
 	  copying by swapping buffers.
 	* FileCopy.cc: tune read delaying; add comments.
+	* DummyProto.cc, DummyProto.h, FileAccess.h, FileCopy.cc, Fish.cc,
+	  Fish.h, Http.cc, Http.h, LocalAccess.cc, LocalAccess.h, SFtp.cc,
+	  SFtp.h, example1.cc, example2.cc, ftpclass.cc, ftpclass.h:
+	  change FA::Read to use Buffer and MoveDataHere.
 
 2013-12-12  Alexander V. Lukyanov <lavv17f@gmail.com>
 

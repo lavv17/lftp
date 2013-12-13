@@ -795,7 +795,7 @@ const char *memstr(const char *mem,size_t len,const char *str)
    return 0;
 }
 
-int Fish::Read(void *buf,int size)
+int Fish::Read(Buffer *buf,int size)
 {
    if(Error())
       return error_code;
@@ -871,8 +871,7 @@ int Fish::Read(void *buf,int size)
       }
       if(size>size1)
 	 size=size1;
-      memcpy(buf,buf1,size);
-      recv_buf->Skip(size);
+      buf->MoveDataHere(recv_buf,size);
       pos+=size;
       real_pos+=size;
       rate_limit->BytesGot(size);

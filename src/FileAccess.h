@@ -39,6 +39,7 @@ class Glob;
 class NoGlob;
 class DirList;
 class FileAccessRef;
+class Buffer;
 
 class FileAccess : public SMTask, public ResClient, protected ProtoLog
 {
@@ -233,7 +234,7 @@ public:
 
    virtual const char *CurrentStatus();
 
-   virtual int Read(void *buf,int size) = 0;
+   virtual int Read(Buffer *buf,int size) = 0;
    virtual int Write(const void *buf,int size) = 0;
    virtual int Buffered();
    virtual int StoreStatus() = 0;

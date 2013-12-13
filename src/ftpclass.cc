@@ -3589,10 +3589,8 @@ void Ftp::ResumeInternal()
    super::ResumeInternal();
 }
 
-int   Ftp::Read(void *buf,int size)
+int   Ftp::CanRead()
 {
-   int shift;
-
    if(Error())
       return(error_code);
 
@@ -3608,6 +3606,7 @@ int   Ftp::Read(void *buf,int size)
    if(state==DATASOCKET_CONNECTING_STATE)
       return DO_AGAIN;
 
+   int size=conn->data_iobuf->Size();
    if(state==DATA_OPEN_STATE)
    {
       assert(rate_limit!=0);
@@ -3619,30 +3618,44 @@ int   Ftp::Read(void *buf,int size)
    }
    if(norest_manual && real_pos==0 && pos>0)
       return DO_AGAIN;
-
-   const char *b;
-   int s;
-   conn->data_iobuf->Get(&b,&s);
-   if(s==0)
+   if(size==0)
       return DO_AGAIN;
-   if(size>s)
-      size=s;
-   memcpy(buf,b,size);
-   conn->data_iobuf->Skip(size);
+   return size;
+}
 
-   TrySuccess();
-   assert(rate_limit!=0);
+int   Ftp::Read(Buffer *buf,int size)
+{
+   int size1=CanRead();
+   if(size1<=0)
+      return size1;
+   if(size>size1)
+      size=size1;
+
+   int skip=0;
+   if(real_pos+size<pos)
+      skip=size;
+   else if(real_pos<pos)
+      skip=pos-real_pos;
+
+   if(skip>0)
+   {
+      conn->data_iobuf->Skip(skip);
+      rate_limit->BytesGot(skip);
+      real_pos+=skip;
+      size-=skip;
+      if(size<=0)
+	 return DO_AGAIN;
+   }
+
+   assert(real_pos==pos);
+   buf->MoveDataHere(conn->data_iobuf,size);
    rate_limit->BytesGot(size);
    real_pos+=size;
-   if(real_pos<=pos)
-      return DO_AGAIN;
-   flags|=IO_FLAG;
-   if((shift=pos+size-real_pos)>0)
-   {
-      memmove(buf,(char*)buf+shift,size-shift);
-      size-=shift;
-   }
    pos+=size;
+
+   TrySuccess();
+   flags|=IO_FLAG;
+
    return(size);
 }
 

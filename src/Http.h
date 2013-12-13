@@ -155,8 +155,9 @@ class Http : public NetAccess
 
    const char *user_agent;
 
-   int _Read(void *,int);  // does not update pos, rate_limit, retries, does not check state.
-   void _Skip(int to_skip); // skip in recv_buf or inflate, update real_pos
+   int _Read(Buffer *,int);  // does not update pos, rate_limit, retries, does not check state.
+   void _Skip(int to_skip); // skip in recv_buf or inflate (unless moved), update real_pos
+   void _UpdatePos(int to_skip); // update real_pos, chunk_pos etc.
 
 protected:
    bool hftp;  // ftp over http proxy.
@@ -178,7 +179,7 @@ public:
 
    int Do();
    int Done();
-   int Read(void *,int);
+   int Read(Buffer *,int);
    int Write(const void *,int);
    int StoreStatus();
    int SendEOT();

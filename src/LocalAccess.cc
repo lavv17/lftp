@@ -300,7 +300,7 @@ void LocalAccess::fill_array_info()
       fi->LocalFile(fi->name,(fi->filetype!=fi->SYMLINK));
 }
 
-int LocalAccess::Read(void *buf,int size)
+int LocalAccess::Read(Buffer *buf0,int size)
 {
    if(error_code<0)
       return error_code;
@@ -320,6 +320,7 @@ int LocalAccess::Read(void *buf,int size)
 read_again:
    int res;
 
+   char *buf=buf0->GetSpace(size);
 #ifndef NATIVE_CRLF
    if(ascii)
       res=read(fd,buf,size/2);
@@ -346,7 +347,7 @@ read_again:
 #ifndef NATIVE_CRLF
    if(ascii)
    {
-      char *p=(char*)buf;
+      char *p=buf;
       for(int i=res; i>0; i--)
       {
 	 if(*p=='\n')
@@ -363,10 +364,10 @@ read_again:
    real_pos+=res;
    if(real_pos<=pos)
       goto read_again;
-   long shift;
-   if((shift=pos+res-real_pos)>0)
+   off_t shift=pos+res-real_pos;
+   if(shift>0)
    {
-      memmove(buf,(char*)buf+shift,size-shift);
+      memmove(buf,buf+shift,size-shift);
       res-=shift;
    }
    pos+=res;

@@ -19,12 +19,12 @@ int main(int argc,char **argv)
       return 1;
    }
    f->Open("/pub/source/lftp",f->LONG_LIST);
+   Buffer buf;
    for(;;)
    {
       SMTask::Schedule();
 
-      char buf[1024];
-      int res=f->Read(buf,sizeof(buf));
+      int res=f->Read(&buf,1024);
       if(res<0)
       {
 	 if(res==f->DO_AGAIN)
@@ -40,7 +40,7 @@ int main(int argc,char **argv)
 	 f->Close();
 	 break;
       }
-      write(1,buf,res);
+      write(1,buf.Get(),res);
    }
    SMTask::Delete(f);
    return 0;

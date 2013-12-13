@@ -421,6 +421,8 @@ private:
    typedef FileInfo *(*FtpLineParser)(char *line,int *err,const char *tz);
    static FtpLineParser line_parsers[];
 
+   int CanRead();
+
 protected:
    ~Ftp();
 
@@ -457,7 +459,7 @@ public:
       return GetConnectLevel()!=CL_NOT_CONNECTED;
    }
 
-   int   Read(void *buf,int size);
+   int   Read(Buffer *buf,int size);
    int   Write(const void *buf,int size);
    int   Buffered();
    void  Close();

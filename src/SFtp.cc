@@ -1182,7 +1182,7 @@ ListInfo *SFtp::MakeListInfo(const char *dir)
    return new SFtpListInfo(this,dir);
 }
 
-int SFtp::Read(void *buf,int size)
+int SFtp::Read(Buffer *buf,int size)
 {
    if(Error())
       return error_code;
@@ -1214,8 +1214,7 @@ int SFtp::Read(void *buf,int size)
 	 return DO_AGAIN;
       if(size>size1)
 	 size=size1;
-      memcpy(buf,buf1,size);
-      file_buf->Skip(size);
+      buf->MoveDataHere(file_buf,size);
       pos+=size;
       real_pos+=size;
       rate_limit->BytesGot(size);

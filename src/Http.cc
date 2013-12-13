@@ -1793,7 +1793,7 @@ void Http::ResumeInternal()
    super::ResumeInternal();
 }
 
-int Http::Read(void *buf,int size)
+int Http::Read(Buffer *buf,int size)
 {
    if(Error())
       return error_code;
@@ -1817,20 +1817,26 @@ int Http::Read(void *buf,int size)
 }
 void Http::_Skip(int to_skip)
 {
-   if(inflate) {
+   if(inflate)
       inflate->Skip(to_skip);
-   } else {
+   else
       conn->recv_buf->Skip(to_skip);
+   _UpdatePos(to_skip);
+}
+void Http::_UpdatePos(int to_skip)
+{
+   if(!inflate) {
       if(chunked)
 	 chunk_pos+=to_skip;
       bytes_received+=to_skip;
    }
    real_pos+=to_skip;
 }
-int Http::_Read(void *buf,int size)
+int Http::_Read(Buffer *buf,int size)
 {
    const char *buf1;
    int size1;
+   Buffer *src_buf=conn->recv_buf.get_non_const();
 get_again:
    if(conn->recv_buf->Size()==0 && conn->recv_buf->Error())
    {
@@ -1944,6 +1950,7 @@ get_again:
 	 bytes_received+=size1;
       }
       inflate->Get(&buf1,&size1);
+      src_buf=inflate.get_non_const();
    } else {
       if(size1>bytes_allowed)
 	 size1=bytes_allowed;
@@ -1962,8 +1969,8 @@ get_again:
    }
    if(size>size1)
       size=size1;
-   memcpy(buf,buf1,size);
-   _Skip(size);
+   buf->MoveDataHere(src_buf,size);
+   _UpdatePos(size);
    return size;
 }
 
@@ -2440,11 +2447,12 @@ void Http::LogErrorText()
    int size=conn->recv_buf->Size();
    if(size==0)
       return;
-   char *buf=string_alloca(size+1);
-   size=_Read(buf,size);
-   if(size<0)
+   Buffer tmpbuf;
+   size=_Read(&tmpbuf,size);
+   if(size<=0)
       return;
-   buf[size]=0;
+   const char *buf0=tmpbuf.Get();
+   char *buf=alloca_strdup(buf0);
    remove_tags(buf);
    for(char *line=strtok(buf,"\n"); line; line=strtok(0,"\n")) {
       rtrim(line);

@@ -772,7 +772,7 @@ public:
 
    int Do();
    int Done();
-   int Read(void *,int);
+   int Read(Buffer *,int);
    int Write(const void *,int);
    int StoreStatus();
    int Buffered();

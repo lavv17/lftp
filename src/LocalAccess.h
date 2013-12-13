@@ -45,7 +45,7 @@ public:
    static FileAccess *New();
    bool SameLocationAs(const FileAccess *fa) const;
 
-   int Read(void *buf,int size);
+   int Read(Buffer *buf,int size);
    int Write(const void *buf,int size);
    int StoreStatus();
    int Do();
