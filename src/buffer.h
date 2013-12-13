@@ -91,6 +91,9 @@ public:
    }
    void Prepend(const char *buf,int size);
    void Prepend(const char *buf) { Prepend(buf,strlen(buf)); }
+   int MoveDataHere(Buffer *o,int len);
+   template<class BUF> int MoveDataHere(const Ref<BUF>& o,int len) { return MoveDataHere(o.get_non_const(),len); }
+   template<class BUF> int MoveDataHere(const SMTaskRef<BUF>& o,int len) { return MoveDataHere(o.get_non_const(),len); }
 
    unsigned long long UnpackUINT64BE(int offset=0) const;
    unsigned UnpackUINT32BE(int offset=0) const;
@@ -180,6 +183,8 @@ public:
    void PutRaw(const char *buf) { Buffer::Put(buf); }
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
+   int MoveDataHere(Buffer *o,int len);
+   template<class BUF> int MoveDataHere(const SMTaskRef<BUF>& o,int len) { return MoveDataHere(o.get_non_const(),len); }
    dir_t GetDirection() { return mode; }
 };
 

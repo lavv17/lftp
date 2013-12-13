@@ -191,6 +191,31 @@ void Buffer::Empty()
       save=true;
 }
 
+// move data from other buffer, prepare for SpaceAdd.
+int Buffer::MoveDataHere(Buffer *o,int max_len)
+{
+   const char *b;
+   int size;
+   o->Get(&b,&size);
+   if(size>max_len)
+      size=max_len;
+   if(size>0) {
+      if(size>=64 && Size()==0 && o->Size()==size && !save && !o->save) {
+	 // optimization by swapping buffers
+	 buffer.swap(o->buffer);
+	 buffer_ptr=replace_value(o->buffer_ptr,buffer_ptr);
+	 buffer.set_length_no_z(buffer_ptr);
+	 o->pos+=size;
+      } else {
+	 memcpy(GetSpace(size),b,size);
+	 o->Skip(size);
+      }
+   }
+   if(o->Eof())
+      PutEOF();
+   return size;
+}
+
 Buffer::Buffer()
 {
    saved_errno=0;
@@ -381,6 +406,16 @@ void DirectedBuffer::PutTranslated(const char *buf,int size)
    else
       Buffer::Put(buf,size);
 }
+int DirectedBuffer::MoveDataHere(Buffer *buf,int size)
+{
+   if(size>buf->Size())
+      size=buf->Size();
+   if(mode==PUT && translator)
+      translator->PutTranslated(this,buf->Get(),size);
+   else
+      return Buffer::MoveDataHere(buf,size);
+   return size;
+}
 
 void DirectedBuffer::EmbraceNewData(int len)
 {
@@ -561,20 +596,7 @@ int IOBufferStacked::Get_LL(int)
       return 0;
    }
    down->ResumeSlave();
-
-   const char *b;
-   int size;
-   down->Get(&b,&size);
-
-   if(!b)
-   {
-      eof=true;
-      return 0;
-   }
-
-   memcpy(GetSpace(size),b,size);
-   down->Skip(size);
-   return size;
+   return MoveDataHere(down,down->Size());
 }
 
 bool IOBufferStacked::Done()
@@ -730,7 +752,7 @@ int IOBufferFileAccess::Get_LL(int size)
 
    int res=0;
 
-   res=session->Read(GetSpace(size),size);
+   res=session->Read(this,size);
    if(res<0)
    {
       if(res==FA::DO_AGAIN)
