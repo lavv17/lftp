@@ -83,6 +83,7 @@ public:
    static void Timeout(int ms) { TimeoutU(1000*ms); }
    static void TimeoutS(int s) { TimeoutU(1000000*s); }
    static bool Ready(int fd,int mask) { return block.FDReady(fd,mask); }
+   static void SetNotReady(int fd,int mask) { block.FDSetNotReady(fd,mask); }
 
    static TimeDate now;
    static void UpdateNow() { now.SetToCurrentTime(); }
