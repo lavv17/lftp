@@ -55,8 +55,11 @@ ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMg
 ResDecl buffer_size  ("xfer:buffer-size","0x100000",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 enum {
+   // Delays in microseconds
    MAX_DELAY=30000,
    DELAY_STEP=30,
+   // This size is related to socket buffer size.
+   // When it is too large, tcp slowdown happens.
    MAX_READ_TO_DELAY=0x4000,
 };
 
@@ -1188,14 +1191,15 @@ int FileCopyPeerFA::Get_LL(int len)
       SetSuggestedFileName(session->GetSuggestedFileName());
       session->Close();
    }
-   else if(res<len/2 && res<=MAX_READ_TO_DELAY && get_delay<MAX_DELAY)
+   else if(res<=MAX_READ_TO_DELAY)
    {
-      get_delay+=DELAY_STEP;
+      if(get_delay<=MAX_DELAY-DELAY_STEP)
+	 get_delay+=DELAY_STEP;
       get_ll_timer.SetMicroSeconds(get_delay);
       session->SuspendSlave();
    }
-   else if(res==len && get_delay>0)
-      get_delay/=2;
+   else if(res>MAX_READ_TO_DELAY && get_delay>=DELAY_STEP)
+      get_delay-=DELAY_STEP;
    return res;
 }
 
