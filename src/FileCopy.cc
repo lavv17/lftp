@@ -52,7 +52,7 @@
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMgr::NoClosure);
-ResDecl buffer_size  ("xfer:buffer-size","0x100000",ResMgr::UNumberValidate,ResMgr::NoClosure);
+ResDecl buffer_size  ("xfer:buffer-size","0x10000",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
 enum {
    // Delays in microseconds
@@ -1486,6 +1486,7 @@ int FileCopyPeerFDStream::Do()
    if(ascii)
       check_min_size=false;
 #endif
+   int res;
    switch(mode)
    {
    case PUT:
@@ -1517,43 +1518,29 @@ int FileCopyPeerFDStream::Do()
 	 return m;
       if(getfd()==-1)
 	 return m;
-      while(Size()>0)
-      {
-	 if(check_min_size && !eof && Size()<PUT_LL_MIN
-	 && put_ll_timer && !put_ll_timer->Stopped())
-	    break;
-	 int res=Put_LL(buffer+buffer_ptr,Size());
-	 if(res>0)
-	 {
-	    buffer_ptr+=res;
-	    m=MOVED;
-	 }
-	 if(res<0)
-	    return MOVED;
-	 if(res==0)
-	    break;
-      }
+
+      if(check_min_size && !eof && Size()<PUT_LL_MIN
+      && put_ll_timer && !put_ll_timer->Stopped())
+	 break;
+      res=Put_LL(buffer+buffer_ptr,Size());
+      if(res>0)
+	 buffer_ptr+=res;
+      if(res!=0)
+	 m=MOVED;
       break;
 
    case GET:
       if(eof)
 	 return m;
-      while(Size()<GET_BUFSIZE)
+
+      res=TuneGetSize(Get_LL(get_size));
+      if(res>0)
       {
-	 int res=TuneGetSize(Get_LL(get_size));
-	 if(res>0)
-	 {
-	    EmbraceNewData(res);
-	    SaveMaxCheck(0);
-	    m=MOVED;
-	 }
-	 if(res<0)
-	    return MOVED;
-	 if(eof)
-	    return MOVED;
-	 if(res==0)
-	    break;
+	 EmbraceNewData(res);
+	 SaveMaxCheck(0);
       }
+      if(res!=0 || eof)
+	 m=MOVED;
       break;
    }
    return m;
