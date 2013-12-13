@@ -201,7 +201,7 @@ public:
    /* set_length can be used to extend the string, e.g. after modification
       with get_space+get_non_const. */
    void set_length(size_t n) { if(buf) buf[len=n]=0; }
-   void set_length_no_z(size_t n) { len=0; }
+   void set_length_no_z(size_t n) { len=n; }
    char *borrow() { size=len=0; return replace_value(buf,(char*)0); }
    bool begins_with(const char *o_buf,size_t o_len) const;
    bool begins_with(const char *s) const { return begins_with(s,strlen(s)); };
