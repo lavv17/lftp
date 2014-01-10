@@ -117,7 +117,7 @@ SMTaskRef<TorrentListener> Torrent::listener_ipv6;
 SMTaskRef<TorrentListener> Torrent::listener_ipv6_udp;
 SMTaskRef<DHT> Torrent::dht_ipv6;
 #endif
-Ref<FDCache> Torrent::fd_cache;
+SMTaskRef<FDCache> Torrent::fd_cache;
 Ref<TorrentBlackList> Torrent::black_list;
 
 void Torrent::StartDHT()
