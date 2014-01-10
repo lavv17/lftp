@@ -123,7 +123,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static SMTaskRef<TorrentListener> listener_ipv6_udp;
    static SMTaskRef<DHT> dht_ipv6;
 #endif
-   static Ref<FDCache> fd_cache;
+   static SMTaskRef<FDCache> fd_cache;
    static Ref<TorrentBlackList> black_list;
 
    static const SMTaskRef<DHT>& GetDHT(int af)
