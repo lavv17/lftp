@@ -701,10 +701,14 @@ void Http::SendRequest(const char *connection,const char *f)
       break;
 
    case(REMOVE):
-   case(REMOVE_DIR):
       SendMethod("DELETE",efile);
-      if(mode==REMOVE)
-	 Send("Depth: 0\r\n"); // deny directory removal
+      Send("Depth: 0\r\n"); // deny directory removal
+      break;
+
+   case(REMOVE_DIR):
+      if(efile.last_char()!='/')
+	 efile.append('/');
+      SendMethod("DELETE",efile);
       break;
 
    case ARRAY_INFO:
