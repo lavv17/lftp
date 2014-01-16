@@ -219,7 +219,8 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
      cwd(c), output_dir(od), rate_limit(mf),
      seed_timer("torrent:seed-max-time",0),
      optimistic_unchoke_timer(30), peers_scan_timer(1),
-     am_interested_timer(1), dht_announce_timer(10*60),
+     am_interested_timer(1), shutting_down_timer(60),
+     dht_announce_timer(10*60),
      dht_announce_count(0), dht_announce_count_ipv6(0)
 {
    shutting_down=false;
@@ -275,6 +276,8 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
 
 bool Torrent::TrackersDone() const
 {
+   if(shutting_down && shutting_down_timer.Stopped())
+      return true;
    for(int i=0; i<trackers.count(); i++) {
       if(trackers[i]->IsActive())
 	 return false;
@@ -298,6 +301,7 @@ void Torrent::Shutdown()
       return;
    LogNote(3,"Shutting down...");
    shutting_down=true;
+   shutting_down_timer.Reset();
    ShutdownTrackers();
    DenounceDHT();
    PrepareToDie();
