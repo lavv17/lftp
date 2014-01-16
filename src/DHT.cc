@@ -625,6 +625,8 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 }
 bool DHT::Node::IsBetterThan(const Node *node,const xstring& target) const
 {
+   if(responded!=node->responded)
+      return responded>node->responded;
    for(int i=0; i<20; i++) {
       unsigned char a=this->id[i]^target[i];
       unsigned char b=node->id[i]^target[i];
