@@ -1,3 +1,7 @@
+2013-01-16  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Http.cc: fixed error handling for new _Read semantics.
+
 2013-01-15  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: fixed rmdir for WebDAV by adding trailing slash to the path.

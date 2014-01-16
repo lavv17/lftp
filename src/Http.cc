@@ -2455,6 +2455,7 @@ void Http::LogErrorText()
    size=_Read(&tmpbuf,size);
    if(size<=0)
       return;
+   tmpbuf.SpaceAdd(size);
    const char *buf0=tmpbuf.Get();
    char *buf=alloca_strdup(buf0);
    remove_tags(buf);
