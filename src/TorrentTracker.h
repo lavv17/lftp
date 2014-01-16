@@ -70,10 +70,10 @@ public:
    bool IsActive() const;
    void TrackerRequestFinished() { tracker_timer.Reset(); }
    void SetInterval(unsigned i) {
-      if(i>30) {
-	 tracker_timer.Set(i);
-	 LogNote(4,"Tracker interval is %u",i);
-      }
+      if(i<30)
+	 i=30;
+      tracker_timer.Set(i);
+      LogNote(4,"Tracker interval is %u",i);
    }
    void SetTrackerID(const xstring& id) {
       if(id)
