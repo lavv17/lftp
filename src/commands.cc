@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2014 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2584,7 +2584,7 @@ CMD(help)
 CMD(ver)
 {
    printf(
-      _("LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"),VERSION,2013);
+      _("LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"),VERSION,2014);
    printf("\n");
    printf(
       _("LFTP is free software: you can redistribute it and/or modify\n"
