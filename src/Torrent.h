@@ -256,6 +256,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    Timer optimistic_unchoke_timer;
    Timer peers_scan_timer;
    Timer am_interested_timer;
+   Timer shutting_down_timer;
 
    Timer dht_announce_timer;
    int dht_announce_count;
