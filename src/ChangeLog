@@ -1,5 +1,12 @@
 2013-01-16  Alexander V. Lukyanov <lavv17f@gmail.com>
 
+	* DHT.cc: prefer responded nodes in search over not responded ones.
+	* Torrent.cc, Torrent.h: add shutting_down_timer to fix a hang on
+	  unresponsive trackers.
+	* TorrentTracker.h: use 30 if interval<30.
+
+2013-01-16  Alexander V. Lukyanov <lavv17f@gmail.com>
+
 	* Http.cc: fixed error handling for new _Read semantics.
 
 2013-01-15  Alexander V. Lukyanov <lavv17f@gmail.com>
