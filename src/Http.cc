@@ -867,7 +867,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(pos==0 && opt_size && H_2XX(status_code) && !inflate)
 	 *opt_size=body_size;
 
-      if(mode==ARRAY_INFO && H_2XX(status_code) && !propfind)
+      if(mode==ARRAY_INFO && H_2XX(status_code)
+      && xstrcmp(last_method,"PROPFIND"))
       {
 	 FileInfo *fi=fileset_for_info->curr();
 	 fi->SetSize(body_size);
@@ -1479,7 +1480,7 @@ int Http::Do()
 		  if(H_2XX(status_code))
 		  {
 		     // should never happen
-		     LogError(0,"Success, but did nothing??");
+		     LogError(0,"Unexpected success, the server did not accept full request body");
 		     Disconnect();
 		     return MOVED;
 		  }
