@@ -219,6 +219,10 @@ public:
    void chop() { dispose(len-1); _chop(); }
    T *last() { return (*this)[len-1]; }
    T **borrow() { return static_cast<T**>(_borrow()); }
+   typedef int (*cmp_t)(const T**,const T**);
+   void qsort(cmp_t cmp) {
+      xarray0::qsort((qsort_cmp_t)cmp);
+   }
 };
 
 
