@@ -285,7 +285,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
       if(!f || (f[0]!='/' && f[0]!='~'))
 	 f=dir_file(cwd.path?cwd.path.get():"~",f);
       u.path.set(f);
-      if(is_dir && url::dir_needs_trailing_slash(proto))
+      if(is_dir && url::dir_needs_trailing_slash(proto) && u.path.last_char()!='/')
 	 u.path.append('/');
    }
    return url.set_allocated(u.Combine(home));
@@ -962,7 +962,7 @@ void FileAccess::Path::Change(const char *new_path,bool new_is_file,const char *
 	    new_url_path.set("/~");
       }
       if(new_url_path.last_char()!='/')
-	 new_url_path.append("/");
+	 new_url_path.append('/');
       if(new_path[0]=='/' || new_path[0]=='~' || new_device_prefix_len!=0)
       {
 	 bool have_slash=((new_path_enc?new_path_enc:new_path)[0]=='/');

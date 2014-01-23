@@ -140,7 +140,7 @@ void History::Set(const FileAccess *s,const FileAccess::Path &cwd)
    if(!cwd.url)
    {
       res.append_url_encoded(cwd,URL_PATH_UNSAFE);
-      if(!cwd.is_file && url::dir_needs_trailing_slash(s->GetProto()))
+      if(!cwd.is_file && url::dir_needs_trailing_slash(s->GetProto()) && res.last_char()!='/')
 	 res.append('/');
    }
    else

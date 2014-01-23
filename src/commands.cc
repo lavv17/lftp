@@ -628,7 +628,7 @@ Job *CmdExec::builtin_cd()
    int cache_is_dir=FileAccess::cache->IsDirectory(session,dir);
    if(cache_is_dir==1)
    {
-      if(is_file && dir_needs_slash)
+      if(is_file && dir_needs_slash && last_char(dir)!='/')
 	 dir=xstring::get_tmp(dir).append('/');
       is_file=false;
    }
