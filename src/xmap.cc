@@ -55,9 +55,9 @@ int _xmap::make_hash(const xstring& s) const
       return 0;
    unsigned hash=0x12345678;
    for(unsigned i=0; i<s.length(); i++) {
-      hash^=(hash<<5)+s[i];
+      hash+=(hash<<5)+s[i];
    }
-   hash^=(hash<<5)+s.length();
+   hash+=(hash<<5)+s.length();
    hash%=hash_size;
    return hash;
 }
