@@ -4,6 +4,7 @@
 	  already there.
 	* xmap.cc: slightly better hash.
 	* xarray.h: (xarray_p::qsort) new method.
+	* StringSet.h: (StringSet::qsort) new method.
 
 2013-01-17  Alexander V. Lukyanov <lavv17f@gmail.com>
 
