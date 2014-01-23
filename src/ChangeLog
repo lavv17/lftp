@@ -1,3 +1,8 @@
+2013-01-23  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* FileAccess.cc, commands.cc, history.cc: don't add a slash if it's
+	  already there.
+
 2013-01-17  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: allow UTC along with GMT in http timestamps.
