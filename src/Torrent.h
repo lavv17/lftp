@@ -154,10 +154,14 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    xstring md_download;
    size_t metadata_size;
-   void StartMetadataDownload() { md_download.nset("",0); }
+   void FetchMetadataFromURL(const char *url);
+   void StartMetadataDownload();
    void MetadataDownloaded();
    void SetMetadata(const xstring& md);
    void ParseMagnet(const char *p);
+   const char *GetMetadataPath() const;
+   void SaveMetadata() const;
+   bool LoadMetadata(const char *path);
 
    xstring_c metainfo_url;
    SMTaskRef<FileCopy> metainfo_copy;

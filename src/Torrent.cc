@@ -44,6 +44,7 @@ CDECL_END
 static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
    {"torrent:max-peers", "60", ResMgr::UNumberValidate},
+   {"torrent:save-metadata", "yes", ResMgr::BoolValidate, ResMgr::NoClosure},
    {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate},
    {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate},
    {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate},
@@ -579,6 +580,114 @@ const char *Torrent::DHT_Status() const
    return status;
 }
 
+const char *Torrent::GetMetadataPath() const
+{
+   if(!QueryBool("torrent:save-metadata",0))
+      return NULL;
+   xstring& path=xstring::cat(get_lftp_data_dir(),"/torrent",NULL);
+   mkdir(path,0700);
+   path.append('/');
+   info_hash.hexdump_to(path);
+   return path;
+}
+
+void Torrent::SaveMetadata() const
+{
+   const char *path=GetMetadataPath();
+   if(!path)
+      return;
+
+   int fd=open(path,O_CREAT|O_WRONLY,0700);
+   if(fd<0) {
+      LogError(9,"open(%s): %s",path,strerror(errno));
+      return;
+   }
+
+   int bytes_to_write=metadata.length();
+   int res=write(fd,metadata.get(),bytes_to_write);
+   int saved_errno=errno;
+   ftruncate(fd,bytes_to_write);
+
+   close(fd);
+
+   if(res==bytes_to_write)
+      return;  // no error, fd is closed.
+
+   if(res<0)
+      LogError(9,"write(%s): %s",path,strerror(saved_errno));
+   else
+      LogError(9,"write(%s): short write (only wrote %d bytes)",path,res);
+
+   unlink(path);
+}
+bool Torrent::LoadMetadata(const char *path)
+{
+   int fd=open(path,O_RDONLY);
+   if(fd<0) {
+      LogError(9,"open(%s): %s",path,strerror(errno));
+      return false;
+   }
+
+   struct stat st;
+   if(fstat(fd,&st)==-1) {
+      close(fd);
+      return false;
+   }
+   int bytes_to_read=st.st_size;
+
+   xstring md;
+   int res=read(fd,md.add_space(bytes_to_read),bytes_to_read);
+   int saved_errno=errno;
+
+   close(fd);
+
+   if(res==bytes_to_read) {
+      // no error, fd is closed.
+      md.add_commit(res);
+
+      xstring new_info_hash;
+      SHA1(md,new_info_hash);
+      if(info_hash && info_hash.ne(new_info_hash)) {
+	 LogError(9,"cached metadata does not match info_hash");
+	 return false;
+      }
+      LogNote(9,"got metadata from %s",path);
+      SetMetadata(md);
+      return true;
+   }
+
+   if(res<0)
+      LogError(9,"read(%s): %s",path,strerror(saved_errno));
+   else
+      LogError(9,"read(%s): short read (only read %d bytes)",path,res);
+   return false;
+}
+
+void Torrent::FetchMetadataFromURL(const char *url)
+{
+   ParsedURL u(url,true);
+   if(!u.proto) {
+      u.proto.set("file");
+      u.path.set(url);  // undo %xx translation
+   }
+   LogNote(9,"Retrieving meta-data from `%s'...\n",url);
+   FileCopyPeer *metainfo_src=new FileCopyPeerFA(&u,FA::RETRIEVE);
+   FileCopyPeer *metainfo_dst=new FileCopyPeerMemory(10000000);
+   metainfo_copy=new FileCopy(metainfo_src,metainfo_dst,false);
+}
+
+void Torrent::StartMetadataDownload()
+{
+   const char *path=GetMetadataPath();
+   if(path && access(path,R_OK)>=0) {
+      // we have the metadata cached
+      LoadMetadata(path);
+      if(metadata)
+	 return;
+   }
+   md_download.nset("",0);
+}
+
 void Torrent::SetMetadata(const xstring& md)
 {
    metadata.set(md);
@@ -681,6 +790,8 @@ void Torrent::SetMetadata(const xstring& md)
    } else {
       AddTorrent(this);
    }
+
+   SaveMetadata();
 
    my_bitfield=new BitField(total_pieces);
    for(unsigned p=0; p<total_pieces; p++)
@@ -828,15 +939,7 @@ int Torrent::Do()
 	    AddTorrent(this);
 	    return MOVED;
 	 }
-	 ParsedURL u(metainfo_url,true);
-	 if(!u.proto) {
-	    u.proto.set("file");
-	    u.path.set(metainfo_url);  // undo %xx translation
-	 }
-	 LogNote(9,"Retrieving meta-data from `%s'...\n",metainfo_url.get());
-	 FileCopyPeer *metainfo_src=new FileCopyPeerFA(&u,FA::RETRIEVE);
-	 FileCopyPeer *metainfo_dst=new FileCopyPeerMemory(10000000);
-	 metainfo_copy=new FileCopy(metainfo_src,metainfo_dst,false);
+	 FetchMetadataFromURL(metainfo_url);
 	 m=MOVED;
       }
       if(metainfo_copy->Error()) {
