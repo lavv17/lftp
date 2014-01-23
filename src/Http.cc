@@ -2297,7 +2297,7 @@ void Http::CookieMerge(xstring &all,const char *cookie_c)
 
 void Http::MakeCookie(xstring &all_cookies,const char *hostname,const char *efile)
 {
-   ResMgr::Resource *scan=0;
+   Resource *scan=0;
    const char *closure;
    for(;;)
    {

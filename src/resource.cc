@@ -375,7 +375,7 @@ void ResMgr::ClassInit()
    if(class_inited)
       return;
    class_inited=true;
-   for(ResType *scan=type_chain; scan; scan=scan->next)
+   for(ResType *scan=types_by_name->each_begin(); scan; scan=types_by_name->each_next())
    {
       if(scan->defvalue && scan->val_valid)
       {

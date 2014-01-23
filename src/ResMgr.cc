@@ -40,8 +40,8 @@ CDECL_END
 #include "StringSet.h"
 #include "log.h"
 
-ResMgr::Resource  *ResMgr::chain=0;
-ResType		  *ResMgr::type_chain=0;
+xlist<Resource> Resource::all_list;
+xmap<ResType*> *ResMgr::types_by_name;
 
 int ResMgr::VarNameCmp(const char *good_name,const char *name)
 {
@@ -83,11 +83,13 @@ const char *ResMgr::FindVar(const char *name,const ResType **type)
    const ResType *exact_proto=0;
    const ResType *exact_name=0;
 
-   *type=0;
+   *type=types_by_name->lookup(name);
+   if(*type)
+      return 0;	// exact match
 
    int sub=0;
    const ResType *type_scan;
-   for(type_scan=type_chain; type_scan; type_scan=type_scan->next)
+   for(type_scan=types_by_name->each_begin(); type_scan; type_scan=types_by_name->each_next())
    {
       switch(VarNameCmp(type_scan->name,name))
       {
@@ -137,7 +139,7 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
 {
    const char *msg;
 
-   const ResType *type;
+   ResType *type;
    // find type of given variable
    msg=FindVar(name,&type);
    if(msg)
@@ -151,36 +153,27 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
    if(closure && type->closure_valid && (msg=(*type->closure_valid)(&closure))!=0)
       return msg;
 
-   Resource **scan;
-   // find the old value
-   for(scan=&chain; *scan; scan=&(*scan)->next)
-      if((*scan)->type==type
-	 && ((closure==0 && (*scan)->closure==0)
-	     || (closure && (*scan)->closure
-	         && !strcmp((*scan)->closure,closure))))
-	 break;
+   bool need_reconfig=false;
 
-   // if found
-   if(*scan)
+   xlist_for_each_safe(Resource,type->type_value_list,node,scan,next)
    {
-      if(value)
-	 (*scan)->value.set(value);
-      else
-      {
-	 Resource *to_free=*scan;
-	 *scan=(*scan)->next;
-	 delete to_free;
+      // find the old value
+      if(scan->type==type
+	 && ((closure==0 && scan->closure==0)
+	     || (closure && scan->closure
+	         && !strcmp(scan->closure,closure)))) {
+	 need_reconfig=true;
+	 delete scan;
+	 break;
       }
+   }
+   if(value)
+   {
+      (void)new Resource(type,closure,value);
+      need_reconfig=true;
+   }
+   if(need_reconfig)
       ResClient::ReconfigAll(type->name);
-   }
-   else
-   {
-      if(value)
-      {
-	 chain=new Resource(chain,type,closure,value);
-	 ResClient::ReconfigAll(type->name);
-      }
-   }
    return 0;
 }
 
@@ -198,152 +191,96 @@ int ResMgr::ResourceCompare(const Resource *ar,const Resource *br)
    return strcmp(ar->closure,br->closure);
 }
 
-int ResMgr::VResourceCompare(const void *a,const void *b)
+void Resource::Format(xstring& buf) const
 {
-   const ResMgr::Resource *ar=*(const ResMgr::Resource*const*)a;
-   const ResMgr::Resource *br=*(const ResMgr::Resource*const*)b;
-   return ResMgr::ResourceCompare(ar,br);
+   buf.appendf("set %s",type->name);
+   const char *s=closure;
+   if(s)
+   {
+      buf.append('/');
+      bool par=false;
+      if(strcspn(s," \t>|;&")!=strlen(s))
+	 par=true;
+      if(par)
+	 buf.append('"');
+      while(*s)
+      {
+	 if(strchr("\"\\",*s))
+	    buf.append('\\');
+	 buf.append(*s++);
+      }
+      if(par)
+	 buf.append('"');
+   }
+   buf.append(' ');
+   s=value;
+
+   bool par=false;
+   if(*s==0 || strcspn(s," \t>|;&")!=strlen(s))
+      par=true;
+   if(par)
+      buf.append('"');
+   while(*s)
+   {
+      if(strchr("\"\\",*s))
+	 buf.append('\\');
+      buf.append(*s++);
+   }
+   if(par)
+      buf.append('"');
+   buf.append('\n');
+}
+
+static int PResourceCompare(const Resource *const*a,const Resource *const*b)
+{
+   return ResMgr::ResourceCompare(*a,*b);
+}
+static int RefResourceCompare(const Ref<Resource> *a,const Ref<Resource> *b)
+{
+   return ResMgr::ResourceCompare(*a,*b);
 }
 
 char *ResMgr::Format(bool with_defaults,bool only_defaults)
 {
-   Resource *scan;
-   ResType  *dscan;
-
-   int n=0;
-   int dn=0;
-   if(!only_defaults)
-   {
-      for(scan=chain; scan; scan=scan->next)
-	 n++;
-   }
+   RefArray<Resource> created;
    if(with_defaults || only_defaults)
    {
-      for(dscan=type_chain; dscan; dscan=dscan->next)
-	 dn++;
-   }
-
-   xstring res("");
-
-   Resource **created=(Resource**)alloca((dn+1)*sizeof(Resource*));
-   Resource **c_store=created;
-   dn=0;
-   if(with_defaults || only_defaults)
-   {
-      for(dscan=type_chain; dscan; dscan=dscan->next)
-      {
+      for(ResType *dscan=types_by_name->each_begin(); dscan; dscan=types_by_name->each_next())
 	 if(only_defaults || SimpleQuery(dscan->name,0)==0)
-	 {
-	    dn++;
-	    *c_store++=new Resource(0,dscan,
-	       0,xstrdup(dscan->defvalue?dscan->defvalue:"(nil)"));
-	 }
-      }
+	    created.append(new Resource(dscan,
+	       0,xstrdup(dscan->defvalue?dscan->defvalue:"(nil)")));
    }
 
-   Resource **arr=(Resource**)alloca((n+dn)*sizeof(Resource*));
-   n=0;
+   xstring buf("");
+
    if(!only_defaults)
    {
-      for(scan=chain; scan; scan=scan->next)
-	 arr[n++]=scan;
+      // just created Resources are also in all_list.
+      xarray<const Resource*> arr;
+      xlist_for_each(Resource,Resource::all_list,node,scan)
+	 arr.append(scan);
+      arr.qsort(PResourceCompare);
+      for(int i=0; i<arr.count(); i++)
+	 arr[i]->Format(buf);
    }
-   int i;
-   if(with_defaults || only_defaults)
+   else
    {
-      for(i=0; i<dn; i++)
-	 arr[n++]=created[i];
+      created.qsort(RefResourceCompare);
+      for(int i=0; i<created.count(); i++)
+	 created[i]->Format(buf);
    }
 
-   qsort(arr,n,sizeof(*arr),&ResMgr::VResourceCompare);
-
-   for(i=0; i<n; i++)
-   {
-      res.appendf("set %s",arr[i]->type->name);
-      const char *s=arr[i]->closure;
-      if(s)
-      {
-	 res.append('/');
-	 bool par=false;
-	 if(strcspn(s," \t>|;&")!=strlen(s))
-	    par=true;
-	 if(par)
-	    res.append('"');
-	 while(*s)
-	 {
-	    if(strchr("\"\\",*s))
-	       res.append('\\');
-	    res.append(*s++);
-	 }
-	 if(par)
-	    res.append('"');
-      }
-      res.append(' ');
-      s=arr[i]->value;
-
-      bool par=false;
-      if(*s==0 || strcspn(s," \t>|;&")!=strlen(s))
-	 par=true;
-      if(par)
-	 res.append('"');
-      while(*s)
-      {
-	 if(strchr("\"\\",*s))
-	    res.append('\\');
-	 res.append(*s++);
-      }
-      if(par)
-	 res.append('"');
-      res.append('\n');
-   }
-   for(i=0; i<dn; i++)
-      delete created[i];
-   return res.borrow();
+   return buf.borrow();
 }
 
 char **ResMgr::Generator(void)
 {
-   Resource *scan;
-   ResType  *dscan;
-
-   int n=0;
-   int dn=0;
-   for(scan=chain; scan; scan=scan->next)
-      n++;
-   for(dscan=type_chain; dscan; dscan=dscan->next)
-      dn++;
-
    StringSet res;
 
-   Resource **created=(Resource**)alloca((dn+1)*sizeof(Resource*));
-   Resource **c_store=created;
-   dn=0;
-   for(dscan=type_chain; dscan; dscan=dscan->next)
-   {
-      if(SimpleQuery(dscan->name,0)==0)
-      {
-         dn++;
-	 *c_store++=new Resource(0,dscan,
-	     0,xstrdup(dscan->defvalue?dscan->defvalue:"(nil)"));
-      }
-   }
+   for(ResType *dscan=types_by_name->each_begin(); dscan; dscan=types_by_name->each_next())
+      res.Append(dscan->name);
 
-   Resource **arr=(Resource**)alloca((n+dn)*sizeof(Resource*));
-   n=0;
-   for(scan=chain; scan; scan=scan->next)
-      arr[n++]=scan;
-
-   int i;
-   for(i=0; i<dn; i++)
-      arr[n++]=created[i];
-
-   qsort(arr,n,sizeof(*arr),&ResMgr::VResourceCompare);
-
-   for(i=0; i<n; i++)
-      res.Append(arr[i]->type->name);
-
-   for(i=0; i<dn; i++)
-      delete created[i];
+   res.qsort();
    return res.borrow();
 }
 
@@ -518,15 +455,19 @@ bool ResValue::to_tri_bool(bool a) const
    return to_bool();
 }
 
-ResMgr::Resource::Resource(Resource *next,const ResType *type,const char *closure,const char *value)
-   : type(type), value(value), closure(closure), next(next)
+Resource::Resource(ResType *type,const char *closure,const char *value)
+   : type(type), value(value), closure(closure), all_node(this), type_value_node(this)
 {
+   all_list.add_tail(all_node);
+   type->type_value_list.add_tail(type_value_node);
 }
-ResMgr::Resource::~Resource()
+Resource::~Resource()
 {
+   all_node.remove();
+   type_value_node.remove();
 }
 
-bool ResMgr::Resource::ClosureMatch(const char *cl_data)
+bool Resource::ClosureMatch(const char *cl_data)
 {
    if(!closure && !cl_data)
       return true;
@@ -546,32 +487,27 @@ bool ResMgr::Resource::ClosureMatch(const char *cl_data)
 
 const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **ptr)
 {
-   const ResType *type=FindRes(name);
-   if(!type)
-      return 0;
-
+   xlist<Resource> *node=0;
    if(*ptr==0)
-      *ptr=chain;
-   else
-      *ptr=(*ptr)->next;
-
-   while(*ptr)
    {
-      if((*ptr)->type==type)
-      {
-	 *closure=(*ptr)->closure;
-	 return (*ptr)->value;
-      }
-      *ptr=(*ptr)->next;
+      const ResType *type=FindRes(name);
+      if(!type)
+	 return 0;
+      node=type->type_value_list.get_next();
    }
-   return 0;
+   else
+   {
+      node=(*ptr)->type_value_node.get_next();
+   }
+   *ptr=node->get_obj();
+   return *ptr ? (*ptr)->value.get() : NULL;
 }
 
 const char *ResMgr::SimpleQuery(const ResType *type,const char *closure)
 {
    // find the value
-   for(Resource *scan=chain; scan; scan=scan->next)
-      if(scan->type==type && scan->ClosureMatch(closure))
+   xlist_for_each(Resource,type->type_value_list,node,scan)
+      if(scan->ClosureMatch(closure))
 	 return scan->value;
    return 0;
 }
@@ -646,28 +582,18 @@ ResDecls::ResDecls(ResType *r1,ResType *r2,...)
    va_end(v);
 }
 
+void ResMgr::AddType(ResType *t)
+{
+   if(!types_by_name)
+      types_by_name=new xmap<ResType*>;
+   types_by_name->add(t->name,t);
+}
 ResType::~ResType()
 {
-   for(ResType **scan=&ResMgr::type_chain; *scan; scan=&(*scan)->next)
-   {
-      if(*scan==this)
-      {
-	 *scan=this->next;
-	 break;
-      }
-   }
-
-   {
-      // remove all resources of this type
-      ResMgr::Resource **scan=&ResMgr::chain;
-      while(*scan)
-      {
-	 if((*scan)->type==this)
-	    delete replace_value(*scan,(*scan)->next);
-	 else
-	    scan=&(*scan)->next;
-      }
-   }
+   ResMgr::types_by_name->remove(name);
+   // remove all resources of this type
+   xlist_for_each_safe(Resource,type_value_list,node,scan,next)
+      delete scan;
 }
 
 void TimeIntervalR::init(const char *s)
@@ -940,7 +866,7 @@ void ResValue::ToNumberPair(int &a,int &b) const
    }
 }
 
-ResClient *ResClient::chain;
+xlist<ResClient> ResClient::list;
 ResValue ResClient::Query(const char *name,const char *closure) const
 {
    if(!strchr(name,':'))
@@ -954,16 +880,17 @@ ResValue ResClient::Query(const char *name,const char *closure) const
    return ResMgr::Query(name,closure);
 }
 ResClient::ResClient()
+   : node(this)
 {
-   ListAdd(ResClient,chain,this,next);
+   list.add(node);
 }
 ResClient::~ResClient()
 {
-   ListDel(ResClient,chain,this,next);
+   node.remove();
 }
 void ResClient::ReconfigAll(const char *r)
 {
-   ListScan(ResClient,chain,next)
+   xlist_for_each(ResClient,list,node,scan)
       scan->Reconfig(r);
 }
 

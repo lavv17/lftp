@@ -25,11 +25,15 @@
 #include <time.h>
 #include "TimeDate.h"
 #include "xstring.h"
+#include "xlist.h"
+#include "xmap.h"
 
 typedef const char *ResValValid(xstring_c *value);
 typedef const char *ResClValid(xstring_c *closure);
 
 class ResValue;
+class ResMgr;
+class Resource;
 
 struct ResType
 {
@@ -37,7 +41,7 @@ struct ResType
    const char *defvalue;
    ResValValid *val_valid;
    ResClValid *closure_valid;
-   ResType *next;
+   xlist<Resource> type_value_list;
    ~ResType();
 
    ResValue Query(const char *closure) const;
@@ -45,34 +49,35 @@ struct ResType
    bool QueryTriBool(const char *closure,bool a) const;
 };
 
+class Resource
+{
+   friend class ResMgr;
+   friend class ResType;
+   static xlist<Resource> all_list;
+
+   const ResType *type;
+   xstring_c value;
+   xstring_c closure;
+
+   xlist<Resource> all_node;
+   xlist<Resource> type_value_node;
+
+   bool ClosureMatch(const char *cl_data);
+   void Format(xstring& buf) const;
+
+   Resource(ResType *type,const char *closure,const char *value);
+public:
+   ~Resource();
+};
+
 class ResMgr
 {
    static bool class_inited;
    friend class ResType;
-public:
-   class Resource
-   {
-      friend class ResMgr;
-      friend class ResType;
-
-      const ResType *type;
-      xstring_c value;
-      xstring_c closure;
-
-      Resource *next;
-
-      bool ClosureMatch(const char *cl_data);
-
-      Resource(Resource *next,const ResType *type,const char *closure,const char *value);
-      ~Resource();
-   };
-
-private:
-   static Resource *chain;
-   static ResType *type_chain;
+   static xmap<ResType*> *types_by_name;
 
 public:
-   static void AddType(ResType *t) { t->next=type_chain; type_chain=t; }
+   static void AddType(ResType *t);
    static const char *QueryNext(const char *name,const char **closure,Resource **ptr);
    static const char *SimpleQuery(const ResType *type,const char *closure);
    static const char *SimpleQuery(const char *name,const char *closure);
@@ -88,6 +93,7 @@ public:
 
    static int VarNameCmp(const char *name1,const char *name2);
    static const char *FindVar(const char *name,const ResType **type);
+   static const char *FindVar(const char *name,ResType **type) { return FindVar(name,const_cast<const ResType **>(type)); }
    static const ResType *FindRes(const char *name);
    static const char *Set(const char *name,const char *closure,const char *value);
 
@@ -119,7 +125,6 @@ public:
    static void ClassInit();
 
    static int ResourceCompare(const Resource *a,const Resource *b);
-   static int VResourceCompare(const void *a,const void *b);
 };
 
 class ResDecl : public ResType
@@ -214,8 +219,8 @@ public:
 
 class ResClient
 {
-   static ResClient *chain;
-   ResClient *next;
+   static xlist<ResClient> list;
+   xlist<ResClient> node;
 protected:
    virtual const char *ResPrefix() const { return 0; }
    virtual const char *ResClosure() const { return 0; }
