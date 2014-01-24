@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.6\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-12-13 13:55+0400\n"
+"POT-Creation-Date: 2014-01-24 12:42+0400\n"
 "PO-Revision-Date: 2013-05-19 08:40+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -268,7 +268,7 @@ msgid "File cannot be accessed"
 msgstr "Brak dostępu do pliku"
 
 #: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1332 src/ftpclass.cc:4333
-#: src/ftpclass.cc:4342 src/Torrent.cc:3022
+#: src/ftpclass.cc:4342 src/Torrent.cc:3026
 msgid "Not connected"
 msgstr "Nie połączony"
 
@@ -399,7 +399,7 @@ msgstr "execlp(/bin/sh) nieudane: %s\n"
 msgid "total"
 msgstr "razem"
 
-#: src/Fish.cc:75 src/Http.cc:1067 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:1072 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "Zamykanie bezczynnego połączenia"
 
@@ -407,7 +407,7 @@ msgstr "Zamykanie bezczynnego połączenia"
 msgid "Running connect program"
 msgstr "Uruchamianie programu łączącego"
 
-#: src/Fish.cc:589 src/Http.cc:1335 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1340 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamknął połączenie"
@@ -416,8 +416,8 @@ msgstr "Komputer po drugiej stronie zamknął połączenie"
 msgid "extra server response"
 msgstr "dodatkowa odpowiedź serwera"
 
-#: src/Fish.cc:987 src/Http.cc:2079 src/Http.cc:2086 src/SFtp.cc:1338
-#: src/ftpclass.cc:4345 src/Torrent.cc:3024 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:2084 src/Http.cc:2091 src/SFtp.cc:1338
+#: src/ftpclass.cc:4345 src/Torrent.cc:3028 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Łączenie się..."
 
@@ -425,16 +425,16 @@ msgstr "Łączenie się..."
 msgid "Connected"
 msgstr "Połączono"
 
-#: src/Fish.cc:991 src/Http.cc:2088 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2093 src/SFtp.cc:1342 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowiedź..."
 
-#: src/Fish.cc:993 src/Http.cc:2091 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2096 src/SFtp.cc:1344 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "Otrzymuję dane"
 
-#: src/Fish.cc:995 src/Http.cc:2084 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2089 src/SFtp.cc:1346 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "Wysyłam dane"
 
@@ -461,70 +461,70 @@ msgstr "Zamykanie połączenia HTTP"
 msgid "POST method failed"
 msgstr "nie powiodła się metoda POST"
 
-#: src/Http.cc:1210
+#: src/Http.cc:1215
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "ftp poprzez http może nie działać bez proxy, ustaw hftp:proxy"
 
-#: src/Http.cc:1260 src/ftpclass.cc:1344 src/Torrent.cc:2702
-#: src/Torrent.cc:3228 src/TorrentTracker.cc:392
+#: src/Http.cc:1265 src/ftpclass.cc:1344 src/Torrent.cc:2706
+#: src/Torrent.cc:3232 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie można utworzyć gniazda dla rodziny adresu %d"
 
-#: src/Http.cc:1361
+#: src/Http.cc:1366
 msgid "Sending request..."
 msgstr "Wysyłanie żądania..."
 
-#: src/Http.cc:1399
+#: src/Http.cc:1404
 msgid "Hit EOF while fetching headers"
 msgstr "Natrafiono na EOF podczas przesyłania nagłówków"
 
-#: src/Http.cc:1505
+#: src/Http.cc:1510
 msgid "Could not parse HTTP status line"
 msgstr "Nie można zanalizować linii statusu HTTP"
 
-#: src/Http.cc:1536
+#: src/Http.cc:1541
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Obiekt nie jest zapamiętany a http:cache-control ma only-if-cache"
 
-#: src/Http.cc:1701
+#: src/Http.cc:1706
 msgid "Receiving body..."
 msgstr "Otrzymuję dane..."
 
-#: src/Http.cc:1846
+#: src/Http.cc:1851
 msgid "Hit EOF"
 msgstr "Natrafiono na EOF"
 
-#: src/Http.cc:1849
+#: src/Http.cc:1854
 msgid "Received not enough data, retrying"
 msgstr "Przesłanie nie wystarczającą ilość danych, próbuję ponownie"
 
-#: src/Http.cc:1860
+#: src/Http.cc:1865
 msgid "Received all"
 msgstr "Przesłano wszystko"
 
-#: src/Http.cc:1865
+#: src/Http.cc:1870
 msgid "Received all (total)"
 msgstr "Przesłano wszystko (całość)"
 
-#: src/Http.cc:1889 src/Http.cc:1912
+#: src/Http.cc:1894 src/Http.cc:1917
 msgid "chunked format violated"
 msgstr "naruszony format"
 
-#: src/Http.cc:1899
+#: src/Http.cc:1904
 msgid "Received last chunk"
 msgstr "Przesłano ostatni fragment"
 
-#: src/Http.cc:2073 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2078 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4338 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Uzyskiwanie adresu hosta..."
 
-#: src/Http.cc:2081 src/ftpclass.cc:4331
+#: src/Http.cc:2086 src/ftpclass.cc:4331
 msgid "Connection idle"
 msgstr "Połączenie bezczynne"
 
-#: src/Http.cc:2089
+#: src/Http.cc:2094
 msgid "Fetching headers..."
 msgstr "Przesyłam nagłówki..."
 
@@ -673,7 +673,7 @@ msgstr "%s: wyrażenie regularne `%s': %s\n"
 #: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
 #: src/commands.cc:2415 src/commands.cc:2701 src/commands.cc:2728
 #: src/commands.cc:2735 src/commands.cc:3061 src/lftp.cc:267
-#: src/Torrent.cc:3611
+#: src/Torrent.cc:3615
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania większej ilości informacji spróbuj `help %s'.\n"
@@ -698,7 +698,7 @@ msgstr "Błąd połączenia (%s) - powtórne łączenie"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Łączenie się z %s%s (%s) port %u"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2819
+#: src/NetAccess.cc:217 src/Torrent.cc:2823
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - łączę się ponownie"
 
@@ -2649,86 +2649,86 @@ msgstr "%s ok, %d katalog$|i|ów$ usunięto\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usunięto\n"
 
-#: src/Torrent.cc:560
+#: src/Torrent.cc:564
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:572
+#: src/Torrent.cc:576
 #, fuzzy, c-format
 msgid "next announce in %s"
 msgstr "następne żądanie w %s"
 
-#: src/Torrent.cc:1591 src/Torrent.cc:1594
+#: src/Torrent.cc:1595 src/Torrent.cc:1598
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Pobieranie metadanych: %s"
 
-#: src/Torrent.cc:1597
+#: src/Torrent.cc:1601
 msgid "Waiting for meta-data..."
 msgstr "Oczekiwanie na metadane..."
 
-#: src/Torrent.cc:1600
+#: src/Torrent.cc:1604
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Sprawdzanie poprawności: %u/%u (%u%%) %s%s"
 
-#: src/Torrent.cc:1610
+#: src/Torrent.cc:1614
 msgid "Shutting down: "
 msgstr "Zamykanie: "
 
-#: src/Torrent.cc:2705
+#: src/Torrent.cc:2709
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Łączenie się z użytkownikiem %s na porcie %u"
 
-#: src/Torrent.cc:2755 src/Torrent.cc:2868
+#: src/Torrent.cc:2759 src/Torrent.cc:2872
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "druga strona nieoczekiwanie zamknęła połączenie po %s"
 
-#: src/Torrent.cc:2757
+#: src/Torrent.cc:2761
 msgid "peer closed connection (before handshake)"
 msgstr "druga strona zamknęła połączenie (przed jego ustanowieniem)"
 
-#: src/Torrent.cc:2853
+#: src/Torrent.cc:2857
 msgid "peer closed connection"
 msgstr "druga strona zamknęła połączenie"
 
-#: src/Torrent.cc:2870
+#: src/Torrent.cc:2874
 msgid "invalid peer response format"
 msgstr "nieprawidłowy format odpowiedzi użytkownika"
 
-#: src/Torrent.cc:3026
+#: src/Torrent.cc:3030
 msgid "Handshaking..."
 msgstr "Łączenie..."
 
-#: src/Torrent.cc:3283
+#: src/Torrent.cc:3287
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Nie można dowiązać gniazda do torrent:zakres-portów"
 
-#: src/Torrent.cc:3333
+#: src/Torrent.cc:3337
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Przyjęto połączenie od [%s]:%d"
 
-#: src/Torrent.cc:3419
+#: src/Torrent.cc:3423
 msgid "peer handshake timeout"
 msgstr "upłynął limit czasu nawiązywania połączenia z drugą stroną"
 
-#: src/Torrent.cc:3431
+#: src/Torrent.cc:3435
 msgid "peer short handshake"
 msgstr "nawiązanie połączenia z drugą stroną zostało ucięte"
 
-#: src/Torrent.cc:3433
+#: src/Torrent.cc:3437
 msgid "peer closed just accepted connection"
 msgstr "druga strona zamknęła świeżo przyjęte połączenie"
 
-#: src/Torrent.cc:3484
+#: src/Torrent.cc:3488
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Karmienie w tle...\n"
 
-#: src/Torrent.cc:3655
+#: src/Torrent.cc:3659
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Proszę podać plik z metadanymi lub URL.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-12-13 13:55+0400\n"
+"POT-Creation-Date: 2014-01-24 12:42+0400\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -268,7 +268,7 @@ msgid "File cannot be accessed"
 msgstr "不能访问文件"
 
 #: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1332 src/ftpclass.cc:4333
-#: src/ftpclass.cc:4342 src/Torrent.cc:3022
+#: src/ftpclass.cc:4342 src/Torrent.cc:3026
 msgid "Not connected"
 msgstr "没有连接上"
 
@@ -401,7 +401,7 @@ msgstr "execlp(%s) 失败: %s\n"
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:75 src/Http.cc:1067 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:1072 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "关闭发呆的连接"
 
@@ -409,7 +409,7 @@ msgstr "关闭发呆的连接"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1335 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1340 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "对端关闭连接"
@@ -418,8 +418,8 @@ msgstr "对端关闭连接"
 msgid "extra server response"
 msgstr "额外的服务器应答"
 
-#: src/Fish.cc:987 src/Http.cc:2079 src/Http.cc:2086 src/SFtp.cc:1338
-#: src/ftpclass.cc:4345 src/Torrent.cc:3024 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:2084 src/Http.cc:2091 src/SFtp.cc:1338
+#: src/ftpclass.cc:4345 src/Torrent.cc:3028 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "正在连接..."
 
@@ -428,16 +428,16 @@ msgstr "正在连接..."
 msgid "Connected"
 msgstr "没有连接上"
 
-#: src/Fish.cc:991 src/Http.cc:2088 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2093 src/SFtp.cc:1342 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正等待应答..."
 
-#: src/Fish.cc:993 src/Http.cc:2091 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2096 src/SFtp.cc:1344 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "正接收数据"
 
-#: src/Fish.cc:995 src/Http.cc:2084 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2089 src/SFtp.cc:1346 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "正发送数据"
 
@@ -466,75 +466,75 @@ msgstr "关闭发呆的连接"
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:1210
+#: src/Http.cc:1215
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1260 src/ftpclass.cc:1344 src/Torrent.cc:2702
-#: src/Torrent.cc:3228 src/TorrentTracker.cc:392
+#: src/Http.cc:1265 src/ftpclass.cc:1344 src/Torrent.cc:2706
+#: src/Torrent.cc:3232 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/Http.cc:1361
+#: src/Http.cc:1366
 #, fuzzy
 msgid "Sending request..."
 msgstr "正在发送命令..."
 
-#: src/Http.cc:1399
+#: src/Http.cc:1404
 #, fuzzy
 msgid "Hit EOF while fetching headers"
 msgstr "正在取得头..."
 
-#: src/Http.cc:1505
+#: src/Http.cc:1510
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1536
+#: src/Http.cc:1541
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1701
+#: src/Http.cc:1706
 #, fuzzy
 msgid "Receiving body..."
 msgstr "正接收数据"
 
-#: src/Http.cc:1846
+#: src/Http.cc:1851
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1849
+#: src/Http.cc:1854
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1860
+#: src/Http.cc:1865
 #, fuzzy
 msgid "Received all"
 msgstr "正接收数据"
 
-#: src/Http.cc:1865
+#: src/Http.cc:1870
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1889 src/Http.cc:1912
+#: src/Http.cc:1894 src/Http.cc:1917
 msgid "chunked format violated"
 msgstr "块格式冲突"
 
-#: src/Http.cc:1899
+#: src/Http.cc:1904
 #, fuzzy
 msgid "Received last chunk"
 msgstr "正接收数据"
 
-#: src/Http.cc:2073 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2078 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4338 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "正在解析主机地址..."
 
-#: src/Http.cc:2081 src/ftpclass.cc:4331
+#: src/Http.cc:2086 src/ftpclass.cc:4331
 msgid "Connection idle"
 msgstr "连接空闲"
 
-#: src/Http.cc:2089
+#: src/Http.cc:2094
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 
@@ -678,7 +678,7 @@ msgstr ""
 #: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
 #: src/commands.cc:2415 src/commands.cc:2701 src/commands.cc:2728
 #: src/commands.cc:2735 src/commands.cc:3061 src/lftp.cc:267
-#: src/Torrent.cc:3611
+#: src/Torrent.cc:3615
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
@@ -703,7 +703,7 @@ msgstr "Socket 错误 (%s) - 重新连接"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2819
+#: src/NetAccess.cc:217 src/Torrent.cc:2823
 msgid "Timeout - reconnecting"
 msgstr "超时 - 重新连接"
 
@@ -2504,91 +2504,91 @@ msgstr "%s 成功, 删除 %d 个目录\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s 成功, 删除 %d 个文件\n"
 
-#: src/Torrent.cc:560
+#: src/Torrent.cc:564
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:572
+#: src/Torrent.cc:576
 #, c-format
 msgid "next announce in %s"
 msgstr ""
 
-#: src/Torrent.cc:1591 src/Torrent.cc:1594
+#: src/Torrent.cc:1595 src/Torrent.cc:1598
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1597
+#: src/Torrent.cc:1601
 #, fuzzy
 msgid "Waiting for meta-data..."
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/Torrent.cc:1600
+#: src/Torrent.cc:1604
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1610
+#: src/Torrent.cc:1614
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2705
+#: src/Torrent.cc:2709
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/Torrent.cc:2755 src/Torrent.cc:2868
+#: src/Torrent.cc:2759 src/Torrent.cc:2872
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2757
+#: src/Torrent.cc:2761
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2853
+#: src/Torrent.cc:2857
 #, fuzzy
 msgid "peer closed connection"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:2870
+#: src/Torrent.cc:2874
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "额外的服务器应答"
 
-#: src/Torrent.cc:3026
+#: src/Torrent.cc:3030
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3283
+#: src/Torrent.cc:3287
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3333
+#: src/Torrent.cc:3337
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "正在建立数据连接到 (%s) 端口 %u"
 
-#: src/Torrent.cc:3419
+#: src/Torrent.cc:3423
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3431
+#: src/Torrent.cc:3435
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3433
+#: src/Torrent.cc:3437
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "对端关闭连接"
 
-#: src/Torrent.cc:3484
+#: src/Torrent.cc:3488
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "正在发送命令..."
 
-#: src/Torrent.cc:3655
+#: src/Torrent.cc:3659
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""

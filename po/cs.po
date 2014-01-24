@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.7\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2013-12-13 13:55+0400\n"
+"POT-Creation-Date: 2014-01-24 12:42+0400\n"
 "PO-Revision-Date: 2013-05-25 07:49+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -274,7 +274,7 @@ msgid "File cannot be accessed"
 msgstr "K souboru nelze přistoupit"
 
 #: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1332 src/ftpclass.cc:4333
-#: src/ftpclass.cc:4342 src/Torrent.cc:3022
+#: src/ftpclass.cc:4342 src/Torrent.cc:3026
 msgid "Not connected"
 msgstr "Nepřipojeno"
 
@@ -406,7 +406,7 @@ msgstr "execl(/bin/sh) selhalo: %s\n"
 msgid "total"
 msgstr "celkem"
 
-#: src/Fish.cc:75 src/Http.cc:1067 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:1072 src/SFtp.cc:77 src/ftpclass.cc:1221
 msgid "Closing idle connection"
 msgstr "Nepoužívané spojení uzavřeno"
 
@@ -414,7 +414,7 @@ msgstr "Nepoužívané spojení uzavřeno"
 msgid "Running connect program"
 msgstr "Běží připojovací program"
 
-#: src/Fish.cc:589 src/Http.cc:1335 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1340 src/SFtp.cc:740 src/SFtp.cc:1076
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "Druhá strana uzavřela spojení"
@@ -423,8 +423,8 @@ msgstr "Druhá strana uzavřela spojení"
 msgid "extra server response"
 msgstr "nadbytečná odpověď serveru"
 
-#: src/Fish.cc:987 src/Http.cc:2079 src/Http.cc:2086 src/SFtp.cc:1338
-#: src/ftpclass.cc:4345 src/Torrent.cc:3024 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:2084 src/Http.cc:2091 src/SFtp.cc:1338
+#: src/ftpclass.cc:4345 src/Torrent.cc:3028 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Navazuje se spojení…"
 
@@ -432,16 +432,16 @@ msgstr "Navazuje se spojení…"
 msgid "Connected"
 msgstr "Spojeno"
 
-#: src/Fish.cc:991 src/Http.cc:2088 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2093 src/SFtp.cc:1342 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Čeká se na odpověď…"
 
-#: src/Fish.cc:993 src/Http.cc:2091 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2096 src/SFtp.cc:1344 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "Přijímají se data"
 
-#: src/Fish.cc:995 src/Http.cc:2084 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2089 src/SFtp.cc:1346 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "Odesílají se data"
 
@@ -468,70 +468,70 @@ msgstr "Zavírá se HTTP spojení"
 msgid "POST method failed"
 msgstr "Metoda POST selhala"
 
-#: src/Http.cc:1210
+#: src/Http.cc:1215
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr "FTP nad HTTP nemůže fungovat bez proxy, nastavte hftp:proxy."
 
-#: src/Http.cc:1260 src/ftpclass.cc:1344 src/Torrent.cc:2702
-#: src/Torrent.cc:3228 src/TorrentTracker.cc:392
+#: src/Http.cc:1265 src/ftpclass.cc:1344 src/Torrent.cc:2706
+#: src/Torrent.cc:3232 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "socket z rodiny %d nelze vytvořit"
 
-#: src/Http.cc:1361
+#: src/Http.cc:1366
 msgid "Sending request..."
 msgstr "Požadavek se odesílá…"
 
-#: src/Http.cc:1399
+#: src/Http.cc:1404
 msgid "Hit EOF while fetching headers"
 msgstr "Při příjmu hlaviček se objevil konec souboru (EOF)"
 
-#: src/Http.cc:1505
+#: src/Http.cc:1510
 msgid "Could not parse HTTP status line"
 msgstr "Nebylo možné rozebrat stavový řádek HTTP"
 
-#: src/Http.cc:1536
+#: src/Http.cc:1541
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Objekt není v keši a http:cache-control má hodnotu only-if-cached"
 
-#: src/Http.cc:1701
+#: src/Http.cc:1706
 msgid "Receiving body..."
 msgstr "Přijímá se tělo…"
 
-#: src/Http.cc:1846
+#: src/Http.cc:1851
 msgid "Hit EOF"
 msgstr "Objevil se EOF (konec souboru)"
 
-#: src/Http.cc:1849
+#: src/Http.cc:1854
 msgid "Received not enough data, retrying"
 msgstr "Nebylo přijato dostatečné množství dat, zkusí se znovu"
 
-#: src/Http.cc:1860
+#: src/Http.cc:1865
 msgid "Received all"
 msgstr "Vše přijato"
 
-#: src/Http.cc:1865
+#: src/Http.cc:1870
 msgid "Received all (total)"
 msgstr "Vše přijato (celkem)"
 
-#: src/Http.cc:1889 src/Http.cc:1912
+#: src/Http.cc:1894 src/Http.cc:1917
 msgid "chunked format violated"
 msgstr "formát chunked porušen"
 
-#: src/Http.cc:1899
+#: src/Http.cc:1904
 msgid "Received last chunk"
 msgstr "Přijat poslední kus dat (chunk)"
 
-#: src/Http.cc:2073 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2078 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4338 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Překládá se adresa stroje…"
 
-#: src/Http.cc:2081 src/ftpclass.cc:4331
+#: src/Http.cc:2086 src/ftpclass.cc:4331
 msgid "Connection idle"
 msgstr "Spojení zahálí"
 
-#: src/Http.cc:2089
+#: src/Http.cc:2094
 msgid "Fetching headers..."
 msgstr "Stahují se hlavičky…"
 
@@ -680,7 +680,7 @@ msgstr "%s: regulární výraz „%s“: %s\n"
 #: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
 #: src/commands.cc:2415 src/commands.cc:2701 src/commands.cc:2728
 #: src/commands.cc:2735 src/commands.cc:3061 src/lftp.cc:267
-#: src/Torrent.cc:3611
+#: src/Torrent.cc:3615
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Podrobnosti získáte příkazem „help %s“.\n"
@@ -705,7 +705,7 @@ msgstr "Chyba socketu (%s) – obnovuje se spojení"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Navazuje se spojení na %s%s (%s) port %u"
 
-#: src/NetAccess.cc:217 src/Torrent.cc:2819
+#: src/NetAccess.cc:217 src/Torrent.cc:2823
 msgid "Timeout - reconnecting"
 msgstr "Časový limit vypršel – obnovuje se spojení"
 
@@ -2665,86 +2665,86 @@ msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 "%s uspělo, %d $soubor odstraněn|soubory odstraněny|souborů odstraněno$\n"
 
-#: src/Torrent.cc:560
+#: src/Torrent.cc:564
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:572
+#: src/Torrent.cc:576
 #, fuzzy, c-format
 msgid "next announce in %s"
 msgstr "další požadavek za %s"
 
-#: src/Torrent.cc:1591 src/Torrent.cc:1594
+#: src/Torrent.cc:1595 src/Torrent.cc:1598
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Získávají se metadata: %s"
 
-#: src/Torrent.cc:1597
+#: src/Torrent.cc:1601
 msgid "Waiting for meta-data..."
 msgstr "Čeká se na metadata…"
 
-#: src/Torrent.cc:1600
+#: src/Torrent.cc:1604
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Ověřování platnosti: %u/%u (%u %%) %s%s"
 
-#: src/Torrent.cc:1610
+#: src/Torrent.cc:1614
 msgid "Shutting down: "
 msgstr "Ukončuje se: "
 
-#: src/Torrent.cc:2705
+#: src/Torrent.cc:2709
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Navazuje se spojení s protistranou %s na portu %u"
 
-#: src/Torrent.cc:2755 src/Torrent.cc:2868
+#: src/Torrent.cc:2759 src/Torrent.cc:2872
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "protistrana nečekaně uzavřela spojení po %s"
 
-#: src/Torrent.cc:2757
+#: src/Torrent.cc:2761
 msgid "peer closed connection (before handshake)"
 msgstr "protistrana uzavřela spojení (před dojednáním spojení)"
 
-#: src/Torrent.cc:2853
+#: src/Torrent.cc:2857
 msgid "peer closed connection"
 msgstr "protistrana uzavřela spojení"
 
-#: src/Torrent.cc:2870
+#: src/Torrent.cc:2874
 msgid "invalid peer response format"
 msgstr "neplatný tvar odpovědi protistrany"
 
-#: src/Torrent.cc:3026
+#: src/Torrent.cc:3030
 msgid "Handshaking..."
 msgstr "Dojednává se spojení…"
 
-#: src/Torrent.cc:3283
+#: src/Torrent.cc:3287
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Socket nelze navázat na torrent:port-range"
 
-#: src/Torrent.cc:3333
+#: src/Torrent.cc:3337
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Přijato spojení z [%s]:%d"
 
-#: src/Torrent.cc:3419
+#: src/Torrent.cc:3423
 msgid "peer handshake timeout"
 msgstr "protistrana nedojednala spojení včas"
 
-#: src/Torrent.cc:3431
+#: src/Torrent.cc:3435
 msgid "peer short handshake"
 msgstr "protistrana zkrátila dojednání spojení"
 
-#: src/Torrent.cc:3433
+#: src/Torrent.cc:3437
 msgid "peer closed just accepted connection"
 msgstr "protistrana uzavřela právě přijaté spojení"
 
-#: src/Torrent.cc:3484
+#: src/Torrent.cc:3488
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Vysemeňování na pozadí…\n"
 
-#: src/Torrent.cc:3655
+#: src/Torrent.cc:3659
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Prosím, zadejte metadata souboru nebo URL.\n"
