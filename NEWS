@@ -1,3 +1,12 @@
+Version 4.4.15 - 2014-01-21
+
+* new setting pget:min-chunk-size.
+* improved DHT search by preferring responded nodes.
+* allow UTC timezone in http timestamps.
+* fixed WebDAV rmdir operation.
+* fixed torrent hang on shutdown when a tracker is unresposive.
+* fixed adding too may slashes to URLs in http.
+
 Version 4.4.14 - 2013-12-13
 
 * fixed HEAD/PROPFIND handling in http.
