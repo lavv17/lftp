@@ -1,3 +1,7 @@
+2014-01-24	Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* lftp.1: (pget:min-chunk-size) new setting.
+
 2013-10-08	Alexander V. Lukyanov <lav@yars.free.net>
 
 	* lftp.1: (ftp:use-utf8) new setting; minor wording changes.

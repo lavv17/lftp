@@ -31,6 +31,7 @@
 ResType pget_vars[] = {
    {"pget:save-status",	"10s",   ResMgr::TimeIntervalValidate,ResMgr::NoClosure},
    {"pget:default-n",   "5",	 ResMgr::UNumberValidate,ResMgr::NoClosure},
+   {"pget:min-chunk-size", "1M", ResMgr::UNumberValidate,ResMgr::NoClosure},
    {0}
 };
 ResDecls pget_vars_register(pget_vars);
@@ -39,7 +40,6 @@ ResDecls pget_vars_register(pget_vars);
 #define MIN(a,b) ((a)<(b)?(a):(b))
 
 #define super CopyJob
-#define min_chunk_size 0x10000
 
 int pgetJob::Do()
 {
@@ -495,6 +495,7 @@ void pgetJob::InitChunks(off_t offset,off_t size)
 {
    /* initialize chunks */
    off_t chunk_size=(size-offset)/max_chunks;
+   int min_chunk_size=ResMgr::Query("pget:min-chunk-size",0);
    if(chunk_size<min_chunk_size)
       chunk_size=min_chunk_size;
    int num_of_chunks=(size-offset)/chunk_size-1;
