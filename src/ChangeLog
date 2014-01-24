@@ -1,3 +1,7 @@
+2013-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* pgetJob.cc: (pget:min-chunk-size) new setting with 1M by default.
+
 2013-01-23  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* FileAccess.cc, commands.cc, history.cc: don't add a slash if it's

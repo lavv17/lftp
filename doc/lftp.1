@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "15 Nov 2013"
+.TH lftp 1 "24 Jan 2014"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.12.
+This man page documents lftp version 4.4.14.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated ftp, http
@@ -1824,6 +1824,9 @@ sets the network protocol timeout.
 .TP
 .BR pget:default-n \ (number)
 default number of chunks to split the file to in pget.
+.TP
+.BR pget:min-chunk-size \ (number)
+minimal chunk size to split the file to.
 .TP
 .BR pget:save-status " (time interval)"
 save pget transfer status this often. Set to `never' to disable saving of the status file.
