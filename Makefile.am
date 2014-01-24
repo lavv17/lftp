@@ -35,7 +35,7 @@ dist-hook:
 	    $(srcdir)/$(PACKAGE).lsm > $(distdir)/$(PACKAGE).lsm && \
 	    cp $(distdir)/$(PACKAGE).lsm $(srcdir)/$(PACKAGE).lsm
 
-REL_DIR=/home/lav/www-lftp/download
+REL_DIR=/home/lav/www-lftp/ftp
 release:
 #	cvs commit -m $(VERSION)
 #	make dist
@@ -44,7 +44,7 @@ release:
 	make release-ftp
 
 release-ftp:
-	mv $(PACKAGE)-$(VERSION).tar.gz $(REL_DIR)
+	mv $(PACKAGE)-$(VERSION).tar.gz $(REL_DIR)/$(PACKAGE)-$(VERSION).tar.gz
 	cp -p $(PACKAGE).lsm $(REL_DIR)/$(PACKAGE)-$(VERSION).lsm
 	cd $(REL_DIR) && \
 	    (addbz $(PACKAGE)-$(VERSION).tar.gz; \
