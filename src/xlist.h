@@ -80,10 +80,10 @@ public:
 
 #define xlist_for_each(TYPE,list_head,node,obj) \
    TYPE *obj; \
-   for(xlist<TYPE> *node=list_head.get_next(); obj=node->get_obj(), node!=&list_head; node=node->get_next())
+   for(xlist<TYPE> *node=(list_head).get_next(); obj=node->get_obj(), node!=&list_head; node=node->get_next())
 
 #define xlist_for_each_safe(TYPE,list_head,node,obj,next) \
    TYPE *obj; \
-   for(xlist<TYPE> *node=list_head.get_next(), *next=node->get_next(); obj=node->get_obj(), node!=&list_head; node=next, next=node->get_next())
+   for(xlist<TYPE> *node=(list_head).get_next(), *next=node->get_next(); obj=node->get_obj(), node!=&list_head; node=next, next=node->get_next())
 
 #endif//XLIST_H
