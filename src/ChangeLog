@@ -1,3 +1,9 @@
+2013-02-04  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* ResMgr.cc, resource.cc: move some methods to ResType; make ResMgr
+	  a descendant of ResType; make type_value_list a pointer to avoid
+	  calling a ctor for each static ResType.
+
 2013-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* pgetJob.cc: (pget:min-chunk-size) new setting with 1M by default.

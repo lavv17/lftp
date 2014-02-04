@@ -41,9 +41,9 @@ CDECL_END
 #include "log.h"
 
 xlist<Resource> Resource::all_list;
-xmap<ResType*> *ResMgr::types_by_name;
+xmap<ResType*> *ResType::types_by_name;
 
-int ResMgr::VarNameCmp(const char *good_name,const char *name)
+int ResType::VarNameCmp(const char *good_name,const char *name)
 {
    int res=EXACT_PREFIX+EXACT_NAME;
    const char *colon=strchr(good_name,':');
@@ -78,7 +78,7 @@ int ResMgr::VarNameCmp(const char *good_name,const char *name)
    return res;
 }
 
-const char *ResMgr::FindVar(const char *name,const ResType **type)
+const char *ResType::FindVar(const char *name,const ResType **type)
 {
    const ResType *exact_proto=0;
    const ResType *exact_name=0;
@@ -126,7 +126,7 @@ const char *ResMgr::FindVar(const char *name,const ResType **type)
    return _("ambiguous variable name");
 }
 
-const ResType *ResMgr::FindRes(const char *name)
+const ResType *ResType::FindRes(const char *name)
 {
    const ResType *type;
    const char *msg=FindVar(name,&type);
@@ -135,33 +135,36 @@ const ResType *ResMgr::FindRes(const char *name)
    return type;
 }
 
-const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue)
+const char *ResType::Set(const char *name,const char *cclosure,const char *cvalue)
 {
-   const char *msg;
-
    ResType *type;
    // find type of given variable
-   msg=FindVar(name,&type);
+   const char *msg=FindVar(name,&type);
    if(msg)
       return msg;
 
+   return type->Set(cclosure,cvalue);
+}
+
+const char *ResType::Set(const char *cclosure,const char *cvalue)
+{
+   const char *msg=0;
+
    xstring_c value(cvalue);
-   if(value && type->val_valid && (msg=(*type->val_valid)(&value))!=0)
+   if(value && val_valid && (msg=val_valid(&value))!=0)
       return msg;
 
    xstring_c closure(cclosure);
-   if(closure && type->closure_valid && (msg=(*type->closure_valid)(&closure))!=0)
+   if(closure && closure_valid && (msg=closure_valid(&closure))!=0)
       return msg;
 
    bool need_reconfig=false;
 
-   xlist_for_each_safe(Resource,type->type_value_list,node,scan,next)
+   xlist_for_each(Resource,*(type_value_list),node,scan)
    {
       // find the old value
-      if(scan->type==type
-	 && ((closure==0 && scan->closure==0)
-	     || (closure && scan->closure
-	         && !strcmp(scan->closure,closure)))) {
+      if(closure==scan->closure || !xstrcmp(scan->closure,closure))
+      {
 	 need_reconfig=true;
 	 delete scan;
 	 break;
@@ -169,11 +172,11 @@ const char *ResMgr::Set(const char *name,const char *cclosure,const char *cvalue
    }
    if(value)
    {
-      (void)new Resource(type,closure,value);
+      (void)new Resource(this,closure,value);
       need_reconfig=true;
    }
    if(need_reconfig)
-      ResClient::ReconfigAll(type->name);
+      ResClient::ReconfigAll(name);
    return 0;
 }
 
@@ -240,13 +243,13 @@ static int RefResourceCompare(const Ref<Resource> *a,const Ref<Resource> *b)
    return ResMgr::ResourceCompare(*a,*b);
 }
 
-char *ResMgr::Format(bool with_defaults,bool only_defaults)
+char *ResType::Format(bool with_defaults,bool only_defaults)
 {
    RefArray<Resource> created;
    if(with_defaults || only_defaults)
    {
       for(ResType *dscan=types_by_name->each_begin(); dscan; dscan=types_by_name->each_next())
-	 if(only_defaults || SimpleQuery(dscan->name,0)==0)
+	 if(only_defaults || dscan->SimpleQuery(0)==0)
 	    created.append(new Resource(dscan,
 	       0,xstrdup(dscan->defvalue?dscan->defvalue:"(nil)")));
    }
@@ -273,7 +276,7 @@ char *ResMgr::Format(bool with_defaults,bool only_defaults)
    return buf.borrow();
 }
 
-char **ResMgr::Generator(void)
+char **ResType::Generator(void)
 {
    StringSet res;
 
@@ -459,7 +462,7 @@ Resource::Resource(ResType *type,const char *closure,const char *value)
    : type(type), value(value), closure(closure), all_node(this), type_value_node(this)
 {
    all_list.add_tail(all_node);
-   type->type_value_list.add_tail(type_value_node);
+   type->type_value_list->add_tail(type_value_node);
 }
 Resource::~Resource()
 {
@@ -493,7 +496,7 @@ const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **p
       const ResType *type=FindRes(name);
       if(!type)
 	 return 0;
-      node=type->type_value_list.get_next();
+      node=type->type_value_list->get_next();
    }
    else
    {
@@ -503,21 +506,13 @@ const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **p
    return *ptr ? (*ptr)->value.get() : NULL;
 }
 
-const char *ResMgr::SimpleQuery(const ResType *type,const char *closure)
+const char *ResType::SimpleQuery(const char *closure) const
 {
    // find the value
-   xlist_for_each(Resource,type->type_value_list,node,scan)
+   xlist_for_each(Resource,*(type_value_list),node,scan)
       if(scan->ClosureMatch(closure))
 	 return scan->value;
    return 0;
-}
-const char *ResMgr::SimpleQuery(const char *name,const char *closure)
-{
-   const ResType *type=FindRes(name);
-   if(!type)
-      return 0;
-
-   return SimpleQuery(type,closure);
 }
 
 ResValue ResMgr::Query(const char *name,const char *closure)
@@ -542,9 +537,9 @@ ResValue ResType::Query(const char *closure) const
    const char *v=0;
 
    if(closure)
-      v=ResMgr::SimpleQuery(this,closure);
+      v=SimpleQuery(closure);
    if(!v)
-      v=ResMgr::SimpleQuery(this,0);
+      v=SimpleQuery(0);
    if(!v)
       v=defvalue;
 
@@ -562,38 +557,54 @@ ResDecl::ResDecl(const char *a_name,const char *a_defvalue,ResValValid *a_val_va
    defvalue=a_defvalue;
    val_valid=a_val_valid;
    closure_valid=a_closure_valid;
-   ResMgr::AddType(this);
+   Register();
 }
 ResDecls::ResDecls(ResType *array)
 {
    while(array->name)
-      ResMgr::AddType(array++);
+      array++->Register();
 }
 ResDecls::ResDecls(ResType *r1,ResType *r2,...)
 {
-   ResMgr::AddType(r1);
+   r.append(r1);
+   r1->Register();
    if(!r2)
       return;
-   ResMgr::AddType(r2);
+   r.append(r2);
+   r2->Register();
    va_list v;
    va_start(v,r2);
    while((r1=va_arg(v,ResType *))!=0)
-      ResMgr::AddType(r1);
+   {
+      r1->Register();
+      r.append(r1);
+   }
    va_end(v);
 }
+ResDecls::~ResDecls()
+{
+   for(int i=0; i<r.count(); i++)
+      r[i]->Unregister();
+}
 
-void ResMgr::AddType(ResType *t)
+void ResType::Register()
 {
    if(!types_by_name)
       types_by_name=new xmap<ResType*>;
-   types_by_name->add(t->name,t);
+   types_by_name->add(name,this);
+   if(!type_value_list)
+      type_value_list=new xlist<Resource>();
 }
-ResType::~ResType()
+void ResType::Unregister()
 {
-   ResMgr::types_by_name->remove(name);
-   // remove all resources of this type
-   xlist_for_each_safe(Resource,type_value_list,node,scan,next)
-      delete scan;
+   types_by_name->remove(name);
+   if(type_value_list) {
+      // remove all resources of this type
+      xlist_for_each_safe(Resource,*type_value_list,node,scan,next)
+	 delete scan;
+      delete type_value_list;
+      type_value_list=0;
+   }
 }
 
 void TimeIntervalR::init(const char *s)

@@ -37,16 +37,39 @@ class Resource;
 
 struct ResType
 {
+   static xmap<ResType*> *types_by_name;
+
    const char *name;
    const char *defvalue;
    ResValValid *val_valid;
    ResClValid *closure_valid;
-   xlist<Resource> type_value_list;
-   ~ResType();
+   xlist<Resource> *type_value_list;
 
+   const char *SimpleQuery(const char *closure) const;
    ResValue Query(const char *closure) const;
    bool QueryBool(const char *closure) const;
    bool QueryTriBool(const char *closure,bool a) const;
+
+   const char *Set(const char *cclosure,const char *cvalue);
+   static const char *Set(const char *name,const char *closure,const char *value);
+
+   void Register();
+   void Unregister();
+
+   static char *Format(bool with_defaults,bool only_defaults);
+   static char **Generator(void);
+
+   static void ClassInit();
+
+   enum CmpRes {
+      EXACT_PREFIX=0x00,SUBSTR_PREFIX=0x01,
+      EXACT_NAME  =0x00,SUBSTR_NAME  =0x10,
+      DIFFERENT=-1
+   };
+   static int VarNameCmp(const char *name1,const char *name2);
+   static const char *FindVar(const char *name,const ResType **type);
+   static const char *FindVar(const char *name,ResType **type) { return FindVar(name,const_cast<const ResType **>(type)); }
+   static const ResType *FindRes(const char *name);
 };
 
 class Resource
@@ -70,35 +93,14 @@ public:
    ~Resource();
 };
 
-class ResMgr
+class ResMgr : public ResType
 {
-   static bool class_inited;
-   friend class ResType;
-   static xmap<ResType*> *types_by_name;
-
+   ResMgr();
 public:
-   static void AddType(ResType *t);
    static const char *QueryNext(const char *name,const char **closure,Resource **ptr);
-   static const char *SimpleQuery(const ResType *type,const char *closure);
-   static const char *SimpleQuery(const char *name,const char *closure);
    static ResValue Query(const char *name,const char *closure);
    static bool QueryBool(const char *name,const char *closure);
    static bool QueryTriBool(const char *name,const char *closure,bool a);
-
-   enum CmpRes {
-      EXACT_PREFIX=0x00,SUBSTR_PREFIX=0x01,
-      EXACT_NAME  =0x00,SUBSTR_NAME  =0x10,
-      DIFFERENT=-1
-   };
-
-   static int VarNameCmp(const char *name1,const char *name2);
-   static const char *FindVar(const char *name,const ResType **type);
-   static const char *FindVar(const char *name,ResType **type) { return FindVar(name,const_cast<const ResType **>(type)); }
-   static const ResType *FindRes(const char *name);
-   static const char *Set(const char *name,const char *closure,const char *value);
-
-   static char *Format(bool with_defaults,bool only_defaults);
-   static char **Generator(void);
 
    static const char *BoolValidate(xstring_c *value);
    static const char *TriBoolValidate(xstring_c *value);
@@ -122,8 +124,6 @@ public:
    static const char *NoClosure(xstring_c *);
    static bool str2bool(const char *value);
 
-   static void ClassInit();
-
    static int ResourceCompare(const Resource *a,const Resource *b);
 };
 
@@ -132,12 +132,15 @@ class ResDecl : public ResType
 public:
    ResDecl(const char *a_name,const char *a_defvalue,
 	   ResValValid *a_val_valid,ResClValid *a_closure_valid=0);
+   ~ResDecl() { Unregister(); }
 };
 class ResDecls
 {
+   xarray<ResType*> r;
 public:
    ResDecls(ResType *array);
    ResDecls(ResType *r1,ResType *r2,...);
+   ~ResDecls();
 };
 
 class ResValue
