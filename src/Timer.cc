@@ -25,7 +25,7 @@
 
 #define now SMTask::now
 
-xlist<Timer> Timer::all_timers;
+xlist_head<Timer> Timer::all_timers;
 xheap<Timer> Timer::running_timers;
 int Timer::infty_count;
 

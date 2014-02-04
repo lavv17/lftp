@@ -30,10 +30,10 @@
 #include "Timer.h"
 #include "misc.h"
 
-xlist<SMTask>  SMTask::all_tasks;
-xlist<SMTask>  SMTask::ready_tasks;
-xlist<SMTask>  SMTask::new_tasks;
-xlist<SMTask>  SMTask::deleted_tasks;
+xlist_head<SMTask>  SMTask::all_tasks;
+xlist_head<SMTask>  SMTask::ready_tasks;
+xlist_head<SMTask>  SMTask::new_tasks;
+xlist_head<SMTask>  SMTask::deleted_tasks;
 
 SMTask	 *SMTask::current;
 

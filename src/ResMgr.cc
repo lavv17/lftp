@@ -40,7 +40,7 @@ CDECL_END
 #include "StringSet.h"
 #include "log.h"
 
-xlist<Resource> Resource::all_list;
+xlist_head<Resource> Resource::all_list;
 xmap<ResType*> *ResType::types_by_name;
 
 int ResType::VarNameCmp(const char *good_name,const char *name)
@@ -593,7 +593,7 @@ void ResType::Register()
       types_by_name=new xmap<ResType*>;
    types_by_name->add(name,this);
    if(!type_value_list)
-      type_value_list=new xlist<Resource>();
+      type_value_list=new xlist_head<Resource>();
 }
 void ResType::Unregister()
 {
@@ -877,7 +877,7 @@ void ResValue::ToNumberPair(int &a,int &b) const
    }
 }
 
-xlist<ResClient> ResClient::list;
+xlist_head<ResClient> ResClient::list;
 ResValue ResClient::Query(const char *name,const char *closure) const
 {
    if(!strchr(name,':'))

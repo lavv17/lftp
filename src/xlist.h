@@ -42,8 +42,9 @@ template<class T> class xlist
       prev->next=next;
    }
 
-public:
+protected:
    xlist() : next(this), prev(this), obj(0) {}
+public:
    xlist(T *t) : next(0), prev(0), obj(t) {}
 
    void add(xlist<T> *node) {
@@ -76,6 +77,12 @@ public:
    bool listed() const {
       return next!=0;
    }
+};
+
+template<class T> class xlist_head : public xlist<T>
+{
+public:
+   xlist_head() {}
 };
 
 #define xlist_for_each(TYPE,list_head,node,obj) \

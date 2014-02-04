@@ -35,7 +35,7 @@ class Timer
    const char *closure;
 
    static int infty_count;
-   static xlist<Timer> all_timers;
+   static xlist_head<Timer> all_timers;
    xlist<Timer> all_timers_node;
    static xheap<Timer> running_timers;
    xheap<Timer>::node running_timers_node;

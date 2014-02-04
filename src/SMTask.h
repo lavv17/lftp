@@ -31,19 +31,19 @@ class SMTask
    virtual int Do() = 0;
 
    // all tasks list
-   static xlist<SMTask> all_tasks;
+   static xlist_head<SMTask> all_tasks;
    xlist<SMTask> all_tasks_node;
 
    // ready (not suspended) tasks list
-   static xlist<SMTask> ready_tasks;
+   static xlist_head<SMTask> ready_tasks;
    xlist<SMTask> ready_tasks_node;
 
    // just created or resumed tasks
-   static xlist<SMTask> new_tasks;
+   static xlist_head<SMTask> new_tasks;
    xlist<SMTask> new_tasks_node;
 
    // deleted and going to be destroyed tasks
-   static xlist<SMTask> deleted_tasks;
+   static xlist_head<SMTask> deleted_tasks;
    xlist<SMTask> deleted_tasks_node;
 
    static PollVec block;

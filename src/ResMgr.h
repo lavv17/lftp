@@ -43,7 +43,7 @@ struct ResType
    const char *defvalue;
    ResValValid *val_valid;
    ResClValid *closure_valid;
-   xlist<Resource> *type_value_list;
+   xlist_head<Resource> *type_value_list;
 
    const char *SimpleQuery(const char *closure) const;
    ResValue Query(const char *closure) const;
@@ -76,7 +76,7 @@ class Resource
 {
    friend class ResMgr;
    friend class ResType;
-   static xlist<Resource> all_list;
+   static xlist_head<Resource> all_list;
 
    const ResType *type;
    xstring_c value;
@@ -222,7 +222,7 @@ public:
 
 class ResClient
 {
-   static xlist<ResClient> list;
+   static xlist_head<ResClient> list;
    xlist<ResClient> node;
 protected:
    virtual const char *ResPrefix() const { return 0; }
