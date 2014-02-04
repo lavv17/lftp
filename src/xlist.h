@@ -67,6 +67,7 @@ public:
    xlist<T> *get_next() const { return next; }
    xlist<T> *get_prev() const { return prev; }
    T *get_obj() const { return obj; }
+   T *next_obj() const { return next->obj; }
 
    int count() const {
       int count=0;
@@ -83,6 +84,7 @@ template<class T> class xlist_head : public xlist<T>
 {
 public:
    xlist_head() {}
+   T *first_obj() const { return xlist<T>::next_obj(); }
 };
 
 #define xlist_for_each(TYPE,list_head,node,obj) \
