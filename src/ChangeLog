@@ -4,6 +4,8 @@
 	  make ResMgr a descendant of ResType; make type_value_list a pointer
 	  to avoid calling a ctor for each static ResType.
 	* Torrent.cc: use ~/.lftp/torrent/md directory; fix file permissions.
+	* FileAccess.cc, FileAccess.h: use xlist and xmap to speed up FA
+	  creation and deleting.
 
 2013-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 

@@ -43,7 +43,7 @@
 # include "module.h"
 #endif
 
-FileAccess *FileAccess::chain=0;
+xlist_head<FileAccess> FileAccess::all_fa;
 const FileAccessRef FileAccessRef::null;
 
 void FileAccess::Init()
@@ -79,11 +79,11 @@ void FileAccess::Init()
 
    priority=last_priority=0;
 
-   next=chain;
-   chain=this;
+   all_fa.add(all_fa_node);
 }
 
 FileAccess::FileAccess(const FileAccess *fa)
+   : all_fa_node(this)
 {
    Init();
 
@@ -99,7 +99,7 @@ FileAccess::FileAccess(const FileAccess *fa)
 
 FileAccess::~FileAccess()
 {
-   ListDel(FileAccess,chain,this,next);
+   all_fa_node.remove();
 }
 
 void  FileAccess::Open(const char *fn,int mode,off_t offs)
@@ -314,8 +314,7 @@ void FileAccess::Login(const char *user1,const char *pass1)
 
    if(user && pass==0)
    {
-      FileAccess *o;
-      for(o=chain; o!=0; o=o->next)
+      xlist_for_each(FileAccess,all_fa,node,o)
       {
 	 pass.set(o->pass);
 	 if(SameSiteAs(o) && o->pass)
@@ -352,7 +351,7 @@ void FileAccess::SetPasswordGlobal(const char *p)
 {
    pass.set(p);
    xstring save_pass;
-   for(FileAccess *o=chain; o!=0; o=o->next)
+   xlist_for_each(FileAccess,all_fa,node,o)
    {
       if(o==this)
 	 continue;
@@ -757,7 +756,7 @@ DirList *FileAccess::MakeDirList(ArgV *a) { delete a; return 0; }
 
 void FileAccess::CleanupAll()
 {
-   for(FileAccess *o=chain; o!=0; o=o->next)
+   xlist_for_each(FileAccess,all_fa,node,o)
    {
       Enter(o);
       o->CleanupThis();
@@ -768,10 +767,10 @@ void FileAccess::CleanupAll()
 FileAccess *FileAccess::NextSameSite(FA *scan) const
 {
    if(scan==0)
-      scan=chain;
+      scan=all_fa.first_obj();
    else
-      scan=scan->next;
-   for( ; scan; scan=scan->next)
+      scan=scan->all_fa_node.next_obj();
+   for( ; scan; scan=scan->all_fa_node.next_obj())
       if(scan!=this && SameSiteAs(scan))
 	 return scan;
    return 0;
@@ -830,22 +829,18 @@ FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
 }
 
 // FileAccess::Protocol implementation
-FileAccess::Protocol *FileAccess::Protocol::chain=0;
+xmap<FileAccess::Protocol*> FileAccess::Protocol::proto_by_name;
 
 FileAccess::Protocol::Protocol(const char *proto, SessionCreator *creator)
 {
    this->proto=proto;
    this->New=creator;
-   this->next=chain;
-   chain=this;
+   proto_by_name.add(proto,this);
 }
 
 FileAccess::Protocol *FileAccess::Protocol::FindProto(const char *proto)
 {
-   for(Protocol *scan=chain; scan; scan=scan->next)
-      if(!strcasecmp(scan->proto,proto))
-	 return scan;
-   return 0;
+   return proto_by_name.lookup(proto);
 }
 
 FileAccess *FileAccess::Protocol::NewSession(const char *proto)

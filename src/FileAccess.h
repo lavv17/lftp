@@ -30,6 +30,8 @@
 #include "FileSet.h"
 #include "ArgV.h"
 #include "ProtoLog.h"
+#include "xlist.h"
+#include "xmap.h"
 
 #define FILE_END     ((off_t)-1L)
 #define UNKNOWN_POS  ((off_t)-1L)
@@ -170,8 +172,9 @@ protected:
    xstring_c entity_content_type;
    xstring_c entity_charset;
 
-   FileAccess *next;
-   static FileAccess *chain;
+   xlist<FileAccess> all_fa_node;
+   static xlist_head<FileAccess> all_fa;
+
    FileAccess *FirstSameSite() const { return NextSameSite(0); }
    FileAccess *NextSameSite(FileAccess *) const;
 
@@ -256,7 +259,7 @@ public:
    bool IsBetterThan(const FileAccess *fa) const;
 
    void Init();
-   FileAccess() { Init(); }
+   FileAccess() : all_fa_node(this) { Init(); }
    FileAccess(const FileAccess *);
 
    void	 DontSleep() { try_time=0; }
@@ -312,8 +315,7 @@ public:
    typedef FileAccess *SessionCreator();
    class Protocol
    {
-      static Protocol *chain;
-      Protocol *next;
+      static xmap<Protocol*> proto_by_name;
       const char *proto;
       SessionCreator *New;
 
