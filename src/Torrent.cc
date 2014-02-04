@@ -586,6 +586,8 @@ const char *Torrent::GetMetadataPath() const
       return NULL;
    xstring& path=xstring::cat(get_lftp_data_dir(),"/torrent",NULL);
    mkdir(path,0700);
+   path.append("/md");
+   mkdir(path,0700);
    path.append('/');
    info_hash.hexdump_to(path);
    return path;
@@ -597,7 +599,7 @@ void Torrent::SaveMetadata() const
    if(!path)
       return;
 
-   int fd=open(path,O_CREAT|O_WRONLY,0700);
+   int fd=open(path,O_CREAT|O_WRONLY,0600);
    if(fd<0) {
       LogError(9,"open(%s): %s",path,strerror(errno));
       return;

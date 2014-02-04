@@ -1,8 +1,9 @@
 2013-02-04  Alexander V. Lukyanov <lavv17f@gmail.com>
 
-	* ResMgr.cc, resource.cc: move some methods to ResType; make ResMgr
-	  a descendant of ResType; make type_value_list a pointer to avoid
-	  calling a ctor for each static ResType.
+	* ResMgr.cc, ResMgr.h, resource.cc: move some methods to ResType;
+	  make ResMgr a descendant of ResType; make type_value_list a pointer
+	  to avoid calling a ctor for each static ResType.
+	* Torrent.cc: use ~/.lftp/torrent/md directory; fix file permissions.
 
 2013-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
