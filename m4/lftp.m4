@@ -275,11 +275,10 @@ AC_DEFUN([LFTP_POSIX_FALLOCATE_CHECK],[
        dnl * Cross-compilation: we can only test if the code compiles and links.
        dnl * If it does, assume that it works, because cross-compilation for AIX or old glibc is unlikely.
        AC_CACHE_VAL([i_cv_posix_fallocate_works],[
-         AC_LINK_IFELSE([
+         AC_TRY_LINK([
            #include <fcntl.h>
-           int main() {
+	 ],[
              posix_fallocate(0, 0, 0);
-           }
          ], [
            i_cv_posix_fallocate_works=yes
          ], [
