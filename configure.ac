@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.4.13], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.4.99.20140204], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -295,6 +295,14 @@ fi
 if test x$with_openssl = xyes -a x"$LIBGNUTLS_LIBS" = x; then
    LFTP_OPENSSL_CHECK
 fi
+
+AC_CHECK_LIB(z, deflate, [
+   ZLIB=-lz
+   AC_SUBST(ZLIB)
+   AC_DEFINE(HAVE_ZLIB, 1, [Define if you have zlib library])
+],[
+   AC_MSG_ERROR(cannot find -lz library, install zlib-devel package)
+])
 
 AC_CHECK_LIB(expat, XML_ParserCreateNS, [
    EXPAT_LIBS=-lexpat
