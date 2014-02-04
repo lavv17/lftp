@@ -1912,6 +1912,10 @@ starts.
 .BR torrent:retracker \ (URL)
 explicit retracker URL, e.g. `http://retracker.local/announce'.
 .TP
+.BR torrent:save-metadata \ (boolean)
+when true, lftp saves metadata of each torrent it works with to
+`~/.lftp/torrent/md' directory and loads it from there if necessary.
+.TP
 .BR torrent:seed-max-time " (time interval)"
 maximum seed time. After this period of time a complete torrent shuts down
 independently of ratio. It can be set to infinity if needed.
