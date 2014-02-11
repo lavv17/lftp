@@ -1,3 +1,10 @@
+2013-02-11  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* MirrorJob.cc, MirrorJob.h: fix transfer rate reporting for parallel
+	  mode mirror (--parallel option).
+	* commands.cc: (--env-password) new open option to take password from
+	  LFTP_PASSWORD environment variable.
+
 2013-02-04  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* ResMgr.cc, ResMgr.h, resource.cc: move some methods to ResType;
