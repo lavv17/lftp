@@ -827,13 +827,15 @@ Job *CmdExec::builtin_open()
 
    enum {
       OPT_USER,
-      OPT_PASSWORD
+      OPT_PASSWORD,
+      OPT_ENV_PASSWORD,
    };
    static struct option open_options[]=
    {
       {"port",required_argument,0,'p'},
       {"user",required_argument,0,OPT_USER},
       {"password",required_argument,0,OPT_PASSWORD},
+      {"env-password",no_argument,0,OPT_ENV_PASSWORD},
       {"execute",required_argument,0,'e'},
       {"debug",optional_argument,0,'d'},
       {"no-bookmark",no_argument,0,'B'},
@@ -872,6 +874,9 @@ Job *CmdExec::builtin_open()
 	 break;
       case(OPT_PASSWORD):
 	 pass=optarg;
+	 break;
+      case(OPT_ENV_PASSWORD):
+	 pass=getenv("LFTP_PASSWORD");
 	 break;
       case('d'):
 	 debug=true;
