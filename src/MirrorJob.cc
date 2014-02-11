@@ -105,7 +105,7 @@ final:
 		     stats.mod_files,stats.mod_symlinks),
 	 tab,stats.mod_files,stats.mod_symlinks);
    if(stats.bytes)
-      s.appendf("%s%s\n",tab,CopyJob::FormatBytesTimeRate(stats.bytes,stats.time));
+      s.appendf("%s%s\n",tab,CopyJob::FormatBytesTimeRate(stats.bytes,transfer_time_elapsed));
    if(stats.del_dirs || stats.del_files || stats.del_symlinks)
       s.appendf(plural(flags&DELETE ?
 	       "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
@@ -176,6 +176,36 @@ void  MirrorJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
       }
       break;
    }
+}
+
+void MirrorJob::TransferStarted(CopyJob *cp)
+{
+   if(transfer_count==0)
+      root_mirror->transfer_start_ts=now;
+   JobStarted(cp);
+}
+void MirrorJob::JobStarted(Job *j)
+{
+   AddWaiting(j);
+   transfer_count++;
+}
+void MirrorJob::TransferFinished(Job *j)
+{
+   long long bytes_count=j->GetBytesCount();
+   AddBytesTransferred(bytes_count);
+   stats.bytes+=bytes_count;
+   stats.time +=j->GetTimeSpent();
+   JobFinished(j);
+   if(transfer_count==0)
+      root_mirror->transfer_time_elapsed += now-root_mirror->transfer_start_ts;
+}
+void MirrorJob::JobFinished(Job *j)
+{
+   if(j->ExitCode()!=0)
+      stats.error_count++;
+   RemoveWaiting(j);
+   Delete(j);
+   transfer_count--;
 }
 
 void  MirrorJob::HandleFile(FileInfo *file)
@@ -315,8 +345,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    cp->SetDate(file->date);
 	 if(file->defined&file->SIZE)
 	    cp->SetSize(file->size);
-	 AddWaiting(cp);
-	 transfer_count++;
+	 TransferStarted(cp);
 	 cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
 
 	 set_state(WAITING_FOR_TRANSFER);
@@ -823,15 +852,7 @@ int   MirrorJob::Do()
    case(WAITING_FOR_TRANSFER):
       while((j=FindDoneAwaitedJob())!=0)
       {
-	 long long bytes_count=j->GetBytesCount();
-	 AddBytesTransferred(bytes_count);
-	 stats.bytes+=bytes_count;
-	 stats.time +=j->GetTimeSpent();
-	 if(j->ExitCode()!=0)
-	    stats.error_count++;
-	 RemoveWaiting(j);
-	 Delete(j);
-	 transfer_count--;
+	 TransferFinished(j);
 	 m=MOVED;
       }
       if(max_error_count>0 && stats.error_count>=max_error_count)
@@ -841,6 +862,7 @@ int   MirrorJob::Do()
 	 file=to_transfer->curr();
       	 if(!file)
 	 {
+	    // go to the next step only when all transfers have finished
 	    if(waiting_num>0)
 	       break;
 	    if(FlagSet(DEPTH_FIRST))
@@ -876,11 +898,7 @@ int   MirrorJob::Do()
    TARGET_REMOVE_OLD_FIRST_label:
       while((j=FindDoneAwaitedJob())!=0)
       {
-	 if(j->ExitCode()!=0)
-	    stats.error_count++;
-	 RemoveWaiting(j);
-	 Delete(j);
-	 transfer_count--;
+	 JobFinished(j);
 	 m=MOVED;
       }
       if(max_error_count>0 && stats.error_count>=max_error_count)
@@ -940,8 +958,7 @@ int   MirrorJob::Do()
 	    args->seek(1);
 	    rmJob *j=new rmJob(target_session->Clone(),args);
 	    j->cmdline.set_allocated(args->Combine());
-	    AddWaiting(j);
-	    transfer_count++;
+	    JobStarted(j);
 	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
 	    {
 	       if(flags&NO_RECURSION)
@@ -977,9 +994,7 @@ int   MirrorJob::Do()
    case(TARGET_CHMOD):
       while((j=FindDoneAwaitedJob())!=0)
       {
-	 RemoveWaiting(j);
-	 Delete(j);
-	 transfer_count--;
+	 JobFinished(j);
 	 m=MOVED;
       }
       if(max_error_count>0 && stats.error_count>=max_error_count)
@@ -1023,10 +1038,9 @@ int   MirrorJob::Do()
 	    a->seek(1);
 	    ChmodJob *cj=new ChmodJob(target_session->Clone(),
 				 file->mode&~mode_mask,a);
-	    AddWaiting(cj);
-	    transfer_count++;
 	    cj->cmdline.set_allocated(a->Combine());
 	    cj->BeQuiet(); // chmod is not supported on all servers; be quiet.
+	    JobStarted(cj);
 	    m=MOVED;
 	 }
       }
@@ -1049,9 +1063,7 @@ int   MirrorJob::Do()
    case(FINISHING):
       while((j=FindDoneAwaitedJob())!=0)
       {
-	 RemoveWaiting(j);
-	 Delete(j);
-	 transfer_count--;
+	 JobFinished(j);
 	 m=MOVED;
       }
       if(waiting_num>0)
@@ -1108,11 +1120,11 @@ MirrorJob::MirrorJob(MirrorJob *parent,
  :
    bytes_transferred(0), bytes_to_transfer(0),
    source_dir(new_source_dir), target_dir(new_target_dir),
-   root_transfer_count(0),
-   transfer_count(parent?parent->transfer_count:root_transfer_count)
+   transfer_time_elapsed(0), root_transfer_count(0),
+   transfer_count(parent?parent->transfer_count:root_transfer_count),
+   verbose_report(0),
+   parent_mirror(parent), root_mirror(parent?parent->root_mirror:this)
 {
-   verbose_report=0;
-   parent_mirror=parent;
 
    source_session=source;
    target_session=target;

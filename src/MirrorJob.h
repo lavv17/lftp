@@ -111,6 +111,8 @@ class MirrorJob : public Job
    };
    Statistics stats;
 
+   double transfer_time_elapsed;
+   TimeDate transfer_start_ts;
    int	 root_transfer_count;
    int	 &transfer_count;
 
@@ -126,6 +128,7 @@ class MirrorJob : public Job
    void	 va_Report(const char *fmt,va_list v);
    int	 verbose_report;
    MirrorJob *parent_mirror;
+   MirrorJob *root_mirror;
 
    time_t newer_than;
    time_t older_than;
@@ -155,6 +158,11 @@ class MirrorJob : public Job
    void HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<ListInfo>& list_info,
 	    const char *relative_dir);
    void HandleListInfo(SMTaskRef<ListInfo>& list_info,Ref<FileSet>& set);
+
+   void TransferStarted(class CopyJob *cp);
+   void JobStarted(Job *j);
+   void TransferFinished(Job *j);
+   void JobFinished(Job *j);
 
 public:
    enum
