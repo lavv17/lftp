@@ -854,8 +854,12 @@ static const char *extract_quoted_header_value(const char *value)
 
 void Http::HandleHeaderLine(const char *name,const char *value)
 {
-   if(!strcasecmp(name,"Content-length"))
-   {
+   // use a perfect hash
+#define hh(L,C) ((L)+(C)*3)
+#define hhc(S,C) hh(sizeof((S))-1,(C))
+#define case_hh(S,C) case hhc((S),(C)): if(strcasecmp(name,(S))) break;
+   switch(hh(strlen(name),c_toupper(name[0]))) {
+   case_hh("Content-Length",'C') {
       long long bs=0;
       if(1!=sscanf(value,"%lld",&bs))
 	 return;
@@ -876,8 +880,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       }
       return;
    }
-   if(!strcasecmp(name,"Content-range"))
-   {
+   case_hh("Content-Range",'C') {
       long long first,last,fsize;
       if(H_REQUESTED_RANGE_NOT_SATISFIABLE(status_code))
       {
@@ -900,8 +903,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 *opt_size=fsize;
       return;
    }
-   if(!strcasecmp(name,"Last-Modified"))
-   {
+   case_hh("Last-Modified",'L') {
       if(!H_2XX(status_code))
 	 return;
 
@@ -920,19 +922,16 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       }
       return;
    }
-   if(!strcasecmp(name,"Location"))
-   {
+   case_hh("Location",'L')
       location.set(value);
       return;
-   }
-   if(!strcasecmp(name,"Retry-After"))
-   {
+
+   case_hh("Retry-After",'R')
       retry_after=0;
       sscanf(value,"%ld",&retry_after);
       return;
-   }
-   if(!strcasecmp(name,"Keep-Alive"))
-   {
+
+   case_hh("Keep-Alive",'K') {
       keep_alive=true;
       const char *m=strstr(value,"max=");
       if(m) {
@@ -942,17 +941,17 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 keep_alive_max=100;
       return;
    }
-   if(!strcasecmp(name,"Connection")
-   || !strcasecmp(name,"Proxy-Connection"))
-   {
+   case_hh("Proxy-Connection",'P')
+      goto case_Connection;
+   case_hh("Connection",'C')
+   case_Connection:
       if(!strcasecmp(value,"keep-alive"))
 	 keep_alive=true;
       else if(!strcasecmp(value,"close"))
 	 keep_alive=false;
       return;
-   }
-   if(!strcasecmp(name,"Transfer-Encoding"))
-   {
+
+   case_hh("Transfer-Encoding",'T')
       if(!strcasecmp(value,"identity"))
 	 return;
       if(!strcasecmp(value,"chunked"));
@@ -963,9 +962,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 chunked_trailer=false;
       }
       return;
-   }
-   if(!strcasecmp(name,"Content-Encoding"))
-   {
+
+   case_hh("Content-Encoding",'C')
       if(!strcasecmp(value,"gzip")) {
 	 // inflated size if unknown beforehand
 	 entity_size=NO_SIZE;
@@ -975,23 +973,20 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 inflate=new DirectedBuffer(DirectedBuffer::GET);
 	 inflate->SetTranslator(new DataInflator());
       }
-   }
-   if(!strcasecmp(name,"Accept-Ranges"))
-   {
+
+   case_hh("Accept-Ranges",'A')
       if(!strcasecmp(value,"none"))
 	 no_ranges=true;
       if(strstr(value,"bytes"))
 	 seen_ranges_bytes=true;
       return;
-   }
-   if(!strcasecmp(name,"Set-Cookie"))
-   {
+
+   case_hh("Set-Cookie",'S')
       if(!hftp && QueryBool("set-cookies",hostname))
 	 SetCookie(value);
       return;
-   }
-   if(!strcasecmp(name,"Content-Disposition"))
-   {
+
+   case_hh("Content-Disposition",'C') {
       const char *filename=strstr(value,"filename=");
       if(!filename)
 	 return;
@@ -999,8 +994,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       SetSuggestedFileName(filename);
       return;
    }
-   if(!strcasecmp(name,"Content-Type"))
-   {
+   case_hh("Content-Type",'C') {
       entity_content_type.set(value);
       const char *cs=strstr(value,"charset=");
       if(cs)
@@ -1008,7 +1002,12 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 cs=extract_quoted_header_value(cs+8);
 	 entity_charset.set(cs);
       }
+      return;
    }
+   default:
+      break;
+   }
+   LogNote(10,"unhandled header line `%s'",name);
 }
 
 static
