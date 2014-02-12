@@ -2,6 +2,7 @@
 
 	* Http.cc: don't call ExpandTildeInCWD every time.
 	* Http.cc: use a perfect hash for header handling.
+	* MirrorJob.cc: clear source/target sets when looping.
 
 2013-02-11  Alexander V. Lukyanov <lavv17f@gmail.com>
 
