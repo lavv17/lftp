@@ -1090,6 +1090,8 @@ int   MirrorJob::Do()
 	 PrintStatus(0,"");
 	 printf(_("Retrying mirror...\n"));
 	 stats.Reset();
+	 source_set=0;
+	 target_set=0;
 	 goto pre_GETTING_LIST_INFO;
       }
       /*fallthrough*/

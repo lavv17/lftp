@@ -32,6 +32,10 @@
 
 	* SFtp.cc: don't send FSETSTAT when file modification time is unknown.
 
+2013-02-12  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* MirrorJob.cc: clear source/target sets when looping.
+
 2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* pgetJob.cc: (pget:min-chunk-size) new setting with 1M by default.
