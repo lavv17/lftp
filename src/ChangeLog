@@ -1,3 +1,7 @@
+2013-02-12  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Http.cc: don't call ExpandTildeInCWD every time.
+
 2013-02-11  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* MirrorJob.cc, MirrorJob.h: fix transfer rate reporting for parallel

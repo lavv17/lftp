@@ -1075,8 +1075,7 @@ int Http::Do()
    }
 
    if(home.path==0)
-      home.Set(default_cwd);
-   ExpandTildeInCWD();
+      set_home(default_cwd);
 
    if(Error())
       return m;
@@ -1348,6 +1347,7 @@ int Http::Do()
 	 SetError(NOT_SUPP);
 	 return MOVED;
       }
+      ExpandTildeInCWD();
       if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size)
       {
 	 state=DONE;
