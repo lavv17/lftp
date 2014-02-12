@@ -883,7 +883,7 @@ ResValue ResClient::Query(const char *name,const char *closure) const
    if(!strchr(name,':'))
    {
       const char *prefix=ResPrefix();
-      name=xstring::format("%s:%s",prefix,name);
+      name=xstring::cat(prefix,":",name,NULL);
       name=alloca_strdup(name);
    }
    if(!closure)
