@@ -24,7 +24,7 @@
 
 class StringSet
 {
-   xarray_p<char> set;
+   xarray_m<char> set;
 
    const StringSet &operator=(const StringSet &); // disable assignment
 

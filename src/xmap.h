@@ -103,11 +103,12 @@ template<class T> T xmap<T>::zero;
 
 template<class T> class xmap_p : public _xmap
 {
+   virtual void dispose(T *p) { delete p; }
 public:
    xmap_p() : _xmap(sizeof(T*)) {}
    ~xmap_p() {
       for(entry *e=_each_begin(); e; e=_each_next())
-	 delete(payload(e));
+	 dispose(payload(e));
    }
    T*& payload_Lv(entry *e) {
       return *(T**)(e+1);
@@ -132,11 +133,11 @@ public:
       return 0;
    }
    void remove(const xstring& key) {
-      delete(borrow(key));
+      dispose(borrow(key));
    }
    void add(const xstring& key,T *e0) {
       entry *e=_add(key);
-      delete(payload(e));
+      dispose(payload(e));
       payload_Lv(e)=e0;
    }
    void add(const char *key,T *e0) { add(xstring::get_tmp(key),e0); }
@@ -147,7 +148,7 @@ public:
    void empty() {
       for(int i=0; i<hash_size; i++) {
 	 while(map[i]) {
-	    delete(payload(map[i]));
+	    dispose(payload(map[i]));
 	    _remove(&map[i]);
 	 }
       }

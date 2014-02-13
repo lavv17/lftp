@@ -188,13 +188,15 @@ public:
    xarray_s() : _RefArray<const char,T>() {}
 };
 
+// array of new'ed pointers
 template<typename T>
 class xarray_p : public xarray0
 {
    xarray_p& operator=(const xarray_p&); // make assignment fail
    xarray_p(const xarray_p&);	       // disable cloning
 
-   void dispose(int i) { delete(get_non_const()[i]); }
+   virtual void dispose(T *p) { delete p; }
+   void dispose(int i) { dispose(get_non_const()[i]); }
    void dispose(int i,int j) { while(i<j) dispose(i++); }
    void clear(int i) { get_non_const()[i]=0; }
    void clear(int i,int j) { while(i<j) clear(i++); }
@@ -225,6 +227,12 @@ public:
    }
 };
 
+// array of malloc'ed pointers
+template<typename T>
+class xarray_m : public xarray_p<T>
+{
+   void dispose(T *p) { xfree(p); }
+};
 
 
 template<typename T,class A,typename P> class _xqueue

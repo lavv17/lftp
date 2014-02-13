@@ -1,3 +1,9 @@
+2013-02-13  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* xarray.h, StringSet.h: (xarray_m) new template for malloc'ed
+	  pointers; use it in StringSet.
+	* xmap.h: (dispose) new method.
+
 2013-02-12  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: don't call ExpandTildeInCWD every time.
