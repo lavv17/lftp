@@ -237,9 +237,7 @@ fi
 AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 
-AC_LANG_PUSH(C++)
 gl_INIT
-AC_LANG_POP(C++)
 
 if test x$ac_cv_func_wcwidth != xyes || test x$REPLACE_WCWIDTH = x1; then
    gl_LIBOBJ([wcwidth])
