@@ -243,7 +243,9 @@ without -f it just executes given arguments as a command. With -f, arguments
 are transformed into a new command. The format can contain plain text and
 placeholders $0...$9 and $@, corresponding to the arguments.
 
-.BR exit " [" bg "] [" top "]"
+.BR exit " [" bg "]"
+.RB [ top ]
+.RB [ parent ]
 .RB [ kill ]
 .RI [ code ]
 .PP
@@ -254,6 +256,7 @@ command is used.
 .PP
 `exit bg' forces moving to background when cmd:move-background is false.
 `exit top' makes top level `shell' (internal lftp command executor) terminate.
+`exit parent' terminates the parent shell when running a nested script.
 `exit kill' kills all numbered jobs before exiting. The options can be combined, e.g.
 `at 08:00 \-\- exit top kill &' kills all jobs and makes lftp exit at specified time.
 

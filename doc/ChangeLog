@@ -1,3 +1,7 @@
+2014-03-04	Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* lftp.1: document 'exit parent' subcommand.
+
 2014-01-24	Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* lftp.1: (pget:min-chunk-size) new setting.
