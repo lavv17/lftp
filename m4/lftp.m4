@@ -311,3 +311,23 @@ AC_DEFUN([LFTP_POSIX_FADVISE_CHECK],[
       AC_DEFINE(HAVE_POSIX_FADVISE, 1, [Define if posix_fadvise() is available])
    fi
 ])
+
+AC_DEFUN([LFTP_CXX_STDC_LIMIT_MACROS],[
+   dnl * Old glibcs requires that __STDC_LIMIT_MACROS is defined for using
+   dnl * stdint.h in c++ mode
+   AC_MSG_CHECKING(whether stdint.h needs __STDC_LIMIT_MACROS in C++ mode)
+   AC_CACHE_VAL(lftp_cv_cxx_stdc_limit_macros,
+   [
+      AC_LANG_PUSH(C++)
+      AC_TRY_COMPILE([
+         #include <stdint.h>
+	 int i = INT_MIN==INT32_MIN && INT_MAX == INT32_MAX;],[],
+	 [lftp_cv_cxx_stdc_limit_macros=no],[lftp_cv_cxx_stdc_limit_macros=yes])
+      AC_LANG_POP(C++)
+   ])
+   AC_MSG_RESULT($lftp_cv_cxx_stdc_limit_macros)
+   if test x$lftp_cv_cxx_stdc_limit_macros = xyes; then
+      AC_DEFINE(__STDC_LIMIT_MACROS, 1, [Use STDC Limit Macros in C++])
+   fi
+])
+
