@@ -822,12 +822,12 @@ void CmdExec::init(LocalDirectory *c)
    Reconfig();
 }
 CmdExec::CmdExec(FileAccess *s,LocalDirectory *c)
-   : SessionJob(s?s:new DummyProto)
+   : SessionJob(s?s:new DummyProto), parent_exec(0)
 {
    init(c);
 }
-CmdExec::CmdExec(const CmdExec *parent)
-   : SessionJob(parent->session->Clone())
+CmdExec::CmdExec(CmdExec *parent)
+   : SessionJob(parent->session->Clone()), parent_exec(parent)
 {
    init(parent->cwd->Clone());
 }

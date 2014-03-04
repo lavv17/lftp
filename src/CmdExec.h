@@ -69,6 +69,7 @@ public:
    int	 prev_exit_code;
 
 private:
+   CmdExec *parent_exec;
    Buffer cmd_buf;
    bool partial_cmd;
    int alias_field; // length of expanded alias (and ttl for used_aliases)
@@ -176,7 +177,7 @@ public:
    void SuspendJob(Job *j);
 
    CmdExec(FileAccess *s,LocalDirectory *c);
-   CmdExec(const CmdExec *parent);
+   CmdExec(CmdExec *parent);
    ~CmdExec();
 
    bool Idle();	// when we have no command running and command buffer is empty

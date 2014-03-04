@@ -674,6 +674,11 @@ Job *CmdExec::builtin_exit()
 	 if(top)
 	    exec=top.get_non_const();
       }
+      else if(!strcmp(a,"parent"))
+      {
+	 if(parent_exec)
+	    exec=parent_exec;
+      }
       else if(!strcmp(a,"kill"))
       {
 	 kill=true;
@@ -699,9 +704,11 @@ Job *CmdExec::builtin_exit()
       detach=true;
    if(kill)
       Job::KillAll();
-   if(detach)
+   if(detach) {
+      for(CmdExec *e=this; e!=exec; e=e->parent_exec)
+	 e->Exit(code);
       exec->Exit(code);
-   else {
+   } else {
       int loc=0;
       exec->SetAutoTerminateInBackground(true);
       eprintf(_(
@@ -733,6 +740,7 @@ void CmdExec::Exit(int code)
 {
    while(feeder)
       RemoveFeeder();
+   cmd_buf.Empty();
    if(interactive)
    {
       ListDoneJobs();

@@ -1,3 +1,8 @@
+2014-03-04  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* CmdExec.cc, CmdExec.h, commands.cc: keep track of parent CmdExec;
+	  add 'exit parent' subcommand; flush command buffer when exiting.
+
 2014-02-13  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* xarray.h, StringSet.h: (xarray_m) new template for malloc'ed
