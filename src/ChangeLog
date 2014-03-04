@@ -1,9 +1,6 @@
 2014-05-06  Alexander V. Lukyanov <lavv17f@gmail.com>
+
 	* xarray.h: fixed a typo which could cause segfault.
-
-2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
-
-	* HttpDir.cc: try to parse as plain html when props format is unrecognized.
 
 2014-03-18  Sami Farin <sami.farin@gmail.com>
 
@@ -30,6 +27,10 @@
 2014-03-14  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* SSH_Access.cc: add another password prompt format for FreeBSD.
+
+2014-03-04  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* SFtp.cc: don't send FSETSTAT when file modification time is unknown.
 
 2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 

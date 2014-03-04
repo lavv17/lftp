@@ -262,10 +262,13 @@ int SFtp::Do()
       if(s==0)
       {
 	 // no more data, set attributes and close the file.
-	 Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
-	 req->attrs.mtime=entity_date;
-	 req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
-	 SendRequest(req,Expect::IGNORE);
+	 if(entity_date!=NO_DATE)
+	 {
+	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
+	    req->attrs.mtime=entity_date;
+	    req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
+	    SendRequest(req,Expect::IGNORE);
+	 }
 	 CloseHandle(Expect::DEFAULT);
 	 state=WAITING;
 	 m=MOVED;
