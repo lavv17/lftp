@@ -1,23 +1,23 @@
-2013-02-13  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-02-13  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* xarray.h, StringSet.h: (xarray_m) new template for malloc'ed
 	  pointers; use it in StringSet.
 	* xmap.h: (dispose) new method.
 
-2013-02-12  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-02-12  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: don't call ExpandTildeInCWD every time.
 	* Http.cc: use a perfect hash for header handling.
 	* MirrorJob.cc: clear source/target sets when looping.
 
-2013-02-11  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-02-11  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* MirrorJob.cc, MirrorJob.h: fix transfer rate reporting for parallel
 	  mode mirror (--parallel option).
 	* commands.cc: (--env-password) new open option to take password from
 	  LFTP_PASSWORD environment variable.
 
-2013-02-04  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-02-04  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* ResMgr.cc, ResMgr.h, resource.cc: move some methods to ResType;
 	  make ResMgr a descendant of ResType; make type_value_list a pointer
@@ -26,11 +26,11 @@
 	* FileAccess.cc, FileAccess.h: use xlist and xmap to speed up FA
 	  creation and deleting.
 
-2013-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* pgetJob.cc: (pget:min-chunk-size) new setting with 1M by default.
 
-2013-01-23  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-01-23  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* FileAccess.cc, commands.cc, history.cc: don't add a slash if it's
 	  already there.
@@ -42,23 +42,23 @@
 	* Torrent.cc, Torrent.h: save metadata and load if needed;
 	  (torrent:save-metadata) new setting.
 
-2013-01-17  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-01-17  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: allow UTC along with GMT in http timestamps.
 	* Http.cc: fixed Content-Length handling after PROPFIND.
 
-2013-01-16  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-01-16  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* DHT.cc: prefer responded nodes in search over not responded ones.
 	* Torrent.cc, Torrent.h: add shutting_down_timer to fix a hang on
 	  unresponsive trackers.
 	* TorrentTracker.h: use 30 if interval<30.
 
-2013-01-16  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-01-16  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: fixed error handling for new _Read semantics.
 
-2013-01-15  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-01-15  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Http.cc: fixed rmdir for WebDAV by adding trailing slash to the path.
 
