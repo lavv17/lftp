@@ -2,6 +2,7 @@
 
 	* CmdExec.cc, CmdExec.h, commands.cc: keep track of parent CmdExec;
 	  add 'exit parent' subcommand; flush command buffer when exiting.
+	* SFtp.cc: don't send FSETSTAT when file modification time is unknown.
 
 2014-02-13  Alexander V. Lukyanov <lavv17f@gmail.com>
 
