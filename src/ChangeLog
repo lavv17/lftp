@@ -1,3 +1,7 @@
+2014-03-11  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Http.cc, resource.cc: (http:accept-encoding, http:decode) new settings.
+
 2014-03-04  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* CmdExec.cc, CmdExec.h, commands.cc: keep track of parent CmdExec;

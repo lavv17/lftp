@@ -368,6 +368,9 @@ void Http::SendMethod(const char *method,const char *efile)
       accept=Query("accept-charset",hostname);
       if(accept && accept[0])
 	 Send("Accept-Charset: %s\r\n",accept);
+      accept=Query("accept-encoding",hostname);
+      if(accept && accept[0])
+	 Send("Accept-Encoding: %s\r\n",accept);
 
       const char *referer=Query("referer",hostname);
       const char *slash="";
@@ -964,7 +967,11 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       return;
 
    case_hh("Content-Encoding",'C')
-      if(!strcasecmp(value,"gzip")) {
+      if(!QueryBool("decode",hostname))
+	 return;
+      if(!strcmp(value,"deflate")
+      || !strcmp(value,"gzip") || !strcmp(value,"compress")
+      || !strcmp(value,"x-gzip") || !strcmp(value,"x-compress")) {
 	 // inflated size if unknown beforehand
 	 entity_size=NO_SIZE;
 	 if(opt_size)
@@ -973,6 +980,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 inflate=new DirectedBuffer(DirectedBuffer::GET);
 	 inflate->SetTranslator(new DataInflator());
       }
+      return;
 
    case_hh("Accept-Ranges",'A')
       if(!strcasecmp(value,"none"))

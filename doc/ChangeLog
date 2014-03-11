@@ -1,3 +1,7 @@
+2014-03-11	Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* lftp.1: document http:accept-encoding and http:decode.
+
 2014-03-04	Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* lftp.1: document 'exit parent' subcommand.

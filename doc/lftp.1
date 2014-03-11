@@ -1647,7 +1647,7 @@ with hftp protocol and use `GET' instead. Default is off.
 If set to off, lftp won't try to append `;type=' to URLs passed to proxy.
 Some broken proxies don't handle it correctly. Default is on.
 .TP
-.BR "http:accept, http:accept-charset, http:accept-language" " (string)"
+.BR "http:accept, http:accept-charset, http:accept-encoding, http:accept-language" " (string)"
 specify corresponding HTTP request headers.
 .TP
 .BR http:authorization \ (string)
@@ -1663,6 +1663,10 @@ specify corresponding HTTP request header.
 .BR http:cookie \ (string)
 send this cookie to server. A closure is useful here:
      set cookie/www.somehost.com "param=value"
+.TP
+.BR http:decode \ (boolean)
+when true, lftp automatically decodes the entity when Content-Encoding
+header value matches deflate, gzip, compress, x-gzip or x-compress.
 .TP
 .BR http:post-content-type " (string)"
 specifies value of Content-Type http request header for POST method.
