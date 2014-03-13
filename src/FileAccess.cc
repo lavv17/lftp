@@ -54,7 +54,6 @@ void FileAccess::Init()
 
    default_cwd="~";
    cwd.Set(default_cwd,false,0);
-   new_cwd=0;
    limit=FILE_END;
    real_pos=UNKNOWN_POS;
    pos=0;
@@ -188,7 +187,7 @@ void FileAccess::Close()
    file.set(0);
    file_url.set(0);
    file1.set(0);
-   delete new_cwd; new_cwd=0;
+   new_cwd=0;
    mode=CLOSED;
    opt_date=0;
    opt_size=0;
@@ -538,7 +537,6 @@ void FileAccess::Chdir(const char *path,bool verify)
    else
    {
       cwd.Set(new_cwd);
-      delete new_cwd;
       new_cwd=0;
    }
 }
@@ -799,7 +797,7 @@ FileAccess *FileAccess::New(const char *proto,const char *host,const char *port)
       FA *n_session=Protocol::NewSession(n_proto);
       if(n_session)
       {
-	 delete session;
+	 Delete(session);
 	 session=n_session;
 	 session->SetVisualProto(proto);
       }

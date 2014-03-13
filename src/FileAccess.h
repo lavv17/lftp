@@ -113,7 +113,7 @@ protected:
    const char *default_cwd;
    Path	 home;
    Path	 cwd;
-   Path	 *new_cwd;
+   Ref<Path> new_cwd;
    xstring file;
    xstring file_url;
    xstring file1;
