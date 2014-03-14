@@ -1,5 +1,4 @@
 2014-05-06  Alexander V. Lukyanov <lavv17f@gmail.com>
-
 	* xarray.h: fixed a typo which could cause segfault.
 
 2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
@@ -27,6 +26,10 @@
 	* xarray.cc, xarray.h: use xrealloc instead of realloc; truncate
 	  xarray_m in dtor, so that proper dispose method is called.
 	* xmap.cc: use xfree for xmalloc'ed memory.
+
+2014-03-14  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* SSH_Access.cc: add another password prompt format for FreeBSD.
 
 2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
