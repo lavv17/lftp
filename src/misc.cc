@@ -566,7 +566,7 @@ char *Subst(const char *txt, const subst_t *s)
       {
 	 ch=*txt++;
 	 if(ch >= '0' && ch < '8') {
-	    unsigned len;
+	    int len;
 	    unsigned code;
 	    txt--;
 	    if(sscanf(txt,"%3o%n",&code,&len)!=1)
