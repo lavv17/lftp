@@ -3,6 +3,7 @@
 	* resource.cc: add hftp:decode setting.
 	* xarray.cc, xarray.h: use xrealloc instead of realloc; truncate
 	  xarray_m in dtor, so that proper dispose method is called.
+	* xmap.cc: use xfree for xmalloc'ed memory.
 
 2014-03-14  Alexander V. Lukyanov <lavv17f@gmail.com>
 
