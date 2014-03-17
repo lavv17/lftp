@@ -232,6 +232,8 @@ template<typename T>
 class xarray_m : public xarray_p<T>
 {
    void dispose(T *p) { xfree(p); }
+public:
+   ~xarray_m() { xarray_p<T>::truncate(); }
 };
 
 

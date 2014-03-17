@@ -1,6 +1,8 @@
 2014-03-17  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* resource.cc: add hftp:decode setting.
+	* xarray.cc, xarray.h: use xrealloc instead of realloc; truncate
+	  xarray_m in dtor, so that proper dispose method is called.
 
 2014-03-14  Alexander V. Lukyanov <lavv17f@gmail.com>
 
