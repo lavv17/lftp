@@ -137,7 +137,7 @@ void _xmap::_remove(entry **ep)
       return;
    entry *e=*ep;
    *ep=e->next;
-   delete e;
+   xfree(e);
    entry_count--;
 }
 
