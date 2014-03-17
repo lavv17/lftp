@@ -23,7 +23,7 @@
 #include "ProcWait.h"
 #include "ArgV.h"
 
-class FileTimestamp;
+struct FileTimestamp;
 
 class FDStream
 {

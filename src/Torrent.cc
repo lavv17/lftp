@@ -1917,7 +1917,7 @@ void TorrentPeer::SendExtensions()
    xmap_p<BeNode> ext;
    ext.add("m",new BeNode(&m));
    ext.add("p",new BeNode(parent->GetPort()));
-   ext.add("v",new BeNode(PACKAGE"/"VERSION));
+   ext.add("v",new BeNode(PACKAGE "/" VERSION));
    ext.add("reqq",new BeNode(MAX_QUEUE_LEN*16));
    if(parent->Complete())
       ext.add("upload_only",new BeNode(1));
