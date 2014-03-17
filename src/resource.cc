@@ -248,6 +248,7 @@ static ResType lftp_vars[] = {
    {"ftp:retry-530-anonymous",	 "Login incorrect",ResMgr::ERegExpValidate,0},
    {"hftp:cache",		 "yes",   ResMgr::BoolValidate,0},
    {"hftp:cache-control",	 "",	  0,0},
+   {"hftp:decode",		 "no",	  ResMgr::BoolValidate,0},
    {"hftp:proxy",		 "",	  HttpProxyValidate,0},
    {"hftp:use-authorization",	 "yes",   ResMgr::BoolValidate,0},
    {"hftp:use-head",		 "yes",   ResMgr::BoolValidate,0},

@@ -1,3 +1,7 @@
+2014-03-17  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* resource.cc: add hftp:decode setting.
+
 2014-03-14  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* SSH_Access.cc: add another password prompt format for FreeBSD.

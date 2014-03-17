@@ -1613,6 +1613,10 @@ allow server/proxy side caching for ftp-over-http protocol.
 .BR hftp:cache-control \ (string)
 specify corresponding HTTP request header.
 .TP
+.BR hftp:decode \ (boolean)
+when true, lftp automatically decodes the entity in hftp protocol when Content-Encoding
+header value matches deflate, gzip, compress, x-gzip or x-compress.
+.TP
 .BR hftp:proxy \ (URL)
 specifies http proxy for ftp-over-http protocol (hftp). The protocol hftp
 cannot work without a http proxy, obviously.
