@@ -112,7 +112,7 @@ public:
 };
 lftp_module_info *lftp_module_info::base;
 
-static ResDecl res_mod_path("module:path", PKGLIBDIR"/"VERSION":"PKGLIBDIR, 0,0);
+static ResDecl res_mod_path("module:path", PKGLIBDIR "/" VERSION ":" PKGLIBDIR, 0,0);
 
 /* dlopen can take a file without extension and automatically do the
  * right thing, however that doesn't fit with this code that tries to
