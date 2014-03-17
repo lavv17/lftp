@@ -75,7 +75,7 @@ struct ResType
 class Resource
 {
    friend class ResMgr;
-   friend class ResType;
+   friend struct ResType;
    static xlist_head<Resource> all_list;
 
    const ResType *type;
