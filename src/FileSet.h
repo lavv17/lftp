@@ -110,6 +110,7 @@ public:
    bool	 NotOlderThan(time_t t) const;
    bool	 NotNewerThan(time_t t) const;
    bool  SizeOutside(const Range *r) const;
+   bool	 TypeIs(type t) const { return (defined&TYPE) && filetype==t; }
 
    void	 SetAssociatedData(const void *d,int len) { data.nset((const char*)d,len); }
    const void *GetAssociatedData() const { return data; }
