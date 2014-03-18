@@ -404,7 +404,6 @@ protected:
 
 public:
    FileAccessRefC(const FileAccessRef& p) { ref=&p; }
-   ~FileAccessRefC() { close(); }
    const FileAccessRef& operator=(const FileAccessRef& p) { close(); ref=&p; return p; }
    operator const FileAccess*() const { return *ref; }
    FileAccess *operator->() const { return ref->operator->(); }

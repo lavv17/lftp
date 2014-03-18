@@ -15,6 +15,12 @@
 
 	* FindJob.cc: don't add slash for plain files in URLs.
 
+2014-03-18  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* FileAccess.h, mkdirJob.h, FindJob.h: don't access the
+	  FileAccessRefC ref in dtor, as the original FileAccessRef can be
+	  already deleted.
+
 2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* pgetJob.cc: (pget:min-chunk-size) new setting with 1M by default.

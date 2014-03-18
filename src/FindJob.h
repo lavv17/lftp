@@ -100,6 +100,7 @@ public:
 
    void Init();
    FinderJob(FileAccess *s);
+   void PrepareToDie() { session->Close(); SessionJob::PrepareToDie(); }
    ~FinderJob();
 
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
