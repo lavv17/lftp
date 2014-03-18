@@ -1,3 +1,9 @@
+2014-03-18  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* FileAccess.h, mkdirJob.h, FindJob.h: don't access the
+	  FileAccessRefC ref in dtor, as the original FileAccessRef can be
+	  already deleted.
+
 2014-03-17  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* resource.cc: add hftp:decode setting.

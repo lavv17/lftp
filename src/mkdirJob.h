@@ -45,6 +45,7 @@ public:
    void	 SayFinal();
 
    mkdirJob(FileAccess *session,ArgV *a);
+   void PrepareToDie() { session->Close(); SessionJob::PrepareToDie(); }
 
    void	 BeQuiet() { quiet=true; }
 
