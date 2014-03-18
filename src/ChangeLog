@@ -1,4 +1,4 @@
-2014-03-18  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-05-06  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* xarray.h: fixed a typo which could cause segfault.
 
@@ -10,6 +10,10 @@
 
 	* FileSet.cc, FtpDirList.cc, Http.cc, PollVec.cc, complete.cc, lftp.cc:
 	  fix warnings
+
+2014-03-18  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* FindJob.cc: don't add slash for plain files in URLs.
 
 2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
