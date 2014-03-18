@@ -1582,7 +1582,7 @@ void FileCopyPeerFDStream::Seek(off_t new_pos)
 	 if(s!=-1)
 	 {
 	    SetSize(s);
-	    pos=seek_pos+(mode==PUT)?Size():0;
+	    pos=seek_pos+((mode==PUT)?Size():0);
 	    return;
 	 }
 	 else
