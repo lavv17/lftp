@@ -957,7 +957,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    case_hh("Transfer-Encoding",'T')
       if(!strcasecmp(value,"identity"))
 	 return;
-      if(!strcasecmp(value,"chunked"));
+      if(!strcasecmp(value,"chunked"))
       {
 	 chunked=true;
 	 chunk_size=CHUNK_SIZE_UNKNOWN;	  // expecting first chunk

@@ -222,7 +222,7 @@ bool FtpDirList::TryColor(const char *line_c,int len)
    if(consumed>0 && -1!=(parse_perms(perms+1))
    && -1!=(parse_month(month_name))
    && -1!=parse_year_or_time(year_or_time,&year,&hour,&minute)
-   && strlen(line+consumed)>1);
+   && strlen(line+consumed)>1)
    {
       // good.
       int type=-1;

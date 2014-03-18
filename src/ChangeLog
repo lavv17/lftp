@@ -1,3 +1,8 @@
+2014-03-18  Sami Farin <sami.farin@gmail.com>
+
+	* FileSet.cc, FtpDirList.cc, Http.cc, PollVec.cc, complete.cc, lftp.cc:
+	  fix warnings
+
 2014-03-18  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* FileAccess.h, mkdirJob.h, FindJob.h: don't access the
