@@ -3,6 +3,7 @@
 	* FileAccess.h, mkdirJob.h, FindJob.h: don't access the
 	  FileAccessRefC ref in dtor, as the original FileAccessRef can be
 	  already deleted.
+	* FindJob.cc: don't add slash for plain files in URLs.
 
 2014-03-17  Alexander V. Lukyanov <lavv17f@gmail.com>
 

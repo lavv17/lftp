@@ -366,8 +366,7 @@ FinderJob::prf_res FinderJob_List::ProcessFile(const char *d,const FileInfo *fi)
    {
       FileAccess::Path old_cwd=session->GetCwd();
       session->SetCwd(init_dir);
-      session->Chdir(dir_file(d,fi->name),false);
-      path_to_show.set(session->GetConnectURL());
+      path_to_show.set(session->GetFileURL(dir_file(d,fi->name)));
       session->SetCwd(old_cwd);
    }
    else
