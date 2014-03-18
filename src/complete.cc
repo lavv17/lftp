@@ -877,7 +877,7 @@ enum { COMPLETE_DQUOTE,COMPLETE_SQUOTE,COMPLETE_BSQUOTE };
 static char *
 single_quote (char *string)
 {
-  register int c;
+  int c;
   char *result, *r, *s;
 
   result = (char *)xmalloc (3 + (4 * strlen (string)));
@@ -906,7 +906,7 @@ single_quote (char *string)
 static char *
 double_quote (char *string)
 {
-  register int c;
+  int c;
   char *result, *r, *s;
 
   result = (char *)xmalloc (3 + (2 * strlen (string)));

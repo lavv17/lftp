@@ -168,7 +168,7 @@ public:
 		     xmalloc_register_block(history_value0);
 		  xstring_ca history_value(history_value0);
 
-		  if (expanded < 0);
+		  if (expanded < 0)
 		     fprintf (stderr, "%s\n", history_value.get());
 
 		  /* If there was an error, return nothing. */

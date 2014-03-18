@@ -1,10 +1,15 @@
-2014-05-06  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-03-18  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* xarray.h: fixed a typo which could cause segfault.
 
 2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* HttpDir.cc: try to parse as plain html when props format is unrecognized.
+
+2014-03-18  Sami Farin <sami.farin@gmail.com>
+
+	* FileSet.cc, FtpDirList.cc, Http.cc, PollVec.cc, complete.cc, lftp.cc:
+	  fix warnings
 
 2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
