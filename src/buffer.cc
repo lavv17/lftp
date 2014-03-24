@@ -211,7 +211,7 @@ int Buffer::MoveDataHere(Buffer *o,int max_len)
 	 o->Skip(size);
       }
    }
-   if(o->Eof())
+   if(o->Eof() && o->Size()==0)
       PutEOF();
    return size;
 }

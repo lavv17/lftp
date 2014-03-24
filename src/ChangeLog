@@ -1,3 +1,7 @@
+2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* buffer.cc: (MoveDataHere) set eof only when all data are exhausted.
+
 2014-03-18  Sami Farin <sami.farin@gmail.com>
 
 	* FileSet.cc, FtpDirList.cc, Http.cc, PollVec.cc, complete.cc, lftp.cc:
