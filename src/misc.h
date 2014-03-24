@@ -99,6 +99,8 @@ void xgettimeofday(time_t *sec, int *usec);
 /* returns malloc'd date */
 char *xstrftime(const char *format, const struct tm *tm);
 
+const char *xhuman(long long n);
+
 void strip_trailing_slashes(xstring& fn);
 xstring& dirname_modify(xstring& fn);
 xstring& dirname(const char *path);  // returns a tmp

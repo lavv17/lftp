@@ -1,6 +1,7 @@
 2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* buffer.cc: (MoveDataHere) set eof only when all data are exhausted.
+	* misc.cc, misc.h: (xhuman) new function.
 
 2014-03-18  Sami Farin <sami.farin@gmail.com>
 

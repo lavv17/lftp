@@ -42,6 +42,7 @@
 
 CDECL_BEGIN
 #include "regex.h"
+#include "human.h"
 CDECL_END
 #include "misc.h"
 #include "ProcWait.h"
@@ -988,4 +989,10 @@ const char *get_nodename()
    if(uname(&u)==0)
       return u.nodename;
    return "NODE";
+}
+
+const char *xhuman(long long n)
+{
+   char *buf=xstring::tmp_buf(LONGEST_HUMAN_READABLE + 1);
+   return human_readable(n, buf, human_autoscale|human_SI, 1, 1);
 }
