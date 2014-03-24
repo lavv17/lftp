@@ -527,3 +527,22 @@ void Job::WaitDone()
    }
    DecRefCount();
 }
+
+off_t Job::GetBytesCount()
+{
+   off_t sum=0;
+   for(int i=0; i<waiting.count(); i++)
+      sum+=waiting[i]->GetBytesCount();
+   return sum;
+}
+double Job::GetTimeSpent()
+{
+   return 0;
+}
+double Job::GetTransferRate()
+{
+   double sum=0;
+   for(int i=0; i<waiting.count(); i++)
+      sum+=waiting[i]->GetTransferRate();
+   return sum;
+}

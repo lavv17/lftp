@@ -212,6 +212,7 @@ public:
    void Kill(int sig);
    off_t GetBytesCount() { return bytes_count; }
    double GetTimeSpent();
+   double GetTransferRate() { return rate.Get(); }
 
    void SetDate(time_t t,int p=0) { get->SetDate(t,p); }
    void SetDate(const FileTimestamp &t) { SetDate(t.ts,t.ts_prec); }

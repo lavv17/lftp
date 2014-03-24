@@ -2,6 +2,13 @@
 
 	* buffer.cc: (MoveDataHere) set eof only when all data are exhausted.
 	* misc.cc, misc.h: (xhuman) new function.
+	* Job.cc, Job.h: (GetTransferRate) new method;
+	  (GetBytesCount) count recursively over descendants.
+	* CopyJob.cc, CopyJob.h, FileCopy.h: (GetTransferRate) implement;
+	  (GetTimeSpent) don't count overlapped time intervals twice;
+	  (GetBytesCount) count recursively for real time monitoring.
+	* MirrorJob.cc, MirrorJob.h: show real-time bytes transferred and
+	  rate in the mirror job title.
 
 2014-03-18  Sami Farin <sami.farin@gmail.com>
 

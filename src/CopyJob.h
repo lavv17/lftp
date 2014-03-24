@@ -64,7 +64,8 @@ public:
    bool Error() { return c->Error(); }
    const char *ErrorText() { return c->ErrorText(); }
    double GetTimeSpent() { return c->GetTimeSpent(); }
-   virtual off_t GetBytesCount() { return c->GetBytesCount(); }
+   off_t GetBytesCount() { return c->GetBytesCount(); }
+   double GetTransferRate() { return c->GetTransferRate(); }
    off_t GetSize() { return c->GetSize(); }
    off_t GetPos()  { return c->GetPos(); }
    float GetRate() { return c->GetRate(); }
@@ -108,6 +109,7 @@ protected:
    int errors;
    int count;
    off_t bytes;
+   TimeDate transfer_start_ts;
    double time_spent;
    const char *op;
    bool no_status;
@@ -141,8 +143,8 @@ public:
 
    void Ascii() { ascii=true; }
 
-   double GetTimeSpent() { return time_spent; }
-   off_t GetBytesCount() { return bytes; }
+   double GetTimeSpent() { return time_spent+(waiting.count()>0?now-transfer_start_ts:0.); }
+   off_t GetBytesCount() { return bytes+Job::GetBytesCount(); }
 };
 
 #endif // COPYJOB_H

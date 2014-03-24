@@ -223,12 +223,13 @@ int CopyJobEnv::Do()
       errors++;
    count++;
    bytes+=j->GetBytesCount();
-   time_spent+=j->GetTimeSpent();
    Delete(j);
    if(cp==j)
       cp=0;
    if(waiting_num>0 && cp==0)
       cp=(CopyJob*)waiting[0];
+   if(waiting.count()==0)
+      time_spent+=now-transfer_start_ts;
    return MOVED;
 }
 void CopyJobEnv::AddCopier(FileCopy *c,const char *n)
@@ -238,6 +239,8 @@ void CopyJobEnv::AddCopier(FileCopy *c,const char *n)
    if(ascii)
       c->Ascii();
    cp=cj_new?cj_new->New(c,n,op):new CopyJob(c,n,op);
+   if(waiting.count()==0)
+      transfer_start_ts=now;
    AddWaiting(cp);
 }
 void CopyJobEnv::SetCopier(FileCopy *c,const char *n)

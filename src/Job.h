@@ -86,7 +86,7 @@ public:
 
    xstring cmdline;
 
-   virtual const xstring& GetCmdLine() const { return cmdline?cmdline:xstring::get_tmp("?",1); }
+   virtual const xstring& GetCmdLine() { return cmdline?cmdline:xstring::get_tmp("?",1); }
    xstring& FormatJobTitle(xstring& s,int indent=0,const char *suffix=0);
    xstring& FormatOneJob(xstring& s,int verbose,int indent=0,const char *suffix=0);
    xstring& FormatOneJobRecursively(xstring& s,int verbose,int indent=0);
@@ -138,8 +138,9 @@ public:
    virtual void lftpMovesToBackground() { Resume(); }
    static  void lftpMovesToBackground_ToAll();
 
-   virtual off_t GetBytesCount() { return 0; }
-   virtual double GetTimeSpent() { return 0; }
+   virtual off_t GetBytesCount();
+   virtual double GetTimeSpent();
+   virtual double GetTransferRate();
 
    void WaitDone();
 };

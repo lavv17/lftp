@@ -73,15 +73,7 @@ class MirrorJob : public Job
       if(parent_mirror)
 	 parent_mirror->AddBytesToTransfer(b);
    }
-
-   const xstring& GetCmdLine() const {
-      if(bytes_to_transfer>0) {
-	 return xstring::get_tmp(cmdline).appendf(" - %lld/%lld (%d%%)",
-	    bytes_transferred,bytes_to_transfer,
-	    percent(bytes_transferred,bytes_to_transfer));
-      }
-      return cmdline;
-   }
+   const xstring& GetCmdLine();
 
    void	 HandleFile(FileInfo *);
 
@@ -163,6 +155,9 @@ class MirrorJob : public Job
    void JobStarted(Job *j);
    void TransferFinished(Job *j);
    void JobFinished(Job *j);
+
+   off_t GetBytesCount() { return bytes_transferred+Job::GetBytesCount(); }
+   double GetTimeSpent() { return transfer_time_elapsed+(transfer_count>0?now-root_mirror->transfer_start_ts:0.); }
 
 public:
    enum
