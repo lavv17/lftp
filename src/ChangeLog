@@ -2,6 +2,10 @@
 
 	* xarray.h: fixed a typo which could cause segfault.
 
+2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* HttpDir.cc: try to parse as plain html when props format is unrecognized.
+
 2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* pgetJob.cc: (pget:min-chunk-size) new setting with 1M by default.
