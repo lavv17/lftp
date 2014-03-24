@@ -9,6 +9,7 @@
 	  (GetBytesCount) count recursively for real time monitoring.
 	* MirrorJob.cc, MirrorJob.h: show real-time bytes transferred and
 	  rate in the mirror job title.
+	* HttpDir.cc: try to parse as plain html when props format is unrecognized.
 
 2014-03-18  Sami Farin <sami.farin@gmail.com>
 
