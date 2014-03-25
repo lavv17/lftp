@@ -692,7 +692,7 @@ Job *CmdExec::builtin_exit()
    }
    // Note: one job is this CmdExec.
    if(!bg && exec->top_level
-   && !ResMgr::QueryBool("cmd:move-background",0) && NumberOfJobs()>0)
+   && !ResMgr::QueryBool("cmd:move-background",0) && NumberOfChildrenJobs()>0)
    {
       eprintf(_(
 	 "There are running jobs and `cmd:move-background' is not set.\n"
@@ -700,7 +700,7 @@ Job *CmdExec::builtin_exit()
       ));
       return 0;
    }
-   if(!detach && Job::NumberOfJobs()==0)
+   if(!detach && Job::NumberOfChildrenJobs()==0)
       detach=true;
    if(kill)
       Job::KillAll();
@@ -2348,7 +2348,7 @@ CMD(wait)
       eprintf(_("%s: wait loop detected\n"),op);
       return 0;
    }
-   j->parent=0;
+   j->SetParent(0);
    j->Bg();
    return j;
 }

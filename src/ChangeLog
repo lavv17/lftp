@@ -2,6 +2,7 @@
 
 	* pgetJob.h: fixed bytes and rate reporting via Get methods.
 	* Job.cc, Job.h: use xlist; add children_jobs list; (NumberOfChildrenJobs) new method.
+	* commands.cc, CmdExec.cc: use NumberOfChildrenJobs to avoid counting "this" Job.
 
 2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 

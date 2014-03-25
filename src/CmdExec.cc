@@ -300,7 +300,7 @@ int CmdExec::Done()
 {
    Enter();
    bool done = (feeder==0 && Idle())
-      || (auto_terminate_in_bg && NumberOfJobs()==0 && !in_foreground_pgrp());
+      || (auto_terminate_in_bg && NumberOfChildrenJobs()==0 && !in_foreground_pgrp());
    Leave();
    return done;
 }
