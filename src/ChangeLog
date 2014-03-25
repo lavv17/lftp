@@ -1,3 +1,7 @@
+2014-03-25  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* pgetJob.h: fixed bytes and rate reporting via Get methods.
+
 2014-03-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* buffer.cc: (MoveDataHere) set eof only when all data are exhausted.

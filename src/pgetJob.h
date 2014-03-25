@@ -75,7 +75,8 @@ public:
 
    void SetMaxConn(int n) { max_chunks=n; }
 
-   off_t GetBytesCount() { return chunks_bytes+c->GetBytesCount(); }
+   off_t GetBytesCount() { return total_xferred; }
+   double GetTransferRate() { return total_xfer_rate; }
 };
 
 class pCopyJobCreator : public CopyJobCreator
