@@ -24,23 +24,31 @@
 #include "Job.h"
 #include "misc.h"
 
-Job *Job::chain;
+xlist_head<Job> Job::all_jobs;
 #define waiting_num waiting.count()
 
 Job::Job()
+   : all_jobs_node(this), children_jobs_node(this)
 {
-   next=chain;
-   chain=this;
+   all_jobs.add(all_jobs_node);
    parent=0;
    jobno=-1;
    fg=false;
-   job_prepared_to_die=false;
+}
+
+void Job::SetParent(Job *j)
+{
+   if(children_jobs_node.listed())
+      children_jobs_node.remove();
+   parent=j;
+   if(j)
+      j->children_jobs.add(children_jobs_node);
 }
 
 void  Job::AllocJobno()
 {
    jobno=0;
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
       if(scan!=this && scan->jobno>=jobno)
 	 jobno=scan->jobno+1;
 }
@@ -48,17 +56,14 @@ void  Job::AllocJobno()
 void Job::PrepareToDie()
 {
    // reparent or kill children (hm, that's sadistic)
-   ListScan(Job,chain,next)
-   {
-      if(scan->parent==this)
-      {
-	 if(scan->jobno!=-1 && this->parent)
-	    scan->parent=this->parent;
-	 else
-	 {
-	    scan->parent=0;
-	    scan->DeleteLater();
-	 }
+   xlist_for_each_safe(Job,children_jobs,child_node,child,next) {
+      child_node->remove();
+      if(child->jobno!=-1 && this->parent) {
+	 child->parent=this->parent;
+	 this->parent->children_jobs.add(child_node);
+      } else {
+	 child->parent=0;
+	 child->DeleteLater();
       }
    }
    // if parent waits for the job, make it stop
@@ -66,18 +71,20 @@ void Job::PrepareToDie()
       parent->RemoveWaiting(this);
    fg_data=0;
    waiting.unset();
-   ListDel(Job,chain,this,next);
-   job_prepared_to_die=true;
+   if(children_jobs_node.listed())
+      children_jobs_node.remove();
+   all_jobs_node.remove();
 }
 
 Job::~Job()
 {
-   assert(job_prepared_to_die);
+   assert(!all_jobs_node.listed());
+   assert(!children_jobs_node.listed());
 }
 
 Job *Job::FindJob(int n)
 {
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
    {
       if(scan->jobno==n)
 	 return scan;
@@ -87,7 +94,7 @@ Job *Job::FindJob(int n)
 
 Job *Job::FindWhoWaitsFor(Job *j)
 {
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
    {
       if(scan->WaitsFor(j))
 	 return scan;
@@ -112,11 +119,8 @@ Job *Job::FindDoneAwaitedJob()
 
 void Job::WaitForAllChildren()
 {
-   ListScan(Job,chain,next)
-   {
-      if(scan->parent==this)
-	 AddWaiting(scan);
-   }
+   xlist_for_each(Job,children_jobs,node,scan)
+      AddWaiting(scan);
 }
 void Job::AllWaitingFg()
 {
@@ -164,6 +168,8 @@ void Job::Kill(Job *j)
       // we have to simulate normal death...
       Job *r=new KilledJob();
       r->parent=j->parent;
+      j->parent->children_jobs.add(r->children_jobs_node);
+      j->children_jobs_node.remove();
       r->cmdline.set(j->cmdline);
       r->waiting.move_here(j->waiting);
       j->parent->ReplaceWaiting(j,r);
@@ -181,14 +187,14 @@ void Job::Kill(int n)
 
 void Job::KillAll()
 {
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
       if(scan->jobno>=0)
 	 Job::Kill(scan);
    CollectGarbage();
 }
 void Job::Cleanup()
 {
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
       Job::Kill(scan);
    CollectGarbage();
 }
@@ -204,10 +210,18 @@ void  Job::SendSig(int n,int sig)
    }
 }
 
-int   Job::NumberOfJobs()
+int Job::NumberOfJobs()
 {
    int count=0;
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
+      if(!scan->Deleted() && !scan->Done())
+	 count++;
+   return count;
+}
+int Job::NumberOfChildrenJobs()
+{
+   int count=0;
+   xlist_for_each(Job,children_jobs,node,scan)
       if(!scan->Deleted() && !scan->Done())
 	 count++;
    return count;
@@ -222,17 +236,18 @@ void  Job::SortJobs()
 {
    xarray<Job*> arr;
 
-   ListScan(Job,chain,next)
+   xlist_for_each_safe(Job,all_jobs,node,scan,next) {
       arr.append(scan);
+      node->remove();
+   }
    arr.qsort(jobno_compare);
 
-   chain=0;
    int count=arr.count();
    while(count--)
-      ListAdd(Job,chain,arr[count],next);
+      all_jobs.add(arr[count]->all_jobs_node);
 
-   ListScan(Job,chain,next)
-      scan->waiting.qsort(jobno_compare);
+   xlist_for_each(Job,all_jobs,node,scan_waiting)
+      scan_waiting->waiting.qsort(jobno_compare);
 }
 
 static xstring print_buf("");
@@ -262,7 +277,7 @@ void  Job::ListDoneJobs()
    SortJobs();
 
    FILE *f=stdout;
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
    {
       if(scan->jobno>=0 && (scan->parent==this || scan->parent==0)
          && !scan->Deleted() && scan->Done())
@@ -327,8 +342,8 @@ xstring& Job::FormatJobs(xstring& s,int verbose,int indent)
 	 waiting[i]->FormatOneJobRecursively(s,verbose,indent);
    }
 
-   ListScan(Job,chain,next)
-      if(scan->parent==this && !scan->Done() && !this->WaitsFor(scan))
+   xlist_for_each(Job,children_jobs,node,scan)
+      if(!scan->Done() && !this->WaitsFor(scan))
 	 scan->FormatOneJobRecursively(s,verbose,indent);
 
    return s;
@@ -336,7 +351,7 @@ xstring& Job::FormatJobs(xstring& s,int verbose,int indent)
 
 void  Job::BuryDoneJobs()
 {
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
 		  && !scan->Deleted() && scan->Done())
@@ -493,15 +508,15 @@ void Job::ShowRunStatus(const SMTaskRef<StatusLine>& sl)
 
 Job *Job::FindAnyChild()
 {
-   ListScan(Job,chain,next)
-      if(scan->parent==this && scan->jobno>=0)
+   xlist_for_each(Job,children_jobs,node,scan)
+      if(scan->jobno>=0)
       	 return scan;
    return 0;
 }
 
 void Job::lftpMovesToBackground_ToAll()
 {
-   ListScan(Job,chain,next)
+   xlist_for_each(Job,all_jobs,node,scan)
       scan->lftpMovesToBackground();
 }
 

@@ -35,14 +35,16 @@ class Job : public SMTask
 {
    static void SortJobs();
 
-   Job  *next;
-   static Job *chain;
+   xlist<Job> all_jobs_node;
+   static xlist_head<Job> all_jobs;
+
+   xlist_head<Job> children_jobs;
+   xlist<Job> children_jobs_node;
 
 protected:
    bool fg;
    Ref<FgData> fg_data;
 
-   bool job_prepared_to_die;
    void PrepareToDie();
    virtual ~Job();
 
@@ -57,7 +59,7 @@ public:
    void RemoveWaiting(const Job *);
    void ReplaceWaiting(Job *from,Job *to);
 
-   void SetParent(Job *j) { parent=j; }
+   void SetParent(Job *j);
    void SetParentFg(Job *j, bool f=true)
       {
 	 SetParent(j);
@@ -109,6 +111,7 @@ public:
    void AllWaitingFg();
 
    static int NumberOfJobs();
+   int NumberOfChildrenJobs();
    static Job *FindJob(int n);
    static bool Running(int n)
    {
