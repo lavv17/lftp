@@ -73,7 +73,6 @@ class MirrorJob : public Job
       if(parent_mirror)
 	 parent_mirror->AddBytesToTransfer(b);
    }
-   const xstring& GetCmdLine();
 
    void	 HandleFile(FileInfo *);
 
@@ -202,6 +201,7 @@ public:
    int	 Done() { return state==DONE; }
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
    xstring& FormatStatus(xstring&,int v,const char *);
+   xstring& FormatShortStatus(xstring&);
    void	 SayFinal() { PrintStatus(0,""); }
    int	 ExitCode() { return stats.error_count!=0; }
 

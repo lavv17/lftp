@@ -160,7 +160,7 @@ const char *CopyJob::FormatBytesTimeRate(off_t bytes,double time_spent)
 		     (long long)bytes,long(time_spent+.5));
       double rate=bytes/time_spent;
       if(rate>=1)
-	 msg.appendf(" (%s)",Speedometer::GetStr(rate).get());
+	 msg.appendf(" (%s)",Speedometer::GetStrProper(rate).get());
       return msg;
    }
    return xstring::format(plural("%lld $#ll#byte|bytes$ transferred",

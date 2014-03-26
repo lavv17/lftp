@@ -178,16 +178,18 @@ void  MirrorJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
    }
 }
 
-const xstring& MirrorJob::GetCmdLine()
+xstring& MirrorJob::FormatShortStatus(xstring& s)
 {
-   if(bytes_to_transfer>0) {
+   if(bytes_to_transfer>0 && (!parent_mirror || parent_mirror->bytes_to_transfer!=bytes_to_transfer)) {
       long long curr_bytes_transferred=GetBytesCount();
-      return xstring::get_tmp(cmdline).appendf(" - %s/%s (%d%%) %s",
+      s.appendf("%s/%s (%d%%)",
 	 xhuman(curr_bytes_transferred),xhuman(bytes_to_transfer),
-	 percent(curr_bytes_transferred,bytes_to_transfer),
-	 Speedometer::GetStrS(GetTransferRate()));
+	 percent(curr_bytes_transferred,bytes_to_transfer));
+      double rate=GetTransferRate();
+      if(rate>=1)
+	 s.append(' ').append(Speedometer::GetStrProper(rate));
    }
-   return cmdline;
+   return s;
 }
 
 void MirrorJob::TransferStarted(CopyJob *cp)

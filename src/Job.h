@@ -73,6 +73,7 @@ public:
 
    void PrintStatus(int,const char *prefix="\t");
    virtual xstring& FormatStatus(xstring& s,int v,const char *prefix="\t") { return s; }
+   virtual xstring& FormatShortStatus(xstring& s);
    virtual void	ShowRunStatus(const SMTaskRef<StatusLine>&);
    void ClearStatus()
       {

@@ -1,3 +1,11 @@
+2014-03-26  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* Job.cc, Job.h: (FormatShortStatus) new virtual method; don't check
+	  Deleted() for jobs in the lists; use xlist_for_each_safe when it's
+	  possible to remove scanned node from the list.
+	* MirrorJob.cc, MirrorJob.h: implement FormatShortStatus.
+	* CopyJob.cc: use Speedometer::GetStrProper for final rate reporting.
+
 2014-03-25  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* pgetJob.h: fixed bytes and rate reporting via Get methods.

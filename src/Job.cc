@@ -214,7 +214,7 @@ int Job::NumberOfJobs()
 {
    int count=0;
    xlist_for_each(Job,all_jobs,node,scan)
-      if(!scan->Deleted() && !scan->Done())
+      if(!scan->Done())
 	 count++;
    return count;
 }
@@ -222,7 +222,7 @@ int Job::NumberOfChildrenJobs()
 {
    int count=0;
    xlist_for_each(Job,children_jobs,node,scan)
-      if(!scan->Deleted() && !scan->Done())
+      if(!scan->Done())
 	 count++;
    return count;
 }
@@ -280,7 +280,7 @@ void  Job::ListDoneJobs()
    xlist_for_each(Job,all_jobs,node,scan)
    {
       if(scan->jobno>=0 && (scan->parent==this || scan->parent==0)
-         && !scan->Deleted() && scan->Done())
+         && scan->Done())
       {
 	 fprintf(f,_("[%d] Done (%s)"),scan->jobno,scan->GetCmdLine().get());
 	 const char *this_url=this->GetConnectURL();
@@ -305,6 +305,12 @@ xstring& Job::FormatJobTitle(xstring& s,int indent,const char *suffix)
    if(suffix) {
       s.append(' ');
       s.append(suffix);
+   }
+   if(waiting.count()>0) {
+      size_t len=s.length();
+      FormatShortStatus(s.append(" -- "));
+      if(s.length()<=len+4)
+	 s.truncate(len);
    }
    s.append('\n');
    return s;
@@ -351,10 +357,10 @@ xstring& Job::FormatJobs(xstring& s,int verbose,int indent)
 
 void  Job::BuryDoneJobs()
 {
-   xlist_for_each(Job,all_jobs,node,scan)
+   xlist_for_each_safe(Job,all_jobs,node,scan,next)
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
-		  && !scan->Deleted() && scan->Done())
+		  && scan->Done())
 	 scan->DeleteLater();
    }
    CollectGarbage();
@@ -560,4 +566,12 @@ double Job::GetTransferRate()
    for(int i=0; i<waiting.count(); i++)
       sum+=waiting[i]->GetTransferRate();
    return sum;
+}
+
+xstring& Job::FormatShortStatus(xstring& s)
+{
+   double rate=GetTransferRate();
+   if(rate>=1)
+      s.append(Speedometer::GetStrProper(rate));
+   return s;
 }
