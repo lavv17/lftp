@@ -187,14 +187,14 @@ void Job::Kill(int n)
 
 void Job::KillAll()
 {
-   xlist_for_each(Job,all_jobs,node,scan)
+   xlist_for_each_safe(Job,all_jobs,node,scan,next)
       if(scan->jobno>=0)
 	 Job::Kill(scan);
    CollectGarbage();
 }
 void Job::Cleanup()
 {
-   xlist_for_each(Job,all_jobs,node,scan)
+   xlist_for_each_safe(Job,all_jobs,node,scan,next)
       Job::Kill(scan);
    CollectGarbage();
 }
