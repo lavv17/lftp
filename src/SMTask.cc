@@ -307,11 +307,6 @@ bool SMTask::NonFatalError(int err)
    return false; /* fatal error */
 }
 
-bool SMTask::TemporaryNetworkError(int err)
-{
-   return temporary_network_error(err);
-}
-
 void SMTask::PrintTasks()
 {
    xlist_for_each(SMTask,all_tasks,node,scan)

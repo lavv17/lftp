@@ -25,6 +25,7 @@
 #include "Ref.h"
 #include "xarray.h"
 #include "xlist.h"
+#include "misc.h"
 
 class SMTask
 {
@@ -128,7 +129,7 @@ public:
    static int TaskCount();
    static void PrintTasks();
    static bool NonFatalError(int err);
-   static bool TemporaryNetworkError(int err);
+   static bool TemporaryNetworkError(int err) { return temporary_network_error(err); }
 
    static void Cleanup();
 };
