@@ -4,6 +4,7 @@
 	* FileAccess.cc, FileAccess.h, Http.cc, NetAccess.cc, ftpclass.cc,
 	  ftpclass.h: replace try_time with Timer reconnect_timer;
 	  use temporary_network_error in FA::NotSerious.
+	* SSH_Access.cc: detect name lookup error from ssh.
 
 2014-03-26  Alexander V. Lukyanov <lavv17f@gmail.com>
 

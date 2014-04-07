@@ -99,6 +99,15 @@ int SSH_Access::HandleSSHMessage()
       SetError(FATAL,_(f));
       return MOVED;
    }
+   if(eol>b && eol[-1]=='\r')
+      eol--;
+   f=N_("Name or service not known");
+   int f_len=strlen(f);
+   if(eol-b>=f_len && !strncasecmp(eol-f_len,f,f_len)) {
+      LogSSHMessage();
+      SetError(LOOKUP_ERROR,xstring::get_tmp(b,eol-b));
+      return MOVED;
+   }
    LogSSHMessage();
    return MOVED;
 }
