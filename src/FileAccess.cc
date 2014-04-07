@@ -58,7 +58,6 @@ void FileAccess::Init()
    real_pos=UNKNOWN_POS;
    pos=0;
    mode=CLOSED;
-   try_time=0;
    retries=0;
    opt_date=0;
    opt_size=0;
@@ -694,42 +693,12 @@ void SessionPool::ClearAll()
    }
 }
 
-bool FileAccess::NotSerious(int e)
-{
-   switch(e)
-   {
-   case(EPIPE):
-   case(ETIMEDOUT):
-#ifdef ECONNRESET
-   case(ECONNRESET):
-#endif
-   case(ECONNREFUSED):
-#ifdef EHOSTUNREACH
-   case(EHOSTUNREACH):
-#endif
-#ifdef EHOSTDOWN
-   case(EHOSTDOWN):
-#endif
-#ifdef ENETRESET
-   case(ENETRESET):
-#endif
-#ifdef ENETUNREACH
-   case(ENETUNREACH):
-#endif
-#ifdef ENETDOWN
-   case(ENETDOWN):
-#endif
-#ifdef ECONNABORTED
-   case(ECONNABORTED):
-#endif
-      return true;
-   }
-   return false;
-}
-
 void FileAccess::SetTryTime(time_t t)
 {
-   try_time=t;
+   if(t)
+      reconnect_timer.Reset(Time(t));
+   else
+      reconnect_timer.Stop();
 }
 
 bool FileAccess::IsBetterThan(const FileAccess *fa) const

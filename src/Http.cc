@@ -282,8 +282,8 @@ void Http::Close()
    else
    {
    disconnect:
-      try_time=0;
       Disconnect();
+      DontSleep();
    }
    array_send=0;
    no_cache_this=false;
@@ -826,7 +826,7 @@ void Http::ProceedArrayInfo()
    else
    {
       Disconnect();
-      try_time=0;
+      DontSleep();
    }
 }
 
@@ -1466,8 +1466,8 @@ int Http::Do()
 		     {
 			ResMgr::Set("http:use-propfind",hostname,"no");
 			use_propfind_now=false;
-			try_time=0;
 			Disconnect();
+			DontSleep();
 			return MOVED;
 		     }
 		     goto pre_RECEIVING_BODY;
@@ -1561,7 +1561,7 @@ int Http::Do()
 		  {
 		     Disconnect();
 		     if(retry_after)
-			try_time = time_t(now)+retry_after-long(reconnect_interval_current);
+			reconnect_timer.StopDelayed(retry_after);
 		     return MOVED;
 		  }
 
@@ -1672,8 +1672,8 @@ int Http::Do()
 	       if(mode==CHANGE_DIR && !xstrcmp(last_method,"PROPFIND"))
 	       {
 		  use_propfind_now=false;
-		  try_time=0;
 		  Disconnect();
+		  DontSleep();
 		  return MOVED;
 	       }
 	       code=NOT_SUPP;
@@ -1691,8 +1691,8 @@ int Http::Do()
 	 {
 	    if(!H_TRANSIENT(status_code))
 	       fileset_for_info->next();
-	    try_time=0;
 	    Disconnect();
+	    DontSleep();
 	 }
 	 else
 	    SetError(code,err);

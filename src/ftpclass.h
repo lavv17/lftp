@@ -509,7 +509,7 @@ public:
 	 copy_protect=prot;
 	 copy_ssl_connect=sscn;
 	 retries=rnum;
-	 try_time=tt;
+	 SetTryTime(tt);
       }
    bool SetCopyAddress(const Ftp *o)
       {

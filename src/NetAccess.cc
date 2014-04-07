@@ -241,7 +241,7 @@ void NetAccess::NextPeer()
    if(peer_curr>=peer.count())
       peer_curr=0;
    else
-      try_time=0;	// try next address immediately
+      DontSleep(); // try next address immediately
 }
 
 void NetAccess::ResetLocationData()
@@ -299,11 +299,8 @@ bool NetAccess::ReconnectAllowed()
       return true; // it will fault later - no need to wait.
    if(connection_limit>0 && connection_limit<=CountConnections())
       return false;
-   if(try_time==0)
+   if(reconnect_timer.Stopped())
       return true;
-   if(time_t(now) >= try_time+long(reconnect_interval_current))
-      return true;
-   TimeoutS(long(reconnect_interval_current)-(time_t(now)-try_time));
    return false;
 }
 
@@ -311,7 +308,7 @@ const char *NetAccess::DelayingMessage()
 {
    if(connection_limit>0 && connection_limit<=CountConnections())
       return _("Connection limit reached");
-   long remains=long(reconnect_interval_current)-(time_t(now)-try_time);
+   long remains=reconnect_timer.TimeLeft();
    if(remains<=0)
       return "";
    current->TimeoutS(1);
@@ -340,7 +337,7 @@ bool NetAccess::CheckRetries()
       Fatal(_("max-retries exceeded"));
       return false;
    }
-   try_time=now;
+   reconnect_timer.Set(reconnect_interval_current);
    LogNote(10,"attempt number %d",retries);
    return true;
 }

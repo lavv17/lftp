@@ -32,6 +32,7 @@
 #include "ProtoLog.h"
 #include "xlist.h"
 #include "xmap.h"
+#include "Timer.h"
 
 #define FILE_END     ((off_t)-1L)
 #define UNKNOWN_POS  ((off_t)-1L)
@@ -127,7 +128,7 @@ protected:
 
    FileSet *fileset_for_info;
 
-   time_t try_time;
+   Timer reconnect_timer;
    int retries;
 
    bool	 mkdir_p;
@@ -262,7 +263,7 @@ public:
    FileAccess() : all_fa_node(this) { Init(); }
    FileAccess(const FileAccess *);
 
-   void	 DontSleep() { try_time=0; }
+   void	 DontSleep() { reconnect_timer.Stop(); }
 
    bool	 IsClosed() { return mode==CLOSED; }
    bool	 IsOpen() { return !IsClosed(); }
@@ -302,7 +303,7 @@ public:
    virtual DirList *MakeDirList(ArgV *a);
    virtual FileSet *ParseLongList(const char *buf,int len,int *err=0) const { return 0; }
 
-   static bool NotSerious(int err);
+   static bool NotSerious(int err) { return temporary_network_error(err); }
 
    const char *GetNewLocation() { return location; }
    const char *GetSuggestedFileName() { return suggested_filename; }
@@ -350,7 +351,7 @@ public:
    // not pretty (FIXME)
    int GetRetries() { return retries; }
    void SetRetries(int r) { retries=r; }
-   time_t GetTryTime() { return try_time; }
+   time_t GetTryTime() { return reconnect_timer.GetStartTime(); }
    void SetTryTime(time_t t);
 
    const char *GetLogContext() { return hostname; }

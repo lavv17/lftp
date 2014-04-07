@@ -1,6 +1,9 @@
 2014-04-07  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* misc.cc: add EIO and EPIPE to the list of temp network errors.
+	* FileAccess.cc, FileAccess.h, Http.cc, NetAccess.cc, ftpclass.cc,
+	  ftpclass.h: replace try_time with Timer reconnect_timer;
+	  use temporary_network_error in FA::NotSerious.
 
 2014-03-26  Alexander V. Lukyanov <lavv17f@gmail.com>
 

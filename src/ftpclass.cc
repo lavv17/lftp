@@ -459,7 +459,7 @@ void Ftp::LoginCheck(int act)
       Disconnect();
       NextPeer();
       if(peer_curr==0)
-	 try_time=now;	// count the reconnect-interval from this moment
+	 reconnect_timer.Reset(); // count the reconnect-interval from this moment
       last_connection_failed=true;
    }
    if(is3XX(act) && !expect->Has(Expect::ACCT_PROXY))
@@ -511,7 +511,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
    }
 retry:
    Disconnect();
-   try_time=now;	// count the reconnect-interval from this moment
+   reconnect_timer.Reset();	// count the reconnect-interval from this moment
    last_connection_failed=true;
 }
 
@@ -526,7 +526,7 @@ void Ftp::proxy_LoginCheck(int act)
       return;
    }
    Disconnect();
-   try_time=now;	// count the reconnect-interval from this moment
+   reconnect_timer.Reset();	// count the reconnect-interval from this moment
 }
 
 void Ftp::proxy_NoPassReqCheck(int act)
@@ -539,7 +539,7 @@ void Ftp::proxy_NoPassReqCheck(int act)
       return;
    }
    Disconnect();
-   try_time=now;	// count the reconnect-interval from this moment
+   reconnect_timer.Reset();	// count the reconnect-interval from this moment
 }
 
 static void normalize_path_vms(char *path)
@@ -1332,7 +1332,7 @@ int   Ftp::Do()
 	 expect=0;
 	 if(peer_curr+1<peer.count())
 	 {
-	    try_time=0;
+	    DontSleep();
 	    peer_curr++;
 	    retries--;
 	    return MOVED;
@@ -2874,7 +2874,7 @@ int  Ftp::ReceiveResp()
       if(error_code==NO_FILE || error_code==LOGIN_FAILED)
       {
 	 if(error_code==LOGIN_FAILED)
-	    try_time=now;	// count the reconnect-interval from this moment
+	    reconnect_timer.Reset();	// count the reconnect-interval from this moment
 	 if(persist_retries++<max_persist_retries)
 	 {
 	    error_code=OK;
@@ -3255,7 +3255,7 @@ int  Ftp::FlushSendQueue(bool all)
 	 {
 	    // retry without ssl
 	    ResMgr::Set("ftp:ssl-allow",hostname,"no");
-	    try_time=0;
+	    DontSleep();
 	 }
 	 else
 #endif
@@ -3997,7 +3997,7 @@ void Ftp::CheckResp(int act)
       LogNote(2,_("Turning on sync-mode"));
       ResMgr::Set("ftp:sync-mode",hostname,"on");
       Disconnect();
-      try_time=0; // retry immediately
+      DontSleep(); // retry immediately
       goto leave;
    }
 
@@ -4025,7 +4025,7 @@ void Ftp::CheckResp(int act)
 	 ResMgr::Set("ftp:sync-mode",hostname,"on");
 	 assert(GetFlag(SYNC_MODE));
 	 Disconnect();
-	 try_time=0; // retry immediately
+	 DontSleep(); // retry immediately
       }
       if(!is2XX(act))
       {
@@ -4037,7 +4037,7 @@ void Ftp::CheckResp(int act)
 	 }
 	 NextPeer();
 	 if(peer_curr==0)
-	    try_time=now;  // count the reconnect-interval from this moment
+	    reconnect_timer.Reset();  // count the reconnect-interval from this moment
 	 last_connection_failed=true;
       }
       break;
@@ -4061,7 +4061,7 @@ void Ftp::CheckResp(int act)
 	 if(!strcmp(arg,"~")) {
 	    // reconnect will change CWD to home directory
 	    Disconnect();
-	    try_time=0;
+	    DontSleep();
 	    break;
 	 }
 	 SetError(NO_FILE,all_lines);
