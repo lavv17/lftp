@@ -1,3 +1,7 @@
+2014-04-07  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* misc.cc: add EIO and EPIPE to the list of temp network errors.
+
 2014-03-26  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* Job.cc, Job.h: (FormatShortStatus) new virtual method; don't check

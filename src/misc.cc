@@ -741,6 +741,8 @@ bool temporary_network_error(int err)
 {
    switch(err)
    {
+   case(EPIPE):
+   case(EIO):
    case(ETIMEDOUT):
 #ifdef ECONNRESET
    case(ECONNRESET):
