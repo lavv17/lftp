@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "24 Jan 2014"
+.TH lftp 1 "07 Apr 2014"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -227,11 +227,19 @@ See `help cls' for options.
 .PP
 execute given command ignoring aliases.
 
-.BR debug " [" \-o
-.IR file "] "  level "|\fBoff\fP"
+.BR debug " [" OPTS "] " \fIlevel\fP | off
 .PP
-Switch debugging to \fIlevel\fP or turn it off.  Use \-o to redirect
-the debug output to a file.
+Switch debugging to \fIlevel\fP or turn it off. Options:
+.Sp
+.in +0.5i
+.TS
+l1	l	lx	.
+\-o <file>	redirect debug output to the file
+\-c	show message context
+\-p	show PID
+\-t	show timestamps
+.TE
+.PP
 
 .BR echo " [" \-n "] \fIstring\fR"
 .PP

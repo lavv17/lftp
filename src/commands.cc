@@ -211,9 +211,12 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	   )},
    {"connect", cmd_open,   0,"open"},
    {"command", cmd_command},
-   {"debug",   cmd_debug,  N_("debug [<level>|off] [-o <file>]"),
+   {"debug",   cmd_debug,  N_("debug [OPTS] [<level>|off]"),
 	 N_("Set debug level to given value or turn debug off completely.\n"
-	 " -o <file>  redirect debug output to the file.\n")},
+	 " -o <file>  redirect debug output to the file\n"
+	 " -c  show message context\n"
+	 " -p  show PID\n"
+	 " -t  show timestamps\n")},
    {"du",      cmd_du,  N_("du [options] <dirs>"),
 	 N_("Summarize disk usage.\n"
 	 " -a, --all             write counts for all files, not just directories\n"
