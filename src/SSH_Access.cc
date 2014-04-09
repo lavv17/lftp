@@ -127,17 +127,21 @@ void SSH_Access::LogSSHMessage()
 	 LogError(0,_("Peer closed connection"));
       }
       if(pty_recv_buf->Error())
-	 LogError(0,"pty read: %s",pty_recv_buf->ErrorText());
-      if(pty_recv_buf->Eof() || pty_recv_buf->Error())
+	 LogError(4,"pty read: %s",pty_recv_buf->ErrorText());
+      if(pty_recv_buf->Eof() || pty_recv_buf->Error()) {
+	 if(last_ssh_message && time_t(now)-last_ssh_message_time<4)
+	    LogError(0,"%s",last_ssh_message.get());
 	 Disconnect();
+      }
       return;
    }
    s=eol-b+1;
-   xstring &line=xstring::get_tmp(b,s-1);
+   last_ssh_message.nset(b,s-1);
+   last_ssh_message_time=now;
    pty_recv_buf->Skip(s);
-   LogRecv(4,line);
+   LogRecv(4,last_ssh_message);
 
-   if(!received_greeting && line.eq(greeting))
+   if(!received_greeting && last_ssh_message.eq(greeting))
       received_greeting=true;
 }
 
@@ -152,6 +156,8 @@ void SSH_Access::Disconnect()
    ssh=0;
    received_greeting=false;
    password_sent=0;
+   last_ssh_message.unset();
+   last_ssh_message_time=0;
 }
 
 void SSH_Access::MoveConnectionHere(SSH_Access *o)
@@ -163,4 +169,6 @@ void SSH_Access::MoveConnectionHere(SSH_Access *o)
    ssh=o->ssh.borrow();
    received_greeting=o->received_greeting;
    password_sent=o->password_sent;
+   last_ssh_message.move_here(o->last_ssh_message);
+   last_ssh_message_time=o->last_ssh_message_time; o->last_ssh_message_time=0;
 }

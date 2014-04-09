@@ -35,6 +35,9 @@ protected:
    const char *greeting;
    bool received_greeting;
 
+   xstring last_ssh_message;
+   time_t last_ssh_message_time;
+
    void MoveConnectionHere(SSH_Access *o);
    void Disconnect();
 
@@ -45,11 +48,13 @@ protected:
 
    SSH_Access(const char *g) :
       password_sent(0),
-      greeting(g), received_greeting(false) {}
+      greeting(g), received_greeting(false),
+      last_ssh_message_time(0) {}
 
    SSH_Access(const SSH_Access *o) : NetAccess(o),
       password_sent(0),
-      greeting(o->greeting), received_greeting(false) {}
+      greeting(o->greeting), received_greeting(false),
+      last_ssh_message_time(0) {}
 };
 
 #endif
