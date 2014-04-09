@@ -40,7 +40,7 @@ int CopyJob::Do()
    {
       const char *error=c->ErrorText();
       const char *name=GetDispName();
-      if(!strstr(error,name))
+      if(!strstr(error,name) && op.ne(name))
 	 error=xstring::cat(name,": ",error,NULL);
       eprintf("%s: %s\n",op.get(),error);
       done=true;
