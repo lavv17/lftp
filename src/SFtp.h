@@ -230,7 +230,7 @@ private:
    Ref<FileSet> file_set;
    Timer flush_timer;
 
-   void Disconnect();
+   void DisconnectLL();
    int IsConnected() const
       {
 	 if(state==DISCONNECTED)

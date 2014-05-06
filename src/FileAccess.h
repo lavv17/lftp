@@ -173,6 +173,8 @@ protected:
    xstring_c entity_content_type;
    xstring_c entity_charset;
 
+   xstring_c last_disconnect_cause;
+
    xlist<FileAccess> all_fa_node;
    static xlist_head<FileAccess> all_fa;
 
@@ -270,7 +272,8 @@ public:
    int	 OpenMode() { return mode; }
 
    virtual int  IsConnected() const; // level of connection (0 - not connected).
-   virtual void Disconnect();
+   void Disconnect(const char *dc=0) { last_disconnect_cause.set(dc); DisconnectLL(); }
+   virtual void DisconnectLL() {}
    virtual void UseCache(bool);
    virtual bool NeedSizeDateBeforehand();
 

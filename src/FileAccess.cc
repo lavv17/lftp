@@ -712,7 +712,6 @@ const char *FileAccess::CurrentStatus() { return ""; }
 int FileAccess::Buffered() { return 0; }
 bool FileAccess::IOReady() { return IsOpen(); }
 int FileAccess::IsConnected() const { return 0; }
-void FileAccess::Disconnect() {}
 void FileAccess::UseCache(bool) {}
 bool FileAccess::NeedSizeDateBeforehand() { return false; }
 void FileAccess::Cleanup() {}

@@ -471,7 +471,7 @@ public:
    int	 StoreStatus();
 
    int	 Do();
-   void  Disconnect();
+   void  DisconnectLL();
    void  DisconnectNow();
 
    void	 SetFlag(int flag,bool val);

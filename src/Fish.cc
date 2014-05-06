@@ -301,9 +301,9 @@ void Fish::MoveConnectionHere(Fish *o)
    ResumeInternal();
 }
 
-void Fish::Disconnect()
+void Fish::DisconnectLL()
 {
-   super::Disconnect();
+   super::DisconnectLL();
    EmptyRespQueue();
    EmptyPathQueue();
    state=DISCONNECTED;

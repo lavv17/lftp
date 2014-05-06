@@ -131,21 +131,24 @@ void SSH_Access::LogSSHMessage()
       if(pty_recv_buf->Eof() || pty_recv_buf->Error()) {
 	 if(last_ssh_message && time_t(now)-last_ssh_message_time<4)
 	    LogError(0,"%s",last_ssh_message.get());
-	 Disconnect();
+	 Disconnect(last_ssh_message);
       }
       return;
    }
    s=eol-b+1;
-   last_ssh_message.nset(b,s-1);
+   int chomp_cr=(s>=2 && b[s-2]=='\r');
+   last_ssh_message.nset(b,s-1-chomp_cr);
    last_ssh_message_time=now;
    pty_recv_buf->Skip(s);
    LogRecv(4,last_ssh_message);
+   if(last_ssh_message.begins_with("ssh: "))
+      last_ssh_message.set(last_ssh_message+5);
 
    if(!received_greeting && last_ssh_message.eq(greeting))
       received_greeting=true;
 }
 
-void SSH_Access::Disconnect()
+void SSH_Access::DisconnectLL()
 {
    if(send_buf)
       LogNote(9,_("Disconnecting"));

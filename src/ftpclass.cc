@@ -234,7 +234,7 @@ void Ftp::RestCheck(int act)
 	 copy_failed=true;
       return;
    }
-   Disconnect();
+   Disconnect(line);
 }
 
 void Ftp::NoFileCheck(int act)
@@ -456,7 +456,7 @@ void Ftp::LoginCheck(int act)
    if(!is2XX(act) && !is3XX(act))
    {
    retry:
-      Disconnect();
+      Disconnect(line);
       NextPeer();
       if(peer_curr==0)
 	 reconnect_timer.Reset(); // count the reconnect-interval from this moment
@@ -466,7 +466,7 @@ void Ftp::LoginCheck(int act)
    {
       if(!QueryStringWithUserAtHost("acct"))
       {
-	 Disconnect();
+	 Disconnect(line);
 	 SetError(LOGIN_FAILED,_("Account is required, set ftp:acct variable"));
       }
    }
@@ -510,7 +510,7 @@ void Ftp::NoPassReqCheck(int act) // for USER command
       return;
    }
 retry:
-   Disconnect();
+   Disconnect(line);
    reconnect_timer.Reset();	// count the reconnect-interval from this moment
    last_connection_failed=true;
 }
@@ -525,7 +525,7 @@ void Ftp::proxy_LoginCheck(int act)
       SetError(LOGIN_FAILED,all_lines);
       return;
    }
-   Disconnect();
+   Disconnect(line);
    reconnect_timer.Reset();	// count the reconnect-interval from this moment
 }
 
@@ -538,7 +538,7 @@ void Ftp::proxy_NoPassReqCheck(int act)
       SetError(LOGIN_FAILED,all_lines);
       return;
    }
-   Disconnect();
+   Disconnect(line);
    reconnect_timer.Reset();	// count the reconnect-interval from this moment
 }
 
@@ -735,7 +735,7 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
    {
       if(*b==0)
       {
-	 Disconnect();
+	 Disconnect(line);
 	 return PASV_NO_ADDRESS_YET;
       }
       if(!is_ascii_digit(*b))
@@ -760,7 +760,7 @@ Ftp::pasv_state_t Ftp::Handle_PASV()
 #endif
    else
    {
-      Disconnect();
+      Disconnect("unsupported address family");
       return PASV_NO_ADDRESS_YET;
    }
 
@@ -811,7 +811,7 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
    if(sscanf(c,format,&port)!=1)
    {
       LogError(0,_("cannot parse EPSV response"));
-      Disconnect();
+      Disconnect(_("cannot parse EPSV response"));
       return PASV_NO_ADDRESS_YET;
    }
 
@@ -825,7 +825,7 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
 #endif
    else
    {
-      Disconnect();
+      Disconnect("unsupported address family");
       return PASV_NO_ADDRESS_YET;
    }
    return PASV_HAVE_ADDRESS;
@@ -852,7 +852,7 @@ void Ftp::CatchDATE(int act)
    }
    else
    {
-      Disconnect();
+      Disconnect(line);
       return;
    }
 
@@ -905,7 +905,7 @@ void Ftp::CatchSIZE(int act)
    }
    else
    {
-      Disconnect();
+      Disconnect(line);
       return;
    }
 
@@ -1231,7 +1231,7 @@ int   Ftp::Do()
       m|=ReceiveResp();
       if(expect && expect->IsEmpty())
       {
-	 Disconnect();
+	 Disconnect(last_disconnect_cause);
 	 return MOVED;
       }
       goto usual_return;
@@ -1359,7 +1359,7 @@ int   Ftp::Do()
 	 LogError(0,"connect(control_sock): %s",strerror(saved_errno));
 	 if(NotSerious(saved_errno))
 	 {
-	    Disconnect();
+	    Disconnect(strerror(saved_errno));
 	    return MOVED;
 	 }
 	 goto system_error;
@@ -1372,10 +1372,7 @@ int   Ftp::Do()
       assert(conn && conn->control_sock!=-1);
       res=Poll(conn->control_sock,POLLOUT);
       if(res==-1)
-      {
-	 Disconnect();
 	 return MOVED;
-      }
       if(!(res&POLLOUT))
 	 goto usual_return;
 
@@ -2127,10 +2124,7 @@ int   Ftp::Do()
 
       res=Poll(conn->data_sock,POLLIN);
       if(res==-1)
-      {
-	 Disconnect();
          return MOVED;
-      }
 
       if(!(res&POLLIN))
 	 goto usual_return;
@@ -2144,7 +2138,7 @@ int   Ftp::Do()
 	 if(NotSerious(saved_errno))
 	 {
 	    LogError(0,"%s",strerror(saved_errno));
-	    Disconnect();
+	    Disconnect(strerror(saved_errno));
 	    return MOVED;
 	 }
 	 goto system_error;
@@ -2159,7 +2153,7 @@ int   Ftp::Do()
 	 SocketNumericAddress(&conn->data_sa),SocketPort(&conn->data_sa));
       if(!conn->data_address_ok(0,verify_data_address,verify_data_port))
       {
-	 Disconnect();
+	 Disconnect("invalid data connection address");
 	 return MOVED;
       }
 
@@ -2183,7 +2177,7 @@ int   Ftp::Do()
 	 if(copy_mode==COPY_NONE
 	 && !conn->data_address_ok(&conn->data_sa,verify_data_address,/*port_verify*/false))
 	 {
-	    Disconnect();
+	    Disconnect("invalid data connection address");
 	    return MOVED;
 	 }
 
@@ -2211,7 +2205,7 @@ int   Ftp::Do()
 	 {
 	    saved_errno=errno;
 	    LogError(0,"connect: %s",strerror(saved_errno));
-	    Disconnect();
+	    Disconnect(strerror(saved_errno));
 	    if(NotSerious(saved_errno))
 	       return MOVED;
 	    goto system_error;
@@ -2227,7 +2221,6 @@ int   Ftp::Do()
 	       LogNote(2,_("Switching passive mode off"));
 	       SetFlag(PASSIVE_MODE,0);
 	    }
-	    Disconnect();
 	    return MOVED;
 	 }
 	 if(!(res&POLLOUT))
@@ -2482,7 +2475,7 @@ int   Ftp::Do()
       {
 	 if(conn->control_recv->ErrorFatal())
 	    SetError(FATAL,conn->control_recv->ErrorText());
-	 Disconnect();
+	 Disconnect(conn->control_recv->ErrorText());
 	 return MOVED;
       }
       if(conn->control_recv->Eof()
@@ -3098,7 +3091,7 @@ void  Ftp::DisconnectNow()
    copy_addr_valid=false;
 }
 
-void  Ftp::Disconnect()
+void  Ftp::DisconnectLL()
 {
    if(!conn)
       return;
@@ -3983,7 +3976,7 @@ void Ftp::CheckResp(int act)
 	 LogError(3,_("extra server response"));
       if(is2XX(act)) // some buggy servers send several 226 replies
 	 return;
-      Disconnect();
+      Disconnect(line);
       return;
    }
 
@@ -4006,7 +3999,7 @@ void Ftp::CheckResp(int act)
    case Expect::NONE:
       if(is2XX(act)) // default rule.
 	 break;
-      Disconnect();
+      Disconnect(line);
       break;
 
    case Expect::QUOTED:
@@ -4029,7 +4022,7 @@ void Ftp::CheckResp(int act)
       }
       if(!is2XX(act))
       {
-	 Disconnect();
+	 Disconnect(line);
 	 if(cc==Expect::OPEN_PROXY && act==403)
 	 {
 	    SetError(LOGIN_FAILED,all_lines);
@@ -4068,7 +4061,7 @@ void Ftp::CheckResp(int act)
 	 cache->SetDirectory(this, arg, false);
 	 break;
       }
-      Disconnect();
+      Disconnect(line);
       break;
 
    case Expect::CWD_STALE:
@@ -4147,7 +4140,7 @@ void Ftp::CheckResp(int act)
       && conn->can_do_pasv && QueryBool("prefer-epsv",hostname))
       {
 	 ResMgr::Set("ftp:prefer-epsv",hostname,"no");
-	 Disconnect();
+	 Disconnect("EPSV failed, will try PASV");
 	 break;
       }
 
@@ -4166,7 +4159,7 @@ void Ftp::CheckResp(int act)
 	    SetFlag(PASSIVE_MODE,0);
 	 }
       }
-      Disconnect();
+      Disconnect(line);
       break;
 
    case Expect::PORT:
@@ -4186,7 +4179,7 @@ void Ftp::CheckResp(int act)
 	    SetFlag(PASSIVE_MODE,1);
 	 }
       }
-      Disconnect();
+      Disconnect(line);
       break;
 
    case Expect::PWD:

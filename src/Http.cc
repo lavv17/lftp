@@ -210,7 +210,7 @@ void Http::MoveConnectionHere(Http *o)
    ResumeInternal();
 }
 
-void Http::Disconnect()
+void Http::DisconnectLL()
 {
    rate_limit=0;
    if(conn)
@@ -1295,7 +1295,6 @@ int Http::Do()
       if(res==-1)
       {
 	 NextPeer();
-	 Disconnect();
 	 return MOVED;
       }
       if(!(res&POLLOUT))

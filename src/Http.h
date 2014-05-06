@@ -105,7 +105,7 @@ class Http : public NetAccess
    void CookieMerge(xstring &c,const char *add);
    bool CookieClosureMatch(const char *closure,const char *host,const char *path);
 
-   void Disconnect();
+   void DisconnectLL();
    void ResetRequestData();
    void MoveConnectionHere(Http *o);
    int IsConnected() const

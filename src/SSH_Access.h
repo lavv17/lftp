@@ -39,7 +39,7 @@ protected:
    time_t last_ssh_message_time;
 
    void MoveConnectionHere(SSH_Access *o);
-   void Disconnect();
+   void DisconnectLL();
 
    void MakePtyBuffers();
    int HandleSSHMessage();

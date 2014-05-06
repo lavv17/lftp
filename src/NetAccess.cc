@@ -125,14 +125,16 @@ int NetAccess::CheckHangup(const struct pollfd *pfd,int num)
 	 return 0;
       if(errno!=0 || s_errno!=0)
       {
-	 LogError(0,_("Socket error (%s) - reconnecting"),
-				    strerror(errno?errno:s_errno));
+	 const char *error=strerror(errno?errno:s_errno);
+	 LogError(0,_("Socket error (%s) - reconnecting"),error);
+	 Disconnect(error);
 	 return 1;
       }
 #endif /* SO_ERROR */
       if(pfd[i].revents&POLLERR)
       {
 	 LogError(0,"POLLERR on fd %d",pfd[i].fd);
+	 Disconnect("POLLERR");
 	 return 1;
       }
    } /* end for */
@@ -312,6 +314,8 @@ const char *NetAccess::DelayingMessage()
    if(remains<=0)
       return "";
    current->TimeoutS(1);
+   if(last_disconnect_cause && reconnect_timer.TimePassed()<5)
+      return last_disconnect_cause;
    return xstring::format("%s: %ld",_("Delaying before reconnect"),remains);
 }
 

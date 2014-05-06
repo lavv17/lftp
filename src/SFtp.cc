@@ -88,10 +88,10 @@ int SFtp::Do()
    if(send_buf && send_buf->Error())
    {
       LogError(0,"send: %s",send_buf->ErrorText());
-      Disconnect();
+      Disconnect(send_buf->ErrorText());
       return MOVED;
    }
-   if(state!=CONNECTING_1)
+   if(state!=CONNECTING_1 && state!=CONNECTING_2)
       m|=HandleReplies();
 
    if(Error())
@@ -215,6 +215,7 @@ int SFtp::Do()
       m|=HandleSSHMessage();
       if(state!=CONNECTING_2)
 	 return MOVED;
+      m|=HandleReplies();
       if(protocol_version==0)
 	 return m;
       if(home_auto==0)
@@ -314,9 +315,9 @@ void SFtp::MoveConnectionHere(SFtp *o)
    ResumeInternal();
 }
 
-void SFtp::Disconnect()
+void SFtp::DisconnectLL()
 {
-   super::Disconnect();
+   super::DisconnectLL();
    handle.set(0);
    file_buf=0;
    EmptyRespQueue();
@@ -745,7 +746,7 @@ int SFtp::HandlePty()
 	 LogError(0,"pty read: %s",pty_recv_buf->ErrorText());
       if(pty_recv_buf->Eof() || pty_recv_buf->Error())
       {
-	 Disconnect();
+	 Disconnect(pty_recv_buf->ErrorText());
 	 m=MOVED;
       }
       return m;
@@ -1071,13 +1072,13 @@ int SFtp::HandleReplies()
       if(recv_buf->Error())
       {
 	 LogError(0,"receive: %s",recv_buf->ErrorText());
-	 Disconnect();
+	 Disconnect(recv_buf->ErrorText());
 	 return MOVED;
       }
       if(recv_buf->Eof() && pty_recv_buf->Size()==0)
       {
 	 LogError(0,_("Peer closed connection"));
-	 Disconnect();
+	 Disconnect(last_ssh_message?last_ssh_message.get():_("Peer closed connection"));
 	 m=MOVED;
       }
       return m;
@@ -1093,7 +1094,7 @@ int SFtp::HandleReplies()
    if(st!=UNPACK_SUCCESS)
    {
       LogError(2,_("invalid server response format"));
-      Disconnect();
+      Disconnect(_("invalid server response format"));
       return MOVED;
    }
 

@@ -46,7 +46,7 @@ class Fish : public SSH_Access
    void	 SendMethod();
    void	 SendArrayInfoRequests();
 
-   void Disconnect();
+   void DisconnectLL();
    int IsConnected() const
       {
 	 if(state==DISCONNECTED)
