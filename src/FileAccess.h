@@ -435,7 +435,7 @@ protected:
 
    bool use_cache;
 
-   ~FileAccessOperation() { if(session) session->Close(); }
+   void PrepareToDie() { if(session) session->Close(); }
 
 public:
    FileAccessOperation(FileAccess *s) : session(s), done(false), use_cache(true) {}
