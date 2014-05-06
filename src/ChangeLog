@@ -1,4 +1,8 @@
-2013-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
+2014-05-06  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* xarray.h: fixed a typo which could cause segfault.
+
+2014-01-24  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* pgetJob.cc: (pget:min-chunk-size) new setting with 1M by default.
 
