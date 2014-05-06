@@ -209,7 +209,7 @@ public:
    T *&operator[](int i) { return get_non_const()[i]; }
    T *operator[](int i) const { return get()[i]; }
    size_t get_element_size() const { return sizeof(T*); }
-   void nset(T *const*s,int len) { dispose(0,len); _nset(s,len); if(buf) z(); }
+   void nset(T *const*s,int s_len) { dispose(0,len); _nset(s,s_len); if(buf) z(); }
    void set(const xarray_p<T> &a) { nset(a.get(),a.count()); }
    void set_length(size_t n) { dispose(n,len); _set_length(n); if(buf) z(); }
    void unset() { dispose(0,len); _unset(); }
