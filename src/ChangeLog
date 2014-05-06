@@ -1,3 +1,7 @@
+2014-05-06  Alexander V. Lukyanov <lavv17f@gmail.com>
+
+	* DHT.cc: prefer fresh node over non-good and not responded one.
+
 2014-04-09  Alexander V. Lukyanov <lavv17f@gmail.com>
 
 	* SSH_Access.cc, SSH_Access.h: display last error message from ssh.

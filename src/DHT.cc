@@ -818,6 +818,16 @@ try_again:
 	 }
       }
    }
+   // remove a non-good and not responded node to free space
+   if(nodes.count()>=K) {
+      for(int j=0; j<nodes.count(); j++) {
+	 if(!nodes[j]->IsGood() && !nodes[j]->responded) {
+	    r->RemoveNode(j);
+	    break;
+	 }
+      }
+   }
+
    if(nodes.count()>=K && i==0 && r->prefix_bits<160) {
       // split the bucket
       int bits=r->prefix_bits;
