@@ -26,9 +26,9 @@ void xarray0::get_space(size_t s,size_t g)
    if(!buf)
       buf=xmalloc(element_size*(size=s+keep_extra));
    else if(size<s+keep_extra)
-      buf=realloc(buf,element_size*(size=(s|(g-1))+keep_extra));
+      buf=xrealloc(buf,element_size*(size=(s|(g-1))+keep_extra));
    else if(size>=g*8 && s+keep_extra<=size/2)
-      buf=realloc(buf,element_size*(size/=2));
+      buf=xrealloc(buf,element_size*(size/=2));
 }
 
 void xarray0::_nset(const void *s,int len)
