@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-01-24 12:42+0400\n"
+"POT-Creation-Date: 2014-05-07 12:47+0400\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -249,7 +249,7 @@ msgstr "%d of %d $file|files$ 전송 실패\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "총 %d $file|files$ 전송\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1676 src/MirrorJob.cc:1698
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1678 src/MirrorJob.cc:1700
 #: src/commands.cc:990 src/commands.cc:2113
 msgid " - not supported protocol"
 msgstr " - 지원하지 않는 프로토콜입니다"
@@ -263,7 +263,7 @@ msgstr "접속 실패: %s"
 msgid "File cannot be accessed"
 msgstr "파일을 읽을 수 없습니다"
 
-#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1332 src/ftpclass.cc:4333
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1335 src/ftpclass.cc:4333
 #: src/ftpclass.cc:4342 src/Torrent.cc:3026
 msgid "Not connected"
 msgstr "접속되지 않았습니다"
@@ -408,44 +408,44 @@ msgstr "사용하지 않는 접속을 끊습니다"
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1340 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1340 src/SFtp.cc:743 src/SFtp.cc:1079
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "접속이 끊겼습니다"
 
-#: src/Fish.cc:635 src/SFtp.cc:1101 src/ftpclass.cc:2866 src/ftpclass.cc:3970
+#: src/Fish.cc:635 src/SFtp.cc:1104 src/ftpclass.cc:2866 src/ftpclass.cc:3970
 msgid "extra server response"
 msgstr "임시 서버 응답"
 
-#: src/Fish.cc:987 src/Http.cc:2084 src/Http.cc:2091 src/SFtp.cc:1338
+#: src/Fish.cc:987 src/Http.cc:2084 src/Http.cc:2091 src/SFtp.cc:1341
 #: src/ftpclass.cc:4345 src/Torrent.cc:3028 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "접속중..."
 
-#: src/Fish.cc:989 src/SFtp.cc:1340 src/ftpclass.cc:4351
+#: src/Fish.cc:989 src/SFtp.cc:1343 src/ftpclass.cc:4351
 msgid "Connected"
 msgstr "접속되었음"
 
-#: src/Fish.cc:991 src/Http.cc:2093 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2093 src/SFtp.cc:1345 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "응답을 기다립니다..."
 
-#: src/Fish.cc:993 src/Http.cc:2096 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2096 src/SFtp.cc:1347 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "자료 받는 중"
 
-#: src/Fish.cc:995 src/Http.cc:2089 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2089 src/SFtp.cc:1349 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "자료 보내는 중"
 
-#: src/Fish.cc:997 src/SFtp.cc:1348
+#: src/Fish.cc:997 src/SFtp.cc:1351
 #, fuzzy
 msgid "Done"
 msgstr "\t완료\n"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2211
-#: src/SFtp.cc:2329
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2214
+#: src/SFtp.cc:2332
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "파일 목록을 가져옵니다 (%lld) [%s]"
@@ -660,12 +660,12 @@ msgstr "옛 원거리 디렉토리 `%s' 삭제"
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1521
+#: src/MirrorJob.cc:1523
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1640 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1642 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1121 src/commands.cc:1209 src/commands.cc:1581
 #: src/commands.cc:1612 src/commands.cc:1715 src/commands.cc:2022
 #: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
@@ -676,12 +676,12 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "상세한 것은 `help %s'를 이용하십시오\n"
 
-#: src/MirrorJob.cc:1664
+#: src/MirrorJob.cc:1666
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1686
+#: src/MirrorJob.cc:1688
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr ""
@@ -844,7 +844,7 @@ msgstr "그러한 %s는  없습니다"
 msgid "No address found"
 msgstr "주소를 찾을 수 없습니다"
 
-#: src/SFtp.cc:1092
+#: src/SFtp.cc:1095
 #, fuzzy
 msgid "invalid server response format"
 msgstr "임시 서버 응답"

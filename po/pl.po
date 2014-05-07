@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.6\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-01-24 12:42+0400\n"
+"POT-Creation-Date: 2014-05-07 12:47+0400\n"
 "PO-Revision-Date: 2013-05-19 08:40+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -254,7 +254,7 @@ msgstr "Transfer %d z %d plik$u|ów|ów$ nie powiódł się\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Podsumowując: przesłano %d plik$|i|ów$\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1676 src/MirrorJob.cc:1698
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1678 src/MirrorJob.cc:1700
 #: src/commands.cc:990 src/commands.cc:2113
 msgid " - not supported protocol"
 msgstr " - protokół nie jest wspierany"
@@ -267,7 +267,7 @@ msgstr "Brak dostępu: "
 msgid "File cannot be accessed"
 msgstr "Brak dostępu do pliku"
 
-#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1332 src/ftpclass.cc:4333
+#: src/FileAccess.cc:162 src/Fish.cc:982 src/SFtp.cc:1335 src/ftpclass.cc:4333
 #: src/ftpclass.cc:4342 src/Torrent.cc:3026
 msgid "Not connected"
 msgstr "Nie połączony"
@@ -407,43 +407,43 @@ msgstr "Zamykanie bezczynnego połączenia"
 msgid "Running connect program"
 msgstr "Uruchamianie programu łączącego"
 
-#: src/Fish.cc:589 src/Http.cc:1340 src/SFtp.cc:740 src/SFtp.cc:1076
+#: src/Fish.cc:589 src/Http.cc:1340 src/SFtp.cc:743 src/SFtp.cc:1079
 #: src/ftpclass.cc:2716 src/ftpclass.cc:2936
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamknął połączenie"
 
-#: src/Fish.cc:635 src/SFtp.cc:1101 src/ftpclass.cc:2866 src/ftpclass.cc:3970
+#: src/Fish.cc:635 src/SFtp.cc:1104 src/ftpclass.cc:2866 src/ftpclass.cc:3970
 msgid "extra server response"
 msgstr "dodatkowa odpowiedź serwera"
 
-#: src/Fish.cc:987 src/Http.cc:2084 src/Http.cc:2091 src/SFtp.cc:1338
+#: src/Fish.cc:987 src/Http.cc:2084 src/Http.cc:2091 src/SFtp.cc:1341
 #: src/ftpclass.cc:4345 src/Torrent.cc:3028 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Łączenie się..."
 
-#: src/Fish.cc:989 src/SFtp.cc:1340 src/ftpclass.cc:4351
+#: src/Fish.cc:989 src/SFtp.cc:1343 src/ftpclass.cc:4351
 msgid "Connected"
 msgstr "Połączono"
 
-#: src/Fish.cc:991 src/Http.cc:2093 src/SFtp.cc:1342 src/ftpclass.cc:4328
+#: src/Fish.cc:991 src/Http.cc:2093 src/SFtp.cc:1345 src/ftpclass.cc:4328
 #: src/ftpclass.cc:4356 src/ftpclass.cc:4370 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowiedź..."
 
-#: src/Fish.cc:993 src/Http.cc:2096 src/SFtp.cc:1344 src/ftpclass.cc:4390
+#: src/Fish.cc:993 src/Http.cc:2096 src/SFtp.cc:1347 src/ftpclass.cc:4390
 msgid "Receiving data"
 msgstr "Otrzymuję dane"
 
-#: src/Fish.cc:995 src/Http.cc:2089 src/SFtp.cc:1346 src/ftpclass.cc:4388
+#: src/Fish.cc:995 src/Http.cc:2089 src/SFtp.cc:1349 src/ftpclass.cc:4388
 msgid "Sending data"
 msgstr "Wysyłam dane"
 
-#: src/Fish.cc:997 src/SFtp.cc:1348
+#: src/Fish.cc:997 src/SFtp.cc:1351
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2211
-#: src/SFtp.cc:2329
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2214
+#: src/SFtp.cc:2332
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Pobieranie listy plików (%lld) [%s]"
@@ -662,12 +662,12 @@ msgstr "Usuwanie starego katalogu `%s'"
 msgid "Retrying mirror...\n"
 msgstr "Ponowne próbowanie mirrora...\n"
 
-#: src/MirrorJob.cc:1521
+#: src/MirrorJob.cc:1523
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: wyrażenie regularne `%s': %s\n"
 
-#: src/MirrorJob.cc:1640 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1642 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1121 src/commands.cc:1209 src/commands.cc:1581
 #: src/commands.cc:1612 src/commands.cc:1715 src/commands.cc:2022
 #: src/commands.cc:2218 src/commands.cc:2380 src/commands.cc:2408
@@ -678,12 +678,12 @@ msgstr "%s: wyrażenie regularne `%s': %s\n"
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania większej ilości informacji spróbuj `help %s'.\n"
 
-#: src/MirrorJob.cc:1664
+#: src/MirrorJob.cc:1666
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1686
+#: src/MirrorJob.cc:1688
 #, fuzzy, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "niejednoznaczny argument %s opcji %s"
@@ -841,7 +841,7 @@ msgstr "nie ma takiej usługi %s"
 msgid "No address found"
 msgstr "Nie znaleziono adresu"
 
-#: src/SFtp.cc:1092
+#: src/SFtp.cc:1095
 msgid "invalid server response format"
 msgstr "nieprawidłowy format odpowiedzi serwera"
 
