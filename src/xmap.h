@@ -153,6 +153,7 @@ public:
 	 }
       }
    }
+   bool exists(const xstring& key) const { return _lookup_c(key); }
 };
 
 #endif // XMAP_H
