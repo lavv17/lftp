@@ -45,7 +45,6 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       bool responded; // has ever responded to our query
       bool in_routes; // belongs to the routing table;
       int ping_lost_count;
-      int requests_in_flight;
 
       bool IsGood() const { return !good_timer.Stopped(); }
       void SetGood() { good_timer.Reset(); }
@@ -56,10 +55,10 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
 
       const char *GetName() const { return addr.to_string(); }
 
-      Node(const xstring& i,const sockaddr_u& a,bool r)
+      Node(const xstring& i,const sockaddr_u& a)
 	 : id(i.copy()), addr(a), good_timer(15*60), token_timer(5*60),
-	   ping_timer(30), responded(r), in_routes(false), ping_lost_count(0),
-	   requests_in_flight(0) {
+	   ping_timer(30), responded(false), in_routes(false), ping_lost_count(0)
+      {
 	 good_timer.AddRandom(5);
 	 ping_timer.Stop();
 	 ping_timer.AddRandom(5);
@@ -98,6 +97,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       Timer expire_timer;
       bool Expired() const { return expire_timer.Stopped(); }
       const xstring& GetNodeId() const { return node_id; }
+      const xstring& GetSearchTarget() const;
 
       Request(BeNode *b,const sockaddr_u& a,const xstring& id)
 	 : data(b), addr(a), node_id(id.copy()), expire_timer(180) {}
@@ -106,7 +106,8 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    {
    public:
       xstring target_id;
-      const Node *best_node;
+      xstring best_node_id;
+      xmap<bool> searched;
       int depth;
       Timer search_timer;
       bool want_peers;
@@ -114,10 +115,11 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       bool bootstrap;
 
       Search(const xstring& i)
-	 : target_id(i.copy()), best_node(0), depth(0), search_timer(185),
+	 : target_id(i.copy()), depth(0), search_timer(185),
 	   want_peers(false), noseed(false), bootstrap(false) {}
 
-      bool IsFeasible(const Node *n) const;
+      bool IsFeasible(const xstring &id) const;
+      bool IsFeasible(const Node *n) const { return IsFeasible(n->id); }
       void ContinueOn(DHT *d,const Node *n);
       void WantPeers(bool ns) { want_peers=true; noseed=ns; }
       void Bootstrap() { bootstrap=true; }
@@ -159,7 +161,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    xmap_p<Node> nodes;
    xmap<Node*> node_by_addr;
    RefArray<RouteBucket> routes;
-   RefArray<Search> search;
+   xmap_p<Search> search;
    xmap_p<KnownTorrent> torrents;
 
    xqueue_p<xstring> bootstrap_nodes;
@@ -168,12 +170,14 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    void Bootstrap();
    void AddNode(Node *);
    void RemoveNode(Node *);
+   void ChangeNodeId(Node *n,const xstring& new_node_id);
    void AddRoute(Node *);
    void RemoveRoute(Node *n);
-   Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded);
+   Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s=0);
    int FindRoute(const xstring& i,int start=0);
    void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good);
    void StartSearch(Search *s);
+   void RestartSearch(Search *s);
    void AddPeer(const xstring& ih,const sockaddr_compact& ca,bool seed);
 
    unsigned t; // transaction id

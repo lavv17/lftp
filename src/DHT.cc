@@ -65,15 +65,19 @@ int DHT::Do()
 	 if(state_io->Error()) {
 	    LogError(1,"loading state: %s",state_io->ErrorText());
 	    state_io=0;
+	    m=MOVED;
 	 } else if(state_io->Eof()) {
 	    Load(state_io);
 	    state_io=0;
+	    m=MOVED;
 	 }
       } else {
 	 if(state_io->Error())
 	    LogError(1,"saving state: %s",state_io->ErrorText());
-	 if(state_io->Done())
+	 if(state_io->Done()) {
 	    state_io=0;
+	    m=MOVED;
+	 }
       }
    }
    if(sent_req_expire_scan.Stopped()) {
@@ -81,21 +85,27 @@ int DHT::Do()
 	 if(r->Expired()) {
 	    LogError(4,"DHT request %s to %s timed out",r->data->lookup_str("q").get(),r->addr.to_string());
 	    Node *n=nodes.lookup(r->GetNodeId());
+	    const xstring& target=r->GetSearchTarget();
+	    if(target) {
+	       Search *s=search.lookup(target);
+	       // if we have lost a search request and have not received any
+	       // reply yet - try to restart the search with good nodes.
+	       if(s && !s->best_node_id)
+		  RestartSearch(s);
+	    }
+	    sent_req.remove(sent_req.each_key());
 	    if(n) {
 	       n->LostPing();
 	       LogNote(4,"DHT node %s has lost %d packets",n->GetName(),n->ping_lost_count);
-	       n->requests_in_flight--;
-	       assert(n->requests_in_flight>=0);
 	    }
-	    sent_req.remove(sent_req.each_key());
 	 }
       }
       sent_req_expire_scan.Reset();
    }
    if(search_cleanup_timer.Stopped()) {
-      for(int i=0; i<search.count(); i++) {
-	 if(search[i]->search_timer.Stopped())
-	    search.remove(i--);
+      for(Search *s=search.each_begin(); s; s=search.each_next()) {
+	 if(s->search_timer.Stopped())
+	    search.remove(search.each_key());
       }
       search_cleanup_timer.Reset();
    }
@@ -117,7 +127,7 @@ int DHT::Do()
 	    }
 	 }
 	 for(Node *n=nodes.each_begin(); n && to_remove>0; n=nodes.each_next()) {
-	    if(!n->in_routes && !n->responded && n->requests_in_flight<=0) {
+	    if(!n->in_routes && !n->responded) {
 	       LogNote(9,"removing node %s (never responded)",n->GetName());
 	       RemoveNode(n);
 	       to_remove--;
@@ -270,9 +280,6 @@ void DHT::SendMessage(Request *req)
    if(res!=-1 && q->lookup_str("y").eq("q")) {
       sent_req.add(q->lookup_str("t"),req);
       rate_limit.BytesPut(res);
-      Node *n=nodes.lookup(req->GetNodeId());
-      if(n)
-	 n->requests_in_flight++;
    } else {
       delete req;
    }
@@ -300,10 +307,8 @@ void DHT::AnnouncePeer(const Torrent *t)
 {
    const xstring& info_hash=t->GetInfoHash();
    // check for duplicated announce
-   for(int i=0; i<search.count(); i++) {
-      if(search[i]->target_id.eq(info_hash))
-	 return;
-   }
+   if(search.exists(info_hash))
+      return;
    Enter();
    Search *s=new Search(info_hash);
    s->WantPeers(t->Complete());
@@ -317,14 +322,8 @@ void DHT::AnnouncePeer(const Torrent *t)
 }
 void DHT::DenouncePeer(const Torrent *t)
 {
-   const xstring& info_hash=t->GetInfoHash();
    // remove any search for this torrent
-   for(int i=0; i<search.count(); i++) {
-      if(search[i]->target_id.eq(info_hash)) {
-	 search.remove(i);
-	 return;
-      }
-   }
+   search.remove(t->GetInfoHash());
 }
 int DHT::AddNodesToReply(xmap_p<BeNode> &r,const xstring& target,int max_count)
 {
@@ -364,6 +363,15 @@ bool DHT::Node::TokenIsValid(const xstring& token) const
    if(!token || !my_token || token_timer.Stopped())
       return false;
    return token.eq(my_token) || token.eq(my_last_token);
+}
+const xstring& DHT::Request::GetSearchTarget() const
+{
+   const BeNode *a=data->lookup("a",BeNode::BE_DICT);
+   if(!a)
+      return xstring::null;
+   const xstring& q=data->lookup_str("q");
+   const char *target=q.eq("find_node")?"target":"info_hash";
+   return a->lookup_str(target);
 }
 void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 {
@@ -510,13 +518,8 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       LogError(2,"got DHT reply with unknown `t' from %s",src.to_string());
       return;
    }
-   Node *n=nodes.lookup(req->GetNodeId());
-   if(n) {
-      n->requests_in_flight--;
-      assert(n->requests_in_flight>=0);
-   }
-   const xstring& q=req->data->lookup_str("q");
 
+   const xstring& q=req->data->lookup_str("q");
    if(y.eq("r")) {
       BeNode *r=p->lookup("r",BeNode::BE_DICT);
       if(!r)
@@ -541,7 +544,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       }
       FoundNode(id,src,true);
       if(q.eq("get_peers")) {
-	 const xstring& info_hash=req->data->lookup("a")->lookup_str("info_hash");
+	 const xstring& info_hash=req->GetSearchTarget();
 	 Torrent *torrent=Torrent::FindTorrent(info_hash);
 	 BeNode *values=r->lookup("values",BeNode::BE_LIST);
 	 if(values) {
@@ -579,6 +582,18 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 }
       }
       if(q.eq("find_node") || q.eq("get_peers")) {
+	 const xstring& target=req->GetSearchTarget();
+	 const xstring &node_id=req->GetNodeId();
+	 LogNote(9,"got reply for %s with target %s from node %s",q.get(),target.hexdump(),node_id.hexdump());
+
+	 Search *s=search.lookup(target);
+	 if(s && s->IsFeasible(node_id)) {
+	    s->best_node_id.set(node_id);
+	    s->depth++;
+	    LogNote(9,"search for %s goes to depth=%d with best_node_id=%s",
+	       s->target_id.hexdump(),s->depth,node_id.hexdump());
+	 }
+
 	 const xstring& nodes=r->lookup_str("nodes");
 	 if(nodes) {
 	    LogNote(9,"adding %d nodes",(int)nodes.length()/26);
@@ -590,7 +605,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	       a.set_compact(data+20,6);
 	       data+=26;
 	       len-=26;
-	       FoundNode(id,a,false);
+	       FoundNode(id,a,false,s);
 	    }
 	 }
 #if INET6
@@ -605,7 +620,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	       a.set_compact(data+20,18);
 	       data+=38;
 	       len-=38;
-	       FoundNode(id,a,false);
+	       FoundNode(id,a,false,s);
 	    }
 	 }
 #endif //INET6
@@ -623,13 +638,14 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       LogError(2,"got DHT error for %s (%d: %s) from %s",q.get(),code,msg,src.to_string());
    }
 }
-bool DHT::Node::IsBetterThan(const Node *node,const xstring& target) const
+
+bool DHT::Search::IsFeasible(const xstring &id) const
 {
-   if(responded!=node->responded)
-      return responded>node->responded;
+   if(!best_node_id)
+      return true;
    for(int i=0; i<20; i++) {
-      unsigned char a=this->id[i]^target[i];
-      unsigned char b=node->id[i]^target[i];
+      unsigned char a=id[i]^target_id[i];
+      unsigned char b=best_node_id[i]^target_id[i];
       if(a<b)
 	 return true;
       if(a>b)
@@ -637,16 +653,15 @@ bool DHT::Node::IsBetterThan(const Node *node,const xstring& target) const
    }
    return false;
 }
-bool DHT::Search::IsFeasible(const Node *n) const
-{
-   return best_node==0 || n->IsBetterThan(best_node,target_id);
-}
 void DHT::Search::ContinueOn(DHT *d,const Node *n)
 {
-   if(IsFeasible(n)) {
-      best_node=n;
-      depth++;
+   if(searched.exists(n->id)) {
+      LogNote(9,"skipping search on %s, already searched",n->GetName());
+      return;
    }
+   LogNote(3,"search for %s continues on %s (%s) depth=%d",
+      target_id.hexdump(),n->id.hexdump(),n->GetName(),depth);
+
    xmap_p<BeNode> a;
 #if INET6
    if(bootstrap) {
@@ -665,6 +680,7 @@ void DHT::Search::ContinueOn(DHT *d,const Node *n)
 	 a.add("noseed",new BeNode(1));
       d->SendMessage(d->NewQuery("get_peers",a),n->addr,n->id);
    }
+   searched.add(n->id,true);
    search_timer.Reset();
 }
 void DHT::StartSearch(Search *s)
@@ -678,10 +694,16 @@ void DHT::StartSearch(Search *s)
    }
    for(int i=0; i<n.count(); i++)
       s->ContinueOn(this,n[i]);
-   s->depth=0;
-   search.append(s);
+   search.add(s->target_id,s);
 }
-DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
+void DHT::RestartSearch(Search *s)
+{
+   xarray<Node*> n;
+   FindNodes(s->target_id,n,K,true);
+   for(int i=0; i<n.count(); i++)
+      s->ContinueOn(this,n[i]);
+}
+DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s)
 {
    if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast()) {
       LogError(9,"node address %s is not valid",a.to_string());
@@ -698,58 +720,68 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded)
    }
    Node *n=nodes.lookup(id);
    if(!n) {
-      n=new Node(id,a,responded);
-      AddNode(n);
-   } else {
-      if(responded) {
-	 n->responded=true;
-	 n->ResetLostPing();
+      n=node_by_addr.lookup(a.compact());
+      if(n) {
+	 ChangeNodeId(n,id);
+      } else {
+	 n=new Node(id,a);
+	 AddNode(n);
       }
-      if(n->responded)
-	 n->SetGood();
+   } else {
       AddRoute(n);
    }
 
-   // continue search
-   for(int i=0; i<search.count(); i++) {
-      const Ref<Search>& s=search[i];
-      if(s->IsFeasible(n)) {
-	 s->ContinueOn(this,n);
-	 LogNote(3,"search for %s continues on %s (%s) depth=%d",
-	    s->target_id.hexdump(),n->id.hexdump(),
-	    n->GetName(),s->depth);
-      }
+   if(responded) {
+      n->responded=true;
+      n->ResetLostPing();
    }
+   if(n->responded)
+      n->SetGood();
+
+   // continue search
+   if(s && s->IsFeasible(n))
+      s->ContinueOn(this,n);
+
    return n;
 }
 void DHT::RemoveNode(Node *n)
 {
    RemoveRoute(n);
-   for(int i=0; i<search.count(); i++) {
-      if(search[i]->best_node==n)
-	 search.remove(i--);
-   }
-   if(n->requests_in_flight>0) {
-      for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
-	 if(r->node_id.eq(n->id))
-	    sent_req.remove(sent_req.each_key());
-      }
+   for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
+      if(r->addr==n->addr)
+	 sent_req.remove(sent_req.each_key());
    }
    node_by_addr.remove(n->addr.compact());
    nodes.remove(n->id);
 }
+void DHT::ChangeNodeId(Node *n,const xstring& new_node_id)
+{
+   LogNote(1,"node_id changed for %s, old_node_id=%s, new_node_id=%s",
+      n->GetName(),n->id.hexdump(),new_node_id.hexdump());
+
+   // change node_id in the in-flight requests
+   for(Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
+      if(r->node_id.eq(n->id) && r->addr==n->addr)
+	 r->node_id.set(new_node_id);
+   }
+
+   RemoveRoute(n);
+   nodes.borrow(n->id);	// borrow to avoid freeing the node
+   n->id.set(new_node_id);
+   nodes.add(n->id,n);
+   AddRoute(n);
+}
 void DHT::AddNode(Node *n)
 {
    assert(n->id.length()==20);
-   Node *n1=node_by_addr.lookup(n->addr.compact());
-   if(n1) {
-      // maybe node_id has changed, remove old Node
-      assert(n1!=n);
-      RemoveNode(n1);
-   }
+   assert(!nodes.exists(n->id));
+   assert(!node_by_addr.exists(n->addr.compact()));
+
    nodes.add(n->id,n);
    node_by_addr.add(n->addr.compact(),n);
+
    AddRoute(n);
+
    if(nodes.count()==1 && search.count()==0)
       Bootstrap();
 }
@@ -810,7 +842,7 @@ try_again:
       }
    }
    // prefer responded nodes
-   if(nodes.count()>=K && n->responded) {
+   if(i>0 && nodes.count()>=K && n->responded) {
       for(int j=0; j<nodes.count(); j++) {
 	 if(!nodes[j]->responded) {
 	    r->RemoveNode(j);
@@ -819,7 +851,7 @@ try_again:
       }
    }
    // remove a non-good and not responded node to free space
-   if(nodes.count()>=K) {
+   if(i>0 && nodes.count()>=K) {
       for(int j=0; j<nodes.count(); j++) {
 	 if(!nodes[j]->IsGood() && !nodes[j]->responded) {
 	    r->RemoveNode(j);
