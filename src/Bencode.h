@@ -58,13 +58,13 @@ public:
 	 n=0;
       return n;
    }
-   const xstring& lookup_str(const char *key) {
+   const xstring& lookup_str(const char *key) const {
       BeNode *n=dict.lookup(key);
       if(!n || n->type!=BE_STR)
 	 return xstring::null;
       return n->str;
    }
-   long long lookup_int(const char *key) {
+   long long lookup_int(const char *key) const {
       BeNode *n=dict.lookup(key);
       if(!n || n->type!=BE_INT)
 	 return 0;
