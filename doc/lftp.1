@@ -1,5 +1,5 @@
 .\"
-.\" lftp.1 - Sophisticated ftp program
+.\" lftp.1 - Sophisticated file transfer program
 .\"
 .\" This file is part of lftp.
 .\"
@@ -61,19 +61,19 @@ lftp \- Sophisticated file transfer program
 This man page documents lftp version 4.4.14.
 
 .SH "DESCRIPTION"
-\fBlftp\fR is a file transfer program that allows sophisticated ftp, http
+\fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
 and other connections to other hosts. If \fIsite\fR is specified then lftp
 will connect to that site otherwise a connection has to be established with
 the open command.
 .PP
-\fBlftp\fP can handle several file access methods - ftp, ftps, http, https,
-hftp, fish, sftp and file (https and ftps are only available when lftp is
+\fBlftp\fP can handle several file access methods - FTP, FTPS, HTTP, HTTPS,
+HFTP, FISH, SFTP and file (HTTPS and FTPS are only available when lftp is
 compiled with GNU TLS or OpenSSL library). You can specify the method to use in `open
-URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
-ftp-over-http-proxy protocol. It can be used automatically instead of ftp
+URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. HFTP is
+ftp-over-http-proxy protocol. It can be used automatically instead of FTP
 if ftp:proxy is set to `http://proxy[:port]'. Fish is a protocol working
 over an ssh connection to a unix account. SFtp is a protocol implemented
-in ssh2 as sftp subsystem.
+in SSH2 as SFTP subsystem.
 .PP
 Besides FTP-like protocols, lftp has support for BitTorrent protocol
 as `torrent' command. Seeding is also supported.
@@ -81,8 +81,8 @@ as `torrent' command. Seeding is also supported.
 .PP
 Every operation in \fBlftp\fP is reliable, that is any non-fatal error is
 handled properly and the operation is repeated. So if downloading breaks, it
-will be restarted from the point automatically. Even if ftp server
-does not support REST command, \fBlftp\fP will try to retrieve the file from
+will be restarted from the point automatically. Even if FTP server
+does not support the REST command, \fBlftp\fP will try to retrieve the file from
 the very beginning until the file is transferred completely.
 
 \fBlftp\fP has shell-like command syntax allowing you to launch several
@@ -95,8 +95,8 @@ commands allow redirecting their output (cat, ls, ...) to file or via
 pipe to external command. Commands can be executed conditionally based
 on termination status of previous command (&&, ||).
 .PP
-If you exit \fBlftp\fP when some jobs are not finished yet, \fBlftp\fP will move
-itself to nohup mode in background. The same happens when you have a
+If you exit \fBlftp\fP before all jobs are not finished yet, \fBlftp\fP will move
+itself to nohup mode in background. The same thing happens with a
 real modem hangup or when you close an xterm.
 .PP
 \fBlftp\fP has built-in mirror which can download or update a whole directory
@@ -119,7 +119,7 @@ all variables and their values or `set \-d' to see list of defaults.
 Variable names can be abbreviated and prefix can be omitted unless the
 rest becomes ambiguous.
 .PP
-If lftp was compiled with OpenSSL (configure \-\-with\-openssl), then it includes software developed
+If lftp was compiled with OpenSSL (configure \-\-with\-openssl) it includes software developed
 by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
 
 .SS Commands
@@ -243,11 +243,11 @@ l1	l	lx	.
 
 .BR echo " [" \-n "] \fIstring\fR"
 .PP
-guess what it does.
+Prints (echos) the given string to the display.
 
 .BR eval " [" -f " \fIformat\fR ] " \fIargs...\fR
 .PP
-without -f it just executes given arguments as a command. With -f, arguments
+without -f it executes given arguments as a command. With -f, arguments
 are transformed into a new command. The format can contain plain text and
 placeholders $0...$9 and $@, corresponding to the arguments.
 
@@ -296,7 +296,7 @@ put ftp://...
 mput ftp://.../*
 mget \-O ftp://... ftp://.../*
 .De
-or other combinations to get FXP transfer (directly between two ftp servers).
+or other combinations to get FXP transfer (directly between two FTP servers).
 lftp would fallback to plain copy (via client) if FXP transfer cannot be
 initiated or ftp:use-fxp is false.
 
@@ -594,7 +594,7 @@ not match to excludes after the include, or does not match anything
 and the first check is exclude. Directories are matched with a slash appended.
 .PP
 Note that symbolic links are not created when uploading to remote server,
-because ftp protocol cannot do it. To upload files the links refer
+because FTP protocol cannot do it. To upload files the links refer
 to, use `mirror \-RL' command (treat symbolic links as files).
 .PP
 For options \-\-newer\-than and \-\-older\-than you can either specify a
@@ -615,9 +615,9 @@ Verbosity level can be selected using \-\-verbose=level option or by several
 only newer files even if size is different. By default older files are transferred and replace newer ones.
 .PP
 You can mirror between two servers if you specify URLs instead of directories.
-FXP is used automatically for transfers between ftp servers, if possible.
+FXP is automatically used for transfers between FTP servers, if possible.
 .PP
-Some ftp servers hide dot-files by default (e.g. \fI.htaccess\fP), and show
+Some FTP servers hide dot-files by default (e.g. \fI.htaccess\fP), and show
 them only when LIST command is used with \-a option. In such case try to use
 `set ftp:list-options \-a'.
 
@@ -683,7 +683,7 @@ List remote file names
 .BR "[" \-u " \fIuser\fP[", "\fIpass\fP]]"
 .BR "[" \-p " \fIport\fP] \fIhost\fP|\fIurl\fP"
 .PP
-Select an ftp server.
+Select a FTP server.
 
 .B pget
 .RI [ OPTS ]
@@ -998,7 +998,7 @@ Print \fBlftp\fR version.
 Wait for specified job to terminate. If jobno is omitted, wait for last
 backgrounded job.
 .PP
-`wait all' waits for all jobs termination.
+`wait all' waits for all jobs to terminate.
 
 .B zcat
 \fIfiles\fP
@@ -1316,23 +1316,23 @@ Send this string in ACCT command after login. The result is ignored.
 The closure for this setting has format \fIuser@host\fP.
 .TP
 .BR ftp:anon-pass \ (string)
-sets the password used for anonymous ftp access authentication.
+sets the password used for anonymous FTP access authentication.
 Default is "lftp@".
 .TP
 .BR ftp:anon-user \ (string)
-sets the user name used for anonymous ftp access authentication.
+sets the user name used for anonymous FTP access authentication.
 Default is "anonymous".
 .TP
 .BR ftp:auto-sync-mode \ (regex)
 if first server message matches this regex, turn on sync mode for that host.
 .TP
 .BR ftp:charset \ (string)
-the character set used by ftp server in requests, replies and file listings.
+the character set used by FTP server in requests, replies and file listings.
 Default is empty which means the same as local. This setting is only used
 when the server does not support UTF8.
 .TP
 .BR ftp:client \ (string)
-the name of ftp client to send with CLNT command, if supported by server.
+the name of FTP client to send with CLNT command, if supported by server.
 If it is empty, then no CLNT command will be sent.
 .TP
 .BR ftp:bind-data-socket \ (boolean)
@@ -1347,14 +1347,14 @@ instead of the one returned by PASV command, port number would not be changed.
 Default is true.
 .TP
 .BR ftp:fxp-passive-source \ (boolean)
-if true, lftp will try to set up source ftp server in passive mode first,
+if true, lftp will try to set up source FTP server in passive mode first,
 otherwise destination one. If first attempt fails, lftp tries to set them up
 the other way. If the other disposition fails too, lftp falls back to plain
 copy. See also ftp:use-fxp.
 .TP
 .BR ftp:home \ (string)
 Initial directory. Default is empty string which means auto. Set this to `/'
-if you don't like the look of %2F in ftp URLs. The closure for this setting
+if you don't like the look of %2F in FTP URLs. The closure for this setting
 has format \fIuser@host\fP.
 .TP
 .BR ftp:ignore-pasv-address \ (boolean)
@@ -1373,11 +1373,11 @@ Default is empty.
 .TP
 .BR ftp:nop-interval \ (seconds)
 delay between NOOP commands when downloading tail of a file. This is useful
-for ftp servers which send "Transfer complete" message before flushing
+for FTP servers which send "Transfer complete" message before flushing
 data transfer. In such cases NOOP commands can prevent connection timeout.
 .TP
 .BR ftp:passive-mode \ (boolean)
-sets passive ftp mode. This can be useful if you are behind a firewall or a
+sets passive FTP mode. This can be useful if you are behind a firewall or a
 dumb masquerading router. In passive mode lftp uses PASV command, not the
 PORT command which is used in active mode. In passive mode lftp itself
 makes the data connection to the server; in active mode the server connects
@@ -1395,13 +1395,13 @@ Format is min-max, or `full' or `any' to indicate any port. Default is `full'.
 use EPSV as preferred passive mode. Default is `false'.
 .TP
 .BR ftp:proxy \ (URL)
-specifies ftp proxy to use.
-To disable proxy set this to empty string. Note that it is an ftp proxy which
-uses ftp protocol, not ftp over http. Default value is taken from environment
-variable \fBftp_proxy\fP if it starts with ``ftp://''. If your ftp proxy
+specifies FTP proxy to use.
+To disable proxy set this to empty string. Note that it is a FTP proxy which
+uses FTP protocol, not FTP over HTTP. Default value is taken from environment
+variable \fBftp_proxy\fP if it starts with ``ftp://''. If your FTP proxy
 requires authentication, specify user name and password in the URL.
-If ftp:proxy starts with http:// then hftp protocol (ftp over http proxy) is used instead
-of ftp automatically.
+If ftp:proxy starts with http:// then hftp protocol (FTP over HTTP proxy) is used instead
+of FTP automatically.
 .TP
 .BR ftp:proxy-auth-type \ (string)
 When set to ``joined'', lftp sends ``user@proxy_user@ftp.example.org'' as
@@ -1424,7 +1424,7 @@ then proxy password. The site user and password are then sent as usual.
 .TP
 .BR ftp:rest-list \ (boolean)
 allow usage of REST command before LIST command. This might be useful for
-large directories, but some ftp servers silently ignore REST before LIST.
+large directories, but some FTP servers silently ignore REST before LIST.
 .TP
 .BR ftp:rest-stor \ (boolean)
 if false, lftp will not try to use REST before STOR. This can be useful
@@ -1451,8 +1451,8 @@ do not send plain text password over the network, use skey/opie instead. If
 skey/opie is not available, assume failed login. Off by default.
 .TP
 .BR ftp:ssl-allow \ (boolean)
-if true, try to negotiate SSL connection with ftp server for non-anonymous
-access. Default is true. This and other ssl settings are only available if lftp was compiled
+if true, try to negotiate SSL connection with FTP server for non-anonymous
+access. Default is true. This and other SSL settings are only available if lftp was compiled
 with an ssl/tls library.
 .TP
 .BR ftp:ssl-auth \ (string)
@@ -1469,17 +1469,17 @@ if true, refuse to send password in clear when server does not support SSL.
 Default is false.
 .TP
 .BR ftp:ssl-protect-data \ (boolean)
-if true, request ssl connection for data transfers. This is cpu-intensive
+if true, request SSL connection for data transfers. This is cpu-intensive
 but provides privacy. Default is false.
 .TP
 .BR ftp:ssl-protect-fxp \ (boolean)
-if true, request ssl connection for data transfer between two ftp servers
-in FXP mode. CPSV or SSCN command will be used in that case. If ssl connection
+if true, request SSL connection for data transfer between two FTP servers
+in FXP mode. CPSV or SSCN command will be used in that case. If SSL connection
 fails for some reason, lftp would try unprotected FXP transfer unless
 ftp:ssl-force is set for any of the two servers. Default is false.
 .TP
 .BR ftp:ssl-protect-list \ (boolean)
-if true, request ssl connection for file list transfers. Default is true.
+if true, request SSL connection for file list transfers. Default is true.
 .TP
 .BR ftp:ssl-use-ccc \ (boolean)
 if true, lftp would issue CCC command after logon, thus disable
@@ -1495,10 +1495,10 @@ relaxed.
 .TP
 .BR ftp:sync-mode \ (boolean)
 if true, lftp will send one command at a time and wait for
-response. This might be useful if you are using a buggy ftp server or
+response. This might be useful if you are using a buggy FTP server or
 router. When it is off, lftp sends a pack of commands and waits for
 responses - it speeds up operation when round trip time is significant.
-Unfortunately it does not work with all ftp servers and some routers have
+Unfortunately it does not work with all FTP servers and some routers have
 troubles with it, so it is on by default.
 .TP
 .BR ftp:timezone \ (string)
@@ -1626,11 +1626,11 @@ when true, lftp automatically decodes the entity in hftp protocol when Content-E
 header value matches deflate, gzip, compress, x-gzip or x-compress.
 .TP
 .BR hftp:proxy \ (URL)
-specifies http proxy for ftp-over-http protocol (hftp). The protocol hftp
-cannot work without a http proxy, obviously.
+specifies HTTP proxy for FTP-over-HTTP protocol (hftp). The protocol hftp
+cannot work without a HTTP proxy, obviously.
 Default value is taken from environment
 variable \fBftp_proxy\fP if it starts with ``http://'', otherwise from
-environment variable \fBhttp_proxy\fP.  If your ftp proxy
+environment variable \fBhttp_proxy\fP.  If your FTP proxy
 requires authentication, specify user name and password in the URL.
 .TP
 .BR hftp:use-allprop \ (boolean)
@@ -1681,23 +1681,23 @@ when true, lftp automatically decodes the entity when Content-Encoding
 header value matches deflate, gzip, compress, x-gzip or x-compress.
 .TP
 .BR http:post-content-type " (string)"
-specifies value of Content-Type http request header for POST method.
+specifies value of Content-Type HTTP request header for POST method.
 Default is ``application/x-www-form-urlencoded''.
 .TP
 .BR http:proxy \ (URL)
-specifies http proxy. It is used when lftp works over http protocol.
+specifies HTTP proxy. It is used when lftp works over HTTP protocol.
 Default value is taken from environment variable \fBhttp_proxy\fP.
 If your proxy requires authentication, specify user name and password
 in the URL.
 .TP
 .BR http:put-method " (PUT or POST)"
-specifies which http method to use on put.
+specifies which HTTP method to use on put.
 .TP
 .BR http:put-content-type " (string)"
-specifies value of Content-Type http request header for PUT method.
+specifies value of Content-Type HTTP request header for PUT method.
 .TP
 .BR http:referer " (string)"
-specifies value for Referer http request header. Single dot `.' expands
+specifies value for Referer HTTP request header. Single dot `.' expands
 to current directory URL. Default is `.'. Set to empty string to disable
 Referer header.
 .TP
@@ -1710,11 +1710,11 @@ otherwise it will send an empty request body.
 .TP
 .BR http:use-mkcol \ (boolean)
 if set to off, lftp will try to use `PUT' instead of `MKCOL' to create
-directories with http protocol. Default is on.
+directories with HTTP protocol. Default is on.
 .TP
 .BR http:use-propfind \ (boolean)
 if set to off, lftp will not try to use `PROPFIND' to get directory contents
-with http protocol and use `GET' instead. Default is on.
+with HTTP protocol and use `GET' instead. Default is on.
 .TP
 .BR http:user-agent " (string)"
 the string lftp sends in User-Agent header of HTTP request.
@@ -1803,7 +1803,7 @@ contains comma separated list of domains for which proxy should not be used.
 Default is taken from environment variable \fBno_proxy\fP.
 .TP
 .BR net:persist-retries " (number)"
-ignore this number of hard errors. Useful to login to buggy ftp servers which
+ignore this number of hard errors. Useful to login to buggy FTP servers which
 reply 5xx when there is too many users.
 .TP
 .BR net:reconnect-interval-base \ (seconds)
@@ -1813,12 +1813,12 @@ operation.
 .TP
 .BR net:reconnect-interval-max \ (seconds)
 sets maximum reconnect interval. When current interval after multiplication
-by net:reconnect-interval-multiplier reachs this value (or exceeds it), it
+by net:reconnect-interval-multiplier reaches this value (or exceeds it), it
 is reset back to net:reconnect-interval-base.
 .TP
 .BR net:reconnect-interval-multiplier \ (real\ number)
 sets multiplier by which base interval is multiplied each time new attempt
-to perform an operation fails. When the interval reachs maximum, it is reset
+to perform an operation fails. When the interval reaches maximum, it is reset
 to base value. See net:reconnect-interval-base and net:reconnect-interval-max.
 .TP
 .BR net:socket-bind-ipv4 " (ipv4 address)"
@@ -1836,7 +1836,7 @@ default.
 .TP
 .BR net:socket-maxseg \ (bytes)
 use given size for TCP_MAXSEG socket option. Not all operating systems support
-this option, but linux does.
+this option, but Linux does.
 .TP
 .BR net:timeout " (time interval)"
 sets the network protocol timeout.
@@ -1852,9 +1852,9 @@ save pget transfer status this often. Set to `never' to disable saving of the st
 The status is saved to a file with suffix \fI.lftp-pget-status\fP.
 .TP
 .BR sftp:charset \ (string)
-the character set used by sftp server in file names and file listings.
+the character set used by SFTP server in file names and file listings.
 Default is empty which means the same as local. This setting is only used
-for sftp protocol version prior to 4. Version 4 and later always use UTF-8.
+for SFTP protocol version prior to 4. Version 4 and later always use UTF-8.
 .TP
 .BR sftp:connect-program \ (string)
 the program to use for connecting to remote server. It should support `\-l' option
@@ -1877,7 +1877,7 @@ Default is `sftp'. You can use rsh as transport level protocol like this:
 set sftp:connect-program rsh
 set sftp:server-program /usr/libexec/openssh/sftp-server
 .De
-Similarly you can run sftp over ssh1.
+Similarly you can run SFTP over SSH1.
 .TP
 .BR sftp:size-read \ (number)
 Block size for reading. Default is 0x8000.
@@ -1915,7 +1915,7 @@ if set to yes, then verify server's certificate to be signed by a known
 Certificate Authority and not be on Certificate Revocation List.
 .TP
 .BR torrent:ip " (ipv4 address)"
-IP address to send to the tracker. Specify it if you are using an http proxy.
+IP address to send to the tracker. Specify it if you are using an HTTP proxy.
 .TP
 .BR torrent:ipv6 " (ipv6 address)"
 IPv6 address to send to the tracker. By default, first found global unicast address is used.
@@ -2027,7 +2027,7 @@ They can also have a prefix: 0 - octal, 0x - hexadecimal.
 .SS FTP asynchronous mode (pipelining)
 .PP
 .B Lftp
-can speed up ftp operations by sending several commands at once and
+can speed up FTP operations by sending several commands at once and
 then checking all the responses. See ftp:sync-mode variable. Sometimes
 this does not work, thus synchronous mode is the default. You can try
 to turn synchronous mode off and see if it works for you. It is known
@@ -2136,7 +2136,7 @@ The directory is used to store DHT id and nodes cache for IPv4 and IPv6.
 File name suffix is the host name.
 .TP
 .I "~/.netrc"
-The file is consulted to get default login and password to ftp server.
+The file is consulted to get default login and password to FTP server.
 Passwords are also searched here if an URL with user name but with no
 password is used.
 
