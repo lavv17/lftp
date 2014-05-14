@@ -1949,6 +1949,10 @@ torrent stops when it's complete and ratio reached this number.
 .BR torrent:use-dht \ (boolean)
 when true, DHT is used.
 .TP
+.BR xfer:auto-rename (boolean)
+suggested filenames provided by the server are used if user explicitly sets
+this option to `on'. As this could be security risk, default is off.
+.TP
 .BR xfer:clobber \ (boolean)
 if this setting is off, get commands will not overwrite existing
 files and generate an error instead.
