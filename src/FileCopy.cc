@@ -1469,7 +1469,7 @@ int FileCopyPeerFDStream::Do()
 	 {
 	    const char *new_name=dir_file(dirname(stream->full_name),suggested_filename);
 	    struct stat st;
-	    if(lstat(new_name,&st)==-1 && errno==ENOENT) {
+	    if((lstat(new_name,&st)==-1 && errno==ENOENT) || ResMgr::QueryBool("xfer:clobber",0)) {
 	       debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name.get(),suggested_filename.get()));
 	       if(rename(stream->full_name,new_name)==-1)
 		  debug((3,"rename(%s, %s): %s\n",stream->full_name.get(),new_name,strerror(errno)));
