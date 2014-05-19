@@ -1800,10 +1800,10 @@ void TorrentPeer::SetError(const char *s)
 {
    error=Error::Fatal(s);
    LogError(11,"fatal error: %s",s);
-   Disconnect();
+   Disconnect(s);
 }
 
-void TorrentPeer::Disconnect()
+void TorrentPeer::Disconnect(const char *dc)
 {
    Enter();
    if(Connected() && !recv_buf->Eof())
@@ -1820,10 +1820,12 @@ void TorrentPeer::Disconnect()
    suggested_set.empty();
    recv_buf=0;
    send_buf=0;
-   if(sock!=-1)
+   if(sock!=-1) {
       close(sock);
-   sock=-1;
-   connected=false;
+      sock=-1;
+      connected=false;
+      last_dc.set(dc);
+   }
    parent->am_interested_peers_count-=am_interested;
    am_interested=false;
    parent->am_not_choking_peers_count-=!am_choking;
@@ -2556,7 +2558,7 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
       upload_only=pp->data->lookup_int("upload_only");
 
       if(!parent->HasMetadata() && !msg_ext_metadata) {
-	 Disconnect();
+	 Disconnect("peer cannot provide metadata");
 	 return;
       }
 
@@ -2820,7 +2822,7 @@ int TorrentPeer::Do()
       {
 	 int e=errno;
 	 LogError(4,"connect(%s): %s\n",GetName(),strerror(e));
-	 Disconnect();
+	 Disconnect(strerror(e));
 	 if(FA::NotSerious(e))
 	    return MOVED;
 	 SetError(strerror(e));
@@ -2844,13 +2846,13 @@ int TorrentPeer::Do()
    if(send_buf->Error())
    {
       LogError(2,"send: %s",send_buf->ErrorText());
-      Disconnect();
+      Disconnect(send_buf->ErrorText());
       return MOVED;
    }
    if(recv_buf->Error())
    {
       LogError(2,"recieve: %s",recv_buf->ErrorText());
-      Disconnect();
+      Disconnect(recv_buf->ErrorText());
       return MOVED;
    }
    if(!peer_id) {
@@ -2859,17 +2861,18 @@ int TorrentPeer::Do()
       if(s==UNPACK_NO_DATA_YET)
 	 return m;
       if(s!=UNPACK_SUCCESS) {
+	 const char *dc=0;
 	 if(s==UNPACK_PREMATURE_EOF) {
 	    if(recv_buf->Size()>0)
-	       LogError(2,_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
+	       LogError(2,dc=_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
 	    else
-	       LogError(4,_("peer closed connection (before handshake)"));
+	       LogError(4,dc=_("peer closed connection (before handshake)"));
 	 }
-	 Disconnect();
+	 Disconnect(dc);
 	 return MOVED;
       }
       if(!parent->HasMetadata() && !LTEPExtensionEnabled()) {
-	 Disconnect();
+	 Disconnect("peer cannot provide metadata");
 	 return MOVED;
       }
       timeout_timer.Reset();
@@ -2926,7 +2929,7 @@ int TorrentPeer::Do()
    timeout_timer.Reset(recv_buf->EventTime());
    if(timeout_timer.Stopped()) {
       LogError(0,_("Timeout - reconnecting"));
-      Disconnect();
+      Disconnect("timed out");
       return MOVED;
    }
 
@@ -2960,7 +2963,7 @@ int TorrentPeer::Do()
 
    if(recv_buf->Eof() && recv_buf->Size()==0) {
       LogError(4,_("peer closed connection"));
-      Disconnect();
+      Disconnect(_("peer closed connection"));
       return MOVED;
    }
 
@@ -2973,11 +2976,12 @@ int TorrentPeer::Do()
       return m;
    if(st!=UNPACK_SUCCESS)
    {
+      const char *dc=0;
       if(st==UNPACK_PREMATURE_EOF)
-	 LogError(2,_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
+	 LogError(2,dc=_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
       else
-	 LogError(2,_("invalid peer response format"));
-      Disconnect();
+	 LogError(2,dc=_("invalid peer response format"));
+      Disconnect(dc);
       return MOVED;
    }
    reply->DropData(recv_buf);
@@ -3127,8 +3131,11 @@ const char *TorrentPeer::GetName() const
 
 const char *TorrentPeer::Status()
 {
-   if(sock==-1)
+   if(sock==-1) {
+      if(last_dc)
+	 return xstring::format("Disconnected (%s)",last_dc.get());
       return _("Not connected");
+   }
    if(!connected)
       return _("Connecting...");
    if(!peer_id)

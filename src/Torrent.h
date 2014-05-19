@@ -423,6 +423,8 @@ class TorrentPeer : public SMTask, protected ProtoLog, public Networker
    bool connected;
    bool passive;
 
+   xstring_c last_dc;
+
    Timer timeout_timer;
    Timer retry_timer;
    Timer keepalive_timer;
@@ -696,7 +698,7 @@ private:
    void SendHandshake();
    unpack_status_t RecvHandshake();
    void SendExtensions();
-   void Disconnect();
+   void Disconnect(const char *dc=0);
    int SendDataRequests(unsigned p);
    void SendDataRequests();
    void Have(unsigned p);
