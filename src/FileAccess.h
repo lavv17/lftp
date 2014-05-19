@@ -203,6 +203,7 @@ public:
    const char  *GetConnectURL(int flags=0) const;
    const char  *GetFileURL(const char *file,int flags=0) const;
    enum { NO_PATH=1,WITH_PASSWORD=2,NO_PASSWORD=4,NO_USER=8 };
+   const char *GetLastDisconnectCause() const { return last_disconnect_cause; }
 
    void Connect(const char *h,const char *p);
    void ConnectVerify();

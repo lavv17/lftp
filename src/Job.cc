@@ -401,6 +401,11 @@ xstring& SessionJob::FormatStatus(xstring& s,int v,const char *prefix)
       s.append(url);
       s.append('\n');
    }
+   const char *last_dc=session->GetLastDisconnectCause();
+   if(last_dc && !session->IsConnected()) {
+      s.append(prefix);
+      s.appendf("Last disconnect cause: %s\n",last_dc);
+   }
    return s;
 }
 
