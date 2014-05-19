@@ -1,16 +1,16 @@
 # Polish translation of lftp.
 # Copyright (C) 1998-2000 Free Software Foundation, Inc.
 # Arkadiusz Miśkiewicz <misiek@pld-linux.org>, 1998-2004
-# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2013
+# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2014
 # some updates by Tomasz Kłoczko <kloczek@pld.org.pl>, 2003
 # Adam Gołębiowski <adamg@pld-linux.org>, 2004-2006
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.4.6\n"
+"Project-Id-Version: lftp 4.4.16\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2014-05-07 12:47+0400\n"
-"PO-Revision-Date: 2013-05-19 08:40+0200\n"
+"PO-Revision-Date: 2014-05-18 06:54+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -333,7 +333,7 @@ msgstr "kopiowanie: get powróciło do %lld, przeszukiwanie put\n"
 
 #: src/FileCopy.cc:339
 msgid "file size decreased during transfer"
-msgstr ""
+msgstr "rozmiar pliku zmniejszył się w trakcie przesyłania"
 
 #: src/FileCopy.cc:1103
 #, c-format
@@ -681,12 +681,12 @@ msgstr "W celu uzyskania większej ilości informacji spróbuj `help %s'.\n"
 #: src/MirrorJob.cc:1666
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
-msgstr ""
+msgstr "%s: niejednoznaczny katalog źródłowy (`%s' czy `%s'?)\n"
 
 #: src/MirrorJob.cc:1688
-#, fuzzy, c-format
+#, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
-msgstr "niejednoznaczny argument %s opcji %s"
+msgstr "%s: niejednoznaczny katalog docelowy (`%s' czy `%s'?)\n"
 
 #: src/NetAccess.cc:128
 #, c-format
@@ -889,19 +889,19 @@ msgid "%.2fM/s"
 msgstr "%.2fM/s"
 
 #: src/Speedometer.cc:103
-#, fuzzy, c-format
+#, c-format
 msgid "%.0f B/s"
-msgstr "%.0fb/s"
+msgstr "%.0f B/s"
 
 #: src/Speedometer.cc:105
-#, fuzzy, c-format
+#, c-format
 msgid "%.1f KiB/s"
-msgstr "%.1fK/s"
+msgstr "%.1f KiB/s"
 
 #: src/Speedometer.cc:107
-#, fuzzy, c-format
+#, c-format
 msgid "%.2f MiB/s"
-msgstr "%.2fM/s"
+msgstr "%.2f MiB/s"
 
 #: src/Speedometer.cc:129
 msgid "eta:"
@@ -2651,12 +2651,12 @@ msgstr "%s ok, %d plik$|i|ów$ usunięto\n"
 
 #: src/Torrent.cc:564
 msgid "announced via "
-msgstr ""
+msgstr "rozgłoszony poprzez "
 
 #: src/Torrent.cc:576
-#, fuzzy, c-format
+#, c-format
 msgid "next announce in %s"
-msgstr "następne żądanie w %s"
+msgstr "następne rozgłoszenie w %s"
 
 #: src/Torrent.cc:1595 src/Torrent.cc:1598
 #, c-format
