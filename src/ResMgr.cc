@@ -494,8 +494,11 @@ const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **p
    if(*ptr==0)
    {
       const ResType *type=FindRes(name);
-      if(!type)
+      if(!type) {
+	 *ptr=0;
+	 *closure=0;
 	 return 0;
+      }
       node=type->type_value_list->get_next();
    }
    else
@@ -503,7 +506,12 @@ const char *ResMgr::QueryNext(const char *name,const char **closure,Resource **p
       node=(*ptr)->type_value_node.get_next();
    }
    *ptr=node->get_obj();
-   return *ptr ? (*ptr)->value.get() : NULL;
+   if(*ptr) {
+      *closure=(*ptr)->closure;
+      return (*ptr)->value;
+   }
+   *closure=0;
+   return 0;
 }
 
 const char *ResType::SimpleQuery(const char *closure) const
