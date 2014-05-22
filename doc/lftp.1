@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "07 Apr 2014"
+.TH lftp 1 "22 May 2014"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.4.14.
+This man page documents lftp version 4.5.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -1979,6 +1979,9 @@ the file to log transfers to. Default is \fI~/.lftp/transfer_log\fR.
 .TP
 .BR xfer:make-backup \ (boolean)
 when true, lftp renames pre-existing file adding ``~'' suffix instead of overwriting it.
+.TP
+.BR xfer:max-log-size " (number)"
+maximum size of the transfer log file. When the size is reached, the file is renamed and started anew.
 .TP
 .BR xfer:max-redirections " (number)"
 maximum number of redirections. This can be useful for downloading over HTTP.

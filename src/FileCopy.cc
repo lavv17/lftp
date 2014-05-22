@@ -647,6 +647,15 @@ void FileCopy::LogTransfer()
       const char *fname = ResMgr::Query("xfer:log-file", 0);
       if(!fname || !*fname)
 	 fname = dir_file(get_lftp_data_dir(),"transfer_log");
+      struct stat st;
+      if(stat(fname,&st)!=-1) {
+	 if(st.st_size > long(ResMgr::Query("xfer:max-log-size",0))) {
+	    debug((9,"rotating xfer-log %s",fname));
+	    if(rename(fname,xstring::cat(fname,".old",NULL))==-1) {
+	       debug((1,"rename(%s): %s",fname,strerror(errno)));
+	    }
+	 }
+      }
       int fd = open(fname,O_WRONLY|O_APPEND|O_CREAT,0600);
       if(fd==-1)
 	 return;
