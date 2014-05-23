@@ -2861,14 +2861,17 @@ int TorrentPeer::Do()
       if(s==UNPACK_NO_DATA_YET)
 	 return m;
       if(s!=UNPACK_SUCCESS) {
-	 const char *dc=0;
 	 if(s==UNPACK_PREMATURE_EOF) {
-	    if(recv_buf->Size()>0)
-	       LogError(2,dc=_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
-	    else
-	       LogError(4,dc=_("peer closed connection (before handshake)"));
+	    if(recv_buf->Size()>0) {
+	       LogError(2,_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
+	       Disconnect(_("peer unexpectedly closed connection"));
+	    } else {
+	       LogError(4,_("peer closed connection (before handshake)"));
+	       Disconnect(_("peer closed connection (before handshake)"));
+	    }
+	 } else {
+	    Disconnect(_("invalid peer response format"));
 	 }
-	 Disconnect(dc);
 	 return MOVED;
       }
       if(!parent->HasMetadata() && !LTEPExtensionEnabled()) {
@@ -2976,12 +2979,13 @@ int TorrentPeer::Do()
       return m;
    if(st!=UNPACK_SUCCESS)
    {
-      const char *dc=0;
-      if(st==UNPACK_PREMATURE_EOF)
-	 LogError(2,dc=_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
-      else
-	 LogError(2,dc=_("invalid peer response format"));
-      Disconnect(dc);
+      if(st==UNPACK_PREMATURE_EOF) {
+	 LogError(2,_("peer unexpectedly closed connection after %s"),recv_buf->Dump());
+	 Disconnect(_("peer unexpectedly closed connection"));
+      } else {
+	 LogError(2,_("invalid peer response format"));
+	 Disconnect(_("invalid peer response format"));
+      }
       return MOVED;
    }
    reply->DropData(recv_buf);
