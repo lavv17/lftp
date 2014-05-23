@@ -1,4 +1,4 @@
-%define version 4.4.13
+%define version 4.5.0
 %define release 1
 %define use_modules 0
 
@@ -7,10 +7,10 @@ Name: lftp
 Version: %{version}
 Release: %{release}
 URL: http://lftp.yar.ru/
-Source: ftp://lftp.yar.ru/lftp/lftp-%{version}.tar.gz
+Source: http://lftp.yar.ru/ftp/lftp-%{version}.tar.gz
 Group: Applications/Internet
 BuildRoot: %{_tmppath}/%{name}-buildroot
-BuildRequires: readline-devel
+BuildRequires: readline-devel zlib-devel ncurses-devel expat-devel gnutls-devel
 License: GNU GPL
 #Packager: Manoj Kasichainula <manojk+rpm@io.com>
 

@@ -1,3 +1,41 @@
+Version 4.5.0 - 2014-05-23
+
+* optimized cpu usage for 10Gb/s transfers by using better data structures
+  and algorithms.
+* new open option --env-password to take password from LFTP_PASSWORD
+  environment variable.
+* new `exit parent' subcommand.
+* new settings http:accept-encoding, http:decode.
+* new setting xfer:max-log-size to limit transfer log size.
+* show last disconnect cause for a few seconds in the session status.
+* improved mirror status to display real-time aggregated byte count and rate.
+* save torrent matadata on disk and load if available when needed.
+* improved torrent DHT search.
+* fixed exit behavior to flush buffered commands.
+* fixed transfer rate reporting for mirror --parallel.
+
+Version 4.4.16 - 2014-05-07
+
+* fixed mirror --loop to re-check base directory contents.
+* fixed sftp and fish authentication by password with FreeBSD server.
+* fixed directory index parsing for some http servers.
+* fixed find command output to avoid extra slash for plain files.
+* fixed several bugs which could cause segfault.
+
+Version 4.4.15 - 2014-01-21
+
+* new setting pget:min-chunk-size.
+* improved DHT search by preferring responded nodes.
+* allow UTC timezone in http timestamps.
+* fixed WebDAV rmdir operation.
+* fixed torrent hang on shutdown when a tracker is unresposive.
+* fixed adding too many slashes to URLs in http.
+
+Version 4.4.14 - 2013-12-13
+
+* fixed HEAD/PROPFIND handling in http.
+* a minor memory leak fixed.
+
 Version 4.4.13 - 2013-11-26
 
 * fixed a bug in file size checking code.
