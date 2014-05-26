@@ -1134,7 +1134,7 @@ int FileCopyPeerFA::Get_LL(int len)
 	    if(FAmode==FA::QUOTE_CMD)
 	       FAmode=FA::RETRIEVE;
 
-	    xstring& loc=xstring::get_tmp(loc_c);
+	    xstring loc(loc_c);
 	    session->Close(); // loc_c is no longer valid.
 	    loc_c=0;
 
