@@ -1902,7 +1902,8 @@ int FileCopyPeerMemory::Do()
 void FileVerificator::Init0()
 {
    done=false;
-   if(!ResMgr::QueryBool("xfer:verify",0))
+   if(!ResMgr::QueryBool("xfer:verify",0)
+   || ResMgr::Query("xfer:verify-command",0).is_empty())
       done=true;
 }
 void FileVerificator::InitVerify(const char *f)
