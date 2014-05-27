@@ -170,6 +170,7 @@ public:
 	 return s;
       }
    bool is_nil() const { return s==0; }
+   bool is_empty() const { return s==0 || *s==0; }
    void ToNumberPair(int &a,int &b) const;
 };
 
