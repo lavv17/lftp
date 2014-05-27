@@ -37,6 +37,7 @@ class Resource;
 
 struct ResType
 {
+   static bool class_inited;
    static xmap<ResType*> *types_by_name;
 
    const char *name;

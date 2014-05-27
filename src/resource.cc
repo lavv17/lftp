@@ -373,11 +373,12 @@ static ResDecls lftp_vars_register(lftp_vars);
 # include <langinfo.h>
 #endif
 
+bool ResType::class_inited;
 void ResType::ClassInit()
 {
-   if(types_by_name)
+   if(class_inited)
       return;
-   types_by_name=new xmap<ResType*>;
+   class_inited=true;
    for(ResType *scan=types_by_name->each_begin(); scan; scan=types_by_name->each_next())
    {
       if(scan->defvalue && scan->val_valid)
