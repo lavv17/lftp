@@ -61,8 +61,8 @@ protected:
    int SocketCreate(int af,int type,int proto) { return Networker::SocketCreate(af,type,proto,hostname); }
    int SocketCreateTCP(int af) { return Networker::SocketCreateTCP(af,hostname); }
 
-   int Poll(int fd,int ev);
-   int CheckHangup(const struct pollfd *pfd,int num);
+   int Poll(int fd,int ev,const char **err);
+   const char *CheckHangup(const struct pollfd *pfd,int num);
 
    xstring_c proxy;
    xstring_c proxy_port;

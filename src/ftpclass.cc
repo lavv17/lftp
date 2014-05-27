@@ -1214,6 +1214,7 @@ int   Ftp::Do()
    const unsigned char *p;
    automate_state oldstate;
    int	 m=STALL;
+   const char *error;
 
    // check if idle time exceeded
    if(mode==CLOSED && conn && idle_timer.Stopped())
@@ -1370,9 +1371,12 @@ int   Ftp::Do()
    /* fallthrough */
    case(CONNECTING_STATE):
       assert(conn && conn->control_sock!=-1);
-      res=Poll(conn->control_sock,POLLOUT);
-      if(res==-1)
+      res=Poll(conn->control_sock,POLLOUT,&error);
+      if(res==-1) {
+	 LogError(0,_("Socket error (%s) - reconnecting"),error);
+	 Disconnect(error);
 	 return MOVED;
+      }
       if(!(res&POLLOUT))
 	 goto usual_return;
 
@@ -2122,9 +2126,12 @@ int   Ftp::Do()
       if(state!=ACCEPTING_STATE || Error())
          return MOVED;
 
-      res=Poll(conn->data_sock,POLLIN);
-      if(res==-1)
+      res=Poll(conn->data_sock,POLLIN,&error);
+      if(res==-1) {
+	 LogError(0,_("Data socket error (%s) - reconnecting"),error);
+	 Disconnect(error);
          return MOVED;
+      }
 
       if(!(res&POLLIN))
 	 goto usual_return;
@@ -2213,14 +2220,16 @@ int   Ftp::Do()
 	 m=MOVED;
       /* fallthrough */
       case PASV_DATASOCKET_CONNECTING:
-	 res=Poll(conn->data_sock,POLLOUT);
+	 res=Poll(conn->data_sock,POLLOUT,&error);
 	 if(res==-1)
 	 {
+	    LogError(0,_("Data socket error (%s) - reconnecting"),error);
 	    if(conn->fixed_pasv && QueryBool("auto-passive-mode",hostname))
 	    {
 	       LogNote(2,_("Switching passive mode off"));
 	       SetFlag(PASSIVE_MODE,0);
 	    }
+	    Disconnect(error);
 	    return MOVED;
 	 }
 	 if(!(res&POLLOUT))

@@ -1070,6 +1070,7 @@ int Http::Do()
 {
    int m=STALL;
    int res;
+   const char *error;
    const char *buf;
    int len;
 
@@ -1291,9 +1292,11 @@ int Http::Do()
       timeout_timer.Reset();
 
    case CONNECTING:
-      res=Poll(conn->sock,POLLOUT);
+      res=Poll(conn->sock,POLLOUT,&error);
       if(res==-1)
       {
+	 LogError(0,_("Socket error (%s) - reconnecting"),error);
+	 Disconnect(error);
 	 NextPeer();
 	 return MOVED;
       }

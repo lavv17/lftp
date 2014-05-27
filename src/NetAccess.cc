@@ -104,43 +104,28 @@ void NetAccess::Reconfig(const char *name)
       rate_limit->Reconfig(name,c);
 }
 
-int NetAccess::CheckHangup(const struct pollfd *pfd,int num)
+const char *NetAccess::CheckHangup(const struct pollfd *pfd,int num)
 {
    for(int i=0; i<num; i++)
    {
 #ifdef SO_ERROR
-      int   s_errno=0;
-      socklen_t len;
-
+      int s_errno=0;
       errno=0;
-
+      socklen_t len=sizeof(s_errno);
+      getsockopt(pfd[i].fd,SOL_SOCKET,SO_ERROR,(char*)&s_errno,&len);
 // Where does the error number go - to errno or to the pointer?
 // It seems that to errno, but if the pointer is NULL it dumps core.
 // (solaris 2.5)
 // It seems to be different on glibc 2.0 - check both errno and s_errno
-
-      len=sizeof(s_errno);
-      getsockopt(pfd[i].fd,SOL_SOCKET,SO_ERROR,(char*)&s_errno,&len);
-      if(errno==ENOTSOCK)
-	 return 0;
-      if(errno!=0 || s_errno!=0)
-      {
-	 const char *error=strerror(errno?errno:s_errno);
-	 LogError(0,_("Socket error (%s) - reconnecting"),error);
-	 Disconnect(error);
-	 return 1;
-      }
+      if((errno!=0 || s_errno!=0) && errno!=ENOTSOCK)
+	 return strerror(errno?errno:s_errno);
 #endif /* SO_ERROR */
       if(pfd[i].revents&POLLERR)
-      {
-	 LogError(0,"POLLERR on fd %d",pfd[i].fd);
-	 Disconnect("POLLERR");
-	 return 1;
-      }
+	 return "POLLERR";
    } /* end for */
    return 0;
 }
-int NetAccess::Poll(int fd,int ev)
+int NetAccess::Poll(int fd,int ev,const char **err)
 {
    struct pollfd pfd;
    pfd.fd=fd;
@@ -149,7 +134,8 @@ int NetAccess::Poll(int fd,int ev)
    int res=poll(&pfd,1,0);
    if(res<1)
       return 0;
-   if(CheckHangup(&pfd,1))
+   *err=CheckHangup(&pfd,1);
+   if(*err)
       return -1;
    if(pfd.revents)
       timeout_timer.Reset();
