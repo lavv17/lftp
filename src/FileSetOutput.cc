@@ -274,7 +274,6 @@ clsJob::clsJob(FA *s, ArgV *a, FileSetOutput *_opts, OutputJob *_output):
    done(0),
    use_cache(true),
    error(false),
-   num(1),
    state(INIT)
 {
    list_info=0;

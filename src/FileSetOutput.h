@@ -96,9 +96,6 @@ class clsJob : public SessionJob
    bool use_cache;
    bool error;
 
-   /* element in args we're currently processing */
-   int num;
-
    enum { INIT, START_LISTING, GETTING_LIST_INFO, DONE } state;
 
 public:
