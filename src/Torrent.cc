@@ -3144,8 +3144,9 @@ const char *TorrentPeer::Status()
       return _("Connecting...");
    if(!peer_id)
       return _("Handshaking...");
-   xstring &buf=xstring::format("dn:%llu %sup:%llu %s",
-      peer_recv,peer_recv_rate.GetStrS(),peer_sent,peer_send_rate.GetStrS());
+   xstring &buf=xstring::format("dn:%s %sup:%s %s",
+      xhuman(peer_recv),peer_recv_rate.GetStrS(),
+      xhuman(peer_sent),peer_send_rate.GetStrS());
    if(peer_interested)
       buf.append("peer-interested ");
    if(peer_choking)
