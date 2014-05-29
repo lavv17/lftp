@@ -223,6 +223,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    xarray<unsigned> pieces_needed;
    static int PiecesNeededCmp(const unsigned *a,const unsigned *b);
    unsigned last_piece;
+   unsigned min_piece_sources;
+   unsigned avg_piece_sources;
 
    void SetPieceNotWanted(unsigned piece);
    void SetDownloader(unsigned piece,unsigned block,const TorrentPeer *o,const TorrentPeer *n);
@@ -325,6 +327,8 @@ public:
    bool Complete() const { return complete; }
    bool Private() const { return is_private; }
    double GetRatio() const;
+   unsigned MinPieceSources() const { return min_piece_sources; }
+   double AvgPieceSources() const { return avg_piece_sources/256.; }
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
    const char *GetName() const { return name?name.get():metainfo_url.get(); }

@@ -251,6 +251,8 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    seed_min_peers=3;
    stop_on_ratio=2;
    last_piece=TorrentPeer::NO_PIECE;
+   min_piece_sources=0;
+   avg_piece_sources=0;
    Reconfig(0);
 
    if(!fd_cache)
@@ -1104,15 +1106,22 @@ int Torrent::Do()
    if(!complete && pieces_needed_rebuild_timer.Stopped()) {
       pieces_needed.truncate();
       bool enter_end_game=true;
+      min_piece_sources=INT_MAX;
+      avg_piece_sources=0;
       for(unsigned i=0; i<total_pieces; i++) {
 	 if(!my_bitfield->get_bit(i)) {
 	    if(!piece_info[i]->has_a_downloader())
 	       enter_end_game=false;
-	    if(piece_info[i]->sources_count==0)
+	    unsigned sc=piece_info[i]->sources_count;
+	    if(min_piece_sources>sc)
+	       min_piece_sources=sc;
+	    if(sc==0)
 	       continue;
+	    avg_piece_sources+=sc;
 	    pieces_needed.append(i);
 	 }
       }
+      avg_piece_sources=avg_piece_sources*256/(total_pieces-complete_pieces);
       if(!end_game && enter_end_game) {
 	 LogNote(1,"entering End Game mode");
 	 end_game=true;
@@ -3619,6 +3628,9 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
    s.appendf("%s%s\n",tab,torrent->Status().get());
    if(!torrent->Complete() && torrent->GetRatio()>0)
       s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
+   if(!torrent->Complete() && !torrent->IsValidating() && torrent->HasMetadata())
+      s.appendf("%spiece availability: min %u, avg %.2f\n",tab,
+	 torrent->MinPieceSources(),torrent->AvgPieceSources());
 
    if(v>2) {
       s.appendf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().hexdump());
