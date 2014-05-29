@@ -253,6 +253,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    last_piece=TorrentPeer::NO_PIECE;
    min_piece_sources=0;
    avg_piece_sources=0;
+   pieces_available_pct=0;
    Reconfig(0);
 
    if(!fd_cache)
@@ -917,6 +918,48 @@ void Torrent::ParseMagnet(const char *m0)
    }
 }
 
+void Torrent::CalcPiecesStats()
+{
+   min_piece_sources=INT_MAX;
+   avg_piece_sources=0;
+   pieces_available_pct=0;
+   for(unsigned i=0; i<total_pieces; i++) {
+      if(my_bitfield->get_bit(i))
+	 continue;
+      unsigned sc=piece_info[i]->sources_count;
+      if(min_piece_sources>sc)
+	 min_piece_sources=sc;
+      if(sc==0)
+	 continue;
+      pieces_available_pct++;
+      avg_piece_sources+=sc;
+   }
+   avg_piece_sources=avg_piece_sources*256/(total_pieces-complete_pieces);
+   pieces_available_pct=pieces_available_pct*100/(total_pieces-complete_pieces);
+}
+
+void Torrent::RebuildPiecesNeeded()
+{
+   pieces_needed.truncate();
+   bool enter_end_game=true;
+   for(unsigned i=0; i<total_pieces; i++) {
+      if(!my_bitfield->get_bit(i)) {
+	 if(!piece_info[i]->has_a_downloader())
+	    enter_end_game=false;
+	 if(piece_info[i]->sources_count==0)
+	    continue;
+	 pieces_needed.append(i);
+      }
+   }
+   if(!end_game && enter_end_game) {
+      LogNote(1,"entering End Game mode");
+      end_game=true;
+   }
+   cmp_torrent=this;
+   pieces_needed.qsort(PiecesNeededCmp);
+   pieces_needed_rebuild_timer.Reset();
+}
+
 int Torrent::Do()
 {
    int m=STALL;
@@ -1103,33 +1146,8 @@ int Torrent::Do()
       return m;
 
    // rebuild lists of needed pieces
-   if(!complete && pieces_needed_rebuild_timer.Stopped()) {
-      pieces_needed.truncate();
-      bool enter_end_game=true;
-      min_piece_sources=INT_MAX;
-      avg_piece_sources=0;
-      for(unsigned i=0; i<total_pieces; i++) {
-	 if(!my_bitfield->get_bit(i)) {
-	    if(!piece_info[i]->has_a_downloader())
-	       enter_end_game=false;
-	    unsigned sc=piece_info[i]->sources_count;
-	    if(min_piece_sources>sc)
-	       min_piece_sources=sc;
-	    if(sc==0)
-	       continue;
-	    avg_piece_sources+=sc;
-	    pieces_needed.append(i);
-	 }
-      }
-      avg_piece_sources=avg_piece_sources*256/(total_pieces-complete_pieces);
-      if(!end_game && enter_end_game) {
-	 LogNote(1,"entering End Game mode");
-	 end_game=true;
-      }
-      cmp_torrent=this;
-      pieces_needed.qsort(PiecesNeededCmp);
-      pieces_needed_rebuild_timer.Reset();
-   }
+   if(!complete && pieces_needed_rebuild_timer.Stopped())
+      RebuildPiecesNeeded();
 
    if(complete && SeededEnough()) {
       Shutdown();
@@ -1543,19 +1561,24 @@ void Torrent::ScanPeers() {
    // scan existing peers
    for(int i=0; i<peers.count(); i++) {
       const TorrentPeer *peer=peers[i];
-      if(peer->Failed())
+      const char *blacklist_time="2h";
+      if(peer->Failed()) {
 	 LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
-      else if(peer->Disconnected())
+      } else if(peer->Disconnected()) {
 	 LogNote(4,"peer %s disconnected",peer->GetName());
-      else if(peer->myself) {
+      } else if(peer->myself) {
 	 LogNote(4,"removing myself-connected peer %s",peer->GetName());
-	 BlackListPeer(peer,"forever");
+	 blacklist_time="forever";
       } else if(peer->duplicate) {
 	 LogNote(4,"removing duplicate peer %s",peer->GetName());
-      } else if(complete && peer->Seed())
+      } else if(complete && peer->Seed()) {
 	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
-      else
+      } else {
+	 // keep the peer.
 	 continue;
+      }
+      if(blacklist_time)
+	 BlackListPeer(peer,blacklist_time);
       peers.remove(i--);
    }
    ReducePeers();
@@ -3628,9 +3651,11 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
    s.appendf("%s%s\n",tab,torrent->Status().get());
    if(!torrent->Complete() && torrent->GetRatio()>0)
       s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
-   if(!torrent->Complete() && !torrent->IsValidating() && torrent->HasMetadata())
-      s.appendf("%spiece availability: min %u, avg %.2f\n",tab,
-	 torrent->MinPieceSources(),torrent->AvgPieceSources());
+   if(!torrent->Complete() && !torrent->IsValidating() && torrent->HasMetadata()) {
+      torrent->CalcPiecesStats();
+      s.appendf("%spiece availability: min %u, avg %.2f, %d%% available\n",tab,
+	 torrent->MinPieceSources(),torrent->AvgPieceSources(),torrent->PiecesAvailablePct());
+   }
 
    if(v>2) {
       s.appendf("%sinfo hash: %s\n",tab,torrent->GetInfoHash().hexdump());
