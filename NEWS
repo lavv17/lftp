@@ -1,3 +1,11 @@
+Version 4.5.1 - 2014-06-02
+
+* show piece availabilty in torrent status.
+* fixed a coredump in ftp when data connection fails.
+* fixed default values of some settings.
+* fixed http redirection handling.
+* fixed compilation with gcc-4.8.3.
+
 Version 4.5.0 - 2014-05-23
 
 * optimized cpu usage for 10Gb/s transfers by using better data structures

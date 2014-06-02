@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.5.0\n"
+"Project-Id-Version: lftp 4.5.0.20140528\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-05-23 10:30+0400\n"
+"POT-Creation-Date: 2014-05-28 16:18+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -264,8 +264,8 @@ msgstr ""
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:160 src/Fish.cc:981 src/SFtp.cc:1335 src/ftpclass.cc:4339
-#: src/ftpclass.cc:4348 src/Torrent.cc:3137
+#: src/FileAccess.cc:160 src/Fish.cc:981 src/SFtp.cc:1335 src/ftpclass.cc:4348
+#: src/ftpclass.cc:4357 src/Torrent.cc:3150
 msgid "Not connected"
 msgstr ""
 
@@ -340,7 +340,7 @@ msgstr ""
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/FileCopy.cc:1984
+#: src/FileCopy.cc:1985
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -395,7 +395,7 @@ msgstr ""
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:75 src/Http.cc:1079 src/SFtp.cc:77 src/ftpclass.cc:1221
+#: src/Fish.cc:75 src/Http.cc:1080 src/SFtp.cc:77 src/ftpclass.cc:1222
 msgid "Closing idle connection"
 msgstr ""
 
@@ -403,34 +403,34 @@ msgstr ""
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1345 src/SFtp.cc:744 src/SFtp.cc:1080
-#: src/SFtp.cc:1081 src/ftpclass.cc:2709 src/ftpclass.cc:2929
+#: src/Fish.cc:589 src/Http.cc:1348 src/SFtp.cc:744 src/SFtp.cc:1080
+#: src/SFtp.cc:1081 src/ftpclass.cc:2718 src/ftpclass.cc:2938
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/Fish.cc:635 src/SFtp.cc:1105 src/ftpclass.cc:2859 src/ftpclass.cc:3976
+#: src/Fish.cc:635 src/SFtp.cc:1105 src/ftpclass.cc:2868 src/ftpclass.cc:3985
 msgid "extra server response"
 msgstr ""
 
-#: src/Fish.cc:986 src/Http.cc:2097 src/Http.cc:2104 src/SFtp.cc:1341
-#: src/ftpclass.cc:4351 src/Torrent.cc:3140 src/TorrentTracker.cc:619
+#: src/Fish.cc:986 src/Http.cc:2100 src/Http.cc:2107 src/SFtp.cc:1341
+#: src/ftpclass.cc:4360 src/Torrent.cc:3153 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr ""
 
-#: src/Fish.cc:988 src/SFtp.cc:1343 src/ftpclass.cc:4357
+#: src/Fish.cc:988 src/SFtp.cc:1343 src/ftpclass.cc:4366
 msgid "Connected"
 msgstr ""
 
-#: src/Fish.cc:990 src/Http.cc:2106 src/SFtp.cc:1345 src/ftpclass.cc:4334
-#: src/ftpclass.cc:4362 src/ftpclass.cc:4376 src/TorrentTracker.cc:621
+#: src/Fish.cc:990 src/Http.cc:2109 src/SFtp.cc:1345 src/ftpclass.cc:4343
+#: src/ftpclass.cc:4371 src/ftpclass.cc:4385 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/Fish.cc:992 src/Http.cc:2109 src/SFtp.cc:1347 src/ftpclass.cc:4396
+#: src/Fish.cc:992 src/Http.cc:2112 src/SFtp.cc:1347 src/ftpclass.cc:4405
 msgid "Receiving data"
 msgstr ""
 
-#: src/Fish.cc:994 src/Http.cc:2102 src/SFtp.cc:1349 src/ftpclass.cc:4394
+#: src/Fish.cc:994 src/Http.cc:2105 src/SFtp.cc:1349 src/ftpclass.cc:4403
 msgid "Sending data"
 msgstr ""
 
@@ -457,70 +457,75 @@ msgstr ""
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:1221
+#: src/Http.cc:1222
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1271 src/ftpclass.cc:1344 src/Torrent.cc:2813
-#: src/Torrent.cc:3344 src/TorrentTracker.cc:392
+#: src/Http.cc:1272 src/ftpclass.cc:1345 src/Torrent.cc:2822
+#: src/Torrent.cc:3358 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/Http.cc:1372
+#: src/Http.cc:1298 src/ftpclass.cc:1376
+#, c-format
+msgid "Socket error (%s) - reconnecting"
+msgstr ""
+
+#: src/Http.cc:1375
 msgid "Sending request..."
 msgstr ""
 
-#: src/Http.cc:1410
+#: src/Http.cc:1413
 msgid "Hit EOF while fetching headers"
 msgstr ""
 
-#: src/Http.cc:1516
+#: src/Http.cc:1519
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1547
+#: src/Http.cc:1550
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1712
+#: src/Http.cc:1715
 msgid "Receiving body..."
 msgstr ""
 
-#: src/Http.cc:1863
+#: src/Http.cc:1866
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:1866
+#: src/Http.cc:1869
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:1877
+#: src/Http.cc:1880
 msgid "Received all"
 msgstr ""
 
-#: src/Http.cc:1882
+#: src/Http.cc:1885
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:1906 src/Http.cc:1929
+#: src/Http.cc:1909 src/Http.cc:1932
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:1916
+#: src/Http.cc:1919
 msgid "Received last chunk"
 msgstr ""
 
-#: src/Http.cc:2091 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4344 src/TorrentTracker.cc:617
+#: src/Http.cc:2094 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/ftpclass.cc:4353 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr ""
 
-#: src/Http.cc:2099 src/ftpclass.cc:4337
+#: src/Http.cc:2102 src/ftpclass.cc:4346
 msgid "Connection idle"
 msgstr ""
 
-#: src/Http.cc:2107
+#: src/Http.cc:2110
 msgid "Fetching headers..."
 msgstr ""
 
@@ -529,11 +534,11 @@ msgstr ""
 msgid "[%d] Done (%s)"
 msgstr ""
 
-#: src/LocalAccess.cc:605 src/NetAccess.cc:593
+#: src/LocalAccess.cc:605 src/NetAccess.cc:579
 msgid "Getting directory contents"
 msgstr ""
 
-#: src/LocalAccess.cc:607 src/NetAccess.cc:597
+#: src/LocalAccess.cc:607 src/NetAccess.cc:583
 msgid "Getting files information"
 msgstr ""
 
@@ -661,7 +666,7 @@ msgstr ""
 #: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
 #: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
 #: src/commands.cc:2751 src/commands.cc:3077 src/lftp.cc:267
-#: src/Torrent.cc:3727
+#: src/Torrent.cc:3744
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr ""
@@ -676,29 +681,24 @@ msgstr ""
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/NetAccess.cc:129
-#, c-format
-msgid "Socket error (%s) - reconnecting"
-msgstr ""
-
-#: src/NetAccess.cc:163
+#: src/NetAccess.cc:149
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
 
-#: src/NetAccess.cc:219 src/Torrent.cc:2931
+#: src/NetAccess.cc:205 src/Torrent.cc:2943
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/NetAccess.cc:312
+#: src/NetAccess.cc:298
 msgid "Connection limit reached"
 msgstr ""
 
-#: src/NetAccess.cc:319
+#: src/NetAccess.cc:305
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:341
+#: src/NetAccess.cc:327
 msgid "max-retries exceeded"
 msgstr ""
 
@@ -2006,126 +2006,131 @@ msgstr ""
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:1270
+#: src/ftpclass.cc:1271
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr ""
 
-#: src/ftpclass.cc:1275
+#: src/ftpclass.cc:1276
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1616
+#: src/ftpclass.cc:1620
 msgid "SITE CHMOD is not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1621
+#: src/ftpclass.cc:1625
 msgid "MLST and MLSD are not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:2078
+#: src/ftpclass.cc:2082
 msgid "unsupported network protocol"
 msgstr ""
 
-#: src/ftpclass.cc:2152
+#: src/ftpclass.cc:2131 src/ftpclass.cc:2226
+#, c-format
+msgid "Data socket error (%s) - reconnecting"
+msgstr ""
+
+#: src/ftpclass.cc:2159
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2194
+#: src/ftpclass.cc:2201
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2200
+#: src/ftpclass.cc:2207
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2221 src/ftpclass.cc:4158
+#: src/ftpclass.cc:2229 src/ftpclass.cc:4167
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2228
+#: src/ftpclass.cc:2237
 msgid "Data connection established"
 msgstr ""
 
-#: src/ftpclass.cc:2534 src/ftpclass.cc:4288
+#: src/ftpclass.cc:2543 src/ftpclass.cc:4297
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:2875
+#: src/ftpclass.cc:2884
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:3142
+#: src/ftpclass.cc:3151
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:3164
+#: src/ftpclass.cc:3173
 msgid "Closing aborted data socket"
 msgstr ""
 
-#: src/ftpclass.cc:3960
+#: src/ftpclass.cc:3969
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:3990 src/ftpclass.cc:4017
+#: src/ftpclass.cc:3999 src/ftpclass.cc:4026
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:4178
+#: src/ftpclass.cc:4187
 msgid "Switching passive mode on"
 msgstr ""
 
-#: src/ftpclass.cc:4325
+#: src/ftpclass.cc:4334
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4332
+#: src/ftpclass.cc:4341
 msgid "Sending commands..."
 msgstr ""
 
-#: src/ftpclass.cc:4336
+#: src/ftpclass.cc:4345
 msgid "Delaying before retry"
 msgstr ""
 
-#: src/ftpclass.cc:4355
+#: src/ftpclass.cc:4364
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4359
+#: src/ftpclass.cc:4368
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:4363
+#: src/ftpclass.cc:4372
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:4366
+#: src/ftpclass.cc:4375
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:4372
+#: src/ftpclass.cc:4381
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:4374 src/ftpclass.cc:4398
+#: src/ftpclass.cc:4383 src/ftpclass.cc:4407
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:4378
+#: src/ftpclass.cc:4387
 msgid "Waiting for TLS shutdown..."
 msgstr ""
 
-#: src/ftpclass.cc:4380
+#: src/ftpclass.cc:4389
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:4386
+#: src/ftpclass.cc:4395
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:4388
+#: src/ftpclass.cc:4397
 msgid "Receiving data/TLS"
 msgstr ""
 
@@ -2296,86 +2301,90 @@ msgstr ""
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr ""
 
-#: src/Torrent.cc:565
+#: src/Torrent.cc:567
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:577
+#: src/Torrent.cc:579
 #, c-format
 msgid "next announce in %s"
 msgstr ""
 
-#: src/Torrent.cc:1700 src/Torrent.cc:1703
+#: src/Torrent.cc:1709 src/Torrent.cc:1712
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1706
+#: src/Torrent.cc:1715
 msgid "Waiting for meta-data..."
 msgstr ""
 
-#: src/Torrent.cc:1709
+#: src/Torrent.cc:1718
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1719
+#: src/Torrent.cc:1728
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2816
+#: src/Torrent.cc:2825
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr ""
 
-#: src/Torrent.cc:2867 src/Torrent.cc:2981
+#: src/Torrent.cc:2875 src/Torrent.cc:2992
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr ""
 
-#: src/Torrent.cc:2869
+#: src/Torrent.cc:2876 src/Torrent.cc:2993
+msgid "peer unexpectedly closed connection"
+msgstr ""
+
+#: src/Torrent.cc:2878 src/Torrent.cc:2879
 msgid "peer closed connection (before handshake)"
 msgstr ""
 
-#: src/Torrent.cc:2965 src/Torrent.cc:2966
-msgid "peer closed connection"
-msgstr ""
-
-#: src/Torrent.cc:2983
+#: src/Torrent.cc:2882 src/Torrent.cc:2995 src/Torrent.cc:2996
 msgid "invalid peer response format"
 msgstr ""
 
-#: src/Torrent.cc:3142
+#: src/Torrent.cc:2977 src/Torrent.cc:2978
+msgid "peer closed connection"
+msgstr ""
+
+#: src/Torrent.cc:3155
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3399
+#: src/Torrent.cc:3413
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3449
+#: src/Torrent.cc:3463
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr ""
 
-#: src/Torrent.cc:3535
+#: src/Torrent.cc:3549
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3547
+#: src/Torrent.cc:3561
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3549
+#: src/Torrent.cc:3563
 msgid "peer closed just accepted connection"
 msgstr ""
 
-#: src/Torrent.cc:3600
+#: src/Torrent.cc:3614
 #, c-format
 msgid "Seeding in background...\n"
 msgstr ""
 
-#: src/Torrent.cc:3771
+#: src/Torrent.cc:3788
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""

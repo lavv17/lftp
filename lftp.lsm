@@ -1,7 +1,7 @@
 Begin3
 Title:		LFTP command line file transfer program
-Version:	4.5.0
-Entered-date:	2014-05-23
+Version:	4.5.0.20140528
+Entered-date:	2014-05-28
 Description:	LFTP is a shell-like command line file transfer program. It is
 		reliable: can retry operations and does reget automatically.
 		It can do several transfers simultaneously in background.
@@ -23,7 +23,7 @@ Keywords:	ftp, client, readline, reliable, background, parallel, http,
 Author:		lav@yars.free.net (Alexander V. Lukyanov)
 Maintained-by:	lav@yars.free.net (Alexander V. Lukyanov)
 Primary-site:	ftp.yars.free.net /pub/source/lftp
-		2492 kB lftp-4.5.0.tar.gz
+		2494 kB lftp-4.5.0.20140528.tar.gz
 Alternate-site:	metalab.unc.edu /pub/Linux/system/network/file-transfer
 Platforms:	Unix, G++
 Copying-policy: GNU GPL
