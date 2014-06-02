@@ -305,7 +305,7 @@ public:
    const Error *GetInvalidCause() const { return invalid_cause; }
 
    void Shutdown();
-   bool ShuttingDown() { return shutting_down; }
+   bool ShuttingDown() const { return shutting_down; }
    void PrepareToDie();
 
    bool CanAccept() const;
@@ -337,6 +337,7 @@ public:
    unsigned long long TotalLength() const { return total_length; }
    unsigned PieceLength() const { return piece_length; }
    const char *GetName() const { return name?name.get():metainfo_url.get(); }
+   bool IsDownloading() const { return HasMetadata() && !IsValidating() && !Complete() && !ShuttingDown(); }
 
    void Reconfig(const char *name);
    const char *GetLogContext() { return GetName(); }
@@ -360,7 +361,7 @@ public:
    unsigned long long GetTotalLeft() { return total_left; }
 
    const TaskRefArray<TorrentTracker>& Trackers() { return trackers; }
-   bool HasMetadata() { return metadata!=0; }
+   bool HasMetadata() const { return metadata!=0; }
    void DisconnectPeers();
 
    static void BootstrapDHT(const char *n) {

@@ -1771,7 +1771,8 @@ const xstring& Torrent::Status()
       buf.appendf("complete:%u/%u (%u%%)",complete_pieces,total_pieces,
 	 unsigned((total_length-total_left)*100/total_length));
       buf.append(' ');
-      buf.append(recv_rate.GetETAStrFromSize(total_left));
+      if(min_piece_sources)
+	 buf.append(recv_rate.GetETAStrFromSize(total_left));
       if(end_game)
 	 buf.append(" end-game");
    } else {
@@ -3645,16 +3646,17 @@ int TorrentJob::Do()
 
 xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
 {
+   if(torrent->IsDownloading())
+      torrent->CalcPiecesStats();
    const char *name=torrent->GetName();
    if(name)
       s.appendf("%sName: %s\n",tab,name);
    s.appendf("%s%s\n",tab,torrent->Status().get());
-   if(!torrent->Complete() && torrent->GetRatio()>0)
-      s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
-   if(!torrent->Complete() && !torrent->IsValidating() && torrent->HasMetadata()) {
-      torrent->CalcPiecesStats();
+   if(torrent->IsDownloading()) {
       s.appendf("%spiece availability: min %u, avg %.2f, %d%% available\n",tab,
 	 torrent->MinPieceSources(),torrent->AvgPieceSources(),torrent->PiecesAvailablePct());
+      if(torrent->GetRatio()>0)
+	 s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
    }
 
    if(v>2) {
