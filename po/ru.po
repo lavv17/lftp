@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.5\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-05-28 16:18+0400\n"
+"POT-Creation-Date: 2014-06-02 16:46+0400\n"
 "PO-Revision-Date: 2013-03-14 12:56+0400\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -269,7 +269,7 @@ msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
 #: src/FileAccess.cc:160 src/Fish.cc:981 src/SFtp.cc:1335 src/ftpclass.cc:4348
-#: src/ftpclass.cc:4357 src/Torrent.cc:3150
+#: src/ftpclass.cc:4357 src/Torrent.cc:3174
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -419,7 +419,7 @@ msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
 #: src/Fish.cc:986 src/Http.cc:2100 src/Http.cc:2107 src/SFtp.cc:1341
-#: src/ftpclass.cc:4360 src/Torrent.cc:3153 src/TorrentTracker.cc:619
+#: src/ftpclass.cc:4360 src/Torrent.cc:3177 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -468,8 +468,8 @@ msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp через http прокси не может работать без прокси, установите hftp:proxy."
 
-#: src/Http.cc:1272 src/ftpclass.cc:1345 src/Torrent.cc:2822
-#: src/Torrent.cc:3358 src/TorrentTracker.cc:392
+#: src/Http.cc:1272 src/ftpclass.cc:1345 src/Torrent.cc:2846
+#: src/Torrent.cc:3382 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "невозможно создать сокет для семейства адресов %d"
@@ -675,7 +675,7 @@ msgstr "%s: регулярное выражение `%s': %s\n"
 #: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
 #: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
 #: src/commands.cc:2751 src/commands.cc:3077 src/lftp.cc:267
-#: src/Torrent.cc:3744
+#: src/Torrent.cc:3771
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
@@ -695,7 +695,7 @@ msgstr "неоднозначный аргумент %s для %s"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Соединение с %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:205 src/Torrent.cc:2943
+#: src/NetAccess.cc:205 src/Torrent.cc:2967
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
@@ -2559,91 +2559,91 @@ msgstr "%s ok, %d каталог$|а|ов$ удалено\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d файл$|а|ов$ удалено\n"
 
-#: src/Torrent.cc:567
+#: src/Torrent.cc:568
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:579
+#: src/Torrent.cc:580
 #, fuzzy, c-format
 msgid "next announce in %s"
 msgstr "следующий запрос через %s"
 
-#: src/Torrent.cc:1709 src/Torrent.cc:1712
+#: src/Torrent.cc:1732 src/Torrent.cc:1735
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Получение мета-данных: %s"
 
-#: src/Torrent.cc:1715
+#: src/Torrent.cc:1738
 msgid "Waiting for meta-data..."
 msgstr "Ожидание метаданных..."
 
-#: src/Torrent.cc:1718
+#: src/Torrent.cc:1741
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Проверка: %u/%u (%u%%) %s%s"
 
-#: src/Torrent.cc:1728
+#: src/Torrent.cc:1751
 msgid "Shutting down: "
 msgstr "Останов: "
 
-#: src/Torrent.cc:2825
+#: src/Torrent.cc:2849
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Соединение с узлом %s, порт %u"
 
-#: src/Torrent.cc:2875 src/Torrent.cc:2992
+#: src/Torrent.cc:2899 src/Torrent.cc:3016
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "удалённый узел неожиданно закрыл соединение после %s"
 
-#: src/Torrent.cc:2876 src/Torrent.cc:2993
+#: src/Torrent.cc:2900 src/Torrent.cc:3017
 #, fuzzy
 msgid "peer unexpectedly closed connection"
 msgstr "удалённый узел неожиданно закрыл соединение после %s"
 
-#: src/Torrent.cc:2878 src/Torrent.cc:2879
+#: src/Torrent.cc:2902 src/Torrent.cc:2903
 msgid "peer closed connection (before handshake)"
 msgstr "удалённый узел закрыл соединение (без обмена сообщениями)"
 
-#: src/Torrent.cc:2882 src/Torrent.cc:2995 src/Torrent.cc:2996
+#: src/Torrent.cc:2906 src/Torrent.cc:3019 src/Torrent.cc:3020
 msgid "invalid peer response format"
 msgstr "неверный формат ответа удалённого узла"
 
-#: src/Torrent.cc:2977 src/Torrent.cc:2978
+#: src/Torrent.cc:3001 src/Torrent.cc:3002
 msgid "peer closed connection"
 msgstr "удалённый узел закрыл соединение"
 
-#: src/Torrent.cc:3155
+#: src/Torrent.cc:3179
 msgid "Handshaking..."
 msgstr "Начало обмена сообщениями..."
 
-#: src/Torrent.cc:3413
+#: src/Torrent.cc:3437
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Не удалось выбрать порт из указанного диапазона torrent:port-range"
 
-#: src/Torrent.cc:3463
+#: src/Torrent.cc:3487
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Принято соединение от [%s]:%d"
 
-#: src/Torrent.cc:3549
+#: src/Torrent.cc:3573
 msgid "peer handshake timeout"
 msgstr "превышено время ожидания при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3561
+#: src/Torrent.cc:3585
 msgid "peer short handshake"
 msgstr "получено усечённое сообщение при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3563
+#: src/Torrent.cc:3587
 msgid "peer closed just accepted connection"
 msgstr "удалённый узел закрыл только что принятое соединение"
 
-#: src/Torrent.cc:3614
+#: src/Torrent.cc:3638
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Раздача продолжится в фоновом режиме...\n"
 
-#: src/Torrent.cc:3788
+#: src/Torrent.cc:3815
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Пожалуйста, укажите torrent-файл или URL.\n"

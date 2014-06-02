@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-05-28 16:18+0400\n"
+"POT-Creation-Date: 2014-06-02 16:46+0400\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -267,7 +267,7 @@ msgid "File cannot be accessed"
 msgstr "Impossible d'accéder au fichier"
 
 #: src/FileAccess.cc:160 src/Fish.cc:981 src/SFtp.cc:1335 src/ftpclass.cc:4348
-#: src/ftpclass.cc:4357 src/Torrent.cc:3150
+#: src/ftpclass.cc:4357 src/Torrent.cc:3174
 msgid "Not connected"
 msgstr "Non connecté"
 
@@ -415,7 +415,7 @@ msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
 #: src/Fish.cc:986 src/Http.cc:2100 src/Http.cc:2107 src/SFtp.cc:1341
-#: src/ftpclass.cc:4360 src/Torrent.cc:3153 src/TorrentTracker.cc:619
+#: src/ftpclass.cc:4360 src/Torrent.cc:3177 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Connexion..."
 
@@ -464,8 +464,8 @@ msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:1272 src/ftpclass.cc:1345 src/Torrent.cc:2822
-#: src/Torrent.cc:3358 src/TorrentTracker.cc:392
+#: src/Http.cc:1272 src/ftpclass.cc:1345 src/Torrent.cc:2846
+#: src/Torrent.cc:3382 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
@@ -673,7 +673,7 @@ msgstr "%s : expression rationnelle « %s » : %s\n"
 #: src/commands.cc:2234 src/commands.cc:2396 src/commands.cc:2424
 #: src/commands.cc:2431 src/commands.cc:2717 src/commands.cc:2744
 #: src/commands.cc:2751 src/commands.cc:3077 src/lftp.cc:267
-#: src/Torrent.cc:3744
+#: src/Torrent.cc:3771
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Essayez « help %s » pour plus d'informations.\n"
@@ -693,7 +693,7 @@ msgstr "Argument %s ambigu pour %s"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Connexion à %s%s (%s) port %u"
 
-#: src/NetAccess.cc:205 src/Torrent.cc:2943
+#: src/NetAccess.cc:205 src/Torrent.cc:2967
 msgid "Timeout - reconnecting"
 msgstr "Temps écoulé - reconnexion"
 
@@ -2673,96 +2673,96 @@ msgstr "%s ok, %d répertoire$ supprimé|s supprimés$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d fichier$ supprimé|s supprimés$\n"
 
-#: src/Torrent.cc:567
+#: src/Torrent.cc:568
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:579
+#: src/Torrent.cc:580
 #, c-format
 msgid "next announce in %s"
 msgstr ""
 
-#: src/Torrent.cc:1709 src/Torrent.cc:1712
+#: src/Torrent.cc:1732 src/Torrent.cc:1735
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1715
+#: src/Torrent.cc:1738
 #, fuzzy
 msgid "Waiting for meta-data..."
 msgstr "\tEn attente de la commande\n"
 
-#: src/Torrent.cc:1718
+#: src/Torrent.cc:1741
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1728
+#: src/Torrent.cc:1751
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2825
+#: src/Torrent.cc:2849
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Connexion à %s%s (%s) port %u"
 
-#: src/Torrent.cc:2875 src/Torrent.cc:2992
+#: src/Torrent.cc:2899 src/Torrent.cc:3016
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "Connexion interrompue par le tiers"
 
-#: src/Torrent.cc:2876 src/Torrent.cc:2993
+#: src/Torrent.cc:2900 src/Torrent.cc:3017
 #, fuzzy
 msgid "peer unexpectedly closed connection"
 msgstr "Connexion interrompue par le tiers"
 
-#: src/Torrent.cc:2878 src/Torrent.cc:2879
+#: src/Torrent.cc:2902 src/Torrent.cc:2903
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "Connexion interrompue par le tiers"
 
-#: src/Torrent.cc:2882 src/Torrent.cc:2995 src/Torrent.cc:2996
+#: src/Torrent.cc:2906 src/Torrent.cc:3019 src/Torrent.cc:3020
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "format de réponse du serveur invalide"
 
-#: src/Torrent.cc:2977 src/Torrent.cc:2978
+#: src/Torrent.cc:3001 src/Torrent.cc:3002
 #, fuzzy
 msgid "peer closed connection"
 msgstr "Connexion interrompue par le tiers"
 
-#: src/Torrent.cc:3155
+#: src/Torrent.cc:3179
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3413
+#: src/Torrent.cc:3437
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3463
+#: src/Torrent.cc:3487
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Connexion données acceptée du (%s) port %u"
 
-#: src/Torrent.cc:3549
+#: src/Torrent.cc:3573
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3561
+#: src/Torrent.cc:3585
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3563
+#: src/Torrent.cc:3587
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "Connexion interrompue par le tiers"
 
-#: src/Torrent.cc:3614
+#: src/Torrent.cc:3638
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "Émission des commandes..."
 
-#: src/Torrent.cc:3788
+#: src/Torrent.cc:3815
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""
