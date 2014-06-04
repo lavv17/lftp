@@ -40,7 +40,9 @@ int main(int argc,char **argv)
 	 f->Close();
 	 break;
       }
+      buf.SpaceAdd(res);
       write(1,buf.Get(),res);
+      buf.Skip(res);
    }
    SMTask::Delete(f);
    return 0;

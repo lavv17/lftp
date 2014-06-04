@@ -9,18 +9,19 @@ int main(int argc,char **argv)
 {
    program_name=argv[0];
 
+   Log::global=new Log;
    Log::global->SetOutput(2,false);
    Log::global->SetLevel(5);
    Log::global->Enable();
    Log::global->ShowNothing();
 
-   FileAccess *f=FileAccess::New("http","ftp.yar.ru");
+   FileAccess *f=FileAccess::New("http","lftp.yar.ru");
    if(!f)
    {
       fprintf(stderr,"http: unknown protocol, cannot create http session\n");
       return 1;
    }
-   f->Open("/pub/source/lftp/",f->RETRIEVE);
+   f->Open("/ftp/",f->RETRIEVE);
    Buffer buf;
    for(;;)
    {
@@ -42,7 +43,9 @@ int main(int argc,char **argv)
 	 f->Close();
 	 return 0;
       }
+      buf.SpaceAdd(res);
       write(1,buf.Get(),res);
+      buf.Skip(res);
    }
    SMTask::Delete(f);
    return 0;
