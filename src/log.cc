@@ -26,7 +26,7 @@
 #include "SMTask.h"
 #include "strftime.h"
 
-SMTaskRef<Log> Log::global(new Log);
+SMTaskRef<Log> Log::global;
 
 void Log::Init()
 {

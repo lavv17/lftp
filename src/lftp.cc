@@ -546,6 +546,7 @@ int   main(int argc,char **argv)
    top_exec=new CmdExec(0,0);
    hook_signals();
    top_exec->SetStatusLine(new StatusLine(1));
+   Log::global=new Log;
    Log::global->SetCB(tty_clear);
 
    source_if_exist(SYSCONFDIR"/lftp.conf");
