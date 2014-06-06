@@ -530,6 +530,7 @@ void Torrent::AnnounceDHT()
 {
    if(is_private)
       return;
+   CleanPeers();
    if(dht)
       dht->AnnouncePeer(this);
 #if INET6
@@ -2854,11 +2855,12 @@ int TorrentPeer::Do()
       if(res==-1 && errno!=EINPROGRESS && errno!=EALREADY && errno!=EISCONN)
       {
 	 int e=errno;
-	 LogError(4,"connect(%s): %s\n",GetName(),strerror(e));
-	 Disconnect(strerror(e));
-	 if(FA::NotSerious(e))
+	 const char *error=strerror(e);
+	 LogError(4,"connect(%s): %s\n",GetName(),error);
+	 Disconnect(error);
+	 if(FA::NotSerious(e) && !ActivityTimedOut())
 	    return MOVED;
-	 SetError(strerror(e));
+	 SetError(error);
 	 return MOVED;
       }
       if(res==-1 && errno!=EISCONN) {
