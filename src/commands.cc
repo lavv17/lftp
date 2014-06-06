@@ -334,9 +334,10 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "If the second directory is omitted, basename of first directory is used.\n"
 	 "If both directories are omitted, current local and remote directories are used.\n"
 	 )},
-   {"mkdir",   cmd_mkdir,  N_("mkdir [-p] <dirs>"),
+   {"mkdir",   cmd_mkdir,  N_("mkdir [OPTS] <dirs>"),
 	 N_("Make remote directories\n"
-	 " -p  make all levels of path\n")},
+	 " -p  make all levels of path\n"
+	 " -q  be quiet, suppress messages\n")},
    {"module",  cmd_module, N_("module name [args]"),
 	 N_("Load module (shared object). The module should contain function\n"
 	 "   void module_init(int argc,const char *const *argv)\n"

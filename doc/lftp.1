@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "22 May 2014"
+.TH lftp 1 "06 Jun 2014"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.5.0.
+This man page documents lftp version 4.5.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -622,9 +622,12 @@ them only when LIST command is used with \-a option. In such case try to use
 `set ftp:list-options \-a'.
 
 .B mkdir
-.RB "[" \-p "] " \fIdir(s)\fP
+.RB "[" \-p "] "
+.RB "[" \-q "] "
+.I dir(s)
 .PP
 Make remote directories. If \-p is used, make all components of paths.
+The \-q option makes mkdir quiet and suppresses messages.
 
 .B module
 .IR "module " [ " args " ]
