@@ -41,14 +41,14 @@ mkdirJob::mkdirJob(FileAccess *s,ArgV *a)
    opt_p=false;
 
    int opt;
-   while((opt=args->getopt("pq"))!=EOF)
+   while((opt=args->getopt("pf"))!=EOF)
    {
       switch(opt)
       {
       case 'p':
 	 opt_p=true;
 	 break;
-      case 'q':
+      case 'f':
 	 quiet=true;
 	 break;
       default:
@@ -59,7 +59,7 @@ mkdirJob::mkdirJob(FileAccess *s,ArgV *a)
    first=curr=args->getnext();
    if(curr==0)
    {
-      fprintf(stderr,"Usage: %s [-p] [-q] paths...\n",op);
+      fprintf(stderr,"Usage: %s [-p] [-f] paths...\n",op);
       return;
    }
 }

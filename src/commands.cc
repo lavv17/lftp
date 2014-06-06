@@ -337,7 +337,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"mkdir",   cmd_mkdir,  N_("mkdir [OPTS] <dirs>"),
 	 N_("Make remote directories\n"
 	 " -p  make all levels of path\n"
-	 " -q  be quiet, suppress messages\n")},
+	 " -f  be quiet, suppress messages\n")},
    {"module",  cmd_module, N_("module name [args]"),
 	 N_("Load module (shared object). The module should contain function\n"
 	 "   void module_init(int argc,const char *const *argv)\n"
