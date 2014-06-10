@@ -92,6 +92,8 @@ CMD(at);    CMD(find);   CMD(command); CMD(module);
 CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
 CMD(repeat);CMD(get1);   CMD(tasks);   CMD(torrent);
 
+CMD(empty); CMD(notempty); CMD(true); CMD(false);
+
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
 #endif
@@ -489,6 +491,10 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Same as more, but filter each file through bzcat\n")},
 
    {".tasks",  cmd_tasks,  0,0},
+   {".empty",  cmd_empty,  0,0},
+   {".notempty",cmd_notempty,0,0},
+   {".true",   cmd_true,   0,0},
+   {".false",  cmd_false,  0,0},
 };
 const int CmdExec::static_cmd_table_length=sizeof(static_cmd_table)/sizeof(static_cmd_table[0]);
 
@@ -1120,8 +1126,16 @@ Job *CmdExec::builtin_glob()
    const char *op=args->a0();
    int opt;
    GlobURL::type_select glob_type=GlobURL::FILES_ONLY;
+   const char *cmd=0;
 
-   while((opt=args->getopt("+adf"))!=EOF)
+   static struct option glob_options[]=
+   {
+      {"exist",no_argument,0,'e'},
+      {"not-exist",no_argument,0,'E'},
+      {0}
+   };
+
+   while((opt=args->getopt_long("+adf",glob_options))!=EOF)
    {
       switch(opt)
       {
@@ -1134,6 +1148,12 @@ Job *CmdExec::builtin_glob()
       case('f'):
 	 glob_type=GlobURL::FILES_ONLY;
 	 break;
+      case('e'):
+	 cmd=".notempty";
+	 break;
+      case('E'):
+	 cmd=".empty";
+	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),op);
 	 return 0;
@@ -1141,6 +1161,8 @@ Job *CmdExec::builtin_glob()
    }
    while(args->getindex()>1)
       args->delarg(1);	   // remove options.
+   if(cmd)
+      args->insarg(1,cmd);
    if(args->count()<2)
    {
       eprintf(_("Usage: %s [OPTS] command args...\n"),op);
@@ -3345,6 +3367,27 @@ CMD(tasks)
    printf("task_count=%d\n",SMTask::TaskCount());
    SMTask::PrintTasks();
    exit_code=0;
+   return 0;
+}
+
+CMD(empty)
+{
+   exit_code=(args->count()>1 ? 1 : 0);
+   return 0;
+}
+CMD(notempty)
+{
+   exit_code=(args->count()>1 ? 0 : 1);
+   return 0;
+}
+CMD(true)
+{
+   exit_code=0;
+   return 0;
+}
+CMD(false)
+{
+   exit_code=1;
    return 0;
 }
 

@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "06 Jun 2014"
+.TH lftp 1 "10 Jun 2014"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -356,11 +356,11 @@ position in target file to write data at
 T}
 .TE
 .P
-.BR glob " [" \-d "] [" \-a "]"
-.RB "[" \-f "] \fIcommand patterns\fP"
+.B glob
+.RI " [" OPTS "] "
+.RI [ command "] " patterns
 .PP
-Glob given patterns containing metacharacters and pass result to given command.
-E.g. ``glob echo *''.
+Glob given patterns containing metacharacters and pass result to given command or return appropriate exit code.
 .Sp
 .in +0.5i
 .TS
@@ -368,8 +368,16 @@ l	lx	.
 \-f	plain files (default)
 \-d	directories
 \-a	all types
+\-\-exist	return zero exit code when the patterns expand to non-empty list
+\-\-not\-exist	return zero exit code when the patterns expand to an empty list
 .TE
-.P
+.PP
+Examples:
+.Ds
+glob echo *
+glob --exist *.csv && echo "There are *.csv files"
+.De
+
 .B help
 [\fIcmd\fP]
 .PP
