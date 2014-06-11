@@ -299,10 +299,7 @@ class FileCopyPeerFA : public FileCopyPeer
 
    bool fxp;   // FXP (ftp<=>ftp copy) active
 
-   time_t try_time;
-   int retries;
-   off_t upload_watermark;
-
+   UploadState upload_state;
    int redirections;
 
    SMTaskRef<FileVerificator> verify;

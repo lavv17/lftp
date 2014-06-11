@@ -38,7 +38,6 @@ void NetAccess::Init()
    resolver=0;
    idle_timer.SetResource("net:idle",0);
    timeout_timer.SetResource("net:timeout",0);
-   max_retries=0;
    max_persist_retries=0;
    persist_retries=0;
    socket_buffer=0;

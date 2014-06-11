@@ -130,6 +130,7 @@ protected:
 
    Timer reconnect_timer;
    int retries;
+   int max_retries;
 
    bool	 mkdir_p;
 
@@ -246,8 +247,8 @@ public:
    virtual int Buffered();
    virtual int StoreStatus() = 0;
    virtual bool IOReady();
-   off_t GetPos() { return pos; }
-   off_t GetRealPos() { return real_pos<0?pos:real_pos; }
+   off_t GetPos() const { return pos; }
+   off_t GetRealPos() const { return real_pos<0?pos:real_pos; }
    void SeekReal() { pos=GetRealPos(); }
    void RereadManual() { norest_manual=true; }
 
@@ -353,9 +354,10 @@ public:
    int GetPriority() const { return priority; }
 
    // not pretty (FIXME)
-   int GetRetries() { return retries; }
+   int GetRetries() const { return retries; }
    void SetRetries(int r) { retries=r; }
-   time_t GetTryTime() { return reconnect_timer.GetStartTime(); }
+   int GetMaxRetries() const { return max_retries; }
+   time_t GetTryTime() const { return reconnect_timer.GetStartTime(); }
    void SetTryTime(time_t t);
 
    const char *GetLogContext() { return hostname; }
@@ -522,6 +524,38 @@ public:
    void Skip(int len) { buf->Skip(len); }
 
    void UseColor(bool c=true) { color=c; }
+};
+
+class UploadState
+{
+   time_t try_time;
+   off_t pos_watermark;
+   int retries;
+public:
+   UploadState() : try_time(NO_DATE), pos_watermark(0),retries(-1) {}
+   void Clear() {
+      try_time=NO_DATE;
+      pos_watermark=0;
+      retries=-1;
+   }
+   void Save(const FileAccess *session) {
+      try_time=session->GetTryTime();
+      retries=session->GetRetries();
+      off_t pos=session->GetRealPos();
+      int max_retries=session->GetMaxRetries();
+      if(max_retries>0 && retries>=max_retries)
+	 pos=0;
+      if(pos_watermark<pos) {
+	 pos_watermark=pos;
+	 retries=-1;
+      }
+   }
+   void Restore(const FileAccessRef& session) {
+      if(try_time!=NO_DATE)
+	 session->SetTryTime(try_time);
+      if(retries>=0)
+	 session->SetRetries(retries+1);
+   }
 };
 
 #endif /* FILEACCESS_H */

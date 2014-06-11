@@ -35,7 +35,6 @@ protected:
    void	 ClearPeer();
    void	 NextPeer();
 
-   int	 max_retries;
    int	 max_persist_retries;
    int	 persist_retries;
 
