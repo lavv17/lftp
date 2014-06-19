@@ -181,6 +181,7 @@ static ResType lftp_vars[] = {
    {"ftp:fxp-passive-source",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"ftp:fxp-passive-sscn",	 "yes",   ResMgr::BoolValidate,ResMgr::NoClosure},
    {"ftp:home",			 "",	  0,0},
+   {"ftp:site"			 "",	  0,0},
    {"ftp:site-group",		 "",	  0,0},
    {"ftp:lang",			 "",	  0,0},
    {"ftp:list-empty-ok",	 "no",	  0,0},

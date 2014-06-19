@@ -327,6 +327,7 @@ private:
    void	SendSiteIdle();
    void	SendAcct();
    void	SendSiteGroup();
+   void	SendSiteCommands();
    void	SendUTimeRequest();
    void SendAuth(const char *auth);
    void TuneConnectionAfterFEAT();

@@ -952,6 +952,7 @@ Ftp::Connection::Connection(const char *c)
    : closure(c), send_cmd_buffer(DirectedBuffer::PUT)
 {
    control_sock=-1;
+   telnet_layer_send=0;
    data_sock=-1;
    aborted_data_sock=-1;
 #if USE_SSL
@@ -1559,6 +1560,7 @@ int   Ftp::Do()
 	 TuneConnectionAfterFEAT();
       SendSiteGroup();
       SendSiteIdle();
+      SendSiteCommands();
 
       if(!home_auto)
       {
@@ -2647,6 +2649,23 @@ void Ftp::SendSiteGroup()
       return;
    conn->SendCmd2("SITE GROUP",group);
    expect->Push(Expect::IGNORE);
+}
+void Ftp::SendSiteCommands()
+{
+   const char *site_commands=QueryStringWithUserAtHost("site");
+   if(!site_commands)
+      return;
+   char *cmd=alloca_strdup(site_commands);
+   for(;;) {
+      char *sep=strstr(cmd,"  ");
+      if(sep)
+	 *sep=0;
+      conn->SendCmd2("SITE",cmd);
+      expect->Push(Expect::IGNORE);
+      if(!sep)
+	 break;
+      cmd=sep+2;
+   }
 }
 
 void Ftp::SendArrayInfoRequests()
