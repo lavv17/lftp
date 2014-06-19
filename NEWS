@@ -2,7 +2,7 @@ Version 4.5.2 - 2014-06-11
 
 * fixed a coredump on startup when compiled with certain gcc versions.
 * mkdir -q option for quiet operation.
-* glob --exists and --not-exist options.
+* glob --exist and --not-exist options.
 * improved torrent status, show piece availability statistics.
 * remove unconnectable torrent peers on trackerless torrents.
 
