@@ -1565,7 +1565,7 @@ void Torrent::ScanPeers() {
       const char *blacklist_time="2h";
       if(peer->Failed()) {
 	 LogError(2,"peer %s failed: %s",peer->GetName(),peer->ErrorText());
-      } else if(peer->Disconnected()) {
+      } else if(peer->Disconnected() && peer->ActivityTimedOut()) {
 	 LogNote(4,"peer %s disconnected",peer->GetName());
       } else if(peer->myself) {
 	 LogNote(4,"removing myself-connected peer %s",peer->GetName());
@@ -1574,6 +1574,7 @@ void Torrent::ScanPeers() {
 	 LogNote(4,"removing duplicate peer %s",peer->GetName());
       } else if(complete && peer->Seed()) {
 	 LogNote(4,"removing unneeded peer %s (%s)",peer->GetName(),peers[i]->Status());
+	 blacklist_time="1d";
       } else {
 	 // keep the peer.
 	 continue;
@@ -3560,7 +3561,8 @@ void Torrent::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remot
 TorrentDispatcher::TorrentDispatcher(int s,const sockaddr_u *a)
    : sock(s), addr(*a),
      recv_buf(new IOBufferFDStream(new FDStream(sock,"<input-socket>"),IOBuffer::GET)),
-     timeout_timer(60)
+     timeout_timer(60),
+     peer_name(addr.to_xstring())
 {
 }
 TorrentDispatcher::~TorrentDispatcher()

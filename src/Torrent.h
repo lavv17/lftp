@@ -785,11 +785,12 @@ class TorrentDispatcher : public SMTask, protected ProtoLog
    const sockaddr_u addr;
    SMTaskRef<IOBuffer> recv_buf;
    Timer timeout_timer;
+   xstring_c peer_name;
 public:
    TorrentDispatcher(int s,const sockaddr_u *a);
    ~TorrentDispatcher();
    int Do();
-   const char *GetLogContext() { return "torrent"; }
+   const char *GetLogContext() { return peer_name; }
 };
 
 #include "Job.h"
