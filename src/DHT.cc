@@ -119,7 +119,7 @@ int DHT::Do()
       if(nodes.count()>MAX_NODES) {
 	 // remove some nodes.
 	 int to_remove=nodes.count()-MAX_NODES;
-	 for(Node *n=nodes.each_begin(); n; n=nodes.each_next()) {
+	 for(Node *n=nodes.each_begin(); n && to_remove>0; n=nodes.each_next()) {
 	    if(!n->IsGood() && !n->in_routes) {
 	       LogNote(9,"removing node %s (not good)",n->GetName());
 	       RemoveNode(n);
@@ -518,6 +518,10 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       LogError(2,"got DHT reply with unknown `t' from %s",src.to_string());
       return;
    }
+   if(req->addr!=src) {
+      LogError(2,"got DHT reply from %s instead of %s",src.to_string(),req->addr.to_string());
+      return;
+   }
 
    const xstring& q=req->data->lookup_str("q");
    if(y.eq("r")) {
@@ -747,10 +751,6 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,S
 void DHT::RemoveNode(Node *n)
 {
    RemoveRoute(n);
-   for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
-      if(r->addr==n->addr)
-	 sent_req.remove(sent_req.each_key());
-   }
    node_by_addr.remove(n->addr.compact());
    nodes.remove(n->id);
 }
