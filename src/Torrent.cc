@@ -3549,8 +3549,7 @@ void Torrent::Dispatch(const xstring& info_hash,int sock,const sockaddr_u *remot
 {
    Torrent *t=FindTorrent(info_hash);
    if(!t) {
-      LogError(3,"peer %s sent unknown info_hash=%s in handshake",
-	 remote_addr->to_string(),info_hash.hexdump());
+      LogError(3,_("peer sent unknown info_hash=%s in handshake"),info_hash.hexdump());
       close(sock);
       Delete(recv_buf);
       return;
