@@ -74,8 +74,11 @@ union sockaddr_u
 #endif
       return sizeof(*this);
    }
-   int operator==(const sockaddr_u &o) const {
+   bool operator==(const sockaddr_u &o) const {
       return !memcmp(this,&o,addr_len());
+   }
+   bool operator!=(const sockaddr_u &o) const {
+      return memcmp(this,&o,addr_len());
    }
    const char *address() const;
    int port() const;
