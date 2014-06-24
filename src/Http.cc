@@ -869,11 +869,6 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(bs<0) // try to workaround broken servers
 	 bs+=0x100000000LL;
       body_size=bs;
-      if(pos==0 && mode!=STORE && mode!=MAKE_DIR && !inflate)
-	 entity_size=body_size;
-      if(pos==0 && opt_size && H_2XX(status_code) && !inflate)
-	 *opt_size=body_size;
-
       if(mode==ARRAY_INFO && H_2XX(status_code)
       && xstrcmp(last_method,"PROPFIND"))
       {
@@ -967,19 +962,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       return;
 
    case_hh("Content-Encoding",'C')
-      if(!QueryBool("decode",hostname))
-	 return;
-      if(!strcmp(value,"deflate")
-      || !strcmp(value,"gzip") || !strcmp(value,"compress")
-      || !strcmp(value,"x-gzip") || !strcmp(value,"x-compress")) {
-	 // inflated size if unknown beforehand
-	 entity_size=NO_SIZE;
-	 if(opt_size)
-	    *opt_size=NO_SIZE;
-	 // start the inflation
-	 inflate=new DirectedBuffer(DirectedBuffer::GET);
-	 inflate->SetTranslator(new DataInflator());
-      }
+      content_encoding.set(value);
       return;
 
    case_hh("Accept-Ranges",'A')
@@ -1710,6 +1693,26 @@ int Http::Do()
 	 cache->SetDirectory(this, "", !cwd.is_file);
 	 state=DONE;
 	 return MOVED;
+      }
+
+      // Many servers send application/x-gzip with x-gzip encoding,
+      // don't decode in such a case.
+      if(CompressedContentEncoding() && !CompressedContentType()
+      && QueryBool("decode",hostname)) {
+	 // inflated size is unknown beforehand
+	 entity_size=NO_SIZE;
+	 if(opt_size)
+	    *opt_size=NO_SIZE;
+	 // start the inflation
+	 inflate=new DirectedBuffer(DirectedBuffer::GET);
+	 inflate->SetTranslator(new DataInflator());
+      }
+      // sometimes it's possible to derive entity size from body size.
+      if(entity_size==NO_SIZE && body_size!=NO_SIZE
+      && pos==0 && mode!=STORE && mode!=MAKE_DIR && !inflate) {
+	 entity_size=body_size;
+	 if(opt_size && H_2XX(status_code))
+	    *opt_size=body_size;
       }
 
       LogNote(9,_("Receiving body..."));
@@ -2580,6 +2583,27 @@ Http::atotm (const char *time_string)
    return ut;
 }
 
+bool Http::IsCompressed(const char *s)
+{
+   static const char *const values[] = {
+      "x-gzip", "gzip", "deflate", "compress", "x-compress", NULL
+   };
+   for(const char *const *v=values; *v; v++)
+      if(!strcmp(s,*v))
+	 return true;
+   return false;
+}
+
+bool Http::CompressedContentEncoding() const
+{
+   return content_encoding && IsCompressed(content_encoding);
+}
+bool Http::CompressedContentType() const
+{
+   static const char app[]="application/";
+   return entity_content_type && entity_content_type.begins_with(app)
+      && IsCompressed(entity_content_type+sizeof(app)-1);
+}
 
 #include "modconfig.h"
 #ifdef MODULE_PROTO_HTTP

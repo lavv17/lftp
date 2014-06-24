@@ -140,6 +140,10 @@ class Http : public NetAccess
 
    Ref<DirectedBuffer> inflate;
    SMTaskRef<IOBuffer> propfind;
+   xstring_c content_encoding;
+   static bool IsCompressed(const char *s);
+   bool CompressedContentEncoding() const;
+   bool CompressedContentType() const;
 
    bool no_ranges;
    bool seen_ranges_bytes;
