@@ -62,10 +62,36 @@ CDECL int vsnprintf(char *,size_t,const char *,va_list);
 CDECL int snprintf(char *,size_t,const char *,...);
 #endif
 
-int xstrcmp(const char *s1,const char *s2);
-int xstrncmp(const char *s1,const char *s2,size_t len);
-int xstrcasecmp(const char *s1,const char *s2);
-size_t xstrlen(const char *s);
+static inline int xstrcmp(const char *s1,const char *s2)
+{
+   if(s1==s2)
+      return 0;
+   if(s1==0 || s2==0)
+      return 1;
+   return strcmp(s1,s2);
+}
+static inline int xstrncmp(const char *s1,const char *s2,size_t len)
+{
+   if(s1==s2 || len==0)
+      return 0;
+   if(s1==0 || s2==0)
+      return 1;
+   return strncmp(s1,s2,len);
+}
+static inline int xstrcasecmp(const char *s1,const char *s2)
+{
+   if(s1==s2)
+      return 0;
+   if(s1==0 || s2==0)
+      return 1;
+   return strcasecmp(s1,s2);
+}
+static inline size_t xstrlen(const char *s)
+{
+   if(s==0)
+      return 0;
+   return strlen(s);
+}
 
 #include <stdarg.h>
 #include "xmalloc.h"
@@ -112,8 +138,8 @@ public:
    void truncate(size_t n=0) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
    bool begins_with(const char *s) const { return !strncmp(buf,s,strlen(s)); };
-   bool eq(const char *s) { return !xstrcmp(buf,s); }
-   bool ne(const char *s) { return !eq(s); }
+   bool eq(const char *s) const { return !xstrcmp(buf,s); }
+   bool ne(const char *s) const { return !eq(s); }
    size_t length() const { return xstrlen(buf); }
    void set_length(size_t n) { if(buf) buf[n]=0; }
 
