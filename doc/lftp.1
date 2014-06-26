@@ -109,7 +109,8 @@ context, command `queue' to queue commands for sequential execution
 for current server, and much more.
 .PP
 On startup, \fBlftp\fP executes \fI/etc/lftp.conf\fP and then \fI~/.lftprc\fP and
-\fI~/.lftp/rc\fP. You can place aliases and `set' commands there. Some
+\fI~/.lftp/rc\fP (or \fI~/.config/lftp/rc\fP if \fI~/.lftp\fP does not exist).
+You can place aliases and `set' commands there. Some
 people prefer to see full protocol debug, use `debug' to turn the
 debug on. Use `debug 3' to see only greeting messages and error
 messages.
@@ -1025,8 +1026,8 @@ Same as more, but filter each file through zcat. (See also \fBcat\fR,
 
 .SS Settings
 .PP
-On startup, lftp executes
-.IR "~/.lftprc " and " ~/.lftp/rc" "."
+On startup, lftp executes \fI~/.lftprc\fP and \fI~/.lftp/rc\fP (or
+\fI~/.config/lftp/rc\fP if \fI~/.lftp\fP does not exist).
 You can place aliases
 and `set' commands there. Some people prefer to see full protocol
 debug, use `debug' to turn the debug on.
@@ -1040,7 +1041,7 @@ has the following settable variables (you can also use
 `set \-a' to see all variables and their values):
 .TP
 .BR bmk:save-passwords \ (boolean)
-save plain text passwords in ~/.lftp/bookmarks on `bookmark add' command.
+save plain text passwords in \fI~/.local/share/lftp/bookmarks\fP or \fI~/.lftp/bookmarks\fP on `bookmark add' command.
 Off by default.
 .TP
 .BR cache:cache-empty-listings \ (boolean)
@@ -1202,11 +1203,11 @@ completion with \fBMeta-Tab\fP when \fBcmd:remote-completion\fP is false or
 when the guess is wrong.
 .TP
 .BR cmd:save-cwd-history \ (boolean)
-when true, lftp saves last CWD of each site to \fI~/.lftp/cwd_history\fR,
+when true, lftp saves last CWD of each site to \fI~/.local/share/lftp/cwd_history\fR or \fI~/.lftp/cwd_history\fR,
 allowing to do ``cd -'' after lftp restart. Default is true.
 .TP
 .BR cmd:save-rl-history \ (boolean)
-when true, lftp saves readline history to \fI~/.lftp/rl_history\fR on exit.
+when true, lftp saves readline history to \fI~/.local/share/lftp/rl_history\fR or \fI~/.lftp/rl_history\fR on exit.
 Default is true.
 .TP
 .BR cmd:show-status \ (booleam)
@@ -1944,7 +1945,8 @@ explicit retracker URL, e.g. `http://retracker.local/announce'.
 .TP
 .BR torrent:save-metadata \ (boolean)
 when true, lftp saves metadata of each torrent it works with to
-`~/.lftp/torrent/md' directory and loads it from there if necessary.
+\fI~/.local/share/lftp/torrent/md\fP or \fI~/.lftp/torrent/md\fP directory
+and loads it from there if necessary.
 .TP
 .BR torrent:seed-max-time " (time interval)"
 maximum seed time. After this period of time a complete torrent shuts down
@@ -1985,8 +1987,8 @@ show terse ETA (only high order parts). Default is true.
 .BR xfer:log \ (boolean)
 when true, lftp logs transfers to a file from xfer:log-file setting.
 .TP
-.BR xfer:log-file \ (path to file)
-the file to log transfers to. Default is \fI~/.lftp/transfer_log\fR.
+.BR xfer:log-file " (path to file)"
+the file to log transfers to. Default is \fI~/.local/share/lftp/transfer_log\fR or \fI~/.lftp/transfer_log\fR.
 .TP
 .BR xfer:make-backup \ (boolean)
 when true, lftp renames pre-existing file adding ``~'' suffix instead of overwriting it.
@@ -2106,8 +2108,9 @@ Used to set initial net:no-proxy variable.
 .IP "\fBLFTP_MODULE_PATH\fP"
 Used to set initial module:path variable.
 .IP "\fBLFTP_HOME\fP"
-Used to locate the directory that stores user-specific configuration files.  If
-unset, \fI~/.lftp\fR will be used.
+Used to locate the directory that stores user-specific configuration files. If
+unset, \fI~/.lftp\fR will be used. Please note that if this directory does not
+exist, then XDG directories will be used.
 .IP "\fBLS_COLORS\fP"
 used to set initial color:dir-colors variable.
 .IP "\fBXDG_CONFIG_DIR\fP, \fBXDG_DATA_DIR\fP, \fBXDG_CACHE_DIR\fP"
@@ -2124,30 +2127,35 @@ configure option. It is \fI/etc\fR when prefix is \fI/usr\fR,
 \fI/usr/local/etc\fR by default.
 
 .TP
-.I "~/.lftp/rc," "~/.lftprc"
+.I "~/.config/lftp/rc \fPor\fI ~/.lftp/rc, ~/.lftprc"
 These files are executed on lftp startup after \fI/etc/lftp.conf\fR.
 .TP
-.I "~/.lftp/log"
+.I "~/.local/share/lftp/log \fPor\fI ~/.lftp/log"
 The file things are logged to when lftp moves into the background in
 nohup mode.
 .TP
-.I "~/.lftp/transfer_log"
+.I "~/.local/share/lftp/transfer_log \fPor\fI ~/.lftp/transfer_log"
 The file transfers are logged to when xfer:log setting is set to `yes'.
 The location can be changed by xfer:log-file setting.
 .TP
-.I "~/.lftp/bookmarks"
+.I "~/.local/share/lftp/bookmarks \fPor\fI ~/.lftp/bookmarks"
 The file is used to store lftp's bookmarks.  See the \fBbookmark\fR
 command.
 .TP
-.I "~/.lftp/cwd_history"
+.I "~/.local/share/lftp/cwd_history \fPor\fI ~/.lftp/cwd_history"
 The file is used to store last working directories for each site visited.
 .TP
-.I "~/.lftp/bg/"
+.I "~/.local/share/lftp/bg/ \fPor\fI ~/.lftp/bg/"
 The directory is used to store named sockets for backgrounded lftp processes.
 .TP
-.I "~/.lftp/DHT/""
+.I "~/.cache/lftp/DHT/ \fPor\fI ~/.lftp/DHT/""
 The directory is used to store DHT id and nodes cache for IPv4 and IPv6.
 File name suffix is the host name.
+.TP
+.I "~/.local/share/lftp/torrent/md/ \fPor\fI ~/.lftp/torrent/md/""
+The directory is used to store torrent metadata. It is especially useful
+for magnet links, cached metadata can be loaded from the directory.
+It can also serve as torrent history, file names are the info_hash of torrents.
 .TP
 .I "~/.netrc"
 The file is consulted to get default login and password to FTP server.
