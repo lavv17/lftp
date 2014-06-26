@@ -1,10 +1,10 @@
-** lftp-4.4.x
+** lftp-4.5.x
 
 This package `lftp' contains the following components:
 
    lftp
       sophisticated command line file transfer program (ftp/http client,
-      also supports fish protocol and file URLs).
+      also supports several other protocols).
 
    lftpget
       shell script for downloading by URL, it calls `lftp -c'.
@@ -43,11 +43,12 @@ previous command (&&, ||).
 If you exit lftp when some jobs are not finished yet, lftp will move itself
 to nohup mode in background. The same happens when you have a real modem
 hangup or when you close an xterm. It is possible to attach to backgrounded
-lftp instance using `attach' command in lftp.
+lftp instance using `attach' command in lftp, e.g. `lftp -c attach'.
 
 lftp has builtin mirror which can download or update a whole directory
 tree. There is also reverse mirror (mirror -R) which uploads or updates a
-directory tree on server.
+directory tree on server. It is also possible to synchronize two servers,
+FXP is used automatically if possible.
 
 There is command `at' to launch a job at specified time in current context,
 command `queue' to queue commands for sequential execution for current
@@ -56,7 +57,9 @@ server, and much more.
 On startup, lftp executes /etc/lftp.conf and then ~/.lftprc and ~/.lftp/rc.
 You can place aliases and `set' commands there. Some people prefer to see
 full protocol debug, use `debug' to turn the debug on. Use `debug 3' to see
-only greeting messages and error messages.
+only greeting messages and error messages. if ~/.lftp directory does not
+exist, XDG directories are used instead: ~/.config/lftp, ~/.local/share/lftp
+and ~/.cache/lftp.
 
 lftp has a number of settable variables. You can use `set -a' to see all
 variables and their values or `set -d' to see list of defaults. Variable
@@ -72,19 +75,33 @@ by the OpenSSL Project for use in the OpenSSL Toolkit.
 Where to get
 ~~~~~~~~~~~~
 By FTP:
-	ftp://ftp.yar.ru/lftp/
-	ftp://metalab.unc.edu/pub/Linux/system/network/file-transfer/
+	ftp://ftp.yar.ru/pub/source/lftp/
 By HTTP:
-	http://ftp.yar.ru/lftp/
-	http://metalab.unc.edu/pub/Linux/system/network/file-transfer/
+	http://lftp.yar.ru/ftp/
 
-See also home page `http://lftp.yar.ru/'.
+By GIT (development):
+	https://github.com/lavv17/lftp
+
+See also the home page `http://lftp.yar.ru/'.
+	
 
 Internals
 ~~~~~~~~~
 All this is based on SMTask class which implements non-preemptive
 multitasking via Do method. The method Do does a little bit of work, sets
 wake up condition (block member) and returns.
+
+There are also some useful classes: Timer, TimeDate, *Buffer, xstring,
+xarray, xlist, xmap, xheap, Ref etc. Timers are ordered using a heap data
+structure. Primitive classes were implemented with performance and low
+memory consumption in mind. Standard C++ library is not used, since lftp
+development started when it was not so standard yet (and boost did not even
+exist).
+
+Access to remote files is performed via FileAccess class, which is base
+class for all protocols. NetAccess is for network file access. There is
+also LocalAccess for local files access. SSH_Access is for SSH based
+protocols: FISH and SFTP.
 
 The class Ftp allows reliable deliver of files via ftp protocol, it hides
 all the details from application and allows asynchronous operation.
@@ -133,16 +150,17 @@ Author
 ~~~~~~
 Author: Alexander V. Lukyanov <lav@yars.free.net>
 My home page: http://lav.yar.ru/
+My other E-Mails: lav@yar.ru, lav@netis.ru, lavv17f@gmail.com
 
-Other people have contributed to lftp development, see THANKS and ChangeLog
-files.
+Other people have contributed to lftp development, see the THANKS file.
 
 Comments and bug reports are welcome. Please send them to the list:
-<lftp@uniyar.ac.ru>.
+<lftp@uniyar.ac.ru>. Subscribe if you want your messages to be sent to the
+list quickly.
 
 License
 ~~~~~~~
-Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+Copyright (c) 1996-2014 by Alexander V. Lukyanov (lav@yars.free.net)
 
 LFTP is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
