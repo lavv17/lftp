@@ -38,7 +38,8 @@ LFTP includes the following features (some may be missed in this list):
 * Bookmarks.
 * Aliases.
 * Saving of last directory on each site. `cd -' to go there.
-* Copying of files between two servers, e.g. between FTP and HTTP.
+* Copying of files (including mirror) between two servers over the client,
+  automatic usage of FXP when possible to bypass the client.
 * Numerous settings which can be associated with a specific server or a group.
 * Paging of remote files using external program.
 * `zcat' and `zmore' support.
