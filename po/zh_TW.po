@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-06-11 11:52+0400\n"
+"POT-Creation-Date: 2014-07-06 16:15+0400\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) <community@linuxhall.org>\n"
@@ -263,8 +263,8 @@ msgstr "存取失敗：%s"
 msgid "File cannot be accessed"
 msgstr "無法存取檔案"
 
-#: src/FileAccess.cc:160 src/Fish.cc:981 src/SFtp.cc:1335 src/ftpclass.cc:4348
-#: src/ftpclass.cc:4357 src/Torrent.cc:3176
+#: src/FileAccess.cc:160 src/Fish.cc:981 src/SFtp.cc:1335 src/ftpclass.cc:4367
+#: src/ftpclass.cc:4376 src/Torrent.cc:3177
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -398,7 +398,7 @@ msgstr "execl(/bin/sh) 失敗：%s\n"
 msgid "total"
 msgstr "總數"
 
-#: src/Fish.cc:75 src/Http.cc:1080 src/SFtp.cc:77 src/ftpclass.cc:1222
+#: src/Fish.cc:75 src/Http.cc:1063 src/SFtp.cc:77 src/ftpclass.cc:1223
 msgid "Closing idle connection"
 msgstr "關閉閒置連線"
 
@@ -406,34 +406,34 @@ msgstr "關閉閒置連線"
 msgid "Running connect program"
 msgstr "正在執行進行連線的程式"
 
-#: src/Fish.cc:589 src/Http.cc:1348 src/SFtp.cc:744 src/SFtp.cc:1080
-#: src/SFtp.cc:1081 src/ftpclass.cc:2718 src/ftpclass.cc:2938
+#: src/Fish.cc:589 src/Http.cc:1331 src/SFtp.cc:744 src/SFtp.cc:1080
+#: src/SFtp.cc:1081 src/ftpclass.cc:2737 src/ftpclass.cc:2957
 msgid "Peer closed connection"
 msgstr "對方關閉了連線"
 
-#: src/Fish.cc:635 src/SFtp.cc:1105 src/ftpclass.cc:2868 src/ftpclass.cc:3985
+#: src/Fish.cc:635 src/SFtp.cc:1105 src/ftpclass.cc:2887 src/ftpclass.cc:4004
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/Fish.cc:986 src/Http.cc:2100 src/Http.cc:2107 src/SFtp.cc:1341
-#: src/ftpclass.cc:4360 src/Torrent.cc:3179 src/TorrentTracker.cc:619
+#: src/Fish.cc:986 src/Http.cc:2103 src/Http.cc:2110 src/SFtp.cc:1341
+#: src/ftpclass.cc:4379 src/Torrent.cc:3180 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "嘗試連線……"
 
-#: src/Fish.cc:988 src/SFtp.cc:1343 src/ftpclass.cc:4366
+#: src/Fish.cc:988 src/SFtp.cc:1343 src/ftpclass.cc:4385
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/Fish.cc:990 src/Http.cc:2109 src/SFtp.cc:1345 src/ftpclass.cc:4343
-#: src/ftpclass.cc:4371 src/ftpclass.cc:4385 src/TorrentTracker.cc:621
+#: src/Fish.cc:990 src/Http.cc:2112 src/SFtp.cc:1345 src/ftpclass.cc:4362
+#: src/ftpclass.cc:4390 src/ftpclass.cc:4404 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正在等待回應……"
 
-#: src/Fish.cc:992 src/Http.cc:2112 src/SFtp.cc:1347 src/ftpclass.cc:4405
+#: src/Fish.cc:992 src/Http.cc:2115 src/SFtp.cc:1347 src/ftpclass.cc:4424
 msgid "Receiving data"
 msgstr "下載中"
 
-#: src/Fish.cc:994 src/Http.cc:2105 src/SFtp.cc:1349 src/ftpclass.cc:4403
+#: src/Fish.cc:994 src/Http.cc:2108 src/SFtp.cc:1349 src/ftpclass.cc:4422
 msgid "Sending data"
 msgstr "上傳中"
 
@@ -460,76 +460,76 @@ msgstr "正在關閉 HTTP 連線"
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#: src/Http.cc:1222
+#: src/Http.cc:1205
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
-#: src/Http.cc:1272 src/ftpclass.cc:1345 src/Torrent.cc:2847
-#: src/Torrent.cc:3384 src/TorrentTracker.cc:392
+#: src/Http.cc:1255 src/ftpclass.cc:1346 src/Torrent.cc:2848
+#: src/Torrent.cc:3385 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "無法建立地址族群 %d 的 socket"
 
-#: src/Http.cc:1298 src/ftpclass.cc:1376
+#: src/Http.cc:1281 src/ftpclass.cc:1377
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket 錯誤 (%s) - 準備重新連線"
 
-#: src/Http.cc:1375
+#: src/Http.cc:1358
 msgid "Sending request..."
 msgstr "正在送出要求……"
 
-#: src/Http.cc:1413
+#: src/Http.cc:1396
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#: src/Http.cc:1519
+#: src/Http.cc:1502
 msgid "Could not parse HTTP status line"
 msgstr "無法分析 HTTP 狀態"
 
-#: src/Http.cc:1550
+#: src/Http.cc:1533
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "快取記憶中沒有該物件，但 http:cache-control 的設定為 only-if-cached"
 
-#: src/Http.cc:1715
+#: src/Http.cc:1718
 msgid "Receiving body..."
 msgstr "正在下載內容……"
 
-#: src/Http.cc:1866
+#: src/Http.cc:1869
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1869
+#: src/Http.cc:1872
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1880
+#: src/Http.cc:1883
 msgid "Received all"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1885
+#: src/Http.cc:1888
 msgid "Received all (total)"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1909 src/Http.cc:1932
+#: src/Http.cc:1912 src/Http.cc:1935
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1919
+#: src/Http.cc:1922
 msgid "Received last chunk"
 msgstr "已收到最後的片段"
 
-#: src/Http.cc:2094 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4353 src/TorrentTracker.cc:617
+#: src/Http.cc:2097 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/ftpclass.cc:4372 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "正在解析主機地址……"
 
-#: src/Http.cc:2102 src/ftpclass.cc:4346
+#: src/Http.cc:2105 src/ftpclass.cc:4365
 msgid "Connection idle"
 msgstr "連線閒置"
 
-#: src/Http.cc:2110
+#: src/Http.cc:2113
 msgid "Fetching headers..."
 msgstr "正在讀取標頭資料……"
 
@@ -672,7 +672,7 @@ msgstr "%s：正規表示式 ‘%s’：%s\n"
 #: src/commands.cc:2257 src/commands.cc:2419 src/commands.cc:2447
 #: src/commands.cc:2454 src/commands.cc:2740 src/commands.cc:2767
 #: src/commands.cc:2774 src/commands.cc:3100 src/lftp.cc:267
-#: src/Torrent.cc:3773
+#: src/Torrent.cc:3774
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
@@ -692,7 +692,7 @@ msgstr "%2$s 的參數 %1$s 不明確"
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "連接至 %s%s (%s) 連接埠 %u"
 
-#: src/NetAccess.cc:204 src/Torrent.cc:2969
+#: src/NetAccess.cc:204 src/Torrent.cc:2970
 msgid "Timeout - reconnecting"
 msgstr "逾時 - 重新連線"
 
@@ -2282,136 +2282,136 @@ msgstr "假設查看主機名稱已失敗"
 msgid "cannot parse EPSV response"
 msgstr "無法分析 EPSV 回應內容"
 
-#: src/ftpclass.cc:1072
+#: src/ftpclass.cc:1073
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
-#: src/ftpclass.cc:1271
+#: src/ftpclass.cc:1272
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "ftp:use-site-chmod 設定關閉了 SITE CHMOD 功能"
 
-#: src/ftpclass.cc:1276
+#: src/ftpclass.cc:1277
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "ftp:use-mlsd 設定關閉了 MLSD 功能"
 
-#: src/ftpclass.cc:1620
+#: src/ftpclass.cc:1622
 msgid "SITE CHMOD is not supported by this site"
 msgstr "該站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1625
+#: src/ftpclass.cc:1627
 msgid "MLST and MLSD are not supported by this site"
 msgstr "該站台不支援 MLST 和 MLSD"
 
-#: src/ftpclass.cc:2082
+#: src/ftpclass.cc:2084
 msgid "unsupported network protocol"
 msgstr "不支援這種網路協定"
 
-#: src/ftpclass.cc:2131 src/ftpclass.cc:2226
+#: src/ftpclass.cc:2133 src/ftpclass.cc:2228
 #, fuzzy, c-format
 msgid "Data socket error (%s) - reconnecting"
 msgstr "Socket 錯誤 (%s) - 準備重新連線"
 
-#: src/ftpclass.cc:2159
+#: src/ftpclass.cc:2161
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2201
+#: src/ftpclass.cc:2203
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2207
+#: src/ftpclass.cc:2209
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "連接資料 socket 到 %s (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2229 src/ftpclass.cc:4167
+#: src/ftpclass.cc:2231 src/ftpclass.cc:4186
 msgid "Switching passive mode off"
 msgstr "關閉 passive 模式"
 
-#: src/ftpclass.cc:2237
+#: src/ftpclass.cc:2239
 msgid "Data connection established"
 msgstr "成功建立數據連線"
 
-#: src/ftpclass.cc:2543 src/ftpclass.cc:4297
+#: src/ftpclass.cc:2545 src/ftpclass.cc:4316
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:2884
+#: src/ftpclass.cc:2903
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:3151
+#: src/ftpclass.cc:3170
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3173
+#: src/ftpclass.cc:3192
 msgid "Closing aborted data socket"
 msgstr "關閉被中止的數據連線"
 
-#: src/ftpclass.cc:3969
+#: src/ftpclass.cc:3988
 msgid "saw file size in response"
 msgstr "回應中包括檔案的大小"
 
-#: src/ftpclass.cc:3999 src/ftpclass.cc:4026
+#: src/ftpclass.cc:4018 src/ftpclass.cc:4045
 msgid "Turning on sync-mode"
 msgstr "開啟 sync-mode"
 
-#: src/ftpclass.cc:4187
+#: src/ftpclass.cc:4206
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:4334
+#: src/ftpclass.cc:4353
 msgid "FEAT negotiation..."
 msgstr "支援功能 (FEAT) 協商……"
 
-#: src/ftpclass.cc:4341
+#: src/ftpclass.cc:4360
 msgid "Sending commands..."
 msgstr "正在送出指令……"
 
-#: src/ftpclass.cc:4345
+#: src/ftpclass.cc:4364
 msgid "Delaying before retry"
 msgstr "重新嘗試之前稍為延遲"
 
-#: src/ftpclass.cc:4364
+#: src/ftpclass.cc:4383
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊……"
 
-#: src/ftpclass.cc:4368
+#: src/ftpclass.cc:4387
 msgid "Logging in..."
 msgstr "正在登入……"
 
-#: src/ftpclass.cc:4372
+#: src/ftpclass.cc:4391
 msgid "Making data connection..."
 msgstr "正在建立資料傳送連線……"
 
-#: src/ftpclass.cc:4375
+#: src/ftpclass.cc:4394
 msgid "Changing remote directory..."
 msgstr "變更遠端目錄……"
 
-#: src/ftpclass.cc:4381
+#: src/ftpclass.cc:4400
 msgid "Waiting for other copy peer..."
 msgstr "等待複製程序的遠端回應……"
 
-#: src/ftpclass.cc:4383 src/ftpclass.cc:4407
+#: src/ftpclass.cc:4402 src/ftpclass.cc:4426
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:4387
+#: src/ftpclass.cc:4406
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "正在等待回應……"
 
-#: src/ftpclass.cc:4389
+#: src/ftpclass.cc:4408
 msgid "Waiting for data connection..."
 msgstr "等待建立資料傳送連線……"
 
-#: src/ftpclass.cc:4395
+#: src/ftpclass.cc:4414
 msgid "Sending data/TLS"
 msgstr "上傳中/TLS"
 
-#: src/ftpclass.cc:4397
+#: src/ftpclass.cc:4416
 msgid "Receiving data/TLS"
 msgstr "下載中/TLS"
 
@@ -2597,87 +2597,92 @@ msgstr ""
 msgid "next announce in %s"
 msgstr ""
 
-#: src/Torrent.cc:1733 src/Torrent.cc:1736
+#: src/Torrent.cc:1734 src/Torrent.cc:1737
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1739
+#: src/Torrent.cc:1740
 #, fuzzy
 msgid "Waiting for meta-data..."
 msgstr "\t等待輸入指令\n"
 
-#: src/Torrent.cc:1742
+#: src/Torrent.cc:1743
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1752
+#: src/Torrent.cc:1753
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2850
+#: src/Torrent.cc:2851
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "連接至 %s%s (%s) 連接埠 %u"
 
-#: src/Torrent.cc:2901 src/Torrent.cc:3018
+#: src/Torrent.cc:2902 src/Torrent.cc:3019
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "對方關閉了連線"
 
-#: src/Torrent.cc:2902 src/Torrent.cc:3019
+#: src/Torrent.cc:2903 src/Torrent.cc:3020
 #, fuzzy
 msgid "peer unexpectedly closed connection"
 msgstr "對方關閉了連線"
 
-#: src/Torrent.cc:2904 src/Torrent.cc:2905
+#: src/Torrent.cc:2905 src/Torrent.cc:2906
 #, fuzzy
 msgid "peer closed connection (before handshake)"
 msgstr "對方關閉了連線"
 
-#: src/Torrent.cc:2908 src/Torrent.cc:3021 src/Torrent.cc:3022
+#: src/Torrent.cc:2909 src/Torrent.cc:3022 src/Torrent.cc:3023
 #, fuzzy
 msgid "invalid peer response format"
 msgstr "伺服器回應格式無效"
 
-#: src/Torrent.cc:3003 src/Torrent.cc:3004
+#: src/Torrent.cc:3004 src/Torrent.cc:3005
 #, fuzzy
 msgid "peer closed connection"
 msgstr "對方關閉了連線"
 
-#: src/Torrent.cc:3181
+#: src/Torrent.cc:3182
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3439
+#: src/Torrent.cc:3440
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3489
+#: src/Torrent.cc:3490
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 
-#: src/Torrent.cc:3575
+#: src/Torrent.cc:3552
+#, c-format
+msgid "peer sent unknown info_hash=%s in handshake"
+msgstr ""
+
+#: src/Torrent.cc:3576
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3587
+#: src/Torrent.cc:3588
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3589
+#: src/Torrent.cc:3590
 #, fuzzy
 msgid "peer closed just accepted connection"
 msgstr "對方關閉了連線"
 
-#: src/Torrent.cc:3640
+#: src/Torrent.cc:3641
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
 msgstr "正在送出指令……"
 
-#: src/Torrent.cc:3817
+#: src/Torrent.cc:3818
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""

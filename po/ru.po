@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.5\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-06-23 10:22+0400\n"
+"POT-Creation-Date: 2014-07-06 16:15+0400\n"
 "PO-Revision-Date: 2013-03-14 12:56+0400\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -401,7 +401,7 @@ msgstr "функция execl(/bin/sh) не выполнена: %s\n"
 msgid "total"
 msgstr "всего"
 
-#: src/Fish.cc:75 src/Http.cc:1080 src/SFtp.cc:77 src/ftpclass.cc:1223
+#: src/Fish.cc:75 src/Http.cc:1063 src/SFtp.cc:77 src/ftpclass.cc:1223
 msgid "Closing idle connection"
 msgstr "Закрытие неиспользуемого соединения"
 
@@ -409,7 +409,7 @@ msgstr "Закрытие неиспользуемого соединения"
 msgid "Running connect program"
 msgstr "Выполняется соединяющая программа"
 
-#: src/Fish.cc:589 src/Http.cc:1348 src/SFtp.cc:744 src/SFtp.cc:1080
+#: src/Fish.cc:589 src/Http.cc:1331 src/SFtp.cc:744 src/SFtp.cc:1080
 #: src/SFtp.cc:1081 src/ftpclass.cc:2737 src/ftpclass.cc:2957
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
@@ -418,7 +418,7 @@ msgstr "Соединение закрыто удаленной машиной"
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/Fish.cc:986 src/Http.cc:2100 src/Http.cc:2107 src/SFtp.cc:1341
+#: src/Fish.cc:986 src/Http.cc:2103 src/Http.cc:2110 src/SFtp.cc:1341
 #: src/ftpclass.cc:4379 src/Torrent.cc:3180 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Установка соединения..."
@@ -427,16 +427,16 @@ msgstr "Установка соединения..."
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/Fish.cc:990 src/Http.cc:2109 src/SFtp.cc:1345 src/ftpclass.cc:4362
+#: src/Fish.cc:990 src/Http.cc:2112 src/SFtp.cc:1345 src/ftpclass.cc:4362
 #: src/ftpclass.cc:4390 src/ftpclass.cc:4404 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Fish.cc:992 src/Http.cc:2112 src/SFtp.cc:1347 src/ftpclass.cc:4424
+#: src/Fish.cc:992 src/Http.cc:2115 src/SFtp.cc:1347 src/ftpclass.cc:4424
 msgid "Receiving data"
 msgstr "Получение данных"
 
-#: src/Fish.cc:994 src/Http.cc:2105 src/SFtp.cc:1349 src/ftpclass.cc:4422
+#: src/Fish.cc:994 src/Http.cc:2108 src/SFtp.cc:1349 src/ftpclass.cc:4422
 msgid "Sending data"
 msgstr "Отправка данных"
 
@@ -463,76 +463,76 @@ msgstr "Закрытие соединения HTTP"
 msgid "POST method failed"
 msgstr "Метод POST завершился неудачей"
 
-#: src/Http.cc:1222
+#: src/Http.cc:1205
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp через http прокси не может работать без прокси, установите hftp:proxy."
 
-#: src/Http.cc:1272 src/ftpclass.cc:1346 src/Torrent.cc:2848
+#: src/Http.cc:1255 src/ftpclass.cc:1346 src/Torrent.cc:2848
 #: src/Torrent.cc:3385 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "невозможно создать сокет для семейства адресов %d"
 
-#: src/Http.cc:1298 src/ftpclass.cc:1377
+#: src/Http.cc:1281 src/ftpclass.cc:1377
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Ошибка на сокете (%s) - повторное соединение"
 
-#: src/Http.cc:1375
+#: src/Http.cc:1358
 msgid "Sending request..."
 msgstr "Передача запроса..."
 
-#: src/Http.cc:1413
+#: src/Http.cc:1396
 msgid "Hit EOF while fetching headers"
 msgstr "Получил конец файла (EOF) при чтении заголовков"
 
-#: src/Http.cc:1519
+#: src/Http.cc:1502
 msgid "Could not parse HTTP status line"
 msgstr "Невозможно разобрать строку статуса HTTP"
 
-#: src/Http.cc:1550
+#: src/Http.cc:1533
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Объект не в кэше, а http:cache-control содержит only-if-cached"
 
-#: src/Http.cc:1715
+#: src/Http.cc:1718
 msgid "Receiving body..."
 msgstr "Получение тела ответа..."
 
-#: src/Http.cc:1866
+#: src/Http.cc:1869
 msgid "Hit EOF"
 msgstr "Конец файла"
 
-#: src/Http.cc:1869
+#: src/Http.cc:1872
 msgid "Received not enough data, retrying"
 msgstr "Получено не достаточно данных - повторная попытка."
 
-#: src/Http.cc:1880
+#: src/Http.cc:1883
 msgid "Received all"
 msgstr "Все данные получены"
 
-#: src/Http.cc:1885
+#: src/Http.cc:1888
 msgid "Received all (total)"
 msgstr "Все данные получены (совсем все)"
 
-#: src/Http.cc:1909 src/Http.cc:1932
+#: src/Http.cc:1912 src/Http.cc:1935
 msgid "chunked format violated"
 msgstr "формат данных `chunked' нарушен"
 
-#: src/Http.cc:1919
+#: src/Http.cc:1922
 msgid "Received last chunk"
 msgstr "Получен последний фрагмент"
 
-#: src/Http.cc:2094 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2097 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4372 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
-#: src/Http.cc:2102 src/ftpclass.cc:4365
+#: src/Http.cc:2105 src/ftpclass.cc:4365
 msgid "Connection idle"
 msgstr "Соединение не используется"
 
-#: src/Http.cc:2110
+#: src/Http.cc:2113
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 
@@ -2631,7 +2631,8 @@ msgstr "Принято соединение от [%s]:%d"
 #: src/Torrent.cc:3552
 #, c-format
 msgid "peer sent unknown info_hash=%s in handshake"
-msgstr "удалённый узел прислал неизвестное значение info_hash=%s при начальном обмене"
+msgstr ""
+"удалённый узел прислал неизвестное значение info_hash=%s при начальном обмене"
 
 #: src/Torrent.cc:3576
 msgid "peer handshake timeout"

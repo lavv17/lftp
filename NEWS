@@ -1,3 +1,10 @@
+Version 4.5.3 - 2014-07-06
+
+* new setting ftp:site.
+* don't uncompress http body when Contrent-Type is compressed.
+* check source address of DHT replies.
+* discard disconnected torrent peers only after a timeout.
+
 Version 4.5.2 - 2014-06-11
 
 * fixed a coredump on startup when compiled with certain gcc versions.

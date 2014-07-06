@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.5.2], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.5.3], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -110,9 +110,6 @@ if test x$GCC = xyes; then
 fi
 if test x$GXX = xyes; then
    CXXFLAGS="$CXXFLAGS -Wall -Wwrite-strings -Woverloaded-virtual"
-   if test x$DEFAULT_CXX = xyes; then
-      LFTP_PROG_CXXLINK
-   fi
    # save some bytes
    LFTP_CHECK_CXX_FLAGS([-fno-exceptions -fno-rtti])
    # check for -fno-implement-inline (doesn't work without -O in gcc 2.95.4; functions are never inlined)
