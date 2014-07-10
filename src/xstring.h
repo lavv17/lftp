@@ -222,7 +222,8 @@ public:
    static xstring& cat(const char *first,...) ATTRIBUTE_SENTINEL;
    static xstring& join(const char *sep,int n,...);
 
-   void truncate(size_t n=0);
+   void truncate() { set_length(0); }
+   void truncate(size_t n);
    void truncate_at(char c);
    /* set_length can be used to extend the string, e.g. after modification
       with get_space+get_non_const. */
