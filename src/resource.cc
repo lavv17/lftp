@@ -57,13 +57,39 @@ static const char *FtpProxyValidate(xstring_c *p)
    return 0;
 }
 
+static const char *SetValidate(xstring_c& s,const char *const *set,const char *name)
+{
+   const char *const *scan;
+   for(scan=set; *scan; scan++)
+      if(s.eq(*scan))
+	 return 0;
+
+   xstring &j=xstring::get_tmp();
+   if(name)
+      j.setf(_("%s must be one of: "),name);
+   else
+      j.set(_("must be one of: "));
+   bool had_empty=false;
+   for(scan=set; *scan; scan++) {
+      if(!**scan) {
+	 had_empty=true;
+	 continue;
+      }
+      if(scan>set)
+	 j.append(", ");
+      j.append(*scan);
+   }
+   if(had_empty)
+      j.append(_(", or empty"));
+   return j;
+}
+
 static const char *FtpProxyAuthTypeValidate(xstring_c *s)
 {
-   if(s->ne("user") && s->ne("joined") && s->ne("joined-acct")
-   && s->ne("open") && s->ne("proxy-user@host"))
-      // for translator: `user', `joined', `joined-acct', `open' are literals.
-      return _("ftp:proxy-auth-type must be one of: user, joined, joined-acct, open, proxy-user@host");
-   return 0;
+   static const char *const valid_set[]={
+      "user", "joined", "joined-acct", "open", "proxy-user@host", 0
+   };
+   return SetValidate(*s,valid_set,"ftp:proxy-auth-type");
 }
 
 static const char *HttpProxyValidate(xstring_c *p)
@@ -137,30 +163,21 @@ const char *AuthArgValidate(xstring_c *s)
    for(char *i=s->get_non_const(); *i; i++)
       *i=to_ascii_upper(*i);
 
-   if(strcmp(*s,"SSL")
-   && strcmp(*s,"TLS")
-   && strcmp(*s,"TLS-P")
-   && strcmp(*s,"TLS-C"))
-      return _("ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C");
-
-   return 0;
+   const char *const valid_set[]={
+      "SSL", "TLS", "TLS-P", "TLS-C", 0
+   };
+   return SetValidate(*s,valid_set,"ftp:ssl-auth");
 }
 static
 const char *ProtValidate(xstring_c *s)
 {
-   if(!**s)
-      return 0;
-
    for(char *i=s->get_non_const(); *i; i++)
       *i=to_ascii_upper(*i);
 
-   if(strcmp(*s,"P")
-   && strcmp(*s,"C")
-   && strcmp(*s,"S")
-   && strcmp(*s,"E"))
-      return _("must be one of: C, S, E, P, or empty");
-
-   return 0;
+   const char *const valid_set[]={
+      "C", "S", "E", "P", "", 0
+   };
+   return SetValidate(*s,valid_set,"ftps:initial-prot");
 }
 #endif
 
