@@ -232,6 +232,21 @@ void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
    }
 }
 
+// reverse current sort order
+void FileSet::ReverseSort()
+{
+   if(!sorted) {
+      Sort(BYNAME,false,true);
+      return;
+   }
+   int i=0;
+   int j=sorted.length()-1;
+   while(i<j) {
+      sorted[i]=replace_value(sorted[j],sorted[i]);
+      ++i,--j;
+   }
+}
+
 /* Remove the current sort, allowing new entries to be added.
  * (Nothing uses this ... */
 void FileSet::Unsort()

@@ -180,6 +180,7 @@ public:
    void  Sort(sort_e newsort, bool casefold=false, bool reverse=false);
    void  Unsort();
    void	 SortByPatternList(const char *list_c);
+   void	 ReverseSort();
 
    void	 Exclude(const char *prefix,const PatternSet *x);
    void	 ExcludeDots();
