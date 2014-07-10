@@ -589,7 +589,17 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    if(!(flags&DELETE))
       to_transfer->SubtractAny(to_rm_mismatched);
 
-   to_transfer->SortByPatternList(ResMgr::Query("mirror:order",0));
+   const char *sort_by=ResMgr::Query("mirror:sort-by",0);
+   bool desc=strstr(sort_by,"-desc");
+   if(!strncmp(sort_by,"name",4))
+      to_transfer->SortByPatternList(ResMgr::Query("mirror:order",0));
+   else if(!strncmp(sort_by,"date",4))
+      to_transfer->Sort(FileSet::BYDATE);
+   else if(!strncmp(sort_by,"size",4))
+      to_transfer->Sort(FileSet::BYSIZE);
+   if(desc)
+      to_transfer->ReverseSort();
+
    to_transfer->CountBytes(&bytes_to_transfer);
    if(parent_mirror)
       parent_mirror->AddBytesToTransfer(bytes_to_transfer);

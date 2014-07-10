@@ -1748,10 +1748,15 @@ is applied. It is never used if mirror:exclude-regex is empty.
 .BR mirror:no-empty-dirs " (boolean)"
 when true, mirror doesn't create empty directories (like \-\-no\-empty\-dirs option).
 .TP
+.BR mirror:sort-by " (string)"
+specifies order of file transfers. Valid values are: name, name-desc, size, size-desc,
+date, date-desc. When the value is name or name-desc, then mirror:order setting also
+affects the order or transfers.
+.TP
 .BR mirror:order " (list of patterns)"
-specifies order of file transfers. E.g. setting this to "*.sfv *.sum" makes mirror to
+specifies order of file transfers when sorting by name. E.g. setting this to "*.sfv *.sum" makes mirror to
 transfer files matching *.sfv first, then ones matching *.sum and then all other
-files. To process directories after other files, add "*/" to end of pattern list.
+files. To process directories after other files, add "*/" to the end of pattern list.
 .TP
 .BR mirror:parallel-directories " (boolean)"
 if true, mirror will start processing of several directories in parallel

@@ -156,6 +156,14 @@ const char *OrderValidate(xstring_c *s)
    return 0;
 }
 
+static const char *SortByValidate(xstring_c *s)
+{
+   static const char * const valid_set[]={
+      "name", "name-desc", "size", "size-desc", "date", "date-desc", 0
+   };
+   return SetValidate(*s,valid_set,"mirror:order-by");
+}
+
 #if USE_SSL
 static
 const char *AuthArgValidate(xstring_c *s)
@@ -317,6 +325,7 @@ static ResType lftp_vars[] = {
    {"net:connection-limit",	 "0",	  ResMgr::UNumberValidate,0},
    {"net:connection-takeover",	 "yes",   ResMgr::BoolValidate,0},
 
+   {"mirror:sort-by",		 "name",  SortByValidate,ResMgr::NoClosure},
    {"mirror:order",		 "*.sfv *.sig *.md5* *.sum * */", 0,ResMgr::NoClosure},
    {"mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:parallel-transfer-count", "1",ResMgr::UNumberValidate,ResMgr::NoClosure},
