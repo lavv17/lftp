@@ -596,7 +596,7 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    else if(!strncmp(sort_by,"date",4))
       to_transfer->Sort(FileSet::BYDATE);
    else if(!strncmp(sort_by,"size",4))
-      to_transfer->Sort(FileSet::BYSIZE);
+      to_transfer->Sort(FileSet::BYSIZE,false,true);
    if(desc)
       to_transfer->ReverseSort();
 
