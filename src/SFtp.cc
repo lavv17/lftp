@@ -918,8 +918,6 @@ void SFtp::HandleExpect(Expect *e)
 	    if(!file_set)
 	       file_set=new FileSet;
 	    FileInfo *info=MakeFileInfo(a);
-	    if(info)
-	       file_set->Add(info);
 	    if(mode==LIST)
 	    {
 	       file_buf->Put(a->name);
@@ -941,6 +939,8 @@ void SFtp::HandleExpect(Expect *e)
 		  file_buf->Put("\n");
 	       }
 	    }
+	    if(info)
+	       file_set->Add(info);
 	 }
 	 if(r->Eof())
 	    goto eof;
