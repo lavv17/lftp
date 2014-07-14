@@ -71,16 +71,16 @@ struct TorrentPiece
 
 struct TorrentFile
 {
-   xstring_c path;
+   char *path;
    off_t pos;
    off_t length;
    void set(const char *n,off_t p,off_t l) {
-      path.set(n);
+      path=xstrdup(n);
       pos=p;
       length=l;
    }
    void unset() {
-      path.unset();
+      xfree(path); path=0;
    }
    bool contains_pos(off_t p) const {
       return p>=pos && p<pos+length;
