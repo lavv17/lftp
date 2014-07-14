@@ -278,6 +278,10 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    dht_announce_timer.Stop();
 }
 
+Torrent::~Torrent()
+{
+}
+
 bool Torrent::TrackersDone() const
 {
    if(shutting_down && shutting_down_timer.Stopped())
@@ -721,7 +725,7 @@ void Torrent::SetMetadata(const xstring& md)
    }
 
    BeNode *b_piece_length=Lookup(info,"piece length",BeNode::BE_INT);
-   if(!b_piece_length)
+   if(!b_piece_length || b_piece_length->num<1024 || b_piece_length->num>INT_MAX/4)
       return;
    piece_length=b_piece_length->num;
    LogNote(4,"Piece length is %u",piece_length);
@@ -744,7 +748,7 @@ void Torrent::SetMetadata(const xstring& md)
    if(!files) {
       single_file=true;
       BeNode *length=Lookup(info,"length",BeNode::BE_INT);
-      if(!length)
+      if(!length || length->num<0)
 	 return;
       total_length=length->num;
    } else {
@@ -764,9 +768,12 @@ void Torrent::SetMetadata(const xstring& md)
 	    return;
 	 if(!Lookup(files->list[i]->dict,"path",BeNode::BE_LIST))
 	    return;
+	 if(f->num<0)
+	    return;
 	 total_length+=f->num;
       }
    }
+   this->files=new TorrentFiles(files,this);
    LogNote(4,"Total length is %llu",total_length);
    total_left=total_length;
 
@@ -1084,6 +1091,8 @@ int Torrent::Do()
 	       a.sa.sa_family=AF_INET6;
 	       if(inet_pton(AF_INET6,b_ip->str,&a.in6.sin6_addr)<=0)
 		  continue;
+	       if(b_port->num<=0 || b_port->num>=0x10000)
+		  continue;
 	       a.set_port(b_port->num);
 	       dht_ipv6->SendPing(a);
 	    } else
@@ -1091,6 +1100,8 @@ int Torrent::Do()
 	    {
 	       a.sa.sa_family=AF_INET;
 	       if(!inet_aton(b_ip->str,&a.in.sin_addr))
+		  continue;
+	       if(b_port->num<=0 || b_port->num>=0x10000)
 		  continue;
 	       a.set_port(b_port->num);
 	       dht->SendPing(a);
@@ -1249,23 +1260,50 @@ const char *Torrent::MakePath(BeNode *p) const
 }
 const char *Torrent::FindFileByPosition(unsigned piece,unsigned begin,off_t *f_pos,off_t *f_tail) const
 {
-   const BeNode *files=info->lookup("files",BeNode::BE_LIST);
    off_t target_pos=(off_t)piece*piece_length+begin;
+   TorrentFile *file=files->FindByPosition(target_pos);
+   if(!file)
+      return 0;
+
+   *f_pos=target_pos-file->pos;
+   *f_tail=file->length-*f_pos;
+
+   return file->path;
+}
+
+TorrentFiles::TorrentFiles(const BeNode *files,const Torrent *t)
+{
    if(!files) {
-      *f_pos=target_pos;
-      *f_tail=total_length-target_pos;
-      return name;
+      grow_space(1);
+      set_length(1);
+      file(0)->set(t->GetName(),0,t->TotalLength());
    } else {
+      int count=files->list.length();
+      grow_space(count);
+      set_length(count);
       off_t scan_pos=0;
-      for(int i=0; i<files->list.length(); i++) {
-	 off_t file_length=files->list[i]->lookup_int("length");
-	 if(scan_pos<=target_pos && scan_pos+file_length>target_pos) {
-	    *f_pos=target_pos-scan_pos;
-	    *f_tail=file_length-*f_pos;
-	    return MakePath(files->list[i]);
-	 }
+      for(int i=0; i<count; i++) {
+	 BeNode *node=files->list[i];
+	 off_t file_length=node->lookup_int("length");
+	 file(i)->set(t->MakePath(node),scan_pos,file_length);
 	 scan_pos+=file_length;
       }
+   }
+   qsort(pos_cmp);
+}
+TorrentFile *TorrentFiles::FindByPosition(off_t pos)
+{
+   int i=0;
+   int j=length()-1;
+   while(i<=j) {
+      // invariant: the target element is in the range [i,j]
+      int m=(i+j)/2;
+      if(file(m)->contains_pos(pos))
+	 return file(m);
+      if(file(m)->pos>pos)
+	 j=m-1;
+      else
+	 i=m+1;
    }
    return 0;
 }
@@ -2641,7 +2679,7 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
 	 return;
       }
       BeNode *piece=pp->data->lookup("piece",BeNode::BE_INT);
-      if(!piece) {
+      if(!piece || piece->num<0 || piece->num>=INT_MAX/Torrent::BLOCK_SIZE) {
 	 SetError("ut_metadata piece bad or missing");
 	 return;
       }
@@ -2692,6 +2730,9 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
 	 }
 	 case UT_METADATA_REJECT:
 	    break;
+	 default:
+	    SetError("ut_metadata msg_type invalid value");
+	    return;
       }
    } else if(pp->code==MSG_EXT_PEX) {
       if(!pex.recv_timer.Stopped())

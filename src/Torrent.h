@@ -69,6 +69,46 @@ struct TorrentPiece
    bool has_a_downloader() const;
 };
 
+struct TorrentFile
+{
+   xstring_c path;
+   off_t pos;
+   off_t length;
+   void set(const char *n,off_t p,off_t l) {
+      path.set(n);
+      pos=p;
+      length=l;
+   }
+   void unset() {
+      path.unset();
+   }
+   bool contains_pos(off_t p) const {
+      return p>=pos && p<pos+length;
+   }
+};
+
+class TorrentFiles : public xarray<TorrentFile>
+{
+   static int pos_cmp(const TorrentFile *a, const TorrentFile *b) {
+      if(a->pos < b->pos)
+	 return -1;
+      if(a->pos > b->pos)
+	 return 1;
+      // we want zero-sized files to placed before non-zero ones.
+      if(a->length != b->length)
+	 return a->length < b->length ? -1 : 1;
+      return 0;
+   }
+public:
+   TorrentFile *file(int i) { return get_non_const()+i; }
+   TorrentFiles(const BeNode *f_node,const Torrent *t);
+   ~TorrentFiles() {
+      for(int i=0; i<length(); i++)
+	 file(i)->unset();
+   }
+   TorrentFile *FindByPosition(off_t p);
+};
+
 class TorrentListener : public SMTask, protected ProtoLog, protected Networker
 {
    Ref<Error> error;
@@ -99,6 +139,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    friend class TorrentPeer;
    friend class TorrentDispatcher;
    friend class TorrentListener;
+   friend class TorrentFiles;
    friend class DHT;
 
    bool shutting_down;
@@ -171,6 +212,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    xstring info_hash;
    const xstring *pieces;
    xstring name;
+   Ref<TorrentFiles> files;
 
    Ref<DirectedBuffer> recv_translate;
    Ref<DirectedBuffer> recv_translate_utf8;
@@ -296,6 +338,7 @@ public:
    static void ClassInit();
 
    Torrent(const char *mf,const char *cwd,const char *output_dir);
+   ~Torrent();
 
    int Do();
    int Done() const;
