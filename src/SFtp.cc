@@ -915,8 +915,6 @@ void SFtp::HandleExpect(Expect *e)
 	 for(int i=0; i<r->GetCount(); i++)
 	 {
 	    const NameAttrs *a=r->GetNameAttrs(i);
-	    if(!file_set)
-	       file_set=new FileSet;
 	    FileInfo *info=MakeFileInfo(a);
 	    if(mode==LIST)
 	    {
@@ -940,7 +938,11 @@ void SFtp::HandleExpect(Expect *e)
 	       }
 	    }
 	    if(info)
+	    {
+	       if(!file_set)
+		  file_set=new FileSet;
 	       file_set->Add(info);
+	    }
 	 }
 	 if(r->Eof())
 	    goto eof;
