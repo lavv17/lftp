@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.4.16\n"
+"Project-Id-Version: lftp 4.5.3\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2014-07-06 16:15+0400\n"
-"PO-Revision-Date: 2014-05-18 06:54+0200\n"
+"PO-Revision-Date: 2014-07-13 14:15+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -1152,12 +1152,10 @@ msgstr ""
 "uczyni dopełnianie nazw plików nie rozpoznającym wielkości liter.\n"
 
 #: src/commands.cc:216
-#, fuzzy
 msgid "debug [OPTS] [<level>|off]"
-msgstr "debug [<poziom>|off] [-o <plik>]"
+msgstr "debug [OPCJE] [<poziom>|off]"
 
 #: src/commands.cc:217
-#, fuzzy
 msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file\n"
@@ -1165,8 +1163,11 @@ msgid ""
 " -p  show PID\n"
 " -t  show timestamps\n"
 msgstr ""
-"Ustaw poziom debugowania na daną wartość lub wyłącz zupełnie.\n"
-" -o <plik>  przekieruj wyjście debugowania do pliku.\n"
+"Ustaw poziom diagnostyki na daną wartość lub wyłącz zupełnie.\n"
+" -o <plik>  przekieruj wyjście diagnostyki do pliku.\n"
+" -c  wypisuj kontekst komunikatu\n"
+" -p  wypisuj PID\n"
+" -t  wypisuj znaczniki czasu\n"
 
 #: src/commands.cc:222
 msgid "du [options] <dirs>"
@@ -1477,12 +1478,10 @@ msgstr ""
 "podano nazw obu katalogów, to będą użyte bieżące katalogi lokalny i zdalny.\n"
 
 #: src/commands.cc:339
-#, fuzzy
 msgid "mkdir [OPTS] <dirs>"
-msgstr "mkdir [-p] <katalogi>"
+msgstr "mkdir [OPCJE] <katalogi>"
 
 #: src/commands.cc:340
-#, fuzzy
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
@@ -1490,6 +1489,7 @@ msgid ""
 msgstr ""
 "Utwórz zdalne katalogi\n"
 " -p  tworzy wszystkie poziomy ścieżki\n"
+" -f  ciche działanie, bez komunikatów\n"
 
 #: src/commands.cc:343
 msgid "module name [args]"
@@ -2378,9 +2378,9 @@ msgid "unsupported network protocol"
 msgstr "protokół nie jest obsługiwany"
 
 #: src/ftpclass.cc:2133 src/ftpclass.cc:2228
-#, fuzzy, c-format
+#, c-format
 msgid "Data socket error (%s) - reconnecting"
-msgstr "Błąd połączenia (%s) - powtórne łączenie"
+msgstr "Błąd gniazda danych (%s) - powtórne łączenie"
 
 #: src/ftpclass.cc:2161
 #, c-format
@@ -2700,13 +2700,12 @@ msgid "peer unexpectedly closed connection after %s"
 msgstr "druga strona nieoczekiwanie zamknęła połączenie po %s"
 
 #: src/Torrent.cc:2903 src/Torrent.cc:3020
-#, fuzzy
 msgid "peer unexpectedly closed connection"
-msgstr "druga strona nieoczekiwanie zamknęła połączenie po %s"
+msgstr "druga strona nieoczekiwanie zamknęła połączenie"
 
 #: src/Torrent.cc:2905 src/Torrent.cc:2906
 msgid "peer closed connection (before handshake)"
-msgstr "druga strona zamknęła połączenie (przed jego ustanowieniem)"
+msgstr "druga strona zamknęła połączenie (przed przywitaniem)"
 
 #: src/Torrent.cc:2909 src/Torrent.cc:3022 src/Torrent.cc:3023
 msgid "invalid peer response format"
@@ -2732,15 +2731,15 @@ msgstr "Przyjęto połączenie od [%s]:%d"
 #: src/Torrent.cc:3552
 #, c-format
 msgid "peer sent unknown info_hash=%s in handshake"
-msgstr ""
+msgstr "druga strona wysłała nieznane info_hash=%s przy przywitaniu"
 
 #: src/Torrent.cc:3576
 msgid "peer handshake timeout"
-msgstr "upłynął limit czasu nawiązywania połączenia z drugą stroną"
+msgstr "upłynął limit czasu przywitania z drugą stroną"
 
 #: src/Torrent.cc:3588
 msgid "peer short handshake"
-msgstr "nawiązanie połączenia z drugą stroną zostało ucięte"
+msgstr "przywitanie z drugą stroną zostało ucięte"
 
 #: src/Torrent.cc:3590
 msgid "peer closed just accepted connection"
