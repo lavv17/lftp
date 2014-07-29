@@ -51,4 +51,22 @@ public:
 
 template<typename T> const Ref<T> Ref<T>::null;
 
+template<typename T> class RefToArray : public Ref<T>
+{
+   RefToArray<T>(const RefToArray<T>&);  // disable cloning
+   void operator=(const RefToArray<T>&);   // and assignment
+
+public:
+   RefToArray<T>() {}
+   RefToArray<T>(T *p) : Ref<T>(p) {}
+   ~RefToArray<T>() { delete[] Ref<T>::ptr; Ref<T>::ptr=0; }
+   void operator=(T *p) { delete[] Ref<T>::ptr; Ref<T>::ptr=p; }
+   T& operator[](unsigned i) const { return Ref<T>::ptr[i]; }
+
+   static const RefToArray<T> null;
+};
+
+template<typename T> const RefToArray<T> RefToArray<T>::null;
+
+
 #endif
