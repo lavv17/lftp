@@ -352,9 +352,7 @@ double Torrent::GetRatio() const
 
 void Torrent::SetDownloader(unsigned piece,unsigned block,const TorrentPeer *o,const TorrentPeer *n)
 {
-   const TorrentPeer*& downloader=piece_info[piece]->downloader[block];
-   if(downloader==o)
-      downloader=n;
+   piece_info[piece].set_downloader(block,o,n,BlocksInPiece(piece));
 }
 
 BeNode *Torrent::Lookup(xmap_p<BeNode>& dict,const char *name,BeNode::be_type_t type)
@@ -425,23 +423,16 @@ void Torrent::ValidatePiece(unsigned p)
 	 complete_pieces--;
 	 my_bitfield->set_bit(p,0);
       }
-      piece_info[p]->block_map.clear();
+      SetBlocksAbsent(p);
    } else {
       LogNote(11,"piece %u ok",p);
       if(!my_bitfield->get_bit(p)) {
 	 total_left-=PieceLength(p);
 	 complete_pieces++;
 	 my_bitfield->set_bit(p,1);
+	 piece_info[p].free_block_map();
       }
    }
-}
-
-bool TorrentPiece::has_a_downloader() const
-{
-   for(int i=0; i<downloader.count(); i++)
-      if(downloader[i])
-	 return true;
-   return false;
 }
 
 template<typename T>
@@ -457,8 +448,8 @@ static inline int cmp(T a,T b)
 static Torrent *cmp_torrent;
 int Torrent::PiecesNeededCmp(const unsigned *a,const unsigned *b)
 {
-   int ra=cmp_torrent->piece_info[*a]->sources_count;
-   int rb=cmp_torrent->piece_info[*b]->sources_count;
+   int ra=cmp_torrent->piece_info[*a].get_sources_count();
+   int rb=cmp_torrent->piece_info[*b].get_sources_count();
    int c=cmp(ra,rb);
    if(c) return c;
    return cmp(*a,*b);
@@ -807,16 +798,18 @@ void Torrent::SetMetadata(const xstring& md)
    SaveMetadata();
 
    my_bitfield=new BitField(total_pieces);
-   for(unsigned p=0; p<total_pieces; p++)
-      piece_info.append(new TorrentPiece(BlocksInPiece(p)));
+
+   blocks_in_piece=(piece_length+BLOCK_SIZE-1)/BLOCK_SIZE;
+   blocks_in_last_piece=(last_piece_length+BLOCK_SIZE-1)/BLOCK_SIZE;
+
+   piece_info=new TorrentPiece[total_pieces]();
 
    if(!force_valid) {
       validate_index=0;
       validating=true;
       recv_rate.Reset();
    } else {
-      for(unsigned i=0; i<total_pieces; i++)
-	 my_bitfield->set_bit(i,1);
+      my_bitfield->set_range(0,total_pieces,1);
       complete_pieces=total_pieces;
       total_left=0;
       complete=true;
@@ -934,7 +927,7 @@ void Torrent::CalcPiecesStats()
    for(unsigned i=0; i<total_pieces; i++) {
       if(my_bitfield->get_bit(i))
 	 continue;
-      unsigned sc=piece_info[i]->sources_count;
+      unsigned sc=piece_info[i].get_sources_count();
       if(min_piece_sources>sc)
 	 min_piece_sources=sc;
       if(sc==0)
@@ -952,12 +945,13 @@ void Torrent::RebuildPiecesNeeded()
    bool enter_end_game=true;
    for(unsigned i=0; i<total_pieces; i++) {
       if(!my_bitfield->get_bit(i)) {
-	 if(!piece_info[i]->has_a_downloader())
+	 if(!piece_info[i].has_a_downloader())
 	    enter_end_game=false;
-	 if(piece_info[i]->sources_count==0)
+	 if(piece_info[i].has_no_sources())
 	    continue;
 	 pieces_needed.append(i);
       }
+      piece_info[i].cleanup();
    }
    if(!end_game && enter_end_game) {
       LogNote(1,"entering End Game mode");
@@ -1523,9 +1517,9 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
    }
 
    while(bc-->0) {
-      piece_info[piece]->block_map.set_bit(b++,1);
+      SetBlockPresent(piece,b++);
    }
-   if(piece_info[piece]->block_map.has_all_set() && !my_bitfield->get_bit(piece)) {
+   if(AllBlocksPresent(piece) && !my_bitfield->get_bit(piece)) {
       ValidatePiece(piece);
       if(!my_bitfield->get_bit(piece)) {
 	 LogError(0,"new piece %u digest mismatch",piece);
@@ -2059,12 +2053,12 @@ int TorrentPeer::SendDataRequests(unsigned p)
    unsigned blocks=parent->BlocksInPiece(p);
    unsigned bytes_allowed=BytesAllowed(RateLimit::GET);
    for(unsigned b=0; b<blocks; b++) {
-      if(parent->piece_info[p]->block_map.get_bit(b))
+      if(parent->BlockPresent(p,b))
 	 continue;
-      if(parent->piece_info[p]->downloader[b]) {
+      if(parent->piece_info[p].downloader_for(b)) {
 	 if(!parent->end_game)
 	    continue;
-	 if(parent->piece_info[p]->downloader[b]==this)
+	 if(parent->piece_info[p].downloader_for(b)==this)
 	    continue;
 	 if(FindRequest(p,b*Torrent::BLOCK_SIZE)>=0)
 	    continue;
@@ -2156,8 +2150,7 @@ void TorrentPeer::SendDataRequests()
 	 if(parent->my_bitfield->get_bit(p))
 	    continue;
 	 // add some randomness, so that different instances don't synchronize
-	 if(!parent->piece_info[p]->block_map.has_any_set()
-	 && random()/13%16==0)
+	 if(parent->AllBlocksAbsent(p) && random()/13%16==0)
 	    continue;
 	 if(SendDataRequests(p)>0)
 	    return;
@@ -2271,7 +2264,7 @@ unsigned TorrentPeer::GetLastPiece() const
    unsigned p=last_piece;
    // continue if have any blocks already
    if(p!=NO_PIECE && !parent->my_bitfield->get_bit(p)
-   && parent->piece_info[p]->block_map.has_any_set()
+   && parent->AnyBlocksPresent(p)
    && peer_bitfield->get_bit(p))
       return p;
    p=parent->last_piece;
@@ -2340,11 +2333,11 @@ void TorrentPeer::SetPieceHaving(unsigned p,bool have)
    int diff = (have - peer_bitfield->get_bit(p));
    if(!diff)
       return;
-   parent->piece_info[p]->sources_count+=diff;
+   parent->piece_info[p].add_sources_count(diff);
    peer_complete_pieces+=diff;
    peer_bitfield->set_bit(p,have);
 
-   if(parent->piece_info[p]->sources_count==0)
+   if(parent->piece_info[p].get_sources_count()==0)
       parent->SetPieceNotWanted(p);
    if(have && send_buf && !am_interested && !parent->my_bitfield->get_bit(p)
    && parent->NeedMoreUploaders()) {
@@ -3363,7 +3356,10 @@ bool BitField::has_all_set(int from,int to) const {
 	 return false;
    return true;
 }
-
+void BitField::set_range(int from,int to,bool value) {
+   for(int i=from; i<to; i++)
+      set_bit(i,value);
+}
 
 void TorrentBlackList::check_expire()
 {

@@ -53,20 +53,65 @@ public:
    int get_bit_length() const { return bit_length; }
    void set_bit_length(int b) { bit_length=b; set_length((b+7)/8); }
    void clear() { memset(buf,0,length()); }
+   void set_range(int from,int to,bool value);
 };
 
-struct TorrentPiece
+class TorrentPiece
 {
    unsigned sources_count;	    // how many peers have the piece
+   unsigned downloader_count;	    // how many downloaders of the piece are there
+   RefToArray<const TorrentPeer*> downloader; // which peers download the blocks
+   Ref<BitField> block_map;	    // which blocks are present.
 
-   BitField block_map;		    // which blocks are present
-   xarray<const TorrentPeer*> downloader; // which peers download the blocks
+public:
+   TorrentPiece() : sources_count(0), downloader_count(0) {}
+   ~TorrentPiece() {}
 
-   TorrentPiece(unsigned b)
-      : sources_count(0), block_map(b)
-      { downloader.allocate(b,0); }
+   unsigned get_sources_count() const { return sources_count; }
+   void add_sources_count(int diff) { sources_count+=diff; }
+   bool has_no_sources() const { return sources_count==0; }
 
-   bool has_a_downloader() const;
+   bool has_a_downloader() const { return downloader_count>0; }
+   void set_downloader(unsigned block,const TorrentPeer *o,const TorrentPeer *n,unsigned blk_count) {
+      if(!downloader) {
+	 if(o || !n)
+	    return;
+	 downloader=new const TorrentPeer*[blk_count]();
+      }
+      const TorrentPeer*& d=downloader[block];
+      if(d==o) {
+	 d=n;
+	 downloader_count+=(n!=0)-(o!=0);
+      }
+   }
+   void cleanup() {
+      if(downloader_count==0 && downloader)
+	 downloader=0;
+   }
+   const TorrentPeer *downloader_for(unsigned block) {
+      return downloader ? downloader[block] : 0;
+   }
+
+   void set_block_present(unsigned block,unsigned blk_count) {
+      if(!block_map)
+	 block_map=new BitField(blk_count);
+      block_map->set_bit(block,1);
+   }
+   void set_blocks_absent() {
+      block_map=0;
+   }
+   void free_block_map() {
+      block_map=0;
+   }
+   bool block_present(unsigned block) const {
+      return block_map && block_map->get_bit(block);
+   }
+   bool all_blocks_present(unsigned blk_count) const {
+      return block_map && block_map->has_all_set(0,blk_count);
+   }
+   bool any_blocks_present() const {
+      return block_map; // it's allocated when setting any bit
+   }
 };
 
 struct TorrentFile
@@ -256,10 +301,31 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    BeNode *Lookup(Ref<BeNode>& d,const char *name,BeNode::be_type_t type) { return Lookup(d->dict,name,type); }
 
    TaskRefArray<TorrentPeer> peers;
-   RefArray<TorrentPiece> piece_info;
    static int PeersCompareActivity(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareRecvRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
    static int PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskRef<TorrentPeer> *p2);
+
+   RefToArray<TorrentPiece> piece_info;
+   unsigned blocks_in_piece;
+   unsigned blocks_in_last_piece;
+   bool BlockPresent(unsigned piece,unsigned block) const {
+      return piece_info[piece].block_present(block);
+   }
+   bool AllBlocksPresent(unsigned piece) const {
+      return piece_info[piece].all_blocks_present(BlocksInPiece(piece));
+   }
+   bool AnyBlocksPresent(unsigned piece) const {
+      return piece_info[piece].any_blocks_present();
+   }
+   bool AllBlocksAbsent(unsigned piece) const {
+      return !AnyBlocksPresent(piece);
+   }
+   void SetBlocksAbsent(unsigned piece) {
+      piece_info[piece].set_blocks_absent();
+   }
+   void SetBlockPresent(unsigned piece,unsigned block) {
+      piece_info[piece].set_block_present(block,BlocksInPiece(piece));
+   }
 
    void RebuildPiecesNeeded();
    Timer pieces_needed_rebuild_timer;
@@ -358,7 +424,7 @@ public:
    static void SHA1(const xstring& str,xstring& buf);
    void ValidatePiece(unsigned p);
    unsigned PieceLength(unsigned p) const { return p==total_pieces-1 ? last_piece_length : piece_length; }
-   unsigned BlocksInPiece(unsigned p) const { return (PieceLength(p)+BLOCK_SIZE-1)/BLOCK_SIZE; }
+   unsigned BlocksInPiece(unsigned p) const { return p==total_pieces-1 ? blocks_in_last_piece : blocks_in_piece; }
 
    const TaskRefArray<TorrentPeer>& GetPeers() const { return peers; }
    void AddPeer(TorrentPeer *);
