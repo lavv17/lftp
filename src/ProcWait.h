@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include "SMTask.h"
+#include "xmap.h"
 
 class ProcWait : public SMTask
 {
@@ -35,10 +36,10 @@ public:
    };
 
 protected:
-   static ProcWait *chain;
-   ProcWait *next;
+   static xmap<ProcWait*> all_proc;
 
-   pid_t pid;
+   const pid_t pid;
+   static const xstring& proc_key(pid_t p) { return xstring::get_tmp((const char*)&p,sizeof(p)); }
    State status;
    int	 term_info;
    int	 saved_errno;

@@ -24,7 +24,14 @@
 #include "ProcWait.h"
 #include "SignalHook.h"
 
-ProcWait *ProcWait::chain=0;
+xmap<ProcWait*> ProcWait::all_proc;
+
+static const xstring& proc_key(pid_t p)
+{
+   static xstring tmp_key;
+   tmp_key.nset((const char*)&p,sizeof(p));
+   return tmp_key;
+}
 
 int ProcWait::Do()
 {
@@ -100,27 +107,19 @@ int ProcWait::Kill(int sig)
 }
 
 ProcWait::ProcWait(pid_t p)
+   : pid(p)
 {
    auto_die=false;
-   pid=p;
    status=RUNNING;
    term_info=-1;
    saved_errno=0;
 
-   next=chain;
-   chain=this;
+   all_proc.add(proc_key(pid),this);
 }
 
 ProcWait::~ProcWait()
 {
-   for(ProcWait **scan=&chain; *scan; scan=&(*scan)->next)
-   {
-      if(*scan==this)
-      {
-	 *scan=next;
-	 return;
-      }
-   }
+   all_proc.remove(proc_key(pid));
 }
 
 void ProcWait::SIGCHLD_handler(int sig)
@@ -130,16 +129,9 @@ void ProcWait::SIGCHLD_handler(int sig)
    pid_t pp=waitpid(-1,&info,WUNTRACED|WNOHANG);
    if(pp==-1)
       return;
-   for(ProcWait *scan=chain; scan; scan=scan->next)
-   {
-      if(scan->pid==pp)
-      {
-	 scan->handle_info(info);
-	 return;
-      }
-   }
-   // no WaitProc for the pid. Probably the process died too fast,
-   // but next waitpid should take care of it.
+   ProcWait *w=all_proc.lookup(proc_key(pp));
+   if(w && w->handle_info(info))
+      w->Timeout(0);
 }
 
 void ProcWait::Signal(bool yes)
@@ -156,6 +148,6 @@ void ProcWait::Signal(bool yes)
 void ProcWait::DeleteAll()
 {
    Signal(false);
-   for(ProcWait *scan=chain; scan; scan=scan->next)
-      Delete(scan);
+   for(ProcWait *w=all_proc.each_begin(); w; w=all_proc.each_next())
+      Delete(w);
 }
