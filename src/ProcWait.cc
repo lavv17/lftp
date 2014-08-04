@@ -26,7 +26,7 @@
 
 xmap<ProcWait*> ProcWait::all_proc;
 
-static const xstring& proc_key(pid_t p)
+const xstring& ProcWait::proc_key(pid_t p)
 {
    static xstring tmp_key;
    tmp_key.nset((const char*)&p,sizeof(p));

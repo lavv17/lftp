@@ -37,9 +37,9 @@ public:
 
 protected:
    static xmap<ProcWait*> all_proc;
+   static const xstring& proc_key(pid_t p); // make key for xmap
 
    const pid_t pid;
-   static const xstring& proc_key(pid_t p) { return xstring::get_tmp((const char*)&p,sizeof(p)); }
    State status;
    int	 term_info;
    int	 saved_errno;
