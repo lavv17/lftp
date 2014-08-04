@@ -600,10 +600,6 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    if(desc)
       to_transfer->ReverseSort();
 
-   to_transfer->CountBytes(&bytes_to_transfer);
-   if(parent_mirror)
-      parent_mirror->AddBytesToTransfer(bytes_to_transfer);
-
    int dir_count=0;
    to_transfer->Count(&dir_count,NULL,NULL,NULL);
    only_dirs = (dir_count==to_transfer->count());
@@ -861,10 +857,16 @@ int   MirrorJob::Do()
       stats.dirs++;
 
       InitSets(source_set,target_set);
+
+      to_transfer->CountBytes(&bytes_to_transfer);
+      if(parent_mirror)
+	 parent_mirror->AddBytesToTransfer(bytes_to_transfer);
+
       to_rm->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
       to_rm->rewind();
       to_rm_mismatched->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
       to_rm_mismatched->rewind();
+
       set_state(TARGET_REMOVE_OLD_FIRST);
       goto TARGET_REMOVE_OLD_FIRST_label;
 
