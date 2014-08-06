@@ -98,6 +98,15 @@ int Fish::Do()
       timeout_timer.Reset(send_buf->EventTime());
    if(recv_buf)
       timeout_timer.Reset(recv_buf->EventTime());
+   if(pty_send_buf)
+      timeout_timer.Reset(pty_send_buf->EventTime());
+   if(pty_recv_buf)
+      timeout_timer.Reset(pty_recv_buf->EventTime());
+
+   // check for timeout only if there should be connection activity.
+   if(state!=DISCONNECTED && (state!=CONNECTED || !RespQueueIsEmpty())
+   && mode!=CLOSED && CheckTimeout())
+      return MOVED;
 
    if((state==FILE_RECV || state==FILE_SEND)
    && rate_limit==0)
@@ -275,14 +284,6 @@ int Fish::Do()
    case DONE:
       break;
    }
-   if(m==MOVED)
-      return MOVED;
-   if(send_buf)
-      timeout_timer.Reset(send_buf->EventTime());
-   if(recv_buf)
-      timeout_timer.Reset(recv_buf->EventTime());
-   if(CheckTimeout())
-      return MOVED;
    return m;
 }
 
