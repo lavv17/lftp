@@ -136,6 +136,7 @@ void _xmap::_remove(entry **ep)
    if(!ep || !*ep)
       return;
    entry *e=*ep;
+   e->key.unset();
    *ep=e->next;
    xfree(e);
    entry_count--;
