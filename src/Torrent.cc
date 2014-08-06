@@ -322,6 +322,8 @@ void Torrent::PrepareToDie()
       RemoveTorrent(this);
       if(GetTorrentsCount()==0) {
 	 StopListener();
+	 StopDHT();
+	 StopListenerUDP();
 	 fd_cache=0;
 	 black_list=0;
       }
@@ -3366,7 +3368,6 @@ void TorrentBlackList::check_expire()
    for(Timer *e=bl.each_begin(); e; e=bl.each_next()) {
       if(e->Stopped()) {
 	 Log::global->Format(4,"---- black-delisting peer %s\n",bl.each_key().get());
-	 delete e;
 	 bl.remove(bl.each_key());
       }
    }

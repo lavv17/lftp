@@ -881,7 +881,7 @@ public:
 
 class TorrentBlackList
 {
-   xmap<Timer*> bl;
+   xmap_p<Timer> bl;
    void check_expire();
 public:
    bool Listed(const sockaddr_u &a);
