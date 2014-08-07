@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-07-06 16:15+0400\n"
+"POT-Creation-Date: 2014-08-07 08:34+0400\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "Valid arguments are:"
 msgstr ""
 
-#: lib/error.c:188
+#: lib/error.c:191
 msgid "Unknown system error"
 msgstr ""
 
@@ -160,7 +160,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr ""
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:618
+#: src/CmdExec.cc:405 src/MirrorJob.cc:624
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -250,7 +250,7 @@ msgstr "Transferência de %d de %d arquivos falhou\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "%d arquivos transmitidos"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1704 src/MirrorJob.cc:1726
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1716 src/MirrorJob.cc:1738
 #: src/commands.cc:1013 src/commands.cc:2152
 #, fuzzy
 msgid " - not supported protocol"
@@ -265,8 +265,8 @@ msgstr "Falha no acesso: %s"
 msgid "File cannot be accessed"
 msgstr "Arquivo não pode ser acessado"
 
-#: src/FileAccess.cc:160 src/Fish.cc:981 src/SFtp.cc:1335 src/ftpclass.cc:4367
-#: src/ftpclass.cc:4376 src/Torrent.cc:3177
+#: src/FileAccess.cc:160 src/Fish.cc:982 src/SFtp.cc:1337 src/ftpclass.cc:4367
+#: src/ftpclass.cc:4376 src/Torrent.cc:3213
 msgid "Not connected"
 msgstr "Não conectado"
 
@@ -403,48 +403,48 @@ msgstr ""
 msgid "Closing idle connection"
 msgstr ""
 
-#: src/Fish.cc:155 src/SFtp.cc:179
+#: src/Fish.cc:164 src/SFtp.cc:179
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:589 src/Http.cc:1331 src/SFtp.cc:744 src/SFtp.cc:1080
-#: src/SFtp.cc:1081 src/ftpclass.cc:2737 src/ftpclass.cc:2957
+#: src/Fish.cc:590 src/Http.cc:1331 src/SFtp.cc:744 src/SFtp.cc:1082
+#: src/SFtp.cc:1083 src/ftpclass.cc:2737 src/ftpclass.cc:2957
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/Fish.cc:635 src/SFtp.cc:1105 src/ftpclass.cc:2887 src/ftpclass.cc:4004
+#: src/Fish.cc:636 src/SFtp.cc:1107 src/ftpclass.cc:2887 src/ftpclass.cc:4004
 msgid "extra server response"
 msgstr ""
 
-#: src/Fish.cc:986 src/Http.cc:2103 src/Http.cc:2110 src/SFtp.cc:1341
-#: src/ftpclass.cc:4379 src/Torrent.cc:3180 src/TorrentTracker.cc:619
+#: src/Fish.cc:987 src/Http.cc:2103 src/Http.cc:2110 src/SFtp.cc:1343
+#: src/ftpclass.cc:4379 src/Torrent.cc:3216 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr ""
 
-#: src/Fish.cc:988 src/SFtp.cc:1343 src/ftpclass.cc:4385
+#: src/Fish.cc:989 src/SFtp.cc:1345 src/ftpclass.cc:4385
 #, fuzzy
 msgid "Connected"
 msgstr "Não conectado"
 
-#: src/Fish.cc:990 src/Http.cc:2112 src/SFtp.cc:1345 src/ftpclass.cc:4362
+#: src/Fish.cc:991 src/Http.cc:2112 src/SFtp.cc:1347 src/ftpclass.cc:4362
 #: src/ftpclass.cc:4390 src/ftpclass.cc:4404 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/Fish.cc:992 src/Http.cc:2115 src/SFtp.cc:1347 src/ftpclass.cc:4424
+#: src/Fish.cc:993 src/Http.cc:2115 src/SFtp.cc:1349 src/ftpclass.cc:4424
 msgid "Receiving data"
 msgstr ""
 
-#: src/Fish.cc:994 src/Http.cc:2108 src/SFtp.cc:1349 src/ftpclass.cc:4422
+#: src/Fish.cc:995 src/Http.cc:2108 src/SFtp.cc:1351 src/ftpclass.cc:4422
 msgid "Sending data"
 msgstr ""
 
-#: src/Fish.cc:996 src/SFtp.cc:1351
+#: src/Fish.cc:997 src/SFtp.cc:1353
 msgid "Done"
 msgstr ""
 
-#: src/Fish.cc:1152 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2214
-#: src/SFtp.cc:2332
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2216
+#: src/SFtp.cc:2334
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "\tExecutando comando embutido `%s' [%s]\n"
@@ -466,8 +466,8 @@ msgstr ""
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1255 src/ftpclass.cc:1346 src/Torrent.cc:2848
-#: src/Torrent.cc:3385 src/TorrentTracker.cc:392
+#: src/Http.cc:1255 src/ftpclass.cc:1346 src/Torrent.cc:2884
+#: src/Torrent.cc:3423 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
@@ -593,7 +593,7 @@ msgstr ""
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s: nenhum arquivo encontrado\n"
 
-#: src/MirrorJob.cc:294 src/MirrorJob.cc:478 src/MirrorJob.cc:994
+#: src/MirrorJob.cc:294 src/MirrorJob.cc:478 src/MirrorJob.cc:1006
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "Removendo arquivo local antigo `%s'"
@@ -613,7 +613,7 @@ msgstr "Enviando arquivo local `%s'"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Criando diretório remoto `%s'"
 
-#: src/MirrorJob.cc:401 src/MirrorJob.cc:510 src/MirrorJob.cc:755
+#: src/MirrorJob.cc:401 src/MirrorJob.cc:510 src/MirrorJob.cc:761
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Removendo arquivo local antigo `%s'"
@@ -633,58 +633,58 @@ msgstr ""
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Criando link simbólico de `%s' para `%s'"
 
-#: src/MirrorJob.cc:669
+#: src/MirrorJob.cc:675
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: o protocolo `%s' não pode ser espelhado\n"
 
-#: src/MirrorJob.cc:776
+#: src/MirrorJob.cc:782
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "Criando diretório remoto `%s'"
 
-#: src/MirrorJob.cc:946
+#: src/MirrorJob.cc:958
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "%s: nenhum arquivo encontrado\n"
 
-#: src/MirrorJob.cc:949
+#: src/MirrorJob.cc:961
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:989
+#: src/MirrorJob.cc:1001
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "Removendo arquivo remoto antigo `%s'"
 
-#: src/MirrorJob.cc:1117
+#: src/MirrorJob.cc:1129
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1549
+#: src/MirrorJob.cc:1561
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1668 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1680 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1158 src/commands.cc:1248 src/commands.cc:1620
 #: src/commands.cc:1651 src/commands.cc:1754 src/commands.cc:2061
 #: src/commands.cc:2257 src/commands.cc:2419 src/commands.cc:2447
 #: src/commands.cc:2454 src/commands.cc:2740 src/commands.cc:2767
 #: src/commands.cc:2774 src/commands.cc:3100 src/lftp.cc:267
-#: src/Torrent.cc:3774
+#: src/Torrent.cc:3812
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1692
+#: src/MirrorJob.cc:1704
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1714
+#: src/MirrorJob.cc:1726
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr ""
@@ -694,7 +694,7 @@ msgstr ""
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
 
-#: src/NetAccess.cc:204 src/Torrent.cc:2970
+#: src/NetAccess.cc:204 src/Torrent.cc:3006
 msgid "Timeout - reconnecting"
 msgstr ""
 
@@ -841,7 +841,7 @@ msgstr "variável desconhecida"
 msgid "No address found"
 msgstr ""
 
-#: src/SFtp.cc:1096 src/SFtp.cc:1097
+#: src/SFtp.cc:1098 src/SFtp.cc:1099
 msgid "invalid server response format"
 msgstr ""
 
@@ -2380,7 +2380,7 @@ msgstr "`%s' em %lu %s%s[%s]"
 msgid "=1 =0|>1"
 msgstr ""
 
-#: src/resource.cc:50 src/resource.cc:81
+#: src/resource.cc:50 src/resource.cc:107
 msgid "Proxy protocol unsupported"
 msgstr ""
 
@@ -2388,27 +2388,26 @@ msgstr ""
 msgid "ftp:proxy password: "
 msgstr ""
 
-#: src/resource.cc:65
-msgid ""
-"ftp:proxy-auth-type must be one of: user, joined, joined-acct, open, proxy-"
-"user@host"
+#: src/resource.cc:69
+#, c-format
+msgid "%s must be one of: "
 msgstr ""
 
-#: src/resource.cc:89
+#: src/resource.cc:71
+msgid "must be one of: "
+msgstr ""
+
+#: src/resource.cc:83
+msgid ", or empty"
+msgstr ""
+
+#: src/resource.cc:115
 msgid "only PUT and POST values allowed"
 msgstr ""
 
-#: src/resource.cc:121
+#: src/resource.cc:147
 #, c-format
 msgid "unknown address family `%s'"
-msgstr ""
-
-#: src/resource.cc:144
-msgid "ftp:ssl-auth must be one of: SSL, TLS, TLS-P, TLS-C"
-msgstr ""
-
-#: src/resource.cc:161
-msgid "must be one of: C, S, E, P, or empty"
 msgstr ""
 
 #: src/rmJob.cc:47
@@ -2431,96 +2430,96 @@ msgstr "%s: nenhum arquivo encontrado\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s: nenhum arquivo encontrado\n"
 
-#: src/Torrent.cc:569
+#: src/Torrent.cc:566
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:581
+#: src/Torrent.cc:578
 #, c-format
 msgid "next announce in %s"
 msgstr ""
 
-#: src/Torrent.cc:1734 src/Torrent.cc:1737
+#: src/Torrent.cc:1768 src/Torrent.cc:1771
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:1740
+#: src/Torrent.cc:1774
 #, fuzzy
 msgid "Waiting for meta-data..."
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/Torrent.cc:1743
+#: src/Torrent.cc:1777
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:1753
+#: src/Torrent.cc:1787
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:2851
+#: src/Torrent.cc:2887
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr ""
 
-#: src/Torrent.cc:2902 src/Torrent.cc:3019
+#: src/Torrent.cc:2938 src/Torrent.cc:3055
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr ""
 
-#: src/Torrent.cc:2903 src/Torrent.cc:3020
+#: src/Torrent.cc:2939 src/Torrent.cc:3056
 msgid "peer unexpectedly closed connection"
 msgstr ""
 
-#: src/Torrent.cc:2905 src/Torrent.cc:2906
+#: src/Torrent.cc:2941 src/Torrent.cc:2942
 msgid "peer closed connection (before handshake)"
 msgstr ""
 
-#: src/Torrent.cc:2909 src/Torrent.cc:3022 src/Torrent.cc:3023
+#: src/Torrent.cc:2945 src/Torrent.cc:3058 src/Torrent.cc:3059
 msgid "invalid peer response format"
 msgstr ""
 
-#: src/Torrent.cc:3004 src/Torrent.cc:3005
+#: src/Torrent.cc:3040 src/Torrent.cc:3041
 msgid "peer closed connection"
 msgstr ""
 
-#: src/Torrent.cc:3182
+#: src/Torrent.cc:3218
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3440
+#: src/Torrent.cc:3478
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3490
+#: src/Torrent.cc:3528
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr ""
 
-#: src/Torrent.cc:3552
+#: src/Torrent.cc:3590
 #, c-format
 msgid "peer sent unknown info_hash=%s in handshake"
 msgstr ""
 
-#: src/Torrent.cc:3576
+#: src/Torrent.cc:3614
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3588
+#: src/Torrent.cc:3626
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3590
+#: src/Torrent.cc:3628
 msgid "peer closed just accepted connection"
 msgstr ""
 
-#: src/Torrent.cc:3641
+#: src/Torrent.cc:3679
 #, c-format
 msgid "Seeding in background...\n"
 msgstr ""
 
-#: src/Torrent.cc:3818
+#: src/Torrent.cc:3856
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""

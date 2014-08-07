@@ -1,3 +1,14 @@
+Version 4.5.4 - 2014-08-07
+
+* new setting mirror:sort-by (name, size, date).
+* torrent: reduced cpu and memory usage.
+* fixed occasional "BUG:deadlock" message.
+* fixed a segfault when a directory contains duplicate file names.
+* fixed a memory leak in torrent.
+* fixed byte counters in mirror --depth-first.
+* fixed timeout checks in FISH.
+* translations updated (pl).
+
 Version 4.5.3 - 2014-07-06
 
 * new setting ftp:site.
