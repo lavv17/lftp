@@ -192,7 +192,6 @@ void FileAccess::Close()
    opt_size=0;
    fileset_for_info=0;
    retries=0;
-   max_retries=0;
    entity_size=NO_SIZE;
    entity_date=NO_DATE;
    ascii=false;
