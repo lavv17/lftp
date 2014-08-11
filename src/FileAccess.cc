@@ -59,6 +59,7 @@ void FileAccess::Init()
    pos=0;
    mode=CLOSED;
    retries=0;
+   max_retries=0;
    opt_date=0;
    opt_size=0;
    fileset_for_info=0;
