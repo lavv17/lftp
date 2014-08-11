@@ -317,17 +317,20 @@ bool NetAccess::NextTry()
 	 reconnect_interval_current=reconnect_interval_max;
    }
    retries++;
+   LogNote(10,"attempt number %d (max_retries=%d)",retries,max_retries);
    return CheckRetries();
 }
 bool NetAccess::CheckRetries()
 {
    if(max_retries>0 && retries>max_retries)
    {
-      Fatal(_("max-retries exceeded"));
+      if(!IsConnected() && last_disconnect_cause)
+	 Fatal(xstring::cat(_("max-retries exceeded")," (",last_disconnect_cause.get(),")",NULL));
+      else
+	 Fatal(_("max-retries exceeded"));
       return false;
    }
    reconnect_timer.Set(reconnect_interval_current);
-   LogNote(10,"attempt number %d",retries);
    return true;
 }
 void NetAccess::TrySuccess()
