@@ -386,10 +386,19 @@ Print help for \fIcmd\fP or if no \fIcmd\fP was specified print a list of
 available commands.
 
 .B jobs
-.RB [ \-v "] [" \fIjob_no...\fP ]
+.RI [ OPTS ]
+.RI [ job_no... ]
 .PP
-List running jobs. \-v means verbose, several \-v can be specified.
-If \fIjob_no\fP is specified, only list a job with that number.
+List running jobs. If \fIjob_no\fP is specified, only list a job with that number.
+Options:
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-v	verbose, several \-v increase verbosity
+\-r	list just one specified job without recursion
+.TE
+.P
 
 .B kill
 all|\fIjob_no\fP

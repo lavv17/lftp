@@ -1937,12 +1937,16 @@ CMD(jobs)
 {
    int opt;
    int v=1;
-   while((opt=args->getopt("+v"))!=EOF)
+   bool recursion=true;
+   while((opt=args->getopt("+vr"))!=EOF)
    {
       switch(opt)
       {
       case('v'):
 	 v++;
+	 break;
+      case('r'):
+	 recursion=false;
 	 break;
       case('?'):
          // xgettext:c-format
@@ -1971,7 +1975,10 @@ CMD(jobs)
 	    exit_code=1;
 	    continue;
 	 }
-	 j->FormatOneJob(s,v);
+	 if(recursion)
+	    j->FormatOneJobRecursively(s,v);
+	 else
+	    j->FormatOneJob(s,v);
       }
    }
    if(exit_code)
