@@ -155,7 +155,15 @@ class MirrorJob : public Job
    void TransferFinished(Job *j);
    void JobFinished(Job *j);
 
-   off_t GetBytesCount() { return bytes_transferred+Job::GetBytesCount(); }
+   off_t GetBytesCount() {
+      long long bytes_count=Job::GetBytesCount();
+      if(!parent_mirror) {
+	 // bytes_transferred is cumulative over the mirror tree,
+	 // add it on the top only
+	 bytes_count+=bytes_transferred;
+      }
+      return bytes_count;
+   }
    double GetTimeSpent() { return transfer_time_elapsed+(transfer_count>0?now-root_mirror->transfer_start_ts:0.); }
 
 public:
