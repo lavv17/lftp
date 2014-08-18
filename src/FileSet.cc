@@ -921,8 +921,11 @@ int FileSet::Have() const
    return bits;
 }
 
-static bool fnmatch_dir(const char *pattern,const FileInfo *file)
+static int fnmatch_dir(const char *pattern,const FileInfo *file)
 {
+   bool inverted = (pattern[0]=='!');
+   if(inverted || (pattern[0]=='\\' && pattern[1]=='!'))
+      pattern++;
    const char *name=file->name;
    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
    {
@@ -930,7 +933,15 @@ static bool fnmatch_dir(const char *pattern,const FileInfo *file)
       strcat(n,"/");
       name=n;
    }
-   return fnmatch(pattern,name,FNM_PATHNAME|FNM_CASEFOLD);
+   int result=fnmatch(pattern,name,FNM_PATHNAME|FNM_CASEFOLD);
+   if(inverted)
+   {
+      if(result==0)
+	 result=FNM_NOMATCH;
+      else if(result==FNM_NOMATCH)
+	 result=0;
+   }
+   return result;
 }
 
 void FileSet::SortByPatternList(const char *list_c)
