@@ -78,7 +78,7 @@ const char *Alias::Find(const char *alias)
 
 char *Alias::Format()
 {
-   xstring res;
+   xstring res("");
    for(Alias *scan=base; scan; scan=scan->next)
    {
       res.append("alias ");
