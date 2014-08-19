@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "04 Jul 2014"
+.TH lftp 1 "19 Aug 2014"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.5.3.
+This man page documents lftp version 4.5.5.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -2100,14 +2100,17 @@ Also note that it is not secure to specify the password on command line, use \fI
 Alternatively you can use ssh-based protocols with authorized keys, so you don't have to enter a password.
 .PP
 .TP
+.B \-\-norc
+Don't execute rc files from the home directory.
+.TP
 .BI \-f " script_file"
 Execute commands in the file and exit.
-This option must be used alone without other arguments.
+This option must be used alone without other arguments (except \fB\-\-norc\fP).
 .TP
 .BI \-c " commands"
 Execute the given commands and exit. Commands can be separated with
 a semicolon, `&&' or `||'. Remember to quote the commands argument properly in the shell.
-This option must be used alone without other arguments.
+This option must be used alone without other arguments (except \fB\-\-norc\fP).
 
 .SH ENVIRONMENT VARIABLES
 The following environment variables are processed by \fBlftp\fR:

@@ -517,6 +517,22 @@ static void tty_clear()
       top_exec->pre_stdout();
 }
 
+// look for the option, remove it and return true if found
+static bool pick_option(int& argc,char **argv,const char *option)
+{
+   for(int i=1; i<argc; i++) {
+      if(!strcmp(argv[i],option)) {
+	 // remove the option, move trailing NULL too.
+	 memmove(argv+i,argv+i+1,(argc-i)*sizeof(*argv));
+	 argc--;
+	 return true;
+      }
+      if(!strcmp(argv[i],"--"))	 // end of options
+	 break;
+   }
+   return false;
+}
+
 char *program_name;
 
 int   main(int argc,char **argv)
@@ -550,14 +566,17 @@ int   main(int argc,char **argv)
    Log::global->SetCB(tty_clear);
 
    source_if_exist(SYSCONFDIR"/lftp.conf");
-   const char *home=getenv("HOME");
-   if(home)
-      source_if_exist(dir_file(home,".lftprc"));
-   home=get_lftp_config_dir();
-   if(home)
-      source_if_exist(dir_file(home,"rc"));
-   top_exec->WaitDone();
 
+   if(!pick_option(argc,argv,"--norc")) {
+      const char *home=getenv("HOME");
+      if(home)
+	 source_if_exist(dir_file(home,".lftprc"));
+      home=get_lftp_config_dir();
+      if(home)
+	 source_if_exist(dir_file(home,"rc"));
+   }
+
+   top_exec->WaitDone();
    top_exec->SetTopLevel();
    top_exec->Fg();
 
