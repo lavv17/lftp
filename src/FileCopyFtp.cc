@@ -160,7 +160,10 @@ int FileCopyFtp::Do()
       Close();
       const long long size=GetSize();
       if(size>=0)
+      {
 	 get->SetPos(size);
+	 put->SetPos(size);
+      }
       get->PutEOF();
       return MOVED;
    }
