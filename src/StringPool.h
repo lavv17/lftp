@@ -25,7 +25,7 @@
 // maybe it is better to have many separate pools with dtors.
 class StringPool
 {
-   static xarray_p<char> strings;
+   static xarray_m<char> strings;
 
 public:
    static const char *Get(const char *);

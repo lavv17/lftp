@@ -21,7 +21,7 @@
 #include "StringPool.h"
 #include "xarray.h"
 
-xarray_p<char> StringPool::strings;
+xarray_m<char> StringPool::strings;
 
 const char *StringPool::Get(const char *s)
 {
