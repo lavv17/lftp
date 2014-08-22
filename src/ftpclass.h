@@ -425,7 +425,7 @@ private:
    int CanRead();
 
 protected:
-   ~Ftp();
+   void PrepareToDie();
 
 public:
    static void ClassInit();

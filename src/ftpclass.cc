@@ -1075,7 +1075,7 @@ Ftp::Connection::~Connection()
    }
 }
 
-Ftp::~Ftp()
+void Ftp::PrepareToDie()
 {
    Enter();
    Disconnect();
