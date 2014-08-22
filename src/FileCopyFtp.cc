@@ -158,6 +158,9 @@ int FileCopyFtp::Do()
    if(src_res==FA::OK && dst_res==FA::OK)
    {
       Close();
+      const long long size=GetSize();
+      if(size>=0)
+	 get->SetPos(size);
       get->PutEOF();
       return MOVED;
    }
