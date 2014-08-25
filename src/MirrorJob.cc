@@ -377,7 +377,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(file->defined&file->SIZE)
 	    cp->SetSize(file->size);
 	 TransferStarted(cp);
-	 cp->cmdline.vset("\\transfer ",file->name.get(),NULL);
+	 cp->cmdline.vset("\\transfer `",source_name_rel,"'",NULL);
 
 	 set_state(WAITING_FOR_TRANSFER);
 	 break;
@@ -430,7 +430,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    source_session->Clone(),target_session->Clone(),
 	    source_name,target_name);
 	 AddWaiting(mj);
-	 mj->cmdline.vset("\\mirror ",file->name.get(),NULL);
+	 mj->cmdline.vset("\\mirror `",source_name_rel,"'",NULL);
 
 	 // inherit flags and other things
 	 mj->SetFlags(flags,1);
