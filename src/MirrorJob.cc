@@ -242,11 +242,17 @@ void  MirrorJob::HandleFile(FileInfo *file)
    struct stat st;
 
    // TODO: get rid of local hacks.
+
    // dir_name returns pointer to static data - need to dup it.
    const char *source_name=dir_file(source_dir,file->name);
    source_name=alloca_strdup(source_name);
    const char *target_name=dir_file(target_dir,file->name);
    target_name=alloca_strdup(target_name);
+
+   const char *source_name_rel=dir_file(source_relative_dir,file->name);
+   source_name_rel=alloca_strdup(source_name_rel);
+   const char *target_name_rel=dir_file(target_relative_dir,file->name);
+   target_name_rel=alloca_strdup(target_name_rel);
 
    FileInfo::type filetype=FileInfo::NORMAL;
    if(file->defined&file->TYPE)
@@ -305,8 +311,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    }
 	    else if(!to_rm_mismatched->FindByName(file->name))
 	    {
-	       Report(_("Removing old file `%s'"),
-			dir_file(target_relative_dir,file->name));
+	       Report(_("Removing old file `%s'"),target_name_rel);
 	       remove_target=true;
 	       stats.mod_files++;
 	    }
@@ -315,15 +320,13 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 }
 	 else if(flags&ONLY_EXISTING)
 	 {
-	    Report(_("Skipping file `%s' (only-existing)"),
-		     dir_file(source_relative_dir,file->name));
+	    Report(_("Skipping file `%s' (only-existing)"),source_name_rel);
 	    goto skip;
 	 }
 	 else
 	    stats.new_files++;
 
-	 Report(_("Transferring file `%s'"),
-		  dir_file(source_relative_dir,file->name));
+	 Report(_("Transferring file `%s'"),source_name_rel);
 
 	 if(script)
 	 {
@@ -392,8 +395,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 {
 	    if(flags&ONLY_EXISTING)
 	    {
-	       Report(_("Skipping directory `%s' (only-existing)"),
-			dir_file(target_relative_dir,file->name));
+	       Report(_("Skipping directory `%s' (only-existing)"),target_name_rel);
 	       goto skip;
 	    }
 	 }
@@ -412,8 +414,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       }
 	       else
 	       {
-		  Report(_("Removing old local file `%s'"),
-			   dir_file(target_relative_dir,file->name));
+		  Report(_("Removing old local file `%s'"),target_name_rel);
 		  if(remove(target_name)==-1)
 		  {
 		     eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
@@ -437,8 +438,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 mj->SetExclude(exclude);
 
-	 mj->source_relative_dir.set(dir_file(source_relative_dir,file->name));
-	 mj->target_relative_dir.set(dir_file(target_relative_dir,file->name));
+	 mj->source_relative_dir.set(source_name_rel);
+	 mj->target_relative_dir.set(target_name_rel);
 
 	 mj->verbose_report=verbose_report;
 	 mj->newer_than=newer_than;
@@ -489,8 +490,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    FileInfo *old=target_set->FindByName(file->name);
 	    if(old && !to_rm_mismatched->FindByName(file->name))
 	    {
-	       Report(_("Removing old file `%s'"),
-			dir_file(target_relative_dir,file->name));
+	       Report(_("Removing old file `%s'"),target_name_rel);
 	       remove_target=true;
 	       stats.mod_symlinks++;
 	    }
@@ -521,8 +521,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    struct stat st;
 	    if(lstat(target_name,&st)!=-1)
 	    {
-	       Report(_("Removing old local file `%s'"),
-			dir_file(target_relative_dir,file->name));
+	       Report(_("Removing old local file `%s'"),target_name_rel);
 	       stats.mod_symlinks++;
 	       if(remove(target_name)==-1)
 	       {
@@ -534,14 +533,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    {
 	       if(flags&ONLY_EXISTING)
 	       {
-		  Report(_("Skipping symlink `%s' (only-existing)"),
-			   dir_file(target_relative_dir,file->name));
+		  Report(_("Skipping symlink `%s' (only-existing)"),target_name_rel);
 		  goto skip;
 	       }
 	       stats.new_symlinks++;
 	    }
-	    Report(_("Making symbolic link `%s' to `%s'"),
-		     dir_file(target_relative_dir,file->name),file->symlink.get());
+	    Report(_("Making symbolic link `%s' to `%s'"),target_name_rel,file->symlink.get());
 	    res=symlink(file->symlink,target_name);
 	    if(res==-1)
 	       eprintf("mirror: symlink(%s): %s\n",target_name,strerror(errno));
@@ -964,16 +961,16 @@ int   MirrorJob::Do()
 	       goto pre_TARGET_CHMOD;
 	    goto pre_WAITING_FOR_TRANSFER;
 	 }
+	 const char *target_name_rel=dir_file(target_relative_dir,file->name);
+	 target_name_rel=alloca_strdup(target_name_rel);
 	 if(!(flags&DELETE))
 	 {
 	    if(flags&REPORT_NOT_DELETED)
 	    {
-	       if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
-		  Report(_("Old directory `%s' is not removed"),
-			   dir_file(target_relative_dir,file->name));
+	       if(file->TypeIs(file->DIRECTORY))
+		  Report(_("Old directory `%s' is not removed"),target_name_rel);
 	       else
-		  Report(_("Old file `%s' is not removed"),
-			   dir_file(target_relative_dir,file->name));
+		  Report(_("Old file `%s' is not removed"),target_name_rel);
 	    }
 	    continue;
 	 }
@@ -1010,16 +1007,10 @@ int   MirrorJob::Do()
 		  j->Recurse();
 	    }
 	 }
-	 if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
-	 {
-	    Report(_("Removing old directory `%s'"),
-		     dir_file(target_relative_dir,file->name));
-	 }
+	 if(file->TypeIs(file->DIRECTORY))
+	    Report(_("Removing old directory `%s'"),target_name_rel);
 	 else
-	 {
-	    Report(_("Removing old file `%s'"),
-		     dir_file(target_relative_dir,file->name));
-	 }
+	    Report(_("Removing old file `%s'"),target_name_rel);
       }
       break;
 
