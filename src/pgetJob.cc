@@ -303,7 +303,6 @@ void pgetJob::free_chunks()
 	 chunks_bytes+=chunks[i]->GetBytesCount();
       chunks.unset();
    }
-   cmdline.set(0);
 }
 
 pgetJob::pgetJob(FileCopy *c1,const char *n,int m)
