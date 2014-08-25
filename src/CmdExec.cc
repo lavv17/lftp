@@ -926,7 +926,8 @@ void CmdExec::Reconfig(const char *name)
    verify_path_cached=ResMgr::QueryBool("cmd:verify-path-cached",c);
    verify_host=ResMgr::QueryBool("cmd:verify-host",c);
    verbose=ResMgr::QueryBool("cmd:verbose",0);
-   max_waiting=ResMgr::Query(queue_feeder?"cmd:queue-parallel":"cmd:parallel",c);
+   if(top_level || queue_feeder)
+      max_waiting=ResMgr::Query(queue_feeder?"cmd:queue-parallel":"cmd:parallel",c);
    if(name && !strcmp(name,"cmd:interactive"))
       SetInteractive();
    show_status=ResMgr::QueryBool("cmd:show-status",0);
