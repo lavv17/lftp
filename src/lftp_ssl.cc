@@ -322,6 +322,7 @@ lftp_ssl_gnutls::~lftp_ssl_gnutls()
    if(cred)
       gnutls_certificate_free_credentials(cred);
    gnutls_deinit(session);
+   session=0;
 }
 
 /* This function will try to verify the peer's certificate chain, and
@@ -873,6 +874,7 @@ void lftp_ssl_openssl::shutdown()
 lftp_ssl_openssl::~lftp_ssl_openssl()
 {
    SSL_free(ssl);
+   ssl=0;
 }
 
 static const char *verify_callback_host;
