@@ -1068,6 +1068,11 @@ Ftp::Connection::~Connection()
 {
    CloseAbortedDataConnection();
    CloseDataConnection();
+
+   control_send=0;
+   control_recv=0;
+   control_ssl=0; // ssl should be freed after send/recv
+
    if(control_sock!=-1)
    {
       LogNote(7,_("Closing control socket"));
