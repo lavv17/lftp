@@ -3692,7 +3692,9 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
    const char *name=torrent->GetName();
    if(name)
       s.appendf("%sName: %s\n",tab,name);
-   s.appendf("%s%s\n",tab,torrent->Status().get());
+   const char *status=torrent->Status();
+   if(*status)
+      s.appendf("%s%s\n",tab,status);
    if(torrent->IsDownloading()) {
       s.appendf("%spiece availability: min %u, avg %.2f, %d%% available\n",tab,
 	 torrent->MinPieceSources(),torrent->AvgPieceSources(),torrent->PiecesAvailablePct());
