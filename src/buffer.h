@@ -250,6 +250,7 @@ class IOBufferStacked : public IOBuffer
 
 public:
    IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()), down(b) {}
+   void PrepareToDie() { down=0; }
    const Time& EventTime() { return down->EventTime(); }
    int Do();
    bool Done();
