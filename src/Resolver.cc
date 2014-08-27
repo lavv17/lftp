@@ -46,6 +46,10 @@
 # include "validator/validator.h"
 #endif
 
+#if LIBIDN
+# include <idna.h>
+#endif
+
 #include "xstring.h"
 #include "ResMgr.h"
 #include "log.h"
@@ -678,6 +682,17 @@ void Resolver::LookupOne(const char *name)
 	 order=o;
       name=proto_delim+1;
    }
+
+#if LIBIDN
+   xstring_c name_ace;
+   char *name_ace_tmp=0;
+   if(idna_to_ascii_lz(name,&name_ace_tmp,0)==IDNA_SUCCESS)
+   {
+      name_ace.set_allocated(name_ace_tmp);
+      name_ace_tmp=0;
+      name=name_ace;
+   }
+#endif//LIBIDN
 
    ParseOrder(order,af_order);
 
