@@ -310,7 +310,7 @@ void Http::SendMethod(const char *method,const char *efile)
 {
    xstring& stripped_hostname=xstring::get_tmp(hostname);
    stripped_hostname.truncate_at('%');
-   xstring& ehost=url::encode(stripped_hostname,URL_HOST_UNSAFE);
+   xstring& ehost=url::encode(xidna_to_ascii(stripped_hostname),URL_HOST_UNSAFE);
    if(portname) {
       ehost.append(':');
       ehost.append(url::encode(portname,URL_PORT_UNSAFE));
