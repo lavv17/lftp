@@ -40,6 +40,10 @@
 # include <sys/time.h>
 #endif
 
+#if LIBIDN
+# include <idna.h>
+#endif
+
 CDECL_BEGIN
 #include "regex.h"
 #include "human.h"
@@ -997,4 +1001,16 @@ const char *xhuman(long long n)
 {
    char *buf=xstring::tmp_buf(LONGEST_HUMAN_READABLE + 1);
    return human_readable(n, buf, human_autoscale|human_SI, 1, 1);
+}
+
+const char *xidna_to_ascii(const char *name)
+{
+#if LIBIDN
+   if(!name)
+      return 0;
+   char *name_ace_tmp=0;
+   if(idna_to_ascii_lz(name,&name_ace_tmp,0)==IDNA_SUCCESS)
+      return xstring::get_tmp().set_allocated(name_ace_tmp);
+#endif//LIBIDN
+   return name;
 }

@@ -154,4 +154,6 @@ do {							 \
       }							 \
 } while(0)
 
+const char *xidna_to_ascii(const char *name);
+
 #endif // MISC_H
