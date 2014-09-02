@@ -1986,7 +1986,7 @@ get_again:
    }
    if(size>size1)
       size=size1;
-   buf->MoveDataHere(src_buf,size);
+   size=buf->MoveDataHere(src_buf,size);
    _UpdatePos(size);
    return size;
 }

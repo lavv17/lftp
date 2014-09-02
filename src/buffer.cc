@@ -211,8 +211,6 @@ int Buffer::MoveDataHere(Buffer *o,int max_len)
 	 o->Skip(size);
       }
    }
-   if(o->Eof() && o->Size()==0)
-      PutEOF();
    return size;
 }
 
@@ -595,7 +593,10 @@ int IOBufferStacked::Get_LL(int)
       return 0;
    }
    down->ResumeSlave();
-   return MoveDataHere(down,down->Size());
+   int size=MoveDataHere(down,down->Size());
+   if(down->Size()==0 && down->Eof())
+      PutEOF();
+   return size;
 }
 
 bool IOBufferStacked::Done()

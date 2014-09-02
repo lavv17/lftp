@@ -1220,7 +1220,9 @@ int SFtp::Read(Buffer *buf,int size)
 	 return DO_AGAIN;
       if(size>size1)
 	 size=size1;
-      buf->MoveDataHere(file_buf,size);
+      size=buf->MoveDataHere(file_buf,size);
+      if(size<=0)
+	 return DO_AGAIN;
       pos+=size;
       real_pos+=size;
       rate_limit->BytesGot(size);

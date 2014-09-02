@@ -872,7 +872,9 @@ int Fish::Read(Buffer *buf,int size)
       }
       if(size>size1)
 	 size=size1;
-      buf->MoveDataHere(recv_buf,size);
+      size=buf->MoveDataHere(recv_buf,size);
+      if(size<=0)
+	 return DO_AGAIN;
       pos+=size;
       real_pos+=size;
       rate_limit->BytesGot(size);

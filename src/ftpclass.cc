@@ -3674,7 +3674,10 @@ int   Ftp::Read(Buffer *buf,int size)
    }
 
    assert(real_pos==pos);
-   buf->MoveDataHere(conn->data_iobuf,size);
+
+   size=buf->MoveDataHere(conn->data_iobuf,size);
+   if(size<=0)
+      return DO_AGAIN;
    rate_limit->BytesGot(size);
    real_pos+=size;
    pos+=size;
