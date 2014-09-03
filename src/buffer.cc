@@ -712,8 +712,10 @@ int IOBufferFDStream::Get_LL(int size)
       goto stream_err;
    }
 
-   if(res==0)
+   if(res==0) {
+      Log::global->Format(10,"buffer: EOF on FD %d\n",fd);
       eof=true;
+   }
    return res;
 
 stream_err:
