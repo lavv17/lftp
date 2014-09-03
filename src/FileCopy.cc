@@ -1045,13 +1045,13 @@ void FileCopyPeerFA::OpenSession()
    session->SetFileURL(orig_url);
    session->SetLimit(range_limit);
    if(mode==PUT)
-   {
       upload_state.Restore(session);
-      if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
-	 session->SetSize(e_size);
-      if(date!=NO_DATE && date!=NO_DATE_YET)
-	 session->SetDate(date);
-   }
+
+   if(e_size!=NO_SIZE && e_size!=NO_SIZE_YET)
+      session->SetSize(e_size);
+   if(date!=NO_DATE && date!=NO_DATE_YET)
+      session->SetDate(date);
+
    session->RereadManual();
    if(ascii)
       session->AsciiTransfer();
