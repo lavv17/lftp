@@ -1718,6 +1718,8 @@ int   Ftp::Do()
       {
 	 if(mode==STORE)
 	    SendUTimeRequest();
+	 if(mode==RETRIEVE)
+	    LogNote(9,"received all data but no EOF\n");
 	 eof=true;
 	 goto pre_WAITING_STATE; // simulate eof.
       }
@@ -3981,14 +3983,16 @@ void Ftp::CheckResp(int act)
 	 conn->stat_timer.ResetDelayed(2);
       }
 
-      if(mode==RETRIEVE && entity_size<0)
+      if(mode==RETRIEVE && entity_size<0 && QueryBool("catch-size",hostname))
       {
 	 // try to catch size
 	 const char *s=strrchr(line,'(');
 	 if(s && is_ascii_digit(s[1]))
 	 {
 	    long long size_ll;
-	    if(1==sscanf(s+1,"%lld",&size_ll))
+	    int n;
+	    if(1<=sscanf(s+1,"%lld%n",&size_ll,&n)
+	    && !strncmp(s+1+n," bytes",6))
 	    {
 	       entity_size=size_ll;
 	       if(opt_size)

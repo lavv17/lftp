@@ -1353,6 +1353,10 @@ Default is "anonymous".
 .BR ftp:auto-sync-mode \ (regex)
 if first server message matches this regex, turn on sync mode for that host.
 .TP
+.BR ftp:catch-size \ (boolean)
+when there is no support for SIZE command, try to catch file size from the
+"150 Opening data connection" reply.
+.TP
 .BR ftp:charset \ (string)
 the character set used by FTP server in requests, replies and file listings.
 Default is empty which means the same as local. This setting is only used

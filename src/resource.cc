@@ -197,6 +197,7 @@ static ResType lftp_vars[] = {
    {"ftp:auto-sync-mode",	 "",	  ResMgr::ERegExpValidate,0},
    {"ftp:auto-passive-mode",	 "yes",   ResMgr::BoolValidate,0},
    {"ftp:bind-data-socket",	 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:catch-size",		 "yes",	  ResMgr::BoolValidate,0},
    {"ftp:charset",		 "",	  ResMgr::CharsetValidate,0},
    {"ftp:client",		 PACKAGE "/" VERSION,0,0},
    {"ftp:device-prefix",	 "no",	  ResMgr::BoolValidate,0},
