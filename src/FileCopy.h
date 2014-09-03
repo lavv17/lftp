@@ -216,7 +216,7 @@ public:
 
    void SetDate(time_t t,int p=0) { get->SetDate(t,p); }
    void SetDate(const FileTimestamp &t) { SetDate(t.ts,t.ts_prec); }
-   void SetSize(off_t  s) { get->SetSize(s); }
+   void SetSize(off_t s) { get->SetSize(s); }
 
    bool SetContinue(bool new_cont) { return replace_value(cont,new_cont); }
 
