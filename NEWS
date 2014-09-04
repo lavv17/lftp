@@ -1,3 +1,14 @@
+Version 4.5.5 - 2014-09-04
+
+* added support for internationalized domain names.
+* added lftp --norc option.
+* added mirror "Finished" message.
+* added ftp:catch-size setting.
+* fixed net:max-retries setting.
+* fixed byte counters in mirror status.
+* fixed a segfault in ftps.
+* fixed a spurious error message in fxp and ftp.
+
 Version 4.5.4 - 2014-08-07
 
 * new setting mirror:sort-by (name, size, date).
