@@ -222,8 +222,59 @@ Close idle connections.  By default only with the current server, use
 and outputs the information according to format options. The difference between
 `ls' and `cls' is that `ls' requests the server to format file listing, and
 `cls' formats it itself, after retrieving all the needed information.
-See `help cls' for options.
-
+.PP
+.Sp
+.in +0.5i
+.TS
+l1	l	lx	.
+\-1		single-column output
+\-a,	\-\-all	show dot files
+\-B,	\-\-basename	show basename of files only
+	\-\-block\-size=SIZ	use SIZ-byte blocks
+\-d,	\-\-directory	T{
+list directory entries instead of contents
+T}
+\-F,	\-\-classify	T{
+append indicator (one of /@) to entries
+T}
+\-h,	\-\-human\-readable	T{
+print sizes in human readable format (e.g., 1K)
+T}
+	\-\-si	T{
+likewise, but use powers of 1000 not 1024
+T}
+\-k,	\-\-kilobytes	T{
+like \-\-block\-size=1024
+T}
+\-l,	\-\-long	T{
+use a long listing format
+T}
+\-q,	\-\-quiet	don't show status
+\-s,	\-\-size	print size of each file
+	\-\-filesize	T{
+if printing size, only print size for files
+T}
+\-i,	\-\-nocase	T{
+case-insensitive pattern matching
+T}
+\-I,	\-\-sortnocase	T{
+sort names case-insensitively
+T}
+\-D,	\-\-dirsfirst	T{
+list directories first
+T}
+	\-\-sort=OPT	T{
+"name", "size", "date"
+T}
+\-S		sort by file size
+	\-\-user, \-\-group,
+	\-\-perms, \-\-date,
+	\-\-linkcount, \-\-links	show individual fields
+	\-\-time\-style=STYLE	T{
+use specified time format
+T}
+.TE
+.P
 .BR command " \fIcmd args...\fP
 .PP
 execute given command ignoring aliases.
