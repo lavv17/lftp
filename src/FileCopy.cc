@@ -650,9 +650,9 @@ void FileCopy::LogTransfer()
       struct stat st;
       if(stat(fname,&st)!=-1) {
 	 if(st.st_size > long(ResMgr::Query("xfer:max-log-size",0))) {
-	    debug((9,"rotating xfer-log %s",fname));
+	    debug((9,"rotating xfer-log %s\n",fname));
 	    if(rename(fname,xstring::cat(fname,".old",NULL))==-1) {
-	       debug((1,"rename(%s): %s",fname,strerror(errno)));
+	       debug((1,"rename(%s): %s\n",fname,strerror(errno)));
 	    }
 	 }
       }
