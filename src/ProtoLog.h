@@ -22,6 +22,7 @@
 
 class ProtoLog
 {
+   static bool WillOutput(int level);
 public:
    static void Log2(int level,xstring& str);
    static void Log3(int level,const char *prefix,const char *str);

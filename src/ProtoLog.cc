@@ -21,9 +21,14 @@
 #include "log.h"
 #include "ProtoLog.h"
 
+bool ProtoLog::WillOutput(int level)
+{
+   return Log::global && Log::global->WillOutput(level);
+}
+
 void  ProtoLog::Log2(int level,xstring& str)
 {
-   if(!Log::global)
+   if(!WillOutput(level))
       return;
    str.chomp('\n');
    str.chomp('\r');
@@ -32,26 +37,26 @@ void  ProtoLog::Log2(int level,xstring& str)
 }
 void  ProtoLog::Log3(int level,const char *prefix,const char *str0)
 {
-   xstring &str=xstring::get_tmp(prefix);
-   str.append(str0);
-   Log2(level,str);
+   if(!WillOutput(level))
+      return;
+   Log2(level,xstring::get_tmp(prefix).append(str0));
 }
 void ProtoLog::LogError(int level,const char *fmt,...)
 {
+   if(!WillOutput(level))
+      return;
    va_list v;
    va_start(v,fmt);
-   xstring &str=xstring::get_tmp("**** ");
-   str.vappendf(fmt,v);
-   Log2(level,str);
+   Log2(level,xstring::get_tmp("**** ").vappendf(fmt,v));
    va_end(v);
 }
 void ProtoLog::LogNote(int level,const char *fmt,...)
 {
+   if(!WillOutput(level))
+      return;
    va_list v;
    va_start(v,fmt);
-   xstring &str=xstring::get_tmp("---- ");
-   str.vappendf(fmt,v);
-   Log2(level,str);
+   Log2(level,xstring::get_tmp("---- ").vappendf(fmt,v));
    va_end(v);
 }
 void ProtoLog::LogRecv(int level,const char *line)

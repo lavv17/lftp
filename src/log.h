@@ -44,14 +44,14 @@ class Log : public SMTask
 	 output=-1;
 	 need_close_output=false;
       }
-   bool WillOutput(int l);
-
-public:
-   static SMTaskRef<Log> global;
 
    bool enabled;
    int level;
 
+public:
+   static SMTaskRef<Log> global;
+
+   bool WillOutput(int l);
    void DoWrite(const char *str);
    void Write(int l,const char *str);
    void Format(int l,const char *fmt,...) PRINTF_LIKE(3,4);
