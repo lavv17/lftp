@@ -2046,13 +2046,12 @@ CMD(debug)
 	 debug_file_name=optarg;
 	 if(fd!=-1)
 	    close(fd);
-	 fd=open(debug_file_name,O_WRONLY|O_CREAT|O_APPEND,0600);
+	 fd=open(debug_file_name,O_WRONLY|O_CREAT|O_APPEND|O_NONBLOCK,0600);
 	 if(fd==-1)
 	 {
 	    perror(debug_file_name);
 	    return 0;
 	 }
-	 fcntl(fd,F_SETFL,O_NONBLOCK);
 	 fcntl(fd,F_SETFD,FD_CLOEXEC);
 	 break;
       case 'p':
