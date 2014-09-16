@@ -684,13 +684,26 @@ FileAccess *SessionPool::Walk(int *n,const char *proto)
 
 void SessionPool::ClearAll()
 {
-   for(int n=0; n<pool_size; n++)
-   {
-      if(pool[n])
-      {
-	 SMTask::Delete(pool[n]);
-	 pool[n]=0;
+   int pass=0;
+   for(;;) {
+      int left=0;
+      for(int n=0; n<pool_size; n++) {
+	 if(!pool[n])
+	    continue;
+	 if(pass==0)
+	    pool[n]->Disconnect();
+	 if(!pool[n]->IsConnected()) {
+	    SMTask::Delete(pool[n]);
+	    pool[n]=0;
+	 } else {
+	    left++;
+	 }
       }
+      if(left==0)
+	 break;
+      SMTask::Schedule();
+      SMTask::Block();
+      pass++;
    }
 }
 
