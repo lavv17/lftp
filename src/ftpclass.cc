@@ -2744,7 +2744,8 @@ int Ftp::ReceiveOneLine()
    conn->control_recv->Get(&resp,&resp_size);
    if(resp==0) // eof
    {
-      LogError(0,_("Peer closed connection"));
+      if(!conn->quit_sent)
+	 LogError(0,_("Peer closed connection"));
       DisconnectNow();
       return -1;
    }
@@ -3135,10 +3136,7 @@ void  Ftp::DisconnectLL()
       return;
 
    if(conn->quit_sent)
-   {
-      DisconnectNow();
       return;
-   }
 
    /* protect against re-entering from FlushSendQueue */
    static bool disconnect_in_progress=false;
