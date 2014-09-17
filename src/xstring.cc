@@ -544,8 +544,10 @@ xstring& xstring::hex_decode()
 }
 
 /* Encode the unsafe characters in a given string, producing %XX encoded string. */
-#define need_quote(c) (c_iscntrl((c)) || !c_isascii((c)) || strchr(unsafe,(c)))
-xstring& xstring::append_url_encoded(const char *s,int len,const char *unsafe)
+#define need_quote(c) (c_iscntrl((c)) \
+   || (!(flags&URL_ALLOW_8BIT) && !c_isascii((c))) \
+   || strchr(unsafe,(c)))
+xstring& xstring::append_url_encoded(const char *s,int len,const char *unsafe,unsigned flags)
 {
    if(!s)
       return *this;

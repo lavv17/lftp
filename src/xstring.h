@@ -99,7 +99,7 @@ static inline size_t xstrlen(const char *s)
 /* this is a small and fast dynamic string class */
 /* mostly used as xstrdup/xfree replacement */
 
-enum { URL_DECODE_PLUS=1 };
+enum { URL_DECODE_PLUS=1, URL_ALLOW_8BIT=2 };
 
 class xstring0 // base class
 {
@@ -255,9 +255,9 @@ public:
    const char *hexdump() const;
 
    xstring& url_decode(int flags=0);
-   xstring& append_url_encoded(const char *s,int len,const char *unsafe);
-   xstring& append_url_encoded(const char *s,const char *unsafe) { return append_url_encoded(s,strlen(s),unsafe); }
-   xstring& append_url_encoded(const xstring& s,const char *unsafe) { return append_url_encoded(s,s.length(),unsafe); }
+   xstring& append_url_encoded(const char *s,int len,const char *unsafe,unsigned flags=0);
+   xstring& append_url_encoded(const char *s,const char *unsafe,unsigned flags=0) { return append_url_encoded(s,strlen(s),unsafe,flags); }
+   xstring& append_url_encoded(const xstring& s,const char *unsafe,unsigned flags=0) { return append_url_encoded(s,s.length(),unsafe,flags); }
 
    xstring& append_quoted(const char *s,int len);
    xstring& append_quoted(const char *s) { return append_quoted(s,strlen(s)); }
