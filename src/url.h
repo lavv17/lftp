@@ -66,9 +66,9 @@ public:
    char *Combine();
 
    // encode unsafe chars as %XY
-   static xstring& encode(const char *s,int len,const char *unsafe);
-   static xstring& encode(const xstring &s,const char *unsafe) { return encode(s,s.length(),unsafe); }
-   static xstring& encode(const char *s,const char *unsafe) { return encode(s,strlen(s),unsafe); }
+   static xstring& encode(const char *s,int len,const char *unsafe,unsigned flags=0);
+   static xstring& encode(const xstring &s,const char *unsafe,unsigned flags=0) { return encode(s,s.length(),unsafe,flags); }
+   static xstring& encode(const char *s,const char *unsafe,unsigned flags=0) { return encode(s,strlen(s),unsafe,flags); }
    static xstring& decode(const char *) __attribute__((warn_unused_result));
 
    static bool is_url(const char *p);
