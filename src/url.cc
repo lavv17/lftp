@@ -312,8 +312,12 @@ char *ParsedURL::Combine(const char *home,bool use_rfc1738)
       }
       u.append('@');
    }
-   if(host && !is_file)
-      u.append(url::encode(host,URL_HOST_UNSAFE));
+   if(host && !is_file) {
+      unsigned encode_flags=0;
+      if(xtld_name_ok(host))
+	 encode_flags|=URL_ALLOW_8BIT;
+      u.append(url::encode(host,URL_HOST_UNSAFE,encode_flags));
+   }
    if(port && !is_file)
    {
       u.append(':');
@@ -346,11 +350,11 @@ xstring& url::decode(const char *p)
       return xstring::null;
    return xstring::get_tmp(p).url_decode();
 }
-xstring& url::encode(const char *s,int len,const char *unsafe)
+xstring& url::encode(const char *s,int len,const char *unsafe,unsigned flags)
 {
    if(!s)
       return xstring::null;
-   return xstring::get_tmp("").append_url_encoded(s,len,unsafe);
+   return xstring::get_tmp("").append_url_encoded(s,len,unsafe,flags);
 }
 
 bool url::dir_needs_trailing_slash(const char *proto_c)
