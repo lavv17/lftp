@@ -42,6 +42,7 @@
 
 #if LIBIDN
 # include <idna.h>
+# include <tld.h>
 #endif
 
 CDECL_BEGIN
@@ -1013,4 +1014,15 @@ const char *xidna_to_ascii(const char *name)
       return xstring::get_tmp().set_allocated(name_ace_tmp);
 #endif//LIBIDN
    return name;
+}
+bool xtld_name_ok(const char *name)
+{
+#if LIBIDN
+   if(mbswidth(name,MBSW_REJECT_INVALID|MBSW_REJECT_UNPRINTABLE)<=0)
+      return false;
+   size_t err_pos;
+   if(tld_check_lz(name,&err_pos,NULL)==TLD_SUCCESS)
+      return true;
+#endif//LIBIDN
+   return false;
 }
