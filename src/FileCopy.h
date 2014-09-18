@@ -54,6 +54,7 @@ protected:
    bool do_verify;
    bool removing;
    bool file_removed;
+   bool temp_file;
 
    bool done;
 
@@ -142,7 +143,7 @@ public:
    const char *GetSuggestedFileName() { return suggested_filename; }
    void SetSuggestedFileName(const char *f)
       {
-	 if(f && !suggested_filename)
+	 if(f)
 	    suggested_filename.set(f);
       }
    void AutoRename(bool yes=true) { auto_rename=yes; }

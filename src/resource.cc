@@ -379,6 +379,7 @@ static ResType lftp_vars[] = {
    {"xfer:auto-rename",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:log-file",              "",     ResMgr::FileCreatable,ResMgr::NoClosure},
    {"xfer:max-log-size",	 "1M",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
+   {"xfer:use-temp-file",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
 
 #if USE_SSL
    {"ssl:ca-file",		 "",	  ResMgr::FileReadable,ResMgr::NoClosure},

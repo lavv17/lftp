@@ -785,6 +785,7 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    range_limit=FILE_END;
    removing=false;
    file_removed=false;
+   temp_file=false;
    use_cache=true;
    write_allowed=true;
    done=false;
@@ -799,6 +800,22 @@ int FileCopyPeerFA::Do()
 {
    int m=STALL;
    int res;
+
+   if(session->OpenMode()==FA::RENAME)
+   {
+      int res=session->Done();
+      if(res==FA::IN_PROGRESS)
+	 return m;
+      if(res<0) {
+	 if(temp_file)
+	    SetError(session->StrError(res));
+	 else
+	    debug((3,"rename failed: %s\n",session->StrError(res)));
+      }
+      session->Close();
+      done=true;
+      return MOVED;
+   }
 
    if(removing)
    {
@@ -823,6 +840,12 @@ int FileCopyPeerFA::Do()
 	 SetError(verify->ErrorText());
       if(verify->Done())
       {
+	 if(suggested_filename && auto_rename)
+	 {
+	    const char *new_name=dir_file(dirname(file),suggested_filename);
+	    session->Rename(file,new_name);
+	    return MOVED;
+	 }
 	 done=true;
 	 m=MOVED;
       }
@@ -1282,6 +1305,14 @@ void FileCopyPeerFA::Init()
    can_seek0=true;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(FileAccess::cache->SizeLimit());
+   if(mode==PUT && ResMgr::QueryBool("xfer:use-temp-file",0)) {
+      auto_rename=true;
+      xstring temp(basename_ptr(file));
+      SetSuggestedFileName(temp);
+      temp.set_substr(0,0,".in.");
+      file.set(dir_file(dirname(file),temp));
+      temp_file=true;
+   }
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
@@ -1371,6 +1402,14 @@ void FileCopyPeerFDStream::Init()
       write_allowed=false;
    if(mode==PUT)
       put_ll_timer=new Timer(0,200);
+   if(mode==PUT && stream->fd==-1 && stream->can_setmtime() && ResMgr::QueryBool("xfer:use-temp-file",0)) {
+      auto_rename=true;
+      xstring temp(basename_ptr(stream->full_name));
+      SetSuggestedFileName(temp);
+      temp.set_substr(0,0,".in.");
+      stream->full_name.set(dir_file(dirname(stream->full_name),temp));
+      temp_file=true;
+   }
 }
 
 void FileCopyPeerFDStream::Seek_LL()
@@ -1462,8 +1501,13 @@ int FileCopyPeerFDStream::Do()
 	    struct stat st;
 	    if((lstat(new_name,&st)==-1 && errno==ENOENT) || ResMgr::QueryBool("xfer:clobber",0)) {
 	       debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name.get(),suggested_filename.get()));
-	       if(rename(stream->full_name,new_name)==-1)
-		  debug((3,"rename(%s, %s): %s\n",stream->full_name.get(),new_name,strerror(errno)));
+	       if(rename(stream->full_name,new_name)==-1) {
+		  const char *err=xstring::format("rename(%s, %s): %s\n",stream->full_name.get(),new_name,strerror(errno));
+		  if(temp_file)
+		     SetError(err);
+		  else
+		     debug((3,"%s\n",err));
+	       }
 	    }
 	 }
 	 done=true;
