@@ -560,7 +560,7 @@ int lftp_ssl_gnutls::read(char *buf,int size)
    {
       if(res==GNUTLS_E_AGAIN || res==GNUTLS_E_INTERRUPTED)
 	 return RETRY;
-      else if(res==GNUTLS_E_UNEXPECTED_PACKET_LENGTH)
+      else if(res==GNUTLS_E_UNEXPECTED_PACKET_LENGTH || res==GNUTLS_E_PREMATURE_TERMINATION)
       {
 	 Log::global->Format(7,"gnutls_record_recv: %s; assuming EOF\n",gnutls_strerror(res));
 	 return 0;
