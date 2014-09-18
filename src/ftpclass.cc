@@ -3106,6 +3106,8 @@ void  Ftp::DataAbort()
 
 void Ftp::ControlClose()
 {
+   if(conn && conn->control_send)
+      conn->control_send->PutEOF();
    conn=0;
    expect=0;
 }
