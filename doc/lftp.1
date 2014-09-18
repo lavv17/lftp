@@ -2078,6 +2078,9 @@ maximum number of redirections. This can be useful for downloading over HTTP.
 .BR xfer:rate-period \ (seconds)
 the period over which weighted average rate is calculated to be shown.
 .TP
+.BR xfer:use-temp-file \ (boolean)
+when true, a file will be transferred to a temporary file in the same directory and then renamed.
+.TP
 .BR xfer:verify \ (boolean)
 when true, verify-command is launched after successful transfer to validate
 file integrity. Zero exit code of that command should indicate correctness
