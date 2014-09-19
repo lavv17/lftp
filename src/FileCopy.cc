@@ -770,11 +770,28 @@ const char *FileCopyPeer::UseTempFile(const char *file)
 {
    if(!ResMgr::QueryBool("xfer:use-temp-file",0))
       return file;
+
+   xstring &temp=xstring::get_tmp(ResMgr::Query("xfer:temp-file-name",0));
+   if(temp.length()==0 || temp.eq("*"))
+      return file;
+
    auto_rename=true;
-   xstring temp(basename_ptr(file));
-   SetSuggestedFileName(temp);
-   temp.set_substr(0,0,".in.");
    temp_file=true;
+
+   const char *name=basename_ptr(file);
+   SetSuggestedFileName(name);
+
+   int subst_pos=temp.instr('*');
+   if(subst_pos>=0)
+      temp.set_substr(subst_pos,1,name);
+   else {
+      if(temp.last_char()=='.')
+	 temp.append(name);
+      else if(temp[0]=='.')
+	 temp.set_substr(0,0,name);
+      else
+	 temp.append('.').append(name);
+   }
    return dir_file(dirname(file),temp);
 }
 
