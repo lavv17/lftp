@@ -766,6 +766,18 @@ void FileCopyPeer::Seek(off_t offs)
    broken=false;
 }
 
+const char *FileCopyPeer::UseTempFile(const char *file)
+{
+   if(!ResMgr::QueryBool("xfer:use-temp-file",0))
+      return file;
+   auto_rename=true;
+   xstring temp(basename_ptr(file));
+   SetSuggestedFileName(temp);
+   temp.set_substr(0,0,".in.");
+   temp_file=true;
+   return dir_file(dirname(file),temp);
+}
+
 FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
 {
    want_size=false;
@@ -1305,14 +1317,8 @@ void FileCopyPeerFA::Init()
    can_seek0=true;
    if(FAmode==FA::LIST || FAmode==FA::LONG_LIST)
       Save(FileAccess::cache->SizeLimit());
-   if(mode==PUT && ResMgr::QueryBool("xfer:use-temp-file",0)) {
-      auto_rename=true;
-      xstring temp(basename_ptr(file));
-      SetSuggestedFileName(temp);
-      temp.set_substr(0,0,".in.");
-      file.set(dir_file(dirname(file),temp));
-      temp_file=true;
-   }
+   if(mode==PUT)
+      file.set(UseTempFile(file));
 }
 
 FileCopyPeerFA::FileCopyPeerFA(FileAccess *s,const char *f,int m)
@@ -1402,14 +1408,8 @@ void FileCopyPeerFDStream::Init()
       write_allowed=false;
    if(mode==PUT)
       put_ll_timer=new Timer(0,200);
-   if(mode==PUT && stream->fd==-1 && stream->can_setmtime() && ResMgr::QueryBool("xfer:use-temp-file",0)) {
-      auto_rename=true;
-      xstring temp(basename_ptr(stream->full_name));
-      SetSuggestedFileName(temp);
-      temp.set_substr(0,0,".in.");
-      stream->full_name.set(dir_file(dirname(stream->full_name),temp));
-      temp_file=true;
-   }
+   if(mode==PUT && stream->fd==-1 && stream->can_setmtime())
+      stream->full_name.set(UseTempFile(stream->full_name));
 }
 
 void FileCopyPeerFDStream::Seek_LL()

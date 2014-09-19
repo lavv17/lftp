@@ -141,12 +141,9 @@ public:
    virtual const Ref<FDStream>& GetLocal() const { return Ref<FDStream>::null; }
 
    const char *GetSuggestedFileName() { return suggested_filename; }
-   void SetSuggestedFileName(const char *f)
-      {
-	 if(f)
-	    suggested_filename.set(f);
-      }
+   void SetSuggestedFileName(const char *f) { if(f) suggested_filename.set(f); }
    void AutoRename(bool yes=true) { auto_rename=yes; }
+   const char *UseTempFile(const char *);
 };
 
 class FileCopy : public SMTask
