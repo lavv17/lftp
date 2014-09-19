@@ -1030,13 +1030,13 @@ continue the process with shell's fg or bg commands.
 .BR torrent " [" OPTS "] " \fItorrent-files...\fP
 .PP
 Start BitTorrent process for the given \fItorrent-files\fP, which can be a
-local file, URL, magnet link or plain \fIinfo_hash\fP written in hex.
+local file, URL, magnet link or plain \fIinfo_hash\fP written in hex or base32.
 Local wildcards are expanded. Existing files are first
 validated unless \fI\-\-force\-valid\fP option is given. Missing pieces are
 downloaded. Files are stored in specified \fIdirectory\fP or current
 working directory by default. Seeding continues until ratio reachs
 \fItorrent:stop-on-ratio\fP setting or time of \fItorrent:seed-max-time\fP
-outs.
+runs out.
 .PP
 Options:
 .Sp
@@ -1050,8 +1050,11 @@ T}
 skip file validation (if you are sure they are ok).
 T}
 \-\-dht\-bootstrap=<node>	T{
-bootstrap DHT by sending a query to specified \fInode\fP. E.g. dht.transmissionbt.com:6881.
-This option should be used just once to fill local node cache.
+bootstrap DHT by sending a query to specified \fInode\fP.
+This option should be used just once to fill the local node cache.
+Port number may be given after colon, default is 6881.
+Here are some nodes for bootstrapping: dht.transmissionbt.com,
+router.utorrent.com, router.bittorrent.com.
 T}
 .TE
 .P
