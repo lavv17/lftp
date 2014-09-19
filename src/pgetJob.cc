@@ -139,6 +139,11 @@ int pgetJob::Do()
 	 return m;
       }
 
+      // Make sure the destination file is open before starting chunks,
+      // it disables temp-name creation in the chunk's Init.
+      if(c->put->GetLocal()->getfd()==-1)
+	 return m;
+
       c->put->NeedSeek(); // seek before writing
 
       if(pget_cont)
