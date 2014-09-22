@@ -1965,6 +1965,8 @@ get_again:
 	 if(chunked)
 	    chunk_pos+=size1;
 	 bytes_received+=size1;
+	 if(inflate->Error())
+	    SetError(FATAL,inflate->ErrorText());
       }
       inflate->Get(&buf1,&size1);
       src_buf=inflate.get_non_const();
@@ -2600,6 +2602,8 @@ bool Http::CompressedContentEncoding() const
 }
 bool Http::CompressedContentType() const
 {
+   if(file.ends_with(".gz") || file.ends_with(".Z") || file.ends_with(".tgz"))
+      return true;
    static const char app[]="application/";
    return entity_content_type && entity_content_type.begins_with(app)
       && IsCompressed(entity_content_type+sizeof(app)-1);
