@@ -1154,6 +1154,7 @@ int Torrent::Do()
       piece_length=building->piece_length;
       SetTotalLength(building->total_length);
       files=new TorrentFiles(building->GetFilesNode(),this);
+      output_dir.set(building->GetBaseDirectory());
       StartValidating();
    }
    if(!metainfo_tree && metainfo_url && !md_download && !build_md) {
@@ -1970,17 +1971,17 @@ const xstring& Torrent::Status()
 {
    if(metainfo_copy)
       return xstring::format(_("Getting meta-data: %s"),metainfo_copy->GetStatus());
-   if(!metadata) {
+   if(validating) {
+      return xstring::format(_("Validation: %u/%u (%u%%) %s%s"),validate_index,total_pieces,
+	 validate_index*100/total_pieces,recv_rate.GetStrS(),
+	 recv_rate.GetETAStrFromSize((off_t)(total_pieces-validate_index-1)*piece_length+last_piece_length).get());
+   }
+   if(!metadata && !build_md) {
       if(md_download.length()>0)
 	 return xstring::format(_("Getting meta-data: %s"),
 	    xstring::format("%u/%u",(unsigned)md_download.length(),(unsigned)metadata_size).get());
       else
 	 return xstring::get_tmp(_("Waiting for meta-data..."));
-   }
-   if(validating) {
-      return xstring::format(_("Validation: %u/%u (%u%%) %s%s"),validate_index,total_pieces,
-	 validate_index*100/total_pieces,recv_rate.GetStrS(),
-	 recv_rate.GetETAStrFromSize((off_t)(total_pieces-validate_index-1)*piece_length+last_piece_length).get());
    }
    if(shutting_down) {
       for(int i=0; i<trackers.count(); i++) {
@@ -4029,6 +4030,11 @@ CMD(torrent)
    }
    args->back();
 
+   if(share && output_dir) {
+      eprintf(_("%s: --share conflicts with --output-directory.\n"),args->a0());
+      return 0;
+   }
+
    xstring_ca torrent_opt(args->Combine(0,args->getindex()+1));
 
    xstring_ca cwd(xgetcwd());
@@ -4038,14 +4044,13 @@ CMD(torrent)
    } else
       output_dir=cwd;
 
-
    Ref<ArgV> args_g(new ArgV(args->a0()));
    const char *torrent;
    while((torrent=args->getnext())!=0) {
       int globbed=0;
-      if(!url::is_url(torrent)) {
+      if(share || !url::is_url(torrent)) {
 	 glob_t pglob;
-	 glob(expand_home_relative(torrent),0,0,&pglob);
+	 glob(dir_file(cwd,expand_home_relative(torrent)),0,0,&pglob);
 	 if(pglob.gl_pathc>0) {
 	    for(unsigned i=0; i<pglob.gl_pathc; i++) {
 	       const char *f=pglob.gl_pathv[i];

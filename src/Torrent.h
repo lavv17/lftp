@@ -89,6 +89,7 @@ public:
    BeNode *GetFilesNode() const { return info->lookup("files"); }
    void SetPiece(unsigned p,const xstring& sha1);
    const xstring& GetMetadata();
+   const char *GetBaseDirectory() const { return dirname(top_path); }
 };
 
 class TorrentPiece
