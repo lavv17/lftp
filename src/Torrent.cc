@@ -29,6 +29,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sha1.h>
+#include <dirent.h>
 
 #include "Torrent.h"
 #include "TorrentTracker.h"
@@ -230,6 +231,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    is_private=false;
    validating=false;
    force_valid=false;
+   build_md=false;
    validate_index=0;
    metadata_size=0;
    info=0;
@@ -317,6 +319,8 @@ void Torrent::Shutdown()
 
 void Torrent::PrepareToDie()
 {
+   metainfo_copy=0;
+   building=0;
    peers.unset();
    if(info_hash && this==FindTorrent(info_hash)) {
       RemoveTorrent(this);
@@ -375,9 +379,11 @@ void Torrent::InitTranslation()
    const char *charset="UTF-8"; // default
    recv_translate_utf8=new DirectedBuffer(DirectedBuffer::GET);
    recv_translate_utf8->SetTranslation(charset,true);
-   BeNode *b_charset=metainfo_tree->lookup("encoding",BeNode::BE_STR);
-   if(b_charset)
-      charset=b_charset->str;
+   if(metainfo_tree) {
+      BeNode *b_charset=metainfo_tree->lookup("encoding",BeNode::BE_STR);
+      if(b_charset)
+	 charset=b_charset->str;
+   }
    recv_translate=new DirectedBuffer(DirectedBuffer::GET);
    recv_translate->SetTranslation(charset,true);
 }
@@ -415,9 +421,18 @@ void Torrent::ValidatePiece(unsigned p)
    if(buf.length()==PieceLength(p)) {
       xstring& sha1=xstring::get_tmp();
       SHA1(buf,sha1);
-      valid=!memcmp(pieces->get()+p*SHA1_DIGEST_SIZE,sha1,SHA1_DIGEST_SIZE);
+      if(building) {
+	 building->SetPiece(p,sha1);
+	 valid=true;
+      } else {
+	 valid=!memcmp(pieces->get()+p*SHA1_DIGEST_SIZE,sha1,SHA1_DIGEST_SIZE);
+      }
    }
    if(!valid) {
+      if(building) {
+	 SetError("File validation error");
+	 return;
+      }
       if(buf.length()==PieceLength(p))
 	 LogError(11,"piece %u digest mismatch",p);
       if(my_bitfield->get_bit(p)) {
@@ -691,6 +706,34 @@ void Torrent::StartMetadataDownload()
    md_download.nset("",0);
 }
 
+void Torrent::SetTotalLength(off_t tl)
+{
+   total_length=tl;
+
+   LogNote(4,"Total length is %llu",total_length);
+   total_left=total_length;
+
+   last_piece_length=total_length%piece_length;
+   if(last_piece_length==0)
+      last_piece_length=piece_length;
+
+   total_pieces=(total_length+piece_length-1)/piece_length;
+
+   my_bitfield=new BitField(total_pieces);
+
+   blocks_in_piece=(piece_length+BLOCK_SIZE-1)/BLOCK_SIZE;
+   blocks_in_last_piece=(last_piece_length+BLOCK_SIZE-1)/BLOCK_SIZE;
+
+   piece_info=new TorrentPiece[total_pieces]();
+}
+
+void Torrent::StartValidating()
+{
+   validate_index=0;
+   validating=true;
+   recv_rate.Reset();
+}
+
 void Torrent::SetMetadata(const xstring& md)
 {
    metadata.set(md);
@@ -739,13 +782,11 @@ void Torrent::SetMetadata(const xstring& md)
 
    BeNode *files=info->lookup("files");
    if(!files) {
-      single_file=true;
       BeNode *length=Lookup(info,"length",BeNode::BE_INT);
       if(!length || length->num<0)
 	 return;
       total_length=length->num;
    } else {
-      single_file=false;
       if(files->type!=BeNode::BE_LIST) {
 	 SetError("Meta-data: wrong `info/files' type, must be LIST");
 	 return;
@@ -767,14 +808,7 @@ void Torrent::SetMetadata(const xstring& md)
       }
    }
    this->files=new TorrentFiles(files,this);
-   LogNote(4,"Total length is %llu",total_length);
-   total_left=total_length;
-
-   last_piece_length=total_length%piece_length;
-   if(last_piece_length==0)
-      last_piece_length=piece_length;
-
-   total_pieces=(total_length+piece_length-1)/piece_length;
+   SetTotalLength(total_length);
 
    BeNode *b_pieces=Lookup(info,"pieces",BeNode::BE_STR);
    if(!b_pieces)
@@ -797,19 +831,11 @@ void Torrent::SetMetadata(const xstring& md)
       AddTorrent(this);
    }
 
-   SaveMetadata();
+   if(!building)
+      SaveMetadata();
 
-   my_bitfield=new BitField(total_pieces);
-
-   blocks_in_piece=(piece_length+BLOCK_SIZE-1)/BLOCK_SIZE;
-   blocks_in_last_piece=(last_piece_length+BLOCK_SIZE-1)/BLOCK_SIZE;
-
-   piece_info=new TorrentPiece[total_pieces]();
-
-   if(!force_valid) {
-      validate_index=0;
-      validating=true;
-      recv_rate.Reset();
+   if(!force_valid && !building) {
+      StartValidating();
    } else {
       my_bitfield->set_range(0,total_pieces,1);
       complete_pieces=total_pieces;
@@ -964,12 +990,173 @@ void Torrent::RebuildPiecesNeeded()
    pieces_needed_rebuild_timer.Reset();
 }
 
+TorrentBuild::TorrentBuild(const char *path) :
+   top_path(path),
+   name(basename_ptr(path)),
+   done(false),
+   total_length(0),
+   piece_length(0)
+{
+   name.rtrim('/');
+
+   struct stat st;
+   if(stat(path,&st)==-1) {
+      error=SysError();
+      return;
+   }
+   if(S_ISREG(st.st_mode)) {
+      total_length=st.st_size;
+      LogNote(10,"single file %s, size %lld",path,(long long)st.st_size);
+      Finish();
+      return;
+   }
+   if(!S_ISDIR(st.st_mode)) {
+      error=new Error(-1,"Need a plain file or directory",true);
+      return;
+   }
+   QueueDir("");
+}
+const char *TorrentBuild::lc_to_utf8(const char *s)
+{
+   if(!translate || !s)
+      return s;
+
+   translate->ResetTranslation();
+   translate->PutTranslated(s);
+   int len;
+   translate->Get(&s,&len);
+   translate->Skip(len);
+   return xstring::get_tmp(s,len);
+}
+void TorrentBuild::Finish()
+{
+   done=true;
+   LogNote(10,"scan finished, total_length=%lld",(long long)total_length);
+
+   translate=new DirectedBuffer(DirectedBuffer::PUT);
+   translate->SetTranslation("UTF-8",false);
+
+   xmap_p<BeNode> *b_info=new xmap_p<BeNode>();
+   b_info->add("name",new BeNode(lc_to_utf8(name)));
+
+   piece_length=16*1024;
+   off_t length_scan=piece_length*2200;
+   while(length_scan<=total_length) {
+      piece_length*=2;
+      length_scan*=2;
+   }
+   b_info->add("piece length",new BeNode(piece_length));
+
+   if(files.count()==0) {
+      b_info->add("length",new BeNode(total_length));
+   } else {
+      files.Sort(FileSet::BYNAME);
+      files.rewind();
+      xarray_p<BeNode> *b_files=new xarray_p<BeNode>();
+      for(FileInfo *fi=files.curr(); fi; fi=files.next()) {
+	 xarray_p<BeNode> *path=new xarray_p<BeNode>();
+	 const char *name_utf8=lc_to_utf8(fi->name);
+	 char *p=alloca_strdup(name_utf8);
+	 for(p=strtok(p,"/"); p; p=strtok(NULL,"/"))
+	    path->append(new BeNode(p));
+	 xmap_p<BeNode> *b_file=new xmap_p<BeNode>();
+	 b_file->add("path",new BeNode(path));
+	 b_file->add("length",new BeNode(fi->size));
+	 b_files->append(new BeNode(b_file));
+      }
+      b_info->add("files",new BeNode(b_files));
+   }
+   info=new BeNode(b_info);
+}
+void TorrentBuild::SetPiece(unsigned p,const xstring& sha)
+{
+   assert(pieces.length()==p*20); // require sequential building
+   pieces.append(sha);
+}
+const xstring& TorrentBuild::GetMetadata()
+{
+   info->dict.add("pieces",new BeNode(pieces));
+   return info->Pack();
+}
+int TorrentBuild::Do()
+{
+   int m=STALL;
+   if(Done())
+      return m;
+
+   const char *curr_path=CurrPath();
+   if(!curr_path) {
+      Finish();
+      return MOVED;
+   }
+   const char *full_path=dir_file(top_path,curr_path);
+   full_path=alloca_strdup(full_path);
+
+   DIR *dir=opendir(full_path);
+   if(!dir) {
+      if(NonFatalError(errno))
+	 return m;
+      if(dirs_to_scan.Count()<=1)
+	 error=SysError();
+      else
+	 LogError(0,"opendir(%s): %s",full_path,strerror(errno));
+      NextDir();
+      return MOVED;
+   }
+   LogNote(10,"scanning %s",full_path);
+   struct dirent *entry;
+   while((entry=readdir(dir))!=0) {
+      if(!strcmp(entry->d_name,".") || !strcmp(entry->d_name,".."))
+	 continue;
+      struct stat st;
+      const char *path=dir_file(full_path,entry->d_name);
+      if(lstat(path,&st)==-1) {
+	 LogError(0,"stat(%s): %s",path,strerror(errno));
+	 continue;
+      }
+      if(S_ISREG(st.st_mode))
+	 AddFile(dir_file(curr_path,entry->d_name),&st);
+      else if(S_ISDIR(st.st_mode))
+	 QueueDir(dir_file(curr_path,entry->d_name));
+      else
+	 LogNote(10,"ignoring %s (not a directory nor a plain file)",path);
+   }
+   closedir(dir);
+   NextDir();
+   return MOVED;
+}
+void TorrentBuild::AddFile(const char *path,struct stat *st)
+{
+   FileInfo *fi=new FileInfo(path);
+   fi->SetSize(st->st_size);
+   files.Add(fi);
+   total_length+=st->st_size;
+   LogNote(10,"adding %s, size %lld",path,(long long)fi->size);
+}
+
 int Torrent::Do()
 {
    int m=STALL;
    if(Done() || shutting_down)
       return m;
-   if(!metainfo_tree && metainfo_url && !md_download) {
+   if(build_md && !files) {
+      if(!building)
+	 building=new TorrentBuild(metainfo_url);
+      if(!building->Done())
+	 return m;
+      m=MOVED;
+      if(building->Failed()) {
+	 SetError(building->ErrorText());
+	 return m;
+      }
+      InitTranslation();
+      name.set(building->name);
+      piece_length=building->piece_length;
+      SetTotalLength(building->total_length);
+      files=new TorrentFiles(building->GetFilesNode(),this);
+      StartValidating();
+   }
+   if(!metainfo_tree && metainfo_url && !md_download && !build_md) {
       // retrieve metainfo if don't have already.
       if(!metainfo_copy) {
 	 if(metainfo_url.begins_with("magnet:?")) {
@@ -1129,6 +1316,20 @@ int Torrent::Do()
 	 complete=true;
 	 seed_timer.Reset();
       }
+      if(building) {
+	 if(!complete) {
+	    SetError("File validation error");
+	    return MOVED;
+	 }
+	 SetMetadata(building->GetMetadata());
+	 building=0;
+	 xstring magnet("magnet:?xt=urn:btih:");
+	 magnet.append(info_hash.hexdump());
+	 magnet.appendf("&xl=%lld",(long long)total_length);
+	 magnet.append("&dn=");
+	 magnet.append_url_encoded(name,URL_PATH_UNSAFE);
+	 printf("%s\n",magnet.get());
+      }
       DisconnectPeers();   // restart peer connections
       dht_announce_timer.Stop();
    }
@@ -1136,9 +1337,6 @@ int Torrent::Do()
       StartTrackers();
    if(dht_announce_timer.Stopped())
       AnnounceDHT();
-
-   if(optimistic_unchoke_timer.Stopped())
-      OptimisticUnchoke();
 
    // count peers
    connected_peers_count=0;
@@ -1153,8 +1351,11 @@ int Torrent::Do()
    if(!metadata)
       return m;
 
+   if(optimistic_unchoke_timer.Stopped())
+      OptimisticUnchoke();
+
    // rebuild lists of needed pieces
-   if(!complete && pieces_needed_rebuild_timer.Stopped())
+   if(!complete && (pieces_needed.count()==0 || pieces_needed_rebuild_timer.Stopped()))
       RebuildPiecesNeeded();
 
    if(complete && SeededEnough()) {
@@ -1692,6 +1893,9 @@ bool Torrent::AllowMoreDownloaders()
 
 void Torrent::UnchokeBestUploaders()
 {
+   if(!metadata)
+      return;
+
    // unchoke 4 best uploaders
    int limit = 4;
 
@@ -2053,6 +2257,8 @@ int TorrentPeer::SendDataRequests(unsigned p)
    if(parent->my_bitfield->get_bit(p)
    || !peer_bitfield || !peer_bitfield->get_bit(p))
       return 0;
+
+assert(!parent->my_bitfield->get_bit(p));
 
    int sent=0;
    unsigned blocks=parent->BlocksInPiece(p);
@@ -3674,7 +3880,7 @@ int TorrentJob::Do()
       return MOVED;
    }
    if(!completed && torrent->Complete()) {
-      if(parent->WaitsFor(this)) {
+      if(parent->WaitsFor(this) && !torrent->IsSharing()) {
 	 PrintStatus(1,"");
 	 printf(_("Seeding in background...\n"));
 	 parent->RemoveWaiting(this);
@@ -3780,17 +3986,20 @@ CMD(torrent)
       OPT_OUTPUT_DIRECTORY,
       OPT_FORCE_VALID,
       OPT_DHT_BOOTSTRAP,
+      OPT_SHARE,
    };
    static const struct option torrent_opts[]=
    {
       {"output-directory",required_argument,0,OPT_OUTPUT_DIRECTORY},
       {"force-valid",no_argument,0,OPT_FORCE_VALID},
       {"dht-bootstrap",required_argument,0,OPT_DHT_BOOTSTRAP},
+      {"share",no_argument,0,OPT_SHARE},
       {0}
    };
    const char *output_dir=0;
    const char *dht_bootstrap=0;
    bool force_valid=false;
+   bool share=false;
 
    args->rewind();
    int opt;
@@ -3808,6 +4017,9 @@ CMD(torrent)
       case(OPT_DHT_BOOTSTRAP):
 	 dht_bootstrap=optarg;
 	 Torrent::BootstrapDHT(dht_bootstrap);
+	 break;
+      case(OPT_SHARE):
+	 share=true;
 	 break;
       case('?'):
       try_help:
@@ -3838,7 +4050,7 @@ CMD(torrent)
 	    for(unsigned i=0; i<pglob.gl_pathc; i++) {
 	       const char *f=pglob.gl_pathv[i];
 	       struct stat st;
-	       if(stat(f,&st)!=-1 && S_ISREG(st.st_mode)) {
+	       if(share || (stat(f,&st)!=-1 && S_ISREG(st.st_mode))) {
 		  args_g->Add(f);
 		  globbed++;
 	       }
@@ -3855,13 +4067,18 @@ CMD(torrent)
    {
       if(dht_bootstrap)
 	 return 0;
-      eprintf(_("%s: Please specify meta-info file or URL.\n"),args->a0());
+      if(share)
+	 eprintf(_("%s: Please specify a file or directory to share.\n"),args->a0());
+      else
+	 eprintf(_("%s: Please specify meta-info file or URL.\n"),args->a0());
       goto try_help;
    }
    while(torrent) {
       Torrent *t=new Torrent(torrent,cwd,output_dir);
       if(force_valid)
 	 t->ForceValid();
+      if(share)
+	 t->Share();
       TorrentJob *tj=new TorrentJob(t);
       tj->cmdline.set(xstring::cat(torrent_opt," ",torrent,NULL));
       parent->AddNewJob(tj);

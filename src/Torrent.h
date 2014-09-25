@@ -56,6 +56,41 @@ public:
    void set_range(int from,int to,bool value);
 };
 
+class TorrentBuild : public SMTask, public ProtoLog
+{
+   xstring_c top_path;
+   xstring name;
+   FileSet files;
+   StringSet dirs_to_scan;
+   bool done;
+   Ref<Error> error;
+
+   Ref<DirectedBuffer> translate;
+   const char *lc_to_utf8(const char *s);
+
+   friend class Torrent;
+   Ref<BeNode> info;
+   xstring pieces;
+   off_t total_length;
+   unsigned piece_length;
+
+   const char *CurrPath() const { return dirs_to_scan[0]; }
+   void NextDir() { dirs_to_scan.Remove(0); }
+   void QueueDir(const char *dir) { dirs_to_scan.Append(dir); }
+   void AddFile(const char *path,struct stat *st);
+   void Finish();
+
+public:
+   TorrentBuild(const char *top);
+   int Do();
+   bool Done() { return done || error; }
+   bool Failed() { return error; }
+   const char *ErrorText() const { return error->Text(); }
+   BeNode *GetFilesNode() const { return info->lookup("files"); }
+   void SetPiece(unsigned p,const xstring& sha1);
+   const xstring& GetMetadata();
+};
+
 class TorrentPiece
 {
    unsigned sources_count;	    // how many peers have the piece
@@ -193,6 +228,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool is_private;
    bool validating;
    bool force_valid;
+   bool build_md;
    unsigned validate_index;
    Ref<Error> invalid_cause;
 
@@ -249,8 +285,12 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void SaveMetadata() const;
    bool LoadMetadata(const char *path);
 
+   void SetTotalLength(off_t);
+   void StartValidating();
+
    xstring_c metainfo_url;
    SMTaskRef<FileCopy> metainfo_copy;
+   SMTaskRef<TorrentBuild> building;
    Ref<BeNode> metainfo_tree;
    BeNode *info;
    xstring metadata;
@@ -279,7 +319,6 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void AnnounceDHT();
    void DenounceDHT();
 
-   bool single_file;
    unsigned piece_length;
    unsigned last_piece_length;
    unsigned total_pieces;
@@ -453,6 +492,8 @@ public:
 
    void ForceValid() { force_valid=true; }
    bool IsValidating() const { return validating; }
+   void Share() { build_md=true; }
+   bool IsSharing() const { return build_md; }
 
    static int GetPort();
    static int GetPortIPv4() { return listener?listener->GetPort():0; }
