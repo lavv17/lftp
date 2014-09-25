@@ -362,6 +362,24 @@ void BeNode::Pack(const SMTaskRef<IOBuffer> &buf)
    Pack(tmp);
    buf->Put(tmp);
 }
+static int xstring_ptr_cmp(const xstring*const*a,const xstring*const*b)
+{
+   return (*a)->cmp(**b);
+}
+void BeNode::PackDict(xstring &buf)
+{
+   xarray<const xstring*> keys;
+   for(BeNode *e=dict.each_begin(); e; e=dict.each_next())
+      keys.append(&dict.each_key());
+   keys.qsort(xstring_ptr_cmp);
+   for(int i=0; i<keys.count(); i++)
+   {
+      const xstring &key=*keys[i];
+      buf.appendf("%d:",(int)key.length());
+      buf.append(key);
+      dict.lookup(key)->Pack(buf);
+   }
+}
 void BeNode::Pack(xstring &buf)
 {
    int i;
@@ -383,14 +401,7 @@ void BeNode::Pack(xstring &buf)
       break;
    case BE_DICT:
       buf.append('d');
-      for(BeNode *e=dict.each_begin(); e; e=dict.each_next())
-      {
-	 const xstring &key=dict.each_key();
-	 i=key.length();
-	 buf.appendf("%d:",i);
-	 buf.append(key);
-	 e->Pack(buf);
-      }
+      PackDict(buf);
       buf.append('e');
       break;
    }

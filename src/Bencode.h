@@ -25,6 +25,7 @@
 
 class BeNode
 {
+   void PackDict(xstring &buf);
 public:
    enum be_type_t {
       BE_STR,
