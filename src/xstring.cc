@@ -181,6 +181,26 @@ bool xstring::eq(const char *o_buf,size_t o_len) const
 {
    return len==o_len && begins_with(o_buf,o_len);
 }
+int xstring::cmp(const char *o_buf,size_t o_len) const
+{
+   if(buf!=o_buf) {
+      if(!buf)
+	 return -1;
+      if(!o_buf)
+	 return 1;
+      size_t cmp_len=len;
+      if(cmp_len>o_len)
+	 cmp_len=o_len;
+      if(cmp_len>0) {
+	 int cmp_res=memcmp(buf,o_buf,cmp_len);
+	 if(cmp_res)
+	    return cmp_res;
+      }
+   }
+   if(len==o_len)
+      return 0;
+   return len-o_len;
+}
 
 static size_t vstrlen(va_list va0)
 {

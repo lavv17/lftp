@@ -238,6 +238,8 @@ public:
    bool eq(const char *s) const { return eq(s,strlen(s)); }
    bool eq(const xstring&o) const { return eq(o.get(),o.length()); }
    bool ne(const xstring&o) const { return !eq(o); }
+   int cmp(const char *o_buf,size_t o_len) const;
+   int cmp(const xstring&o) const { return cmp(o.get(),o.length()); }
    bool chomp(char c='\n');
    void rtrim(char c=' ');
    char last_char() const { return len>0?buf[len-1]:0; }
