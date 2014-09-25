@@ -103,7 +103,7 @@ template<class T> T xmap<T>::zero;
 
 template<class T> class xmap_p : public _xmap
 {
-   virtual void dispose(T *p) { delete p; }
+   void dispose(T *p) { delete p; }
 public:
    xmap_p() : _xmap(sizeof(T*)) {}
    ~xmap_p() {
