@@ -2406,6 +2406,7 @@ int   Ftp::Do()
 	 if(conn->data_iobuf->Size()==0 && conn->data_iobuf->Eof())
 	 {
 	    LogNote(9,"Got EOF on data connection");
+	    conn->data_iobuf->PutEOF(); // for ssl shutdown
 	    DataClose();
 	    if(expect->IsEmpty())
 	    {
