@@ -26,6 +26,8 @@
 #include "xarray.h"
 #include "xlist.h"
 #include "misc.h"
+#include "Error.h"
+#include <errno.h>
 
 class SMTask
 {
@@ -130,6 +132,7 @@ public:
    static void PrintTasks();
    static bool NonFatalError(int err);
    static bool TemporaryNetworkError(int err) { return temporary_network_error(err); }
+   static Error *SysError(int e=errno) { return new Error(e,strerror(e),!NonFatalError(e)); }
 
    static void Cleanup();
 };
