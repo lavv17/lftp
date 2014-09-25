@@ -786,7 +786,7 @@ public:
 	    return res;
 	 }
       void ComputeLength() { Packet::ComputeLength(); length++; if(data) length+=data->ComputeLength(); length+=appendix.length(); }
-      void Pack(SMTaskRef<IOBuffer>& b) { Packet::Pack(b); b->PackUINT8(code); if(data) data->Pack(b); }
+      void Pack(SMTaskRef<IOBuffer>& b) { Packet::Pack(b); b->PackUINT8(code); if(data) data->Pack(b); b->Put(appendix); }
       void SetAppendix(const char *s,int len) { appendix.nset(s,len); length+=len; }
    };
 
