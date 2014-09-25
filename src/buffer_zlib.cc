@@ -42,7 +42,7 @@ void DataInflator::PutTranslated(Buffer *target,const char *put_buf,int size)
       }
       size_t put_size=size;
       int size_coeff=6;
-      size_t store_size=size_coeff*put_size;
+      size_t store_size=size_coeff*put_size+256;
       char *store_space=target->GetSpace(store_size);
       char *store_buf=store_space;
       // do the inflation
