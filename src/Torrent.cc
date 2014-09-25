@@ -2050,6 +2050,9 @@ int TorrentPeer::SendDataRequests(unsigned p)
 {
    if(p==NO_PIECE)
       return 0;
+   if(parent->my_bitfield->get_bit(p)
+   || !peer_bitfield || !peer_bitfield->get_bit(p))
+      return 0;
 
    int sent=0;
    unsigned blocks=parent->BlocksInPiece(p);
@@ -2123,10 +2126,8 @@ void TorrentPeer::SendDataRequests()
       // try fast set when choking
       while(fast_set.count()>0) {
 	 unsigned p=fast_set[0];
-	 if(peer_bitfield->get_bit(p) && !parent->my_bitfield->get_bit(p)) {
-	    if(SendDataRequests(p)>0)
-	       return;
-	 }
+	 if(SendDataRequests(p)>0)
+	    return;
 	 fast_set.next();
       }
       return;
@@ -2139,8 +2140,7 @@ void TorrentPeer::SendDataRequests()
    // try suggested pieces
    while(suggested_set.count()>0) {
       unsigned p=suggested_set.next();
-      if(peer_bitfield->get_bit(p) && !parent->my_bitfield->get_bit(p)
-      && SendDataRequests(p)>0)
+      if(SendDataRequests(p)>0)
 	 return;
    }
 
