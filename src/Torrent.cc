@@ -4050,13 +4050,13 @@ CMD(torrent)
       int globbed=0;
       if(share || !url::is_url(torrent)) {
 	 glob_t pglob;
-	 glob(dir_file(cwd,expand_home_relative(torrent)),0,0,&pglob);
+	 glob(expand_home_relative(torrent),0,0,&pglob);
 	 if(pglob.gl_pathc>0) {
 	    for(unsigned i=0; i<pglob.gl_pathc; i++) {
 	       const char *f=pglob.gl_pathv[i];
 	       struct stat st;
 	       if(share || (stat(f,&st)!=-1 && S_ISREG(st.st_mode))) {
-		  args_g->Add(f);
+		  args_g->Add(dir_file(cwd,f));
 		  globbed++;
 	       }
 	    }
