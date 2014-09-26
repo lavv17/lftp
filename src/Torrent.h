@@ -83,13 +83,14 @@ class TorrentBuild : public SMTask, public ProtoLog
 public:
    TorrentBuild(const char *top);
    int Do();
-   bool Done() { return done || error; }
-   bool Failed() { return error; }
+   bool Done() const { return done || error; }
+   bool Failed() const { return error; }
    const char *ErrorText() const { return error->Text(); }
    BeNode *GetFilesNode() const { return info->lookup("files"); }
    void SetPiece(unsigned p,const xstring& sha1);
    const xstring& GetMetadata();
    const char *GetBaseDirectory() const { return dirname(top_path); }
+   const xstring& Status() const;
 };
 
 class TorrentPiece

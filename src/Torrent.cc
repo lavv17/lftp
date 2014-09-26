@@ -1078,6 +1078,16 @@ const xstring& TorrentBuild::GetMetadata()
    info->dict.add("pieces",new BeNode(pieces));
    return info->Pack();
 }
+const xstring& TorrentBuild::Status() const
+{
+   if(Done())
+      return xstring::get_tmp("");
+   const char *curr=CurrPath();
+   int count=files.count();
+   if(curr[0])
+      return xstring::format(plural("%d file$|s$ found, now scanning %s",count),count,curr);
+   return xstring::format(plural("%d file$|s$ found",count),count);
+}
 int TorrentBuild::Do()
 {
    int m=STALL;
@@ -1976,6 +1986,8 @@ const xstring& Torrent::Status()
 	 validate_index*100/total_pieces,recv_rate.GetStrS(),
 	 recv_rate.GetETAStrFromSize((off_t)(total_pieces-validate_index-1)*piece_length+last_piece_length).get());
    }
+   if(building)
+      return building->Status();
    if(!metadata && !build_md) {
       if(md_download.length()>0)
 	 return xstring::format(_("Getting meta-data: %s"),
