@@ -360,6 +360,7 @@ class FileCopyPeerFDStream : public FileCopyPeer
 
    bool create_fg_data;
    bool need_seek;
+   bool close_when_done;
 
    SMTaskRef<FileVerificator> verify;
 
@@ -376,6 +377,7 @@ public:
 
    void DontCreateFgData() { create_fg_data=false; }
    void NeedSeek() { need_seek=true; }
+   void CloseWhenDone() { close_when_done=true; }
    void WantSize();
    void RemoveFile();
    void SetBase(off_t b) { seek_base=b; }

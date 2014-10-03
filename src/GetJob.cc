@@ -90,6 +90,7 @@ FileCopyPeer *GetJob::DstLocal(const char *dst)
    }
    local=new FileStream(f,flags); // local is for pget.
    FileCopyPeerFDStream *p=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
+   p->CloseWhenDone();
    return p;
 }
 

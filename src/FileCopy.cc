@@ -1395,12 +1395,12 @@ FileCopyPeer *FileCopyPeerFA::Clone()
 #define super FileCopyPeer
 
 FileCopyPeerFDStream::FileCopyPeerFDStream(FDStream *o,dir_t m)
-   : FileCopyPeer(m), my_stream(o?o:new FDStream(1,"<stdout>")), stream(my_stream)
+   : FileCopyPeer(m), my_stream(o?o:new FDStream(1,"<stdout>")), stream(my_stream), close_when_done(o!=0)
 {
    Init();
 }
 FileCopyPeerFDStream::FileCopyPeerFDStream(const Ref<FDStream>& o,dir_t m)
-   : FileCopyPeer(m), stream(o)
+   : FileCopyPeer(m), stream(o), close_when_done(false)
 {
    Init();
 }
@@ -1546,7 +1546,9 @@ int FileCopyPeerFDStream::Do()
       {
 	 if(eof)
 	 {
-	    getfd(); // give it a chance to create empty file. (FIXME - handle tmp errors)
+	    // make sure the stream is open - it may create an empty file.
+	    if(stream && !stream->is_closed() && getfd()==-1)
+	       return m;
 	    if(!date_set && date!=NO_DATE && do_set_date)
 	    {
 	       if(date==NO_DATE_YET)
@@ -1555,7 +1557,7 @@ int FileCopyPeerFDStream::Do()
 	       date_set=true;
 	       m=MOVED;
 	    }
-	    if(stream && my_stream && !stream->Done())
+	    if(stream && close_when_done && !stream->Done())
 	       return m;
 	    if(!verify && do_verify)
 	       verify=new FileVerificator(stream);
