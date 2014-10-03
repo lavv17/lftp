@@ -267,7 +267,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    StartDHT();
 
    if(!my_peer_id) {
-      my_peer_id.set("-lftp44-");
+      my_peer_id.set("-lftp45-");
       my_peer_id.appendf("%04x",(unsigned)getpid() & 0xffff);
       my_peer_id.appendf("%08x",(unsigned)now.UnixTime());
       assert(my_peer_id.length()==PEER_ID_LEN);
