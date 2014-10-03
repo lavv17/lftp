@@ -1240,7 +1240,7 @@ int   Ftp::Do()
       m|=ReceiveResp();
       if(expect && expect->IsEmpty())
       {
-	 Disconnect(last_disconnect_cause);
+	 DisconnectNow();
 	 return MOVED;
       }
       goto usual_return;
