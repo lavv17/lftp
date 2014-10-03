@@ -34,15 +34,16 @@
 #include "ArgV.h"
 #include "misc.h"
 #include "FileSet.h"
+#include "log.h"
 
 #ifndef O_BINARY
 # define O_BINARY 0
 #endif
 
 FDStream::FDStream(int new_fd,const char *new_name)
-   : close_fd(false), fd(new_fd), name(new_name?expand_home_relative(new_name):0), status(0) {}
+   : close_when_done(false), closed(false), fd(new_fd), name(new_name?expand_home_relative(new_name):0), status(0) {}
 FDStream::FDStream()
-   : close_fd(false), fd(-1), status(0) {}
+   : close_when_done(false), closed(false), fd(-1), status(0) {}
 
 void FDStream::MakeErrorText(int e)
 {
@@ -56,22 +57,45 @@ void FDStream::SetCwd(const char *new_cwd)
 {
    cwd.set(new_cwd);
 }
+void FDStream::DoCloseFD()
+{
+   if(fd!=-1) {
+      if(close_when_done) {
+	 close(fd);
+	 Log::global->Format(11,"closed FD %d\n",fd);
+      }
+      fd=-1;
+   }
+}
+void FDStream::SetFD(int new_fd,bool c)
+{
+   DoCloseFD();
+   fd=new_fd;
+   close_when_done=c;
+}
+bool FDStream::Done()
+{
+   if(closed)
+      return true;
+   DoCloseFD();
+   closed=true;
+   return true;
+}
 FDStream::~FDStream()
 {
-   if(close_fd)
-      close(fd);
+   DoCloseFD();
 };
 
 void OutputFilter::Parent(int *p)
 {
    close(p[0]);
-   fd=p[1];
+   SetFD(p[1],true);
 }
 
 void InputFilter::Parent(int *p)
 {
    close(p[1]);
-   fd=p[0];
+   SetFD(p[0],true);
 }
 void OutputFilter::Child(int *p)
 {
@@ -222,7 +246,6 @@ void OutputFilter::Init()
    second_fd=-1;
    cwd.set_allocated(xgetcwd());
    pg=0;
-   closed=false;
    stderr_to_stdout=false;
    stdout_to_null=false;
    if(a)
@@ -264,23 +287,16 @@ OutputFilter::OutputFilter(ArgV *a1,const Ref<FDStream>& new_second)
 
 OutputFilter::~OutputFilter()
 {
-   close(fd);
-   fd=-1;
-
    if(w)
       w->Auto();
 }
 
 bool OutputFilter::Done()
 {
+   if(!FDStream::Done())
+      return false;
    if(w==0)
       return true;
-   if(fd!=-1)
-   {
-      close(fd);
-      fd=-1;
-      closed=true;
-   }
    if(w->GetState()!=w->RUNNING)
    {
       if(my_second)
@@ -343,11 +359,6 @@ FileStream::FileStream(const char *fname,int new_mode)
 }
 FileStream::~FileStream()
 {
-   if(fd!=-1)
-   {
-      close(fd);
-      fd=-1;
-   }
 }
 void FileStream::remove()
 {
@@ -365,14 +376,16 @@ void FileStream::remove_if_empty()
 
 int   FileStream::getfd()
 {
-   if(fd!=-1 || error())
+   if(fd!=-1 || error() || closed)
       return fd;
-   fd=open(full_name,mode|O_NONBLOCK|O_BINARY,create_mode);
-   if(fd==-1)
+   int new_fd=open(full_name,mode|O_NONBLOCK|O_BINARY,create_mode);
+   if(new_fd==-1)
    {
       MakeErrorText();
       return -1;
    }
+   Log::global->Format(11,"opened FD %d (%s)\n",new_fd,full_name.get());
+   SetFD(new_fd,true);
    fcntl(fd,F_SETFD,FD_CLOEXEC);
    if(do_lock) {
       struct flock lk;
@@ -382,7 +395,7 @@ int   FileStream::getfd()
       lk.l_len=0;
       if(fcntl(fd,F_SETLKW,&lk)==-1) {
 	 MakeErrorText();
-	 close(fd);
+	 DoCloseFD();
 	 return -1;
       }
    }

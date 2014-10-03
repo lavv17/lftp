@@ -108,8 +108,8 @@ void OutputJob::InitCopy()
       output->NoStatus(no_status);
       output_fd=new FDStream(filter_pipe[1],"<filter-in>");
 
-      pipe_output->CloseFD();
-      output_fd->CloseFD();
+      pipe_output->CloseWhenDone();
+      output_fd->CloseWhenDone();
 
       fa_path.set(0);
    }

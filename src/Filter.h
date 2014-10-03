@@ -27,7 +27,13 @@ struct FileTimestamp;
 
 class FDStream
 {
-   bool close_fd;
+   bool close_when_done;
+
+protected:
+   bool closed;
+
+   void DoCloseFD();
+   void SetFD(int new_fd,bool c);
 
 public:
    int fd;
@@ -40,6 +46,7 @@ public:
    bool	 error() { return error_text!=0; }
 
    virtual int getfd() { return fd; }
+   bool is_closed() const { return closed; }
 
    FDStream();
    FDStream(int new_fd,const char *new_name);
@@ -49,7 +56,7 @@ public:
    bool NonFatalError(int err);
    void set_status(const char *str) { status=str; }
    void clear_status() { status=0; }
-   void CloseFD() { close_fd=true; }
+   void CloseWhenDone() { close_when_done=true; }
 
    void SetCwd(const char *);
    const char *GetCwd() const { return cwd; }
@@ -59,7 +66,7 @@ public:
    virtual bool can_setmtime() { return false; }
    virtual void remove_if_empty() {}
    virtual void remove() {}
-   virtual bool Done() { return true; }
+   virtual bool Done();
    virtual bool usesfd(int n_fd) { return fd==n_fd; }
    virtual void Kill(int=SIGTERM) {}
    virtual pid_t GetProcGroup() const { return 0; }
@@ -78,8 +85,6 @@ class OutputFilter : public FDStream
 
    bool stderr_to_stdout;
    bool stdout_to_null;
-
-   bool closed;
 
    void Init();
 
