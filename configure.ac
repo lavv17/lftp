@@ -346,7 +346,7 @@ AC_CHECK_HEADERS(libintl.h fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.
  termios.h termio.h sys/select.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
  netinet/in_systm.h netinet/ip.h termcap.h sys/statfs.h ifaddrs.h\
- resolv.h langinfo.h endian.h locale.h expat.h linux/magic.h,,,[
+ resolv.h langinfo.h endian.h locale.h expat.h linux/magic.h socks.h,,,[
 #include <sys/types.h>
 #ifdef HAVE_ARPA_NAMESER_H
 # include <arpa/nameser.h>
@@ -504,41 +504,45 @@ static inline T replace_value(T &var,T new_value)
 
 #define USE_EXPAT (defined(HAVE_EXPAT_H) && defined(HAVE_LIBEXPAT))
 
-#if defined(SOCKS4) || defined(SOCKS_DANTE)
-# define connect     Rconnect
-# define getsockname Rgetsockname
-# define bind	     Rbind
-# define accept	     Raccept
-# define listen	     Rlisten
-# define select	     Rselect
-# ifdef HAVE_RPOLL
-#  define poll	     Rpoll
-# endif
-CDECL void SOCKSinit(const char *);
+#if defined(SOCKS4) || defined(SOCKS5) || defined(SOCKS_DANTE)
+# define SOCKS 1
 #endif
-#ifdef SOCKS_DANTE
-# define rresvport Rrresvport
-# define bindresvport Rbindresvport
-# define gethostbyname Rgethostbyname
-# define gethostbyname2 Rgethostbyname2
-# define sendto Rsendto
-# define recvfrom Rrecvfrom
-# define recvfrom Rrecvfrom
-# define write Rwrite
-# define writev Rwritev
-# define send Rsend
-# define sendmsg Rsendmsg
-# define read Rread
-# define readv Rreadv
-# define recv Rrecv
-# define recvmsg Rrecvmsg
-#endif
-
-#ifdef SOCKS5
-# define SOCKS
-# include <socks.h>
-# undef /**/ getc /* fix a problem with redefined getc */
-#endif
+#ifdef SOCKS
+# if defined(HAVE_SOCKS_H)
+#  include <socks.h>
+#  undef /**/ getc /* fix a problem with redefined getc */
+# else // !HAVE_SOCKS_H
+#  if defined(SOCKS4) || defined(SOCKS_DANTE)
+#   define connect     Rconnect
+#   define getsockname Rgetsockname
+#   define bind	     Rbind
+#   define accept	     Raccept
+#   define listen	     Rlisten
+#   define select	     Rselect
+#   ifdef HAVE_RPOLL
+#    define poll	     Rpoll
+#   endif
+CDECL int SOCKSinit(const char *);
+#  endif
+#  ifdef SOCKS_DANTE
+#   define rresvport Rrresvport
+#   define bindresvport Rbindresvport
+#   define gethostbyname Rgethostbyname
+#   define gethostbyname2 Rgethostbyname2
+#   define sendto Rsendto
+#   define recvfrom Rrecvfrom
+#   define recvfrom Rrecvfrom
+#   define write Rwrite
+#   define writev Rwritev
+#   define send Rsend
+#   define sendmsg Rsendmsg
+#   define read Rread
+#   define readv Rreadv
+#   define recv Rrecv
+#   define recvmsg Rrecvmsg
+#  endif
+# endif // !HAVE_SOCKS_H
+#endif // SOCKS
 
 #if defined __MSDOS__ || defined __CYGWIN32__
 # define NATIVE_CRLF 1
