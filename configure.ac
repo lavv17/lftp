@@ -509,7 +509,9 @@ static inline T replace_value(T &var,T new_value)
 #endif
 #ifdef SOCKS
 # if defined(HAVE_SOCKS_H)
+CDECL_BEGIN
 #  include <socks.h>
+CDECL_END
 #  undef /**/ getc /* fix a problem with redefined getc */
 # else // !HAVE_SOCKS_H
 #  if defined(SOCKS4) || defined(SOCKS_DANTE)
