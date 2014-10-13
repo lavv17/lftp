@@ -1,3 +1,21 @@
+Version 4.6.0 - 2014-10-13
+
+* new torrent --share option.
+* new setting mirror:require-source.
+* new settings xfer:use-temp-file and xfer:temp-file-name.
+* ftp: wait for QUIT reply before closing control socket.
+
+Version 4.5.6 - 2014-10-13
+
+* display valid IDN in URLs without percent encoding.
+* ftp: shutdown SSL connection before closing control socket.
+* ftp: avoid duplication of PROT command.
+* fixed debug -o to append to the log file.
+* fixed compilation without SSL.
+* http: don't uncompress files ending with .gz, .Z or .tgz
+* http: fixed inflation of some files.
+* minor fixes in torrent protocol.
+
 Version 4.5.5 - 2014-09-04
 
 * added support for internationalized domain names.
