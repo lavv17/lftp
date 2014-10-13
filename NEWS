@@ -1,3 +1,14 @@
+Version 4.5.6 - 2014-10-13
+
+* display valid IDN in URLs without percent encoding.
+* ftp: shutdown SSL connection before closing control socket.
+* ftp: avoid duplication of PROT command.
+* fixed debug -o to append to the log file.
+* fixed compilation without SSL.
+* http: don't uncompress files ending with .gz, .Z or .tgz
+* http: fixed inflation of some files.
+* minor fixes in torrent protocol.
+
 Version 4.5.5 - 2014-09-04
 
 * added support for internationalized domain names.
