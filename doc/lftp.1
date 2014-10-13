@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "04 Sep 2014"
+.TH lftp 1 "13 Oct 2014"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.5.5.
+This man page documents lftp version 4.6.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -1843,6 +1843,10 @@ directory before moving to other directories.
 .BR mirror:parallel-transfer-count " (number)"
 specifies number of parallel transfers mirror is allowed to start. Default is 1.
 You can override it with \-\-parallel option.
+.TP
+.BR mirror:require-source \ (boolean)
+When true, mirror requires a source directory to be specified explicitly,
+otherwise it is supposed to be the current directory.
 .TP
 .BR mirror:set-permissions \ (boolean)
 When set to off, mirror won't try to copy file and directory permissions.

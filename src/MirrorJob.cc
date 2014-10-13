@@ -1768,8 +1768,13 @@ CMD(mirror)
       }
    }
 
-   if(!source_dir)
+   if(!source_dir) {
+      if(ResMgr::QueryBool("mirror:require-source",0)) {
+	 eprintf(_("%s: source directory is required (mirror:require-source is set)\n"),args->a0());
+	 return 0;
+      }
       source_dir=".";
+   }
    if(!target_dir)
       target_dir=".";
 
