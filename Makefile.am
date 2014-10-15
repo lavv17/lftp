@@ -36,11 +36,20 @@ dist-hook:
 	    cp $(distdir)/$(PACKAGE).lsm $(srcdir)/$(PACKAGE).lsm
 
 REL_DIR=/home/lav/www-lftp/ftp
+
+release-check:
+	for opt in "" "--with-modules" "--without-gnutls" "--without-openssl" \
+			"--without-gnutls --without-openssl" \
+			"--with-modules --without-gnutls --without-openssl"; \
+	 do \
+		make DISTCHECK_CONFIGURE_FLAGS="$$opt" distcheck || exit 1; \
+	 done
+
 release:
 #	cvs commit -m $(VERSION)
 #	make dist
 #	cvs commit -m $(VERSION)
-	make distcheck
+	make release-check
 	make release-ftp
 
 release-ftp:
