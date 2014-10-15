@@ -547,6 +547,11 @@ int lftp_ssl_gnutls::do_handshake()
 
    return DONE;
 }
+
+#ifndef GNUTLS_E_PREMATURE_TERMINATION // for gnutls < 3.0
+# define GNUTLS_E_PREMATURE_TERMINATION GNUTLS_E_UNEXPECTED_PACKET_LENGTH
+#endif
+
 int lftp_ssl_gnutls::read(char *buf,int size)
 {
    if(error)
