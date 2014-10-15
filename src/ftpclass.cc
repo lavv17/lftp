@@ -1610,12 +1610,12 @@ int   Ftp::Do()
 
       if(expect->Has(Expect::FEAT)
       || expect->Has(Expect::OPTS_UTF8)
-      || expect->Has(Expect::LANG)
-      || expect->Has(Expect::PROT))
+      || expect->Has(Expect::LANG))
 	 goto usual_return;
 
 #if USE_SSL
-      if(expect->Has(Expect::CCC))
+      if(expect->Has(Expect::CCC)
+      || expect->Has(Expect::PROT))
 	 goto usual_return;
 #endif // USE_SSL
 
