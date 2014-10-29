@@ -1518,7 +1518,13 @@ int FileCopyPeerFDStream::Do()
 	    struct stat st;
 	    if(temp_file || (lstat(new_name,&st)==-1 && errno==ENOENT) || ResMgr::QueryBool("xfer:clobber",0)) {
 	       debug((5,"copy: renaming `%s' to `%s'\n",stream->full_name.get(),suggested_filename.get()));
-	       if(rename(stream->full_name,new_name)==-1) {
+	       int res=rename(stream->full_name,new_name);
+	       if(res==-1 && errno==EIO) {
+		  // FUSE with HadoopFS workaround
+		  unlink(new_name);
+		  res=rename(stream->full_name,new_name);
+	       }
+	       if(res==-1) {
 		  const char *err=xstring::format("rename(%s, %s): %s\n",stream->full_name.get(),new_name,strerror(errno));
 		  if(temp_file)
 		     SetError(err);
