@@ -16,7 +16,7 @@ AC_CACHE_VAL(lftp_cv_openssl,
 		AC_TRY_LINK(
 			[#include <openssl/ssl.h>
 			 #include <openssl/rand.h>],
-			[static SSL_CTX *ctx; SSL_new(ctx); RAND_status(); RAND_egd("file")],
+			[static SSL_CTX *ctx; SSL_new(ctx); RAND_status()],
 			[found_loc="$loc"])
 		LIBS="$old_LIBS"
 		LDFLAGS="$old_LDFLAGS"
