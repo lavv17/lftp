@@ -767,8 +767,6 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
 #endif
 
    RAND_file_name(file,sizeof(file));
-   if(RAND_egd(file)>0)
-      return;
 
    if(RAND_load_file(file,-1) && RAND_status()!=0)
       atexit(lftp_ssl_write_rnd);
