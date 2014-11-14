@@ -107,6 +107,13 @@ const char *FinderJob_Du::MakeFileName(const char *n)
    return size_stack.count()>0 ? dir_file(size_stack.last()->dir,n) : n;
 }
 
+off_t FinderJob_Du::BlockCeil(off_t size) const
+{
+   size+=output_block_size-1;
+   size-=size%output_block_size;
+   return size;
+}
+
 FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
 {
    if(buf->Broken())
@@ -127,7 +134,7 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
       return PRF_OK; /* can't count this one */
 
    /* add this file to the current dir */
-   long long add = fi->size;
+   long long add = BlockCeil(fi->size);
    if (file_count)
       add = 1;
    if(size_stack.count()>0)
@@ -137,7 +144,7 @@ FinderJob::prf_res FinderJob_Du::ProcessFile(const char *d,const FileInfo *fi)
    if(all_files || stack_ptr == -1) {
       /* this is <, where Pop() is <=, since the file counts in depth */
       if(max_print_depth == -1 || stack_ptr < max_print_depth)
-	 print_size(fi->size, MakeFileName(fi->name));
+	 print_size(BlockCeil(fi->size), MakeFileName(fi->name));
    }
 
    return PRF_OK;
@@ -172,7 +179,7 @@ void FinderJob_Du::print_size (long long n_blocks, const char *string)
    /* We get blocks in bytes, since we don't know the remote system's
     * block size. */
    buf->Format("%s\t%s\n",
-	 human_readable (n_blocks, buffer, human_opts, 1, output_block_size),
+	 human_readable (n_blocks, buffer, human_opts, 1, human_opts?1:output_block_size),
 	 string);
 }
 

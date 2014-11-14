@@ -51,6 +51,7 @@ class FinderJob_Du : public FinderJob
    Ref<ArgV> args;
 
    void print_size (long long n_blocks, const char *string);
+   off_t BlockCeil(off_t size) const;
 
    // prepends last directory name
    const char *MakeFileName(const char *n);

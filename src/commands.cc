@@ -2983,6 +2983,7 @@ CMD(du)
 	 break;
       case 'b':
 	 blocksize = 1;
+	 human_opts = 0;
 	 break;
       case 'c':
 	 print_totals=true;
@@ -3000,18 +3001,18 @@ CMD(du)
 	 file_count=true;
 	 break;
       case 'h':
-	 blocksize=1;
-	 human_opts|=human_autoscale|human_SI|human_base_1024;
+	 human_opts |= human_autoscale|human_SI|human_base_1024;
 	 break;
       case 'H':
-	 blocksize=1;
 	 human_opts |= human_autoscale|human_SI;
 	 break;
       case 'k': /* the default; here for completeness */
 	 blocksize = 1024;
+	 human_opts = 0;
 	 break;
       case 'm':
 	 blocksize = 1024*1024;
+	 human_opts = 0;
 	 break;
       case 's':
 	 summarize_only = true;
