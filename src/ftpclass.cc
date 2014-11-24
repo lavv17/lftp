@@ -3831,6 +3831,8 @@ void Ftp::SendOPTS_MLST()
       }
       differs|=(was_enabled^want_enable);
    }
+   if(store>facts && store[-1]==';')
+      --store;
    if(!differs || store==facts)
       return;
    *store=0;
