@@ -39,6 +39,7 @@ class MirrorJob : public Job
       TARGET_REMOVE_OLD,
       TARGET_REMOVE_OLD_FIRST,
       TARGET_CHMOD,
+      TARGET_MKDIR,
       FINISHING,
       LAST_EXEC,
       DONE
@@ -54,7 +55,10 @@ class MirrorJob : public Job
    long long bytes_to_transfer;
    Ref<FileSet> target_set;
    Ref<FileSet> source_set;
+   Ref<FileSet> target_set_recursive;
+   Ref<FileSet> source_set_recursive;
    Ref<FileSet> to_transfer;
+   Ref<FileSet> to_mkdir;
    Ref<FileSet> same;
    Ref<FileSet> to_rm;
    Ref<FileSet> to_rm_mismatched;
@@ -188,6 +192,7 @@ public:
       NO_EMPTY_DIRS=1<<16,
       DEPTH_FIRST=1<<17,
       ASCII=1<<18,
+      SCAN_ALL_FIRST=1<<19,
    };
 
    void SetFlags(int f,bool v)

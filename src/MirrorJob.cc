@@ -31,6 +31,7 @@
 #include "rmJob.h"
 #include "mvJob.h"
 #include "ChmodJob.h"
+#include "mkdirJob.h"
 #include "misc.h"
 #include "plural.h"
 #include "FindJob.h"
@@ -57,6 +58,7 @@ xstring& MirrorJob::FormatStatus(xstring& s,int v,const char *tab)
    case(TARGET_REMOVE_OLD):
    case(TARGET_REMOVE_OLD_FIRST):
    case(TARGET_CHMOD):
+   case(TARGET_MKDIR):
    case(LAST_EXEC):
       break;
 
@@ -131,6 +133,7 @@ void  MirrorJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
    case(TARGET_REMOVE_OLD):
    case(TARGET_REMOVE_OLD_FIRST):
    case(TARGET_CHMOD):
+   case(TARGET_MKDIR):
    case(FINISHING):
    case(DONE):
    case(LAST_EXEC):
@@ -221,7 +224,8 @@ void MirrorJob::TransferFinished(Job *j)
       const xstring& rate=Speedometer::GetStrProper(j->GetTransferRate());
       if(rate.length()>0)
 	 finished.append(" (").append(rate).append(')');
-      Report(_("Finished %s"),finished.get());
+      if(!(FlagSet(SCAN_ALL_FIRST) && finished.begins_with("mirror")))
+	 Report(_("Finished %s"),finished.get());
    }
    JobFinished(j);
    if(transfer_count==0)
@@ -460,8 +464,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
 	 mj->max_error_count=max_error_count;
 
-	 if(verbose_report>=3)
-	    Report(_("Mirroring directory `%s'"),mj->target_relative_dir.get());
+	 if(verbose_report>=3) {
+	    if(FlagSet(SCAN_ALL_FIRST))
+	       Report(_("Scanning directory `%s'"),mj->target_relative_dir.get());
+	    else
+	       Report(_("Mirroring directory `%s'"),mj->target_relative_dir.get());
+	 }
 
 	 break;
       }
@@ -582,6 +590,12 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    if(size_range)
       to_transfer->SubtractSizeOutside(size_range);
 
+   if(FlagSet(SCAN_ALL_FIRST)) {
+      to_mkdir=new FileSet(to_transfer);
+      to_mkdir->SubtractNotDirs();
+      to_mkdir->SubtractAny(dest);
+   }
+
    if(flags&NO_RECURSION)
       to_transfer->SubtractDirs();
 
@@ -612,8 +626,13 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
       to_transfer->ReverseSort();
 
    int dir_count=0;
-   to_transfer->Count(&dir_count,NULL,NULL,NULL);
-   only_dirs = (dir_count==to_transfer->count());
+   if(to_mkdir) {
+      to_mkdir->Count(&dir_count,NULL,NULL,NULL);
+      only_dirs = (dir_count==to_mkdir->count());
+   } else {
+      to_transfer->Count(&dir_count,NULL,NULL,NULL);
+      only_dirs = (dir_count==to_transfer->count());
+   }
 }
 
 void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
@@ -650,7 +669,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 	 }
       }
    cd_err_normal:
-      if(session==target_session && script_only)
+      if(session==target_session && (script_only || FlagSet(SCAN_ALL_FIRST)))
       {
 	 char *dir=alloca_strdup(session->GetFile());
 	 session->Close();
@@ -751,7 +770,7 @@ int   MirrorJob::Do()
 
    pre_MAKE_TARGET_DIR:
    {
-      if(!strcmp(target_dir,".") || !strcmp(target_dir,".."))
+      if(!strcmp(target_dir,".") || !strcmp(target_dir,"..") || (FlagSet(SCAN_ALL_FIRST) && parent_mirror))
 	 create_target_dir=false;
       if(!create_target_dir)
 	 goto pre_CHANGING_DIR_TARGET;
@@ -865,8 +884,35 @@ int   MirrorJob::Do()
       }
 
       // now we have both target and source file sets.
-      stats.dirs++;
+      if(parent_mirror)
+	 stats.dirs++;
 
+      if(FlagSet(SCAN_ALL_FIRST) && parent_mirror)
+      {
+	 source_set->PrependPath(source_relative_dir);
+	 if(root_mirror->source_set_recursive)
+	    root_mirror->source_set_recursive->Merge(source_set);
+	 else
+	    root_mirror->source_set_recursive=source_set.borrow();
+	 if(target_set) {
+	    target_set->PrependPath(target_relative_dir);
+	    if(root_mirror->target_set_recursive)
+	       root_mirror->target_set_recursive->Merge(target_set);
+	    else
+	       root_mirror->target_set_recursive=target_set.borrow();
+	 }
+	 root_mirror->stats.dirs++;
+	 goto pre_DONE;
+      }
+
+      if(source_set_recursive) {
+	 source_set->Merge(source_set_recursive);
+	 source_set_recursive=0;
+      }
+      if(target_set_recursive) {
+	 target_set->Merge(target_set_recursive);
+	 target_set_recursive=0;
+      }
       InitSets(source_set,target_set);
 
       to_transfer->CountBytes(&bytes_to_transfer);
@@ -880,6 +926,43 @@ int   MirrorJob::Do()
 
       set_state(TARGET_REMOVE_OLD_FIRST);
       goto TARGET_REMOVE_OLD_FIRST_label;
+
+   pre_TARGET_MKDIR:
+      if(!to_mkdir)
+	 goto pre_WAITING_FOR_TRANSFER;
+      to_mkdir->rewind();
+      set_state(TARGET_MKDIR);
+      m=MOVED;
+      /*fallthrough*/
+   case(TARGET_MKDIR):
+      while((j=FindDoneAwaitedJob())!=0)
+      {
+	 JobFinished(j);
+	 m=MOVED;
+      }
+      if(max_error_count>0 && stats.error_count>=max_error_count)
+	 goto pre_FINISHING;
+      while(transfer_count<parallel && state==TARGET_MKDIR)
+      {
+	 file=to_mkdir->curr();
+	 if(!file)
+	    goto pre_WAITING_FOR_TRANSFER;
+	 to_mkdir->next();
+	 if(!file->TypeIs(file->DIRECTORY))
+	    continue;
+	 if(script)
+	    fprintf(script,"mkdir %s\n",target_session->GetFileURL(file->name));
+	 if(!script_only)
+	 {
+	    ArgV *a=new ArgV("mkdir");
+	    a->Append(file->name);
+	    mkdirJob *mkj=new mkdirJob(target_session->Clone(),a);
+	    mkj->cmdline.set_allocated(a->Combine());
+	    JobStarted(mkj);
+	    m=MOVED;
+	 }
+      }
+      break;
 
    pre_WAITING_FOR_TRANSFER:
       to_transfer->rewind();
@@ -959,7 +1042,7 @@ int   MirrorJob::Do()
 	       break;
 	    if(state==TARGET_REMOVE_OLD)
 	       goto pre_TARGET_CHMOD;
-	    goto pre_WAITING_FOR_TRANSFER;
+	    goto pre_TARGET_MKDIR;
 	 }
 	 const char *target_name_rel=dir_file(target_relative_dir,file->name);
 	 target_name_rel=alloca_strdup(target_name_rel);
@@ -979,7 +1062,7 @@ int   MirrorJob::Do()
 	    ArgV args("rm");
 	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
 	    {
-	       if(flags&NO_RECURSION)
+	       if(FlagSet(NO_RECURSION) && !FlagSet(SCAN_ALL_FIRST))
 		  args.setarg(0,"rmdir");
 	       else
 		  args.Append("-r");
@@ -998,7 +1081,7 @@ int   MirrorJob::Do()
 	    JobStarted(j);
 	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
 	    {
-	       if(flags&NO_RECURSION)
+	       if(FlagSet(NO_RECURSION) && !FlagSet(SCAN_ALL_FIRST))
 	       {
 		  args->setarg(0,"rmdir");
 		  j->Rmdir();
@@ -1441,6 +1524,7 @@ CMD(mirror)
       OPT_NO_EMPTY_DIRS,
       OPT_DEPTH_FIRST,
       OPT_ASCII,
+      OPT_SCAN_ALL_FIRST,
    };
    static const struct option mirror_opts[]=
    {
@@ -1488,6 +1572,7 @@ CMD(mirror)
       {"ascii",no_argument,0,OPT_ASCII},
       {"target-directory",required_argument,0,'O'},
       {"destination-directory",required_argument,0,'O'},
+      {"scan-all-first",no_argument,0,OPT_SCAN_ALL_FIRST},
       {0}
    };
 
@@ -1543,6 +1628,7 @@ CMD(mirror)
 	 break;
       case('r'):
 	 flags|=MirrorJob::NO_RECURSION;
+	 flags&=~MirrorJob::SCAN_ALL_FIRST;
 	 break;
       case('n'):
 	 flags|=MirrorJob::ONLY_NEWER;
@@ -1594,6 +1680,7 @@ CMD(mirror)
       {
 	 // mirror for a single file (or glob pattern).
 	 flags|=MirrorJob::NO_RECURSION;
+	 flags&=~MirrorJob::SCAN_ALL_FIRST;
 	 MirrorJob::AddPattern(exclude,'I',basename_ptr(optarg));
 	 source_dir=dirname(optarg);
 	 source_dir=alloca_strdup(source_dir); // save the temp string
@@ -1678,6 +1765,9 @@ CMD(mirror)
 	 break;
       case(OPT_DEPTH_FIRST):
 	 flags|=MirrorJob::DEPTH_FIRST;
+	 break;
+      case(OPT_SCAN_ALL_FIRST):
+	 flags|=MirrorJob::SCAN_ALL_FIRST|MirrorJob::DEPTH_FIRST;
 	 break;
       case(OPT_ASCII):
 	 flags|=MirrorJob::ASCII|MirrorJob::IGNORE_SIZE;
