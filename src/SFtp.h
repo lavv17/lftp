@@ -789,7 +789,7 @@ public:
    Glob *MakeGlob(const char *pattern);
    ListInfo *MakeListInfo(const char *dir);
 
-   bool NeedSizeDateBeforehand() { return true; }
+   bool NeedSizeDateBeforehand() { return false; }
 
    void SuspendInternal();
    void ResumeInternal();
