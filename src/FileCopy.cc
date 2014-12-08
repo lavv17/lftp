@@ -1124,7 +1124,7 @@ void FileCopyPeerFA::WantSize()
    struct stat st;
    if(!strcmp(session->GetProto(),"file")
    && stat(dir_file(session->GetCwd(),file),&st)!=-1)
-      SetSize(st.st_size);
+      SetSize(S_ISREG(st.st_mode)?st.st_size:NO_SIZE);
    else
       super::WantSize();
 }
@@ -1677,7 +1677,7 @@ int FileCopyPeerFDStream::Get_LL(int len)
       else
       {
 	 SetDate(st.st_mtime);
-	 SetSize(st.st_size);
+	 SetSize(S_ISREG(st.st_mode)?st.st_size:NO_SIZE);
 #ifndef NATIVE_CRLF
 	 if(ascii)
 	    SetSize(NO_SIZE);
@@ -1840,15 +1840,15 @@ FgData *FileCopyPeerFDStream::GetFgData(bool fg)
 void FileCopyPeerFDStream::WantSize()
 {
    struct stat st;
-   st.st_size=NO_SIZE;
+   int res=-1;
 
    if(stream->fd!=-1)
-      fstat(stream->fd,&st);
+      res=fstat(stream->fd,&st);
    else if(stream->full_name)
-      stat(stream->full_name,&st);
+      res=stat(stream->full_name,&st);
 
-   if(st.st_size!=NO_SIZE)
-      SetSize(st.st_size);
+   if(res!=-1)
+      SetSize(S_ISREG(st.st_mode)?st.st_size:NO_SIZE);
    else
       super::WantSize();
 }

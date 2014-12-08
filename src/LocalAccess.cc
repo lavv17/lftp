@@ -271,8 +271,10 @@ int LocalAccess::Do()
 	 }
 	 else
 	 {
-	    if(opt_size) *opt_size=st.st_size;
-	    if(opt_date) *opt_date=st.st_mtime;
+	    if(opt_size)
+	       *opt_size=(S_ISREG(st.st_mode)?st.st_size:NO_SIZE);
+	    if(opt_date)
+	       *opt_date=st.st_mtime;
 	 }
 	 opt_size=0;
 	 opt_date=0;
