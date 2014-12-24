@@ -40,6 +40,7 @@ class MirrorJob : public Job
       TARGET_REMOVE_OLD_FIRST,
       TARGET_CHMOD,
       TARGET_MKDIR,
+      SOURCE_REMOVING_SAME,
       FINISHING,
       LAST_EXEC,
       DONE

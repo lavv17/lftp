@@ -59,6 +59,7 @@ xstring& MirrorJob::FormatStatus(xstring& s,int v,const char *tab)
    case(TARGET_REMOVE_OLD_FIRST):
    case(TARGET_CHMOD):
    case(TARGET_MKDIR):
+   case(SOURCE_REMOVING_SAME):
    case(LAST_EXEC):
       break;
 
@@ -134,6 +135,7 @@ void  MirrorJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
    case(TARGET_REMOVE_OLD_FIRST):
    case(TARGET_CHMOD):
    case(TARGET_MKDIR):
+   case(SOURCE_REMOVING_SAME):
    case(FINISHING):
    case(DONE):
    case(LAST_EXEC):
@@ -346,6 +348,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       args.Append("-e");
 	    if(FlagSet(ASCII))
 	       args.Append("-a");
+	    if(remove_source_files)
+	       args.Append("-E");
 	    args.Append("-O");
 	    args.Append(target_is_local?target_dir.get()
 			:target_session->GetConnectURL());
@@ -994,7 +998,7 @@ int   MirrorJob::Do()
 	       // if we have not created any subdirs and there are only subdirs,
 	       // then the directory would be empty - skip it.
 	       if(FlagSet(NO_EMPTY_DIRS) && stats.dirs==0 && only_dirs)
-		  goto pre_FINISHING;
+		  goto pre_FINISHING_FIX_LOCAL;
 
 	       transfer_count+=root_transfer_count;
 	       goto pre_MAKE_TARGET_DIR;
@@ -1099,7 +1103,7 @@ int   MirrorJob::Do()
 
    pre_TARGET_CHMOD:
       if(flags&NO_PERMS)
-	 goto pre_FINISHING;
+	 goto pre_FINISHING_FIX_LOCAL;
 
       to_transfer->rewind();
       set_state(TARGET_CHMOD);
@@ -1117,7 +1121,7 @@ int   MirrorJob::Do()
       {
 	 file=to_transfer->curr();
 	 if(!file)
-	    goto pre_FINISHING;
+	    goto pre_FINISHING_FIX_LOCAL;
 	 to_transfer->next();
 	 if((file->defined&file->TYPE) && file->filetype==file->SYMLINK)
 	    continue;
@@ -1160,7 +1164,7 @@ int   MirrorJob::Do()
       }
       break;
 
-   pre_FINISHING:
+   pre_FINISHING_FIX_LOCAL:
       if(target_is_local && !script_only)     // FIXME
       {
 	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true);
@@ -1171,6 +1175,9 @@ int   MirrorJob::Do()
 	 if(FlagSet(ALLOW_CHOWN) && same)
 	    same->LocalChown(target_dir);
       }
+      if(remove_source_files)
+	 goto pre_SOURCE_REMOVING_SAME;
+   pre_FINISHING:
       set_state(FINISHING);
       m=MOVED;
       /*fallthrough*/
@@ -1199,6 +1206,50 @@ int   MirrorJob::Do()
 	 }
       }
       goto pre_DONE;
+
+   pre_SOURCE_REMOVING_SAME:
+      same->rewind();
+      set_state(SOURCE_REMOVING_SAME);
+      m=MOVED;
+      /*fallthrough*/
+   case(SOURCE_REMOVING_SAME):
+      while((j=FindDoneAwaitedJob())!=0)
+      {
+	 JobFinished(j);
+	 m=MOVED;
+      }
+      if(max_error_count>0 && stats.error_count>=max_error_count)
+	 goto pre_FINISHING;
+      while(transfer_count<parallel && state==SOURCE_REMOVING_SAME)
+      {
+	 file=same->curr();
+	 same->next();
+	 if(!file)
+	    goto pre_FINISHING;
+	 if(file->TypeIs(file->DIRECTORY))
+	    continue;
+	 const char *source_name_rel=dir_file(source_relative_dir,file->name);
+	 source_name_rel=alloca_strdup(source_name_rel);
+	 if(script)
+	 {
+	    ArgV args("rm");
+	    args.Append(source_session->GetFileURL(file->name));
+	    xstring_ca cmd(args.CombineQuoted());
+	    fprintf(script,"%s\n",cmd.get());
+	 }
+	 if(!script_only)
+	 {
+	    ArgV *args=new ArgV("rm");
+	    args->Append(file->name);
+	    args->seek(1);
+	    rmJob *j=new rmJob(source_session->Clone(),args);
+	    j->cmdline.set_allocated(args->Combine());
+	    JobStarted(j);
+	 }
+	 Report(_("Removing source file `%s'"),source_name_rel);
+      }
+      break;
+
    case(LAST_EXEC):
       while((j=FindDoneAwaitedJob())!=0)
       {
