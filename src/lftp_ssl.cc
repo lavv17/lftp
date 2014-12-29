@@ -615,7 +615,8 @@ void lftp_ssl_gnutls::copy_sid(const lftp_ssl_gnutls *o)
 {
    size_t session_data_size;
    void *session_data;
-   if(gnutls_session_get_data(o->session,NULL,&session_data_size)!=GNUTLS_E_SUCCESS)
+   int res=gnutls_session_get_data(o->session,NULL,&session_data_size);
+   if(res!=GNUTLS_E_SUCCESS && res!=GNUTLS_E_SHORT_MEMORY_BUFFER)
       return;
    session_data=xmalloc(session_data_size);
    if(gnutls_session_get_data(o->session,session_data,&session_data_size)!=GNUTLS_E_SUCCESS)
