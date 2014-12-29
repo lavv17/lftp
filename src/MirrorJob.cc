@@ -651,22 +651,25 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 	 // cd to another url.
 	 const char *loc_c=session->GetNewLocation();
 	 int max_redirections=ResMgr::Query("xfer:max-redirections",0);
-	 if(loc_c && max_redirections>0 && last_char(loc_c)=='/')
+	 if(loc_c && max_redirections>0)
 	 {
 	    if(++redirections>max_redirections)
 	       goto cd_err_normal;
 	    eprintf(_("%s: received redirection to `%s'\n"),"mirror",loc_c);
 
 	    char *loc=alloca_strdup(loc_c);
-	    session->Close(); // loc_c is no longer valid.
-
 	    ParsedURL u(loc,true);
 
 	    if(!u.proto)
 	    {
-	       session->Chdir(url::decode(loc));
+	       bool is_file=(last_char(loc)!='/');
+	       FileAccess::Path new_cwd(session->GetNewCwd());
+	       new_cwd.Change(0,is_file,loc);
+	       session->PathVerify(new_cwd);
+	       session->Roll();
 	       return;
 	    }
+	    session->Close(); // loc_c is no longer valid.
 	    session=FA::New(&u);
 	    session->Chdir(u.path);
 	    return;
