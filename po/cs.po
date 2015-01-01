@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.7\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-10-13 13:44+0400\n"
+"POT-Creation-Date: 2014-12-29 15:34+0300\n"
 "PO-Revision-Date: 2013-05-25 07:49+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -169,7 +169,7 @@ msgstr "Modul pro příkaz „%s“ si nezaregistroval tento příkaz.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd uspělo, cwd=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:635
+#: src/CmdExec.cc:405 src/MirrorJob.cc:658
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: přijato přesměrování na „%s“\n"
@@ -260,7 +260,7 @@ msgstr "Přenos %'d z %'d $souboru|souborů|souborů$ selhal\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Celkem přeneseno: %'d $soubor|soubory|souborů$\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1722 src/MirrorJob.cc:1744
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1866 src/MirrorJob.cc:1888
 #: src/commands.cc:1013 src/commands.cc:2158
 msgid " - not supported protocol"
 msgstr " – nepodporovaný protokol"
@@ -273,8 +273,8 @@ msgstr "Přístup selhal: "
 msgid "File cannot be accessed"
 msgstr "K souboru nelze přistoupit"
 
-#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1339 src/ftpclass.cc:4383
-#: src/ftpclass.cc:4392 src/Torrent.cc:3432
+#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1339 src/ftpclass.cc:4385
+#: src/ftpclass.cc:4394 src/Torrent.cc:3432
 msgid "Not connected"
 msgstr "Nepřipojeno"
 
@@ -351,7 +351,7 @@ msgstr "kopírování: obdrženo přesměrování na „%s“\n"
 msgid "file name missed in URL"
 msgstr "v URL chybí název souboru"
 
-#: src/FileCopy.cc:2032
+#: src/FileCopy.cc:2038
 msgid "Verify command failed without a message"
 msgstr "Příkaz verify (ověření) selhal bez vysvětlení"
 
@@ -419,29 +419,29 @@ msgstr "Běží připojovací program"
 msgid "Peer closed connection"
 msgstr "Druhá strana uzavřela spojení"
 
-#: src/Fish.cc:636 src/SFtp.cc:1107 src/ftpclass.cc:2899 src/ftpclass.cc:4020
+#: src/Fish.cc:636 src/SFtp.cc:1107 src/ftpclass.cc:2899 src/ftpclass.cc:4022
 msgid "extra server response"
 msgstr "nadbytečná odpověď serveru"
 
 #: src/Fish.cc:989 src/Http.cc:2105 src/Http.cc:2112 src/SFtp.cc:1345
-#: src/ftpclass.cc:4395 src/Torrent.cc:3435 src/TorrentTracker.cc:619
+#: src/ftpclass.cc:4397 src/Torrent.cc:3435 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Navazuje se spojení…"
 
-#: src/Fish.cc:991 src/SFtp.cc:1347 src/ftpclass.cc:4401
+#: src/Fish.cc:991 src/SFtp.cc:1347 src/ftpclass.cc:4403
 msgid "Connected"
 msgstr "Spojeno"
 
-#: src/Fish.cc:993 src/Http.cc:2114 src/SFtp.cc:1349 src/ftpclass.cc:4378
-#: src/ftpclass.cc:4406 src/ftpclass.cc:4420 src/TorrentTracker.cc:621
+#: src/Fish.cc:993 src/Http.cc:2114 src/SFtp.cc:1349 src/ftpclass.cc:4380
+#: src/ftpclass.cc:4408 src/ftpclass.cc:4422 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Čeká se na odpověď…"
 
-#: src/Fish.cc:995 src/Http.cc:2117 src/SFtp.cc:1351 src/ftpclass.cc:4440
+#: src/Fish.cc:995 src/Http.cc:2117 src/SFtp.cc:1351 src/ftpclass.cc:4442
 msgid "Receiving data"
 msgstr "Přijímají se data"
 
-#: src/Fish.cc:997 src/Http.cc:2110 src/SFtp.cc:1353 src/ftpclass.cc:4438
+#: src/Fish.cc:997 src/Http.cc:2110 src/SFtp.cc:1353 src/ftpclass.cc:4440
 msgid "Sending data"
 msgstr "Odesílají se data"
 
@@ -528,11 +528,11 @@ msgid "Received last chunk"
 msgstr "Přijat poslední kus dat (chunk)"
 
 #: src/Http.cc:2099 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4388 src/TorrentTracker.cc:617
+#: src/ftpclass.cc:4390 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Překládá se adresa stroje…"
 
-#: src/Http.cc:2107 src/ftpclass.cc:4381
+#: src/Http.cc:2107 src/ftpclass.cc:4383
 msgid "Connection idle"
 msgstr "Spojení zahálí"
 
@@ -545,15 +545,15 @@ msgstr "Stahují se hlavičky…"
 msgid "[%d] Done (%s)"
 msgstr "[%d] Hotovo (%s)"
 
-#: src/LocalAccess.cc:605 src/NetAccess.cc:581
+#: src/LocalAccess.cc:607 src/NetAccess.cc:581
 msgid "Getting directory contents"
 msgstr "Zjišťování obsahu adresáře"
 
-#: src/LocalAccess.cc:607 src/NetAccess.cc:585
+#: src/LocalAccess.cc:609 src/NetAccess.cc:585
 msgid "Getting files information"
 msgstr "Zjišťování informací o souborech"
 
-#: src/LocalAccess.cc:643 src/commands.cc:3123
+#: src/LocalAccess.cc:645 src/commands.cc:3124
 msgid "cannot get current directory"
 msgstr "pracovní adresář nelze získat"
 
@@ -571,141 +571,151 @@ msgstr ", bez omezení velikosti"
 msgid ", maximum size %ld\n"
 msgstr ", maximální velikost %'ld\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:99
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sCelkem: %d adresář$|adresáře|adresářů$, %d soubor$|soubory|souborů$, %d "
 "$symbolický odkaz|symbolické odkazy|symbolických odkazů$\n"
 
-#: src/MirrorJob.cc:100
+#: src/MirrorJob.cc:103
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sNové: %d $soubor|soubory|souborů$, %d $symbolický odkaz|symbolické odkazy|"
 "symbolických odkazů$\n"
 
-#: src/MirrorJob.cc:104
+#: src/MirrorJob.cc:107
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sZměněné: %d $soubor|soubory|souborů$, %d $symbolický odkaz|symbolické "
 "odkazy|symbolických odkazů$\n"
 
-#: src/MirrorJob.cc:111
+#: src/MirrorJob.cc:114
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sOdstraněné: %d $adresář|adresáře|adresářů$, %d $soubor|soubory|souborů$, "
 "%d $symbolický odkaz|symbolické odkazy|symbolických odkazů$\n"
 
-#: src/MirrorJob.cc:116
+#: src/MirrorJob.cc:119
 #, c-format
 msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d $chyba nalezena|chyby nalezeny|chyb nalezeno$\n"
 
-#: src/MirrorJob.cc:224
+#: src/MirrorJob.cc:230
 #, fuzzy, c-format
 msgid "Finished %s"
 msgstr "[%u] Dokončeno. %s\n"
 
-#: src/MirrorJob.cc:314 src/MirrorJob.cc:493 src/MirrorJob.cc:1013
+#: src/MirrorJob.cc:320 src/MirrorJob.cc:505 src/MirrorJob.cc:1103
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Odstraňuje se starý soubor „%s“"
 
-#: src/MirrorJob.cc:323
+#: src/MirrorJob.cc:329
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Vynechává se soubor „%s“ (jen existující)"
 
-#: src/MirrorJob.cc:329
+#: src/MirrorJob.cc:335
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Přenáší se soubor „%s“"
 
-#: src/MirrorJob.cc:398
+#: src/MirrorJob.cc:406
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Vynechává se adresář „%s“ (jen existující)"
 
-#: src/MirrorJob.cc:417 src/MirrorJob.cc:524 src/MirrorJob.cc:772
+#: src/MirrorJob.cc:425 src/MirrorJob.cc:536 src/MirrorJob.cc:798
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Odstraňuje se starý místní soubor „%s“"
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:473
+#, fuzzy, c-format
+msgid "Scanning directory `%s'"
+msgstr "Vytváří se adresář „%s“"
+
+#: src/MirrorJob.cc:475
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Zrcadlí se adresář „%s“"
 
-#: src/MirrorJob.cc:536
+#: src/MirrorJob.cc:548
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Vynechává se symbolický odkaz „%s“ (jen existující)"
 
-#: src/MirrorJob.cc:541
+#: src/MirrorJob.cc:553
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Vytváří se symbolický odkaz „%s“ na „%s“"
 
-#: src/MirrorJob.cc:686
+#: src/MirrorJob.cc:712
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "zrcadlení: protokol „%s“ se na zrcadlení nehodí\n"
 
-#: src/MirrorJob.cc:793
+#: src/MirrorJob.cc:819
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Vytváří se adresář „%s“"
 
-#: src/MirrorJob.cc:971
+#: src/MirrorJob.cc:1061
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Starý adresář „%s“ není odstraněn"
 
-#: src/MirrorJob.cc:973
+#: src/MirrorJob.cc:1063
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Starý soubor „%s“ není odstraněn"
 
-#: src/MirrorJob.cc:1011
+#: src/MirrorJob.cc:1101
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Odstraňuje se starý adresář „%s“"
 
-#: src/MirrorJob.cc:1135
+#: src/MirrorJob.cc:1252
+#, fuzzy, c-format
+msgid "Removing source file `%s'"
+msgstr "Odstraňuje se starý soubor „%s“"
+
+#: src/MirrorJob.cc:1272
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Znovu se zkouší zrcadlení…\n"
 
-#: src/MirrorJob.cc:1567
+#: src/MirrorJob.cc:1707
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: regulární výraz „%s“: %s\n"
 
-#: src/MirrorJob.cc:1686 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1830 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1158 src/commands.cc:1248 src/commands.cc:1620
 #: src/commands.cc:1651 src/commands.cc:1754 src/commands.cc:2067
 #: src/commands.cc:2263 src/commands.cc:2425 src/commands.cc:2453
 #: src/commands.cc:2460 src/commands.cc:2746 src/commands.cc:2773
-#: src/commands.cc:2780 src/commands.cc:3106 src/lftp.cc:267
+#: src/commands.cc:2780 src/commands.cc:3107 src/lftp.cc:267
 #: src/Torrent.cc:4039
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Podrobnosti získáte příkazem „help %s“.\n"
 
-#: src/MirrorJob.cc:1710
+#: src/MirrorJob.cc:1854
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1732
+#: src/MirrorJob.cc:1876
 #, fuzzy, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "nejednoznačný argument %s u %s"
 
-#: src/MirrorJob.cc:1773
+#: src/MirrorJob.cc:1917
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
@@ -2006,7 +2016,7 @@ msgstr ""
 "Použijte\n"
 "příkaz shellu „fg“, potřebujete-li se vrátit do lftp (pokud neskončil).\n"
 
-#: src/commands.cc:916 src/commands.cc:3413
+#: src/commands.cc:916 src/commands.cc:3414
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Podrobnosti získáte příkazem „%s --help“\n"
@@ -2094,7 +2104,7 @@ msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Použití: %s [-v] [-v]…\n"
 
 #: src/commands.cc:1967 src/commands.cc:2229 src/commands.cc:2352
-#: src/commands.cc:2522 src/commands.cc:2913 src/commands.cc:2993
+#: src/commands.cc:2522 src/commands.cc:2913 src/commands.cc:2994
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
@@ -2289,53 +2299,53 @@ msgstr "%s: při importu je druh (netscape, ncftp) nutný\n"
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Použití: %s [-d číslo] adresář\n"
 
-#: src/commands.cc:3026
+#: src/commands.cc:3027
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: neplatná velikost bloku „%s“\n"
 
-#: src/commands.cc:3035
+#: src/commands.cc:3036
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Použití: %s [volby] <adresáře>\n"
 
-#: src/commands.cc:3041
+#: src/commands.cc:3042
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s: pozor: --summarize je stejné jako --max-depth=0\n"
 
-#: src/commands.cc:3045
+#: src/commands.cc:3046
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: --summarize je v rozporu s --max-depth=%i\n"
 
 # TODO: use singular before elipses
-#: src/commands.cc:3093
+#: src/commands.cc:3094
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Použití: %s příkaz argument…\n"
 
 # TODO: use singular before elipses
-#: src/commands.cc:3105
+#: src/commands.cc:3106
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Použití: %s modul [argument…]\n"
 
-#: src/commands.cc:3187
+#: src/commands.cc:3188
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Použití: %s [VOLBY] mód soubor…\n"
 
-#: src/commands.cc:3207
+#: src/commands.cc:3208
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "neplatný řetězec módu: %s\n"
 
-#: src/commands.cc:3266 src/commands.cc:3275
+#: src/commands.cc:3267 src/commands.cc:3276
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Neplatný formát rozsahu. Formát je MIN-MAX, např. 10-20."
 
-#: src/commands.cc:3281
+#: src/commands.cc:3282
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Použití: %s [VOLBY] soubor\n"
@@ -2421,7 +2431,7 @@ msgstr "Datový socket se připojuje na (%s) port %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Datový socket se připojuje na proxy %s (%s) port %u"
 
-#: src/ftpclass.cc:2241 src/ftpclass.cc:4202
+#: src/ftpclass.cc:2241 src/ftpclass.cc:4204
 msgid "Switching passive mode off"
 msgstr "Pasivní režim bude vypnut"
 
@@ -2429,7 +2439,7 @@ msgstr "Pasivní režim bude vypnut"
 msgid "Data connection established"
 msgstr "Datové spojení navázáno"
 
-#: src/ftpclass.cc:2556 src/ftpclass.cc:4332
+#: src/ftpclass.cc:2556 src/ftpclass.cc:4334
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "Je nastaveno ftp:ssl-force, ale server nepodporuje nebo nedovoluje SSL"
 
@@ -2446,67 +2456,67 @@ msgstr "Datový socket bude uzavřen"
 msgid "Closing aborted data socket"
 msgstr "Přerušený datový socket bude uzavřen"
 
-#: src/ftpclass.cc:4004
+#: src/ftpclass.cc:4006
 msgid "saw file size in response"
 msgstr "v odpovědi zahlédnuta velikost souboru"
 
-#: src/ftpclass.cc:4034 src/ftpclass.cc:4061
+#: src/ftpclass.cc:4036 src/ftpclass.cc:4063
 msgid "Turning on sync-mode"
 msgstr "Zapíná se sync-mode (synchronní režim)"
 
-#: src/ftpclass.cc:4222
+#: src/ftpclass.cc:4224
 msgid "Switching passive mode on"
 msgstr "Zapíná se pasivní režim"
 
-#: src/ftpclass.cc:4369
+#: src/ftpclass.cc:4371
 msgid "FEAT negotiation..."
 msgstr "Vyjednávají se vlastnosti pomocí FEAT…"
 
-#: src/ftpclass.cc:4376
+#: src/ftpclass.cc:4378
 msgid "Sending commands..."
 msgstr "Odesílají se příkazy…"
 
-#: src/ftpclass.cc:4380
+#: src/ftpclass.cc:4382
 msgid "Delaying before retry"
 msgstr "Zpoždění před opakováním"
 
-#: src/ftpclass.cc:4399
+#: src/ftpclass.cc:4401
 msgid "TLS negotiation..."
 msgstr "Vyjednává se TLS…"
 
-#: src/ftpclass.cc:4403
+#: src/ftpclass.cc:4405
 msgid "Logging in..."
 msgstr "Probíhá přihlašování…"
 
-#: src/ftpclass.cc:4407
+#: src/ftpclass.cc:4409
 msgid "Making data connection..."
 msgstr "Vytváří se datové spojení…"
 
-#: src/ftpclass.cc:4410
+#: src/ftpclass.cc:4412
 msgid "Changing remote directory..."
 msgstr "Mění se vzdálený adresář…"
 
-#: src/ftpclass.cc:4416
+#: src/ftpclass.cc:4418
 msgid "Waiting for other copy peer..."
 msgstr "Čeká se na druhou kopírovací protistranu…"
 
-#: src/ftpclass.cc:4418 src/ftpclass.cc:4442
+#: src/ftpclass.cc:4420 src/ftpclass.cc:4444
 msgid "Waiting for transfer to complete"
 msgstr "Čeká se na dokončení přenosu"
 
-#: src/ftpclass.cc:4422
+#: src/ftpclass.cc:4424
 msgid "Waiting for TLS shutdown..."
 msgstr "Čeká se ukončení TLS…"
 
-#: src/ftpclass.cc:4424
+#: src/ftpclass.cc:4426
 msgid "Waiting for data connection..."
 msgstr "Čeká se na datové spojení…"
 
-#: src/ftpclass.cc:4430
+#: src/ftpclass.cc:4432
 msgid "Sending data/TLS"
 msgstr "Odesílají se data/TLS"
 
-#: src/ftpclass.cc:4432
+#: src/ftpclass.cc:4434
 msgid "Receiving data/TLS"
 msgstr "Přijímají se data/TLS"
 

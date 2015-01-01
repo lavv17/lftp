@@ -295,3 +295,4 @@
 /locale.h
 glthread
 /gl_openssl.h
+/assure.h

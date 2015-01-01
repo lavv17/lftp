@@ -1,3 +1,15 @@
+Version 4.6.1 - 2014-12-29
+
+* new mirror option --scan-all-first.
+* mirror --Remove-source-files now removes files already present at the target.
+* added a workaround for FUSE with HadoopFS I/O error during rename(2).
+* fixed du to round file size up to block size.
+* fixed compilation with libressl.
+* fixed OPTS MLST, removed trailing semicolon.
+* fixed put to sftp with special files (like /dev/stdin).
+* fixed ftp to copy SID properly with GnuTLS (Tim Kosse).
+* fixed mirror to follow redirections to files (Tomas Hozza).
+
 Version 4.6.0 - 2014-10-13
 
 * new torrent --share option.

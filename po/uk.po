@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.8\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-10-13 13:44+0400\n"
+"POT-Creation-Date: 2014-12-29 15:34+0300\n"
 "PO-Revision-Date: 2014-07-04 09:41+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
@@ -167,7 +167,7 @@ msgstr "Модулем для команди «%s» не зареєстрова�
 msgid "cd ok, cwd=%s\n"
 msgstr "cd виконано, cwd=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:635
+#: src/CmdExec.cc:405 src/MirrorJob.cc:658
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: отримано переспрямовування до «%s»\n"
@@ -256,7 +256,7 @@ msgstr "Не вдалося передати %d з %d $файла|файлів|�
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Загалом перенесено %d $файл|файлів|файлів$\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1722 src/MirrorJob.cc:1744
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1866 src/MirrorJob.cc:1888
 #: src/commands.cc:1013 src/commands.cc:2158
 msgid " - not supported protocol"
 msgstr " — немає серед підтримуваних протоколів"
@@ -269,8 +269,8 @@ msgstr "Спроба доступу зазнала невдачі: "
 msgid "File cannot be accessed"
 msgstr "Не вдалося отримати доступ до файла"
 
-#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1339 src/ftpclass.cc:4383
-#: src/ftpclass.cc:4392 src/Torrent.cc:3432
+#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1339 src/ftpclass.cc:4385
+#: src/ftpclass.cc:4394 src/Torrent.cc:3432
 msgid "Not connected"
 msgstr "Не з’єднано"
 
@@ -347,7 +347,7 @@ msgstr "copy: отримано переспрямування на «%s»\n"
 msgid "file name missed in URL"
 msgstr "у адресі не вказано назви файла"
 
-#: src/FileCopy.cc:2032
+#: src/FileCopy.cc:2038
 msgid "Verify command failed without a message"
 msgstr ""
 "Не вдалося виконати команду перевірки. Додаткових повідомлень не виведено."
@@ -416,29 +416,29 @@ msgstr "Запускаємо програму для встановлення з
 msgid "Peer closed connection"
 msgstr "З’єднання перервано з ініціативи віддаленого комп’ютера"
 
-#: src/Fish.cc:636 src/SFtp.cc:1107 src/ftpclass.cc:2899 src/ftpclass.cc:4020
+#: src/Fish.cc:636 src/SFtp.cc:1107 src/ftpclass.cc:2899 src/ftpclass.cc:4022
 msgid "extra server response"
 msgstr "зайва відповідь сервера"
 
 #: src/Fish.cc:989 src/Http.cc:2105 src/Http.cc:2112 src/SFtp.cc:1345
-#: src/ftpclass.cc:4395 src/Torrent.cc:3435 src/TorrentTracker.cc:619
+#: src/ftpclass.cc:4397 src/Torrent.cc:3435 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "Встановлюємо з’єднання…"
 
-#: src/Fish.cc:991 src/SFtp.cc:1347 src/ftpclass.cc:4401
+#: src/Fish.cc:991 src/SFtp.cc:1347 src/ftpclass.cc:4403
 msgid "Connected"
 msgstr "З'єднано"
 
-#: src/Fish.cc:993 src/Http.cc:2114 src/SFtp.cc:1349 src/ftpclass.cc:4378
-#: src/ftpclass.cc:4406 src/ftpclass.cc:4420 src/TorrentTracker.cc:621
+#: src/Fish.cc:993 src/Http.cc:2114 src/SFtp.cc:1349 src/ftpclass.cc:4380
+#: src/ftpclass.cc:4408 src/ftpclass.cc:4422 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "Очікуємо на відповідь…"
 
-#: src/Fish.cc:995 src/Http.cc:2117 src/SFtp.cc:1351 src/ftpclass.cc:4440
+#: src/Fish.cc:995 src/Http.cc:2117 src/SFtp.cc:1351 src/ftpclass.cc:4442
 msgid "Receiving data"
 msgstr "Отримуємо дані…"
 
-#: src/Fish.cc:997 src/Http.cc:2110 src/SFtp.cc:1353 src/ftpclass.cc:4438
+#: src/Fish.cc:997 src/Http.cc:2110 src/SFtp.cc:1353 src/ftpclass.cc:4440
 msgid "Sending data"
 msgstr "Надсилаємо дані"
 
@@ -526,11 +526,11 @@ msgid "Received last chunk"
 msgstr "Отримано останній шматок"
 
 #: src/Http.cc:2099 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4388 src/TorrentTracker.cc:617
+#: src/ftpclass.cc:4390 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "Визначаємо адресу вузла…"
 
-#: src/Http.cc:2107 src/ftpclass.cc:4381
+#: src/Http.cc:2107 src/ftpclass.cc:4383
 msgid "Connection idle"
 msgstr "Неактивне з’єднання"
 
@@ -543,15 +543,15 @@ msgstr "Отримуємо заголовки…"
 msgid "[%d] Done (%s)"
 msgstr "[%d] Виконано (%s)"
 
-#: src/LocalAccess.cc:605 src/NetAccess.cc:581
+#: src/LocalAccess.cc:607 src/NetAccess.cc:581
 msgid "Getting directory contents"
 msgstr "Отримуємо дані щодо вмісту каталогу"
 
-#: src/LocalAccess.cc:607 src/NetAccess.cc:585
+#: src/LocalAccess.cc:609 src/NetAccess.cc:585
 msgid "Getting files information"
 msgstr "Отримуємо дані щодо файлів"
 
-#: src/LocalAccess.cc:643 src/commands.cc:3123
+#: src/LocalAccess.cc:645 src/commands.cc:3124
 msgid "cannot get current directory"
 msgstr "не вдається отримати поточний каталог"
 
@@ -569,142 +569,152 @@ msgstr ", без обмеження розміру"
 msgid ", maximum size %ld\n"
 msgstr ", максимальний розмір — %ld\n"
 
-#: src/MirrorJob.cc:96
+#: src/MirrorJob.cc:99
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sЗагалом: %d каталог$|и|ів$, %d файл$|и|ів$, %d $символічне посилання|"
 "символічні посилання|символічних посилань$\n"
 
-#: src/MirrorJob.cc:100
+#: src/MirrorJob.cc:103
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sНові: %d файл$|и|ів$, %d $символічне посилання|символічні посилання|"
 "символічних посилань$\n"
 
-#: src/MirrorJob.cc:104
+#: src/MirrorJob.cc:107
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sЗмінено: %d файл$|а|ів$, %d $символічне посилання|символічні посилання|"
 "символічних посилань$\n"
 
-#: src/MirrorJob.cc:111
+#: src/MirrorJob.cc:114
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 msgstr ""
 "%sВилучено: %d каталог$|и|ів$, %d файл$|и|ів$, %d $символічне посилання|"
 "символічні посилання|символічних посилань$\n"
 
-#: src/MirrorJob.cc:116
+#: src/MirrorJob.cc:119
 #, c-format
 msgid "%s%d error$|s$ detected\n"
 msgstr "%sвиявлено %d $помилку|помилки|помилок$\n"
 
-#: src/MirrorJob.cc:224
+#: src/MirrorJob.cc:230
 #, fuzzy, c-format
 msgid "Finished %s"
 msgstr "[%u] Завершено. %s\n"
 
-#: src/MirrorJob.cc:314 src/MirrorJob.cc:493 src/MirrorJob.cc:1013
+#: src/MirrorJob.cc:320 src/MirrorJob.cc:505 src/MirrorJob.cc:1103
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Вилучаємо застарілий файл «%s»"
 
-#: src/MirrorJob.cc:323
+#: src/MirrorJob.cc:329
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Пропускаємо файл «%s» (only-existing)"
 
-#: src/MirrorJob.cc:329
+#: src/MirrorJob.cc:335
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Переносимо дані файла «%s»"
 
-#: src/MirrorJob.cc:398
+#: src/MirrorJob.cc:406
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Пропускаємо каталог «%s» (only-existing)"
 
-#: src/MirrorJob.cc:417 src/MirrorJob.cc:524 src/MirrorJob.cc:772
+#: src/MirrorJob.cc:425 src/MirrorJob.cc:536 src/MirrorJob.cc:798
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Вилучаємо застарілий локальний файл «%s»"
 
-#: src/MirrorJob.cc:464
+#: src/MirrorJob.cc:473
+#, fuzzy, c-format
+msgid "Scanning directory `%s'"
+msgstr "Створюємо каталог «%s»"
+
+#: src/MirrorJob.cc:475
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Створюємо дзеркальну копію каталогу «%s»"
 
-#: src/MirrorJob.cc:536
+#: src/MirrorJob.cc:548
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Пропускаємо символічне посилання «%s» (only-existing)"
 
-#: src/MirrorJob.cc:541
+#: src/MirrorJob.cc:553
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Створюємо символічне посилання «%s» на «%s»"
 
-#: src/MirrorJob.cc:686
+#: src/MirrorJob.cc:712
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr ""
 "mirror: протокол «%s» не може бути використано для дзеркального копіювання\n"
 
-#: src/MirrorJob.cc:793
+#: src/MirrorJob.cc:819
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Створюємо каталог «%s»"
 
-#: src/MirrorJob.cc:971
+#: src/MirrorJob.cc:1061
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Старий каталог «%s» не вилучено"
 
-#: src/MirrorJob.cc:973
+#: src/MirrorJob.cc:1063
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старий файл «%s» не вилучено"
 
-#: src/MirrorJob.cc:1011
+#: src/MirrorJob.cc:1101
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Вилучаємо старий каталог «%s»"
 
-#: src/MirrorJob.cc:1135
+#: src/MirrorJob.cc:1252
+#, fuzzy, c-format
+msgid "Removing source file `%s'"
+msgstr "Вилучаємо застарілий файл «%s»"
+
+#: src/MirrorJob.cc:1272
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Повторюємо спробу створення дзеркальної копії…\n"
 
-#: src/MirrorJob.cc:1567
+#: src/MirrorJob.cc:1707
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: формальний вираз «%s»: %s\n"
 
-#: src/MirrorJob.cc:1686 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1830 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1158 src/commands.cc:1248 src/commands.cc:1620
 #: src/commands.cc:1651 src/commands.cc:1754 src/commands.cc:2067
 #: src/commands.cc:2263 src/commands.cc:2425 src/commands.cc:2453
 #: src/commands.cc:2460 src/commands.cc:2746 src/commands.cc:2773
-#: src/commands.cc:2780 src/commands.cc:3106 src/lftp.cc:267
+#: src/commands.cc:2780 src/commands.cc:3107 src/lftp.cc:267
 #: src/Torrent.cc:4039
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Віддайте команду «help %s», щоб дізнатися більше.\n"
 
-#: src/MirrorJob.cc:1710
+#: src/MirrorJob.cc:1854
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначний початковий каталог («%s» чи «%s»?)\n"
 
-#: src/MirrorJob.cc:1732
+#: src/MirrorJob.cc:1876
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначний каталог призначення («%s» чи «%s»?)\n"
 
-#: src/MirrorJob.cc:1773
+#: src/MirrorJob.cc:1917
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
@@ -2041,7 +2051,7 @@ msgstr ""
 "Скористайтеся командою оболонки «fg» для повернення до lftp, доки програма "
 "працюватиме.\n"
 
-#: src/commands.cc:916 src/commands.cc:3413
+#: src/commands.cc:916 src/commands.cc:3414
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Щоб дізнатися більше, віддайте команду «%s --help»\n"
@@ -2131,7 +2141,7 @@ msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Користування: %s [-v] [-v] ...\n"
 
 #: src/commands.cc:1967 src/commands.cc:2229 src/commands.cc:2352
-#: src/commands.cc:2522 src/commands.cc:2913 src/commands.cc:2993
+#: src/commands.cc:2522 src/commands.cc:2913 src/commands.cc:2994
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
@@ -2329,54 +2339,54 @@ msgstr "%s: слід вказати тип імпортованих даних (
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Користування: %s [-d #] каталог\n"
 
-#: src/commands.cc:3026
+#: src/commands.cc:3027
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: некоректний розмір блоку, «%s»\n"
 
-#: src/commands.cc:3035
+#: src/commands.cc:3036
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Користування: %s [параметри] <каталоги>\n"
 
-#: src/commands.cc:3041
+#: src/commands.cc:3042
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 "%s: попередження: підбиття підсумків це те ж саме, що й --max-depth=0\n"
 
-#: src/commands.cc:3045
+#: src/commands.cc:3046
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: підбиття підсумків конфліктує з --max-depth=%i\n"
 
-#: src/commands.cc:3093
+#: src/commands.cc:3094
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Користування: %s команда аргументи...\n"
 
-#: src/commands.cc:3105
+#: src/commands.cc:3106
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Користування: %s модуль [аргументи...]\n"
 
-#: src/commands.cc:3187
+#: src/commands.cc:3188
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Користування: %s [параметри] режим файл...\n"
 
-#: src/commands.cc:3207
+#: src/commands.cc:3208
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "некоректний рядок режиму: %s\n"
 
-#: src/commands.cc:3266 src/commands.cc:3275
+#: src/commands.cc:3267 src/commands.cc:3276
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 "Некоректний діапазон часу. Діапазон слід вказувати у форматі мінімум-"
 "максимум. Приклад: 10-20."
 
-#: src/commands.cc:3281
+#: src/commands.cc:3282
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Користування: %s [параметри] файл\n"
@@ -2466,7 +2476,7 @@ msgstr ""
 "Встановлюємо з’єднання сокета передавання даних з проксі-сервером %s (%s), "
 "порт %u"
 
-#: src/ftpclass.cc:2241 src/ftpclass.cc:4202
+#: src/ftpclass.cc:2241 src/ftpclass.cc:4204
 msgid "Switching passive mode off"
 msgstr "Вимикаємо пасивний режим"
 
@@ -2474,7 +2484,7 @@ msgstr "Вимикаємо пасивний режим"
 msgid "Data connection established"
 msgstr "Встановлено з’єднання для обміну даними"
 
-#: src/ftpclass.cc:2556 src/ftpclass.cc:4332
+#: src/ftpclass.cc:2556 src/ftpclass.cc:4334
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "Встановлено ftp:ssl-force, а на сервері не підтримується і не дозволяється "
@@ -2492,67 +2502,67 @@ msgstr "Закриваємо сокет передавання даних"
 msgid "Closing aborted data socket"
 msgstr "Закриваємо перерваний сокет передавання даних"
 
-#: src/ftpclass.cc:4004
+#: src/ftpclass.cc:4006
 msgid "saw file size in response"
 msgstr "розмір файла saw у відповіді"
 
-#: src/ftpclass.cc:4034 src/ftpclass.cc:4061
+#: src/ftpclass.cc:4036 src/ftpclass.cc:4063
 msgid "Turning on sync-mode"
 msgstr "Вмикаємо режим синхронізації"
 
-#: src/ftpclass.cc:4222
+#: src/ftpclass.cc:4224
 msgid "Switching passive mode on"
 msgstr "Вмикаємо пасивний режим"
 
-#: src/ftpclass.cc:4369
+#: src/ftpclass.cc:4371
 msgid "FEAT negotiation..."
 msgstr "Узгодження FEAT…"
 
-#: src/ftpclass.cc:4376
+#: src/ftpclass.cc:4378
 msgid "Sending commands..."
 msgstr "Надсилаємо команди…"
 
-#: src/ftpclass.cc:4380
+#: src/ftpclass.cc:4382
 msgid "Delaying before retry"
 msgstr "Затримка перед повторною спробою"
 
-#: src/ftpclass.cc:4399
+#: src/ftpclass.cc:4401
 msgid "TLS negotiation..."
 msgstr "Узгодуємо TLS…"
 
-#: src/ftpclass.cc:4403
+#: src/ftpclass.cc:4405
 msgid "Logging in..."
 msgstr "Вхід до системи…"
 
-#: src/ftpclass.cc:4407
+#: src/ftpclass.cc:4409
 msgid "Making data connection..."
 msgstr "Створюємо з’єднання для передавання даних…"
 
-#: src/ftpclass.cc:4410
+#: src/ftpclass.cc:4412
 msgid "Changing remote directory..."
 msgstr "Змінюємо віддалений каталог…"
 
-#: src/ftpclass.cc:4416
+#: src/ftpclass.cc:4418
 msgid "Waiting for other copy peer..."
 msgstr "Очікуємо на інший вузол копіювання…"
 
-#: src/ftpclass.cc:4418 src/ftpclass.cc:4442
+#: src/ftpclass.cc:4420 src/ftpclass.cc:4444
 msgid "Waiting for transfer to complete"
 msgstr "Очікуємо на завершення передавання даних"
 
-#: src/ftpclass.cc:4422
+#: src/ftpclass.cc:4424
 msgid "Waiting for TLS shutdown..."
 msgstr "Очікуємо на завершення роботи TLS…"
 
-#: src/ftpclass.cc:4424
+#: src/ftpclass.cc:4426
 msgid "Waiting for data connection..."
 msgstr "Очікуємо на з’єднання для обміну даними…"
 
-#: src/ftpclass.cc:4430
+#: src/ftpclass.cc:4432
 msgid "Sending data/TLS"
 msgstr "Надсилаємо дані/TLS"
 
-#: src/ftpclass.cc:4432
+#: src/ftpclass.cc:4434
 msgid "Receiving data/TLS"
 msgstr "Отримуємо дані/TLS"
 
