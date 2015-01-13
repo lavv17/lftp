@@ -1384,6 +1384,10 @@ address family in dns:order.
 .BR file:charset \ (string)
 local character set. It is set from current locale initially.
 .TP
+.BR fish:auto-confirm \ (boolean)
+when true, lftp answers ``yes'' to all ssh questions, in particular to the
+question about a new host key. Otherwise it answers ``no''.
+.TP
 .BR fish:charset \ (string)
 the character set used by fish server in requests, replies and file listings.
 Default is empty which means the same as local.
@@ -1951,6 +1955,10 @@ minimal chunk size to split the file to.
 .BR pget:save-status " (time interval)"
 save pget transfer status this often. Set to `never' to disable saving of the status file.
 The status is saved to a file with suffix \fI.lftp-pget-status\fP.
+.TP
+.BR sftp:auto-confirm \ (boolean)
+when true, lftp answers ``yes'' to all ssh questions, in particular to the
+question about a new host key. Otherwise it answers ``no''.
 .TP
 .BR sftp:charset \ (string)
 the character set used by SFTP server in file names and file listings.

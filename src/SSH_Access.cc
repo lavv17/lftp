@@ -72,8 +72,9 @@ int SSH_Access::HandleSSHMessage()
       }
       if(s>=y_len && !strncasecmp(b+s-y_len,y,y_len))
       {
-	 pty_recv_buf->Put("yes\n");
-	 pty_send_buf->Put("yes\n");
+	 const char *answer=QueryBool("auto-confirm",hostname)?"yes\n":"no\n";
+	 pty_recv_buf->Put(answer);
+	 pty_send_buf->Put(answer);
 	 return m;
       }
       if(!received_greeting && recv_buf->Size()>0)

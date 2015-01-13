@@ -339,6 +339,7 @@ static ResType lftp_vars[] = {
    {"mirror:no-empty-dirs",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:require-source",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
 
+   {"sftp:auto-confirm",	 "no",	  ResMgr::BoolValidate,0},
    {"sftp:max-packets-in-flight","16",	  ResMgr::UNumberValidate,0},
    {"sftp:protocol-version",	 "6",	  ResMgr::UNumberValidate,0},
    {"sftp:size-read",		 "32k",	  ResMgr::UNumberValidate,0},
@@ -367,6 +368,7 @@ static ResType lftp_vars[] = {
    {"dns:strict-dnssec",	 "no",	  ResMgr::BoolValidate,0},
 #endif
 
+   {"fish:auto-confirm",	 "no",	  ResMgr::BoolValidate,0},
    {"fish:shell",		 "/bin/sh",0,0},
    {"fish:connect-program",	 "ssh -a -x",0,0},
    {"fish:charset",		 "",	  ResMgr::CharsetValidate,0},
