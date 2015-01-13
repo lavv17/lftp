@@ -773,7 +773,7 @@ int   MirrorJob::Do()
       if(source_session->IsOpen())
 	 return m;
 
-      source_dir.set(source_session->GetCwd());
+      source_dir.set(source_session->GetCwd().GetDirectory());
 
    pre_MAKE_TARGET_DIR:
    {
@@ -856,7 +856,7 @@ int   MirrorJob::Do()
 	 return m;
       create_target_dir=false;
 
-      target_dir.set(target_session->GetCwd());
+      target_dir.set(target_session->GetCwd().GetDirectory());
 
    pre_GETTING_LIST_INFO:
       set_state(GETTING_LIST_INFO);
