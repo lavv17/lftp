@@ -59,11 +59,11 @@ liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
 liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
 liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB)
 
-proto_ftp_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
-proto_http_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la $(EXPAT_LIBS) $(ZLIB)
-proto_fish_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
-proto_sftp_la_LIBADD = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la liblftp-pty.la
-cmd_torrent_la_LIBADD  = -L$(DESTDIR)$(pkgverlibdir) liblftp-network.la
+proto_ftp_la_LIBADD  = liblftp-network.la
+proto_http_la_LIBADD = liblftp-network.la $(EXPAT_LIBS) $(ZLIB)
+proto_fish_la_LIBADD = liblftp-network.la liblftp-pty.la
+proto_sftp_la_LIBADD = liblftp-network.la liblftp-pty.la
+cmd_torrent_la_LIBADD  = liblftp-network.la
 
 liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  ProcWait.h GetPass.cc GetPass.h ConnectionSlot.cc ConnectionSlot.h\
