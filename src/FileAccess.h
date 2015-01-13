@@ -90,6 +90,7 @@ public:
       void Set(const char *new_path,bool new_is_file=false,const char *new_url=0,int device_prefix_len=0);
       void SetURL(const char *u) { url.set(u); }
       void Change(const char *new_path,bool new_is_file=false,const char *new_path_enc=0,int device_prefix_len=0);
+      const xstring& GetDirectory() const { return is_file?dirname(path):path; }
       void ExpandTilde(const Path &home);
       static void Optimize(xstring& p,int dev_prefix=0);
       void Optimize() { Optimize(path,device_prefix_len); }
