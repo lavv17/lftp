@@ -42,6 +42,10 @@ public:
    void Add(const char *a) { Append(a); } // alias
 
    char *Combine(int start_index=0,int end_index=0) const;
+
+   // for the UNIX shell
+   char *CombineShellQuoted(int start) const;
+   // for lftp's CmdExec
    char *CombineQuoted(int start_index=0) const;
    char *CombineCmd(int i=0) const;
 

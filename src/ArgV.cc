@@ -72,6 +72,25 @@ char *ArgV::Combine(int start,int end) const
    }
 }
 
+char *ArgV::CombineShellQuoted(int start) const
+{
+   xstring res("");
+   if(start>=Count())
+      return res.borrow();
+   for(;;)
+   {
+      for(const char *arg=String(start++); *arg; arg++)
+      {
+	 if (is_shell_special(*arg))
+	    res.append('\\');
+	 res.append(*arg);
+      }
+      if(start>=Count())
+	 return(res.borrow());
+      res.append(' ');
+   }
+}
+
 int ArgV::getopt_long(const char *opts,const struct option *lopts,int *lind)
 {
    optind=ind;

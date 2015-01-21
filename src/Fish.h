@@ -150,7 +150,7 @@ class FishDirList : public DirList
 
 public:
    FishDirList(Fish *s,ArgV *a)
-      : DirList(s,a), pattern(args->Combine(1)) {}
+      : DirList(s,a), pattern(args->CombineShellQuoted(1)) {}
    const char *Status();
    int Do();
 

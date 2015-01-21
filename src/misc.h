@@ -123,6 +123,7 @@ static inline char *memrchr(char *buf,char c,size_t len) {
    return const_cast<char*>(memrchr(const_cast<const char*>(buf),c,len));
 }
 
+bool is_shell_special(char c);
 const xstring& shell_encode(const char *);
 void remove_tags(char *buf);
 void rtrim(char *s);

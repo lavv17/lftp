@@ -882,6 +882,26 @@ const char *memrchr(const char *buf,char c,size_t len)
    return 0;
 }
 
+bool is_shell_special(char c)
+{
+   switch (c)
+   {
+   case '\'':
+   case '(': case ')':
+   case '!': case '{': case '}':		/* reserved words */
+   case '^':
+   case '$': case '`':			/* expansion chars */
+   case '*': case '[': case '?': case ']':	/* globbing chars */
+   case ' ': case '\t': case '\n':		/* IFS white space */
+   case '"': case '\\':		/* quoting chars */
+   case '|': case '&': case ';':		/* shell metacharacters */
+   case '<': case '>':
+   case '#':				/* comment char */
+      return true;
+   }
+   return false;
+}
+
 const xstring& shell_encode(const char *string)
 {
    if(!string)
@@ -901,26 +921,9 @@ const xstring& shell_encode(const char *string)
    int c;
    for (const char *s = string; s && (c = *s); s++)
    {
-      switch (c)
-      {
-      case '\'':
-      case '(': case ')':
-      case '!': case '{': case '}':		/* reserved words */
-      case '^':
-      case '$': case '`':			/* expansion chars */
-      case '*': case '[': case '?': case ']':	/* globbing chars */
-      case ' ': case '\t': case '\n':		/* IFS white space */
-      case '"': case '\\':		/* quoting chars */
-      case '|': case '&': case ';':		/* shell metacharacters */
-      case '<': case '>':
-      case '#':				/* comment char */
+      if (is_shell_special(c))
 	 *r++ = '\\';
-	 *r++ = c;
-	 break;
-      default:
-	 *r++ = c;
-	 break;
-      }
+      *r++ = c;
    }
    result.set_length(r-result);
    return (result);
