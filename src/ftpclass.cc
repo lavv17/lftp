@@ -1183,6 +1183,7 @@ void  Ftp::HandleTimeout()
    if(conn)
       conn->quit_sent=true;
    super::HandleTimeout();
+   DisconnectNow();
 }
 
 // Create buffers after control socket had been connected.
