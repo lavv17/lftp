@@ -270,10 +270,16 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
 
    gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
 
-   // hack for some ftp servers
-   const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
-   if(auth && !strncmp(auth, "SSL", 3))
-      gnutls_priority_set_direct(session, "NORMAL:+SSL3.0:-TLS1.0:-TLS1.1:-TLS1.2",0);
+   const char *priority=ResMgr::Query("ssl:priority", 0);
+   if(priority)
+      gnutls_priority_set_direct(session, priority, 0);
+   else
+   {
+      // hack for some ftp servers
+      const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
+      if(auth && !strncmp(auth, "SSL", 3))
+         gnutls_priority_set_direct(session, "NORMAL:+SSL3.0:-TLS1.0:-TLS1.1:-TLS1.2",0);
+   }
 
    if(h && ResMgr::QueryBool("ssl:use-sni",h)) {
       if(gnutls_server_name_set(session, GNUTLS_NAME_DNS, h, xstrlen(h)) < 0)
@@ -778,7 +784,21 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
 #else
    SSLeay_add_ssl_algorithms();
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
-   SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL|SSL_OP_NO_TICKET|SSL_OP_NO_SSLv2);
+   long options=SSL_OP_ALL|SSL_OP_NO_TICKET|SSL_OP_NO_SSLv2;
+   const char *priority=ResMgr::Query("ssl:priority", 0);
+   if(priority)
+   {
+      const char *ptr;
+      if((ptr=strstr(priority,"-SSL3.0")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
+         options|=SSL_OP_NO_SSLv3;
+      if((ptr=strstr(priority,"-TLS1.0")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
+         options|=SSL_OP_NO_TLSv1;
+      if((ptr=strstr(priority,"-TLS1.1")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
+         options|=SSL_OP_NO_TLSv1_1;
+      if((ptr=strstr(priority,"-TLS1.2")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
+         options|=SSL_OP_NO_TLSv1_2;
+   }
+   SSL_CTX_set_options(ssl_ctx, options);
    SSL_CTX_set_cipher_list(ssl_ctx, "ALL:!aNULL:!eNULL:!SSLv2:!LOW:!EXP:!MD5:@STRENGTH");
    SSL_CTX_set_verify(ssl_ctx,SSL_VERIFY_PEER,lftp_ssl_openssl::verify_callback);
 //    SSL_CTX_set_default_passwd_cb(ssl_ctx,lftp_ssl_passwd_callback);

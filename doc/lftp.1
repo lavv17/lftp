@@ -2023,6 +2023,14 @@ when true, use Server Name Indication (SNI) TLS extension.
 if set to yes, then verify server's certificate to be signed by a known
 Certificate Authority and not be on Certificate Revocation List.
 .TP
+.BR ssl:priority " (string)"
+free form priority string for GnuTLS. If built with OpenSSL the understood
+values are \fI+\fP or \fI-\fP followed by SSL3.0, TLS1.0, TLS1.1 or TLS1.2,
+separated by \fI:\fP. Example:
+.Ds
+set ssl:priority "NORMAL:-SSL3.0:-TLS1.0:-TLS1.1:+TLS1.2"
+.De
+.TP
 .BR torrent:ip " (ipv4 address)"
 IP address to send to the tracker. Specify it if you are using an HTTP proxy.
 .TP
