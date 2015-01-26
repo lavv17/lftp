@@ -271,8 +271,12 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
 
    const char *priority=ResMgr::Query("ssl:priority", 0);
-   if(priority)
-      gnutls_priority_set_direct(session, priority, 0);
+   if(priority && *priority)
+   {
+      int res = gnutls_priority_set_direct(session, priority, 0);
+      if(res != GNUTLS_E_SUCCESS)
+	 Log::global->Format(0,"gnutls_priority_set_direct(`%s'): %s\n",priority,gnutls_strerror(res));
+   }
    else
    {
       // hack for some ftp servers
@@ -786,17 +790,28 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
    long options=SSL_OP_ALL|SSL_OP_NO_TICKET|SSL_OP_NO_SSLv2;
    const char *priority=ResMgr::Query("ssl:priority", 0);
-   if(priority)
+   if(priority && *priority)
    {
-      const char *ptr;
-      if((ptr=strstr(priority,"-SSL3.0")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
-         options|=SSL_OP_NO_SSLv3;
-      if((ptr=strstr(priority,"-TLS1.0")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
-         options|=SSL_OP_NO_TLSv1;
-      if((ptr=strstr(priority,"-TLS1.1")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
-         options|=SSL_OP_NO_TLSv1_1;
-      if((ptr=strstr(priority,"-TLS1.2")) && (ptr==priority || ptr[-1]==':') && (ptr[7]==':' || ptr[7]=='\0'))
-         options|=SSL_OP_NO_TLSv1_2;
+      static const struct ssl_option {
+	 const char name[8];
+	 long option;
+      } opt_table[]={
+	 {"-SSL3.0",SSL_OP_NO_SSLv3},
+	 {"-TLS1.0",SSL_OP_NO_TLSv1},
+	 {"-TLS1.1",SSL_OP_NO_TLSv1_1},
+	 {"-TLS1.2",SSL_OP_NO_TLSv1_2},
+	 {"",0}
+      };
+      char *to_parse=alloca_strdup(priority);
+      for(char *ptr=strtok(to_parse,":"); ptr; ptr=strtok(NULL,":")) {
+	 for(const ssl_option *opt=opt_table; opt->name[0]; opt++) {
+	    if(!strcmp(ptr,opt->name)) {
+	       options|=opt->option;
+	       Log::global->Format(9,"ssl: applied %s option\n",ptr);
+	       break;
+	    }
+	 }
+      }
    }
    SSL_CTX_set_options(ssl_ctx, options);
    SSL_CTX_set_cipher_list(ssl_ctx, "ALL:!aNULL:!eNULL:!SSLv2:!LOW:!EXP:!MD5:@STRENGTH");
