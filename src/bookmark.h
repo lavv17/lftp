@@ -54,6 +54,8 @@ public:
 	 Refresh();
 	 KeyValueDB::Rewind();
       }
+
+   const xstring& GetFilePath() const { return bm_file; }
 };
 
 extern Bookmark lftp_bookmarks;
