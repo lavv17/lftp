@@ -608,8 +608,11 @@ void SFtp::SendRequest()
 	 SetError(NOT_SUPP);
 	 break;
       }
+      int options=SSH_FXF_RENAME_NATIVE;
+      if(QueryBool("xfer:clobber",0))
+	 options|=SSH_FXF_RENAME_OVERWRITE;
       SendRequest(new Request_RENAME(WirePath(file),WirePath(file1),
-			SSH_FXF_RENAME_NATIVE,protocol_version),Expect::DEFAULT);
+			options,protocol_version),Expect::DEFAULT);
       state=WAITING;
       break;
    }
