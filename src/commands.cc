@@ -2835,7 +2835,13 @@ CMD(bookmark)
    else if(!strcasecmp(op,"edit"))
    {
       lftp_bookmarks.Remove(""); // force bookmark file creation
-      parent->PrependCmd("shell \"/bin/sh -c 'exec ${EDITOR:-vi} ${LFTP_HOME:-$HOME/.lftp}/bookmarks'\"\n");
+
+      xstring cmd0("exec ${EDITOR:-vi} ");
+      cmd0.append(shell_encode(lftp_bookmarks.GetFilePath()));
+      xstring cmd1("/bin/sh -c ");
+      cmd1.append(shell_encode(cmd0));
+
+      parent->PrependCmd(xstring::get_tmp("shell ").append_quoted(cmd1));
    }
    else if(!strcasecmp(op,"import"))
    {
