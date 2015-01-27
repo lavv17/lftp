@@ -28,7 +28,7 @@
 #endif
 #include <stdarg.h>
 
-class xstring;
+#include "xstring.h"
 
 // expands tilde; returns pointer to static data
 const char *expand_home_relative(const char *);
@@ -124,7 +124,9 @@ static inline char *memrchr(char *buf,char c,size_t len) {
 }
 
 bool is_shell_special(char c);
-const xstring& shell_encode(const char *);
+const xstring& shell_encode(const char *s,int len);
+static inline const xstring& shell_encode(const char *s) { return shell_encode(s,strlen(s)); }
+static inline const xstring& shell_encode(const xstring& s) { return shell_encode(s.get(),s.length()); }
 void remove_tags(char *buf);
 void rtrim(char *s);
 

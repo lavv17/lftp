@@ -902,14 +902,14 @@ bool is_shell_special(char c)
    return false;
 }
 
-const xstring& shell_encode(const char *string)
+const xstring& shell_encode(const char *string,int len)
 {
    if(!string)
       return xstring::null;
 
    static xstring result;
 
-   result.get_space(2 + 2 * strlen (string));
+   result.get_space(2 + 2 * len);
    char *r = result.get_non_const();
 
    if(string[0]=='-' || string[0]=='~')
