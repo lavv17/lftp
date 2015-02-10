@@ -79,6 +79,7 @@ class Http : public NetAccess
 
    Ref<Connection> conn;
 
+   static void AppendHostEncoded(xstring&,const char *);
    void SendMethod(const char *,const char *);
    const char *last_method;
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY, HTTP_PROPFIND } special;

@@ -306,11 +306,20 @@ void Http::Send(const char *format,...)
    conn->send_buf->Put(str);
 }
 
+void Http::AppendHostEncoded(xstring& buf,const char *host)
+{
+   if(is_ipv6_address(host))
+      buf.append('[').append(host).append(']');
+   else
+      buf.append_url_encoded(host,URL_HOST_UNSAFE);
+}
+
 void Http::SendMethod(const char *method,const char *efile)
 {
    xstring& stripped_hostname=xstring::get_tmp(hostname);
    stripped_hostname.truncate_at('%');
-   xstring& ehost=url::encode(xidna_to_ascii(stripped_hostname),URL_HOST_UNSAFE);
+   xstring ehost;
+   AppendHostEncoded(ehost,xidna_to_ascii(stripped_hostname));
    if(portname) {
       ehost.append(':');
       ehost.append(url::encode(portname,URL_PORT_UNSAFE));
@@ -564,7 +573,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 }
 	 pfile.append('@');
       }
-      pfile.append(url::encode(hostname,URL_HOST_UNSAFE));
+      AppendHostEncoded(pfile,hostname);
       if(portname)
       {
 	 pfile.append(':');
@@ -1166,7 +1175,7 @@ int Http::Do()
 	    while(*scan==' ')
 	       scan++;
 	    file_url.set(https?"https://":"http://");
-	    file_url.append_url_encoded(hostname,URL_HOST_UNSAFE);
+	    AppendHostEncoded(file_url,hostname);
 	    if(portname)
 	    {
 	       file_url.append(':');
@@ -1309,10 +1318,11 @@ int Http::Do()
 	 if(proxy && https)
 	 {
 	    // have to setup a tunnel.
-	    const char *ehost=url::encode(hostname,URL_HOST_UNSAFE);
+	    xstring ehost;
+	    AppendHostEncoded(ehost,hostname);
 	    const char *port_to_use=portname?portname.get():HTTPS_DEFAULT_PORT;
 	    const char *eport=url::encode(port_to_use,URL_PORT_UNSAFE);
-	    Send("CONNECT %s:%s HTTP/1.1\r\n\r\n",ehost,eport);
+	    Send("CONNECT %s:%s HTTP/1.1\r\n\r\n",ehost.get(),eport);
 	    tunnel_state=TUNNEL_WAITING;
 	    state=RECEIVING_HEADER;
 	    return MOVED;

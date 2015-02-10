@@ -28,6 +28,7 @@
 #include "bookmark.h"
 #include "misc.h"
 #include "log.h"
+#include "network.h"
 
 /*
    URL -> [PROTO://]CONNECT[[:]/PATH]
@@ -316,7 +317,10 @@ char *ParsedURL::Combine(const char *home,bool use_rfc1738)
       unsigned encode_flags=0;
       if(xtld_name_ok(host))
 	 encode_flags|=URL_ALLOW_8BIT;
-      u.append(url::encode(host,URL_HOST_UNSAFE,encode_flags));
+      if(is_ipv6_address(host))
+	 u.append('[').append(host).append(']');
+      else
+	 u.append_url_encoded(host,URL_HOST_UNSAFE,encode_flags);
    }
    if(port && !is_file)
    {
