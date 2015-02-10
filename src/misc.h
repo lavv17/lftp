@@ -135,28 +135,6 @@ double random01();
 
 const char *get_nodename();
 
-#define ListAdd(type,chain,this,next)  \
-do {				       \
-   this->next=chain;		       \
-   chain=this;			       \
-} while(0)
-
-#define ListScan(type,chain,next) \
-   for(type *scan=chain; scan; scan=scan->next)
-
-#define ListScanPtr(type,chain,next) \
-   for(type **scan=&chain; *scan; scan=&scan[0]->next)
-
-#define ListDel(type,chain,this,next)			 \
-do {							 \
-   ListScanPtr(type,chain,next)				 \
-      if(*scan==this)					 \
-      {							 \
-	 *scan=scan[0]->next;				 \
-	 break;						 \
-      }							 \
-} while(0)
-
 const char *xidna_to_ascii(const char *name);
 bool xtld_name_ok(const char *name);
 
