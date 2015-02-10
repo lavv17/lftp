@@ -129,4 +129,7 @@ protected:
    static void SocketSinglePF(int sock,int pf);
 };
 
+bool is_ipv4_address(const char *);
+bool is_ipv6_address(const char *);
+
 #endif //NETWORK_H
