@@ -2533,7 +2533,7 @@ CMD(scache)
    return 0;
 }
 
-void CmdExec::print_cmd_help(const char *cmd)
+bool CmdExec::print_cmd_help(const char *cmd)
 {
    const cmd_rec *c;
    int part=find_cmd(cmd,&c);
@@ -2543,30 +2543,31 @@ void CmdExec::print_cmd_help(const char *cmd)
       if(c->long_desc==0 && c->short_desc==0)
       {
 	 printf(_("Sorry, no help for %s\n"),cmd);
-	 return;
+	 return true;
       }
       if(c->short_desc==0 && !strchr(c->long_desc,' '))
       {
 	 printf(_("%s is a built-in alias for %s\n"),cmd,c->long_desc);
 	 print_cmd_help(c->long_desc);
-	 return;
+	 return true;
       }
       if(c->short_desc)
 	 printf(_("Usage: %s\n"),_(c->short_desc));
       if(c->long_desc)
 	 printf("%s",_(c->long_desc));
-      return;
+      return true;
    }
    const char *a=Alias::Find(cmd);
    if(a)
    {
       printf(_("%s is an alias to `%s'\n"),cmd,a);
-      return;
+      return true;
    }
    if(part==0)
       printf(_("No such command `%s'. Use `help' to see available commands.\n"),cmd);
    else
       printf(_("Ambiguous command `%s'. Use `help' to see available commands.\n"),cmd);
+   return false;
 }
 
 void CmdExec::print_cmd_index()
@@ -2610,12 +2611,14 @@ CMD(help)
 {
    if(args->count()>1)
    {
+      exit_code=0;
       for(;;)
       {
 	 const char *cmd=args->getnext();
 	 if(cmd==0)
 	    break;
-	 parent->print_cmd_help(cmd);
+	 if(!parent->print_cmd_help(cmd))
+	    exit_code=1;
       }
       return 0;
    }

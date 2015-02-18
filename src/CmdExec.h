@@ -253,7 +253,7 @@ public:
 
    void ChangeSession(FileAccess *new_session);
 
-   void print_cmd_help(const char *cmd);
+   bool print_cmd_help(const char *cmd);
    void print_cmd_index();
 
    static const char *CmdByIndex(int i);
