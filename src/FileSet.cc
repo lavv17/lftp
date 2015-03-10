@@ -364,6 +364,14 @@ void FileSet::ExcludeDots()
       }
    }
 }
+void FileSet::ExcludeCompound()
+{
+   for(int i=0; i<fnum; i++)
+   {
+      if(strchr(files[i]->name,'/'))
+	 Sub(i--);
+   }
+}
 
 void FileSet::ExcludeUnaccessible()
 {

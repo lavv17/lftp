@@ -184,6 +184,7 @@ public:
 
    void	 Exclude(const char *prefix,const PatternSet *x);
    void	 ExcludeDots();
+   void	 ExcludeCompound();
    void	 ExcludeUnaccessible();
 
    void	 rewind() { ind=0; }
