@@ -414,10 +414,14 @@ void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
    SendBasicAuth(tag,xstring::cat(user,":",pass,NULL));
 }
 
-void Http::SendAuth()
+void Http::SendProxyAuth()
 {
    if(proxy && proxy_user && proxy_pass)
       SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
+}
+
+void Http::SendAuth()
+{
    if(user && pass && !(hftp && !QueryBool("use-authorization",proxy)))
       SendBasicAuth("Authorization",user,pass);
    else if(!hftp)
@@ -736,6 +740,8 @@ void Http::SendRequest(const char *connection,const char *f)
 	 Send("Destination: %s\r\n",GetFileURL(file1));
       }
    }
+   if(proxy && !https)
+      SendProxyAuth();
    SendAuth();
    if(no_cache || no_cache_this)
       Send("Pragma: no-cache\r\n"); // for HTTP/1.0 compatibility
@@ -1322,7 +1328,9 @@ int Http::Do()
 	    AppendHostEncoded(ehost,hostname);
 	    const char *port_to_use=portname?portname.get():HTTPS_DEFAULT_PORT;
 	    const char *eport=url::encode(port_to_use,URL_PORT_UNSAFE);
-	    Send("CONNECT %s:%s HTTP/1.1\r\n\r\n",ehost.get(),eport);
+	    Send("CONNECT %s:%s HTTP/1.1\r\n",ehost.get(),eport);
+	    SendProxyAuth();
+	    Send("\r\n");
 	    tunnel_state=TUNNEL_WAITING;
 	    state=RECEIVING_HEADER;
 	    return MOVED;

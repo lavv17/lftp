@@ -86,6 +86,7 @@ class Http : public NetAccess
    xstring special_data;
    void DirFile(xstring& path,const xstring& ecwd,const xstring& efile) const;
    void SendAuth();
+   void SendProxyAuth();
    void SendCacheControl();
    void SendBasicAuth(const char *tag,const char *auth);
    void SendBasicAuth(const char *tag,const char *u,const char *p);
