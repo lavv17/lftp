@@ -2061,8 +2061,6 @@ FileInfo *SFtp::MakeFileInfo(const NameAttrs *na)
 
    if(!name || !name[0])
       return 0;
-   if(strchr(name,'/'))
-      return 0;
    if(name[0]=='~')
       name=dir_file(".",name);
    Ref<FileInfo> fi(new FileInfo(name));
@@ -2297,6 +2295,7 @@ int SFtpListInfo::Do()
    if(result && session->OpenMode()!=FA::ARRAY_INFO)
    {
       ubuf=0;
+      result->ExcludeCompound();
       result->rewind();
       for(FileInfo *file=result->curr(); file!=0; file=result->next())
       {
