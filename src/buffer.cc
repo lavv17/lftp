@@ -356,14 +356,18 @@ DataRecoder::DataRecoder(const char *from_code,const char *to_code,bool translit
    if(translit) {
       const char *to_code_translit=xstring::cat(to_code,"//TRANSLIT",NULL);
       backend_translate=iconv_open(to_code_translit,from_code);
-      if(backend_translate!=(iconv_t)-1)
+      if(backend_translate!=(iconv_t)-1) {
+	 Log::global->Format(9,"initialized translation from %s to %s\n",from_code,to_code_translit);
 	 return;
+      }
       backend_translate=0;
    }
 
    backend_translate=iconv_open(to_code,from_code);
-   if(backend_translate!=(iconv_t)-1)
+   if(backend_translate!=(iconv_t)-1) {
+      Log::global->Format(9,"initialized translation from %s to %s\n",from_code,to_code);
       return;
+   }
 
    Log::global->Format(0,"iconv_open(%s,%s) failed: %s\n",
 			      to_code,from_code,strerror(errno));
