@@ -34,6 +34,7 @@
 #include "ArgV.h"
 #include "misc.h"
 #include "FileSet.h"
+#include "ResMgr.h"
 #include "log.h"
 
 #ifndef O_BINARY
@@ -347,7 +348,8 @@ void FileStream::setmtime(const FileTimestamp &ts)
    utime(full_name,&ut);
 }
 FileStream::FileStream(const char *fname,int new_mode)
-   : FDStream(-1,fname), mode(new_mode), create_mode(0664), do_lock(false)
+   : FDStream(-1,fname), mode(new_mode), create_mode(0664),
+     do_lock(ResMgr::QueryBool("file:use-lock",0))
 {
    if(name[0]=='/')
       full_name.set(name);
@@ -387,7 +389,7 @@ int   FileStream::getfd()
    Log::global->Format(11,"opened FD %d (%s)\n",new_fd,full_name.get());
    SetFD(new_fd,true);
    fcntl(fd,F_SETFD,FD_CLOEXEC);
-   if(do_lock) {
+   if(do_lock && !(mode&O_APPEND)) {
       struct flock lk;
       lk.l_type=((mode&3)==0)?F_RDLCK:F_WRLCK;
       lk.l_whence=SEEK_SET;

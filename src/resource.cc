@@ -350,6 +350,7 @@ static ResType lftp_vars[] = {
    {"sftp:use-full-path",	 "yes",	  ResMgr::BoolValidate,0},
 
    {"file:charset",		 "",	  ResMgr::CharsetValidate,ResMgr::NoClosure},
+   {"file:use-lock",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
 
    {"dns:cache-enable",		 "yes",	  ResMgr::BoolValidate,0},
    {"dns:cache-expire",		 "1h",	  ResMgr::TimeIntervalValidate,0},

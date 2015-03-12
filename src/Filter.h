@@ -150,7 +150,7 @@ public:
    int getfd();
    bool can_seek();
    off_t get_size();
-   void set_lock() { do_lock=true; }
+   void set_lock(bool flag=true) { do_lock=flag; }
    void set_create_mode(int m) { create_mode=m; }
 };
 

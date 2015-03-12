@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.6.0.
+This man page documents lftp version 4.6.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -1383,6 +1383,9 @@ address family in dns:order.
 .TP
 .BR file:charset \ (string)
 local character set. It is set from current locale initially.
+.TP
+.BR file:use-lock \ (boolean)
+when true, lftp uses advisory locking on local files when opening them.
 .TP
 .BR fish:auto-confirm \ (boolean)
 when true, lftp answers ``yes'' to all ssh questions, in particular to the
