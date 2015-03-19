@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.6.1], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.6.1.20150319], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -192,17 +192,17 @@ fi
 if test x$with_socks = xyes; then
    AC_DEFINE(SOCKS4, 1, [define if you are building with SOCKS support])
    AC_CHECK_LIB(socks, main, [SOCKSLIBS=-lsocks],
-      [AC_MSG_ERROR(cannot find -lsocks library)])
+      [AC_MSG_ERROR([cannot find -lsocks library])])
 fi
 if test x$with_socks5 = xyes; then
    AC_DEFINE(SOCKS5, 1, [define if you are building with SOCKSv5 support])
    AC_CHECK_LIB(socks5, main, [SOCKSLIBS=-lsocks5],
-      [AC_MSG_ERROR(cannot find -lsocks5 library)])
+      [AC_MSG_ERROR([cannot find -lsocks5 library])])
 fi
 if test x$with_socksdante = xyes; then
    AC_DEFINE(SOCKS_DANTE, 1, [define if you are building with SOCKS-Dante support])
    AC_CHECK_LIB(socks, main, [SOCKSLIBS=-lsocks],
-      [AC_MSG_ERROR(cannot find -lsocks library)])
+      [AC_MSG_ERROR([cannot find -lsocks library])])
 fi
 
 AC_SUBST(SOCKSLIBS)
@@ -297,7 +297,7 @@ AC_CHECK_LIB(z, deflate, [
    AC_SUBST(ZLIB)
    AC_DEFINE(HAVE_ZLIB, 1, [Define if you have zlib library])
 ],[
-   AC_MSG_ERROR(cannot find -lz library, install zlib-devel package)
+   AC_MSG_ERROR([cannot find -lz library, install zlib-devel package])
 ])
 
 AC_CHECK_LIB(expat, XML_ParserCreateNS, [
@@ -312,19 +312,19 @@ AC_ARG_WITH(dnssec-local-validation,
 if test "x$want_dnssec" = "xyes"; then
     AC_CHECK_HEADERS(validator/validator.h)
     if test "$ac_cv_header_validator_validator_h" != yes; then
-        AC_MSG_ERROR(Can't find validator.h (from dnssec-tools))
+        AC_MSG_ERROR([Can't find validator.h (from dnssec-tools)])
     fi
     AC_SEARCH_LIBS([SHA1_Init], [crypto ssl])
     AC_CHECK_LIB(sres, query_send)
     if test "$ac_cv_lib_sres_query_send" != yes; then
-        AC_MSG_ERROR(Can't find libsres (from dnssec-tools))
+        AC_MSG_ERROR([Can't find libsres (from dnssec-tools)])
     fi
     AC_CHECK_LIB(val, p_val_status,[LIBS="$LIBS -lval"])
     if test "x$ac_cv_lib_val_p_val_status" = "xno"; then
         AC_CHECK_LIB(pthread, pthread_rwlock_init)
 	AC_CHECK_LIB(val-threads, p_val_status,
                 [LIBS="$LIBS -lval-threads -lpthread" LIBVAL_SUFFIX="-threads"],
-                AC_MSG_ERROR(Can't find libval or libval-threads (from dnssec-tools)))
+                AC_MSG_ERROR([Can't find libval or libval-threads (from dnssec-tools)]))
     fi
     if test "x$ac_cv_lib_val_p_val_status" = "xyes" -o "x$ac_cv_lib_val_threads_p_val_status" = "xyes"; then
         AC_DEFINE(DNSSEC_LOCAL_VALIDATION, 1,
