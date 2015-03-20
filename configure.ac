@@ -292,6 +292,14 @@ if test x$with_openssl = xyes -a x"$LIBGNUTLS_LIBS" = x; then
    LFTP_OPENSSL_CHECK
 fi
 
+AC_ARG_WITH(zlib,
+AS_HELP_STRING([--with-zlib=/path], [use zlib at /path]),
+	[zlib_loc="$withval"])
+case "$zlib_loc" in
+yes|no|"")	;;
+*) LDFLAGS="$LDFLAGS -L$zlib_loc/lib"
+   CPPFLAGS="$CPPFLAGS -I$zlib_loc/include"
+esac
 AC_CHECK_LIB(z, deflate, [
    ZLIB=-lz
    AC_SUBST(ZLIB)
