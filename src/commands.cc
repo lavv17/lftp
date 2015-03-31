@@ -54,6 +54,7 @@
 #include "CopyJob.h"
 #include "OutputJob.h"
 #include "echoJob.h"
+#include "EditJob.h"
 
 #include "misc.h"
 #include "alias.h"
@@ -78,21 +79,16 @@
 
 History	 cwd_history;
 
-CMD(alias); CMD(anon);   CMD(cd);      CMD(debug);	CMD(du);
-CMD(exit);  CMD(get);    CMD(help);    CMD(jobs);
-CMD(kill);  CMD(lcd);    CMD(ls);      CMD(cls);
-CMD(open);  CMD(pwd);    CMD(set);     CMD(eval);
-CMD(shell); CMD(source); CMD(user);    CMD(rm);
-CMD(wait);  CMD(subsh);  CMD(mirror);  CMD(local);
-CMD(mv);    CMD(cat);    CMD(cache);   CMD(ln);
-CMD(mkdir); CMD(scache); CMD(mrm);
-CMD(ver);   CMD(close);  CMD(bookmark);CMD(lftp);
-CMD(echo);  CMD(suspend);CMD(sleep);   CMD(slot);
-CMD(at);    CMD(find);   CMD(command); CMD(module);
-CMD(lpwd);  CMD(glob);	 CMD(chmod);   CMD(queue);
-CMD(repeat);CMD(get1);   CMD(tasks);   CMD(torrent);
-
-CMD(empty); CMD(notempty); CMD(true); CMD(false);
+CMD(alias); CMD(anon); CMD(at); CMD(bookmark); CMD(cache); CMD(cat);
+CMD(cd); CMD(chmod); CMD(close); CMD(cls); CMD(command); CMD(debug);
+CMD(du); CMD(echo); CMD(edit); CMD(eval); CMD(exit); CMD(find); CMD(get);
+CMD(get1); CMD(glob); CMD(help); CMD(jobs); CMD(kill); CMD(lcd); CMD(lftp);
+CMD(ln); CMD(local); CMD(lpwd); CMD(ls); CMD(mirror); CMD(mkdir);
+CMD(module); CMD(mrm); CMD(mv); CMD(open); CMD(pwd); CMD(queue);
+CMD(repeat); CMD(rm); CMD(scache); CMD(set); CMD(shell); CMD(sleep);
+CMD(slot); CMD(source); CMD(subsh); CMD(suspend); CMD(tasks); CMD(torrent);
+CMD(user); CMD(ver); CMD(wait); CMD(empty); CMD(notempty); CMD(true);
+CMD(false);
 
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
@@ -238,6 +234,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -s, --summarize       display only a total for each argument\n"
 	 "     --exclude=PAT     exclude files that match PAT\n")},
    {"echo",    cmd_echo,   0},
+   {"edit",    cmd_edit,   N_("edit [OPTS] <file>"),
+	 N_("Retrieve remote file to a temporary location, run a local editor on it\n"
+	 "and upload the file back if changed.\n"
+	 " -k  keep the temporary file\n"
+	 " -o <temp>  explicit temporary file location\n")},
    {"eval",    cmd_eval,   0},
    {"exit",    cmd_exit,   N_("exit [<code>|bg]"),
 	 N_("exit - exit from lftp or move to background if jobs are active\n\n"
@@ -1812,6 +1813,58 @@ CMD(get)
       j->Reverse();
    if(n_conn!=1)
       j->SetCopyJobCreator(new pCopyJobCreator(n_conn));
+   return j;
+}
+
+CMD(edit)
+{
+   /* Download specified remote file into a temporary local file; run an
+    * editor on it and upload the file back if changed. Remove the temp file. */
+
+   const char *op=args->a0();
+   xstring temp_file;
+   bool keep_temp=false;
+
+   int opt;
+   while((opt=args->getopt("ok"))!=EOF)
+   {
+      switch(opt)
+      {
+      case('o'):
+	 temp_file.set(optarg);
+	 break;
+      case('k'):
+	 keep_temp=true;
+	 break;
+      case('?'):
+      err:
+	 eprintf(_("Try `help %s' for more information.\n"),op);
+	 return 0;
+      }
+   }
+   args->rewind();
+   if(args->count()<=1) {
+      eprintf(_("File name missed. "));
+      goto err;
+   }
+   const char *file=args->getarg(1);
+   if(!temp_file) {
+      ParsedURL u(file);
+      temp_file.set(basename_ptr(u.proto?u.path.get():file));
+      // make temp file name by substituting node name and PID after the first dot.
+      xstring temp_str;
+      temp_str.setf("%s-%u.",get_nodename(),(unsigned)getpid());
+      int point=temp_file.instr('.');
+      temp_file.set_substr(point>=0?point+1:0,0,temp_str);
+      temp_file.set_substr(0,0,"/");
+      xstring temp_dir(dir_file(get_lftp_cache_dir(),"edit"));
+      mkdir(temp_dir,0700);
+      temp_file.set_substr(0,0,temp_dir);
+      if(access(temp_file,F_OK)!=-1)
+	 keep_temp=true;
+   }
+   EditJob *j=new EditJob(session->Clone(),file,temp_file);
+   j->KeepTempFile(keep_temp);
    return j;
 }
 

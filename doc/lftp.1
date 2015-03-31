@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "13 Oct 2014"
+.TH lftp 1 "31 Mar 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -296,6 +296,19 @@ l1	l	lx	.
 .BR echo " [" \-n "] \fIstring\fR"
 .PP
 Prints (echos) the given string to the display.
+
+.BR edit " [" OPTS "] " \fIfile\fP
+.PP
+Retrieve remote file to a temporary location, run a local editor on it
+and upload the file back if changed. Options:
+.Sp
+.in +0.5i
+.TS
+l1	l	lx	.
+\-k	keep the temporary file
+\-o <temp>	explicit temporary file location
+.TE
+.PP
 
 .BR eval " [" -f " \fIformat\fR ] " \fIargs...\fR
 .PP
@@ -2208,8 +2221,10 @@ This option must be used alone without other arguments (except \fB\-\-norc\fP).
 
 .SH ENVIRONMENT VARIABLES
 The following environment variables are processed by \fBlftp\fR:
+.IP "\fBEDITOR\fP"
+Used as local editor for the \fBedit\fR command.
 .IP "\fBHOME\fP"
-Used for (local) tilde (`~') expansion
+Used for (local) tilde (`~') expansion.
 .IP "\fBSHELL\fP"
 Used by the \fB!\fR command to determine the shell to run.
 .IP "\fBPAGER\fP"
@@ -2268,6 +2283,9 @@ The directory is used to store named sockets for backgrounded lftp processes.
 .I "~/.cache/lftp/DHT/ \fPor\fI ~/.lftp/DHT/""
 The directory is used to store DHT id and nodes cache for IPv4 and IPv6.
 File name suffix is the host name.
+.TP
+.I "~/.cache/lftp/edit/ \fPor\fI ~/.lftp/edit/""
+The directory is used to store temporary files for \fBedit\fR command.
 .TP
 .I "~/.local/share/lftp/torrent/md/ \fPor\fI ~/.lftp/torrent/md/""
 The directory is used to store torrent metadata. It is especially useful

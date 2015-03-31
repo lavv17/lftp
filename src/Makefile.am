@@ -88,7 +88,7 @@ liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(TRIO) $(GNULIB)\
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
  parsecmd.cc mvJob.cc mvJob.h alias.cc alias.h\
- CatJob.cc CatJob.h GetJob.cc GetJob.h\
+ CatJob.cc CatJob.h EditJob.cc EditJob.h GetJob.cc GetJob.h\
  ColumnOutput.h ColumnOutput.cc FileSetOutput.h FileSetOutput.cc\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
  QueueFeeder.cc QueueFeeder.h history.cc history.h\
