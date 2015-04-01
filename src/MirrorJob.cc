@@ -660,9 +660,9 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 	    char *loc=alloca_strdup(loc_c);
 	    ParsedURL u(loc,true);
 
+	    bool is_file=(last_char(loc)!='/');
 	    if(!u.proto)
 	    {
-	       bool is_file=(last_char(loc)!='/');
 	       FileAccess::Path new_cwd(session->GetNewCwd());
 	       new_cwd.Change(0,is_file,loc);
 	       session->PathVerify(new_cwd);
@@ -671,7 +671,8 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 	    }
 	    session->Close(); // loc_c is no longer valid.
 	    session=FA::New(&u);
-	    session->Chdir(u.path);
+	    FileAccess::Path new_cwd(u.path,is_file,url::path_ptr(loc));
+	    session->PathVerify(new_cwd);
 	    return;
 	 }
       }
