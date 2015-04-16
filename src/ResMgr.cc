@@ -26,9 +26,6 @@
 #include <math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <errno.h>
 #include <limits.h>
 CDECL_BEGIN
@@ -771,23 +768,19 @@ const char *ResMgr::IPv4AddrValidate(xstring_c *value)
 {
    if(!**value)
       return 0;
-   struct in_addr addr;
-   if(!inet_pton(AF_INET,*value,&addr))
+   if(!is_ipv4_address(*value))
       return _("Invalid IPv4 numeric address");
    return 0;
 }
 
-#if INET6
 const char *ResMgr::IPv6AddrValidate(xstring_c *value)
 {
    if(!**value)
       return 0;
-   struct in6_addr addr;
-   if(!inet_pton(AF_INET6,*value,&addr))
+   if(!is_ipv6_address(*value))
       return _("Invalid IPv6 numeric address");
    return 0;
 }
-#endif
 
 const char *ResMgr::FileAccessible(xstring_c *value,int mode,bool want_dir)
 {
