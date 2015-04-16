@@ -110,13 +110,13 @@ int pgetJob::Do()
 	 c->Suspend();
    }
 
-   if(Done() || chunks_done)
+   if(Done())
       return m;
 
    off_t offset=c->GetPos();
    off_t size=c->GetSize();
 
-   if(chunks==0)
+   if(chunks==0 && !chunks_done)
    {
       if(size==NO_SIZE_YET)
 	 return m;
