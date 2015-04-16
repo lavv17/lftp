@@ -1,3 +1,21 @@
+Version 4.6.2 - 2015-04-16
+
+* new command "edit" instead of the edit alias.
+* new setting ssl:priority for disabling selected protocols.
+* new settings fish:auto-confirm and sftp:auto-confirm.
+* new setting file:use-lock to lock local files before accessing.
+* ftp: fixed disconnecting on timeout (broken in 4.6.0).
+* http: enclose ipv6 address in brackets in URLs and Host header.
+* fixed mirror for http protocol with redirections.
+* fixed `bookmark edit' to use correct XDG path if XDG is used.
+* fixed a wildcard certificate validation vulnerability (CVE-2014-0139).
+* fixed proxy authentication for CONNECT method.
+* fixed exit code of `help' command.
+* fixed sftp to show file names with slashes.
+* fixed pget status display when all chunks are done except the first one.
+* Ukrainian translation updated (Yuri Chornoivan).
+* Russian translation updated.
+
 Version 4.6.1 - 2014-12-29
 
 * new mirror option --scan-all-first.

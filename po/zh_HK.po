@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2014-12-29 15:34+0300\n"
+"POT-Creation-Date: 2015-04-16 13:51+0300\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -33,57 +33,62 @@ msgstr "有效的參數為："
 msgid "Unknown system error"
 msgstr "不明的系統錯誤"
 
-#: lib/getopt.c:547 lib/getopt.c:576
+#: lib/getopt.c:575 lib/getopt.c:604
 #, fuzzy, c-format
 msgid "%s: option '%s' is ambiguous; possibilities:"
 msgstr "%s：選項 ‘%s’ 不明確\n"
 
-#: lib/getopt.c:624 lib/getopt.c:628
+#: lib/getopt.c:619
+#, fuzzy, c-format
+msgid "%s: option '%s' is ambiguous\n"
+msgstr "%s：選項 ‘-W %s’ 不明確\n"
+
+#: lib/getopt.c:654 lib/getopt.c:658
 #, fuzzy, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘--%s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:637 lib/getopt.c:642
+#: lib/getopt.c:667 lib/getopt.c:672
 #, fuzzy, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘%c%s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:685 lib/getopt.c:704
+#: lib/getopt.c:715 lib/getopt.c:734
 #, fuzzy, c-format
 msgid "%s: option '--%s' requires an argument\n"
 msgstr "%s：選項 ‘%s’ 需要參數\n"
 
-#: lib/getopt.c:742 lib/getopt.c:745
+#: lib/getopt.c:772 lib/getopt.c:775
 #, fuzzy, c-format
 msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s：‘--%s’ 選項無法辨識\n"
 
-#: lib/getopt.c:753 lib/getopt.c:756
+#: lib/getopt.c:783 lib/getopt.c:786
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s：‘%c%s’ 選項無法辨識\n"
 
-#: lib/getopt.c:805 lib/getopt.c:808
+#: lib/getopt.c:835 lib/getopt.c:838
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s：無效的選項 ─ %c\n"
 
-#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
+#: lib/getopt.c:891 lib/getopt.c:908 lib/getopt.c:1118 lib/getopt.c:1136
 #, fuzzy, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s：選項需要參數 ─ %c\n"
 
-#: lib/getopt.c:934 lib/getopt.c:950
+#: lib/getopt.c:964 lib/getopt.c:980
 #, fuzzy, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s：選項 ‘-W %s’ 不明確\n"
 
-#: lib/getopt.c:974 lib/getopt.c:992
+#: lib/getopt.c:1004 lib/getopt.c:1022
 #, fuzzy, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s：選項 ‘-W %s’ 不可配合參數使用\n"
 
-#: lib/getopt.c:1013 lib/getopt.c:1031
+#: lib/getopt.c:1043 lib/getopt.c:1061
 #, fuzzy, c-format
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr "%s：選項 ‘%s’ 需要參數\n"
@@ -249,8 +254,8 @@ msgstr "傳送 %2$d 個檔案時有 %1$d 個失敗了\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "共傳送了 %d 個檔案\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1866 src/MirrorJob.cc:1888
-#: src/commands.cc:1013 src/commands.cc:2158
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1867 src/MirrorJob.cc:1889
+#: src/commands.cc:1014 src/commands.cc:2211
 msgid " - not supported protocol"
 msgstr " - 不支援該種協定"
 
@@ -263,8 +268,8 @@ msgstr "存取失敗：%s"
 msgid "File cannot be accessed"
 msgstr "無法存取檔案"
 
-#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1339 src/ftpclass.cc:4385
-#: src/ftpclass.cc:4394 src/Torrent.cc:3432
+#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1342 src/ftpclass.cc:4386
+#: src/ftpclass.cc:4395 src/Torrent.cc:3432
 msgid "Not connected"
 msgstr "並未連線"
 
@@ -374,22 +379,22 @@ msgstr "設定了 ftp:fxp-force 變數，但無法進行 FXP 連線"
 msgid "non-option arguments found"
 msgstr "出現並非選項的參數"
 
-#: src/Filter.cc:164
+#: src/Filter.cc:165
 #, fuzzy
 msgid "pipe() failed: "
 msgstr "pipe() 失敗：%s"
 
-#: src/Filter.cc:198 src/PtyShell.cc:135
+#: src/Filter.cc:199 src/PtyShell.cc:135
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "chdir(%s) 失敗：%s\n"
 
-#: src/Filter.cc:206
+#: src/Filter.cc:207
 #, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "execvp(%s) 失敗：%s\n"
 
-#: src/Filter.cc:211 src/PtyShell.cc:147
+#: src/Filter.cc:212 src/PtyShell.cc:147
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) 失敗：%s\n"
@@ -398,7 +403,7 @@ msgstr "execl(/bin/sh) 失敗：%s\n"
 msgid "total"
 msgstr "總數"
 
-#: src/Fish.cc:75 src/Http.cc:1063 src/SFtp.cc:77 src/ftpclass.cc:1230
+#: src/Fish.cc:75 src/Http.cc:1078 src/SFtp.cc:77 src/ftpclass.cc:1231
 msgid "Closing idle connection"
 msgstr "關閉閒置連線"
 
@@ -406,43 +411,43 @@ msgstr "關閉閒置連線"
 msgid "Running connect program"
 msgstr "正在執行進行連線的程式"
 
-#: src/Fish.cc:590 src/Http.cc:1331 src/SFtp.cc:744 src/SFtp.cc:1082
-#: src/SFtp.cc:1083 src/ftpclass.cc:2749 src/ftpclass.cc:2969
+#: src/Fish.cc:590 src/Http.cc:1349 src/SFtp.cc:747 src/SFtp.cc:1085
+#: src/SFtp.cc:1086 src/ftpclass.cc:2750 src/ftpclass.cc:2970
 msgid "Peer closed connection"
 msgstr "對方關閉了連線"
 
-#: src/Fish.cc:636 src/SFtp.cc:1107 src/ftpclass.cc:2899 src/ftpclass.cc:4022
+#: src/Fish.cc:636 src/SFtp.cc:1110 src/ftpclass.cc:2900 src/ftpclass.cc:4023
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/Fish.cc:989 src/Http.cc:2105 src/Http.cc:2112 src/SFtp.cc:1345
-#: src/ftpclass.cc:4397 src/Torrent.cc:3435 src/TorrentTracker.cc:619
+#: src/Fish.cc:989 src/Http.cc:2123 src/Http.cc:2130 src/SFtp.cc:1348
+#: src/ftpclass.cc:4398 src/Torrent.cc:3435 src/TorrentTracker.cc:619
 msgid "Connecting..."
 msgstr "嘗試連線……"
 
-#: src/Fish.cc:991 src/SFtp.cc:1347 src/ftpclass.cc:4403
+#: src/Fish.cc:991 src/SFtp.cc:1350 src/ftpclass.cc:4404
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/Fish.cc:993 src/Http.cc:2114 src/SFtp.cc:1349 src/ftpclass.cc:4380
-#: src/ftpclass.cc:4408 src/ftpclass.cc:4422 src/TorrentTracker.cc:621
+#: src/Fish.cc:993 src/Http.cc:2132 src/SFtp.cc:1352 src/ftpclass.cc:4381
+#: src/ftpclass.cc:4409 src/ftpclass.cc:4423 src/TorrentTracker.cc:621
 msgid "Waiting for response..."
 msgstr "正在等待回應……"
 
-#: src/Fish.cc:995 src/Http.cc:2117 src/SFtp.cc:1351 src/ftpclass.cc:4442
+#: src/Fish.cc:995 src/Http.cc:2135 src/SFtp.cc:1354 src/ftpclass.cc:4443
 msgid "Receiving data"
 msgstr "下載中"
 
-#: src/Fish.cc:997 src/Http.cc:2110 src/SFtp.cc:1353 src/ftpclass.cc:4440
+#: src/Fish.cc:997 src/Http.cc:2128 src/SFtp.cc:1356 src/ftpclass.cc:4441
 msgid "Sending data"
 msgstr "上傳中"
 
-#: src/Fish.cc:999 src/SFtp.cc:1355
+#: src/Fish.cc:999 src/SFtp.cc:1358
 msgid "Done"
 msgstr "完成"
 
-#: src/Fish.cc:1155 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2218
-#: src/SFtp.cc:2336
+#: src/Fish.cc:1155 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2219
+#: src/SFtp.cc:2338
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在擷取檔案清單 (%lld) [%s]"
@@ -460,76 +465,76 @@ msgstr "正在關閉 HTTP 連線"
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#: src/Http.cc:1205
+#: src/Http.cc:1220
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
-#: src/Http.cc:1255 src/ftpclass.cc:1353 src/Torrent.cc:3103
+#: src/Http.cc:1270 src/ftpclass.cc:1354 src/Torrent.cc:3103
 #: src/Torrent.cc:3642 src/TorrentTracker.cc:392
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "無法建立地址族羣 %d 的 socket"
 
-#: src/Http.cc:1281 src/ftpclass.cc:1384
+#: src/Http.cc:1296 src/ftpclass.cc:1385
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket 錯誤 (%s) - 準備重新連線"
 
-#: src/Http.cc:1358
+#: src/Http.cc:1376
 msgid "Sending request..."
 msgstr "正在送出要求……"
 
-#: src/Http.cc:1396
+#: src/Http.cc:1414
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#: src/Http.cc:1502
+#: src/Http.cc:1520
 msgid "Could not parse HTTP status line"
 msgstr "無法分析 HTTP 狀態"
 
-#: src/Http.cc:1533
+#: src/Http.cc:1551
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "快取記憶中沒有該物件，但 http:cache-control 的設定為 only-if-cached"
 
-#: src/Http.cc:1718
+#: src/Http.cc:1736
 msgid "Receiving body..."
 msgstr "正在下載內容……"
 
-#: src/Http.cc:1869
+#: src/Http.cc:1887
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:1872
+#: src/Http.cc:1890
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:1883
+#: src/Http.cc:1901
 msgid "Received all"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1888
+#: src/Http.cc:1906
 msgid "Received all (total)"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:1912 src/Http.cc:1935
+#: src/Http.cc:1930 src/Http.cc:1953
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:1922
+#: src/Http.cc:1940
 msgid "Received last chunk"
 msgstr "已收到最後的片段"
 
-#: src/Http.cc:2099 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4390 src/TorrentTracker.cc:617
+#: src/Http.cc:2117 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/ftpclass.cc:4391 src/TorrentTracker.cc:617
 msgid "Resolving host address..."
 msgstr "正在解析主機地址……"
 
-#: src/Http.cc:2107 src/ftpclass.cc:4383
+#: src/Http.cc:2125 src/ftpclass.cc:4384
 msgid "Connection idle"
 msgstr "連線閒置"
 
-#: src/Http.cc:2115
+#: src/Http.cc:2133
 msgid "Fetching headers..."
 msgstr "正在讀取標頭資料……"
 
@@ -548,7 +553,7 @@ msgstr "正在擷取目錄內容 (%lld) %s[%s]"
 msgid "Getting files information"
 msgstr "正在擷取檔案資訊 (%d%%) [%s]"
 
-#: src/LocalAccess.cc:645 src/commands.cc:3124
+#: src/LocalAccess.cc:645 src/commands.cc:3186
 msgid "cannot get current directory"
 msgstr "無法決定目前的目錄"
 
@@ -596,7 +601,7 @@ msgstr "%s發現了 %d 個錯誤\n"
 msgid "Finished %s"
 msgstr "[%lu] 完成。%s"
 
-#: src/MirrorJob.cc:320 src/MirrorJob.cc:505 src/MirrorJob.cc:1103
+#: src/MirrorJob.cc:320 src/MirrorJob.cc:505 src/MirrorJob.cc:1104
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "刪除舊的檔案 ‘%s’"
@@ -616,7 +621,7 @@ msgstr "正在上傳檔案 ‘%s’"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "正在建立 ‘%s’ 目錄"
 
-#: src/MirrorJob.cc:425 src/MirrorJob.cc:536 src/MirrorJob.cc:798
+#: src/MirrorJob.cc:425 src/MirrorJob.cc:536 src/MirrorJob.cc:799
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "刪除舊的本機檔案 ‘%s’"
@@ -641,68 +646,68 @@ msgstr ""
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立符號鏈結 ‘%s’ 到 ‘%s’"
 
-#: src/MirrorJob.cc:712
+#: src/MirrorJob.cc:713
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror：協定 ‘%s’ 不適合作為 mirror 用途\n"
 
-#: src/MirrorJob.cc:819
+#: src/MirrorJob.cc:820
 #, c-format
 msgid "Making directory `%s'"
 msgstr "正在建立 ‘%s’ 目錄"
 
-#: src/MirrorJob.cc:1061
+#: src/MirrorJob.cc:1062
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "沒有刪除 ‘%s’ 舊目錄"
 
-#: src/MirrorJob.cc:1063
+#: src/MirrorJob.cc:1064
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "沒有刪除舊檔案 ‘%s’"
 
-#: src/MirrorJob.cc:1101
+#: src/MirrorJob.cc:1102
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "刪除 ‘%s’ 舊目錄"
 
-#: src/MirrorJob.cc:1252
+#: src/MirrorJob.cc:1253
 #, fuzzy, c-format
 msgid "Removing source file `%s'"
 msgstr "刪除舊的檔案 ‘%s’"
 
-#: src/MirrorJob.cc:1272
+#: src/MirrorJob.cc:1273
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "重新嘗試 mirror……\n"
 
-#: src/MirrorJob.cc:1707
+#: src/MirrorJob.cc:1708
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s：正規表示式 ‘%s’：%s\n"
 
-#: src/MirrorJob.cc:1830 src/SleepJob.cc:144 src/SleepJob.cc:200
-#: src/commands.cc:1158 src/commands.cc:1248 src/commands.cc:1620
-#: src/commands.cc:1651 src/commands.cc:1754 src/commands.cc:2067
-#: src/commands.cc:2263 src/commands.cc:2425 src/commands.cc:2453
-#: src/commands.cc:2460 src/commands.cc:2746 src/commands.cc:2773
-#: src/commands.cc:2780 src/commands.cc:3107 src/lftp.cc:267
-#: src/Torrent.cc:4039
+#: src/MirrorJob.cc:1831 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/commands.cc:1159 src/commands.cc:1249 src/commands.cc:1621
+#: src/commands.cc:1652 src/commands.cc:1755 src/commands.cc:1841
+#: src/commands.cc:2120 src/commands.cc:2316 src/commands.cc:2478
+#: src/commands.cc:2506 src/commands.cc:2513 src/commands.cc:2802
+#: src/commands.cc:2829 src/commands.cc:2836 src/commands.cc:3169
+#: src/lftp.cc:267 src/Torrent.cc:4039
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "請輸入 ‘help %s’ 顯示額外資訊。\n"
 
-#: src/MirrorJob.cc:1854
+#: src/MirrorJob.cc:1855
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1876
+#: src/MirrorJob.cc:1877
 #, fuzzy, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "%2$s 的參數 %1$s 不明確"
 
-#: src/MirrorJob.cc:1917
+#: src/MirrorJob.cc:1918
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
@@ -774,61 +779,61 @@ msgstr "已更改工作次序"
 msgid "Commands queued:"
 msgstr "已放入佇列中的指令:"
 
-#: src/ResMgr.cc:122
+#: src/ResMgr.cc:119
 msgid "no such variable"
 msgstr "這個變數不存在"
 
-#: src/ResMgr.cc:126
+#: src/ResMgr.cc:123
 msgid "ambiguous variable name"
 msgstr "變數名稱不明確"
 
-#: src/ResMgr.cc:312
+#: src/ResMgr.cc:309
 msgid "invalid boolean value"
 msgstr "邏輯值無效"
 
-#: src/ResMgr.cc:334
+#: src/ResMgr.cc:331
 msgid "invalid boolean/auto value"
 msgstr "邏輯值或自動變動值無效"
 
-#: src/ResMgr.cc:379 src/ResMgr.cc:684
+#: src/ResMgr.cc:376 src/ResMgr.cc:681
 msgid "invalid number"
 msgstr "數字無效"
 
-#: src/ResMgr.cc:392
+#: src/ResMgr.cc:389
 msgid "invalid floating point number"
 msgstr "浮點數無效"
 
-#: src/ResMgr.cc:406
+#: src/ResMgr.cc:403
 #, fuzzy
 msgid "invalid unsigned number"
 msgstr "數字無效"
 
-#: src/ResMgr.cc:649
+#: src/ResMgr.cc:646
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "時間單位無效，只允許使用 [smhd] 其中一個。"
 
-#: src/ResMgr.cc:657
+#: src/ResMgr.cc:654
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "時間格式無效。格式是 <time><unit>，例如：2h30m。"
 
-#: src/ResMgr.cc:689
+#: src/ResMgr.cc:686
 #, fuzzy
 msgid "integer overflow"
 msgstr "整數溢位"
 
-#: src/ResMgr.cc:776
+#: src/ResMgr.cc:772
 msgid "Invalid IPv4 numeric address"
 msgstr "IPv4 地址無效"
 
-#: src/ResMgr.cc:787
+#: src/ResMgr.cc:781
 msgid "Invalid IPv6 numeric address"
 msgstr "IPv6 地址無效"
 
-#: src/ResMgr.cc:857 src/ResMgr.cc:861
+#: src/ResMgr.cc:850 src/ResMgr.cc:854
 msgid "this encoding is not supported"
 msgstr "不支援這種編碼"
 
-#: src/ResMgr.cc:867
+#: src/ResMgr.cc:860
 msgid "no closure defined for this setting"
 msgstr "本設定值並沒有定義 closure"
 
@@ -858,7 +863,7 @@ msgstr "%s 服務不存在"
 msgid "No address found"
 msgstr "沒有地址"
 
-#: src/SFtp.cc:1098 src/SFtp.cc:1099
+#: src/SFtp.cc:1101 src/SFtp.cc:1102
 msgid "invalid server response format"
 msgstr "伺服器回應格式無效"
 
@@ -929,19 +934,19 @@ msgstr "距離完成約:"
 msgid "execlp(%s) failed: %s\n"
 msgstr "execlp(%s) 失敗：%s\n"
 
-#: src/commands.cc:113
+#: src/commands.cc:109
 msgid "!<shell-command>"
 msgstr "!<shell 指令>"
 
-#: src/commands.cc:114
+#: src/commands.cc:110
 msgid "Launch shell or shell command\n"
 msgstr "開啟 shell 或執行 shell 指令\n"
 
-#: src/commands.cc:115
+#: src/commands.cc:111
 msgid "(commands)"
 msgstr "(指令)"
 
-#: src/commands.cc:116
+#: src/commands.cc:112
 msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
@@ -949,11 +954,11 @@ msgstr ""
 "將多個指令組合成一個指令來執行\n"
 "此組指令可在背景執行\n"
 
-#: src/commands.cc:119
+#: src/commands.cc:115
 msgid "alias [<name> [<value>]]"
 msgstr "alias [<名稱> [<變數值>]]"
 
-#: src/commands.cc:120
+#: src/commands.cc:116
 msgid ""
 "Define or undefine alias <name>. If <value> omitted,\n"
 "the alias is undefined, else is takes the value <value>.\n"
@@ -962,15 +967,15 @@ msgstr ""
 "建立或刪除 <名稱> 的定義。如果不填入 <變數值>，<名稱> 會沒有定義，否則\n"
 "<名稱> 的值為 <變數值>。如果沒有任何參數則會列出所有別名。\n"
 
-#: src/commands.cc:124
+#: src/commands.cc:120
 msgid "anon - login anonymously (by default)\n"
 msgstr "anon - 以無名氏身份登入(預設)\n"
 
-#: src/commands.cc:126
+#: src/commands.cc:122
 msgid "bookmark [SUBCMD]"
 msgstr "bookmark [副指令]"
 
-#: src/commands.cc:127
+#: src/commands.cc:123
 msgid ""
 "bookmark command controls bookmarks\n"
 "\n"
@@ -992,11 +997,11 @@ msgstr ""
 "  import <類型>       - 匯入其它格式的書籤\n"
 "  list                - 列出所有書籤 (預設操作)\n"
 
-#: src/commands.cc:136
+#: src/commands.cc:132
 msgid "cache [SUBCMD]"
 msgstr "cache [副指令]"
 
-#: src/commands.cc:137
+#: src/commands.cc:133
 msgid ""
 "cache command controls local memory cache\n"
 "\n"
@@ -1018,11 +1023,11 @@ msgstr ""
 "  expire <Nx> - 設定快取記憶的有效期限為 N 秒 (x=s)、\n"
 "                N 分鐘 (x=m)、N 小時 (x=h) 或 N 日 (x=d)\n"
 
-#: src/commands.cc:145
+#: src/commands.cc:141
 msgid "cat [-b] <files>"
 msgstr "cat [-b] <檔案>"
 
-#: src/commands.cc:146
+#: src/commands.cc:142
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
@@ -1030,11 +1035,11 @@ msgstr ""
 "cat - 在標準輸出中顯示遠端檔案的內容 (可以重新導向至其它地方)\n"
 " -b  使用 binary 模式 (預設為 ascii 模式)\n"
 
-#: src/commands.cc:148
+#: src/commands.cc:144
 msgid "cd <rdir>"
 msgstr "cd <遠端目錄>"
 
-#: src/commands.cc:149
+#: src/commands.cc:145
 msgid ""
 "Change current remote directory to <rdir>. The previous remote directory\n"
 "is stored as `-'. You can do `cd -' to change the directory back.\n"
@@ -1045,11 +1050,11 @@ msgstr ""
 "‘cd -’返回上次的遠端目錄。離開 lftp 前每一個站台最後進入的目錄都會被\n"
 "儲存，所以即使 lftp 重新啟動後仍然可以輸入‘open site; cd -’。\n"
 
-#: src/commands.cc:153
+#: src/commands.cc:149
 msgid "chmod [OPTS] mode file..."
 msgstr "chmod [選項] 模式 檔案……"
 
-#: src/commands.cc:154
+#: src/commands.cc:150
 msgid ""
 "Change the mode of each FILE to MODE.\n"
 "\n"
@@ -1068,7 +1073,7 @@ msgstr ""
 " -R, --recursive      -  同時更改目錄下的所有目錄層\n"
 "\n"
 
-#: src/commands.cc:163
+#: src/commands.cc:159
 msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
@@ -1076,11 +1081,11 @@ msgstr ""
 "關閉閒置的連線。預設只會關閉最後使用的伺服器連線。\n"
 " -a  關閉所有閒置的伺服器連線\n"
 
-#: src/commands.cc:165
+#: src/commands.cc:161
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr "[re]cle [選項] [路徑/][樣式]"
 
-#: src/commands.cc:166
+#: src/commands.cc:162
 #, fuzzy
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
@@ -1159,12 +1164,12 @@ msgstr ""
 "--filesize 選項會對指令列中的 -s 選項有影響。如果在 cls-completion-default\n"
 "中加上 ‘-i’ 選項可在進行自動補齊時不分辨大小寫。\n"
 
-#: src/commands.cc:216
+#: src/commands.cc:212
 #, fuzzy
 msgid "debug [OPTS] [<level>|off]"
 msgstr "debug [<level>|off] [-o <檔案>]"
 
-#: src/commands.cc:217
+#: src/commands.cc:213
 #, fuzzy
 msgid ""
 "Set debug level to given value or turn debug off completely.\n"
@@ -1176,11 +1181,11 @@ msgstr ""
 "設定 debug level 為指定的數值或完全關閉偵錯功能。\n"
 " -o <檔案>  將偵錯輸出的結果重新導向至該檔案。\n"
 
-#: src/commands.cc:222
+#: src/commands.cc:218
 msgid "du [options] <dirs>"
 msgstr "du [選項] <目錄>"
 
-#: src/commands.cc:223
+#: src/commands.cc:219
 msgid ""
 "Summarize disk usage.\n"
 " -a, --all             write counts for all files, not just directories\n"
@@ -1219,11 +1224,24 @@ msgstr ""
 " -s, --summarize       只分別顯示指令列每個項目的總大小\n"
 "     --exclude=PAT     不計算符合 PAT 樣式的檔案在內\n"
 
-#: src/commands.cc:242
+#: src/commands.cc:237
+#, fuzzy
+msgid "edit [OPTS] <file>"
+msgstr "mget [選項] <檔案>"
+
+#: src/commands.cc:238
+msgid ""
+"Retrieve remote file to a temporary location, run a local editor on it\n"
+"and upload the file back if changed.\n"
+" -k  keep the temporary file\n"
+" -o <temp>  explicit temporary file location\n"
+msgstr ""
+
+#: src/commands.cc:243
 msgid "exit [<code>|bg]"
 msgstr "exit [<回傳碼>|bg]"
 
-#: src/commands.cc:243
+#: src/commands.cc:244
 msgid ""
 "exit - exit from lftp or move to background if jobs are active\n"
 "\n"
@@ -1237,7 +1255,7 @@ msgstr ""
 "如果不指定回傳碼，就會使用最後一個指令的回傳碼。\n"
 "‘bg’在 cmd:move-background 設定為 false 時會強迫進入背景作業。\n"
 
-#: src/commands.cc:249
+#: src/commands.cc:250
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory or current directory recursively.\n"
@@ -1251,11 +1269,11 @@ msgstr ""
 "這個指令的輸出結果可以重新導向至其它地方。\n"
 " -d, --maxdepth=層數  最多只進入指定層數的目錄來搜尋檔案。\n"
 
-#: src/commands.cc:254
+#: src/commands.cc:255
 msgid "get [OPTS] <rfile> [-o <lfile>]"
 msgstr "get [選項] <遠端檔案> [-o <本機檔案>]"
 
-#: src/commands.cc:255
+#: src/commands.cc:256
 #, fuzzy
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
@@ -1272,11 +1290,11 @@ msgstr ""
 " -a  使用 ascii 模式 (預設為 binary 模式)\n"
 " -O <base> 指定下載後的檔案放置的目錄或 URL\n"
 
-#: src/commands.cc:262
+#: src/commands.cc:263
 msgid "glob [OPTS] <cmd> <args>"
 msgstr "glob [選項] <指令> <參數>"
 
-#: src/commands.cc:264
+#: src/commands.cc:265
 msgid ""
 "Expand wildcards and run specified command.\n"
 "Options can be used to expand wildcards to list of files, directories,\n"
@@ -1294,15 +1312,15 @@ msgstr ""
 " -d  目錄\n"
 " -a  所有類型\n"
 
-#: src/commands.cc:271
+#: src/commands.cc:272
 msgid "help [<cmd>]"
 msgstr "help [<指令>]"
 
-#: src/commands.cc:272
+#: src/commands.cc:273
 msgid "Print help for command <cmd>, or list of available commands\n"
 msgstr "印出 <指令> 的說明文字，或列出所有可用的指令\n"
 
-#: src/commands.cc:274
+#: src/commands.cc:275
 #, fuzzy
 msgid ""
 "List running jobs. -v means verbose, several -v can be specified.\n"
@@ -1310,19 +1328,19 @@ msgid ""
 msgstr ""
 "列出正在執行的工作。-v 表示輸出結果會更詳細，可使用多於一個 -v 來累積效果。\n"
 
-#: src/commands.cc:276
+#: src/commands.cc:277
 msgid "kill all|<job_no>"
 msgstr "kill all|<工作編號>"
 
-#: src/commands.cc:277
+#: src/commands.cc:278
 msgid "Delete specified job with <job_no> or all jobs\n"
 msgstr "終止由 <工作編號> 指定的工作或所有工作\n"
 
-#: src/commands.cc:278
+#: src/commands.cc:279
 msgid "lcd <ldir>"
 msgstr "lcd <目錄>"
 
-#: src/commands.cc:279
+#: src/commands.cc:280
 msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
@@ -1330,11 +1348,11 @@ msgstr ""
 "將目前的本機目錄更改為 <目錄>。上一個本機目錄會記錄為‘-’。\n"
 "可以輸入‘lcd -’返回上次的本機目錄。\n"
 
-#: src/commands.cc:281
+#: src/commands.cc:282
 msgid "lftp [OPTS] <site>"
 msgstr "lftp [選項] <站台>"
 
-#: src/commands.cc:282
+#: src/commands.cc:283
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -1358,21 +1376,21 @@ msgstr ""
 " -p <連接埠>             使用該連接埠連線\n"
 " <站台>                  主機名稱、URL 或書籤名稱\n"
 
-#: src/commands.cc:292
+#: src/commands.cc:293
 #, fuzzy
 msgid "ln [-s] <file1> <file2>"
 msgstr "mv <檔案1> <檔案2>"
 
-#: src/commands.cc:293
+#: src/commands.cc:294
 #, fuzzy
 msgid "Link <file1> to <file2>\n"
 msgstr "將 <檔案1> 重新命名為 <檔案2>\n"
 
-#: src/commands.cc:297
+#: src/commands.cc:298
 msgid "ls [<args>]"
 msgstr "ls [<參數>]"
 
-#: src/commands.cc:298
+#: src/commands.cc:299
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -1385,11 +1403,11 @@ msgstr ""
 "‘cache flush’。\n"
 "請參考‘help cls’。\n"
 
-#: src/commands.cc:303
+#: src/commands.cc:304
 msgid "mget [OPTS] <files>"
 msgstr "mget [選項] <檔案>"
 
-#: src/commands.cc:304
+#: src/commands.cc:305
 #, fuzzy
 msgid ""
 "Gets selected files with expanded wildcards\n"
@@ -1408,11 +1426,11 @@ msgstr ""
 " -a        使用 ascii 模式 (預設為 binary 模式)\n"
 " -O <base> 指定下載後的檔案所儲存的目錄或 URL\n"
 
-#: src/commands.cc:311
+#: src/commands.cc:312
 msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [選項] [遠端目錄 [本機目錄]]"
 
-#: src/commands.cc:312
+#: src/commands.cc:313
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -1473,12 +1491,12 @@ msgstr ""
 "如果沒有填第二個，會採用第一個目錄的名稱。\n"
 "如果兩個都沒有填，則會使用目前的本機及遠端目錄。\n"
 
-#: src/commands.cc:339
+#: src/commands.cc:340
 #, fuzzy
 msgid "mkdir [OPTS] <dirs>"
 msgstr "mkdir [-p] <目錄>"
 
-#: src/commands.cc:340
+#: src/commands.cc:341
 #, fuzzy
 msgid ""
 "Make remote directories\n"
@@ -1488,11 +1506,11 @@ msgstr ""
 "建立遠端目錄\n"
 " -p  建立路徑中的每一層目錄\n"
 
-#: src/commands.cc:343
+#: src/commands.cc:344
 msgid "module name [args]"
 msgstr "module 名稱 [參數]"
 
-#: src/commands.cc:344
+#: src/commands.cc:345
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -1504,19 +1522,19 @@ msgstr ""
 "如果名稱中含有‘/’，則會在目前的目錄中搜尋模組，\n"
 "否則會在 module:path 設定值所指定的目錄中搜尋。\n"
 
-#: src/commands.cc:348
+#: src/commands.cc:349
 msgid "more <files>"
 msgstr "more <檔案>"
 
-#: src/commands.cc:349
+#: src/commands.cc:350
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr "即‘cat <檔案> | more’。如果定義了 PAGER 變數，會使用它來過濾內容\n"
 
-#: src/commands.cc:350
+#: src/commands.cc:351
 msgid "mput [OPTS] <files>"
 msgstr "mput [選項] <檔案>"
 
-#: src/commands.cc:351
+#: src/commands.cc:352
 msgid ""
 "Upload files with wildcard expansion\n"
 " -c  continue, reput\n"
@@ -1534,27 +1552,27 @@ msgstr ""
 " -a         使用 ascii 模式 (預設為 binary 模式)\n"
 " -O <base>  設定上傳後的檔案放置的目錄或 URL\n"
 
-#: src/commands.cc:358
+#: src/commands.cc:359
 msgid "mrm <files>"
 msgstr "mrm <檔案>"
 
-#: src/commands.cc:359
+#: src/commands.cc:360
 msgid "Removes specified files with wildcard expansion\n"
 msgstr "展開萬用字符後，刪除指定的檔案\n"
 
-#: src/commands.cc:360
+#: src/commands.cc:361
 msgid "mv <file1> <file2>"
 msgstr "mv <檔案1> <檔案2>"
 
-#: src/commands.cc:361
+#: src/commands.cc:362
 msgid "Rename <file1> to <file2>\n"
 msgstr "將 <檔案1> 重新命名為 <檔案2>\n"
 
-#: src/commands.cc:362
+#: src/commands.cc:363
 msgid "[re]nlist [<args>]"
 msgstr "[re]nlist [<參數>]"
 
-#: src/commands.cc:363
+#: src/commands.cc:364
 msgid ""
 "List remote file names.\n"
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
@@ -1564,11 +1582,11 @@ msgstr ""
 "預設 nlist 的輸出結果是放進快取記憶中的，若要獲取最新的檔案清單請用\n"
 "‘renlist’ 或 ‘cache flush’。\n"
 
-#: src/commands.cc:366
+#: src/commands.cc:367
 msgid "open [OPTS] <site>"
 msgstr "open [選項] <站台>"
 
-#: src/commands.cc:367
+#: src/commands.cc:368
 #, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
@@ -1584,11 +1602,11 @@ msgstr ""
 " -p <連接埠>             使用指定連接埠來連線\n"
 " <站台>                  主機名稱、URL 或書籤名稱\n"
 
-#: src/commands.cc:373
+#: src/commands.cc:374
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [選項] <遠端檔> [-o <本機檔>]"
 
-#: src/commands.cc:374
+#: src/commands.cc:375
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -1609,11 +1627,11 @@ msgstr ""
 " -n <maxconn>  設定最大的連線數目 (預設為 pget:default-n 中的數目)\n"
 " -O <base> 指定下載的檔案應存取在哪個目錄\n"
 
-#: src/commands.cc:382
+#: src/commands.cc:383
 msgid "put [OPTS] <lfile> [-o <rfile>]"
 msgstr "put [選項] <本機檔案> [-o <遠端檔案>]"
 
-#: src/commands.cc:383
+#: src/commands.cc:384
 msgid ""
 "Upload <lfile> with remote name <rfile>.\n"
 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -1631,7 +1649,7 @@ msgstr ""
 " -a           使用 ascii 模式 (預設為 binary 模式)\n"
 " -O <base>    指定上傳後的檔案放置的目錄或 URL\n"
 
-#: src/commands.cc:391
+#: src/commands.cc:392
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
@@ -1639,11 +1657,11 @@ msgstr ""
 "顯示目前的遠端 URL。\n"
 " -p  顯示密碼\n"
 
-#: src/commands.cc:393
+#: src/commands.cc:394
 msgid "queue [OPTS] [<cmd>]"
 msgstr "queue [選項] [<指令>]"
 
-#: src/commands.cc:394
+#: src/commands.cc:395
 msgid ""
 "\n"
 "       queue [-n num] <command>\n"
@@ -1689,11 +1707,11 @@ msgstr ""
 " -Q                  更改輸出的格式，方便將指令重新加入佇列中。\n"
 "                     和 --delete 配合時比較有用。\n"
 
-#: src/commands.cc:415
+#: src/commands.cc:416
 msgid "quote <cmd>"
 msgstr "quote <指令>"
 
-#: src/commands.cc:416
+#: src/commands.cc:417
 msgid ""
 "Send the command uninterpreted. Use with caution - it can lead to\n"
 "unknown remote state and thus will cause reconnect. You cannot\n"
@@ -1704,7 +1722,7 @@ msgstr ""
 "之重新連線。因該種指令而導致的連線狀態改變不一定可靠 — 連線狀態隨時可能因\n"
 "為重新連線而重設。\n"
 
-#: src/commands.cc:421
+#: src/commands.cc:422
 msgid ""
 "recls [<args>]\n"
 "Same as `cls', but don't look in cache\n"
@@ -1712,7 +1730,7 @@ msgstr ""
 "recls [<參數>]\n"
 "即 ‘cls’，但不讀入快取記憶的資料\n"
 
-#: src/commands.cc:424
+#: src/commands.cc:425
 msgid ""
 "Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
 "Same as `get -c'\n"
@@ -1720,7 +1738,7 @@ msgstr ""
 "用法：reget [選項] <遠端檔> [-o <本機檔>]\n"
 "等於 ‘get -c’\n"
 
-#: src/commands.cc:427
+#: src/commands.cc:428
 msgid ""
 "Usage: rels [<args>]\n"
 "Same as `ls', but don't look in cache\n"
@@ -1728,7 +1746,7 @@ msgstr ""
 "用法：rels [<參數>]\n"
 "即 ‘ls’，但不讀入快取記憶的資料\n"
 
-#: src/commands.cc:430
+#: src/commands.cc:431
 msgid ""
 "Usage: renlist [<args>]\n"
 "Same as `nlist', but don't look in cache\n"
@@ -1736,11 +1754,11 @@ msgstr ""
 "用法：renlist [<參數>]\n"
 "即 ‘nlist’，但不讀入快取記憶的資料\n"
 
-#: src/commands.cc:432
+#: src/commands.cc:433
 msgid "repeat [OPTS] [delay] [command]"
 msgstr "repeat [選項] [延遲秒數] [指令]"
 
-#: src/commands.cc:433
+#: src/commands.cc:434
 #, fuzzy
 msgid ""
 "Repeat specified command with a delay between iterations.\n"
@@ -1754,7 +1772,7 @@ msgstr ""
 "重複執行某指令並在每次之後稍為停頓。\n"
 "預設每次相隔一秒執行指令，但指令本身沒有預設值。\n"
 
-#: src/commands.cc:441
+#: src/commands.cc:442
 msgid ""
 "Usage: reput <lfile> [-o <rfile>]\n"
 "Same as `put -c'\n"
@@ -1762,11 +1780,11 @@ msgstr ""
 "reput <本機檔案> [-o <遠端檔案>]\n"
 "即 ‘put -c’\n"
 
-#: src/commands.cc:443
+#: src/commands.cc:444
 msgid "rm [-r] [-f] <files>"
 msgstr "rm [-r] [-f] <檔案>"
 
-#: src/commands.cc:444
+#: src/commands.cc:445
 msgid ""
 "Remove remote files\n"
 " -r  recursive directory removal, be careful\n"
@@ -1776,27 +1794,27 @@ msgstr ""
 " -r  同時刪除所有子目錄，請小心使用\n"
 " -f  不輸出任何結果\n"
 
-#: src/commands.cc:447
+#: src/commands.cc:448
 msgid "rmdir [-f] <dirs>"
 msgstr "rmdir [-f] <目錄>"
 
-#: src/commands.cc:448
+#: src/commands.cc:449
 msgid "Remove remote directories\n"
 msgstr "刪除遠端目錄\n"
 
-#: src/commands.cc:449
+#: src/commands.cc:450
 msgid "scache [<session_no>]"
 msgstr "scache [<作業階段代號>]"
 
-#: src/commands.cc:450
+#: src/commands.cc:451
 msgid "List cached sessions or switch to specified session number\n"
 msgstr "列出所有快取記憶中的作業階段或切換至指定的作業階段代號\n"
 
-#: src/commands.cc:451
+#: src/commands.cc:452
 msgid "set [OPT] [<var> [<val>]]"
 msgstr "set [選項] [<變數名稱> [<變數值>]]"
 
-#: src/commands.cc:452
+#: src/commands.cc:453
 msgid ""
 "Set variable to given value. If the value is omitted, unset the variable.\n"
 "Variable name has format ``name/closure'', where closure can specify\n"
@@ -1814,12 +1832,12 @@ msgstr ""
 " -a  列出所有設定值，包括預設的在內\n"
 " -d  只列出預設的設定值，未必符合目前的設定\n"
 
-#: src/commands.cc:460
+#: src/commands.cc:461
 #, fuzzy
 msgid "site <site-cmd>"
 msgstr "site <站台指令>"
 
-#: src/commands.cc:461
+#: src/commands.cc:462
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
@@ -1827,7 +1845,7 @@ msgstr ""
 "執行 site 指令 <站台指令> 並輸出結果\n"
 "可以將輸出結果重新導向至其它地方\n"
 
-#: src/commands.cc:464
+#: src/commands.cc:465
 msgid ""
 "Usage: sleep <time>[unit]\n"
 "Sleep for given amount of time. The time argument can be optionally\n"
@@ -1838,100 +1856,100 @@ msgstr ""
 "在指定時間之內不進行任何操作。指定時間時可選擇加入單位：\n"
 "d = 日，h = 小時，m = 分鐘，s = 秒。預設以秒為單位。\n"
 
-#: src/commands.cc:469
+#: src/commands.cc:470
 msgid ""
 "Usage: slot [<label>]\n"
 "List assigned slots.\n"
 "If <label> is specified, switch to the slot named <label>.\n"
 msgstr ""
 
-#: src/commands.cc:472
+#: src/commands.cc:473
 msgid "source <file>"
 msgstr "source <檔案>"
 
-#: src/commands.cc:473
+#: src/commands.cc:474
 msgid "Execute commands recorded in file <file>\n"
 msgstr "執行記錄在 <檔案> 內的指令\n"
 
-#: src/commands.cc:475
+#: src/commands.cc:476
 msgid "torrent [-O <dir>] <file|URL>..."
 msgstr ""
 
-#: src/commands.cc:476
+#: src/commands.cc:477
 msgid "user <user|URL> [<pass>]"
 msgstr "user <用戶名稱|URL> [<密碼>]"
 
-#: src/commands.cc:477
+#: src/commands.cc:478
 msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
 msgstr "使用指定的資料登入。如果指定了 URL，密碼將會被儲存以便將來使用。\n"
 
-#: src/commands.cc:480
+#: src/commands.cc:481
 msgid "Shows lftp version\n"
 msgstr "顯示 lftp 版本\n"
 
-#: src/commands.cc:481
+#: src/commands.cc:482
 msgid "wait [<jobno>]"
 msgstr "wait [<工作編號>]"
 
-#: src/commands.cc:482
+#: src/commands.cc:483
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
 msgstr ""
 "等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
 
-#: src/commands.cc:484
+#: src/commands.cc:485
 msgid "zcat <files>"
 msgstr "zcat <檔案>"
 
-#: src/commands.cc:485
+#: src/commands.cc:486
 msgid "Same as cat, but filter each file through zcat\n"
 msgstr "用途和 cat 一樣，但每個檔案會經 zcat 過濾\n"
 
-#: src/commands.cc:486
+#: src/commands.cc:487
 msgid "zmore <files>"
 msgstr "zmore <檔案>"
 
-#: src/commands.cc:487
+#: src/commands.cc:488
 msgid "Same as more, but filter each file through zcat\n"
 msgstr "用途和 more 一樣，但每個檔案會經 zcat 過濾\n"
 
-#: src/commands.cc:489
+#: src/commands.cc:490
 msgid "Same as cat, but filter each file through bzcat\n"
 msgstr "用途和 cat 一樣，但每個檔案會經 bzcat 過濾\n"
 
-#: src/commands.cc:491
+#: src/commands.cc:492
 msgid "Same as more, but filter each file through bzcat\n"
 msgstr "用途和 more 一樣，但每個檔案會經 bzcat 過濾\n"
 
-#: src/commands.cc:546
+#: src/commands.cc:547
 #, c-format
 msgid "Usage: %s local-dir\n"
 msgstr "用法：%s 本機目錄\n"
 
-#: src/commands.cc:582
+#: src/commands.cc:583
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
 msgstr "lcd 成功，本機目錄為 %s\n"
 
-#: src/commands.cc:598
+#: src/commands.cc:599
 #, c-format
 msgid "Usage: cd remote-dir\n"
 msgstr "用法：cd 遠端目錄\n"
 
-#: src/commands.cc:610
+#: src/commands.cc:611
 #, c-format
 msgid "%s: no old directory for this site\n"
 msgstr "%s：沒有關於此站台以往進入的目錄的紀錄\n"
 
-#: src/commands.cc:699
+#: src/commands.cc:700
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "用法：%s [<回傳碼>]\n"
 
-#: src/commands.cc:708
+#: src/commands.cc:709
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
@@ -1940,7 +1958,7 @@ msgstr ""
 "目前仍然有未完成的工作，而且沒有設定 ‘cmd:move-background’ 變數。\n"
 "用 ‘exit bg’ 將所有工作轉移至背景繼續執行，或 ‘kill all’ 停止所有工作。\n"
 
-#: src/commands.cc:725
+#: src/commands.cc:726
 msgid ""
 "\n"
 "lftp now tricks the shell to move it to background process group.\n"
@@ -1949,224 +1967,224 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:916 src/commands.cc:3414
+#: src/commands.cc:917 src/commands.cc:3476
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "請輸入 ‘%s --help’ 顯示額外資訊\n"
 
-#: src/commands.cc:918
+#: src/commands.cc:919
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "用法：%s [-e 指令] [-p 連接埠] [-u 用戶名稱[,密碼]] <主機名稱|URL>\n"
 
-#: src/commands.cc:1045 src/commands.cc:2142
+#: src/commands.cc:1046 src/commands.cc:2195
 msgid "Password: "
 msgstr "密碼："
 
-#: src/commands.cc:1047
+#: src/commands.cc:1048
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s：GetPass() 錯誤 -- 假設是無名氏身份登入\n"
 
-#: src/commands.cc:1168
+#: src/commands.cc:1169
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "用法：%s [選項] 指令 參數……\n"
 
-#: src/commands.cc:1218
+#: src/commands.cc:1219
 #, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s：-n：應該使用正整數。 "
 
 # (Abel) 這句譯起來可能有問題
-#: src/commands.cc:1270
+#: src/commands.cc:1271
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr "產生了一個停止狀態的佇列。\n"
 
-#: src/commands.cc:1313 src/commands.cc:1341
+#: src/commands.cc:1314 src/commands.cc:1342
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s：沒有任何佇列正在運作。\n"
 
-#: src/commands.cc:1333
+#: src/commands.cc:1334
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s：-m：第二個參數應該是數字。 "
 
-#: src/commands.cc:1385
+#: src/commands.cc:1386
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "用法：%s <指令>\n"
 
-#: src/commands.cc:1487
+#: src/commands.cc:1488
 msgid "invalid argument for `--sort'"
 msgstr "‘--sort’的參數無效"
 
-#: src/commands.cc:1517
+#: src/commands.cc:1518
 msgid "invalid block size"
 msgstr "無效的區段大小"
 
-#: src/commands.cc:1660
+#: src/commands.cc:1661
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "用法：%s [選項] 檔案……\n"
 
-#: src/commands.cc:1732
+#: src/commands.cc:1733
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s：-n：應該使用數字。 "
 
-#: src/commands.cc:1765
+#: src/commands.cc:1766 src/commands.cc:1847
 #, c-format
 msgid "File name missed. "
 msgstr "缺少了檔案名稱。 "
 
-#: src/commands.cc:1863
+#: src/commands.cc:1916
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "用法：%s %s[-f] 檔案……\n"
 
-#: src/commands.cc:1906
+#: src/commands.cc:1959
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "用法：%s [-e] <檔案|指令>\n"
 
-#: src/commands.cc:1953
+#: src/commands.cc:2006
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "用法：%s [-v] [-v] ……\n"
 
-#: src/commands.cc:1967 src/commands.cc:2229 src/commands.cc:2352
-#: src/commands.cc:2522 src/commands.cc:2913 src/commands.cc:2994
+#: src/commands.cc:2020 src/commands.cc:2282 src/commands.cc:2405
+#: src/commands.cc:2575 src/commands.cc:2975 src/commands.cc:3056
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s：%s - 不是數字\n"
 
-#: src/commands.cc:1974 src/commands.cc:2208 src/commands.cc:2238
-#: src/commands.cc:2370
+#: src/commands.cc:2027 src/commands.cc:2261 src/commands.cc:2291
+#: src/commands.cc:2423
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s：%d - 指定的工作編號不存在\n"
 
-#: src/commands.cc:2009
+#: src/commands.cc:2062
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "用法：%s [-p]\n"
 
-#: src/commands.cc:2109
+#: src/commands.cc:2162
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "偵錯輸出詳細程度為 %d，輸出至 %s\n"
 
-#: src/commands.cc:2112
+#: src/commands.cc:2165
 #, c-format
 msgid "debug is off\n"
 msgstr "關閉偵錯輸出\n"
 
-#: src/commands.cc:2123
+#: src/commands.cc:2176
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "用法：%s <用戶名稱|URL> [<密碼>]\n"
 
-#: src/commands.cc:2198 src/commands.cc:2362
+#: src/commands.cc:2251 src/commands.cc:2415
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s：目前沒有任何工作\n"
 
-#: src/commands.cc:2210
+#: src/commands.cc:2263
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "用法：%s <工作編號> …… | all\n"
 
-#: src/commands.cc:2292
+#: src/commands.cc:2345
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s：%s。請輸入‘set -a’列出所有變數。\n"
 
-#: src/commands.cc:2336
+#: src/commands.cc:2389
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "用法：%s [<工作編號>]\n"
 
-#: src/commands.cc:2375
+#: src/commands.cc:2428
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s：有其它工作正在等待工作 %d 完成\n"
 
-#: src/commands.cc:2380
+#: src/commands.cc:2433
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s：某項工作正在等待自己完成 (迴圈)\n"
 
-#: src/commands.cc:2404
+#: src/commands.cc:2457
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "用法：mv <檔案1> <檔案2>\n"
 
-#: src/commands.cc:2452 src/commands.cc:2772
+#: src/commands.cc:2505 src/commands.cc:2828
 #, c-format
 msgid "Invalid command. "
 msgstr "指令無效。 "
 
-#: src/commands.cc:2459 src/commands.cc:2779
+#: src/commands.cc:2512 src/commands.cc:2835
 #, c-format
 msgid "Ambiguous command. "
 msgstr "指令不明確。 "
 
-#: src/commands.cc:2478
+#: src/commands.cc:2531
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s：size 副指令缺少了參數\n"
 
-#: src/commands.cc:2495
+#: src/commands.cc:2548
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s：‘expire’副指令缺少了參數\n"
 
-#: src/commands.cc:2528
+#: src/commands.cc:2581
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr "%s：%s - 指定的作業階段不存在。請使用‘scache’列出作業階段的清單。\n"
 
-#: src/commands.cc:2545
+#: src/commands.cc:2598
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "對不起，沒有有關 %s 的說明文字\n"
 
-#: src/commands.cc:2550
+#: src/commands.cc:2603
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s 是 %s 的內置別名\n"
 
-#: src/commands.cc:2555
+#: src/commands.cc:2608
 #, c-format
 msgid "Usage: %s\n"
 msgstr "用法：%s\n"
 
-#: src/commands.cc:2563
+#: src/commands.cc:2616
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s 是 ‘%s’ 的別名\n"
 
-#: src/commands.cc:2567
+#: src/commands.cc:2620
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "沒有 ‘%s’ 這個指令。請輸入 ‘help’ 列出可使用的指令。\n"
 
-#: src/commands.cc:2569
+#: src/commands.cc:2622
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "指令 ‘%s’ 不明確。請輸入 ‘help’ 列出可使用的指令。\n"
 
-#: src/commands.cc:2632
+#: src/commands.cc:2688
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | %s 版本 | 版權所有 (c) 1996-%d Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2635
+#: src/commands.cc:2691
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2183,85 +2201,85 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2649
+#: src/commands.cc:2705
 #, fuzzy, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "請將錯誤報告及問題寄至 <%s>。\n"
 
-#: src/commands.cc:2655
+#: src/commands.cc:2711
 msgid "Libraries used: "
 msgstr "本程式使用的函式庫："
 
-#: src/commands.cc:2795 src/commands.cc:2826
+#: src/commands.cc:2851 src/commands.cc:2882
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s：需要書籤名稱\n"
 
-#: src/commands.cc:2815
+#: src/commands.cc:2871
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s：書籤名稱不可有空格\n"
 
-#: src/commands.cc:2828
+#: src/commands.cc:2884
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s：沒有‘%s’這個書籤\n"
 
-#: src/commands.cc:2844
+#: src/commands.cc:2906
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s：需要指定匯入的方式 (netscape,ncftp)\n"
 
-#: src/commands.cc:2922
+#: src/commands.cc:2984
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "用法：%s [-d 數字] 目錄\n"
 
-#: src/commands.cc:3027
+#: src/commands.cc:3089
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s：區段大小‘%s’無效\n"
 
-#: src/commands.cc:3036
+#: src/commands.cc:3098
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "用法：%s [選項] <目錄>\n"
 
-#: src/commands.cc:3042
+#: src/commands.cc:3104
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s：警告：summarizing 和 --max-depth=0 是一樣的\n"
 
-#: src/commands.cc:3046
+#: src/commands.cc:3108
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s：summarizing 和 --max-depth=%i 選項互相矛盾\n"
 
-#: src/commands.cc:3094
+#: src/commands.cc:3156
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "用法：%s 指令 參數……\n"
 
-#: src/commands.cc:3106
+#: src/commands.cc:3168
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "用法：%s 模組 [參數……]\n"
 
-#: src/commands.cc:3188
+#: src/commands.cc:3250
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "用法：%s [選項] 模式 檔案……\n"
 
-#: src/commands.cc:3208
+#: src/commands.cc:3270
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "無效的檔案模式字串：%s\n"
 
-#: src/commands.cc:3267 src/commands.cc:3276
+#: src/commands.cc:3329 src/commands.cc:3338
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "範圍格式無效。格式是 min-max，例如 10-20。"
 
-#: src/commands.cc:3282
+#: src/commands.cc:3344
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "用法：%s [選項] 檔案\n"
@@ -2306,132 +2324,132 @@ msgstr "無法分析 EPSV 回應內容"
 msgid "Closing control socket"
 msgstr "正在關閉控制 socket"
 
-#: src/ftpclass.cc:1279
+#: src/ftpclass.cc:1280
 msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 msgstr "ftp:use-site-chmod 設定關閉了 SITE CHMOD 功能"
 
-#: src/ftpclass.cc:1284
+#: src/ftpclass.cc:1285
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "ftp:use-mlsd 設定關閉了 MLSD 功能"
 
-#: src/ftpclass.cc:1630
+#: src/ftpclass.cc:1631
 msgid "SITE CHMOD is not supported by this site"
 msgstr "該站台不支援 SITE CHMOD"
 
-#: src/ftpclass.cc:1635
+#: src/ftpclass.cc:1636
 msgid "MLST and MLSD are not supported by this site"
 msgstr "該站台不支援 MLST 和 MLSD"
 
-#: src/ftpclass.cc:2094
+#: src/ftpclass.cc:2095
 msgid "unsupported network protocol"
 msgstr "不支援這種網絡協定"
 
-#: src/ftpclass.cc:2143 src/ftpclass.cc:2238
+#: src/ftpclass.cc:2144 src/ftpclass.cc:2239
 #, fuzzy, c-format
 msgid "Data socket error (%s) - reconnecting"
 msgstr "Socket 錯誤 (%s) - 準備重新連線"
 
-#: src/ftpclass.cc:2171
+#: src/ftpclass.cc:2172
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2213
+#: src/ftpclass.cc:2214
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "連接資料 socket 到 (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2219
+#: src/ftpclass.cc:2220
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "連接資料 socket 到 %s (%s)，埠號為 %u"
 
-#: src/ftpclass.cc:2241 src/ftpclass.cc:4204
+#: src/ftpclass.cc:2242 src/ftpclass.cc:4205
 msgid "Switching passive mode off"
 msgstr "關閉 passive 模式"
 
-#: src/ftpclass.cc:2249
+#: src/ftpclass.cc:2250
 msgid "Data connection established"
 msgstr "成功建立數據連線"
 
-#: src/ftpclass.cc:2556 src/ftpclass.cc:4334
+#: src/ftpclass.cc:2557 src/ftpclass.cc:4335
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr "已設定 ftp:ssl-force 但伺服器不支援/不使用 SSL"
 
-#: src/ftpclass.cc:2915
+#: src/ftpclass.cc:2916
 msgid "Persist and retry"
 msgstr "繼續重試"
 
-#: src/ftpclass.cc:3181
+#: src/ftpclass.cc:3182
 msgid "Closing data socket"
 msgstr "正在關閉資料 socket"
 
-#: src/ftpclass.cc:3203
+#: src/ftpclass.cc:3204
 msgid "Closing aborted data socket"
 msgstr "關閉被中止的數據連線"
 
-#: src/ftpclass.cc:4006
+#: src/ftpclass.cc:4007
 msgid "saw file size in response"
 msgstr "回應中包括檔案的大小"
 
-#: src/ftpclass.cc:4036 src/ftpclass.cc:4063
+#: src/ftpclass.cc:4037 src/ftpclass.cc:4064
 msgid "Turning on sync-mode"
 msgstr "開啟 sync-mode"
 
-#: src/ftpclass.cc:4224
+#: src/ftpclass.cc:4225
 msgid "Switching passive mode on"
 msgstr "開啟 passive 模式"
 
-#: src/ftpclass.cc:4371
+#: src/ftpclass.cc:4372
 msgid "FEAT negotiation..."
 msgstr "支援功能 (FEAT) 協商……"
 
-#: src/ftpclass.cc:4378
+#: src/ftpclass.cc:4379
 msgid "Sending commands..."
 msgstr "正在送出指令……"
 
-#: src/ftpclass.cc:4382
+#: src/ftpclass.cc:4383
 msgid "Delaying before retry"
 msgstr "重新嘗試之前稍為延遲"
 
-#: src/ftpclass.cc:4401
+#: src/ftpclass.cc:4402
 msgid "TLS negotiation..."
 msgstr "使用 TLS 協定通訊……"
 
-#: src/ftpclass.cc:4405
+#: src/ftpclass.cc:4406
 msgid "Logging in..."
 msgstr "正在登入……"
 
-#: src/ftpclass.cc:4409
+#: src/ftpclass.cc:4410
 msgid "Making data connection..."
 msgstr "正在建立資料傳送連線……"
 
-#: src/ftpclass.cc:4412
+#: src/ftpclass.cc:4413
 msgid "Changing remote directory..."
 msgstr "更改遠端目錄……"
 
-#: src/ftpclass.cc:4418
+#: src/ftpclass.cc:4419
 msgid "Waiting for other copy peer..."
 msgstr "等待複製程序的遠端回應……"
 
-#: src/ftpclass.cc:4420 src/ftpclass.cc:4444
+#: src/ftpclass.cc:4421 src/ftpclass.cc:4445
 msgid "Waiting for transfer to complete"
 msgstr "等待傳送完成"
 
-#: src/ftpclass.cc:4424
+#: src/ftpclass.cc:4425
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "正在等待回應……"
 
-#: src/ftpclass.cc:4426
+#: src/ftpclass.cc:4427
 msgid "Waiting for data connection..."
 msgstr "等待建立資料傳送連線……"
 
-#: src/ftpclass.cc:4432
+#: src/ftpclass.cc:4433
 msgid "Sending data/TLS"
 msgstr "上傳中/TLS"
 
-#: src/ftpclass.cc:4434
+#: src/ftpclass.cc:4435
 msgid "Receiving data/TLS"
 msgstr "下載中/TLS"
 
