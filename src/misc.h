@@ -138,4 +138,7 @@ const char *get_nodename();
 const char *xidna_to_ascii(const char *name);
 bool xtld_name_ok(const char *name);
 
+bool is_ipv4_address(const char *);
+bool is_ipv6_address(const char *);
+
 #endif // MISC_H

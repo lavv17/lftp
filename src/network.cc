@@ -427,18 +427,3 @@ int Networker::SocketBuffered(int sock)
    return 0;
 #endif
 }
-
-bool is_ipv4_address(const char *s)
-{
-   struct in_addr addr;
-   return inet_pton(AF_INET,s,&addr)>0;
-}
-bool is_ipv6_address(const char *s)
-{
-#if INET6
-   struct in6_addr addr;
-   return inet_pton(AF_INET6,s,&addr)>0;
-#else
-   return false;
-#endif
-}
