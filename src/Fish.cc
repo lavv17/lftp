@@ -1174,18 +1174,24 @@ void FishDirList::ResumeInternal()
 static FileSet *ls_to_FileSet(const char *b,int len)
 {
    FileSet *set=new FileSet;
-   char *buf=string_alloca(len+1);
-   memcpy(buf,b,len);
-   buf[len]=0;
-   for(char *line=strtok(buf,"\n"); line; line=strtok(0,"\n"))
-   {
-      int ll=strlen(line);
+   while(len>0) {
+      // find one line
+      const char *line=b;
+      int ll=len;
+      const char *eol=find_char(b,len,'\n');
+      if(eol) {
+	 ll=eol-b;
+	 len-=ll+1;
+	 b+=ll+1;
+      } else {
+	 len=0;
+      }
       if(ll && line[ll-1]=='\r')
-	 line[--ll]=0;
+	 --ll;
       if(ll==0)
 	 continue;
 
-      FileInfo *f=FileInfo::parse_ls_line(line,"GMT");
+      FileInfo *f=FileInfo::parse_ls_line(line,ll,"GMT");
 
       if(!f)
 	 continue;
