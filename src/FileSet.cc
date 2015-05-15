@@ -771,9 +771,11 @@ drwxr-xr-x   4 lav      root         1024 Feb 22 15:32 lib
 lrwxrwxrwx   1 lav      root           33 Feb 14 17:45 ltconfig -> /usr/share/libtool/ltconfig
 NOTE: group may be missing.
 */
-FileInfo *FileInfo::parse_ls_line(const char *line_c,const char *tz)
+FileInfo *FileInfo::parse_ls_line(const char *line_c,int line_len,const char *tz)
 {
-   char *line=alloca_strdup(line_c);
+   char *line=string_alloca(line_len+1);
+   memcpy(line,line_c,line_len);
+   line[line_len]=0;
    char *next=0;
    FileInfo *fi=0; /* don't instantiate until we at least have something */
 #define FIRST_TOKEN strtok_r(line," \t",&next)

@@ -93,7 +93,8 @@ public:
    void SetUser(const char *n);
    void SetGroup(const char *n);
    void LocalFile(const char *name, bool follow_symlinks);
-   static FileInfo *parse_ls_line(const char *line,const char *tz);
+   static FileInfo *parse_ls_line(const char *line,int line_len,const char *tz);
+   static FileInfo *parse_ls_line(const char *line,const char *tz) { return parse_ls_line(line,strlen(line),tz); }
 
    void SetMode(mode_t m) { mode=m; def(MODE); }
    void SetDate(time_t t,int prec) { date.set(t,prec); def(DATE); }
