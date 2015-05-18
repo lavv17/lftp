@@ -300,13 +300,35 @@ yes|no|"")	;;
 *) LDFLAGS="$LDFLAGS -L$zlib_loc/lib"
    CPPFLAGS="$CPPFLAGS -I$zlib_loc/include"
 esac
-AC_CHECK_LIB(z, deflate, [
-   ZLIB=-lz
-   AC_SUBST(ZLIB)
-   AC_DEFINE(HAVE_ZLIB, 1, [Define if you have zlib library])
-],[
+for loc in $zlib_loc default; do
+	old_LDFLAGS="$LDFLAGS"
+	old_CPPFLAGS="$CPPFLAGS"
+	case $loc in
+	yes|no|default|"") ;;
+	*)	LDFLAGS="$LDFLAGS -L$loc/lib"
+		CPPFLAGS="$CPPFLAGS -I$loc/include";;
+	esac
+	AC_CHECK_LIB(z, deflate, [
+	   LDFLAGS="$old_LDFLAGS"
+	   CPPFLAGS="$old_CPPFLAGS"
+	   ZLIB=-lz
+	   case $loc in
+	   yes|no|default|"") ;;
+	   *)	ZLIB_LDFLAGS="-L$loc/lib"
+		ZLIB_CPPFLAGS="-I$loc/include";;
+	   esac
+	   AC_SUBST(ZLIB)
+	   AC_SUBST(ZLIB_LDFLAGS)
+	   AC_SUBST(ZLIB_CPPFLAGS)
+	   AC_DEFINE(HAVE_ZLIB, 1, [Define if you have zlib library])
+	   break
+	])
+	LDFLAGS="$old_LDFLAGS"
+	CPPFLAGS="$old_CPPFLAGS"
+done
+if test "x$ZLIB" = x; then
    AC_MSG_ERROR([cannot find -lz library, install zlib-devel package])
-])
+fi
 
 AC_CHECK_LIB(expat, XML_ParserCreateNS, [
    EXPAT_LIBS=-lexpat

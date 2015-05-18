@@ -60,7 +60,7 @@ liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDF
 liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB)
 
 proto_ftp_la_LIBADD  = liblftp-network.la
-proto_http_la_LIBADD = liblftp-network.la $(EXPAT_LIBS) $(ZLIB)
+proto_http_la_LIBADD = liblftp-network.la $(EXPAT_LIBS) $(ZLIB_LDFLAGS) $(ZLIB)
 proto_fish_la_LIBADD = liblftp-network.la liblftp-pty.la
 proto_sftp_la_LIBADD = liblftp-network.la liblftp-pty.la
 cmd_torrent_la_LIBADD  = liblftp-network.la
@@ -107,7 +107,7 @@ example2_LDADD = liblftp-tasks.la
 
 CLEANFILES = *.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/trio $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/trio $(ZLIB_CPPFLAGS) $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 
 # libtool does not strip modules, do it here.
 install-data-hook:
