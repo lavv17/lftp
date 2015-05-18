@@ -295,11 +295,6 @@ fi
 AC_ARG_WITH(zlib,
 AS_HELP_STRING([--with-zlib=/path], [use zlib at /path]),
 	[zlib_loc="$withval"])
-case "$zlib_loc" in
-yes|no|"")	;;
-*) LDFLAGS="$LDFLAGS -L$zlib_loc/lib"
-   CPPFLAGS="$CPPFLAGS -I$zlib_loc/include"
-esac
 for loc in $zlib_loc default; do
 	old_LDFLAGS="$LDFLAGS"
 	old_CPPFLAGS="$CPPFLAGS"
