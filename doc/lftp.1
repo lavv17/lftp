@@ -1190,7 +1190,9 @@ The value is used when `open' is used
 with just host name without protocol. Default is `ftp'.
 .TP
 .BR cmd:fail-exit \ (boolean)
-if true, exit when an unconditional (without || and && at begin) command fails.
+if true, exit when a command fails and the following command is
+unconditional (i.e. does not begin with || or &&). lftp exits
+after the unconditional command is issued without executing it.
 .TP
 .BR cmd:interactive \ (tri-boolean)
 when true, lftp acts interactively, handles terminal signals and outputs
