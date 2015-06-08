@@ -804,7 +804,7 @@ FileInfo *FileInfo::parse_ls_line(const char *line_c,int line_len,const char *tz
    case('p'): // pipe
    case('s'): // sock
    case('D'): // Door
-      return 0;  // ignore
+      // ignore them
    default:
       ERR;
    }
