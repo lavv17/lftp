@@ -91,10 +91,10 @@ void ChmodJob::CurrentFinished(const char *d,const FileInfo *fi)
    if(verbose == V_ALL || (verbose == V_CHANGES
 			 && (!(fi->defined&fi->mode) || mode != (int)fi->mode)))
    {
-      char perms[11];               /* "-rwxrwxrwx" ls-style modes. */
+      char perms[12];               /* "-rwxrwxrwx " ls-style modes. */
 
       strmode (mode, perms);
-      perms[10] = '\0';             /* `mode_string' does not null terminate. */
+      perms[10] = '\0';
 
       eprintf (fmt, fi->name.get(), (int) mode, perms+1);
    }

@@ -89,7 +89,6 @@ void FileSetOutput::print(FileSet &fs, const JobRef<OutputJob>& o) const
 	 if(f->filetype == FileInfo::DIRECTORY) mode[0] = 'd';
 	 else if(f->filetype == FileInfo::SYMLINK) mode[0] = 'l';
 	 else mode[0] = '-';
-	 strcat(mode, " ");
 
 	 c.add(mode, "");
       }
