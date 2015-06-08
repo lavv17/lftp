@@ -157,13 +157,15 @@ void StatusLine::WriteTitle(const char *s, int fd) const
 
    xstring &disp=xstring::get_tmp();
 
-   /* If we have no format, and we have both tsl and fsl, use them: */
-   if((!status_format || !*status_format) && to_status_line && from_status_line)
+   if(status_format && *status_format)
+      disp.set_allocated(Subst(status_format, subst));
+   else if(to_status_line && from_status_line)
+      /* If we have no format, and we have both tsl and fsl, use them: */
       disp.vset(to_status_line, s, from_status_line, NULL);
    else
-      disp.set_allocated(Subst(status_format, subst));
+      return;
 
-   write(fd, disp, strlen(disp));
+   write(fd, disp, disp.length());
 }
 
 void StatusLine::update(const char *const *newstr,int newstr_height)
