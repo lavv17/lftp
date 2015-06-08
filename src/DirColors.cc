@@ -269,6 +269,7 @@ void DirColors::Parse(const char *p)
 	       /* next should be . */
 	       if(*p++ != '.') {
 		  state = -1;
+		  break;
 	       }
 
 	       ext = buf;
