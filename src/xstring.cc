@@ -329,14 +329,16 @@ xstring& xstring::vappendf(const char *format, va_list ap)
    {
       va_list tmp;
       VA_COPY(tmp,ap);
-      size_t res=vsnprintf(buf+len, size-len, format, tmp);
+      int res=vsnprintf(buf+len, size-len, format, tmp);
       va_end(tmp);
-      if(res>=0 && res<size-len)
+      if(res<0)
+	 return *this; // error
+      if((size_t)res<size-len)
       {
 	 set_length(len+res);
 	 return *this;
       }
-      get_space(res>size-len ? len+res+1 : len+(size-len)*2);
+      get_space((size_t)res>size-len ? len+res+1 : len+(size-len)*2);
    }
 }
 xstring& xstring::setf(const char *format, ...)
