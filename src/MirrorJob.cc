@@ -261,12 +261,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
    target_name_rel=alloca_strdup(target_name_rel);
 
    FileInfo::type filetype=FileInfo::NORMAL;
-   if(file->defined&file->TYPE)
+   if(file->Has(file->TYPE))
       filetype=file->filetype;
    else
    {
       FileInfo *target=target_set->FindByName(file->name);
-      if(target && (target->defined&target->TYPE))
+      if(target && target->Has(target->TYPE))
 	 filetype=target->filetype;
    }
 
@@ -277,7 +277,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 bool remove_target=false;
 	 bool cont_this=false;
 	 bool use_pget=(pget_n>1) && target_is_local;
-	 if((file->defined&file->SIZE) && file->size<pget_minchunk*2)
+	 if(file->Has(file->SIZE) && file->size<pget_minchunk*2)
 	    use_pget=false;
 	 if(target_is_local)
 	 {
@@ -288,8 +288,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       if(old)
 		  goto skip;  // file has appeared after mirror start
 	       old=old_files_set->FindByName(file->name);
-	       if(old && ((old->defined&old->SIZE && old->size!=st.st_size)
-			||(old->defined&old->DATE && old->date!=st.st_mtime)))
+	       if(old && ((old->Has(old->SIZE) && old->size!=st.st_size)
+			||(old->Has(old->DATE) && old->date!=st.st_mtime)))
 		  goto skip;  // the file has changed after mirror start
 	    }
 	 }
@@ -297,11 +297,11 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(old)
 	 {
 	    if((flags&CONTINUE)
-	    && (old->defined&file->TYPE) && old->filetype==old->NORMAL
+	    && old->Has(file->TYPE) && old->filetype==old->NORMAL
 	    && (flags&IGNORE_TIME ||
-	    	((file->defined&file->DATE) && (old->defined&old->DATE)
+	    	(file->Has(file->DATE) && old->Has(old->DATE)
 	    	&& file->date + file->date.ts_prec < old->date - old->date.ts_prec))
-	    && (file->defined&file->SIZE) && (old->defined&old->SIZE)
+	    && file->Has(file->SIZE) && old->Has(old->SIZE)
 	    && file->size >= old->size)
 	    {
 	       cont_this=true;
@@ -380,9 +380,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(FlagSet(ASCII))
 	    c->Ascii();
 	 CopyJob *cp=(use_pget ? new pgetJob(c,file->name,pget_n) : new CopyJob(c,file->name,"mirror"));
-	 if(file->defined&file->DATE)
+	 if(file->Has(file->DATE))
 	    cp->SetDate(file->date);
-	 if(file->defined&file->SIZE)
+	 if(file->Has(file->SIZE))
 	    cp->SetSize(file->size);
 	 TransferStarted(cp);
 	 cp->cmdline.vset("\\transfer `",source_name_rel,"'",NULL);
@@ -407,7 +407,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       goto skip;
 	    }
 	 }
-	 else if(old->defined&old->TYPE && old->filetype==old->DIRECTORY)
+	 else if(old->TypeIs(old->DIRECTORY))
 	 {
 	    create_target_dir=false;
 	 }
@@ -528,7 +528,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       goto skip;
 	 }
 
-	 if(file->defined&file->SYMLINK)
+	 if(file->Has(file->SYMLINK))
 	 {
 	    struct stat st;
 	    if(lstat(target_name,&st)!=-1)
@@ -1068,7 +1068,7 @@ int   MirrorJob::Do()
 	 if(script)
 	 {
 	    ArgV args("rm");
-	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+	    if(file->TypeIs(file->DIRECTORY))
 	    {
 	       if(FlagSet(NO_RECURSION) && !FlagSet(SCAN_ALL_FIRST))
 		  args.setarg(0,"rmdir");
@@ -1087,7 +1087,7 @@ int   MirrorJob::Do()
 	    rmJob *j=new rmJob(target_session->Clone(),args);
 	    j->cmdline.set_allocated(args->Combine());
 	    JobStarted(j);
-	    if(file->defined&file->TYPE && file->filetype==file->DIRECTORY)
+	    if(file->TypeIs(file->DIRECTORY))
 	    {
 	       if(FlagSet(NO_RECURSION) && !FlagSet(SCAN_ALL_FIRST))
 	       {
@@ -1127,12 +1127,12 @@ int   MirrorJob::Do()
 	 if(!file)
 	    goto pre_FINISHING_FIX_LOCAL;
 	 to_transfer->next();
-	 if((file->defined&file->TYPE) && file->filetype==file->SYMLINK)
+	 if(file->TypeIs(file->SYMLINK))
 	    continue;
-	 if(!(file->defined&file->MODE))
+	 if(!file->Has(file->MODE))
 	    continue;
 	 mode_t mode_mask=get_mode_mask();
-	 mode_t def_mode=(file->filetype==file->DIRECTORY?0775:0664)&~mode_mask;
+	 mode_t def_mode=(file->TypeIs(file->DIRECTORY)?0775:0664)&~mode_mask;
 	 if(target_is_local && file->mode==def_mode)
 	 {
 	    struct stat st;
