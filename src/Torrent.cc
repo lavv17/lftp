@@ -1580,7 +1580,7 @@ bool FDCache::CloseOne()
    int oldest_time=0;
    const xstring *oldest_key=0;
    for(int i=0; i<3; i++) {
-      for(const FD *f=&cache[i].each_begin(); f; f=&cache[i].each_next()) {
+      for(const FD *f=&cache[i].each_begin(); f!=&cache[i].zero; f=&cache[i].each_next()) {
 	 if(oldest_key==0 || f->last_used<oldest_time) {
 	    oldest_key=&cache[i].each_key();
 	    oldest_time=f->last_used;
