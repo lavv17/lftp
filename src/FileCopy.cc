@@ -1051,7 +1051,8 @@ void FileCopyPeerFA::OpenSession()
    current->Timeout(0);	// mark it MOVED.
    if(mode==GET)
    {
-      if(size!=NO_SIZE && size!=NO_SIZE_YET && seek_pos>=size && !ascii)
+      if(size!=NO_SIZE && size!=NO_SIZE_YET && !ascii
+      && (seek_pos>size || (seek_pos==size && size>0)))
       {
       past_eof:
 	 debug((10,"copy src: seek past eof (seek_pos=%lld, size=%lld)\n",
