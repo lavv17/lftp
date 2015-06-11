@@ -209,3 +209,15 @@ const char *module_error_message()
    return _("modules are not supported on this system");
 #endif
 }
+
+bool module_init_preloaded(const char *prefix)
+{
+#if defined(HAVE_DLOPEN) && defined(RTLD_DEFAULT)
+   init_t init=(init_t)dlsym(RTLD_DEFAULT,xstring::cat(prefix,"_module_init",NULL));
+   if(init) {
+      (*init)(0,0);
+      return true;
+   }
+#endif
+   return false;
+}

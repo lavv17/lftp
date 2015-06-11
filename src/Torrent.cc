@@ -4106,10 +4106,18 @@ CMD(torrent)
 }
 
 #include "modconfig.h"
-#ifdef MODULE_CMD_TORRENT
-void module_init()
+#ifndef MODULE_CMD_TORRENT
+# define module_init torrent_module_init
+#endif
+CDECL void module_init()
 {
    Torrent::ClassInit();
-   CmdExec::RegisterCommand("torrent",cmd_torrent);
+   CmdExec::RegisterCommand("torrent",cmd_torrent,0,
+	 N_("Start BitTorrent job for the given torrent-files, which can be a local file,\n"
+	 "URL, magnet link or plain info_hash written in hex or base32. Local wildcards\n"
+	 "are expanded. Options:\n"
+	 " -O <base>      specifies base directory where files should be placed\n"
+	 " --force-valid  skip file validation\n"
+	 " --dht-bootstrap=<node>  bootstrap DHT by sending a query to the node\n"
+	 " --share        share specified file or directory\n"));
 }
-#endif

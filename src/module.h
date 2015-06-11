@@ -22,5 +22,6 @@
 
 void *module_load(const char *name,int argc,const char *const *argv);
 const char *module_error_message();
+bool module_init_preloaded(const char *prefix);
 
 #endif

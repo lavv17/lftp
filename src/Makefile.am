@@ -98,6 +98,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  buffer_std.cc buffer_std.h
 liblftp_jobs_la_LIBADD = $(JOB_MODULES_STATIC) liblftp-tasks.la
 
+lftp_LDFLAGS = -export-dynamic
 lftp_LDADD = liblftp-jobs.la $(READLINE)
 lftp_DEPENDENCIES = liblftp-jobs.la $(READLINE_DEPEND)
 

@@ -473,7 +473,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
-   {"torrent", cmd_torrent, N_("torrent [-O <dir>] <file|URL>...")},
+   {"torrent", cmd_torrent, N_("torrent [OPTS] <file|URL>..."), "module"},
    {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
 	 N_("Use specified info for remote login. If you specify URL, the password\n"
 	 "will be cached for future usage.\n")},
@@ -2593,6 +2593,15 @@ bool CmdExec::print_cmd_help(const char *cmd)
 
    if(part==1)
    {
+      if(c->creator==0) {
+	 // try to load the module which can have a help text
+	 if(load_cmd_module(c->name))
+	    find_cmd(c->name,&c);
+      } else if((c->long_desc==0 && c->short_desc==0)
+	       || (c->long_desc && !strcmp(c->long_desc,"module"))) {
+	 if(module_init_preloaded(c->name))
+	    find_cmd(c->name,&c);
+      }
       if(c->long_desc==0 && c->short_desc==0)
       {
 	 printf(_("Sorry, no help for %s\n"),cmd);

@@ -1237,22 +1237,32 @@ const char *CmdExec::CmdByIndex(int i)
    return static_cmd_table[i].name;
 }
 
-Job *CmdExec::default_cmd()
+bool CmdExec::load_cmd_module(const char *op)
 {
-   const char *op=args->a0();
+   if(module_init_preloaded(op))
+      return true;
 #ifdef WITH_MODULES
    const char *modname=xstring::cat("cmd-",op,NULL);
    if(module_load(modname,0,0)==0)
    {
       eprintf("%s\n",module_error_message());
-      return 0;
+      return false;
    }
-   builtin=BUILTIN_EXEC_RESTART;
-   return this;
+   return true;
 #else
    eprintf(_("%s: command `%s' is not compiled in.\n"),op,op);
-   return 0;
+   return false;
 #endif
+}
+
+Job *CmdExec::default_cmd()
+{
+   const char *op=args->a0();
+   if(load_cmd_module(op)) {
+      builtin=BUILTIN_EXEC_RESTART;
+      return this;
+   }
+   return 0;
 }
 Job *CmdExec::builtin_local()
 {

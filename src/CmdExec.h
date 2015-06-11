@@ -249,6 +249,7 @@ public:
    Job *builtin_queue_edit();
    Job *builtin_local();
 
+   bool load_cmd_module(const char *op);
    Job *default_cmd();
 
    void ChangeSession(FileAccess *new_session);
