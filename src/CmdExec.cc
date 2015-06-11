@@ -1210,7 +1210,7 @@ void CmdExec::RegisterCommand(const char *name,cmd_creator_t creator,const char 
       c->creator=creator;
       if(short_desc)
 	 c->short_desc=short_desc;
-      if(long_desc)
+      if(long_desc || strlen(c->long_desc)<2)
 	 c->long_desc=long_desc;
       return;
    }
@@ -1239,10 +1239,10 @@ const char *CmdExec::CmdByIndex(int i)
 
 bool CmdExec::load_cmd_module(const char *op)
 {
-   if(module_init_preloaded(op))
+   const char *modname=xstring::cat("cmd-",op,NULL);
+   if(module_init_preloaded(modname))
       return true;
 #ifdef WITH_MODULES
-   const char *modname=xstring::cat("cmd-",op,NULL);
    if(module_load(modname,0,0)==0)
    {
       eprintf("%s\n",module_error_message());

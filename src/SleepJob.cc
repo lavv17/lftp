@@ -294,11 +294,25 @@ Job *cmd_at(CmdExec *parent)
 #undef args
 
 #include "modconfig.h"
-#ifdef MODULE_CMD_SLEEP
-void module_init()
-{
-   CmdExec::RegisterCommand("sleep",cmd_sleep);
-   CmdExec::RegisterCommand("at",cmd_at);
-   CmdExec::RegisterCommand("repeat",cmd_repeat);
-}
+#ifndef MODULE_CMD_SLEEP
+# define module_init cmd_sleep_module_init
 #endif
+CDECL void module_init()
+{
+   CmdExec::RegisterCommand("sleep",cmd_sleep,0,
+	 N_("Usage: sleep <time>[unit]\n"
+	 "Sleep for given amount of time. The time argument can be optionally\n"
+	 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
+	 "By default time is assumed to be seconds.\n")
+   );
+   CmdExec::RegisterCommand("at",cmd_at);
+   CmdExec::RegisterCommand("repeat",cmd_repeat,0,
+	 N_("Repeat specified command with a delay between iterations.\n"
+	 "Default delay is one second, default command is empty.\n"
+	 " -c <count>  maximum number of iterations\n"
+	 " -d <delay>  delay between iterations\n"
+	 " --while-ok  stop when command exits with non-zero code\n"
+	 " --until-ok  stop when command exits with zero code\n"
+	 " --weak      stop when lftp moves to background.\n")
+   );
+}

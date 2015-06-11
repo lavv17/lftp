@@ -135,6 +135,15 @@ static int access_so(xstring &fullpath)
    return res;
 }
 
+static const char *find_module_alias(const char *path)
+{
+   const char *const *scan;
+   for(scan=module_aliases; *scan; scan+=2)
+      if(!strcmp(path,*scan))
+	 return scan[1];
+   return path;
+}
+
 void *module_load(const char *path,int argc,const char *const *argv)
 {
 #ifdef HAVE_DLOPEN
@@ -150,15 +159,7 @@ void *module_load(const char *path,int argc,const char *const *argv)
    }
    else
    {
-      const char *const *scan;
-      for(scan=module_aliases; *scan; scan+=2)
-      {
-	 if(!strcmp(path,*scan))
-	 {
-	    path=scan[1];
-	    break;
-	 }
-      }
+      path=find_module_alias(path);
       char *p=alloca_strdup(modules_path);
       for(p=strtok(p,":"); p; p=strtok(0,":"))
       {
@@ -210,10 +211,17 @@ const char *module_error_message()
 #endif
 }
 
-bool module_init_preloaded(const char *prefix)
+bool module_init_preloaded(const char *module)
 {
 #if defined(HAVE_DLOPEN) && defined(RTLD_DEFAULT)
-   init_t init=(init_t)dlsym(RTLD_DEFAULT,xstring::cat(prefix,"_module_init",NULL));
+   module=find_module_alias(module);
+   char *init_fn=alloca_strdup2(module,12);
+   // change dashes to underscores in the function name
+   for(char *scan=init_fn; *scan; scan++)
+      if(*scan=='-')
+	 *scan='_';
+   strcat(init_fn,"_module_init");
+   init_t init=(init_t)dlsym(RTLD_DEFAULT,init_fn);
    if(init) {
       (*init)(0,0);
       return true;

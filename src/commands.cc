@@ -90,6 +90,10 @@ CMD(slot); CMD(source); CMD(subsh); CMD(suspend); CMD(tasks); CMD(torrent);
 CMD(user); CMD(ver); CMD(wait); CMD(empty); CMD(notempty); CMD(true);
 CMD(false);
 
+#define HELP_IN_MODULE "m"
+#define ALIAS_FOR(cmd) cmd_##cmd,0,#cmd
+#define ALIAS_FOR2(a,cmd) cmd_##cmd,0,a
+
 #ifdef MODULE_CMD_MIRROR
 # define cmd_mirror 0
 #endif
@@ -102,8 +106,6 @@ CMD(false);
 # define cmd_torrent 0
 #endif
 
-#define S "\001"
-
 const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 {
    {"!",       cmd_shell,  N_("!<shell-command>"),
@@ -111,14 +113,14 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"(",       cmd_subsh,  N_("(commands)"),
 	 N_("Group commands together to be executed as one command\n"
 	 "You can launch such a group in background\n")},
-   {"?",       cmd_help,   0,"help"},
+   {"?", ALIAS_FOR(help)},
    {"alias",   cmd_alias,  N_("alias [<name> [<value>]]"),
 	 N_("Define or undefine alias <name>. If <value> omitted,\n"
 	 "the alias is undefined, else is takes the value <value>.\n"
          "If no argument is given the current aliases are listed.\n")},
    {"anon",    cmd_anon,   0,
 	 N_("anon - login anonymously (by default)\n")},
-   {"at",      cmd_at},
+   {"at",      cmd_at, 0, HELP_IN_MODULE},
    {"bookmark",cmd_bookmark,N_("bookmark [SUBCMD]"),
 	 N_("bookmark command controls bookmarks\n\n"
 	 "The following subcommands are recognized:\n"
@@ -128,7 +130,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "  edit               - start editor on bookmarks file\n"
 	 "  import <type>      - import foreign bookmarks\n"
 	 "  list               - list bookmarks (default)\n")},
-   {"bye",     cmd_exit,   0,"exit"},
+   {"bye", ALIAS_FOR(exit)},
    {"cache",   cmd_cache,  N_("cache [SUBCMD]"),
 	 N_("cache command controls local memory cache\n\n"
 	 "The following subcommands are recognized:\n"
@@ -207,7 +209,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	    "-s flag on the commandline as well.  Add `-i' to cls-completion-default\n"
 	    "to make filename completion case-insensitive.\n"
 	   )},
-   {"connect", cmd_open,   0,"open"},
+   {"connect", ALIAS_FOR(open)},
    {"command", cmd_command},
    {"debug",   cmd_debug,  N_("debug [OPTS] [<level>|off]"),
 	 N_("Set debug level to given value or turn debug off completely.\n"
@@ -245,7 +247,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "If no jobs active, the code is passed to operating system as lftp\n"
 	 "termination status. If omitted, exit code of last command is used.\n"
 	 "`bg' forces moving to background if cmd:move-background is false.\n")},
-   {"fg",      cmd_wait,   0,"wait"},
+   {"fg", ALIAS_FOR(wait)},
    {"find",    cmd_find,0,
 	 N_("Usage: find [OPTS] [directory]\n"
 	 "Print contents of specified directory or current directory recursively.\n"
@@ -294,7 +296,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("Link <file1> to <file2>\n")},
    {"lpwd",    cmd_lpwd},
    {"local",   cmd_local},
-   {"login",   cmd_user,   0,"user"},
+   {"login", ALIAS_FOR(user)},
    {"ls",      cmd_ls,	    N_("ls [<args>]"),
 	 N_("List remote files. You can redirect output of this command to file\n"
 	 "or via pipe to external command.\n"
@@ -309,34 +311,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -E  delete remote files after successful transfer\n"
 	 " -a  use ascii mode (binary is the default)\n"
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
-   {"mirror",  cmd_mirror, N_("mirror [OPTS] [remote [local]]"),
-	 N_("\nMirror specified remote directory to local directory\n\n"
-	 " -c, --continue         continue a mirror job if possible\n"
-	 " -e, --delete           delete files not present at remote site\n"
-	 "     --delete-first     delete old files before transferring new ones\n"
-	 " -s, --allow-suid       set suid/sgid bits according to remote site\n"
-	 "     --allow-chown      try to set owner and group on files\n"
-	 "     --ignore-time      ignore time when deciding whether to download\n"
-	 " -n, --only-newer       download only newer files (-c won't work)\n"
-	 " -r, --no-recursion     don't go to subdirectories\n"
-	 " -p, --no-perms         don't set file permissions\n"
-	 "     --no-umask         don't apply umask to file modes\n"
-	 " -R, --reverse          reverse mirror (put files)\n"
-	 " -L, --dereference      download symbolic links as files\n"
-	 " -N, --newer-than=SPEC  download only files newer than specified time\n"
-	 " -P, --parallel[=N]     download N files in parallel\n"
-	 " -i RX, --include RX    include matching files\n"
-	 " -x RX, --exclude RX    exclude matching files\n"
-	 "                        RX is extended regular expression\n"
-	 " -v, --verbose[=N]      verbose operation\n"
-	 "     --log=FILE         write lftp commands being executed to FILE\n"
-	 "     --script=FILE      write lftp commands to FILE, but don't execute them\n"
-	 "     --just-print, --dry-run    same as --script=-\n"
-	 "\n"
-	 "When using -R, the first directory is local and the second is remote.\n"
-	 "If the second directory is omitted, basename of first directory is used.\n"
-	 "If both directories are omitted, current local and remote directories are used.\n"
-	 )},
+   {"mirror",  cmd_mirror, N_("mirror [OPTS] [remote [local]]"), HELP_IN_MODULE},
    {"mkdir",   cmd_mkdir,  N_("mkdir [OPTS] <dirs>"),
 	 N_("Make remote directories\n"
 	 " -p  make all levels of path\n"
@@ -412,7 +387,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -Q                  Output in a format that can be used to re-queue.\n"
 	 "                     Useful with --delete.\n"
 	 )},
-   {"quit",    cmd_exit,   0,"exit"},
+   {"quit", ALIAS_FOR(exit)},
    {"quote",   cmd_ls,	   N_("quote <cmd>"),
 	 N_("Send the command uninterpreted. Use with caution - it can lead to\n"
 	 "unknown remote state and thus will cause reconnect. You cannot\n"
@@ -430,14 +405,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"renlist", cmd_ls,	    0,
 	 N_("Usage: renlist [<args>]\n"
 	 "Same as `nlist', but don't look in cache\n")},
-   {"repeat",  cmd_repeat, N_("repeat [OPTS] [delay] [command]"),
-	 N_("Repeat specified command with a delay between iterations.\n"
-	 "Default delay is one second, default command is empty.\n"
-	 " -c <count>  maximum number of iterations\n"
-	 " -d <delay>  delay between iterations\n"
-	 " --while-ok  stop when command exits with non-zero code\n"
-	 " --until-ok  stop when command exits with zero code\n"
-	 " --weak      stop when lftp moves to background.\n")},
+   {"repeat",  cmd_repeat, N_("repeat [OPTS] [delay] [command]"), HELP_IN_MODULE},
    {"reput",   cmd_get,    0,
 	 N_("Usage: reput <lfile> [-o <rfile>]\n"
 	 "Same as `put -c'\n")},
@@ -457,15 +425,11 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "It can be changed by options:\n"
    	 " -a  list all settings, including default values\n"
 	 " -d  list only default values, not necessary current ones\n")},
-   {"shell",   cmd_shell,  0,"!"},
+   {"shell", ALIAS_FOR2("!",shell)},
    {"site",    cmd_ls,	   N_("site <site-cmd>"),
 	 N_("Execute site command <site_cmd> and output the result\n"
 	 "You can redirect its output\n")},
-   {"sleep",   cmd_sleep, 0,
-	 N_("Usage: sleep <time>[unit]\n"
-	 "Sleep for given amount of time. The time argument can be optionally\n"
-	 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
-	 "By default time is assumed to be seconds.\n")},
+   {"sleep",   cmd_sleep, 0, HELP_IN_MODULE},
    {"slot",    cmd_slot, 0,
         N_("Usage: slot [<label>]\n"
    	"List assigned slots.\n"
@@ -473,7 +437,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
    {"suspend", cmd_suspend},
-   {"torrent", cmd_torrent, N_("torrent [OPTS] <file|URL>..."), "module"},
+   {"torrent", cmd_torrent, N_("torrent [OPTS] <file|URL>..."), HELP_IN_MODULE},
    {"user",    cmd_user,   N_("user <user|URL> [<pass>]"),
 	 N_("Use specified info for remote login. If you specify URL, the password\n"
 	 "will be cached for future usage.\n")},
@@ -2593,14 +2557,12 @@ bool CmdExec::print_cmd_help(const char *cmd)
 
    if(part==1)
    {
-      if(c->creator==0) {
+      if(c->creator==0 || !xstrcmp(c->long_desc,HELP_IN_MODULE)) {
 	 // try to load the module which can have a help text
 	 if(load_cmd_module(c->name))
 	    find_cmd(c->name,&c);
-      } else if((c->long_desc==0 && c->short_desc==0)
-	       || (c->long_desc && !strcmp(c->long_desc,"module"))) {
-	 if(module_init_preloaded(c->name))
-	    find_cmd(c->name,&c);
+	 else
+	    return false;
       }
       if(c->long_desc==0 && c->short_desc==0)
       {

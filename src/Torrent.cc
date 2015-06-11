@@ -4107,7 +4107,7 @@ CMD(torrent)
 
 #include "modconfig.h"
 #ifndef MODULE_CMD_TORRENT
-# define module_init torrent_module_init
+# define module_init cmd_torrent_module_init
 #endif
 CDECL void module_init()
 {

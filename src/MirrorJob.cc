@@ -1992,9 +1992,37 @@ CMD(mirror)
 }
 
 #include "modconfig.h"
-#ifdef MODULE_CMD_MIRROR
-void module_init()
-{
-   CmdExec::RegisterCommand("mirror",cmd_mirror);
-}
+#ifndef MODULE_CMD_MIRROR
+# define module_init cmd_mirror_module_init
 #endif
+CDECL void module_init()
+{
+   CmdExec::RegisterCommand("mirror",cmd_mirror,0,
+	 N_("\nMirror specified remote directory to local directory\n\n"
+	 " -c, --continue         continue a mirror job if possible\n"
+	 " -e, --delete           delete files not present at remote site\n"
+	 "     --delete-first     delete old files before transferring new ones\n"
+	 " -s, --allow-suid       set suid/sgid bits according to remote site\n"
+	 "     --allow-chown      try to set owner and group on files\n"
+	 "     --ignore-time      ignore time when deciding whether to download\n"
+	 " -n, --only-newer       download only newer files (-c won't work)\n"
+	 " -r, --no-recursion     don't go to subdirectories\n"
+	 " -p, --no-perms         don't set file permissions\n"
+	 "     --no-umask         don't apply umask to file modes\n"
+	 " -R, --reverse          reverse mirror (put files)\n"
+	 " -L, --dereference      download symbolic links as files\n"
+	 " -N, --newer-than=SPEC  download only files newer than specified time\n"
+	 " -P, --parallel[=N]     download N files in parallel\n"
+	 " -i RX, --include RX    include matching files\n"
+	 " -x RX, --exclude RX    exclude matching files\n"
+	 "                        RX is extended regular expression\n"
+	 " -v, --verbose[=N]      verbose operation\n"
+	 "     --log=FILE         write lftp commands being executed to FILE\n"
+	 "     --script=FILE      write lftp commands to FILE, but don't execute them\n"
+	 "     --just-print, --dry-run    same as --script=-\n"
+	 "\n"
+	 "When using -R, the first directory is local and the second is remote.\n"
+	 "If the second directory is omitted, basename of first directory is used.\n"
+	 "If both directories are omitted, current local and remote directories are used.\n")
+   );
+}
