@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "31 Mar 2015"
+.TH lftp 1 "11 Jun 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.6.2.
+This man page documents lftp version 4.6.3.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -600,6 +600,12 @@ reverse mirror (put files)
 T}
 \-L,	\-\-dereference	T{
 download symbolic links as files
+T}
+	\-\-overwrite	T{
+overwrite plain files without removing them first
+T}
+	\-\-no\-overwrite	T{
+remove and re-create plain files instead of overwriting
 T}
 \-N,	\-\-newer\-than=SPEC	T{
 download only files newer than specified time
@@ -1859,6 +1865,9 @@ affects the order or transfers.
 specifies order of file transfers when sorting by name. E.g. setting this to "*.sfv *.sum" makes mirror to
 transfer files matching *.sfv first, then ones matching *.sum and then all other
 files. To process directories after other files, add "*/" to the end of pattern list.
+.TP
+.BR mirror:overwrite " (boolean)"
+when true, mirror will overwrite plain files instead of removing and re-creating them.
 .TP
 .BR mirror:parallel-directories " (boolean)"
 if true, mirror will start processing of several directories in parallel
