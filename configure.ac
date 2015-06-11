@@ -232,7 +232,7 @@ else
 fi
 
 #test -z "$enable_static" && enable_static=no
-AM_PROG_LIBTOOL
+LT_INIT([dlopen])
 LIBTOOL="$LIBTOOL --silent"
 
 gl_INIT
