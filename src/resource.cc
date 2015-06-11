@@ -338,6 +338,7 @@ static ResType lftp_vars[] = {
    {"mirror:skip-noaccess",	 "no",    ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:no-empty-dirs",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:require-source",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
+   {"mirror:overwrite",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
 
    {"sftp:auto-confirm",	 "no",	  ResMgr::BoolValidate,0},
    {"sftp:max-packets-in-flight","16",	  ResMgr::UNumberValidate,0},

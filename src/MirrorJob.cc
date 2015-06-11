@@ -317,8 +317,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    }
 	    else if(!to_rm_mismatched->FindByName(file->name))
 	    {
-	       Report(_("Removing old file `%s'"),target_name_rel);
-	       remove_target=true;
+	       if(!FlagSet(OVERWRITE)) {
+		  remove_target=true;
+		  Report(_("Removing old file `%s'"),target_name_rel);
+	       } else {
+		  Report(_("Overwriting old file `%s'"),target_name_rel);
+	       }
 	       stats.mod_files++;
 	    }
 	    else
@@ -1580,6 +1584,8 @@ CMD(mirror)
       OPT_DEPTH_FIRST,
       OPT_ASCII,
       OPT_SCAN_ALL_FIRST,
+      OPT_OVERWRITE,
+      OPT_NO_OVERWRITE,
    };
    static const struct option mirror_opts[]=
    {
@@ -1628,6 +1634,8 @@ CMD(mirror)
       {"target-directory",required_argument,0,'O'},
       {"destination-directory",required_argument,0,'O'},
       {"scan-all-first",no_argument,0,OPT_SCAN_ALL_FIRST},
+      {"overwrite",no_argument,0,OPT_OVERWRITE},
+      {"no-overwrite",no_argument,0,OPT_NO_OVERWRITE},
       {0}
    };
 
@@ -1660,6 +1668,8 @@ CMD(mirror)
       flags|=MirrorJob::NO_PERMS;
    if(ResMgr::QueryBool("mirror:dereference",0))
       flags|=MirrorJob::RETR_SYMLINKS;
+   if(ResMgr::QueryBool("mirror:overwrite",0))
+      flags|=MirrorJob::OVERWRITE;
 
    const char *source_dir=NULL;
    const char *target_dir=NULL;
@@ -1826,6 +1836,12 @@ CMD(mirror)
 	 break;
       case(OPT_ASCII):
 	 flags|=MirrorJob::ASCII|MirrorJob::IGNORE_SIZE;
+	 break;
+      case(OPT_OVERWRITE):
+	 flags|=MirrorJob::OVERWRITE;
+	 break;
+      case(OPT_NO_OVERWRITE):
+	 flags&=~MirrorJob::OVERWRITE;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());

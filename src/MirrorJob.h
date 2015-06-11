@@ -194,6 +194,7 @@ public:
       DEPTH_FIRST=1<<17,
       ASCII=1<<18,
       SCAN_ALL_FIRST=1<<19,
+      OVERWRITE=1<<20,
    };
 
    void SetFlags(int f,bool v)
