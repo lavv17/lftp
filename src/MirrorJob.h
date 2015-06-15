@@ -28,6 +28,15 @@
 
 class MirrorJob : public Job
 {
+public:
+   enum recursion_mode_t {
+      RECURSION_ALWAYS,
+      RECURSION_NEVER,
+      RECURSION_MISSING,
+      RECURSION_NEWER,
+   };
+
+private:
    enum state_t
    {
       INITIAL_STATE,
@@ -113,6 +122,7 @@ class MirrorJob : public Job
    int	 &transfer_count;
 
    int	 flags;
+   recursion_mode_t recursion_mode;
    int	 max_error_count;
 
    Ref<PatternSet> my_exclude;
@@ -196,7 +206,6 @@ public:
       SCAN_ALL_FIRST=1<<19,
       OVERWRITE=1<<20,
    };
-
    void SetFlags(int f,bool v)
    {
       if(v)
@@ -242,6 +251,7 @@ public:
    void Fg();
    void Bg();
 
+   const char *SetRecursionMode(const char *r);
    const char *SetScriptFile(const char *n);
    void	 ScriptOnly(bool yes=true)
       {

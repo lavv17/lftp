@@ -396,7 +396,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
       }
       case(FileInfo::DIRECTORY):
       {
-	 if(flags&NO_RECURSION)
+	 if(recursion_mode==RECURSION_NEVER || FlagSet(NO_RECURSION))
 	    goto skip;
 
 	 bool create_target_dir=true;
@@ -464,6 +464,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 mj->skip_noaccess=skip_noaccess;
 	 mj->create_target_dir=create_target_dir;
 	 mj->no_target_dir=no_target_dir;
+	 mj->recursion_mode=recursion_mode;
 
 	 mj->script=script;
 	 mj->script_needs_closing=false;
@@ -604,8 +605,19 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
       to_mkdir->SubtractAny(dest);
    }
 
-   if(flags&NO_RECURSION)
+   switch(recursion_mode) {
+   case RECURSION_NEVER:
       to_transfer->SubtractDirs();
+      break;
+   case RECURSION_MISSING:
+      to_transfer->SubtractDirs(dest);
+      break;
+   case RECURSION_NEWER:
+      to_transfer->SubtractNotOlderDirs(dest);
+      break;
+   case RECURSION_ALWAYS:
+      break;
+   }
 
    if(skip_noaccess)
       to_transfer->ExcludeUnaccessible();
@@ -1074,7 +1086,7 @@ int   MirrorJob::Do()
 	    ArgV args("rm");
 	    if(file->TypeIs(file->DIRECTORY))
 	    {
-	       if(FlagSet(NO_RECURSION) && !FlagSet(SCAN_ALL_FIRST))
+	       if(recursion_mode==RECURSION_NEVER)
 		  args.setarg(0,"rmdir");
 	       else
 		  args.Append("-r");
@@ -1093,7 +1105,7 @@ int   MirrorJob::Do()
 	    JobStarted(j);
 	    if(file->TypeIs(file->DIRECTORY))
 	    {
-	       if(FlagSet(NO_RECURSION) && !FlagSet(SCAN_ALL_FIRST))
+	       if(recursion_mode==RECURSION_NEVER)
 	       {
 		  args->setarg(0,"rmdir");
 		  j->Rmdir();
@@ -1554,6 +1566,27 @@ const char *MirrorJob::AddPattern(Ref<PatternSet>& exclude,char opt,const char *
    return NULL; // no error
 }
 
+const char *MirrorJob::SetRecursionMode(const char *m)
+{
+   struct { const char name[8]; recursion_mode_t mode; } map[]={
+      {"always", RECURSION_ALWAYS},
+      {"never",  RECURSION_NEVER},
+      {"missing",RECURSION_MISSING},
+      {"newer",  RECURSION_NEWER},
+   };
+   unsigned i;
+   for(i=0; i<sizeof(map)/sizeof(map[0]); i++) {
+      if(!strcasecmp(m,map[i].name)) {
+	 recursion_mode=map[i].mode;
+	 return 0;
+      }
+   }
+   xstring list(map[0].name);
+   for(i=1; i<sizeof(map)/sizeof(map[0]); i++)
+      list.append(", ").append(map[i].name);
+   return xstring::format(_("%s must be one of: %s"),"--recursion",list.get());
+}
+
 CMD(mirror)
 {
 #define args (parent->args)
@@ -1586,6 +1619,7 @@ CMD(mirror)
       OPT_SCAN_ALL_FIRST,
       OPT_OVERWRITE,
       OPT_NO_OVERWRITE,
+      OPT_RECURSION,
    };
    static const struct option mirror_opts[]=
    {
@@ -1636,6 +1670,7 @@ CMD(mirror)
       {"scan-all-first",no_argument,0,OPT_SCAN_ALL_FIRST},
       {"overwrite",no_argument,0,OPT_OVERWRITE},
       {"no-overwrite",no_argument,0,OPT_NO_OVERWRITE},
+      {"recursion",required_argument,0,OPT_RECURSION},
       {0}
    };
 
@@ -1661,6 +1696,7 @@ CMD(mirror)
    bool	 no_empty_dirs=ResMgr::QueryBool("mirror:no-empty-dirs",0);
    const char *script_file=0;
    const char *on_change=0;
+   const char *recursion_mode=0;
 
    Ref<PatternSet> exclude;
 
@@ -1692,8 +1728,7 @@ CMD(mirror)
 	 flags|=MirrorJob::ALLOW_SUID|MirrorJob::ALLOW_CHOWN|MirrorJob::NO_UMASK;
 	 break;
       case('r'):
-	 flags|=MirrorJob::NO_RECURSION;
-	 flags&=~MirrorJob::SCAN_ALL_FIRST;
+	 recursion_mode="never";
 	 break;
       case('n'):
 	 flags|=MirrorJob::ONLY_NEWER;
@@ -1744,8 +1779,7 @@ CMD(mirror)
       case('f'):
       {
 	 // mirror for a single file (or glob pattern).
-	 flags|=MirrorJob::NO_RECURSION;
-	 flags&=~MirrorJob::SCAN_ALL_FIRST;
+	 recursion_mode="never";
 	 MirrorJob::AddPattern(exclude,'I',basename_ptr(optarg));
 	 source_dir=dirname(optarg);
 	 source_dir=alloca_strdup(source_dir); // save the temp string
@@ -1843,6 +1877,9 @@ CMD(mirror)
       case(OPT_NO_OVERWRITE):
 	 flags&=~MirrorJob::OVERWRITE;
 	 break;
+      case(OPT_RECURSION):
+	 recursion_mode=optarg;
+	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
@@ -1850,7 +1887,7 @@ CMD(mirror)
       }
    }
 
-   if(exclude && !(flags&MirrorJob::NO_RECURSION))
+   if(exclude && strcasecmp(recursion_mode,"never"))
    {
       /* Users usually don't want to exclude all directories when recursing */
       if(exclude->GetFirstType()==PatternSet::INCLUDE)
@@ -1957,7 +1994,7 @@ CMD(mirror)
    if(no_empty_dirs)
       flags|=MirrorJob::NO_EMPTY_DIRS|MirrorJob::DEPTH_FIRST;
 
-   Ref<MirrorJob> j(new MirrorJob(0,source_session.borrow(),target_session.borrow(),source_dir,target_dir));
+   JobRef<MirrorJob> j(new MirrorJob(0,source_session.borrow(),target_session.borrow(),source_dir,target_dir));
    j->SetFlags(flags,1);
    j->SetVerbose(verbose);
    j->SetExclude(exclude.borrow());
@@ -1982,13 +2019,19 @@ CMD(mirror)
    if(use_pget>1 && !(flags&MirrorJob::ASCII))
       j->SetPGet(use_pget);
 
+   if(recursion_mode) {
+      const char *err=j->SetRecursionMode(recursion_mode);
+      if(err) {
+	 eprintf("%s: %s\n",args->a0(),err);
+	 return 0;
+      }
+   }
    if(script_file)
    {
       const char *err=j->SetScriptFile(script_file);
       if(err)
       {
 	 eprintf("%s: %s\n",args->a0(),err);
-	 j->DeleteLater();
 	 return 0;
       }
    }

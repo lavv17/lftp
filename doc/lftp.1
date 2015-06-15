@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "11 Jun 2015"
+.TH lftp 1 "15 Jun 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -586,6 +586,9 @@ T}
 \-r,	\-\-no\-recursion	T{
 don't go to subdirectories
 T}
+\-r,	\-\-recursion=\fIMODE\fP	T{
+go to subdirectories on a condition
+T}
 	\-\-no\-symlinks	T{
 don't create symbolic links
 T}
@@ -607,22 +610,22 @@ T}
 	\-\-no\-overwrite	T{
 remove and re-create plain files instead of overwriting
 T}
-\-N,	\-\-newer\-than=SPEC	T{
+\-N,	\-\-newer\-than=\fISPEC\fP	T{
 download only files newer than specified time
 T}
-	\-\-older\-than=SPEC	T{
+	\-\-older\-than=\fISPEC\fP	T{
 download only files older than specified time
 T}
-	\-\-size\-range=RANGE	T{
+	\-\-size\-range=\fIRANGE\fP	T{
 download only files with size in specified range
 T}
-\-P,	\-\-parallel[=N]	T{
+\-P,	\-\-parallel[=\fIN\fP]	T{
 download N files in parallel
 T}
-	\-\-use-pget[\-n=N]	T{
+	\-\-use-pget[\-n=\fIN\fP]	T{
 use pget to transfer every single file
 T}
-	\-\-on\-change=CMD	T{
+	\-\-on\-change=\fICMD\fP	T{
 execute the command if anything has been changed
 T}
 	\-\-loop	T{
@@ -710,6 +713,12 @@ Verbosity level can be selected using \-\-verbose=level option or by several
 .PP
 \-\-only\-newer turns off file size comparison and uploads/downloads
 only newer files even if size is different. By default older files are transferred and replace newer ones.
+.PP
+Recursion mode can be one of `always', `never', `missing', `newer'. With
+the option `newer' mirror compares timestamps of directories and enters a
+directory only if it is older or missing on the target side. Be aware that
+when a file changes the directory timestamp may stay the same, so mirror
+won't process that directory.
 .PP
 You can mirror between two servers if you specify URLs instead of directories.
 FXP is automatically used for transfers between FTP servers, if possible.
