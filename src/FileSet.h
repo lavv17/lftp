@@ -177,6 +177,8 @@ public:
    void  SubtractNotDirs();
    void  SubtractNotIn(const FileSet *);
    void  SubtractSameType(const FileSet *);
+   void  SubtractDirs(const FileSet *);
+   void  SubtractNotOlderDirs(const FileSet *);
    void  SubtractCurr();
    void  Sort(sort_e newsort, bool casefold=false, bool reverse=false);
    void  Unsort();

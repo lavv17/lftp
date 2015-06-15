@@ -298,6 +298,29 @@ void FileSet::SubtractSameType(const FileSet *set)
 	 Sub(i--);
    }
 }
+void FileSet::SubtractDirs(const FileSet *set)
+{
+   for(int i=0; i<fnum; i++)
+   {
+      if(!files[i]->TypeIs(FileInfo::DIRECTORY))
+	 continue;
+      FileInfo *f=set->FindByName(files[i]->name);
+      if(f && f->TypeIs(f->DIRECTORY))
+	 Sub(i--);
+   }
+}
+void FileSet::SubtractNotOlderDirs(const FileSet *set)
+{
+   for(int i=0; i<fnum; i++)
+   {
+      if(!files[i]->TypeIs(FileInfo::DIRECTORY)
+      || !files[i]->Has(FileInfo::DATE))
+	 continue;
+      FileInfo *f=set->FindByName(files[i]->name);
+      if(f && f->TypeIs(f->DIRECTORY) && f->NotOlderThan(files[i]->date))
+	 Sub(i--);
+   }
+}
 
 void FileSet::SubtractTimeCmp(bool (FileInfo::*cmp)(time_t) const,time_t t)
 {
