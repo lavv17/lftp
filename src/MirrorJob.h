@@ -205,6 +205,7 @@ public:
       ASCII=1<<18,
       SCAN_ALL_FIRST=1<<19,
       OVERWRITE=1<<20,
+      UPLOAD_OLDER=1<<21,
    };
    void SetFlags(int f,bool v)
    {

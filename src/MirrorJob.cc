@@ -582,7 +582,7 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    int ignore=0;
    if(flags&ONLY_NEWER)
       ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
-   if(strcmp(target_session->GetProto(),"file"))
+   if(!FlagSet(UPLOAD_OLDER) && strcmp(target_session->GetProto(),"file"))
       ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
    if(flags&IGNORE_TIME)
       ignore|=FileInfo::DATE;
@@ -1620,6 +1620,7 @@ CMD(mirror)
       OPT_OVERWRITE,
       OPT_NO_OVERWRITE,
       OPT_RECURSION,
+      OPT_UPLOAD_OLDER,
    };
    static const struct option mirror_opts[]=
    {
@@ -1671,6 +1672,7 @@ CMD(mirror)
       {"overwrite",no_argument,0,OPT_OVERWRITE},
       {"no-overwrite",no_argument,0,OPT_NO_OVERWRITE},
       {"recursion",required_argument,0,OPT_RECURSION},
+      {"upload-older",no_argument,0,OPT_UPLOAD_OLDER},
       {0}
    };
 
@@ -1879,6 +1881,9 @@ CMD(mirror)
 	 break;
       case(OPT_RECURSION):
 	 recursion_mode=optarg;
+	 break;
+      case(OPT_UPLOAD_OLDER):
+	 flags|=MirrorJob::UPLOAD_OLDER;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());

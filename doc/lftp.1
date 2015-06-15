@@ -580,6 +580,9 @@ T}
 \-n,	\-\-only\-newer	T{
 download only newer files (\-c won't work)
 T}
+	\-\-upload\-older	T{
+upload even files older than remote ones
+T}
 	\-\-no\-empty\-dirs	T{
 don't create empty directories (implies \-\-depth\-first)
 T}
@@ -713,6 +716,10 @@ Verbosity level can be selected using \-\-verbose=level option or by several
 .PP
 \-\-only\-newer turns off file size comparison and uploads/downloads
 only newer files even if size is different. By default older files are transferred and replace newer ones.
+.PP
+\-\-upload\-older allows replacing newer remote files with older ones (when
+the target side is remote). Some remote back-ends cannot preserve timestamps
+so the default is to keep newer files.
 .PP
 Recursion mode can be one of `always', `never', `missing', `newer'. With
 the option `newer' mirror compares timestamps of directories and enters a
