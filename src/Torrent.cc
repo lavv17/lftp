@@ -700,8 +700,11 @@ void Torrent::StartMetadataDownload()
    if(path && access(path,R_OK)>=0) {
       // we have the metadata cached
       LoadMetadata(path);
-      if(metadata)
+      if(metadata) {
+	 if(stop_if_known)
+	    Shutdown();
 	 return;
+      }
    }
    md_download.nset("",0);
 }
@@ -932,6 +935,8 @@ void Torrent::ParseMagnet(const char *m0)
 	    return;
 	 }
 	 StartMetadataDownload();
+	 if(shutting_down)
+	    return;
 	 AddTorrent(this);
       }
       else if(!strcmp(p,"tr")) {
@@ -1185,6 +1190,8 @@ int Torrent::Do()
 	       return MOVED;
 	    }
 	    StartMetadataDownload();
+	    if(shutting_down)
+	       return MOVED;
 	    AddTorrent(this);
 	    return MOVED;
 	 }
@@ -1326,6 +1333,10 @@ int Torrent::Do()
       if(total_left==0) {
 	 complete=true;
 	 seed_timer.Reset();
+	 if(stop_if_complete) {
+	    Shutdown();
+	    return MOVED;
+	 }
       }
       if(building) {
 	 if(!complete) {
@@ -4000,6 +4011,8 @@ CMD(torrent)
       OPT_FORCE_VALID,
       OPT_DHT_BOOTSTRAP,
       OPT_SHARE,
+      OPT_ONLY_NEW,
+      OPT_ONLY_INCOMPLETE,
    };
    static const struct option torrent_opts[]=
    {
@@ -4007,12 +4020,16 @@ CMD(torrent)
       {"force-valid",no_argument,0,OPT_FORCE_VALID},
       {"dht-bootstrap",required_argument,0,OPT_DHT_BOOTSTRAP},
       {"share",no_argument,0,OPT_SHARE},
+      {"only-new",no_argument,0,OPT_ONLY_NEW},
+      {"only-incomplete",no_argument,0,OPT_ONLY_INCOMPLETE},
       {0}
    };
    const char *output_dir=0;
    const char *dht_bootstrap=0;
    bool force_valid=false;
    bool share=false;
+   bool only_new=false;
+   bool only_incomplete=false;
 
    args->rewind();
    int opt;
@@ -4034,6 +4051,12 @@ CMD(torrent)
       case(OPT_SHARE):
 	 share=true;
 	 break;
+      case(OPT_ONLY_NEW):
+	 only_new=true;
+	 // fallthrough
+      case(OPT_ONLY_INCOMPLETE):
+	 only_incomplete=true;
+	 break;
       case('?'):
       try_help:
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
@@ -4044,6 +4067,14 @@ CMD(torrent)
 
    if(share && output_dir) {
       eprintf(_("%s: --share conflicts with --output-directory.\n"),args->a0());
+      return 0;
+   }
+   if(share && only_new) {
+      eprintf(_("%s: --share conflicts with --only-new.\n"),args->a0());
+      return 0;
+   }
+   if(share && only_incomplete) {
+      eprintf(_("%s: --share conflicts with --only-incomplete.\n"),args->a0());
       return 0;
    }
 
@@ -4096,6 +4127,10 @@ CMD(torrent)
 	 t->ForceValid();
       if(share)
 	 t->Share();
+      if(only_new)
+	 t->StopIfKnown();
+      if(only_incomplete)
+	 t->StopIfComplete();
       TorrentJob *tj=new TorrentJob(t);
       tj->cmdline.set(xstring::cat(torrent_opt," ",torrent,NULL));
       parent->AddNewJob(tj);

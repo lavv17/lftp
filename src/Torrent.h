@@ -231,6 +231,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool validating;
    bool force_valid;
    bool build_md;
+   bool stop_if_complete;
+   bool stop_if_known;
    unsigned validate_index;
    Ref<Error> invalid_cause;
 
@@ -496,6 +498,9 @@ public:
    bool IsValidating() const { return validating; }
    void Share() { build_md=true; }
    bool IsSharing() const { return build_md; }
+
+   void StopIfComplete() { stop_if_complete=true; }
+   void StopIfKnown() { stop_if_known=stop_if_complete=true; }
 
    static int GetPort();
    static int GetPortIPv4() { return listener?listener->GetPort():0; }
