@@ -170,8 +170,10 @@ void TorrentTracker::SendTrackerRequest(const char *event)
 }
 const char *TorrentTracker::Status() const
 {
+   if(error)
+      return error->Text();
    if(!backend)
-      return "";
+      return _("not started");
    if(backend->IsActive())
       return backend->Status();
    return xstring::format(_("next request in %s"),NextRequestIn());
