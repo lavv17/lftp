@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "15 Jun 2015"
+.TH lftp 1 "16 Jun 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1086,6 +1086,12 @@ specifies base directory where files should be placed
 T}
 \-\-force\-valid	T{
 skip file validation (if you are sure they are ok).
+T}
+\-\-only\-new	T{
+stop if the metadata is known already or the torrent is complete.
+T}
+\-\-only\-incomplete	T{
+stop if the torrent is already complete.
 T}
 \-\-dht\-bootstrap=<node>	T{
 bootstrap DHT by sending a query to specified \fInode\fP.
