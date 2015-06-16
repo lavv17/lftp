@@ -232,6 +232,9 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    validating=false;
    force_valid=false;
    build_md=false;
+   stop_if_complete=false;
+   stop_if_known=false;
+   md_saved=false;
    validate_index=0;
    metadata_size=0;
    info=0;
@@ -257,14 +260,6 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    avg_piece_sources=0;
    pieces_available_pct=0;
    Reconfig(0);
-
-   if(!fd_cache)
-      fd_cache=new FDCache();
-   if(!black_list)
-      black_list=new TorrentBlackList();
-
-   StartListener();
-   StartDHT();
 
    if(!my_peer_id) {
       my_peer_id.set("-lftp46-");
@@ -317,21 +312,37 @@ void Torrent::Shutdown()
    PrepareToDie();
 }
 
+void Torrent::AddTorrent(Torrent *t)
+{
+   if(FindTorrent(t->GetInfoHash()))
+      return;
+   if(GetTorrentsCount()==0) {
+      StartListener();
+      StartDHT();
+   }
+   torrents.add(t->GetInfoHash(),t);
+}
+void Torrent::RemoveTorrent(Torrent *t)
+{
+   if(t!=FindTorrent(t->info_hash))
+      return;
+   torrents.remove(t->GetInfoHash());
+   if(GetTorrentsCount()==0) {
+      StopListener();
+      StopDHT();
+      StopListenerUDP();
+      fd_cache=0;
+      black_list=0;
+   }
+}
+
 void Torrent::PrepareToDie()
 {
    metainfo_copy=0;
    building=0;
    peers.unset();
-   if(info_hash && this==FindTorrent(info_hash)) {
+   if(info_hash && this==FindTorrent(info_hash))
       RemoveTorrent(this);
-      if(GetTorrentsCount()==0) {
-	 StopListener();
-	 StopDHT();
-	 StopListenerUDP();
-	 fd_cache=0;
-	 black_list=0;
-      }
-   }
 }
 
 void Torrent::SetError(Error *e)
@@ -609,16 +620,19 @@ const char *Torrent::GetMetadataPath() const
    return path;
 }
 
-void Torrent::SaveMetadata() const
+bool Torrent::SaveMetadata() const
 {
+   if(md_saved)
+      return true;  // saved already.
+
    const char *path=GetMetadataPath();
    if(!path)
-      return;
+      return false;
 
    int fd=open(path,O_CREAT|O_WRONLY,0600);
    if(fd<0) {
       LogError(9,"open(%s): %s",path,strerror(errno));
-      return;
+      return false;
    }
 
    int bytes_to_write=metadata.length();
@@ -629,14 +643,14 @@ void Torrent::SaveMetadata() const
    close(fd);
 
    if(res==bytes_to_write)
-      return;  // no error, fd is closed.
+      return true;  // no error, fd is closed.
 
    if(res<0)
       LogError(9,"write(%s): %s",path,strerror(saved_errno));
    else
       LogError(9,"write(%s): short write (only wrote %d bytes)",path,res);
 
-   unlink(path);
+   return false;
 }
 bool Torrent::LoadMetadata(const char *path)
 {
@@ -670,8 +684,11 @@ bool Torrent::LoadMetadata(const char *path)
 	 return false;
       }
       LogNote(9,"got metadata from %s",path);
-      SetMetadata(md);
-      return true;
+      if(SetMetadata(md)) {
+	 md_saved=true;
+	 return true;
+      }
+      return false;
    }
 
    if(res<0)
@@ -699,14 +716,19 @@ void Torrent::StartMetadataDownload()
    const char *path=GetMetadataPath();
    if(path && access(path,R_OK)>=0) {
       // we have the metadata cached
-      LoadMetadata(path);
-      if(metadata) {
-	 if(stop_if_known)
+      if(LoadMetadata(path)) {
+	 if(stop_if_known) {
+	    LogNote(2,"found cached metadata, stopping");
 	    Shutdown();
+	 } else {
+	    Startup();
+	 }
 	 return;
       }
    }
    md_download.nset("",0);
+   // add torrent without metadata to announce it and get peers to get MD from.
+   AddTorrent(this);
 }
 
 void Torrent::SetTotalLength(off_t tl)
@@ -737,7 +759,7 @@ void Torrent::StartValidating()
    recv_rate.Reset();
 }
 
-void Torrent::SetMetadata(const xstring& md)
+bool Torrent::SetMetadata(const xstring& md)
 {
    metadata.set(md);
 
@@ -746,7 +768,7 @@ void Torrent::SetMetadata(const xstring& md)
    if(info_hash && info_hash.ne(new_info_hash)) {
       metadata.unset();
       SetError("metadata does not match info_hash");
-      return;
+      return false;
    }
    info_hash.set(new_info_hash);
 
@@ -755,7 +777,7 @@ void Torrent::SetMetadata(const xstring& md)
       info=BeNode::Parse(metadata,metadata.length(),&rest);
       if(!info) {
 	 SetError("cannot parse metadata");
-	 return;
+	 return false;
       }
       xmap_p<BeNode> d;
       d.add("info",info);
@@ -764,8 +786,10 @@ void Torrent::SetMetadata(const xstring& md)
    }
 
    BeNode *b_piece_length=Lookup(info,"piece length",BeNode::BE_INT);
-   if(!b_piece_length || b_piece_length->num<1024 || b_piece_length->num>INT_MAX/4)
-      return;
+   if(!b_piece_length || b_piece_length->num<1024 || b_piece_length->num>INT_MAX/4) {
+      SetError("Meta-data: invalid piece length");
+      return false;
+   }
    piece_length=b_piece_length->num;
    LogNote(4,"Piece length is %u",piece_length);
 
@@ -786,27 +810,31 @@ void Torrent::SetMetadata(const xstring& md)
    BeNode *files=info->lookup("files");
    if(!files) {
       BeNode *length=Lookup(info,"length",BeNode::BE_INT);
-      if(!length || length->num<0)
-	 return;
+      if(!length || length->num<0) {
+	 SetError("Meta-data: invalid or missing length");
+	 return false;
+      }
       total_length=length->num;
    } else {
       if(files->type!=BeNode::BE_LIST) {
 	 SetError("Meta-data: wrong `info/files' type, must be LIST");
-	 return;
+	 return false;
       }
       total_length=0;
       for(int i=0; i<files->list.length(); i++) {
 	 if(files->list[i]->type!=BeNode::BE_DICT) {
 	    SetError(xstring::format("Meta-data: wrong `info/files[%d]' type, must be LIST",i));
-	    return;
+	    return false;
 	 }
 	 BeNode *f=Lookup(files->list[i]->dict,"length",BeNode::BE_INT);
-	 if(!f)
-	    return;
-	 if(!Lookup(files->list[i]->dict,"path",BeNode::BE_LIST))
-	    return;
-	 if(f->num<0)
-	    return;
+	 if(!f || f->num<0) {
+	    SetError("Meta-data: invalid or missing file length");
+	    return false;
+	 }
+	 if(!Lookup(files->list[i]->dict,"path",BeNode::BE_LIST)) {
+	    SetError("Meta-data: file path missing");
+	    return false;
+	 }
 	 total_length+=f->num;
       }
    }
@@ -814,16 +842,27 @@ void Torrent::SetMetadata(const xstring& md)
    SetTotalLength(total_length);
 
    BeNode *b_pieces=Lookup(info,"pieces",BeNode::BE_STR);
-   if(!b_pieces)
-      return;
+   if(!b_pieces) {
+      SetError("Meta-data: `pieces' missing");
+      return false;
+   }
    pieces=&b_pieces->str;
    if(pieces->length()!=SHA1_DIGEST_SIZE*total_pieces) {
       SetError("Meta-data: invalid `pieces' length");
-      return;
+      return false;
    }
 
    is_private=info->lookup_int("private");
 
+   return true;
+}
+
+void Torrent::Startup()
+{
+   if(!info_hash || !metadata)
+      SetError("missing metadata");
+   if(shutting_down)
+      return;
    Torrent *other=FindTorrent(info_hash);
    if(other) {
       if(other!=this) {
@@ -835,7 +874,7 @@ void Torrent::SetMetadata(const xstring& md)
    }
 
    if(!building)
-      SaveMetadata();
+      md_saved=SaveMetadata();
 
    if(!force_valid && !building) {
       StartValidating();
@@ -929,15 +968,6 @@ void Torrent::ParseMagnet(const char *m0)
 	       return;
 	    }
 	 }
-
-	 if(FindTorrent(info_hash)) {
-	    SetError("This torrent is already running");
-	    return;
-	 }
-	 StartMetadataDownload();
-	 if(shutting_down)
-	    return;
-	 AddTorrent(this);
       }
       else if(!strcmp(p,"tr")) {
 	 SMTaskRef<TorrentTracker> new_tracker(new TorrentTracker(this,v));
@@ -950,6 +980,15 @@ void Torrent::ParseMagnet(const char *m0)
 	 name.set(v);
       }
    }
+   if(!info_hash) {
+      SetError("missing urn:btih in magnet link");
+      return;
+   }
+   if(FindTorrent(info_hash)) {
+      SetError("This torrent is already running");
+      return;
+   }
+   StartMetadataDownload();
 }
 
 void Torrent::CalcPiecesStats()
@@ -1190,9 +1229,6 @@ int Torrent::Do()
 	       return MOVED;
 	    }
 	    StartMetadataDownload();
-	    if(shutting_down)
-	       return MOVED;
-	    AddTorrent(this);
 	    return MOVED;
 	 }
 	 FetchMetadataFromURL(metainfo_url);
@@ -1314,7 +1350,8 @@ int Torrent::Do()
       if(!info)
          return MOVED;
 
-      SetMetadata(info->str);
+      if(SetMetadata(info->str))
+	 Startup();
       m=MOVED;
       if(Done())
 	 return m;
@@ -1334,6 +1371,7 @@ int Torrent::Do()
 	 complete=true;
 	 seed_timer.Reset();
 	 if(stop_if_complete) {
+	    LogNote(2,"torrent is already complete, stopping");
 	    Shutdown();
 	    return MOVED;
 	 }
@@ -1343,7 +1381,8 @@ int Torrent::Do()
 	    SetError("File validation error");
 	    return MOVED;
 	 }
-	 SetMetadata(building->GetMetadata());
+	 if(!SetMetadata(building->GetMetadata()))
+	    return MOVED;
 	 building=0;
 	 xstring magnet("magnet:?xt=urn:btih:");
 	 magnet.append(info_hash.hexdump());
@@ -1351,6 +1390,7 @@ int Torrent::Do()
 	 magnet.append("&dn=");
 	 magnet.append_url_encoded(name,URL_PATH_UNSAFE);
 	 printf("%s\n",magnet.get());
+	 Startup();
       }
       DisconnectPeers();   // restart peer connections
       dht_announce_timer.Stop();
@@ -1390,8 +1430,15 @@ int Torrent::Do()
 
 void Torrent::BlackListPeer(const TorrentPeer *peer,const char *timeout)
 {
-   if(!peer->IsPassive())
-      black_list->Add(peer->GetAddress(),timeout);
+   if(peer->IsPassive())
+      return;
+   if(!black_list)
+      black_list=new TorrentBlackList();
+   black_list->Add(peer->GetAddress(),timeout);
+}
+bool Torrent::BlackListed(const TorrentPeer *peer)
+{
+   return black_list && black_list->Listed(peer->GetAddress());
 }
 
 bool Torrent::CanAccept() const
@@ -1414,7 +1461,7 @@ void Torrent::Accept(int s,const sockaddr_u *addr,IOBuffer *rb)
 
 void Torrent::AddPeer(TorrentPeer *peer)
 {
-   if(black_list->Listed(peer->GetAddress())) {
+   if(BlackListed(peer)) {
       Delete(peer);
       return;
    }
@@ -1665,6 +1712,8 @@ int FDCache::OpenFile(const char *file,int m,off_t size)
 int Torrent::OpenFile(const char *file,int m,off_t size)
 {
    bool did_mkdir=false;
+   if(!fd_cache)
+      fd_cache=new FDCache();
 try_again:
    const char *cf=dir_file(output_dir,file);
    int fd=fd_cache->OpenFile(cf,m,size);
@@ -1694,6 +1743,8 @@ try_again:
 }
 void Torrent::CloseFile(const char *file) const
 {
+   if(!fd_cache)
+      return;
    fd_cache->Close(dir_file(output_dir,file));
 }
 
@@ -2823,7 +2874,8 @@ void Torrent::MetadataDownloaded()
       StartMetadataDownload();
       return;
    }
-   SetMetadata(md_download);
+   if(SetMetadata(md_download))
+      Startup();
    md_download.unset();
 }
 
@@ -2878,7 +2930,7 @@ void TorrentPeer::HandleExtendedMessage(PacketExtended *pp)
 	    addr.set_port(p);
 	    passive=false;
 	    // check the black list
-	    if(Torrent::black_list->Listed(GetAddress())) {
+	    if(Torrent::BlackListed(this)) {
 	       SetError("blacklisted");
 	       return;
 	    }

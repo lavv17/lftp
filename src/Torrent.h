@@ -233,6 +233,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool build_md;
    bool stop_if_complete;
    bool stop_if_known;
+   bool md_saved;
    unsigned validate_index;
    Ref<Error> invalid_cause;
 
@@ -272,8 +273,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    static const SMTaskRef<TorrentListener>& GetUDPSocket(const sockaddr_u& a) { return GetUDPSocket(a.family()); }
 
    static Torrent *FindTorrent(const xstring& info_hash) { return torrents.lookup(info_hash); }
-   static void AddTorrent(Torrent *t) { torrents.add(t->GetInfoHash(),t); }
-   static void RemoveTorrent(Torrent *t) { torrents.remove(t->GetInfoHash()); }
+   static void AddTorrent(Torrent *t);
+   static void RemoveTorrent(Torrent *t);
    static int GetTorrentsCount() { return torrents.count(); }
    static void Dispatch(const xstring& info_hash,int s,const sockaddr_u *remote_addr,IOBuffer *recv_buf);
    static void DispatchUDP(const char *buf,int len,const sockaddr_u& src);
@@ -283,11 +284,13 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void FetchMetadataFromURL(const char *url);
    void StartMetadataDownload();
    void MetadataDownloaded();
-   void SetMetadata(const xstring& md);
+   bool SetMetadata(const xstring& md);
    void ParseMagnet(const char *p);
    const char *GetMetadataPath() const;
-   void SaveMetadata() const;
+   bool SaveMetadata() const;
    bool LoadMetadata(const char *path);
+
+   void Startup();
 
    void SetTotalLength(off_t);
    void StartValidating();
@@ -441,6 +444,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    void PeerBytesGot(int b) { PeerBytesUsed(b,RateLimit::GET); }
 
    static void BlackListPeer(const TorrentPeer *peer,const char *timeout);
+   static bool BlackListed(const TorrentPeer *peer);
    TorrentPeer *FindPeerById(const xstring& p_id);
 
 public:
