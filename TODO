@@ -4,6 +4,8 @@ at least tell me what you think. Items marked with - are hard to implement
 currently; other work needs to be done. Items marked with + are partially
 implemented.
 
+ * OpenStack Swift
+ * GlusterFS
 
 ?* document variables in on-line help
 
