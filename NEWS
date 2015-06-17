@@ -1,3 +1,16 @@
+Version 4.6.3 - 2015-06-17
+
+* new mirror setting mirror:overwrite and options --overwrite/--no-overwrite.
+* new mirror option --upload-older.
+* new mirror option --recursion={always,never,missing,newer}.
+* try to download zero sized files as they may be non-empty.
+* torrent: new options --only-new, --only-incomplete.
+* torrent: fixed endless loop in FD deallocation.
+* fixed a memleak when parsing a directory listing with special files.
+* fixed one byte buffer overflow in cls.
+* fixed cmd:fail-exit description in the man page.
+* fixed large stack usage when parsing fish directory listings.
+
 Version 4.6.2 - 2015-04-16
 
 * new command "edit" instead of the edit alias.

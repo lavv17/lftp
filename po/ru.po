@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.6.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2015-04-16 13:51+0300\n"
+"POT-Creation-Date: 2015-06-17 12:03+0300\n"
 "PO-Revision-Date: 2015-03-19 11:48+0400\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -170,12 +170,12 @@ msgstr "Модуль для команды `%s' не зарегистриров�
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, каталог=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:658
+#: src/CmdExec.cc:405 src/MirrorJob.cc:674
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1175
+#: src/CmdExec.cc:408 src/FileCopy.cc:1176
 msgid "Too many redirections"
 msgstr "Слишком много перенаправлений"
 
@@ -223,12 +223,12 @@ msgstr "\tОжидание команды\n"
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: команда `%s' не встроена при компиляции.\n"
 
-#: src/CmdExec.cc:1260
+#: src/CmdExec.cc:1270
 #, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "Использование: %s команда [аргументы...]\n"
 
-#: src/CmdExec.cc:1266
+#: src/CmdExec.cc:1276
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr "%s: не удалось создать локальный сеанс\n"
@@ -260,8 +260,8 @@ msgstr "Пересылка %d из %d $файла|файлов|файлов$ з�
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1867 src/MirrorJob.cc:1889
-#: src/commands.cc:1014 src/commands.cc:2211
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1925 src/MirrorJob.cc:1947
+#: src/commands.cc:978 src/commands.cc:2175
 msgid " - not supported protocol"
 msgstr " - протокол не поддерживается"
 
@@ -274,7 +274,7 @@ msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
 #: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1342 src/ftpclass.cc:4386
-#: src/ftpclass.cc:4395 src/Torrent.cc:3432
+#: src/ftpclass.cc:4395 src/Torrent.cc:3495
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -342,16 +342,16 @@ msgstr ""
 msgid "file size decreased during transfer"
 msgstr "размер файла уменьшился во время пересылки"
 
-#: src/FileCopy.cc:1172
+#: src/FileCopy.cc:1173
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "копирование: получено перенаправление на `%s'\n"
 
-#: src/FileCopy.cc:1359
+#: src/FileCopy.cc:1360
 msgid "file name missed in URL"
 msgstr "пропущено имя файла в URL"
 
-#: src/FileCopy.cc:2038
+#: src/FileCopy.cc:2039
 msgid "Verify command failed without a message"
 msgstr "Команда проверки вернула статус ошибки без сообщения"
 
@@ -379,7 +379,7 @@ msgstr "**** FXP: все попытки неудачны, переходим к 
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr "ftp:fxp-force установлен, но FXP не удалось использовать"
 
-#: src/FileSetOutput.cc:229
+#: src/FileSetOutput.cc:228
 msgid "non-option arguments found"
 msgstr "обнаружены аргументы, не являющиеся опциями"
 
@@ -424,7 +424,7 @@ msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
 #: src/Fish.cc:989 src/Http.cc:2123 src/Http.cc:2130 src/SFtp.cc:1348
-#: src/ftpclass.cc:4398 src/Torrent.cc:3435 src/TorrentTracker.cc:619
+#: src/ftpclass.cc:4398 src/Torrent.cc:3498 src/TorrentTracker.cc:621
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
@@ -433,7 +433,7 @@ msgid "Connected"
 msgstr "Соединен"
 
 #: src/Fish.cc:993 src/Http.cc:2132 src/SFtp.cc:1352 src/ftpclass.cc:4381
-#: src/ftpclass.cc:4409 src/ftpclass.cc:4423 src/TorrentTracker.cc:621
+#: src/ftpclass.cc:4409 src/ftpclass.cc:4423 src/TorrentTracker.cc:623
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
@@ -473,8 +473,8 @@ msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp через http прокси не может работать без прокси, установите hftp:proxy."
 
-#: src/Http.cc:1270 src/ftpclass.cc:1354 src/Torrent.cc:3103
-#: src/Torrent.cc:3642 src/TorrentTracker.cc:392
+#: src/Http.cc:1270 src/ftpclass.cc:1354 src/Torrent.cc:3166
+#: src/Torrent.cc:3705 src/TorrentTracker.cc:394
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "невозможно создать сокет для семейства адресов %d"
@@ -529,7 +529,7 @@ msgid "Received last chunk"
 msgstr "Получен последний фрагмент"
 
 #: src/Http.cc:2117 src/Resolver.cc:168 src/Resolver.cc:210
-#: src/ftpclass.cc:4391 src/TorrentTracker.cc:617
+#: src/ftpclass.cc:4391 src/TorrentTracker.cc:619
 msgid "Resolving host address..."
 msgstr "Преобразование адреса сервера..."
 
@@ -554,7 +554,7 @@ msgstr "Получение содержимого каталога"
 msgid "Getting files information"
 msgstr "Получение информации о файлах"
 
-#: src/LocalAccess.cc:645 src/commands.cc:3186
+#: src/LocalAccess.cc:645 src/commands.cc:3157
 msgid "cannot get current directory"
 msgstr "невозможно получить текущий каталог"
 
@@ -604,124 +604,200 @@ msgstr "%s%d ошиб$ка обнаружена|ки обнаружены|ок �
 msgid "Finished %s"
 msgstr "Завершено: %s"
 
-#: src/MirrorJob.cc:320 src/MirrorJob.cc:505 src/MirrorJob.cc:1104
+#: src/MirrorJob.cc:322 src/MirrorJob.cc:510 src/MirrorJob.cc:1120
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Удаление старого файла `%s'"
 
-#: src/MirrorJob.cc:329
+#: src/MirrorJob.cc:324
+#, fuzzy, c-format
+msgid "Overwriting old file `%s'"
+msgstr "Удаление старого файла `%s'"
+
+#: src/MirrorJob.cc:333
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Пропущен файл `%s' (only-existing)"
 
-#: src/MirrorJob.cc:335
+#: src/MirrorJob.cc:339
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Копирование файла `%s'"
 
-#: src/MirrorJob.cc:406
+#: src/MirrorJob.cc:410
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Пропущен каталог `%s' (only-existing)"
 
-#: src/MirrorJob.cc:425 src/MirrorJob.cc:536 src/MirrorJob.cc:799
+#: src/MirrorJob.cc:429 src/MirrorJob.cc:541 src/MirrorJob.cc:815
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Удаление старого локального файла `%s'"
 
-#: src/MirrorJob.cc:473
+#: src/MirrorJob.cc:478
 #, c-format
 msgid "Scanning directory `%s'"
 msgstr "Просмотр каталога `%s'"
 
-#: src/MirrorJob.cc:475
+#: src/MirrorJob.cc:480
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Копирование каталога `%s'"
 
-#: src/MirrorJob.cc:548
+#: src/MirrorJob.cc:553
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Пропущена символьная ссылка `%s' (only-existing)"
 
-#: src/MirrorJob.cc:553
+#: src/MirrorJob.cc:558
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Создание символьной ссылки `%s' на `%s'"
 
-#: src/MirrorJob.cc:713
+#: src/MirrorJob.cc:729
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: протокол `%s' не подходит для зеркалирования\n"
 
-#: src/MirrorJob.cc:820
+#: src/MirrorJob.cc:836
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Создание каталога `%s'"
 
-#: src/MirrorJob.cc:1062
+#: src/MirrorJob.cc:1078
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Старый каталог `%s' не удален"
 
-#: src/MirrorJob.cc:1064
+#: src/MirrorJob.cc:1080
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старый файл `%s' не удален"
 
-#: src/MirrorJob.cc:1102
+#: src/MirrorJob.cc:1118
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Удаление старого каталога `%s'"
 
-#: src/MirrorJob.cc:1253
+#: src/MirrorJob.cc:1269
 #, c-format
 msgid "Removing source file `%s'"
 msgstr "Удаление исходного файла `%s'"
 
-#: src/MirrorJob.cc:1273
+#: src/MirrorJob.cc:1289
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Повторный проход...\n"
 
-#: src/MirrorJob.cc:1708
+#: src/MirrorJob.cc:1587
+#, fuzzy, c-format
+msgid "%s must be one of: %s"
+msgstr "%s должно быть одним из: "
+
+#: src/MirrorJob.cc:1755
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: регулярное выражение `%s': %s\n"
 
-#: src/MirrorJob.cc:1831 src/SleepJob.cc:144 src/SleepJob.cc:200
-#: src/commands.cc:1159 src/commands.cc:1249 src/commands.cc:1621
-#: src/commands.cc:1652 src/commands.cc:1755 src/commands.cc:1841
-#: src/commands.cc:2120 src/commands.cc:2316 src/commands.cc:2478
-#: src/commands.cc:2506 src/commands.cc:2513 src/commands.cc:2802
-#: src/commands.cc:2829 src/commands.cc:2836 src/commands.cc:3169
-#: src/lftp.cc:267 src/Torrent.cc:4039
+#: src/MirrorJob.cc:1889 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/commands.cc:1123 src/commands.cc:1213 src/commands.cc:1585
+#: src/commands.cc:1616 src/commands.cc:1719 src/commands.cc:1805
+#: src/commands.cc:2084 src/commands.cc:2280 src/commands.cc:2442
+#: src/commands.cc:2470 src/commands.cc:2477 src/commands.cc:2773
+#: src/commands.cc:2800 src/commands.cc:2807 src/commands.cc:3140
+#: src/lftp.cc:267 src/Torrent.cc:4114
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
 
-#: src/MirrorJob.cc:1855
+#: src/MirrorJob.cc:1913
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначен исходный каталог (`%s' или `%s'?)\n"
 
-#: src/MirrorJob.cc:1877
+#: src/MirrorJob.cc:1935
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначен конечный каталог (`%s' или `%s'?)\n"
 
-#: src/MirrorJob.cc:1918
+#: src/MirrorJob.cc:1976
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
 "%s: требуется указать исходный каталог (mirror:require-source установлено)\n"
+
+#: src/MirrorJob.cc:2065
+msgid ""
+"\n"
+"Mirror specified remote directory to local directory\n"
+"\n"
+" -c, --continue         continue a mirror job if possible\n"
+" -e, --delete           delete files not present at remote site\n"
+"     --delete-first     delete old files before transferring new ones\n"
+" -s, --allow-suid       set suid/sgid bits according to remote site\n"
+"     --allow-chown      try to set owner and group on files\n"
+"     --ignore-time      ignore time when deciding whether to download\n"
+" -n, --only-newer       download only newer files (-c won't work)\n"
+" -r, --no-recursion     don't go to subdirectories\n"
+" -p, --no-perms         don't set file permissions\n"
+"     --no-umask         don't apply umask to file modes\n"
+" -R, --reverse          reverse mirror (put files)\n"
+" -L, --dereference      download symbolic links as files\n"
+" -N, --newer-than=SPEC  download only files newer than specified time\n"
+" -P, --parallel[=N]     download N files in parallel\n"
+" -i RX, --include RX    include matching files\n"
+" -x RX, --exclude RX    exclude matching files\n"
+"                        RX is extended regular expression\n"
+" -v, --verbose[=N]      verbose operation\n"
+"     --log=FILE         write lftp commands being executed to FILE\n"
+"     --script=FILE      write lftp commands to FILE, but don't execute them\n"
+"     --just-print, --dry-run    same as --script=-\n"
+"\n"
+"When using -R, the first directory is local and the second is remote.\n"
+"If the second directory is omitted, basename of first directory is used.\n"
+"If both directories are omitted, current local and remote directories are "
+"used.\n"
+msgstr ""
+"\n"
+"Выполнить \"зеркалирование\" указанного каталога с сервера в локальный "
+"каталог\n"
+"\n"
+" -c, --continue         продолжить прерванную команду `mirror', если "
+"возможно\n"
+" -e, --delete           удалять файлы, отсутствующие на сервере\n"
+"     --delete-first     удалять старые файлы до прекачки новых файлов\n"
+" -s, --allow-suid       сохранять значение битов suid/sgid\n"
+"     --allow-chown      попытаться сменить владельца и группу файлов\n"
+"     --ignore-time      игнорировать время при выборе файлов для перекачки\n"
+" -n, --only-newer       получать только более свежие файлы\n"
+"                        (указание ключа -c не будет иметь эффекта)\n"
+" -r, --no-recursion     не переходить в дочерние подкаталоги\n"
+" -p, --no-perms         не устанавливать режим доступа к файлам\n"
+"     --no-umask         не применять значение umask к режиму доступа файлов\n"
+" -R, --reverse          обратное зеркалирование (выполнять put)\n"
+" -L, --dereference      принимать символические ссылки как обычные файлы\n"
+" -N, --newer-than=SPEC  принимать только файлы новее указанного времени\n"
+" -P, --parallel[=N]     скачивать параллельно N файлов\n"
+" -i RX, --include RX    включить соответствующие файлы (только один ключ)\n"
+" -x RX, --exclude RX    исключить соответствующие файлы (только один ключ)\n"
+"                        RX - расширенное регулярное выражение\n"
+" -v, --verbose          выводить подробную информацию\n"
+"     --log=FILE         записать выполняемые комманды в файл FILE\n"
+"     --script=FILE      записать команды в FILE, но не выполнять их\n"
+"     --just-print, --dry-run    то же самое, что и --script=-\n"
+"\n"
+"При использовании -R первый каталог - локальный, второй - каталог на "
+"сервере.\n"
+"Если второй каталог на указан, то используется последний элемент первого.\n"
+"Если ни один из каталогов не указан, используются текущий локальный каталог\n"
+"и текущий каталог на сервере.\n"
 
 #: src/NetAccess.cc:148
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Соединение с %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:204 src/Torrent.cc:3225
+#: src/NetAccess.cc:204 src/Torrent.cc:3288
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
@@ -896,6 +972,36 @@ msgstr "%s: не указана спецификация даты и време�
 msgid "%s: date-time parse error\n"
 msgstr "%s: ошибка разбора спецификации даты и времени\n"
 
+#: src/SleepJob.cc:303
+msgid ""
+"Usage: sleep <time>[unit]\n"
+"Sleep for given amount of time. The time argument can be optionally\n"
+"followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
+"By default time is assumed to be seconds.\n"
+msgstr ""
+"Использование: sleep <время>[единицы_измерения]\n"
+"Перейти в режим сна на заданный промежуток времени. После аргумента,\n"
+"задающего время, допускается указание единиц измерения: d - дни, h - часы,\n"
+"m - минуты, s - секунды. По умолчанию предполагается время в секундах.\n"
+
+#: src/SleepJob.cc:310
+msgid ""
+"Repeat specified command with a delay between iterations.\n"
+"Default delay is one second, default command is empty.\n"
+" -c <count>  maximum number of iterations\n"
+" -d <delay>  delay between iterations\n"
+" --while-ok  stop when command exits with non-zero code\n"
+" --until-ok  stop when command exits with zero code\n"
+" --weak      stop when lftp moves to background.\n"
+msgstr ""
+"Повторять указанную команду с задержкой между повторами.\n"
+"По-умолчанию задержка - 1 секунда, команды нет.\n"
+" -c <кол-во>   количество повторений\n"
+" -d <задержка> задержка между повторениями\n"
+" --while-ok\tзавершить, когда команда вернёт ненулевой код\n"
+" --until-ok\tзавершить, когда команда вернёт нулевой код\n"
+" --weak\tзавершить, когда lftp переходит в фоновый режим.\n"
+
 #: src/Speedometer.cc:90
 #, c-format
 msgid "%.0fb/s"
@@ -935,19 +1041,19 @@ msgstr "овп:"
 msgid "execlp(%s) failed: %s\n"
 msgstr "функция execlp(%s) не выполнена: %s\n"
 
-#: src/commands.cc:109
+#: src/commands.cc:111
 msgid "!<shell-command>"
 msgstr "!<внешняя-команда>"
 
-#: src/commands.cc:110
+#: src/commands.cc:112
 msgid "Launch shell or shell command\n"
 msgstr "Запустить командный процессор или внешнюю команду\n"
 
-#: src/commands.cc:111
+#: src/commands.cc:113
 msgid "(commands)"
 msgstr "(команды)"
 
-#: src/commands.cc:112
+#: src/commands.cc:114
 msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
@@ -955,11 +1061,11 @@ msgstr ""
 "Сгруппировать команды вместе, так что они могут быть выполнены как\n"
 "единое целое. Такую группу команд можно запустить в фоновом режиме.\n"
 
-#: src/commands.cc:115
+#: src/commands.cc:117
 msgid "alias [<name> [<value>]]"
 msgstr "alias [<имя> [<значение>]]"
 
-#: src/commands.cc:116
+#: src/commands.cc:118
 msgid ""
 "Define or undefine alias <name>. If <value> omitted,\n"
 "the alias is undefined, else is takes the value <value>.\n"
@@ -969,15 +1075,15 @@ msgstr ""
 "то псевдоним удаляется, иначе он принимает указанное значение.\n"
 "Если аргументы не указаны, выводится текущий список псевдонимов.\n"
 
-#: src/commands.cc:120
+#: src/commands.cc:122
 msgid "anon - login anonymously (by default)\n"
 msgstr "anon - анонимная регистрация (используется по умолчанию)\n"
 
-#: src/commands.cc:122
+#: src/commands.cc:124
 msgid "bookmark [SUBCMD]"
 msgstr "bookmark [ДЕЙСТВИЕ]"
 
-#: src/commands.cc:123
+#: src/commands.cc:125
 msgid ""
 "bookmark command controls bookmarks\n"
 "\n"
@@ -999,11 +1105,11 @@ msgstr ""
 "программами\n"
 "  list                - вывести список закладок (по умолчанию)\n"
 
-#: src/commands.cc:132
+#: src/commands.cc:134
 msgid "cache [SUBCMD]"
 msgstr "cache [ДЕЙСТВИЕ]"
 
-#: src/commands.cc:133
+#: src/commands.cc:135
 msgid ""
 "cache command controls local memory cache\n"
 "\n"
@@ -1026,11 +1132,11 @@ msgstr ""
 "(x=s),\n"
 "                  минут (x=m), часов (x=h) или дней (x=d)\n"
 
-#: src/commands.cc:141
+#: src/commands.cc:143
 msgid "cat [-b] <files>"
 msgstr "cat [-b] <файлы>"
 
-#: src/commands.cc:142
+#: src/commands.cc:144
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
@@ -1038,11 +1144,11 @@ msgstr ""
 "cat - вывести содержимое файлов на сервере на стандартный вывод\n"
 " -b  использовать бинарный режим (режим ascii по умолчанию)\n"
 
-#: src/commands.cc:144
+#: src/commands.cc:146
 msgid "cd <rdir>"
 msgstr "cd <каталог>"
 
-#: src/commands.cc:145
+#: src/commands.cc:147
 msgid ""
 "Change current remote directory to <rdir>. The previous remote directory\n"
 "is stored as `-'. You can do `cd -' to change the directory back.\n"
@@ -1055,11 +1161,11 @@ msgstr ""
 "сохраняется на диске, поэтому можно сделать `open site; cd -' даже\n"
 "после повторного запуска lftp.\n"
 
-#: src/commands.cc:149
+#: src/commands.cc:151
 msgid "chmod [OPTS] mode file..."
 msgstr "chmod [КЛЮЧИ] <режим> <файлы>"
 
-#: src/commands.cc:150
+#: src/commands.cc:152
 msgid ""
 "Change the mode of each FILE to MODE.\n"
 "\n"
@@ -1081,7 +1187,7 @@ msgstr ""
 "РЕЖИМ может быть восьмеричным числом или символическим значением (см. "
 "chmod(1))\n"
 
-#: src/commands.cc:159
+#: src/commands.cc:161
 msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
@@ -1090,11 +1196,11 @@ msgstr ""
 "текущим сервером.\n"
 " -a  закрыть неиспользуемые соединения со всеми серверами\n"
 
-#: src/commands.cc:161
+#: src/commands.cc:163
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr ""
 
-#: src/commands.cc:162
+#: src/commands.cc:164
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -1135,11 +1241,11 @@ msgid ""
 "to make filename completion case-insensitive.\n"
 msgstr ""
 
-#: src/commands.cc:212
+#: src/commands.cc:214
 msgid "debug [OPTS] [<level>|off]"
 msgstr "debug [КЛЮЧИ] [<уровень>|off]"
 
-#: src/commands.cc:213
+#: src/commands.cc:215
 msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file\n"
@@ -1154,11 +1260,11 @@ msgstr ""
 " -p  показывать идентификатор процесса\n"
 " -t  показывать дату и время сообщений\n"
 
-#: src/commands.cc:218
+#: src/commands.cc:220
 msgid "du [options] <dirs>"
 msgstr "du [КЛЮЧИ] <каталоги>"
 
-#: src/commands.cc:219
+#: src/commands.cc:221
 msgid ""
 "Summarize disk usage.\n"
 " -a, --all             write counts for all files, not just directories\n"
@@ -1181,12 +1287,12 @@ msgid ""
 "     --exclude=PAT     exclude files that match PAT\n"
 msgstr ""
 
-#: src/commands.cc:237
+#: src/commands.cc:239
 #, fuzzy
 msgid "edit [OPTS] <file>"
 msgstr "mget [КЛЮЧИ] <файлы>"
 
-#: src/commands.cc:238
+#: src/commands.cc:240
 msgid ""
 "Retrieve remote file to a temporary location, run a local editor on it\n"
 "and upload the file back if changed.\n"
@@ -1194,11 +1300,11 @@ msgid ""
 " -o <temp>  explicit temporary file location\n"
 msgstr ""
 
-#: src/commands.cc:243
+#: src/commands.cc:245
 msgid "exit [<code>|bg]"
 msgstr "exit [<код>|bg]"
 
-#: src/commands.cc:244
+#: src/commands.cc:246
 msgid ""
 "exit - exit from lftp or move to background if jobs are active\n"
 "\n"
@@ -1215,7 +1321,7 @@ msgstr ""
 "`bg' заставляет lftp перейти в фоновый режим, даже если cmd:move-background\n"
 " установлен в `off'.\n"
 
-#: src/commands.cc:250
+#: src/commands.cc:252
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory or current directory recursively.\n"
@@ -1230,11 +1336,11 @@ msgstr ""
 " -d, --maxdepth=УРОВНИ  Максимальная глубина рекурсивного спуска по "
 "каталогам.\n"
 
-#: src/commands.cc:255
+#: src/commands.cc:257
 msgid "get [OPTS] <rfile> [-o <lfile>]"
 msgstr "get [КЛЮЧИ] <файл> [-o <лок.файл>]"
 
-#: src/commands.cc:256
+#: src/commands.cc:258
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -1251,11 +1357,11 @@ msgstr ""
 " -a  использовать режим ascii (бинарный режим по умолчанию)\n"
 " -O <база> указывает базовый каталог или URL, куда класть полученные файлы\n"
 
-#: src/commands.cc:263
+#: src/commands.cc:265
 msgid "glob [OPTS] <cmd> <args>"
 msgstr "glob [КЛЮЧИ] <к-да> <арг-ты>"
 
-#: src/commands.cc:265
+#: src/commands.cc:267
 msgid ""
 "Expand wildcards and run specified command.\n"
 "Options can be used to expand wildcards to list of files, directories,\n"
@@ -1274,15 +1380,15 @@ msgstr ""
 " -d  только каталоги\n"
 " -a  все типы\n"
 
-#: src/commands.cc:272
+#: src/commands.cc:274
 msgid "help [<cmd>]"
 msgstr "help [<команда>]"
 
-#: src/commands.cc:273
+#: src/commands.cc:275
 msgid "Print help for command <cmd>, or list of available commands\n"
 msgstr "Вывести помощь для указанной <команды>, или список всех команд\n"
 
-#: src/commands.cc:275
+#: src/commands.cc:277
 msgid ""
 "List running jobs. -v means verbose, several -v can be specified.\n"
 "If <job_no> is specified, only list a job with that number.\n"
@@ -1291,19 +1397,19 @@ msgstr ""
 "допустимы несколько ключей -v.\n"
 "Если указан номер задания, то выводится информация только об этом задании.\n"
 
-#: src/commands.cc:277
+#: src/commands.cc:279
 msgid "kill all|<job_no>"
 msgstr "kill all|<номер_задания>"
 
-#: src/commands.cc:278
+#: src/commands.cc:280
 msgid "Delete specified job with <job_no> or all jobs\n"
 msgstr "Удалить задание с указанным номером или все задания\n"
 
-#: src/commands.cc:279
+#: src/commands.cc:281
 msgid "lcd <ldir>"
 msgstr "lcd <локальный_каталог>"
 
-#: src/commands.cc:280
+#: src/commands.cc:282
 msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
@@ -1312,11 +1418,11 @@ msgstr ""
 "под именем `-'. Вы можете выполнить `lcd -', чтобы сменить каталог на "
 "прежний.\n"
 
-#: src/commands.cc:282
+#: src/commands.cc:284
 msgid "lftp [OPTS] <site>"
 msgstr "lftp [КЛЮЧИ] <адрес>"
 
-#: src/commands.cc:283
+#: src/commands.cc:285
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -1340,19 +1446,19 @@ msgstr ""
 " -p <порт>           использовать для соединения указанный порт\n"
 " <адрес>             имя сервера, URL или имя закладки\n"
 
-#: src/commands.cc:293
+#: src/commands.cc:295
 msgid "ln [-s] <file1> <file2>"
 msgstr "ln [-s] <файл1> <файл2>"
 
-#: src/commands.cc:294
+#: src/commands.cc:296
 msgid "Link <file1> to <file2>\n"
 msgstr "Привязать <файл1> к имени <файл2>\n"
 
-#: src/commands.cc:298
+#: src/commands.cc:300
 msgid "ls [<args>]"
 msgstr "ls [<аргументы>]"
 
-#: src/commands.cc:299
+#: src/commands.cc:301
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -1366,11 +1472,11 @@ msgstr ""
 "список файлов, используйте команды `rels' или `cache flush'.\n"
 "Смотри также `help cls'.\n"
 
-#: src/commands.cc:304
+#: src/commands.cc:306
 msgid "mget [OPTS] <files>"
 msgstr "mget [КЛЮЧИ] <файлы>"
 
-#: src/commands.cc:305
+#: src/commands.cc:307
 msgid ""
 "Gets selected files with expanded wildcards\n"
 " -c  continue, resume transfer\n"
@@ -1388,81 +1494,15 @@ msgstr ""
 " -a  использовать режим ascii (бинарный режим по умолчанию)\n"
 " -O <база> указывает базовый каталог или URL, куда класть полученные файлы\n"
 
-#: src/commands.cc:312
+#: src/commands.cc:314
 msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [КЛЮЧИ] [<откуда> [<куда>]]"
 
-#: src/commands.cc:313
-msgid ""
-"\n"
-"Mirror specified remote directory to local directory\n"
-"\n"
-" -c, --continue         continue a mirror job if possible\n"
-" -e, --delete           delete files not present at remote site\n"
-"     --delete-first     delete old files before transferring new ones\n"
-" -s, --allow-suid       set suid/sgid bits according to remote site\n"
-"     --allow-chown      try to set owner and group on files\n"
-"     --ignore-time      ignore time when deciding whether to download\n"
-" -n, --only-newer       download only newer files (-c won't work)\n"
-" -r, --no-recursion     don't go to subdirectories\n"
-" -p, --no-perms         don't set file permissions\n"
-"     --no-umask         don't apply umask to file modes\n"
-" -R, --reverse          reverse mirror (put files)\n"
-" -L, --dereference      download symbolic links as files\n"
-" -N, --newer-than=SPEC  download only files newer than specified time\n"
-" -P, --parallel[=N]     download N files in parallel\n"
-" -i RX, --include RX    include matching files\n"
-" -x RX, --exclude RX    exclude matching files\n"
-"                        RX is extended regular expression\n"
-" -v, --verbose[=N]      verbose operation\n"
-"     --log=FILE         write lftp commands being executed to FILE\n"
-"     --script=FILE      write lftp commands to FILE, but don't execute them\n"
-"     --just-print, --dry-run    same as --script=-\n"
-"\n"
-"When using -R, the first directory is local and the second is remote.\n"
-"If the second directory is omitted, basename of first directory is used.\n"
-"If both directories are omitted, current local and remote directories are "
-"used.\n"
-msgstr ""
-"\n"
-"Выполнить \"зеркалирование\" указанного каталога с сервера в локальный "
-"каталог\n"
-"\n"
-" -c, --continue         продолжить прерванную команду `mirror', если "
-"возможно\n"
-" -e, --delete           удалять файлы, отсутствующие на сервере\n"
-"     --delete-first     удалять старые файлы до прекачки новых файлов\n"
-" -s, --allow-suid       сохранять значение битов suid/sgid\n"
-"     --allow-chown      попытаться сменить владельца и группу файлов\n"
-"     --ignore-time      игнорировать время при выборе файлов для перекачки\n"
-" -n, --only-newer       получать только более свежие файлы\n"
-"                        (указание ключа -c не будет иметь эффекта)\n"
-" -r, --no-recursion     не переходить в дочерние подкаталоги\n"
-" -p, --no-perms         не устанавливать режим доступа к файлам\n"
-"     --no-umask         не применять значение umask к режиму доступа файлов\n"
-" -R, --reverse          обратное зеркалирование (выполнять put)\n"
-" -L, --dereference      принимать символические ссылки как обычные файлы\n"
-" -N, --newer-than=SPEC  принимать только файлы новее указанного времени\n"
-" -P, --parallel[=N]     скачивать параллельно N файлов\n"
-" -i RX, --include RX    включить соответствующие файлы (только один ключ)\n"
-" -x RX, --exclude RX    исключить соответствующие файлы (только один ключ)\n"
-"                        RX - расширенное регулярное выражение\n"
-" -v, --verbose          выводить подробную информацию\n"
-"     --log=FILE         записать выполняемые комманды в файл FILE\n"
-"     --script=FILE      записать команды в FILE, но не выполнять их\n"
-"     --just-print, --dry-run    то же самое, что и --script=-\n"
-"\n"
-"При использовании -R первый каталог - локальный, второй - каталог на "
-"сервере.\n"
-"Если второй каталог на указан, то используется последний элемент первого.\n"
-"Если ни один из каталогов не указан, используются текущий локальный каталог\n"
-"и текущий каталог на сервере.\n"
-
-#: src/commands.cc:340
+#: src/commands.cc:315
 msgid "mkdir [OPTS] <dirs>"
 msgstr "mkdir [КЛЮЧИ] <каталоги>"
 
-#: src/commands.cc:341
+#: src/commands.cc:316
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
@@ -1472,11 +1512,11 @@ msgstr ""
 " -p  создать все составляющие пути\n"
 " -f  не выводить сообщения\n"
 
-#: src/commands.cc:344
+#: src/commands.cc:319
 msgid "module name [args]"
 msgstr "module <имя> [<аргументы>]"
 
-#: src/commands.cc:345
+#: src/commands.cc:320
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -1489,21 +1529,21 @@ msgstr ""
 "каталоге, в противном случае - в каталогах, указанных в переменной module:"
 "path.\n"
 
-#: src/commands.cc:349
+#: src/commands.cc:324
 msgid "more <files>"
 msgstr "more <файлы>"
 
-#: src/commands.cc:350
+#: src/commands.cc:325
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
 "То же, что и `cat <файлы> | more'. Если переменная среды PAGER\n"
 "установлена, то в качестве фильтра используется ее значение.\n"
 
-#: src/commands.cc:351
+#: src/commands.cc:326
 msgid "mput [OPTS] <files>"
 msgstr "mput [КЛЮЧИ] <файлы>"
 
-#: src/commands.cc:352
+#: src/commands.cc:327
 msgid ""
 "Upload files with wildcard expansion\n"
 " -c  continue, reput\n"
@@ -1521,27 +1561,27 @@ msgstr ""
 " -a  использовать режим ascii (бинарный режим по умолчанию)\n"
 " -O <база> указывает базовый каталог или URL, куда класть переданные файлы\n"
 
-#: src/commands.cc:359
+#: src/commands.cc:334
 msgid "mrm <files>"
 msgstr "mrm <файлы>"
 
-#: src/commands.cc:360
+#: src/commands.cc:335
 msgid "Removes specified files with wildcard expansion\n"
 msgstr "Удалить указанные <файлы> с поддержкой шаблонов в именах файлов\n"
 
-#: src/commands.cc:361
+#: src/commands.cc:336
 msgid "mv <file1> <file2>"
 msgstr "mv <файл1> <файл2>"
 
-#: src/commands.cc:362
+#: src/commands.cc:337
 msgid "Rename <file1> to <file2>\n"
 msgstr "Переименовать <файл1> в <файл2>\n"
 
-#: src/commands.cc:363
+#: src/commands.cc:338
 msgid "[re]nlist [<args>]"
 msgstr "[re]nlist [<аргументы>]"
 
-#: src/commands.cc:364
+#: src/commands.cc:339
 msgid ""
 "List remote file names.\n"
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
@@ -1551,11 +1591,11 @@ msgstr ""
 "По-умолчанию, вывод команды nlist кэшируется; чтобы увидеть обновленный\n"
 "список файлов, используйте команды `renlist' или `cache flush'.\n"
 
-#: src/commands.cc:367
+#: src/commands.cc:342
 msgid "open [OPTS] <site>"
 msgstr "open [КЛЮЧИ] <адрес>"
 
-#: src/commands.cc:368
+#: src/commands.cc:343
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -1571,11 +1611,11 @@ msgstr ""
 " -s <слот>           перейти в указанный слот\n"
 " <адрес>             имя сервера, URL или имя закладки\n"
 
-#: src/commands.cc:374
+#: src/commands.cc:349
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [КЛЮЧИ] <файл> [-o <лок.файл>]"
 
-#: src/commands.cc:375
+#: src/commands.cc:350
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -1601,11 +1641,11 @@ msgstr ""
 "     (по умолчанию берется настройка pget:default-n)\n"
 " -O <база> указывает базовый каталог, куда класть полученные файлы\n"
 
-#: src/commands.cc:383
+#: src/commands.cc:358
 msgid "put [OPTS] <lfile> [-o <rfile>]"
 msgstr "put [КЛЮЧИ] <лок.файл> [-o <файл>]"
 
-#: src/commands.cc:384
+#: src/commands.cc:359
 msgid ""
 "Upload <lfile> with remote name <rfile>.\n"
 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -1624,7 +1664,7 @@ msgstr ""
 " -a  использовать режим ascii (бинарный режим по умолчанию)\n"
 " -O <база> указывает базовый каталог или URL, куда класть переданные файлы\n"
 
-#: src/commands.cc:392
+#: src/commands.cc:367
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
@@ -1632,11 +1672,11 @@ msgstr ""
 "Вывести текущий URL сервера.\n"
 " -p  показывать пароль\n"
 
-#: src/commands.cc:394
+#: src/commands.cc:369
 msgid "queue [OPTS] [<cmd>]"
 msgstr ""
 
-#: src/commands.cc:395
+#: src/commands.cc:370
 msgid ""
 "\n"
 "       queue [-n num] <command>\n"
@@ -1662,11 +1702,11 @@ msgid ""
 "                     Useful with --delete.\n"
 msgstr ""
 
-#: src/commands.cc:416
+#: src/commands.cc:391
 msgid "quote <cmd>"
 msgstr "quote <команда>"
 
-#: src/commands.cc:417
+#: src/commands.cc:392
 msgid ""
 "Send the command uninterpreted. Use with caution - it can lead to\n"
 "unknown remote state and thus will cause reconnect. You cannot\n"
@@ -1678,7 +1718,7 @@ msgstr ""
 "Вы не можете также полагаться на изменение состояния сервера, так как\n"
 "повторное соединение может восстановить состояние в любой момент.\n"
 
-#: src/commands.cc:422
+#: src/commands.cc:397
 msgid ""
 "recls [<args>]\n"
 "Same as `cls', but don't look in cache\n"
@@ -1686,7 +1726,7 @@ msgstr ""
 "recls [<аргументы>]\n"
 "То же, что и `cls', но не обращаться к кэшу\n"
 
-#: src/commands.cc:425
+#: src/commands.cc:400
 msgid ""
 "Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
 "Same as `get -c'\n"
@@ -1694,7 +1734,7 @@ msgstr ""
 "reget [КЛЮЧИ] <файл> [-o <лок.файл>]\n"
 "То же, что и `get -c'\n"
 
-#: src/commands.cc:428
+#: src/commands.cc:403
 msgid ""
 "Usage: rels [<args>]\n"
 "Same as `ls', but don't look in cache\n"
@@ -1702,7 +1742,7 @@ msgstr ""
 "Использование: rels [<аргументы>]\n"
 "То же, что и `ls', но не обращаться к кэшу\n"
 
-#: src/commands.cc:431
+#: src/commands.cc:406
 msgid ""
 "Usage: renlist [<args>]\n"
 "Same as `nlist', but don't look in cache\n"
@@ -1710,29 +1750,11 @@ msgstr ""
 "Использование: [<аргументы>]\n"
 "То же, что и `nlist', но не обращаться к кэшу\n"
 
-#: src/commands.cc:433
+#: src/commands.cc:408
 msgid "repeat [OPTS] [delay] [command]"
 msgstr ""
 
-#: src/commands.cc:434
-msgid ""
-"Repeat specified command with a delay between iterations.\n"
-"Default delay is one second, default command is empty.\n"
-" -c <count>  maximum number of iterations\n"
-" -d <delay>  delay between iterations\n"
-" --while-ok  stop when command exits with non-zero code\n"
-" --until-ok  stop when command exits with zero code\n"
-" --weak      stop when lftp moves to background.\n"
-msgstr ""
-"Повторять указанную команду с задержкой между повторами.\n"
-"По-умолчанию задержка - 1 секунда, команды нет.\n"
-" -c <кол-во>   количество повторений\n"
-" -d <задержка> задержка между повторениями\n"
-" --while-ok\tзавершить, когда команда вернёт ненулевой код\n"
-" --until-ok\tзавершить, когда команда вернёт нулевой код\n"
-" --weak\tзавершить, когда lftp переходит в фоновый режим.\n"
-
-#: src/commands.cc:442
+#: src/commands.cc:410
 msgid ""
 "Usage: reput <lfile> [-o <rfile>]\n"
 "Same as `put -c'\n"
@@ -1740,11 +1762,11 @@ msgstr ""
 "reput <лок.файл> [-o <файл>]\n"
 "То же, что и `put -c'\n"
 
-#: src/commands.cc:444
+#: src/commands.cc:412
 msgid "rm [-r] [-f] <files>"
 msgstr "rm [-r] [-f] <файлы>"
 
-#: src/commands.cc:445
+#: src/commands.cc:413
 msgid ""
 "Remove remote files\n"
 " -r  recursive directory removal, be careful\n"
@@ -1754,29 +1776,29 @@ msgstr ""
 " -r  рекурсивное удаление каталогов (пользуйтесь с осторожностью)\n"
 " -f  работать тихо\n"
 
-#: src/commands.cc:448
+#: src/commands.cc:416
 msgid "rmdir [-f] <dirs>"
 msgstr "rmdir [-f] <каталоги>"
 
-#: src/commands.cc:449
+#: src/commands.cc:417
 msgid "Remove remote directories\n"
 msgstr "Удалить указанные <каталоги> на сервере\n"
 
-#: src/commands.cc:450
+#: src/commands.cc:418
 msgid "scache [<session_no>]"
 msgstr "scache [<номер_сеанса>]"
 
-#: src/commands.cc:451
+#: src/commands.cc:419
 msgid "List cached sessions or switch to specified session number\n"
 msgstr ""
 "Вывести список резервных сеансов или переключиться на сеанс\n"
 "с указанным номером.\n"
 
-#: src/commands.cc:452
+#: src/commands.cc:420
 msgid "set [OPT] [<var> [<val>]]"
 msgstr "set [КЛЮЧИ] [<перем> [<значение>]]"
 
-#: src/commands.cc:453
+#: src/commands.cc:421
 msgid ""
 "Set variable to given value. If the value is omitted, unset the variable.\n"
 "Variable name has format ``name/closure'', where closure can specify\n"
@@ -1797,11 +1819,11 @@ msgstr ""
 " -a  вывести все переменные, включая значения по умолчанию\n"
 " -d  вывести только значения по умолчанию, не обязательно текущие значения.\n"
 
-#: src/commands.cc:461
+#: src/commands.cc:429
 msgid "site <site-cmd>"
 msgstr "site <команда>"
 
-#: src/commands.cc:462
+#: src/commands.cc:430
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
@@ -1809,19 +1831,7 @@ msgstr ""
 "Исполнить site-команду на сервере и вывести ее результаты.\n"
 "Вы можете перенаправить вывод этой команды.\n"
 
-#: src/commands.cc:465
-msgid ""
-"Usage: sleep <time>[unit]\n"
-"Sleep for given amount of time. The time argument can be optionally\n"
-"followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
-"By default time is assumed to be seconds.\n"
-msgstr ""
-"Использование: sleep <время>[единицы_измерения]\n"
-"Перейти в режим сна на заданный промежуток времени. После аргумента,\n"
-"задающего время, допускается указание единиц измерения: d - дни, h - часы,\n"
-"m - минуты, s - секунды. По умолчанию предполагается время в секундах.\n"
-
-#: src/commands.cc:470
+#: src/commands.cc:434
 msgid ""
 "Usage: slot [<label>]\n"
 "List assigned slots.\n"
@@ -1831,23 +1841,24 @@ msgstr ""
 "Вывести список слотов.\n"
 "Если указано имя, то переключиться в слот с таким именем.\n"
 
-#: src/commands.cc:473
+#: src/commands.cc:437
 msgid "source <file>"
 msgstr "source <файл>"
 
-#: src/commands.cc:474
+#: src/commands.cc:438
 msgid "Execute commands recorded in file <file>\n"
 msgstr "Выполнить команды из указанного файла\n"
 
-#: src/commands.cc:476
-msgid "torrent [-O <dir>] <file|URL>..."
-msgstr ""
+#: src/commands.cc:440
+#, fuzzy
+msgid "torrent [OPTS] <file|URL>..."
+msgstr "mget [КЛЮЧИ] <файлы>"
 
-#: src/commands.cc:477
+#: src/commands.cc:441
 msgid "user <user|URL> [<pass>]"
 msgstr "user <имя|URL> [<пароль>]"
 
-#: src/commands.cc:478
+#: src/commands.cc:442
 msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
@@ -1856,15 +1867,15 @@ msgstr ""
 "пароль\n"
 "будет запомнен для дальнейшего использования.\n"
 
-#: src/commands.cc:481
+#: src/commands.cc:445
 msgid "Shows lftp version\n"
 msgstr "Вывести версию lftp\n"
 
-#: src/commands.cc:482
+#: src/commands.cc:446
 msgid "wait [<jobno>]"
 msgstr "wait [<номер_задания>]"
 
-#: src/commands.cc:483
+#: src/commands.cc:447
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
@@ -1872,56 +1883,56 @@ msgstr ""
 "Ждать завершения указанного задания. Если номер задания не указан,\n"
 "ждать завершения последнего переведенного в фоновый режим задания.\n"
 
-#: src/commands.cc:485
+#: src/commands.cc:449
 msgid "zcat <files>"
 msgstr "zcat <файлы>"
 
-#: src/commands.cc:486
+#: src/commands.cc:450
 msgid "Same as cat, but filter each file through zcat\n"
 msgstr "То же, что и cat, но фильтровать каждый файл через программу zcat\n"
 
-#: src/commands.cc:487
+#: src/commands.cc:451
 msgid "zmore <files>"
 msgstr "zmore <файлы>"
 
-#: src/commands.cc:488
+#: src/commands.cc:452
 msgid "Same as more, but filter each file through zcat\n"
 msgstr "То же, что и more, но фильтровать каждый файл через программу zcat\n"
 
-#: src/commands.cc:490
+#: src/commands.cc:454
 msgid "Same as cat, but filter each file through bzcat\n"
 msgstr "То же, что и cat, но фильтровать каждый файл через программу bzcat\n"
 
-#: src/commands.cc:492
+#: src/commands.cc:456
 msgid "Same as more, but filter each file through bzcat\n"
 msgstr "То же, что и more, но фильтровать каждый файл через программу bzcat\n"
 
-#: src/commands.cc:547
+#: src/commands.cc:511
 #, c-format
 msgid "Usage: %s local-dir\n"
 msgstr "Использование: %s <локальный_каталог>\n"
 
-#: src/commands.cc:583
+#: src/commands.cc:547
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
 msgstr "lcd ok, локальный каталог=%s\n"
 
-#: src/commands.cc:599
+#: src/commands.cc:563
 #, c-format
 msgid "Usage: cd remote-dir\n"
 msgstr "Использование: cd <каталог_сервера>\n"
 
-#: src/commands.cc:611
+#: src/commands.cc:575
 #, c-format
 msgid "%s: no old directory for this site\n"
 msgstr "%s: нет предыдущего каталога для этого сервера\n"
 
-#: src/commands.cc:700
+#: src/commands.cc:664
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "Использование: %s [<код_завершения>]\n"
 
-#: src/commands.cc:709
+#: src/commands.cc:673
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
@@ -1931,7 +1942,7 @@ msgstr ""
 "Используйте `exit bg' чтобы переместить lftp в фоновый режим или `kill all'\n"
 "чтобы завершить все задания.\n"
 
-#: src/commands.cc:726
+#: src/commands.cc:690
 msgid ""
 "\n"
 "lftp now tricks the shell to move it to background process group.\n"
@@ -1940,183 +1951,183 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:917 src/commands.cc:3476
+#: src/commands.cc:881 src/commands.cc:3447
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Введите `%s --help' для получения дополнительной информации\n"
 
-#: src/commands.cc:919
+#: src/commands.cc:883
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 "Использование: %s [-e команда] [-p порт] [-u имя[,пароль]] <машина|url>\n"
 
-#: src/commands.cc:1046 src/commands.cc:2195
+#: src/commands.cc:1010 src/commands.cc:2159
 msgid "Password: "
 msgstr "Пароль: "
 
-#: src/commands.cc:1048
+#: src/commands.cc:1012
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: ошибка GetPass() -- подразумевается анонимная регистрация\n"
 
-#: src/commands.cc:1169
+#: src/commands.cc:1133
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "Использование: %s [КЛЮЧИ] команда аргументы...\n"
 
-#: src/commands.cc:1219
+#: src/commands.cc:1183
 #, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s: -n: Ожидается числовое значение больше нуля. "
 
-#: src/commands.cc:1271
+#: src/commands.cc:1235
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr "Создана остановленная очередь.\n"
 
-#: src/commands.cc:1314 src/commands.cc:1342
+#: src/commands.cc:1278 src/commands.cc:1306
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: Нет активной очереди.\n"
 
-#: src/commands.cc:1334
+#: src/commands.cc:1298
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: Ожидается числовое значение во втором аргументе. "
 
-#: src/commands.cc:1386
+#: src/commands.cc:1350
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Использование: %s <команда>\n"
 
-#: src/commands.cc:1488
+#: src/commands.cc:1452
 msgid "invalid argument for `--sort'"
 msgstr "неверный аргумент для `--sort'"
 
-#: src/commands.cc:1518
+#: src/commands.cc:1482
 msgid "invalid block size"
 msgstr "неверный размер блока"
 
-#: src/commands.cc:1661
+#: src/commands.cc:1625
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Использование: %s [КЛЮЧИ] файлы...\n"
 
-#: src/commands.cc:1733
+#: src/commands.cc:1697
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr "%s: -n: Ожидается числовое значение. "
 
-#: src/commands.cc:1766 src/commands.cc:1847
+#: src/commands.cc:1730 src/commands.cc:1811
 #, c-format
 msgid "File name missed. "
 msgstr "Пропущено имя файла. "
 
-#: src/commands.cc:1916
+#: src/commands.cc:1880
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Использование: %s %s[-f] файлы...\n"
 
-#: src/commands.cc:1959
+#: src/commands.cc:1923
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "Использование: %s [-e] <файл|команда>\n"
 
-#: src/commands.cc:2006
+#: src/commands.cc:1970
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Использование: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:2020 src/commands.cc:2282 src/commands.cc:2405
-#: src/commands.cc:2575 src/commands.cc:2975 src/commands.cc:3056
+#: src/commands.cc:1984 src/commands.cc:2246 src/commands.cc:2369
+#: src/commands.cc:2539 src/commands.cc:2946 src/commands.cc:3027
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - не является числом\n"
 
-#: src/commands.cc:2027 src/commands.cc:2261 src/commands.cc:2291
-#: src/commands.cc:2423
+#: src/commands.cc:1991 src/commands.cc:2225 src/commands.cc:2255
+#: src/commands.cc:2387
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - указанное задание отсутствует\n"
 
-#: src/commands.cc:2062
+#: src/commands.cc:2026
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Использование: %s [-p]\n"
 
-#: src/commands.cc:2162
+#: src/commands.cc:2126
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "уровень отладки %d, вывод направлен в %s\n"
 
-#: src/commands.cc:2165
+#: src/commands.cc:2129
 #, c-format
 msgid "debug is off\n"
 msgstr "отладка выключена\n"
 
-#: src/commands.cc:2176
+#: src/commands.cc:2140
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "Использование: %s <имя|URL> [<пароль>]\n"
 
-#: src/commands.cc:2251 src/commands.cc:2415
+#: src/commands.cc:2215 src/commands.cc:2379
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: текущее задание отсутствует\n"
 
-#: src/commands.cc:2263
+#: src/commands.cc:2227
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Использование: %s <номер_задания> ... | all\n"
 
-#: src/commands.cc:2345
+#: src/commands.cc:2309
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Используйте `set -a' для просмотра списка всех переменных.\n"
 
-#: src/commands.cc:2389
+#: src/commands.cc:2353
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Использование: %s [<номер_задания>]\n"
 
-#: src/commands.cc:2428
+#: src/commands.cc:2392
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: другое задание ожидает завершения задания %d\n"
 
-#: src/commands.cc:2433
+#: src/commands.cc:2397
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: обнаружен цикл в цепочке ожидания\n"
 
-#: src/commands.cc:2457
+#: src/commands.cc:2421
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr "Использование: mv <файл1> <файл2>\n"
 
-#: src/commands.cc:2505 src/commands.cc:2828
+#: src/commands.cc:2469 src/commands.cc:2799
 #, c-format
 msgid "Invalid command. "
 msgstr "Недопустимая команда. "
 
-#: src/commands.cc:2512 src/commands.cc:2835
+#: src/commands.cc:2476 src/commands.cc:2806
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Неоднозначное сокращение. "
 
-#: src/commands.cc:2531
+#: src/commands.cc:2495
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Пропущен параметр размера\n"
 
-#: src/commands.cc:2548
+#: src/commands.cc:2512
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Пропущен параметр `expire'\n"
 
-#: src/commands.cc:2581
+#: src/commands.cc:2545
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -2124,45 +2135,45 @@ msgstr ""
 "%s: %s - нет такого резервного сеанса.\n"
 "Для просмотра списка резервных сеансов используйте команду `scache'.\n"
 
-#: src/commands.cc:2598
+#: src/commands.cc:2569
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Извините, нет помощи для %s\n"
 
-#: src/commands.cc:2603
+#: src/commands.cc:2574
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s является встроенным псевдонимом для %s\n"
 
-#: src/commands.cc:2608
+#: src/commands.cc:2579
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Использование: %s\n"
 
-#: src/commands.cc:2616
+#: src/commands.cc:2587
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s является псевдонимом для `%s'\n"
 
-#: src/commands.cc:2620
+#: src/commands.cc:2591
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Команда `%s' отсутствует.\n"
 "Введите `help' для получения списка доступных команд.\n"
 
-#: src/commands.cc:2622
+#: src/commands.cc:2593
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Неоднозначное сокращение `%s'. Введите `help' для списка доступных команд.\n"
 
-#: src/commands.cc:2688
+#: src/commands.cc:2659
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Версия %s | Copyright (c) 1996-%d Александр В. Лукьянов\n"
 
-#: src/commands.cc:2691
+#: src/commands.cc:2662
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -2179,85 +2190,85 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2705
+#: src/commands.cc:2676
 #, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Сообщения об ошибках и вопросы посылайте в список рассылки <%s>.\n"
 
-#: src/commands.cc:2711
+#: src/commands.cc:2682
 msgid "Libraries used: "
 msgstr "Загруженые библиотеки: "
 
-#: src/commands.cc:2851 src/commands.cc:2882
+#: src/commands.cc:2822 src/commands.cc:2853
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: требуется указать имя закладки\n"
 
-#: src/commands.cc:2871
+#: src/commands.cc:2842
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: пробелы в имени закладки не разрешаются\n"
 
-#: src/commands.cc:2884
+#: src/commands.cc:2855
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: закладка `%s' отсутствует\n"
 
-#: src/commands.cc:2906
+#: src/commands.cc:2877
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: требуется указание типа импорта (netscape,ncftp)\n"
 
-#: src/commands.cc:2984
+#: src/commands.cc:2955
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Использование: %s [-d #] dir\n"
 
-#: src/commands.cc:3089
+#: src/commands.cc:3060
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: неверный размер блока `%s'\n"
 
-#: src/commands.cc:3098
+#: src/commands.cc:3069
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Использование: %s [ключи] <каталоги>\n"
 
-#: src/commands.cc:3104
+#: src/commands.cc:3075
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:3108
+#: src/commands.cc:3079
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:3156
+#: src/commands.cc:3127
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Использование: %s команда аргументы...\n"
 
-#: src/commands.cc:3168
+#: src/commands.cc:3139
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Использование: %s модуль [аргументы...]\n"
 
-#: src/commands.cc:3250
+#: src/commands.cc:3221
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Использование: %s [КЛЮЧИ] права файлы...\n"
 
-#: src/commands.cc:3270
+#: src/commands.cc:3241
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "неверная запись прав: %s\n"
 
-#: src/commands.cc:3329 src/commands.cc:3338
+#: src/commands.cc:3300 src/commands.cc:3309
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Неверный формат диапазона. Формат: минимум-максимум, например 10-20."
 
-#: src/commands.cc:3344
+#: src/commands.cc:3315
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Использование: %s [КЛЮЧИ] <файл>\n"
@@ -2505,12 +2516,12 @@ msgstr "Команда %s не выполнена для %d из %d катало
 msgid "%s ok, %d director$y|ies$ created\n"
 msgstr "%s ok, %d каталог$|а|ов$ создано\n"
 
-#: src/module.cc:189
+#: src/module.cc:190
 #, c-format
 msgid "depend module `%s': %s\n"
 msgstr "модуль зависимости `%s': %s\n"
 
-#: src/module.cc:209
+#: src/module.cc:210
 msgid "modules are not supported on this system"
 msgstr "модули на этой системе не поддерживаются"
 
@@ -2598,132 +2609,159 @@ msgstr "%s ok, %d каталог$|а|ов$ удалено\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d файл$|а|ов$ удалено\n"
 
-#: src/Torrent.cc:581
+#: src/Torrent.cc:592
 msgid "announced via "
 msgstr "объявлений через "
 
-#: src/Torrent.cc:593
+#: src/Torrent.cc:604
 #, c-format
 msgid "next announce in %s"
 msgstr "следующий анонс через %s"
 
-#: src/Torrent.cc:1088
+#: src/Torrent.cc:1132
 #, c-format
 msgid "%d file$|s$ found, now scanning %s"
 msgstr ""
 "%d $файл найден|файла найдено|файлов найдено$, теперь просматривается %s"
 
-#: src/Torrent.cc:1089
+#: src/Torrent.cc:1133
 #, c-format
 msgid "%d file$|s$ found"
 msgstr "%d $файл найден|файла найдено|файлов найдено$"
 
-#: src/Torrent.cc:1983 src/Torrent.cc:1993
+#: src/Torrent.cc:2045 src/Torrent.cc:2055
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Получение мета-данных: %s"
 
-#: src/Torrent.cc:1985
+#: src/Torrent.cc:2047
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Проверка: %u/%u (%u%%) %s%s"
 
-#: src/Torrent.cc:1996
+#: src/Torrent.cc:2058
 msgid "Waiting for meta-data..."
 msgstr "Ожидание метаданных..."
 
-#: src/Torrent.cc:2004
+#: src/Torrent.cc:2066
 msgid "Shutting down: "
 msgstr "Останов: "
 
-#: src/Torrent.cc:3106
+#: src/Torrent.cc:3169
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Соединение с узлом %s, порт %u"
 
-#: src/Torrent.cc:3157 src/Torrent.cc:3274
+#: src/Torrent.cc:3220 src/Torrent.cc:3337
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "удалённый узел неожиданно закрыл соединение после %s"
 
-#: src/Torrent.cc:3158 src/Torrent.cc:3275
+#: src/Torrent.cc:3221 src/Torrent.cc:3338
 msgid "peer unexpectedly closed connection"
 msgstr "удалённый узел неожиданно закрыл соединение"
 
-#: src/Torrent.cc:3160 src/Torrent.cc:3161
+#: src/Torrent.cc:3223 src/Torrent.cc:3224
 msgid "peer closed connection (before handshake)"
 msgstr "удалённый узел закрыл соединение (без обмена сообщениями)"
 
-#: src/Torrent.cc:3164 src/Torrent.cc:3277 src/Torrent.cc:3278
+#: src/Torrent.cc:3227 src/Torrent.cc:3340 src/Torrent.cc:3341
 msgid "invalid peer response format"
 msgstr "неверный формат ответа удалённого узла"
 
-#: src/Torrent.cc:3259 src/Torrent.cc:3260
+#: src/Torrent.cc:3322 src/Torrent.cc:3323
 msgid "peer closed connection"
 msgstr "удалённый узел закрыл соединение"
 
-#: src/Torrent.cc:3437
+#: src/Torrent.cc:3500
 msgid "Handshaking..."
 msgstr "Начало обмена сообщениями..."
 
-#: src/Torrent.cc:3697
+#: src/Torrent.cc:3760
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Не удалось выбрать порт из указанного диапазона torrent:port-range"
 
-#: src/Torrent.cc:3747
+#: src/Torrent.cc:3810
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Принято соединение от [%s]:%d"
 
-#: src/Torrent.cc:3809
+#: src/Torrent.cc:3872
 #, c-format
 msgid "peer sent unknown info_hash=%s in handshake"
 msgstr ""
 "удалённый узел прислал неизвестное значение info_hash=%s при начальном обмене"
 
-#: src/Torrent.cc:3833
+#: src/Torrent.cc:3896
 msgid "peer handshake timeout"
 msgstr "превышено время ожидания при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3845
+#: src/Torrent.cc:3908
 msgid "peer short handshake"
 msgstr "получено усечённое сообщение при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3847
+#: src/Torrent.cc:3910
 msgid "peer closed just accepted connection"
 msgstr "удалённый узел закрыл только что принятое соединение"
 
-#: src/Torrent.cc:3898
+#: src/Torrent.cc:3961
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Раздача продолжится в фоновом режиме...\n"
 
-#: src/Torrent.cc:4046
+#: src/Torrent.cc:4121
 #, c-format
 msgid "%s: --share conflicts with --output-directory.\n"
 msgstr "%s: --share конфликтует с --output-directory.\n"
 
-#: src/Torrent.cc:4088
+#: src/Torrent.cc:4125
+#, fuzzy, c-format
+msgid "%s: --share conflicts with --only-new.\n"
+msgstr "%s: --share конфликтует с --output-directory.\n"
+
+#: src/Torrent.cc:4129
+#, fuzzy, c-format
+msgid "%s: --share conflicts with --only-incomplete.\n"
+msgstr "%s: --share конфликтует с --output-directory.\n"
+
+#: src/Torrent.cc:4171
 #, c-format
 msgid "%s: Please specify a file or directory to share.\n"
 msgstr "%s: Пожалуйста, укажите файл или каталог для раздачи.\n"
 
-#: src/Torrent.cc:4090
+#: src/Torrent.cc:4173
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Пожалуйста, укажите torrent-файл или URL.\n"
 
-#: src/TorrentTracker.cc:177
+#: src/Torrent.cc:4203
+msgid ""
+"Start BitTorrent job for the given torrent-files, which can be a local "
+"file,\n"
+"URL, magnet link or plain info_hash written in hex or base32. Local "
+"wildcards\n"
+"are expanded. Options:\n"
+" -O <base>      specifies base directory where files should be placed\n"
+" --force-valid  skip file validation\n"
+" --dht-bootstrap=<node>  bootstrap DHT by sending a query to the node\n"
+" --share        share specified file or directory\n"
+msgstr ""
+
+#: src/TorrentTracker.cc:176
+msgid "not started"
+msgstr ""
+
+#: src/TorrentTracker.cc:179
 #, c-format
 msgid "next request in %s"
 msgstr "следующий запрос через %s"
 
-#: src/TorrentTracker.cc:280 src/TorrentTracker.cc:496
+#: src/TorrentTracker.cc:282 src/TorrentTracker.cc:498
 #, c-format
 msgid "Received valid info about %d peer$|s$"
 msgstr "Получил корректную информацию о %d узл$е|ах|ах$"
 
-#: src/TorrentTracker.cc:294
+#: src/TorrentTracker.cc:296
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr "Получил корректную информацию о %d узл$е|ах|ах$ с IPv6 адресами"
