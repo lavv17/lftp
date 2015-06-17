@@ -1892,7 +1892,7 @@ CMD(mirror)
       }
    }
 
-   if(exclude && strcasecmp(recursion_mode,"never"))
+   if(exclude && xstrcasecmp(recursion_mode,"never"))
    {
       /* Users usually don't want to exclude all directories when recursing */
       if(exclude->GetFirstType()==PatternSet::INCLUDE)
