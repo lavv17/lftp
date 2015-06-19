@@ -576,21 +576,24 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    to_rm=new FileSet(dest);
    to_rm->SubtractAny(source);
 
-   same=new FileSet(source);
    to_transfer=new FileSet(source);
 
-   int ignore=0;
-   if(flags&ONLY_NEWER)
-      ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
-   if(!FlagSet(UPLOAD_OLDER) && strcmp(target_session->GetProto(),"file"))
-      ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
-   if(flags&IGNORE_TIME)
-      ignore|=FileInfo::DATE;
-   if(flags&IGNORE_SIZE)
-      ignore|=FileInfo::SIZE;
-   to_transfer->SubtractSame(dest,ignore);
+   if(!FlagSet(TRANSFER_ALL)) {
+      same=new FileSet(source);
 
-   same->SubtractAny(to_transfer);
+      int ignore=0;
+      if(flags&ONLY_NEWER)
+	 ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
+      if(!FlagSet(UPLOAD_OLDER) && strcmp(target_session->GetProto(),"file"))
+	 ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
+      if(flags&IGNORE_TIME)
+	 ignore|=FileInfo::DATE;
+      if(flags&IGNORE_SIZE)
+	 ignore|=FileInfo::SIZE;
+      to_transfer->SubtractSame(dest,ignore);
+
+      same->SubtractAny(to_transfer);
+   }
 
    if(newer_than!=NO_DATE)
       to_transfer->SubtractNotNewerThan(newer_than);
@@ -1195,7 +1198,7 @@ int   MirrorJob::Do()
 	 if(FlagSet(ALLOW_CHOWN) && same)
 	    same->LocalChown(target_dir);
       }
-      if(remove_source_files)
+      if(remove_source_files && same)
 	 goto pre_SOURCE_REMOVING_SAME;
    pre_FINISHING:
       set_state(FINISHING);
@@ -1621,6 +1624,7 @@ CMD(mirror)
       OPT_NO_OVERWRITE,
       OPT_RECURSION,
       OPT_UPLOAD_OLDER,
+      OPT_TRANSFER_ALL,
    };
    static const struct option mirror_opts[]=
    {
@@ -1673,6 +1677,7 @@ CMD(mirror)
       {"no-overwrite",no_argument,0,OPT_NO_OVERWRITE},
       {"recursion",required_argument,0,OPT_RECURSION},
       {"upload-older",no_argument,0,OPT_UPLOAD_OLDER},
+      {"transfer-all",no_argument,0,OPT_TRANSFER_ALL},
       {0}
    };
 
@@ -1884,6 +1889,9 @@ CMD(mirror)
 	 break;
       case(OPT_UPLOAD_OLDER):
 	 flags|=MirrorJob::UPLOAD_OLDER;
+	 break;
+      case(OPT_TRANSFER_ALL):
+	 flags|=MirrorJob::TRANSFER_ALL;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());

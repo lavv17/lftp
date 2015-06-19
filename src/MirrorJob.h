@@ -206,6 +206,7 @@ public:
       SCAN_ALL_FIRST=1<<19,
       OVERWRITE=1<<20,
       UPLOAD_OLDER=1<<21,
+      TRANSFER_ALL=1<<22,
    };
    void SetFlags(int f,bool v)
    {

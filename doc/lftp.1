@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 Jun 2015"
+.TH lftp 1 "19 Jun 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -58,7 +58,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.6.3.
+This man page documents lftp version 4.6.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -582,6 +582,9 @@ download only newer files (\-c won't work)
 T}
 	\-\-upload\-older	T{
 upload even files older than remote ones
+T}
+	\-\-transfer\-all	T{
+transfer all files, even seemingly the same at the target site
 T}
 	\-\-no\-empty\-dirs	T{
 don't create empty directories (implies \-\-depth\-first)
