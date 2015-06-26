@@ -364,7 +364,7 @@ int UdpTracker::Do()
    if(!peer) {
       // need to resolve addresses
       if(!resolver) {
-	 resolver=new Resolver(hostname,portname);
+	 resolver=new Resolver(hostname,portname,"80");
 	 resolver->Roll();
 	 m=MOVED;
       }
