@@ -263,13 +263,14 @@ int SFtp::Do()
       if(s==0)
       {
 	 // no more data, set attributes and close the file.
-	 if(entity_date!=NO_DATE)
-	 {
-	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
+	 Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
+	 if(entity_date!=NO_DATE) {
 	    req->attrs.mtime=entity_date;
 	    req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
-	    SendRequest(req,Expect::IGNORE);
 	 }
+	 req->attrs.size=pos;
+	 req->attrs.flags|=SSH_FILEXFER_ATTR_SIZE;
+	 SendRequest(req,Expect::IGNORE);
 	 CloseHandle(Expect::DEFAULT);
 	 state=WAITING;
 	 m=MOVED;
@@ -852,17 +853,10 @@ void SFtp::HandleExpect(Expect *e)
 	    handle_x.appendf("%02X",(unsigned char)handle[i]);
 	 LogNote(9,"got file handle %s (%d)",handle_x.get(),handle_len);
 	 request_pos=real_pos=pos;
-	 if(mode==RETRIEVE)
+	 if(mode==RETRIEVE) {
 	    SendRequest(new Request_FSTAT(handle,
 	       SSH_FILEXFER_ATTR_SIZE|SSH_FILEXFER_ATTR_MODIFYTIME|SSH_FILEXFER_ATTR_PERMISSIONS,
 	       protocol_version),Expect::INFO);
-	 else if(mode==STORE && pos>0)
-	 {
-	    // truncate the file at write position.
-	    Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
-	    req->attrs.size=pos;
-	    req->attrs.flags|=SSH_FILEXFER_ATTR_SIZE;
-	    SendRequest(req,Expect::IGNORE);
 	 }
       }
       else
