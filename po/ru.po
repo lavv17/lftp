@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lftp 4.6.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2015-06-17 17:10+0300\n"
-"PO-Revision-Date: 2015-03-19 11:48+0400\n"
+"PO-Revision-Date: 2015-07-01 09:40+0300\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "Language: ru\n"
@@ -42,9 +42,9 @@ msgid "%s: option '%s' is ambiguous; possibilities:"
 msgstr "%s: опция `%s' неоднозначна; варианты:"
 
 #: lib/getopt.c:619
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s' is ambiguous\n"
-msgstr "%s: опция `-W %s' неоднозначна\n"
+msgstr "%s: опция `%s' неоднозначна\n"
 
 #: lib/getopt.c:654 lib/getopt.c:658
 #, c-format
@@ -610,9 +610,9 @@ msgid "Removing old file `%s'"
 msgstr "Удаление старого файла `%s'"
 
 #: src/MirrorJob.cc:324
-#, fuzzy, c-format
+#, c-format
 msgid "Overwriting old file `%s'"
-msgstr "Удаление старого файла `%s'"
+msgstr "Перезапись старого файла `%s'"
 
 #: src/MirrorJob.cc:333
 #, c-format
@@ -690,9 +690,9 @@ msgid "Retrying mirror...\n"
 msgstr "Повторный проход...\n"
 
 #: src/MirrorJob.cc:1587
-#, fuzzy, c-format
+#, c-format
 msgid "%s must be one of: %s"
-msgstr "%s должно быть одним из: "
+msgstr "%s должно быть одним из: %s"
 
 #: src/MirrorJob.cc:1755
 #, c-format
@@ -1288,9 +1288,8 @@ msgid ""
 msgstr ""
 
 #: src/commands.cc:239
-#, fuzzy
 msgid "edit [OPTS] <file>"
-msgstr "mget [КЛЮЧИ] <файлы>"
+msgstr "edit [КЛЮЧИ] <файл>"
 
 #: src/commands.cc:240
 msgid ""
@@ -1850,9 +1849,8 @@ msgid "Execute commands recorded in file <file>\n"
 msgstr "Выполнить команды из указанного файла\n"
 
 #: src/commands.cc:440
-#, fuzzy
 msgid "torrent [OPTS] <file|URL>..."
-msgstr "mget [КЛЮЧИ] <файлы>"
+msgstr "torrent [КЛЮЧИ] <файл|URL>"
 
 #: src/commands.cc:441
 msgid "user <user|URL> [<pass>]"
@@ -2715,14 +2713,14 @@ msgid "%s: --share conflicts with --output-directory.\n"
 msgstr "%s: --share конфликтует с --output-directory.\n"
 
 #: src/Torrent.cc:4125
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --share conflicts with --only-new.\n"
-msgstr "%s: --share конфликтует с --output-directory.\n"
+msgstr "%s: --share конфликтует с --only-new.\n"
 
 #: src/Torrent.cc:4129
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --share conflicts with --only-incomplete.\n"
-msgstr "%s: --share конфликтует с --output-directory.\n"
+msgstr "%s: --share конфликтует с --only-incomplete.\n"
 
 #: src/Torrent.cc:4171
 #, c-format
@@ -2749,7 +2747,7 @@ msgstr ""
 
 #: src/TorrentTracker.cc:176
 msgid "not started"
-msgstr ""
+msgstr "ещё не запущен"
 
 #: src/TorrentTracker.cc:179
 #, c-format
