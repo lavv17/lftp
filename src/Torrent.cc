@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2014 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ static ResType torrent_vars[] = {
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
    {"torrent:retracker", ""},
    {"torrent:use-dht", "yes", ResMgr::BoolValidate, ResMgr::NoClosure},
+   {"torrent:timeout", "7d", ResMgr::TimeIntervalValidate},
 #if INET6
    {"torrent:ipv6", "", ResMgr::IPv6AddrValidate, ResMgr::NoClosure},
 #endif
@@ -220,6 +221,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
      pieces_needed_rebuild_timer(10),
      cwd(c), output_dir(od), rate_limit(mf),
      seed_timer("torrent:seed-max-time",0),
+     timeout_timer("torrent:timeout",0),
      optimistic_unchoke_timer(30), peers_scan_timer(1),
      am_interested_timer(1), shutting_down_timer(60),
      dht_announce_timer(10*60),
@@ -762,6 +764,7 @@ void Torrent::StartValidating()
 bool Torrent::SetMetadata(const xstring& md)
 {
    metadata.set(md);
+   timeout_timer.Reset();
 
    xstring new_info_hash;
    SHA1(metadata,new_info_hash);
@@ -1193,6 +1196,10 @@ int Torrent::Do()
    int m=STALL;
    if(Done() || shutting_down)
       return m;
+   if(!complete && !building && timeout_timer.Stopped()) {
+      SetError("timed out with no progress");
+      return MOVED;
+   }
    if(build_md && !files) {
       if(!building)
 	 building=new TorrentBuild(metainfo_url);
@@ -1803,6 +1810,7 @@ void Torrent::StoreBlock(unsigned piece,unsigned begin,unsigned len,const char *
 	 return;
       }
       LogNote(3,"piece %u complete",piece);
+      timeout_timer.Reset();
       SetPieceNotWanted(piece);
       for(int i=0; i<peers.count(); i++)
 	 peers[i]->Have(piece);

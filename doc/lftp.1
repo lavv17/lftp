@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "19 Jun 2015"
+.TH lftp 1 "31 Jul 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -2115,6 +2115,9 @@ new peers are actively searched for.
 .TP
 .BR torrent:stop-on-ratio " (real number)"
 torrent stops when it's complete and ratio reached this number.
+.TP
+.BR torrent:timeout " (time interval)"
+maximum time without any progress. When it's reached, the torrent shuts down.
 .TP
 .BR torrent:use-dht \ (boolean)
 when true, DHT is used.

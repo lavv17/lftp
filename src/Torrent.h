@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2014 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -414,6 +414,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    bool SeededEnough() const;
    float stop_on_ratio;
    Timer seed_timer;
+   Timer timeout_timer;
 
    Timer decline_timer;
    Timer optimistic_unchoke_timer;
