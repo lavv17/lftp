@@ -773,6 +773,7 @@ const char *ResMgr::IPv4AddrValidate(xstring_c *value)
    return 0;
 }
 
+#if INET6
 const char *ResMgr::IPv6AddrValidate(xstring_c *value)
 {
    if(!**value)
@@ -781,6 +782,7 @@ const char *ResMgr::IPv6AddrValidate(xstring_c *value)
       return _("Invalid IPv6 numeric address");
    return 0;
 }
+#endif
 
 const char *ResMgr::FileAccessible(xstring_c *value,int mode,bool want_dir)
 {

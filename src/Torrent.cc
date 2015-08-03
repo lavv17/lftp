@@ -594,11 +594,13 @@ const char *Torrent::DHT_Status() const
       status.append(_("announced via "));
       if(dht_announce_count)
 	 status.appendf("ipv4:%d",dht_announce_count);
+#if INET6
       if(dht_announce_count_ipv6) {
 	 if(dht_announce_count)
 	    status.append(", ");
 	 status.appendf("ipv6:%d",dht_announce_count_ipv6);
       }
+#endif
    }
    if(!dht_announce_timer.Stopped() && !validating) {
       if(status.length()>0)
