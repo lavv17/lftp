@@ -203,7 +203,7 @@ class xarray_p : public xarray0
    void z() { clear(len); }
 public:
    xarray_p() : xarray0(sizeof(T*),1) {}
-   ~xarray_p() { dispose(0,len); }
+   virtual ~xarray_p() { dispose(0,len); }
    T **get_non_const() { return static_cast<T**>(buf); }
    T *const* get() const { return static_cast<T*const*>(buf); }
    T *&operator[](int i) { return get_non_const()[i]; }

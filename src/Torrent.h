@@ -113,7 +113,9 @@ public:
       if(!downloader) {
 	 if(o || !n)
 	    return;
-	 downloader=new const TorrentPeer*[blk_count]();
+	 downloader=new const TorrentPeer*[blk_count];
+	 for(int i=0; i<blk_count; i++)
+	    downloader[i]=0;
       }
       const TorrentPeer*& d=downloader[block];
       if(d==o) {
