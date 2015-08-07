@@ -526,7 +526,7 @@ public:
 
    const TaskRefArray<TorrentTracker>& Trackers() { return trackers; }
    bool HasMetadata() const { return metadata!=0; }
-   void DisconnectPeers();
+   void RestartPeers();
 
    static void BootstrapDHT(const char *n) {
       StartDHT();
@@ -873,6 +873,7 @@ private:
    unpack_status_t RecvHandshake();
    void SendExtensions();
    void Disconnect(const char *dc=0);
+   void Restart();
    int SendDataRequests(unsigned p);
    void SendDataRequests();
    void Have(unsigned p);

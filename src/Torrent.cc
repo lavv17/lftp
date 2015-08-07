@@ -891,14 +891,13 @@ void Torrent::Startup()
       seed_timer.Reset();
       dht_announce_timer.Stop();
    }
-   DisconnectPeers(); // restart all connected peers
+   RestartPeers();
 }
 
-void Torrent::DisconnectPeers()
+void Torrent::RestartPeers()
 {
-   for(int i=0; i<peers.count(); i++) {
-      peers[i]->Disconnect(); // restart all connected peers
-   }
+   for(int i=0; i<peers.count(); i++)
+      peers[i]->Restart();
 }
 
 static int base32_char_to_value(char c)
@@ -1401,7 +1400,7 @@ int Torrent::Do()
 	 printf("%s\n",magnet.get());
 	 Startup();
       }
-      DisconnectPeers();   // restart peer connections
+      RestartPeers();
       dht_announce_timer.Stop();
    }
    if(GetPort())
@@ -2159,6 +2158,15 @@ void TorrentPeer::SetError(const char *s)
    error=Error::Fatal(s);
    LogError(11,"fatal error: %s",s);
    Disconnect(s);
+}
+
+void TorrentPeer::Restart()
+{
+   if(!Connected())
+      return;
+   Disconnect();
+   retry_timer.Stop();
+   retry_timer.AddRandom(2);
 }
 
 void TorrentPeer::Disconnect(const char *dc)
