@@ -162,6 +162,7 @@ int FileCopy::Do()
       }
       if(get->Error() && get->Size()==0)
       {
+	 put->DontVerify();
 	 if(put->GetPos()>0)
 	 {
 	    put->PutEOF();
@@ -1513,8 +1514,11 @@ int FileCopyPeerFDStream::Do()
    if(verify)
    {
       if(verify->Error())
+      {
 	 SetError(verify->ErrorText());
-      if(verify->Done())
+	 m=MOVED;
+      }
+      else if(verify->Done())
       {
 	 if(suggested_filename && stream && stream->full_name && auto_rename)
 	 {
