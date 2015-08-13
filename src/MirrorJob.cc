@@ -623,7 +623,7 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    }
 
    if(skip_noaccess)
-      to_transfer->ExcludeUnaccessible();
+      to_transfer->ExcludeUnaccessible(source_session->GetUser());
 
    new_files_set=new FileSet(to_transfer);
    new_files_set->SubtractAny(dest);

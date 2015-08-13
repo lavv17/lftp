@@ -396,14 +396,17 @@ void FileSet::ExcludeCompound()
    }
 }
 
-void FileSet::ExcludeUnaccessible()
+void FileSet::ExcludeUnaccessible(const char *user)
 {
    for(int i=0; i<fnum; i++)
    {
-      if(!(files[i]->defined&FileInfo::MODE) || !(files[i]->defined&FileInfo::TYPE))
+      if(!files[i]->Has(FileInfo::MODE) || !files[i]->Has(FileInfo::TYPE))
 	 continue;
-      if((files[i]->filetype==FileInfo::NORMAL    && !(files[i]->mode&0444))
-      || (files[i]->filetype==FileInfo::DIRECTORY && !(files[i]->mode&0444&(files[i]->mode<<2))))
+      unsigned mask=0444;
+      if(user && files[i]->Has(FileInfo::USER))
+	 mask=(!strcmp(files[i]->user,user)?0400:0044);
+      if((files[i]->TypeIs(FileInfo::NORMAL)    && !(files[i]->mode&mask))
+      || (files[i]->TypeIs(FileInfo::DIRECTORY) && !(files[i]->mode&mask&(files[i]->mode<<2))))
       {
 	 Sub(i);
 	 i--;

@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <utime.h>
+#include <pwd.h>
 
 #include "LocalAccess.h"
 #include "xstring.h"
@@ -53,6 +54,9 @@ void LocalAccess::Init()
    error_code=OK;
    home.Set(getenv("HOME"));
    hostname.set("localhost");
+   struct passwd *p=getpwuid(getuid());
+   if(p)
+      user.set(p->pw_name);
 }
 
 LocalAccess::LocalAccess() : FileAccess()
