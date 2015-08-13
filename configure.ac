@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.60])
-AC_INIT([lftp], [4.6.3a], [lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp], [4.6.3a.20150813], [lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -256,6 +256,15 @@ AC_CHECK_DECLS([res_search],,, [
      #include <arpa/nameser.h>
      #include <resolv.h>
 ])
+
+AC_ARG_ENABLE([ipv6],
+	AC_HELP_STRING([--disable-ipv6],[disable IPv6 code]),
+        [
+		if test x$enableval = xno; then
+			AC_DEFINE([DISABLE_IPV6],[1],[Disable IPv6 code])
+		fi
+	]
+)
 
 AC_ARG_WITH(libresolv, AS_HELP_STRING([--without-libresolv], [don't use libresolv]),
       [with_libresolv=$withval], [with_libresolv=yes])
@@ -523,9 +532,10 @@ static inline T replace_value(T &var,T new_value)
 # endif
 #endif
 
-#define INET6 (defined(AF_INET6) \
-	       && defined(HAVE_GETNAMEINFO) \
-	       && defined(HAVE_GETADDRINFO))
+#define INET6 (!defined(DISABLE_IPV6) \
+		&& defined(HAVE_IPV6) \
+		&& defined(HAVE_GETNAMEINFO) \
+		&& defined(HAVE_GETADDRINFO))
 
 #define USE_EXPAT (defined(HAVE_EXPAT_H) && defined(HAVE_LIBEXPAT))
 
