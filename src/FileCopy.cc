@@ -866,8 +866,11 @@ int FileCopyPeerFA::Do()
    if(verify)
    {
       if(verify->Error())
+      {
 	 SetError(verify->ErrorText());
-      if(verify->Done())
+	 m=MOVED;
+      }
+      else if(verify->Done())
       {
 	 if(suggested_filename && auto_rename)
 	 {
