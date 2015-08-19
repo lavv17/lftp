@@ -855,19 +855,34 @@ const char *CmdExec::FormatPrompt(const char *scan)
       cwd="~";
    {
       const char *home=session->GetHome();
-      if(home && strcmp(home,"/") && !strncmp(cwd,home,strlen(home))
-      && (cwd[strlen(home)]=='/' || cwd[strlen(home)]==0))
+      int home_len=xstrlen(home);
+      if(home_len>1 && !strncmp(cwd,home,home_len)
+      && (cwd[home_len]=='/' || cwd[home_len]==0))
       {
-	 cwd=xstring::format("~%s",cwd+strlen(home));
+	 cwd=xstring::format("~%s",cwd+home_len);
       }
    }
    const char *cwdb=session->GetCwd();
-   cwdb=session->GetCwd();
    if(cwdb==0 || cwdb[0]==0)
       cwdb="~";
    const char *p=strrchr(cwdb,'/');
    if(p && p>cwdb)
       cwdb=p+1;
+
+   const char *lcwd=this->cwd->GetName();
+   {
+      const char *home=get_home();
+      int home_len=xstrlen(home);
+      if(home_len>1 && !strncmp(lcwd,home,home_len)
+      && (lcwd[home_len]=='/' || lcwd[home_len]==0))
+      {
+	 lcwd=xstring::format("~%s",lcwd+home_len);
+      }
+   }
+   const char *lcwdb=this->cwd->GetName();
+   p=strrchr(lcwdb,'/');
+   if(p && p>lcwdb)
+      lcwdb=p+1;
 
    static const char StartIgn[]={RL_PROMPT_START_IGNORE,0};
    static const char EndIgn[]={RL_PROMPT_END_IGNORE,0};
@@ -887,6 +902,8 @@ const char *CmdExec::FormatPrompt(const char *scan)
       { 'S', slot?slot.get():"" },
       { 'w', cwd },
       { 'W', cwdb },
+      { 'l', lcwd },
+      { 'L', lcwdb },
       { '[', StartIgn },
       { ']', EndIgn },
       { 0, "" }
