@@ -176,7 +176,7 @@ const char *expand_home_relative(const char *s)
 
    if(s[1]==0 || s[1]=='/')
    {
-      home=getenv("HOME");
+      home=get_home();
    }
    else
    {
