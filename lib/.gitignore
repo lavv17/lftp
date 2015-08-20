@@ -296,3 +296,6 @@
 glthread
 /gl_openssl.h
 /assure.h
+/time-internal.h
+/time_rz.c
+/timegm.c

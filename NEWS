@@ -1,3 +1,17 @@
+Version 4.6.4 - 2015-08-20
+
+* mirror: new option --transfer-all.
+* torrent: new setting torrent:timeout to limit time without any progress.
+* torrent: fixed handling of udp tracker without explicit port number.
+* torrent: improved transfer start time after metadata download.
+* improved sftp put -c to use a single FSETSTAT.
+* mirror --skip-noaccess now uses user name to check for permissions.
+* don't rename temporary file to the target name when transfer fails.
+* new cmd:prompt escapes \l and \L for local working directory.
+* translations updated (pl, ru, uk).
+* new configure option --disable-ipv6.
+* fixed compilation with an old gcc.
+
 Version 4.6.3 - 2015-06-17
 
 * new mirror setting mirror:overwrite and options --overwrite/--no-overwrite.

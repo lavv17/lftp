@@ -238,3 +238,6 @@
 /extern-inline.m4
 /absolute-header.m4
 /gl-openssl.m4
+/flexmember.m4
+/time_rz.m4
+/timegm.m4
