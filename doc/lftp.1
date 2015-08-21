@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "31 Jul 2015"
+.TH lftp 1 "21 Aug 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1254,7 +1254,7 @@ characters that are decoded as follows:
 .PD 0
 .TP
 .B \e@
-insert @ if current user is not default
+insert @ if the current remote site user is not default
 .TP
 .B \ea
 an ASCII bell character (07)
@@ -1263,7 +1263,7 @@ an ASCII bell character (07)
 an ASCII escape character (033)
 .TP
 .B \eh
-the hostname you are connected to
+the remote hostname you are connected to
 .TP
 .B \en
 newline
@@ -1275,7 +1275,7 @@ the name of the client (lftp)
 current slot name
 .TP
 .B \eu
-the username of the user you are logged in as
+the username of the remote site user you are logged in as
 .TP
 .B \eU
 the URL of the remote site (e.g., ftp://g437.ub.gu.se/home/james/src/lftp)
@@ -1288,6 +1288,12 @@ the current working directory at the remote site
 .TP
 .B \eW
 the base name of the current working directory at the remote site
+.TP
+.B \el
+the current working directory at the local site
+.TP
+.B \eL
+the base name of the current working directory at the local site
 .TP
 .B \e\fInnn\fP
 the character corresponding to the octal number \fInnn\fP
