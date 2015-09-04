@@ -1044,12 +1044,11 @@ int   MirrorJob::Do()
 	       goto pre_TARGET_CHMOD;
 	    goto pre_TARGET_MKDIR;
 	 }
-	 const char *target_name_rel=dir_file(target_relative_dir,file->name);
-	 target_name_rel=alloca_strdup(target_name_rel);
 	 if(!(flags&DELETE))
 	 {
 	    if(flags&REPORT_NOT_DELETED)
 	    {
+		const char *target_name_rel=dir_file(target_relative_dir,file->name);
 	       if(file->TypeIs(file->DIRECTORY))
 		  Report(_("Old directory `%s' is not removed"),target_name_rel);
 	       else
@@ -1090,6 +1089,7 @@ int   MirrorJob::Do()
 		  j->Recurse();
 	    }
 	 }
+	const char *target_name_rel=dir_file(target_relative_dir,file->name);
 	 if(file->TypeIs(file->DIRECTORY))
 	    Report(_("Removing old directory `%s'"),target_name_rel);
 	 else
