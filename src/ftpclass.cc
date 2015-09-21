@@ -3962,7 +3962,7 @@ void Ftp::CheckFEAT(char *reply)
    }
    if(!trust) {
       // turn on EPSV support based on some other modern features
-      conn->epsv_supported||=conn->mlst_supported|conn->host_supported;
+      conn->epsv_supported|=conn->mlst_supported|conn->host_supported;
    }
    conn->have_feat_info=true;
 }
