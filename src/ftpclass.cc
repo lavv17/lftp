@@ -3878,7 +3878,8 @@ void Ftp::TuneConnectionAfterFEAT()
 
 void Ftp::CheckFEAT(char *reply)
 {
-   if(QueryBool("trust-feat",hostname)) {
+   bool trust=QueryBool("trust-feat",hostname);
+   if(trust) {
       // turn off these pre-FEAT extensions only when trusting FEAT reply,
       // as some servers forget to advertise them.
       conn->mdtm_supported=false;
@@ -3958,6 +3959,10 @@ void Ftp::CheckFEAT(char *reply)
       else if(!strcasecmp(f,"SSCN"))
 	 conn->sscn_supported=true;
 #endif // USE_SSL
+   }
+   if(!trust) {
+      // turn on EPSV support based on some other modern features
+      conn->epsv_supported||=conn->mlst_supported|conn->host_supported;
    }
    conn->have_feat_info=true;
 }
