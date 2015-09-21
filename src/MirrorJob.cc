@@ -1071,12 +1071,11 @@ int   MirrorJob::Do()
 	       goto pre_TARGET_CHMOD;
 	    goto pre_TARGET_MKDIR;
 	 }
-	 const char *target_name_rel=dir_file(target_relative_dir,file->name);
-	 target_name_rel=alloca_strdup(target_name_rel);
 	 if(!(flags&DELETE))
 	 {
 	    if(flags&REPORT_NOT_DELETED)
 	    {
+	       const char *target_name_rel=dir_file(target_relative_dir,file->name);
 	       if(file->TypeIs(file->DIRECTORY))
 		  Report(_("Old directory `%s' is not removed"),target_name_rel);
 	       else
@@ -1117,6 +1116,7 @@ int   MirrorJob::Do()
 		  j->Recurse();
 	    }
 	 }
+	 const char *target_name_rel=dir_file(target_relative_dir,file->name);
 	 if(file->TypeIs(file->DIRECTORY))
 	    Report(_("Removing old directory `%s'"),target_name_rel);
 	 else
@@ -1251,8 +1251,6 @@ int   MirrorJob::Do()
 	    goto pre_FINISHING;
 	 if(file->TypeIs(file->DIRECTORY))
 	    continue;
-	 const char *source_name_rel=dir_file(source_relative_dir,file->name);
-	 source_name_rel=alloca_strdup(source_name_rel);
 	 if(script)
 	 {
 	    ArgV args("rm");
@@ -1269,6 +1267,7 @@ int   MirrorJob::Do()
 	    j->cmdline.set_allocated(args->Combine());
 	    JobStarted(j);
 	 }
+	 const char *source_name_rel=dir_file(source_relative_dir,file->name);
 	 Report(_("Removing source file `%s'"),source_name_rel);
       }
       break;
