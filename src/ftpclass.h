@@ -113,6 +113,7 @@ class Ftp : public NetAccess
       bool clnt_supported;
       bool host_supported;
       bool mfmt_supported;
+      bool mff_supported;
       bool epsv_supported;
       bool tvfs_supported;
 
@@ -233,10 +234,11 @@ class Ftp : public NetAccess
       };
 
       expect_t check_case;
+      xstring_c cmd;
       xstring_c arg;
       Expect *next;
 
-      Expect(expect_t e,const char *a=0) : check_case(e), arg(a) {}
+      Expect(expect_t e,const char *a=0,const char *c=0) : check_case(e), cmd(c), arg(a) {}
       Expect(expect_t e,char c) : check_case(e)
 	 {
 	    char cc[2]={c,0};

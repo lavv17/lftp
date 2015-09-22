@@ -993,6 +993,7 @@ Ftp::Connection::Connection(const char *c)
    clnt_supported=false;
    host_supported=false;
    mfmt_supported=false;
+   mff_supported=false;
    epsv_supported=false;
    tvfs_supported=false;
 
@@ -1275,11 +1276,6 @@ int   Ftp::Do()
    if(!hostname)
       return m;
 
-   if(mode==CHANGE_MODE && !QueryBool("use-site-chmod"))
-   {
-      SetError(NOT_SUPP,_("SITE CHMOD is disabled by ftp:use-site-chmod"));
-      return MOVED;
-   }
    if(mode==MP_LIST && !use_mlsd)
    {
       SetError(NOT_SUPP,_("MLSD is disabled by ftp:use-mlsd"));
@@ -1626,9 +1622,9 @@ int   Ftp::Do()
       if(mode==CONNECT_VERIFY)
 	 goto notimeout_return;
 
-      if(mode==CHANGE_MODE && !conn->site_chmod_supported)
+      if(mode==CHANGE_MODE && !conn->mff_supported && !conn->site_chmod_supported)
       {
-	 SetError(NOT_SUPP,_("SITE CHMOD is not supported by this site"));
+	 SetError(NOT_SUPP,_("MFF and SITE CHMOD are not supported by this site"));
 	 return MOVED;
       }
       if(mode==MP_LIST && !conn->mlst_supported)
@@ -1938,7 +1934,10 @@ int   Ftp::Do()
 	 break;
       case(CHANGE_MODE):
 	 {
-	    command=xstring::format("SITE CHMOD %03o",chmod_mode);
+	    if(conn->mff_supported)
+	       command=xstring::format("MFF UNIX.mode=%03o;",chmod_mode);
+	    else
+	       command=xstring::format("SITE CHMOD %03o",chmod_mode);
 	    append_file=true;
 	    want_type=conn->type;
 	    break;
@@ -1989,9 +1988,10 @@ int   Ftp::Do()
 	 else
 	    conn->SendCmd(command);
 
+	 Expect::expect_t e=Expect::FILE_ACCESS;
 	 if(mode==QUOTE_CMD)
 	 {
-	    expect->Push(Expect::QUOTED);
+	    e=Expect::QUOTED;
 	    if(!strncasecmp(file,"CWD",3)
 	    || !strncasecmp(file,"CDUP",4)
 	    || !strncasecmp(file,"XCWD",4)
@@ -2002,12 +2002,10 @@ int   Ftp::Do()
 	    }
 	 }
 	 else if(mode==LONG_LIST)
-	    expect->Push(Expect::QUOTED);
+	    e=Expect::QUOTED;
 	 else if(mode==RENAME)
-	    expect->Push(Expect::RNFR);
-	 else
-	    expect->Push(Expect::FILE_ACCESS);
-
+	    e=Expect::RNFR;
+	 expect->Push(new Expect(e,file,command));
 	 goto pre_WAITING_STATE;
       }
       if(mode==LINK || mode==SYMLINK) {
@@ -2029,23 +2027,20 @@ int   Ftp::Do()
 	 conn->can_do_pasv|=(conn->peer_sa.sa.sa_family==AF_INET6
 			&& IN6_IS_ADDR_V4MAPPED(&conn->peer_sa.in6.sin6_addr));
 #endif
-	 if(conn->can_do_pasv && !(conn->epsv_supported && QueryBool("prefer-epsv",hostname)))
-	 {
 #if USE_SSL
-	    if(copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on && copy_ssl_connect)
-	       conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
-	    else
-#endif // note the following statement
-	       conn->SendCmd("PASV");
+	 if(conn->can_do_pasv && copy_mode!=COPY_NONE && conn->prot=='P' && !conn->sscn_on && copy_ssl_connect) {
+	    conn->SendCmd("CPSV"); // same as PASV, but server does SSL_connect
 	    expect->Push(Expect::PASV);
-	    pasv_state=PASV_NO_ADDRESS_YET;
-	 }
-	 else
-	 {
+	 } else
+#endif // note the following statement
+	 if(!conn->can_do_pasv || (conn->epsv_supported && QueryBool("prefer-epsv",hostname))) {
 	    conn->SendCmd("EPSV");
 	    expect->Push(Expect::EPSV);
-	    pasv_state=PASV_NO_ADDRESS_YET;
+	 } else {
+	    conn->SendCmd("PASV");
+	    expect->Push(Expect::PASV);
 	 }
+	 pasv_state=PASV_NO_ADDRESS_YET;
       }
       else // !PASSIVE
       {
@@ -2616,6 +2611,11 @@ void Ftp::SendUTimeRequest()
    if(conn->mfmt_supported)
    {
       conn->SendCmd2(xstring::format("MFMT %s",d),file,url::path_ptr(file_url),home);
+      expect->Push(Expect::IGNORE);
+   }
+   else if(conn->mff_supported)
+   {
+      conn->SendCmd2(xstring::format("MFF modify=%s;",d),file,url::path_ptr(file_url),home);
       expect->Push(Expect::IGNORE);
    }
    else if(QueryBool("use-site-utime2") && conn->site_utime2_supported)
@@ -3930,6 +3930,8 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->host_supported=true;
       else if(!strcasecmp(f,"MFMT"))
 	 conn->mfmt_supported=true;
+      else if(!strcasecmp(f,"MFF"))
+	 conn->mff_supported=true;
       else if(!strncasecmp(f,"REST ",5)) // FIXME: actually REST STREAM
 	 conn->rest_supported=true;
       else if(!strcasecmp(f,"REST"))
@@ -4142,7 +4144,10 @@ void Ftp::CheckResp(int act)
    file_access:
       if(mode==CHANGE_MODE && site_cmd_unsupported(act))
       {
-	 conn->site_chmod_supported=false;
+	 if(exp->cmd.begins_with("SITE CHMOD"))
+	    conn->site_chmod_supported=false;
+	 else if(exp->cmd.begins_with("MFF"))
+	    conn->mff_supported=false;
 	 SetError(NO_FILE,all_lines);
 	 break;
       }
