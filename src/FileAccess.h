@@ -473,6 +473,8 @@ protected:
 
    unsigned need;
    bool follow_symlinks;
+   bool try_recursive;
+   bool is_recursive;
 
    void PrepareToDie();
    ~ListInfo();
@@ -481,9 +483,11 @@ public:
    ListInfo(FileAccess *session,const char *path);
 
    void SetExclude(const char *p,const PatternSet *e) { exclude_prefix=p; exclude=e; }
+   void TryRecursive(bool y=true) { try_recursive=y; }
 
    // caller has to delete the resulting FileSet itself.
    FileSet *GetResult() { return result.borrow(); }
+   bool IsRecursive() const { return is_recursive; }
 
    void Need(unsigned mask) { need|=mask; }
    void NoNeed(unsigned mask) { need&=~mask; }

@@ -869,15 +869,9 @@ DirList::~DirList()
 
 // ListInfo implementation
 ListInfo::ListInfo(FileAccess *s,const char *p)
-   : FileAccessOperation(s)
+   : FileAccessOperation(s), exclude_prefix(0), exclude(0), need(0),
+   follow_symlinks(false), try_recursive(false), is_recursive(false)
 {
-   exclude=0;
-   exclude_prefix=0;
-
-   need=0;
-
-   follow_symlinks=false;
-
    if(session && p)
    {
       saved_cwd=session->GetCwd();
