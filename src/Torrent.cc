@@ -3795,6 +3795,10 @@ int TorrentListener::Do()
    }
 
    if(type==SOCK_DGRAM) {
+      if(!Ready(sock,POLLIN)) {
+	 Block(sock,POLLIN);
+	 return m;
+      }
       char buf[0x4000];
       sockaddr_u src;
       socklen_t src_len=sizeof(src);
@@ -3815,6 +3819,11 @@ int TorrentListener::Do()
    if(rate.Get()>5 || Torrent::NoTorrentCanAccept())
    {
       TimeoutS(1);
+      return m;
+   }
+
+   if(!Ready(sock,POLLIN)) {
+      Block(sock,POLLIN);
       return m;
    }
 

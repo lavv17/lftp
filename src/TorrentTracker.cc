@@ -436,6 +436,10 @@ void UdpTracker::NextPeer() {
 }
 
 bool UdpTracker::RecvReply() {
+   if(!Ready(sock,POLLIN)) {
+      Block(sock,POLLIN);
+      return false;
+   }
    Buffer buf;
    const int max_len=0x1000;
    sockaddr_u addr;

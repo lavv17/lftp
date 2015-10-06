@@ -94,6 +94,10 @@ public:
 	    TimeoutS(1);
 	    return m;
 	 }
+	 if(!Ready(sock,POLLIN)) {
+	    Block(sock,POLLIN);
+	    return m;
+	 }
 	 struct sockaddr_un sun_addr;
 	 socklen_t sa_len=sizeof(sun_addr);
 	 a_sock=accept(sock,(sockaddr*)&sun_addr,&sa_len);
