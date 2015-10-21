@@ -122,23 +122,11 @@ ProcWait::~ProcWait()
    all_proc.remove(proc_key(pid));
 }
 
-void ProcWait::SIGCHLD_handler(int sig)
-{
-   (void)sig;
-   int info;
-   pid_t pp=waitpid(-1,&info,WUNTRACED|WNOHANG);
-   if(pp==-1)
-      return;
-   ProcWait *w=all_proc.lookup(proc_key(pp));
-   if(w && w->handle_info(info))
-      w->Timeout(0);
-}
-
 void ProcWait::Signal(bool yes)
 {
    if(yes)
    {
-      SignalHook::Handle(SIGCHLD,&ProcWait::SIGCHLD_handler);
+      SignalHook::DoCount(SIGCHLD);   // select() will return -1 with EINTR
       SignalHook::Unblock(SIGCHLD);
    }
    else
