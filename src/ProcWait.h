@@ -59,8 +59,6 @@ public:
 
    ProcWait(pid_t p);
 
-   static void SIGCHLD_handler(int);
-
    static void Signal(bool yes);
 
    static void DeleteAll();
