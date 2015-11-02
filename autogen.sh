@@ -24,7 +24,7 @@ DIE=0
   DIE=1
 }
 
-(grep "^AM_PROG_LIBTOOL" $srcdir/configure.ac >/dev/null) && {
+(egrep "^AM_PROG_LIBTOOL|^LT_INIT" $srcdir/configure.ac >/dev/null) && {
   (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed to compile $PKG_NAME."
@@ -63,6 +63,10 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.9.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
+}
+
+(gnulib-tool --version) < /dev/null > /dev/null 2>&1 || {
+	test -x $HOME/gnulib/gnulib-tool && PATH=$PATH:$HOME/gnulib
 }
 
 (gnulib-tool --version) < /dev/null > /dev/null 2>&1 || {
@@ -130,14 +134,16 @@ do
 	  echo "Creating $dr/aclocal.m4 ..."
 	  test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
 	  echo "Running gettextize...  Ignore non-fatal messages."
-	  echo "no" | gettextize --force --copy --no-changelog
+	  rm -f configure.ac~ m4/Makefile.am~
+	  setsid -V >/dev/null 2>&1 && SETSID="setsid -w"
+	  eval $SETSID gettextize --force --copy --no-changelog
 	  mv configure.ac~ configure.ac
 	  mv m4/Makefile.am~ m4/Makefile.am 
 	  echo "Making $dr/aclocal.m4 writable ..."
 	  test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
         fi
       fi
-      if grep "^AM_PROG_LIBTOOL" configure.ac >/dev/null; then
+      if egrep "^AM_PROG_LIBTOOL|^LT_INIT" configure.ac >/dev/null; then
 	echo "Running libtoolize..."
 	libtoolize --force --copy
 	mv Makefile.am~ Makefile.am
