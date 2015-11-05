@@ -33,11 +33,11 @@ void EditJob::Finish(int e)
       unlink(temp_file);
 }
 
-int EditJob::HandleJob(JobRef<Job>& j)
+int EditJob::HandleJob(JobRef<Job>& j,bool fail)
 {
    if(!j->Done())
       return STALL;
-   if(j->ExitCode())
+   if(j->ExitCode() && fail)
       Finish(1);
    RemoveWaiting(j);
    return MOVED;
@@ -82,18 +82,13 @@ int EditJob::Do()
       return MOVED;
    }
    if(get) {
-      if(!HandleJob(get))
+      if(!HandleJob(get,false))
 	 return m;
       if(done)
 	 return MOVED;
       struct stat st;
       int res=stat(temp_file,&st);
-      if(res<0) {
-	 perror(temp_file);
-	 Finish(1);
-	 return MOVED;
-      }
-      mtime=st.st_mtime;
+      mtime=(res>=0?st.st_mtime:NO_DATE);
       xstring cmd("${EDITOR:-vi} ");
       cmd.append(shell_encode(temp_file));
       editor=new SysCmdJob(cmd);

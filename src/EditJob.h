@@ -34,7 +34,7 @@ class EditJob : public SessionJob
    int exit_code;
    bool done;
 
-   int HandleJob(JobRef<Job>& j);
+   int HandleJob(JobRef<Job>& j, bool fail=true);
    void Finish(int code);
 
 public:
