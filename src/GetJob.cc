@@ -42,12 +42,18 @@ int   GetJob::Do()
 {
    int m=STALL;
 
-   if(cp && cp->Done() && !cp->Error())
+   if(cp && cp->Done())
    {
-      // now we can delete old file, since there is new one
-      RemoveBackupFile();
-      if(file_mode!=NO_MODE && local)
-	 chmod(local->full_name,file_mode);
+      if(cp->Error()) {
+	 // in case of errors, move the backup to original location
+	 if(local && backup_file)
+	    rename(backup_file,local->full_name);
+      } else {
+	 // now we can delete the old file, since there is a new one
+	 RemoveBackupFile();
+	 if(file_mode!=NO_MODE && local)
+	    chmod(local->full_name,file_mode);
+      }
    }
    if(super::Do()==MOVED)
       m=MOVED;
