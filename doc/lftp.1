@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "21 Aug 2015"
+.TH lftp 1 "12 Nov 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -798,12 +798,29 @@ Rename \fIfile1\fP to \fIfile2\fP.
 List remote file names
 
 .B open
-.RB [ \-e " \fIcmd\fP]"
-.BR "[" \-u " \fIuser\fP[", "\fIpass\fP]]"
-.BR "[" \-p " \fIport\fP] \fIhost\fP|\fIurl\fP"
+.RI [ OPTS ]
+.I site
 .PP
-Select a FTP server.
-
+Select a server by host name, URL or bookmark. When an URL or bookmark is
+given, automatically change the current working directory to the directory
+of the URL.
+Options:
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-e \fIcmd\fP	execute the command just after selecting the server
+\-u \fIuser\fP[,\fIpass\fP]	use the user/password for authentication
+\-p \fIport\fP	use the port for connection
+\-s \fIslot\fP	assign the connection to this slot
+\-d	enable debug
+\-B	don't look up bookmarks
+\-\-user \fIuser\fP	use the user for authentication
+\-\-password \fIpass\fP	use the password for authentication
+\-\-env\-password	take password from \fBLFTP_PASSWORD\fP environment variable
+\fIsite\fP	host name, URL or bookmark name
+.TE
+.P
 .B pget
 .RI [ OPTS ]
 .I rfile
@@ -2247,9 +2264,12 @@ Execute given commands and don't exit.
 Use the given port to connect.
 .TP
 .BI \-u " user\fR[\fP\fB,\fPpass\fR]\fP"
-Use the given username and password to connect. Remember to quote the password properly in the shell.
-Also note that it is not secure to specify the password on command line, use \fI~/.netrc\fP file.
-Alternatively you can use ssh-based protocols with authorized keys, so you don't have to enter a password.
+Use the given username and password to connect. Remember to quote the
+password properly in the shell. Also note that it is not secure to specify
+the password on command line, use \fI~/.netrc\fP file or
+\fBLFTP_PASSWORD\fP environment variable together with \-\-env\-password
+option. Alternatively you can use ssh-based protocols with authorized keys,
+so you don't have to enter a password.
 .PP
 .TP
 .B \-\-norc
@@ -2263,6 +2283,8 @@ This option must be used alone without other arguments (except \fB\-\-norc\fP).
 Execute the given commands and exit. Commands can be separated with
 a semicolon, `&&' or `||'. Remember to quote the commands argument properly in the shell.
 This option must be used alone without other arguments (except \fB\-\-norc\fP).
+.TP
+Other \fBopen\fP options may also be given on the \fBlftp\fP command line.
 
 .SH ENVIRONMENT VARIABLES
 The following environment variables are processed by \fBlftp\fR:
@@ -2288,6 +2310,8 @@ Used to set initial module:path variable.
 Used to locate the directory that stores user-specific configuration files. If
 unset, \fI~/.lftp\fR will be used. Please note that if this directory does not
 exist, then XDG directories will be used.
+.IP "\fBLFTP_PASSWORD\fP"
+Used for \-\-env\-password \fBopen\fP option.
 .IP "\fBLS_COLORS\fP"
 used to set initial color:dir-colors variable.
 .IP "\fBXDG_CONFIG_DIR\fP, \fBXDG_DATA_DIR\fP, \fBXDG_CACHE_DIR\fP"
