@@ -901,13 +901,9 @@ Job *CmdExec::builtin_open()
       xstring& cmd=xstring::get_tmp("open -B ");
       if(user)
       {
-	 cmd.append("-u ");
-	 cmd.append_quoted(user);
+	 cmd.append("--user ").append_quoted(user);
 	 if(pass)
-	 {
-	    cmd.append(",");
-	    cmd.append_quoted(pass);
-	 }
+	    cmd.append(" --password ").append_quoted(pass);
 	 cmd.append(' ');
       }
       if(port)
