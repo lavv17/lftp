@@ -4,3 +4,5 @@ This file describes some limitations or misfeatures lftp has.
 
 * sftp:connect-program and fish:connect-program cannot have shell quoting
 in the value.
+
+* glob does not work with aliases.
