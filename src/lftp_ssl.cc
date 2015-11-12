@@ -271,18 +271,18 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
 
    const char *priority=ResMgr::Query("ssl:priority", 0);
+   if(!priority || !*priority)
+   {
+      // hack for some ftp servers
+      const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
+      if(auth && !strncmp(auth, "SSL", 3))
+         priority="NORMAL:+VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-TLS1.2";
+   }
    if(priority && *priority)
    {
       int res = gnutls_priority_set_direct(session, priority, 0);
       if(res != GNUTLS_E_SUCCESS)
 	 Log::global->Format(0,"gnutls_priority_set_direct(`%s'): %s\n",priority,gnutls_strerror(res));
-   }
-   else
-   {
-      // hack for some ftp servers
-      const char *auth=ResMgr::Query("ftp:ssl-auth", hostname);
-      if(auth && !strncmp(auth, "SSL", 3))
-         gnutls_priority_set_direct(session, "NORMAL:+SSL3.0:-TLS1.0:-TLS1.1:-TLS1.2",0);
    }
 
    if(h && ResMgr::QueryBool("ssl:use-sni",h)) {
@@ -804,6 +804,10 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
       };
       char *to_parse=alloca_strdup(priority);
       for(char *ptr=strtok(to_parse,":"); ptr; ptr=strtok(NULL,":")) {
+	 if(*ptr && !strncmp(ptr+1,"VERS-",5)) {
+	    ptr[5]=ptr[0];
+	    ptr+=5;
+	 }
 	 for(const ssl_option *opt=opt_table; opt->name[0]; opt++) {
 	    if(!strcmp(ptr,opt->name)) {
 	       options|=opt->option;
