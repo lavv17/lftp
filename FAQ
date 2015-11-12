@@ -29,8 +29,8 @@ A: You have compiled lftp with large file support (>2G) but your kernel
 Q: Where is lls?
 A: !ls
 
-Q: Why doesn't `mirror' download files starting with a dot? I can see the files
-   using `ls -a'.
+Q: Why doesn't `mirror' download files starting with a dot (or re-uploads
+   them all the time)? I can see the files on the server using `ls -a'.
 A: Try `set ftp:list-options -a'.
 
 Q: ^Z doesn't work in Cygwin.
