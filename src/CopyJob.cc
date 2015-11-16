@@ -42,7 +42,8 @@ int CopyJob::Do()
       const char *name=GetDispName();
       if(!strstr(error,name) && op.ne(name))
 	 error=xstring::cat(name,": ",error,NULL);
-      eprintf("%s: %s\n",op.get(),error);
+      if(!quiet)
+	 eprintf("%s: %s\n",op.get(),error);
       done=true;
       return MOVED;
    }
@@ -137,7 +138,7 @@ void CopyJob::SetDispName()
 }
 
 CopyJob::CopyJob(FileCopy *c1,const char *name1,const char *op1)
-   : c(c1), name(name1), op(op1)
+   : c(c1), name(name1), op(op1), quiet(false)
 {
    done=false;
    no_status=false;
@@ -179,7 +180,7 @@ CopyJob::~CopyJob()
 
 // CopyJobEnv
 CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
-   : SessionJob(s)
+   : SessionJob(s), quiet(false)
 {
    args=a;
    args->rewind();
@@ -239,6 +240,7 @@ void CopyJobEnv::AddCopier(FileCopy *c,const char *n)
    if(ascii)
       c->Ascii();
    cp=cj_new?cj_new->New(c,n,op):new CopyJob(c,n,op);
+   cp->Quiet(quiet);
    if(waiting.count()==0)
       transfer_start_ts=now;
    AddWaiting(cp);
@@ -286,7 +288,8 @@ xstring& CopyJobEnv::FormatStatus(xstring& s,int v,const char *prefix)
 
 void CopyJobEnv::SayFinal()
 {
-   printf("%s",FormatFinalWithPrefix(xstring::get_tmp(""),"").get());
+   if(!quiet)
+      printf("%s",FormatFinalWithPrefix(xstring::get_tmp(""),"").get());
 }
 
 int CopyJobEnv::AcceptSig(int sig)

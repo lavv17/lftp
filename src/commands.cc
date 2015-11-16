@@ -1637,7 +1637,7 @@ CMD(get)
 {
    int opt;
    bool cont=false;
-   const char *opts="+cEeuaO:";
+   const char *opts="+cEeuaO:q";
    const char *op=args->a0();
    ArgV	 *get_args=new ArgV(op);
    int n_conn=1;
@@ -1647,16 +1647,17 @@ CMD(get)
    bool glob=false;
    bool make_dirs=false;
    bool reverse=false;
+   bool quiet=false;
    xstring_c output_dir;
 
    if(!strncmp(op,"re",2))
    {
       cont=true;
-      opts="+EuaO:";
+      opts="+EuaO:q";
    }
    if(!strcmp(op,"pget"))
    {
-      opts="+n:ceuO:";
+      opts="+n:ceuO:q";
       n_conn=0; // default, which means to take pget:default-n
    }
    else if(!strcmp(op,"put") || !strcmp(op,"reput"))
@@ -1666,12 +1667,12 @@ CMD(get)
    else if(!strcmp(op,"mget"))
    {
       glob=true;
-      opts="cEeadO:";
+      opts="cEeadO:q";
    }
    else if(!strcmp(op,"mput"))
    {
       glob=true;
-      opts="cEeadO:";
+      opts="cEeadO:q";
       reverse=true;
    }
    if(!reverse)
@@ -1710,6 +1711,9 @@ CMD(get)
       case('O'):
 	 output_dir.set(optarg);
 	 break;
+      case('q'):
+	 quiet=true;
+	 break;
       case('?'):
       err:
 	 eprintf(_("Try `help %s' for more information.\n"),op);
@@ -1739,6 +1743,7 @@ CMD(get)
 	 j->Ascii();
       if(output_dir)
 	 j->OutputDir(output_dir.borrow());
+      j->Quiet(quiet);
       return j;
    }
    args->back();
@@ -1773,6 +1778,7 @@ CMD(get)
       j->Reverse();
    if(n_conn!=1)
       j->SetCopyJobCreator(new pCopyJobCreator(n_conn));
+   j->Quiet(quiet);
    return j;
 }
 
@@ -3264,6 +3270,7 @@ CMD(get1)
       {"output",required_argument,0,'o'},
       {"remove-source-later",no_argument,0,'E'},
       {"remove-target-first",no_argument,0,'e'},
+      {"quiet",no_argument,0,'q'},
       {0,0,0,0}
    };
    int opt;
@@ -3271,6 +3278,7 @@ CMD(get1)
    const char *dst=0;
    bool cont=false;
    bool ascii=false;
+   bool quiet=false;
    long long source_region_begin=0,source_region_end=FILE_END;
    long long target_region_begin=0,target_region_end=FILE_END;
    int n,p;
@@ -3305,6 +3313,9 @@ CMD(get1)
 	    eprintf("%s\n",_("Invalid range format. Format is min-max, e.g. 10-20."));
 	    goto usage;
 	 }
+	 break;
+      case('q'):
+	 quiet=true;
 	 break;
       case '?':
       usage:
@@ -3378,7 +3389,9 @@ CMD(get1)
    if(ascii)
       c->Ascii();
 
-   return new CopyJob(c,src,args->a0());
+   CopyJob *cj=new CopyJob(c,src,args->a0());
+   cj->Quiet(quiet);
+   return cj;
 }
 
 CMD(slot)

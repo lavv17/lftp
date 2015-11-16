@@ -35,6 +35,7 @@ protected:
    bool no_status;
    bool no_status_on_write;
    bool clear_status_on_write;
+   bool quiet;
 
    void SetDispName();
 
@@ -48,6 +49,7 @@ public:
    void NoStatusOnWrite() { no_status_on_write=true; }
    void ClearStatusOnWrite() { clear_status_on_write=true; }
    bool HasStatus() const { return !no_status; }
+   void Quiet(bool q) { quiet=q; }
 
    int Do();
    int Done() { return done; }
@@ -116,6 +118,7 @@ protected:
    xstring_c cwd;
    bool cont;
    bool ascii;
+   bool quiet;
    Ref<ArgV> args;
 
    virtual void NextFile() = 0;
@@ -145,6 +148,8 @@ public:
 
    double GetTimeSpent() { return time_spent+(waiting.count()>0?now-transfer_start_ts:0.); }
    off_t GetBytesCount() { return bytes+Job::GetBytesCount(); }
+
+   void Quiet(bool q) { quiet=q; }
 };
 
 #endif // COPYJOB_H
