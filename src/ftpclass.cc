@@ -2512,7 +2512,7 @@ int   Ftp::Do()
 usual_return:
    if(m==MOVED)
       return MOVED;
-   if(CheckTimeout())
+   if(conn && CheckTimeout())
       return MOVED;
 notimeout_return:
    if(m==MOVED)
