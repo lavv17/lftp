@@ -95,6 +95,7 @@ class Ftp : public NetAccess
       bool received_150;
 
       char type;  // type of transfer: 'A'scii or 'I'mage
+      char t_mode; // transfer mode: 'S'tream, 'Z'ipped
 
       bool dos_path;
       bool vms_path;
@@ -116,6 +117,7 @@ class Ftp : public NetAccess
       bool mff_supported;
       bool epsv_supported;
       bool tvfs_supported;
+      bool mode_z_supported;
 
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
@@ -145,6 +147,7 @@ class Ftp : public NetAccess
 #endif
 
       xstring_c mlst_attr_supported;
+      xstring_c mode_z_opts_supported;
 
       Connection(const char *c);
       ~Connection();
@@ -170,6 +173,9 @@ class Ftp : public NetAccess
       void SendCmd2(const char *cmd,int v);
       void SendCmdF(const char *fmt,...) PRINTF_LIKE(2,3);
       int FlushSendQueueOneCmd(); // sends single command from send_cmd_buffer
+
+      void AddDataTranslator(DataTranslator *t);
+      void AddDataTranslation(const char *charset,bool translit);
 
       void SuspendInternal()
       {
@@ -198,6 +204,7 @@ class Ftp : public NetAccess
 	 READY,		// check response after connect
 	 REST,		// check response for REST
 	 TYPE,		// check response for TYPE
+	 MODE,
 	 CWD,		// check response for CWD
 	 CWD_CURR,	// check response for CWD into current directory
 	 CWD_STALE,	// check response for CWD when it's not critical

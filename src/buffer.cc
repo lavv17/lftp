@@ -418,6 +418,12 @@ int DirectedBuffer::MoveDataHere(Buffer *buf,int size)
       return Buffer::MoveDataHere(buf,size);
    return size;
 }
+void DirectedBuffer::PutEOF()
+{
+   if(mode==PUT && translator)
+      translator->PutTranslated(this,0,0);
+   Buffer::PutEOF();
+}
 
 void DirectedBuffer::EmbraceNewData(int len)
 {

@@ -169,6 +169,7 @@ protected:
 public:
    DirectedBuffer(dir_t m) : mode(m) {}
    void SetTranslator(DataTranslator *t);
+   const Ref<DataTranslator>& GetTranslator() const { return translator; }
    void SetTranslation(const char *be_encoding,bool translit=true)
 #ifdef HAVE_ICONV
       ;
@@ -183,6 +184,7 @@ public:
    void PutRaw(const char *buf) { Buffer::Put(buf); }
    void Put(const char *buf,int size);
    void Put(const char *buf) { Put(buf,strlen(buf)); }
+   void PutEOF(); // set eof, flush translator
    int MoveDataHere(Buffer *o,int len);
    template<class BUF> int MoveDataHere(const SMTaskRef<BUF>& o,int len) { return MoveDataHere(o.get_non_const(),len); }
    dir_t GetDirection() { return mode; }

@@ -37,4 +37,15 @@ public:
    void ResetTranslation();
 };
 
+class DataDeflator : public DataTranslator
+{
+   z_stream z;
+   int z_err;
+public:
+   DataDeflator(int level=Z_DEFAULT_COMPRESSION);
+   ~DataDeflator();
+   void PutTranslated(Buffer *dst,const char *buf,int size);
+   void ResetTranslation();
+};
+
 #endif //BUFFER_ZLIB_H

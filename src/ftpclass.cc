@@ -38,6 +38,7 @@
 #include "FileCopyFtp.h"
 #include "LsCache.h"
 #include "buffer_ssl.h"
+#include "buffer_zlib.h"
 
 #include "ascii_ctype.h"
 #include "misc.h"
@@ -964,6 +965,7 @@ Ftp::Connection::Connection(const char *c)
    sscn_on=false;
 #endif
    type='A';
+   t_mode='S';
    last_rest=0;
    rest_pos=0;
 
@@ -996,6 +998,7 @@ Ftp::Connection::Connection(const char *c)
    mff_supported=false;
    epsv_supported=false;
    tvfs_supported=false;
+   mode_z_supported=false;
 
    proxy_is_http=false;
    may_show_password=false;
@@ -1824,6 +1827,15 @@ int   Ftp::Do()
       }
 
       char want_type=(ascii?'A':'I');
+      char want_t_mode='S';
+
+      if(conn->mode_z_supported && QueryBool("use-mode-z",hostname)
+      && (mode==LIST || mode==LONG_LIST || mode==MP_LIST
+	  || ((mode==RETRIEVE || mode==STORE)
+	      && !re_match(file,Query("compressed-re"))))) {
+	 want_t_mode='Z';
+      }
+
       if(GetFlag(NOREST_MODE) || pos==0)
 	 real_pos=0;
       else
@@ -1859,6 +1871,7 @@ int   Ftp::Do()
 	    conn->data_iobuf=new IOBuffer(IOBuffer::GET);
 	    rate_limit=new RateLimit(hostname);
 	    want_type=conn->type;
+	    want_t_mode=conn->t_mode;
 	 }
 	 else
 	 {
@@ -1947,10 +1960,15 @@ int   Ftp::Do()
 	 state=EOF_STATE;
 	 return MOVED;
       }
+
       if(want_type!=conn->type)
       {
 	 conn->SendCmdF("TYPE %c",want_type);
 	 expect->Push(new Expect(Expect::TYPE,want_type));
+      }
+      if(want_t_mode!=conn->t_mode) {
+	 conn->SendCmdF("MODE %c",want_t_mode);
+	 expect->Push(new Expect(Expect::MODE,want_t_mode));
       }
 
       if(opt_size && conn->size_supported && file[0] && use_size)
@@ -2298,12 +2316,17 @@ int   Ftp::Do()
 	 if(!conn->data_iobuf || conn->data_iobuf->GetDirection()!=dir)
 	    conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),dir);
       }
+      if(conn->t_mode=='Z') {
+	 if(mode==STORE)
+	    conn->AddDataTranslator(new DataDeflator());
+	 else
+	    conn->AddDataTranslator(new DataInflator());
+      }
       if(mode==LIST || mode==LONG_LIST || mode==MP_LIST)
       {
-	 if(conn->utf8_activated)
-	    conn->data_iobuf->SetTranslation("UTF-8",true);
-	 else if(charset && *charset)
-	    conn->data_iobuf->SetTranslation(charset,true);
+	 const char *cset=conn->utf8_activated?"UTF-8":charset.get();
+	 if(cset && *cset)
+	    conn->AddDataTranslation(cset,true);
       }
       rate_limit->SetBufferSize(conn->data_iobuf,max_buf);
    /* fallthrough */
@@ -3406,6 +3429,21 @@ void Ftp::Connection::SendCmdF(const char *f,...)
    SendCmd(s);
 }
 
+void Ftp::Connection::AddDataTranslator(DataTranslator *t)
+{
+   if(data_iobuf->GetTranslator())
+      data_iobuf=new IOBufferStacked(data_iobuf.borrow());
+   data_iobuf->SetTranslator(t);
+}
+void Ftp::Connection::AddDataTranslation(const char *charset,bool translit)
+{
+#ifdef HAVE_ICONV
+   if(data_iobuf->GetTranslator())
+      data_iobuf=new IOBufferStacked(data_iobuf.borrow());
+   data_iobuf->SetTranslation(charset,translit);
+#endif
+}
+
 int   Ftp::SendEOT()
 {
    if(mode!=STORE)
@@ -3551,6 +3589,7 @@ void Ftp::ExpectQueue::Close()
       case(Expect::SITE_UTIME):
       case(Expect::SITE_UTIME2):
       case(Expect::TYPE):
+      case(Expect::MODE):
       case(Expect::LANG):
       case(Expect::OPTS_UTF8):
       case(Expect::ALLO):
@@ -3960,6 +3999,10 @@ void Ftp::CheckFEAT(char *reply)
 	 conn->cpsv_supported=true;
       else if(!strcasecmp(f,"SSCN"))
 	 conn->sscn_supported=true;
+      else if(!strncasecmp(f,"MODE Z",6)) {
+	 conn->mode_z_supported=true;
+	 conn->mode_z_opts_supported.set(f[6]==' '?f+7:NULL);
+      }
 #endif // USE_SSL
    }
    if(!trust) {
@@ -4321,6 +4364,10 @@ void Ftp::CheckResp(int act)
    case Expect::TYPE:
       if(is2XX(act))
 	 conn->type=arg[0];
+      break;
+   case Expect::MODE:
+      if(is2XX(act))
+	 conn->t_mode=arg[0];
       break;
    case Expect::OPTS_UTF8:
    case Expect::LANG:

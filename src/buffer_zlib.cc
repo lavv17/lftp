@@ -92,7 +92,7 @@ DataInflator::DataInflator()
    z.opaque = Z_NULL;
    z.avail_in = 0;
    z.next_in = Z_NULL;
-   z_err = inflateInit2(&z, 16+MAX_WBITS);
+   z_err = inflateInit2(&z, 32+MAX_WBITS);
 }
 DataInflator::~DataInflator()
 {
@@ -101,4 +101,83 @@ DataInflator::~DataInflator()
 void DataInflator::ResetTranslation()
 {
    z_err = inflateReset(&z);
+}
+
+
+void DataDeflator::PutTranslated(Buffer *target,const char *put_buf,int size)
+{
+   const int flush=(put_buf?Z_NO_FLUSH:Z_FINISH);
+   bool from_untranslated=false;
+   if(Size()>0)
+   {
+      Put(put_buf,size);
+      Get(&put_buf,&size);
+      from_untranslated=true;
+   }
+   // process all data we can, save the rest in the untranslated buffer
+   while(size>0 || flush==Z_FINISH)
+   {
+      size_t put_size=size;
+      int size_coeff=1;
+      size_t store_size=size_coeff*put_size+256;
+      char *store_space=target->GetSpace(store_size);
+      char *store_buf=store_space;
+      // do the deflation
+      z.next_in=(Bytef*)put_buf;
+      z.avail_in=put_size;
+      z.next_out=(Bytef*)store_buf;
+      z.avail_out=store_size;
+      int ret = deflate(&z,flush);
+      assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+      switch (ret) {
+      case Z_BUF_ERROR:
+	 size_coeff*=2;
+	 continue;
+      case Z_MEM_ERROR:
+	 z_err=ret;
+	 target->SetError(xstring::cat("zlib deflate error: ",z.msg,NULL),true);
+	 return;
+      case Z_STREAM_END:
+	 z_err=ret;
+	 break;
+      }
+      int deflated_size=store_size-z.avail_out;
+      int processed_size=put_size-z.avail_in;
+
+      target->SpaceAdd(deflated_size);
+      if(from_untranslated) {
+	 Skip(processed_size);
+	 Get(&put_buf,&size);
+      } else {
+	 put_buf+=processed_size;
+	 size-=processed_size;
+      }
+      if(deflated_size==0) {
+	 // could not deflate any data, save unprocessed data
+	 if(!from_untranslated)
+	    Put(put_buf,size);
+	 return;
+      }
+      if(flush==Z_FINISH && ret==Z_STREAM_END)
+	 break;
+   }
+}
+
+DataDeflator::DataDeflator(int level)
+{
+   /* allocate deflate state */
+   z.zalloc = Z_NULL;
+   z.zfree = Z_NULL;
+   z.opaque = Z_NULL;
+   z.avail_in = 0;
+   z.next_in = Z_NULL;
+   z_err = deflateInit(&z, level);
+}
+DataDeflator::~DataDeflator()
+{
+   (void)deflateEnd(&z);
+}
+void DataDeflator::ResetTranslation()
+{
+   z_err = deflateReset(&z);
 }
