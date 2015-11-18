@@ -29,7 +29,7 @@ lib_LTLIBRARIES = liblftp-tasks.la liblftp-jobs.la
 
 proto_ftp_la_SOURCES  = ftpclass.cc ftpclass.h FtpListInfo.cc FtpListInfo.h\
  FtpDirList.cc FtpDirList.h ftp-opie.c netkey.c FileCopyFtp.cc FileCopyFtp.h
-proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h HttpDirXML.cc buffer_zlib.cc buffer_zlib.h
+proto_http_la_SOURCES = Http.cc Http.h HttpDir.cc HttpDir.h HttpDirXML.cc
 proto_file_la_SOURCES = LocalAccess.cc LocalAccess.h
 proto_fish_la_SOURCES = Fish.cc Fish.h
 proto_sftp_la_SOURCES = SFtp.cc SFtp.h
@@ -37,10 +37,10 @@ cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
 cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
 cmd_torrent_la_SOURCES= Torrent.cc Torrent.h TorrentTracker.cc TorrentTracker.h\
  DHT.cc DHT.h Bencode.cc Bencode.h
-liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h
+liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h SSH_Access.cc SSH_Access.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h RateLimit.cc RateLimit.h\
- network.cc network.h SSH_Access.cc SSH_Access.h
+ network.cc network.h buffer_zlib.cc buffer_zlib.h
 
 if NEED_TRIO
    TRIO = $(top_builddir)/trio/libtrio.la
@@ -56,11 +56,11 @@ cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_torrent_la_LDFLAGS= -module -avoid-version -rpath $(pkgverlibdir)
 liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
-liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS)
-liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB)
+liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS) $(ZLIB_LDFLAGS)
+liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB) $(ZLIB)
 
 proto_ftp_la_LIBADD  = liblftp-network.la
-proto_http_la_LIBADD = liblftp-network.la $(EXPAT_LIBS) $(ZLIB_LDFLAGS) $(ZLIB)
+proto_http_la_LIBADD = liblftp-network.la $(EXPAT_LIBS)
 proto_fish_la_LIBADD = liblftp-network.la liblftp-pty.la
 proto_sftp_la_LIBADD = liblftp-network.la liblftp-pty.la
 cmd_torrent_la_LIBADD  = liblftp-network.la
