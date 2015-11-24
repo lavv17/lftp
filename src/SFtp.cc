@@ -340,6 +340,7 @@ void SFtp::Init()
    state=DISCONNECTED;
    ssh_id=0;
    eof=false;
+   dir=false;
    received_greeting=false;
    password_sent=0;
    expect_queue_size=0;
@@ -837,6 +838,9 @@ void SFtp::HandleExpect(Expect *e)
 	    eof=true;
 	    cache->SetDirectory(this,cwd,true);
 	 }
+         else if (mode==CHANGE_DIR){
+	    dir=true;
+	 }
       }
       else
 	 SetError(NO_FILE,reply);
@@ -1106,6 +1110,18 @@ int SFtp::HandleReplies()
       return MOVED;
    }
    HandleExpect(e);
+   if(dir)
+   {
+      if(mode==CHANGE_DIR && RespQueueIsEmpty())
+      {
+         LogNote(9,_("triggered late directory change"));
+         cwd.Set(file);
+         eof=true;
+         cache->SetDirectory(this,cwd,true);
+         dir=false;
+      }
+   }
+
    return MOVED;
 }
 SFtp::Expect **SFtp::FindExpect(Packet *p)
