@@ -301,12 +301,7 @@ void SFtp::MoveConnectionHere(SFtp *o)
    recv_translate=o->recv_translate.borrow();
    send_translate=o->send_translate.borrow();
    rate_limit=o->rate_limit.borrow();
-   expect_queue_size=o->expect_queue_size; o->expect_queue_size=0;
-   expect_chain=o->expect_chain; o->expect_chain=0;
-   expect_chain_end=o->expect_chain_end;
-   if(expect_chain_end==&o->expect_chain)
-      expect_chain_end=&expect_chain;
-   o->expect_chain_end=&o->expect_chain;
+   expect_queue.move_here(o->expect_queue);
    timeout_timer.Reset(o->timeout_timer);
    ssh_id=o->ssh_id;
    state=CONNECTED;
@@ -342,10 +337,6 @@ void SFtp::Init()
    eof=false;
    received_greeting=false;
    password_sent=0;
-   expect_queue_size=0;
-   expect_chain=0;
-   expect_chain_end=&expect_chain;
-   ooo_chain=0;
    protocol_version=0;
    send_translate=0;
    recv_translate=0;
@@ -726,8 +717,7 @@ void SFtp::Close()
    CloseHandle(Expect::IGNORE);
    super::Close();
    // don't need these out-of-order packets anymore
-   while(ooo_chain)
-      DeleteExpect(&ooo_chain);
+   ooo_chain.truncate();
    if(recv_buf)
       recv_buf->Resume();
 }
@@ -831,7 +821,7 @@ void SFtp::HandleExpect(Expect *e)
 	    SetError(NO_FILE,strerror(ENOTDIR));
 	    break;
 	 }
-	 if(mode==CHANGE_DIR && RespQueueIsEmpty())
+	 if(mode==CHANGE_DIR && GetExpectCount(Expect::CWD)==0)
 	 {
 	    cwd.Set(file);
 	    eof=true;
@@ -897,11 +887,15 @@ void SFtp::HandleExpect(Expect *e)
 	 }
 	 else
 	 {
-	    if(e->next!=ooo_chain)
-	       LogNote(9,"put a packet with id=%d on out-of-order chain (need_pos=%lld packet_pos=%lld)",
-		  reply->GetID(),(long long)(pos+file_buf->Size()),(long long)r->pos);
-	    e->next=ooo_chain;
-	    ooo_chain=e;
+	    LogNote(9,"put a packet with id=%d on out-of-order chain (need_pos=%lld packet_pos=%lld)",
+	       reply->GetID(),(long long)(pos+file_buf->Size()),(long long)r->pos);
+	    if(ooo_chain.count()>=64)
+	    {
+	       LogError(0,"Too many out-of-order packets");
+	       Disconnect();
+	       return;
+	    }
+	    ooo_chain.append(e);
 	    return;
 	 }
       }
@@ -955,7 +949,7 @@ void SFtp::HandleExpect(Expect *e)
 		  LogNote(9,"eof");
 	       eof=true;
 	       state=DONE;
-	       if(file_buf && !ooo_chain)
+	       if(file_buf && ooo_chain.count()==0)
 		  file_buf->PutEOF();
 	       break;
 	    }
@@ -1048,22 +1042,20 @@ int SFtp::HandleReplies()
    if(!recv_buf)
       return MOVED;
 
-   int i=0;
-   Expect *ooo_scan=ooo_chain;
-   while(ooo_scan)
-   {
-      Expect *next=ooo_scan->next;
-      ooo_chain=next;
-      HandleExpect(ooo_scan);
-      ooo_scan=next;
-      if(++i>64)
-      {
-	 LogError(0,"Too many out-of-order packets");
-	 Disconnect();
-	 return MOVED;
+   if(file_buf) {
+      off_t need_pos=pos+file_buf->Size();
+      // there are usually a few of out-of-order packets, no need for fast search
+      for(int i=0; i<ooo_chain.count(); i++) {
+	 if(ooo_chain[i]->has_data_at_pos(need_pos)) {
+	    Expect *e=ooo_chain[i];
+	    ooo_chain[i]=0; // to keep the Expect
+	    ooo_chain.remove(i);
+	    HandleExpect(e);
+	 }
       }
    }
-   if(!ooo_chain && eof && file_buf && !file_buf->Eof())
+
+   if(ooo_chain.count()==0 && eof && file_buf && !file_buf->Eof())
       file_buf->PutEOF();
 
    if(recv_buf->Size()<4)
@@ -1108,51 +1100,20 @@ int SFtp::HandleReplies()
    HandleExpect(e);
    return MOVED;
 }
-SFtp::Expect **SFtp::FindExpect(Packet *p)
-{
-   unsigned id=p->GetID();
-   for(Expect **scan=&expect_chain; *scan; scan=&scan[0]->next)
-   {
-      if(scan[0]->request->GetID()==id)
-      {
-	 assert(!scan[0]->reply);
-	 scan[0]->reply=p;
-	 return scan;
-      }
-   }
-   return 0;
-}
 void SFtp::PushExpect(Expect *e)
 {
-   e->next=*expect_chain_end;
-   *expect_chain_end=e;
-   expect_chain_end=&e->next;
-   expect_queue_size++;
-}
-void SFtp::DeleteExpect(Expect **e)
-{
-   if(expect_chain_end==&e[0]->next)
-      expect_chain_end=e;
-   Expect *d=*e;
-   *e=e[0]->next;
-   delete d;
-   expect_queue_size--;
+   expect_queue.add(e->request->GetKey(),e);
 }
 SFtp::Expect *SFtp::FindExpectExclusive(Packet *p)
 {
-   Expect **e=FindExpect(p);
-   if(!e || !*e)
-      return 0;
-   Expect *res=*e;
-   if(expect_chain_end==&res->next)
-      expect_chain_end=e;
-   *e=res->next;
-   expect_queue_size--;
-   return res;
+   Expect *e=expect_queue.borrow(p->GetKey());
+   if(e)
+      e->reply=p;
+   return e;
 }
 void SFtp::CloseExpectQueue()
 {
-   for(Expect  *e=expect_chain; e; e=e->next)
+   for(Expect *e=expect_queue.each_begin(); e; e=expect_queue.each_next())
    {
       switch(e->tag)
       {
@@ -1174,6 +1135,14 @@ void SFtp::CloseExpectQueue()
 	 break;
       }
    }
+}
+
+int SFtp::GetExpectCount(Expect::expect_t tag)
+{
+   int count=0;
+   for(Expect *e=expect_queue.each_begin(); e; e=expect_queue.each_next())
+      count+=(e->tag==tag);
+   return count;
 }
 
 Glob *SFtp::MakeGlob(const char *pat)
