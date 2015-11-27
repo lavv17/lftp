@@ -288,6 +288,7 @@ public:
       packet_type GetPacketType() { return type; }
       const char *GetPacketTypeText();
       unsigned GetID() const { return id; }
+      const xstring& GetKey() { return xstring::get_tmp((const char*)&id,sizeof(id)); }
       void SetID(unsigned new_id) { id=new_id; }
       void DropData(Buffer *b) { b->Skip(4+(length>0?length:0)); }
       bool TypeIs(packet_type t) const { return type==t; }
@@ -702,10 +703,15 @@ private:
 
       Ref<Packet> request;
       Ref<Packet> reply;
-      Expect *next;
       int i;
       expect_t tag;
       Expect(Packet *req,expect_t t,int j=0) : request(req), i(j), tag(t) {}
+
+      bool has_data_at_pos(off_t pos) const {
+	 if(!reply->TypeIs(SSH_FXP_DATA) || !request->TypeIs(SSH_FXP_READ))
+	    return false;
+	 return request.Cast<Request_READ>()->pos==pos;
+      }
    };
 
    void PushExpect(Expect *);
@@ -713,26 +719,22 @@ private:
    int HandlePty();
    void HandleExpect(Expect *);
    void CloseExpectQueue();
+   int GetExpectCount(Expect::expect_t tag);
    void CloseHandle(Expect::expect_t e);
    int ReplyLogPriority(int);
 
-   int expect_queue_size;
-   Expect *expect_chain;
-   Expect **expect_chain_end;
-   Expect **FindExpect(Packet *reply);
-   void DeleteExpect(Expect **);
-   Expect *FindExpectExclusive(Packet *reply);
-   Expect *ooo_chain; 	// out of order replies buffered
+   xmap_p<Expect> expect_queue;
+   const xstring& expect_key(unsigned id);
 
-   int   RespQueueIsEmpty() { return expect_chain==0; }
-   int	 RespQueueSize() { return expect_queue_size; }
-   void  EmptyRespQueue()
-      {
-	 while(expect_chain)
-	    DeleteExpect(&expect_chain);
-	 while(ooo_chain)
-	    DeleteExpect(&ooo_chain);
-      }
+   Expect *FindExpectExclusive(Packet *reply);
+   xarray_p<Expect> ooo_chain; 	// out of order replies buffered
+
+   int	 RespQueueSize() const { return expect_queue.count(); }
+   int   RespQueueIsEmpty() const { return RespQueueSize()==0; }
+   void  EmptyRespQueue() {
+      expect_queue.empty();
+      ooo_chain.truncate();
+   }
 
    bool GetBetterConnection(int level,bool limit_reached);
    void MoveConnectionHere(SFtp *o);
