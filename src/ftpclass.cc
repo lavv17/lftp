@@ -3644,6 +3644,8 @@ bool  Ftp::IOReady()
 {
    if(copy_mode!=COPY_NONE && !copy_passive && !copy_addr_valid)
       return true;   // simulate to be ready as other fxp peer has to go
+   if(Error())
+      return true;   // report ready to propagate the error.
    return (state==DATA_OPEN_STATE || state==WAITING_STATE)
       && real_pos!=-1 && IsOpen();
 }
