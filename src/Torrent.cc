@@ -1035,6 +1035,7 @@ void Torrent::RebuildPiecesNeeded()
    }
    cmp_torrent=this;
    pieces_needed.qsort(PiecesNeededCmp);
+   CalcPiecesStats();
    pieces_needed_rebuild_timer.Reset();
 }
 
