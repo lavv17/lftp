@@ -88,7 +88,7 @@ int FtpDirList::Do()
    {
       const char *eol=find_char(b,len,'\n');
       if(!eol && !ubuf->Eof() && len<0x1000)
-	 return m;
+	 break;
       if(eol)
       {
 	 int line_len=eol+1-b;
