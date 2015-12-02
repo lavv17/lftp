@@ -41,7 +41,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "17 Nov 2015"
+.TH lftp 1 "02 Dec 2015"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1542,6 +1542,9 @@ and another method (NLST) will be used.
 sets options which are always appended to LIST command. It can be
 useful to set this to `\-a' if server does not show dot (hidden) files by default.
 Default is empty.
+.TP
+.BR ftp:mode-z-level \ (number)
+compression level (0-9) for uploading with MODE Z.
 .TP
 .BR ftp:nop-interval \ (seconds)
 delay between NOOP commands when downloading tail of a file. This is useful

@@ -2318,7 +2318,7 @@ int   Ftp::Do()
       }
       if(conn->t_mode=='Z') {
 	 if(mode==STORE)
-	    conn->AddDataTranslator(new DataDeflator());
+	    conn->AddDataTranslator(new DataDeflator(Query("mode-z-level",hostname)));
 	 else
 	    conn->AddDataTranslator(new DataInflator());
       }

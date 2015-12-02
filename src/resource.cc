@@ -213,6 +213,7 @@ static ResType lftp_vars[] = {
    {"ftp:lang",			 "",	  0,0},
    {"ftp:list-empty-ok",	 "no",	  0,0},
    {"ftp:list-options",		 "",	  0,0},
+   {"ftp:mode-z-level",		 "6",	  ResMgr::UNumberValidate,0},
    {"ftp:nop-interval",		 "120",   ResMgr::UNumberValidate,0},
    {"ftp:passive-mode",		 "on",    ResMgr::BoolValidate,0},
    {"ftp:port-range",		 "full",  ResMgr::RangeValidate,0},
