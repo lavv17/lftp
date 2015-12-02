@@ -32,6 +32,7 @@ Makefile
 /build-aux/depcomp
 /build-aux/install-sh
 /build-aux/missing
+/build-aux/ar-lib
 
 # LE editor
 .le.ini
