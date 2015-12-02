@@ -1,5 +1,5 @@
 LFTP
-===
+====
 Command line driven, shell-like, reliable file transfer program. It supports a number of protocols and even BitTorrent with DHT! IPv6 is fully supported too.
 
 To build from GIT sources, run `autogen.sh` script to create Makefiles. You will need autoconf, libtool, gettext-devel, automake, gnulib.
