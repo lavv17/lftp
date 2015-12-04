@@ -1,0 +1,17 @@
+Some hints about lftp compilation
+---------------------------------
+   * ncurses or termcap development is required. If you get undefined
+references to tputs or tgetent, install ncurses-devel package.
+   * invalid exception specifications in rltypedefs.h
+Solution: install a newer readline library.
+   * multiple declarations of rl_dispatching during linking
+Solution: install a newer readline library.
+   * g++ cannot create executables
+You probably have not installed libstdc++ (or libg++). As a
+workaround, you can try `CXX=gcc configure' to avoid linking with
+libstdc++.
+   * lftp cannot resolve host names
+Try `configure --without-libresolv' - it can sometimes help.
+   * Sun C++ v5.0 compiler can be used to compile lftp. Use
+       CXX=CC CXXFLAGS="-compat=4 -features=bool" ./configure
+   * you need GNU TLS 1.0 or newer to compile with SSL support.
