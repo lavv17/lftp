@@ -8,7 +8,7 @@ AC_DEFUN([LFTP_NEED_TRIO],[
 	 ac_cv_need_trio="yes (because there is no system snprintf/vsnprintf functions)"
       else
 
-      AC_TRY_RUN([
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	 int main()
 	 {
 	    unsigned long long x=0,x1;
@@ -30,7 +30,7 @@ AC_DEFUN([LFTP_NEED_TRIO],[
 	       return 1;
 
 	    return 0;
-	 }],[],[ac_cv_need_trio="yes (because %lld fails)"],[ac_cv_need_trio="no (assumed)"])
+	 }]])],[],[ac_cv_need_trio="yes (because %lld fails)"],[ac_cv_need_trio="no (assumed)"])
 
       fi
    ])

@@ -7,11 +7,10 @@ AC_DEFUN([LFTP_PROG_CXXLINK],
       old_CXX="$CXX"
       CXX="$CC"
       AC_LANG_PUSH(C++)
-      AC_TRY_LINK([],[char *a=new char[10];delete[] a;],
-	 [],[
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[char *a=new char[10];delete[] a;]])],[],[
 	 old_LIBS="$LIBS"
 	 LIBS="-lsupc++ $LIBS"
-	 AC_TRY_LINK([],[char *a=new char[10];delete[] a;],[],[LIBS="$old_LIBS"; CXX="$old_CXX";])
+	 AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[char *a=new char[10];delete[] a;]])],[],[LIBS="$old_LIBS"; CXX="$old_CXX";])
 	 ])
       AC_LANG_POP(C++)
    fi
@@ -22,10 +21,9 @@ AC_DEFUN([LFTP_CXX_TEST],
 [
    AC_LANG_PUSH(C++)
    AC_MSG_CHECKING(if c++ compiler works)
-   AC_TRY_RUN([int main() { return(0); } ],
-           [AC_MSG_RESULT(yes)], [
+   AC_RUN_IFELSE([AC_LANG_SOURCE([[int main() { return(0); } ]])],[AC_MSG_RESULT(yes)],[
 	   AC_MSG_RESULT(no)
-	   AC_MSG_ERROR(C++ test compile failed; check your C++ compiler)], [AC_MSG_RESULT(cross-compiling)])
+	   AC_MSG_ERROR(C++ test compile failed; check your C++ compiler)],[AC_MSG_RESULT(cross-compiling)])
    AC_LANG_POP(C++)
 ])
 
@@ -34,14 +32,11 @@ AC_DEFUN([LFTP_FUNC_SSCANF_CONST],
    AC_MSG_CHECKING(whether sscanf works on const strings)
    AC_CACHE_VAL(lftp_cv_func_sscanf_const_works,
    [
-      AC_TRY_RUN([   #include <stdio.h>
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[   #include <stdio.h>
 		     int main() {
 			int a,b;
 			return !(sscanf("123x","%d%n",&a,&b)>0);
-		  }],
-	    [lftp_cv_func_sscanf_const_works=yes;],
-	    [lftp_cv_func_sscanf_const_works=no;],
-	    [lftp_cv_func_sscanf_const_works=yes;])
+		  }]])],[lftp_cv_func_sscanf_const_works=yes;],[lftp_cv_func_sscanf_const_works=no;],[lftp_cv_func_sscanf_const_works=yes;])
    ])
    AC_MSG_RESULT($lftp_cv_func_sscanf_const_works)
    if test $lftp_cv_func_sscanf_const_works = no; then
@@ -56,7 +51,7 @@ AC_DEFUN([LFTP_C_INLINE],
 [AC_CACHE_CHECK([for inline], ac_cv_c_inline,
 [ac_cv_c_inline=no
 for ac_kw in inline __inline__ __inline; do
-  AC_TRY_COMPILE(, [} $ac_kw foo() {], [ac_cv_c_inline=$ac_kw; break])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[} $ac_kw foo() {]])],[ac_cv_c_inline=$ac_kw; break],[])
 done
 ])
 case "$ac_cv_c_inline" in
@@ -75,7 +70,7 @@ AC_DEFUN([LFTP_NOIMPLEMENTINLINE],
       AC_LANG_PUSH(C++)
       old_CXXFLAGS="$CXXFLAGS"
       CXXFLAGS="$CXXFLAGS $flags"
-      AC_TRY_LINK([
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	 class aaa
 	 {
 	    int var;
@@ -86,9 +81,7 @@ AC_DEFUN([LFTP_NOIMPLEMENTINLINE],
 	 };
 	 aaa::aaa() { var=0; }
 	 aaa::~aaa() {}
-	 ],[],
-	 [lftp_cv_noimplementinline=yes],
-	 [lftp_cv_noimplementinline=no])
+	 ]], [[]])],[lftp_cv_noimplementinline=yes],[lftp_cv_noimplementinline=no])
       CXXFLAGS="$old_CXXFLAGS"
       AC_LANG_POP(C++)
    ])
@@ -105,7 +98,7 @@ AC_DEFUN([LFTP_CHECK_CXX_FLAGS],
       AC_LANG_PUSH(C++)
       old_CXXFLAGS="$CXXFLAGS"
       CXXFLAGS="$CXXFLAGS $flags"
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 	 class aaa
 	 {
 	    int var;
@@ -116,8 +109,7 @@ AC_DEFUN([LFTP_CHECK_CXX_FLAGS],
 	 };
 	 aaa::aaa() { var=0; }
 	 aaa::~aaa() {}
-	 ],[],
-	 [support=yes],[support=no])
+	 ]], [[]])],[support=yes],[support=no])
       CXXFLAGS="$old_CXXFLAGS"
       AC_LANG_POP(C++)
 
@@ -132,14 +124,12 @@ AC_DEFUN([LFTP_CHECK_LIBM],
    AC_CACHE_VAL(lftp_cv_libm_needed,
    [
       AC_LANG_PUSH(C++)
-      AC_TRY_LINK([
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	    #include <math.h>
 	    double a,b;
-	 ],[
+	 ]], [[
 	    return int(exp(a)+log(b)+pow(a,b));
-	 ],
-	 [lftp_cv_libm_needed=no],
-	 [lftp_cv_libm_needed=yes])
+	 ]])],[lftp_cv_libm_needed=no],[lftp_cv_libm_needed=yes])
       AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_libm_needed)
@@ -154,8 +144,7 @@ AC_DEFUN([LFTP_CXX_BOOL],
    AC_CACHE_VAL(lftp_cv_cxx_bool,
    [
       AC_LANG_PUSH(C++)
-      AC_TRY_COMPILE([bool t=true;bool f=false;],[],
-	 [lftp_cv_cxx_bool=yes],[lftp_cv_cxx_bool=no])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[bool t=true;bool f=false;]], [[]])],[lftp_cv_cxx_bool=yes],[lftp_cv_cxx_bool=no])
       AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_cxx_bool)
@@ -178,8 +167,7 @@ AC_DEFUN([LFTP_CXX__BOOL],
    AC_CACHE_VAL(lftp_cv_cxx__Bool,
    [
       AC_LANG_PUSH(C++)
-      AC_TRY_COMPILE([_Bool t=true;bool f=false;],[],
-	 [lftp_cv_cxx__Bool=yes],[lftp_cv_cxx__Bool=no])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[_Bool t=true;bool f=false;]], [[]])],[lftp_cv_cxx__Bool=yes],[lftp_cv_cxx__Bool=no])
       AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_cxx__Bool)
@@ -199,20 +187,16 @@ AC_DEFUN([LFTP_CXX_ANSI_SCOPE],
    AC_CACHE_VAL(lftp_cv_cxx_ansi_scope,
    [
       AC_LANG_PUSH(C++)
-      AC_TRY_COMPILE(,[
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
   for (int i = 0; i < 4; i++) ;
-  for (int i = 0; i < 4; i++) ;],
-      [lftp_cv_cxx_ansi_scope=yes],
-      [
+  for (int i = 0; i < 4; i++) ;]])],[lftp_cv_cxx_ansi_scope=yes],[
          # IRIX C++ needs -LANG:ansi-for-init-scope=ON if
          # -LANG:std not used
          _cxxflags=$CXXFLAGS
          CXXFLAGS="$CXXFLAGS -LANG:ansi-for-init-scope=ON"
-         AC_TRY_COMPILE(,[
+         AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
   for (int i = 0; i < 4; i++) ;
-  for (int i = 0; i < 4; i++) ;],
-         [lftp_cv_cxx_ansi_scope="-LANG:ansi-for-init-scope=ON"],
-         [lftp_cv_cxx_ansi_scope=no])
+  for (int i = 0; i < 4; i++) ;]])],[lftp_cv_cxx_ansi_scope="-LANG:ansi-for-init-scope=ON"],[lftp_cv_cxx_ansi_scope=no])
          CXXFLAGS=$_cxxflags
       ])
       AC_LANG_POP(C++)
@@ -230,12 +214,12 @@ AC_DEFUN([LFTP_CXX_ANSI_SCOPE],
 
 AC_DEFUN([LFTP_ENVIRON_CHECK],[
    AC_CACHE_CHECK([for environ variable],[lftp_cv_environ],[
-      AC_TRY_LINK([
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	 #include <unistd.h>
 	 extern char **environ;
-      ],[
+      ]], [[
 	 return environ==(char**)0;
-      ],[lftp_cv_environ=yes],[lftp_cv_environ=no])
+      ]])],[lftp_cv_environ=yes],[lftp_cv_environ=no])
    ])
    if test x$lftp_cv_environ = xyes; then
       AC_DEFINE(HAVE_ENVIRON, 1, [define if you have global environ variable])
@@ -247,7 +231,7 @@ AC_DEFUN([LFTP_POSIX_FALLOCATE_CHECK],[
    dnl * Old glibcs have broken posix_fallocate(). Make sure not to use it.
    dnl * It may also be broken in AIX.
    AC_CACHE_CHECK([whether posix_fallocate() works],[i_cv_posix_fallocate_works],[
-     AC_TRY_RUN([
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
        #define _XOPEN_SOURCE 600
        #include <stdio.h>
        #include <stdlib.h>
@@ -267,21 +251,21 @@ AC_DEFUN([LFTP_POSIX_FALLOCATE_CHECK],[
 	 unlink("conftest.temp");
 	 return ret;
        }
-     ], [
+     ]])],[
        i_cv_posix_fallocate_works=yes
-     ], [
+     ],[
        i_cv_posix_fallocate_works=no
-     ], [
+     ],[
        dnl * Cross-compilation: we can only test if the code compiles and links.
        dnl * If it does, assume that it works, because cross-compilation for AIX or old glibc is unlikely.
        AC_CACHE_VAL([i_cv_posix_fallocate_works],[
-         AC_TRY_LINK([
+         AC_LINK_IFELSE([AC_LANG_PROGRAM([[
            #include <fcntl.h>
-	 ],[
+	 ]], [[
              posix_fallocate(0, 0, 0);
-         ], [
+         ]])],[
            i_cv_posix_fallocate_works=yes
-         ], [
+         ],[
            i_cv_posix_fallocate_works=no
          ])
        ])
@@ -293,20 +277,20 @@ AC_DEFUN([LFTP_POSIX_FALLOCATE_CHECK],[
 ])
 
 AC_DEFUN([LFTP_POSIX_FADVISE_CHECK],[
-   AC_CACHE_CHECK([for posix_fadvise], [ac_cv_posix_fadvise], [AC_TRY_LINK([
+   AC_CACHE_CHECK([for posix_fadvise], [ac_cv_posix_fadvise], [AC_LINK_IFELSE([AC_LANG_PROGRAM([[
    #define _XOPEN_SOURCE 600
    #include <stdio.h>
    #include <stdlib.h>
    #include <fcntl.h>
    #include <unistd.h>
-   ],[
+   ]], [[
       int res = posix_fadvise ((int)0, (off_t)0, (off_t)0, POSIX_FADV_NORMAL);
       int a = POSIX_FADV_SEQUENTIAL;
       int b = POSIX_FADV_NOREUSE;
       int c = POSIX_FADV_RANDOM;
       int d = POSIX_FADV_WILLNEED;
       int e = POSIX_FADV_DONTNEED;
-   ],[ac_cv_posix_fadvise=yes],[ac_cv_posix_fadvise=no])])
+   ]])],[ac_cv_posix_fadvise=yes],[ac_cv_posix_fadvise=no])])
    if test x$ac_cv_posix_fadvise = xyes; then
       AC_DEFINE(HAVE_POSIX_FADVISE, 1, [Define if posix_fadvise() is available])
    fi
@@ -319,10 +303,9 @@ AC_DEFUN([LFTP_CXX_STDC_LIMIT_MACROS],[
    AC_CACHE_VAL(lftp_cv_cxx_stdc_limit_macros,
    [
       AC_LANG_PUSH(C++)
-      AC_TRY_COMPILE([
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
          #include <stdint.h>
-	 int i = INT_MIN==INT32_MIN && INT_MAX == INT32_MAX;],[],
-	 [lftp_cv_cxx_stdc_limit_macros=no],[lftp_cv_cxx_stdc_limit_macros=yes])
+	 int i = INT_MIN==INT32_MIN && INT_MAX == INT32_MAX;]], [[]])],[lftp_cv_cxx_stdc_limit_macros=no],[lftp_cv_cxx_stdc_limit_macros=yes])
       AC_LANG_POP(C++)
    ])
    AC_MSG_RESULT($lftp_cv_cxx_stdc_limit_macros)
@@ -332,8 +315,7 @@ AC_DEFUN([LFTP_CXX_STDC_LIMIT_MACROS],[
 ])
 
 AC_DEFUN([LFTP_LIBIDN_CHECK],[
-     AC_ARG_WITH(libidn, AC_HELP_STRING([--with-libidn@<:@=DIR@:>@],
-                                     [Support IDN (needs GNU Libidn)]),
+     AC_ARG_WITH(libidn, AS_HELP_STRING([--with-libidn@<:@=DIR@:>@],[Support IDN (needs GNU Libidn)]),
        libidn=$withval, libidn=yes)
      if test "$libidn" != "no"; then
        if test "$libidn" != "yes"; then

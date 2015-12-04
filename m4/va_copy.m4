@@ -5,7 +5,7 @@
 AC_DEFUN([lftp_VA_COPY],
 [
    AC_CACHE_CHECK([for an implementation of va_copy()],lftp_cv_va_copy,[
-      AC_TRY_RUN([
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[
       #include <stdarg.h>
       #include <stdlib.h>
       void f (int i, ...) {
@@ -19,14 +19,11 @@ AC_DEFUN([lftp_VA_COPY],
       int main() {
 	 f (0, 42);
 	 return 0;
-      }],
-      [lftp_cv_va_copy=yes],
-      [lftp_cv_va_copy=no],
-      [lftp_cv_va_copy=yes])
+      }]])],[lftp_cv_va_copy=yes],[lftp_cv_va_copy=no],[lftp_cv_va_copy=yes])
    ])
    if test x$lftp_cv_va_copy != xyes; then
       AC_CACHE_CHECK([for an implementation of __va_copy()],lftp_cv___va_copy,[
-	 AC_TRY_RUN([
+	 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	 #include <stdarg.h>
          #include <stdlib.h>
 	 void f (int i, ...) {
@@ -40,10 +37,7 @@ AC_DEFUN([lftp_VA_COPY],
 	 int main() {
 	    f (0, 42);
 	    return 0;
-	 }],
-	 [lftp_cv___va_copy=yes],
-	 [lftp_cv___va_copy=no],
-	 [lftp_cv___va_copy=no])
+	 }]])],[lftp_cv___va_copy=yes],[lftp_cv___va_copy=no],[lftp_cv___va_copy=no])
       ])
    fi
 
@@ -59,7 +53,7 @@ AC_DEFUN([lftp_VA_COPY],
    else
 
       AC_CACHE_CHECK([whether va_lists can be copied by value],lftp_cv_va_val_copy,[
-	   AC_TRY_RUN([
+	   AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	   #include <stdarg.h>
 	   #include <string.h>
            #include <stdlib.h>
@@ -75,17 +69,14 @@ AC_DEFUN([lftp_VA_COPY],
 	   int main() {
 	     f (0, 42);
 	     return 0;
-	   }],
-	   [lftp_cv_va_val_copy=yes],
-	   [lftp_cv_va_val_copy=no],
-	   [lftp_cv_va_val_copy=no])
+	   }]])],[lftp_cv_va_val_copy=yes],[lftp_cv_va_val_copy=no],[lftp_cv_va_val_copy=no])
       ])
 
       if test x$lftp_cv_va_val_copy = xyes; then
 	 AC_DEFINE(VA_VAL_COPY,1,[Define to 1 if va_lists can be copied by value])
       else
 	 AC_CACHE_CHECK([whether va_lists can be copied by pointer],lftp_cv_va_ptr_copy,[
-	      AC_TRY_RUN([
+	      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	      #include <stdarg.h>
               #include <stdlib.h>
 	      void f (int i, ...) {
@@ -100,10 +91,7 @@ AC_DEFUN([lftp_VA_COPY],
 	      int main() {
 		f (0, 42);
 		return 0;
-	      }],
-	      [lftp_cv_va_ptr_copy=yes],
-	      [lftp_cv_va_ptr_copy=no],
-	      [lftp_cv_va_ptr_copy=no])
+	      }]])],[lftp_cv_va_ptr_copy=yes],[lftp_cv_va_ptr_copy=no],[lftp_cv_va_ptr_copy=no])
 	 ])
 
 	 if test x$lftp_cv_va_ptr_copy = xyes; then

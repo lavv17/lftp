@@ -12,13 +12,9 @@ AC_CACHE_VAL(lftp_cv_precompiled_readline,
 [
    old_LIBS="$LIBS"
    LIBS="-lreadline $READLINE_SUPPLIB $LIBS"
-   AC_TRY_LINK([extern int (*rl_getc_function)();],
-      [rl_getc_function=0;
-       rl_completion_matches(0,0);],
-      [AC_TRY_CPP([#include <readline/readline.h>],
-		[lftp_cv_precompiled_readline=yes],
-		[lftp_cv_precompiled_readline=no])
-      ],lftp_cv_precompiled_readline=no)
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([[extern int (*rl_getc_function)();]], [[rl_getc_function=0;
+       rl_completion_matches(0,0);]])],[AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <readline/readline.h>]])],[lftp_cv_precompiled_readline=yes],[lftp_cv_precompiled_readline=no])
+      ],[lftp_cv_precompiled_readline=no])
    LIBS="$old_LIBS"
 ])
    ;;

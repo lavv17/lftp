@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ([2.60])
-AC_INIT([lftp], [4.6.4], [lftp-bugs@lftp.yar.ru])
+AC_PREREQ([2.69])
+AC_INIT([lftp],[4.6.4.90],[lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -10,7 +10,7 @@ AM_INIT_AUTOMAKE
 
 dnl This doesn't *require* GNU extensions; it merely enables them if
 dnl they're there.
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 
 test -z "$CXX"	     && DEFAULT_CXX=yes
 test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
@@ -126,7 +126,7 @@ LFTP_CXX__BOOL
 LFTP_CXX_ANSI_SCOPE
 LFTP_CXX_STDC_LIMIT_MACROS
 
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 
 case "`uname -sr`" in
 # Linux-2.2.x and older don't support fcntl64.
@@ -138,6 +138,7 @@ AM_ICONV
 
 ALL_LINGUAS="de es fr it ja ko pl pt_BR ru uk zh_CN zh_TW zh_HK cs"
 AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.15])
 test "$MSGFMT"  = "no" && MSGFMT  ="$missing_dir/missing msgfmt"
 test "$GMSGFMT" = "no" && GMSGFMT ="$missing_dir/missing msgfmt"
 test "$XGETTEXT" = ":" && XGETTEXT="$missing_dir/missing xgettext"
@@ -258,7 +259,7 @@ AC_CHECK_DECLS([res_search],,, [
 ])
 
 AC_ARG_ENABLE([ipv6],
-	AC_HELP_STRING([--disable-ipv6],[disable IPv6 code]),
+	AS_HELP_STRING([--disable-ipv6],[disable IPv6 code]),
         [
 		if test x$enableval = xno; then
 			AC_DEFINE([DISABLE_IPV6],[1],[Disable IPv6 code])
@@ -273,7 +274,6 @@ if test x$with_libresolv = xyes; then
 fi
 
 lftp_TERMINFO
-
 READLINE_CHECK
 
 AC_ARG_WITH(gnutls, AS_HELP_STRING([--without-gnutls], [don't use GNUTLS library]),
@@ -397,12 +397,10 @@ LFTP_NEED_TRIO
 
 # See if we have h_errno (the test is here so we can use -lresolv if necessary).
 AC_CACHE_CHECK([for h_errno], inetutils_cv_var_h_errno,
-  AC_TRY_COMPILE([#include <netdb.h>],
-    [ #ifndef h_errno
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <netdb.h>]], [[ #ifndef h_errno
       extern int h_errno;
       #endif
-      int iu_x = h_errno; ],
-    inetutils_cv_var_h_errno=yes, inetutils_cv_var_h_errno=no))
+      int iu_x = h_errno; ]])],[inetutils_cv_var_h_errno=yes],[inetutils_cv_var_h_errno=no]))
 if test "$inetutils_cv_var_h_errno" = yes; then
   AC_DEFINE([HAVE_H_ERRNO], 1, [system has h_errno])
   AC_CHECK_DECLS([h_errno],,, [#include <netdb.h>])
@@ -445,7 +443,6 @@ AC_STRUCT_TIMEZONE
 AC_STRUCT_TM
 
 dnl Checks for library functions.
-AC_TYPE_SIGNAL
 AC_FUNC_UTIME_NULL
 AC_FUNC_GETPGRP
 AC_FUNC_VPRINTF
