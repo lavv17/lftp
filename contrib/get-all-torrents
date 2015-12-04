@@ -11,5 +11,5 @@ index="$1" # e.g. https://kat.cr/movies/
 store="$2"
 
 urls="$(lynx "$index" -dump -listonly | grep magnet: | awk 'BEGIN {ORS=" "} {print "\""$2"\""}')"
-exec ./lftp -e "set limit-total-rate $RATE_LIMIT; set cmd:interactive yes; \
+exec lftp -e "set limit-total-rate $RATE_LIMIT; set cmd:interactive yes; \
 torrent -O \"$store\" --only-new $urls &"
