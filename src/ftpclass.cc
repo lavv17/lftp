@@ -1217,6 +1217,15 @@ bool Ftp::ProxyIsHttp()
        || !strcmp(proxy_proto,"https");
 }
 
+const char *Ftp::path_to_send()
+{
+   if(mode!=QUOTE_CMD && mode!=LIST && mode!=LONG_LIST
+   && cwd.path.last_char()!='/' && file.begins_with(cwd.path)
+   && file[cwd.path.length()]=='/')
+      return file+cwd.path.length()+1;
+   return file;
+}
+
 int   Ftp::Do()
 {
    const char *command=0;
@@ -1988,6 +1997,10 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE;
       }
 
+      const char *file_to_append=0;
+      if(append_file)
+	 file_to_append=path_to_send();
+
       if(mode==QUOTE_CMD || mode==CHANGE_MODE || (mode==LONG_LIST && use_stat_for_list)
       || mode==REMOVE || mode==REMOVE_DIR || mode==MAKE_DIR || mode==RENAME)
       {
@@ -2002,7 +2015,7 @@ int   Ftp::Do()
 	 }
 
 	 if(append_file)
-	    conn->SendCmd2(command,file,url::path_ptr(file_url),home);
+	    conn->SendCmd2(command,file_to_append,url::path_ptr(file_url),home);
 	 else
 	    conn->SendCmd(command);
 
@@ -2027,7 +2040,7 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE;
       }
       if(mode==LINK || mode==SYMLINK) {
-	 conn->SendCmdF("%s %s %s",command,file.get(),file1.get());
+	 conn->SendCmdF("%s %s %s",command,file_to_append,file1.get());
 	 expect->Push(Expect::FILE_ACCESS);
 	 goto pre_WAITING_STATE;
       }
@@ -2037,7 +2050,7 @@ int   Ftp::Do()
       {
 	 if(use_pret && conn->pret_supported)
 	 {
-	    conn->SendCmd(xstring::cat("PRET ",command," ",file.get(),NULL));
+	    conn->SendCmd(xstring::cat("PRET ",command," ",file_to_append,NULL));
 	    expect->Push(Expect::PRET);
 	 }
 	 conn->can_do_pasv=(conn->peer_sa.sa.sa_family==AF_INET);
@@ -2128,7 +2141,7 @@ int   Ftp::Do()
       if(copy_mode!=COPY_DEST || copy_allow_store)
       {
 	 if(append_file)
-	    conn->SendCmd2(command,file,url::path_ptr(file_url),home);
+	    conn->SendCmd2(command,file_to_append,url::path_ptr(file_url),home);
 	 else
 	    conn->SendCmd(command);
 	 expect->Push(Expect::TRANSFER);
@@ -2631,29 +2644,30 @@ void Ftp::SendUTimeRequest()
    strftime(d,sizeof(d),"%Y%m%d%H%M%S",gmtime(&n));
    d[sizeof(d)-1]=0;
 
+   const char *file_to_append=path_to_send();
    if(conn->mfmt_supported)
    {
-      conn->SendCmd2(xstring::format("MFMT %s",d),file,url::path_ptr(file_url),home);
+      conn->SendCmd2(xstring::format("MFMT %s",d),file_to_append,url::path_ptr(file_url),home);
       expect->Push(Expect::IGNORE);
    }
    else if(conn->mff_supported)
    {
-      conn->SendCmd2(xstring::format("MFF modify=%s;",d),file,url::path_ptr(file_url),home);
+      conn->SendCmd2(xstring::format("MFF modify=%s;",d),file_to_append,url::path_ptr(file_url),home);
       expect->Push(Expect::IGNORE);
    }
    else if(QueryBool("use-site-utime2") && conn->site_utime2_supported)
    {
-      conn->SendCmd2(xstring::format("SITE UTIME %s",d),file,url::path_ptr(file_url),home);
+      conn->SendCmd2(xstring::format("SITE UTIME %s",d),file_to_append,url::path_ptr(file_url),home);
       expect->Push(Expect::SITE_UTIME2);
    }
    else if(QueryBool("use-site-utime") && conn->site_utime_supported)
    {
-      conn->SendCmd(xstring::format("SITE UTIME %s %s %s %s UTC",file.get(),d,d,d));
+      conn->SendCmd(xstring::format("SITE UTIME %s %s %s %s UTC",file_to_append,d,d,d));
       expect->Push(Expect::SITE_UTIME);
    }
    else if(QueryBool("use-mdtm-overloaded"))
    {
-      conn->SendCmd2(xstring::format("MDTM %s",d),file,url::path_ptr(file_url),home);
+      conn->SendCmd2(xstring::format("MDTM %s",d),file_to_append,url::path_ptr(file_url),home);
       expect->Push(Expect::IGNORE);
    }
 }

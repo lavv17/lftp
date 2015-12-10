@@ -433,6 +433,8 @@ private:
 
    int CanRead();
 
+   const char *path_to_send();
+
 protected:
    void PrepareToDie();
 
