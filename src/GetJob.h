@@ -22,7 +22,7 @@
 
 #include "CopyJob.h"
 
-class GetJob : public CopyJobEnv
+class GetJob : public CopyJobEnv, ResClient
 {
    FileCopyPeer *SrcLocal(const char *src);
    FileCopyPeer *DstLocal(const char *dst);

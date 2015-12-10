@@ -31,9 +31,6 @@
 #include "ArgV.h"
 #include "url.h"
 
-ResDecl res_clobber	("xfer:clobber",     "no", ResMgr::BoolValidate,ResMgr::NoClosure);
-ResDecl res_make_backup	("xfer:make-backup", "yes",ResMgr::BoolValidate,ResMgr::NoClosure);
-
 #define super CopyJobEnv
 
 #define NO_MODE ((mode_t)-1)
@@ -67,11 +64,11 @@ FileCopyPeer *GetJob::SrcLocal(const char *src)
 }
 FileCopyPeer *GetJob::DstLocal(const char *dst)
 {
-   bool clobber=(cont || res_clobber.QueryBool(0));
+   bool clobber=(cont || QueryBool("xfer:clobber",0));
    int flags=O_WRONLY|O_CREAT|(truncate_target_first?O_TRUNC:0)|(clobber?0:O_EXCL);
    dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
-   if(truncate_target_first && res_make_backup.QueryBool(0))
+   if(truncate_target_first && QueryBool("xfer:make-backup",0))
    {
       /* rename old file if exists and size>0 */
       struct stat st;
@@ -86,7 +83,8 @@ FileCopyPeer *GetJob::DstLocal(const char *dst)
 	       count++;
 	       return 0;
 	    }
-	    backup_file.vset(f,"~",NULL);
+	    xstring_ca suffix(xstrftime(Query("xfer:backup-suffix",0),now));
+	    backup_file.set(f).append(suffix);
 	    if(rename(f,backup_file)!=0)
 	       backup_file.set(0);
 	    else
@@ -179,7 +177,7 @@ try_next:
 
 void GetJob::RemoveBackupFile()
 {
-   if(backup_file)
+   if(backup_file && !QueryBool("xfer:keep-backup",0))
    {
       remove(backup_file);
       backup_file.set(0);

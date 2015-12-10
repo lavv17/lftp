@@ -2160,6 +2160,10 @@ when true, DHT is used.
 suggested filenames provided by the server are used if user explicitly sets
 this option to `on'. As this could be security risk, default is off.
 .TP
+.BR xfer:backup-suffix \ (string)
+a time format string (see strftime(3)) for backup file name when replacing
+an existing file.
+.TP
 .BR xfer:clobber \ (boolean)
 if this setting is off, get commands will not overwrite existing
 files and generate an error instead.
@@ -2178,6 +2182,9 @@ the period over which weighted average rate is calculated to produce ETA.
 .BR xfer:eta-terse \ (boolean)
 show terse ETA (only high order parts). Default is true.
 .TP
+.BR xfer:keep-backup \ (boolean)
+when true, the backup file created before replacing an existing file is not removed after successful transfer.
+.TP
 .BR xfer:log \ (boolean)
 when true, lftp logs transfers to a file from xfer:log-file setting.
 .TP
@@ -2185,7 +2192,7 @@ when true, lftp logs transfers to a file from xfer:log-file setting.
 the file to log transfers to. Default is \fI~/.local/share/lftp/transfer_log\fR or \fI~/.lftp/transfer_log\fR.
 .TP
 .BR xfer:make-backup \ (boolean)
-when true, lftp renames pre-existing file adding ``~'' suffix instead of overwriting it.
+when true, lftp renames pre-existing file adding xfer:backup-suffix instead of overwriting it.
 .TP
 .BR xfer:max-log-size " (number)"
 maximum size of the transfer log file. When the size is reached, the file is renamed and started anew.
