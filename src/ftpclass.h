@@ -190,6 +190,7 @@ class Ftp : public NetAccess
 	 if(data_iobuf)	data_iobuf->ResumeSlave();
       }
 
+      void CheckFEAT(char *reply,const char *line,bool trust);
    };
 
    Ref<Connection> conn;
@@ -288,7 +289,6 @@ class Ftp : public NetAccess
    void	 NoPassReqCheck(int);
    void	 proxy_LoginCheck(int);
    void	 proxy_NoPassReqCheck(int);
-   void	 CheckFEAT(char *reply);
    char *ExtractPWD();
    int   SendCWD(const char *path,const char *path_url,Expect::expect_t c);
    void	 CatchDATE(int);

@@ -3931,25 +3931,25 @@ void Ftp::TuneConnectionAfterFEAT()
       SendOPTS_MLST();
 }
 
-void Ftp::CheckFEAT(char *reply)
+void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
 {
-   bool trust=QueryBool("trust-feat",hostname);
+//   bool trust=QueryBool("trust-feat",hostname);
    if(trust) {
       // turn off these pre-FEAT extensions only when trusting FEAT reply,
       // as some servers forget to advertise them.
-      conn->mdtm_supported=false;
-      conn->size_supported=false;
-      conn->rest_supported=false;
-      conn->tvfs_supported=false;
+      mdtm_supported=false;
+      size_supported=false;
+      rest_supported=false;
+      tvfs_supported=false;
    }
 #if USE_SSL
-   conn->auth_supported=false;
-   conn->auth_args_supported.set(0);
-   conn->cpsv_supported=false;
-   conn->sscn_supported=false;
+   auth_supported=false;
+   auth_args_supported.set(0);
+   cpsv_supported=false;
+   sscn_supported=false;
 #endif
-   conn->pret_supported=false;
-   conn->epsv_supported=false;
+   pret_supported=false;
+   epsv_supported=false;
 
    char *scan=strchr(reply,'\n');
    if(scan)
@@ -3970,62 +3970,62 @@ void Ftp::CheckFEAT(char *reply)
 	 f++;
 
       if(!strcasecmp(f,"UTF8"))
-	 conn->utf8_supported=true;
+	 utf8_supported=true;
       else if(!strncasecmp(f,"LANG ",5))
-	 conn->lang_supported=true;
+	 lang_supported=true;
       else if(!strcasecmp(f,"PRET"))
-	 conn->pret_supported=true;
+	 pret_supported=true;
       else if(!strcasecmp(f,"MDTM"))
-	 conn->mdtm_supported=true;
+	 mdtm_supported=true;
       else if(!strcasecmp(f,"SIZE"))
-	 conn->size_supported=true;
+	 size_supported=true;
       else if(!strcasecmp(f,"CLNT") || !strncasecmp(f,"CLNT ",5))
-	 conn->clnt_supported=true;
+	 clnt_supported=true;
       else if(!strcasecmp(f,"HOST"))
-	 conn->host_supported=true;
+	 host_supported=true;
       else if(!strcasecmp(f,"MFMT"))
-	 conn->mfmt_supported=true;
+	 mfmt_supported=true;
       else if(!strcasecmp(f,"MFF"))
-	 conn->mff_supported=true;
+	 mff_supported=true;
       else if(!strncasecmp(f,"REST ",5)) // FIXME: actually REST STREAM
-	 conn->rest_supported=true;
+	 rest_supported=true;
       else if(!strcasecmp(f,"REST"))
-	 conn->rest_supported=true;
+	 rest_supported=true;
       else if(!strncasecmp(f,"MLST ",5))
       {
-	 conn->mlst_supported=true;
-	 conn->mlst_attr_supported.set(f+5);
+	 mlst_supported=true;
+	 mlst_attr_supported.set(f+5);
       }
       else if(!strcasecmp(f,"EPSV"))
-	 conn->epsv_supported=true;
+	 epsv_supported=true;
       else if(!strcasecmp(f,"TVFS"))
-	 conn->tvfs_supported=true;
+	 tvfs_supported=true;
 #if USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
-	 conn->auth_supported=true;
-	 if(conn->auth_args_supported)
-	    conn->auth_args_supported.vappend(";",f+5,NULL);
+	 auth_supported=true;
+	 if(auth_args_supported)
+	    auth_args_supported.vappend(";",f+5,NULL);
 	 else
-	    conn->auth_args_supported.append(f+5);
+	    auth_args_supported.append(f+5);
       }
       else if(!strcasecmp(f,"AUTH"))
-	 conn->auth_supported=true;
+	 auth_supported=true;
       else if(!strcasecmp(f,"CPSV"))
-	 conn->cpsv_supported=true;
+	 cpsv_supported=true;
       else if(!strcasecmp(f,"SSCN"))
-	 conn->sscn_supported=true;
+	 sscn_supported=true;
       else if(!strncasecmp(f,"MODE Z",6)) {
-	 conn->mode_z_supported=true;
-	 conn->mode_z_opts_supported.set(f[6]==' '?f+7:NULL);
+	 mode_z_supported=true;
+	 mode_z_opts_supported.set(f[6]==' '?f+7:NULL);
       }
 #endif // USE_SSL
    }
    if(!trust) {
       // turn on EPSV support based on some other modern features
-      conn->epsv_supported|=conn->mlst_supported|conn->host_supported;
+      epsv_supported|=mlst_supported|host_supported;
    }
-   conn->have_feat_info=true;
+   have_feat_info=true;
 }
 
 void Ftp::TurnOffStatForList()
@@ -4355,7 +4355,7 @@ void Ftp::CheckResp(int act)
    case Expect::FEAT:
       if(is2XX(act))
       {
-	 CheckFEAT(all_lines.get_non_const());
+	 conn->CheckFEAT(all_lines.get_non_const(),line,QueryBool("trust-feat",hostname));
 	 if(conn->try_feat_after_login && conn->have_feat_info)
 	    TuneConnectionAfterFEAT();
       }
