@@ -1,3 +1,15 @@
+Version 4.6.5 - 2015-12-10
+
+* sftp: fixed handling of out-of-order replies.
+* fixed futex_wait issue in SIGCHLD handler.
+* ftp: fixed ls freezing with unstable server connection.
+* torrent: show more correct ETA on the status line.
+* fixed gnutls priority string.
+* mirror: fixed excessive stack usage on large directories.
+* documented some hard to fix bugs.
+* improved man page on open command and cmd:prompt setting.
+* translations updated (zh_TW).
+
 Version 4.6.4 - 2015-08-20
 
 * mirror: new option --transfer-all.
