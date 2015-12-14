@@ -17,6 +17,7 @@ addons:
     - build-essential
     - automake
     - autoconf
+    - autopoint
 
 script:
     - ./bootstrap
