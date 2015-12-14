@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.69])
-AC_INIT([lftp],[4.6.4.90],[lftp-bugs@lftp.yar.ru])
+AC_INIT([lftp],[4.6.5.90],[lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -274,7 +274,10 @@ if test x$with_libresolv = xyes; then
 fi
 
 lftp_TERMINFO
-READLINE_CHECK
+lftp_LIB_READLINE([5.0])
+if test "$HAVE_READLINE" != "yes"; then
+   AC_MSG_ERROR([cannot find readline library, install readline-devel package])
+fi
 
 AC_ARG_WITH(gnutls, AS_HELP_STRING([--without-gnutls], [don't use GNUTLS library]),
       [with_gnutls=$withval], [with_gnutls=yes])
@@ -301,44 +304,18 @@ if test x$with_openssl = xyes -a x"$LIBGNUTLS_LIBS" = x; then
    LFTP_OPENSSL_CHECK
 fi
 
-AC_ARG_WITH(zlib,
-AS_HELP_STRING([--with-zlib=/path], [use zlib at /path]),
-	[zlib_loc="$withval"])
-for loc in $zlib_loc default; do
-	old_LDFLAGS="$LDFLAGS"
-	old_CPPFLAGS="$CPPFLAGS"
-	case $loc in
-	yes|no|default|"") ;;
-	*)	LDFLAGS="$LDFLAGS -L$loc/lib"
-		CPPFLAGS="$CPPFLAGS -I$loc/include";;
-	esac
-	AC_CHECK_LIB(z, deflate, [
-	   LDFLAGS="$old_LDFLAGS"
-	   CPPFLAGS="$old_CPPFLAGS"
-	   ZLIB=-lz
-	   case $loc in
-	   yes|no|default|"") ;;
-	   *)	ZLIB_LDFLAGS="-L$loc/lib"
-		ZLIB_CPPFLAGS="-I$loc/include";;
-	   esac
-	   AC_SUBST(ZLIB)
-	   AC_SUBST(ZLIB_LDFLAGS)
-	   AC_SUBST(ZLIB_CPPFLAGS)
-	   AC_DEFINE(HAVE_ZLIB, 1, [Define if you have zlib library])
-	   break
-	])
-	LDFLAGS="$old_LDFLAGS"
-	CPPFLAGS="$old_CPPFLAGS"
-done
-if test "x$ZLIB" = x; then
+AX_CHECK_ZLIB([
+   AC_SUBST([ZLIB],[-lz])
+   AC_SUBST([ZLIB_LDFLAGS],["-L${ZLIB_HOME}/lib"])
+   AC_SUBST([ZLIB_CPPFLAGS],["-I${ZLIB_HOME}/include"])
+],[
    AC_MSG_ERROR([cannot find -lz library, install zlib-devel package])
-fi
-
-AC_CHECK_LIB(expat, XML_ParserCreateNS, [
-   EXPAT_LIBS=-lexpat
-   AC_SUBST(EXPAT_LIBS)
-   AC_DEFINE(HAVE_LIBEXPAT, 1, [Define if you have expat library])
 ])
+
+AX_LIB_EXPAT
+if test "x$HAVE_EXPAT" = xyes; then
+   AC_DEFINE(HAVE_LIBEXPAT, 1, [Define if you have expat library])
+fi
 
 # Check whether user wants DNSSEC local validation support
 AC_ARG_WITH(dnssec-local-validation,

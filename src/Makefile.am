@@ -48,7 +48,8 @@ endif
 GNULIB = $(top_builddir)/lib/libgnu.la
 
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
-proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
+proto_http_la_CPPFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
+proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir) $(EXPAT_LDFLAGS)
 proto_file_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 proto_fish_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -56,6 +57,7 @@ cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_torrent_la_LDFLAGS= -module -avoid-version -rpath $(pkgverlibdir)
 liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
+liblftp_network_la_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CPPFLAGS) $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir) $(OPENSSL_LDFLAGS) $(ZLIB_LDFLAGS)
 liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB) $(ZLIB)
 
@@ -98,9 +100,10 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  buffer_std.cc buffer_std.h
 liblftp_jobs_la_LIBADD = $(JOB_MODULES_STATIC) liblftp-tasks.la
 
-lftp_LDFLAGS = -export-dynamic
-lftp_LDADD = liblftp-jobs.la $(READLINE)
-lftp_DEPENDENCIES = liblftp-jobs.la $(READLINE_DEPEND)
+lftp_CPPFLAGS = $(AM_CPPFLAGS) $(READLINE_CFLAGS)
+lftp_LDFLAGS = -export-dynamic $(READLINE_LDFLAGS)
+lftp_LDADD = liblftp-jobs.la $(READLINE_LIBS)
+lftp_DEPENDENCIES = liblftp-jobs.la
 
 example1_LDADD = liblftp-tasks.la
 example1_cmd_LDADD = liblftp-jobs.la
@@ -108,7 +111,7 @@ example2_LDADD = liblftp-tasks.la
 
 CLEANFILES = *.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/trio $(ZLIB_CPPFLAGS) $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/trio
 
 # libtool does not strip modules, do it here.
 install-data-hook:
