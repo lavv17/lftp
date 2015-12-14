@@ -26,7 +26,7 @@
 #include "ArgV.h"
 #include "Filter.h"
 #include "alias.h"
-#include "history.h"
+#include "History.h"
 #include "bookmark.h"
 #include "FileGlob.h"
 

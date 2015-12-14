@@ -37,7 +37,7 @@
 #include "CmdExec.h"
 #include "SignalHook.h"
 #include "GetPass.h"
-#include "history.h"
+#include "History.h"
 #include "log.h"
 #include "DummyProto.h"
 #include "ResMgr.h"

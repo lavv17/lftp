@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <stddef.h>
 #include "trio.h"
-#include "history.h"
+#include "History.h"
 #include "url.h"
 #include "misc.h"
 

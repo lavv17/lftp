@@ -93,7 +93,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  CatJob.cc CatJob.h EditJob.cc EditJob.h GetJob.cc GetJob.h\
  ColumnOutput.h ColumnOutput.cc FileSetOutput.h FileSetOutput.cc\
  mkdirJob.cc mkdirJob.h pgetJob.cc pgetJob.h FileFeeder.cc FileFeeder.h\
- QueueFeeder.cc QueueFeeder.h history.cc history.h\
+ QueueFeeder.cc QueueFeeder.h History.cc History.h\
  FindJob.cc FindJob.h FindJobDu.cc FindJobDu.h ChmodJob.cc ChmodJob.h\
  TreatFileJob.cc TreatFileJob.h CopyJob.cc CopyJob.h echoJob.cc echoJob.h\
  OutputJob.cc OutputJob.h FileCopyOutputJob.cc FileCopyOutputJob.h\
