@@ -22,7 +22,7 @@ Makefile.in
 
 # http://www.gnu.org/software/autoconf
 Makefile
-/autom4te.cache
+/m4/autom4te.cache
 /aclocal.m4
 /compile
 /configure
@@ -33,9 +33,13 @@ Makefile
 /build-aux/install-sh
 /build-aux/missing
 /build-aux/ar-lib
+/build-aux/mdate-sh
+/build-aux/texinfo.tex
+/INSTALL
 
 # LE editor
 .le.ini
 
 # gettext
 /ABOUT-NLS
+/po/Makevars

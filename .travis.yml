@@ -1,0 +1,24 @@
+language: c++
+sudo: false
+
+compiler:
+    - clang
+    - gcc
+
+addons:
+  apt:
+    packages:
+    - libncurses5-dev
+    - readline-dev
+    - openssl-dev
+    - gnutls-dev
+    - expat-dev
+    - zlib-dev
+    - build-essential
+    - automake
+    - autoconf
+
+script:
+    - ./bootstrap
+    - ./configure
+    - make release-check
