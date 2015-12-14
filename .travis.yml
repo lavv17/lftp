@@ -9,15 +9,16 @@ addons:
   apt:
     packages:
     - libncurses5-dev
-    - readline-dev
-    - openssl-dev
-    - gnutls-dev
-    - expat-dev
-    - zlib-dev
+    - libreadline-dev
+    - openssl
+    - libgnutls-dev
+    - libexpat1-dev
+    - zlib1g-dev
     - build-essential
     - automake
     - autoconf
     - autopoint
+    - gperf
 
 script:
     - ./bootstrap
