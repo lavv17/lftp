@@ -106,7 +106,7 @@ lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(READLINE_LIBS)
 lftp_DEPENDENCIES = liblftp-jobs.la
 
 example1_LDADD = liblftp-tasks.la
-example1_cmd_LDADD = liblftp-jobs.la
+example1_cmd_LDADD = liblftp-jobs.la liblftp-tasks.la
 example2_LDADD = liblftp-tasks.la
 
 CLEANFILES = *.la
