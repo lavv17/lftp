@@ -102,7 +102,7 @@ liblftp_jobs_la_LIBADD = $(JOB_MODULES_STATIC) liblftp-tasks.la
 
 lftp_CPPFLAGS = $(AM_CPPFLAGS) $(READLINE_CFLAGS)
 lftp_LDFLAGS = -export-dynamic $(READLINE_LDFLAGS)
-lftp_LDADD = liblftp-jobs.la $(READLINE_LIBS)
+lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(READLINE_LIBS)
 lftp_DEPENDENCIES = liblftp-jobs.la
 
 example1_LDADD = liblftp-tasks.la
