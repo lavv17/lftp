@@ -1942,6 +1942,7 @@ get_again:
 	 chunked_trailer=true;
 	 state=RECEIVING_HEADER;
 	 body_size=bytes_received;
+	 Timeout(0);
 	 return DO_AGAIN;
       }
       if(chunk_pos==chunk_size)
