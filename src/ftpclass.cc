@@ -1219,10 +1219,20 @@ bool Ftp::ProxyIsHttp()
 
 const char *Ftp::path_to_send()
 {
-   if(mode!=QUOTE_CMD && mode!=LIST && mode!=LONG_LIST
-   && cwd.path.last_char()!='/' && file.begins_with(cwd.path)
-   && file[cwd.path.length()]=='/')
-      return file+cwd.path.length()+1;
+   if(mode==QUOTE_CMD && mode==LIST && mode==LONG_LIST)
+      return file;
+
+   xstring prefix(cwd.path.copy());
+   /* two cases:
+    *    root cwd	/ vs /file		-> file
+    *    non-root cwd	/cwd vs /cwd/file	-> file
+    */
+   if(prefix.last_char()!='/')
+      prefix.append('/');
+   /* cwd//file or cwd/ are not converted */
+   if(file.begins_with(prefix) && file.length()>prefix.length() && file[prefix.length()]!='/')
+      return file+prefix.length();
+
    return file;
 }
 
@@ -1980,6 +1990,7 @@ int   Ftp::Do()
 	 expect->Push(new Expect(Expect::MODE,want_t_mode));
       }
 
+      const char *file=path_to_send();
       if(opt_size && conn->size_supported && file[0] && use_size)
       {
 	 conn->SendCmd2("SIZE",file,url::path_ptr(file_url),home);
