@@ -1219,7 +1219,7 @@ bool Ftp::ProxyIsHttp()
 
 const char *Ftp::path_to_send()
 {
-   if(mode==QUOTE_CMD && mode==LIST && mode==LONG_LIST)
+   if(mode==QUOTE_CMD || mode==LIST || mode==LONG_LIST)
       return file;
 
    xstring prefix(cwd.path.copy());
