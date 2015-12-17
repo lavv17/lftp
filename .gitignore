@@ -14,6 +14,7 @@
 libtool
 .deps
 /.version
+/lftp.spec
 
 # backup files
 *~

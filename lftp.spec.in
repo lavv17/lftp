@@ -1,4 +1,4 @@
-%define version 4.6.4
+%define version @VERSION@
 %define release 1
 %define use_modules 0
 
@@ -30,10 +30,6 @@ if [ "$LINGUAS" ]; then
     unset LINGUAS
 fi
 
-# The lftp maintainer seems to use a newer version of libtool than Red
-# Hat (even 7.0) ships with. So make sure that we don't muck with
-# ltconfig
-%define __libtoolize :
 %if %use_modules
     %configure --with-modules
 %else
