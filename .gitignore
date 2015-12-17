@@ -13,6 +13,7 @@
 
 libtool
 .deps
+/.version
 
 # backup files
 *~
@@ -22,18 +23,17 @@ Makefile.in
 
 # http://www.gnu.org/software/autoconf
 Makefile
-/m4/autom4te.cache
+autom4te.cache/
 /aclocal.m4
-/compile
 /configure
 /config.cache
 /config.log
 /config.status
+/build-aux/ar-lib
 /build-aux/depcomp
 /build-aux/install-sh
-/build-aux/missing
-/build-aux/ar-lib
 /build-aux/mdate-sh
+/build-aux/missing
 /build-aux/texinfo.tex
 /INSTALL
 

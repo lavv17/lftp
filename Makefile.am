@@ -1,6 +1,8 @@
 EXTRA_DIST = lftp.conf lftp.lsm FAQ MIRRORS BUGS FEATURES\
  README README.debug-levels README.modules README.dnssec\
  lib/hstrerror.c
+EXTRA_DIST += $(top_srcdir)/.version
+BUILT_SOURCES = $(top_srcdir)/.version
 if NEED_TRIO
    TRIO = trio
 endif
@@ -19,7 +21,11 @@ uninstall-local:
 		rm -f $(DESTDIR)$(sysconfdir)/lftp.conf; \
 	fi
 
+$(top_srcdir)/.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+
 dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
 	@echo $(PACKAGE).spec updating...
 	@rm -f $(distdir)/$(PACKAGE).spec
 	@-sed "s/%define version .*/%define version $(VERSION)/" \
@@ -42,13 +48,11 @@ release-check:
 			"--without-gnutls --without-openssl" \
 			"--with-modules --without-gnutls --without-openssl"; \
 	 do \
-		make DISTCHECK_CONFIGURE_FLAGS="$$opt" distcheck || exit 1; \
+	 	echo "Testing $$opt ..."; \
+		make DISTCHECK_CONFIGURE_FLAGS="$$opt" distcheck >/dev/null || exit 1; \
 	 done
 
 release:
-#	cvs commit -m $(VERSION)
-#	make dist
-#	cvs commit -m $(VERSION)
 	make release-check
 	make release-ftp
 
@@ -62,4 +66,3 @@ release-ftp:
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.xz; \
 	    md5sum $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION).tar.bz2 $(PACKAGE)-$(VERSION).tar.xz > $(PACKAGE)-$(VERSION).md5sum)
 	mutt -s add lsm@execpc.com < $(PACKAGE).lsm
-#	cvs tag $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'` .
