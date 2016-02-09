@@ -2525,11 +2525,11 @@ msgstr "Oczekiwanie na zakończenie transferu"
 
 #: src/ftpclass.cc:4425
 msgid "Waiting for TLS shutdown..."
-msgstr "Oczekiwanie na zakoĂączenie TLS..."
+msgstr "Oczekiwanie na zakończenie TLS..."
 
 #: src/ftpclass.cc:4427
 msgid "Waiting for data connection..."
-msgstr "Oczekiwanie na poÂłÂączenie dla danych..."
+msgstr "Oczekiwanie na połączenie dla danych..."
 
 #: src/ftpclass.cc:4433
 msgid "Sending data/TLS"
