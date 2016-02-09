@@ -1092,7 +1092,7 @@ local file, URL, magnet link or plain \fIinfo_hash\fP written in hex or base32.
 Local wildcards are expanded. Existing files are first
 validated unless \fI\-\-force\-valid\fP option is given. Missing pieces are
 downloaded. Files are stored in specified \fIdirectory\fP or current
-working directory by default. Seeding continues until ratio reachs
+working directory by default. Seeding continues until ratio reaches
 \fItorrent:stop-on-ratio\fP setting or time of \fItorrent:seed-max-time\fP
 runs out.
 .PP
@@ -1355,7 +1355,7 @@ allowing to do ``cd -'' after lftp restart. Default is true.
 when true, lftp saves readline history to \fI~/.local/share/lftp/rl_history\fR or \fI~/.lftp/rl_history\fR on exit.
 Default is true.
 .TP
-.BR cmd:show-status \ (booleam)
+.BR cmd:show-status \ (boolean)
 when false, lftp does not show status line on terminal. Default is true.
 .TP
 .BR cmd:set-term-status \ (boolean)
