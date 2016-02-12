@@ -138,6 +138,7 @@ public:
    void truncate(size_t n=0) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
    bool begins_with(const char *s) const { return !strncmp(buf,s,strlen(s)); };
+   bool prefixes(const char *s) const { return !strncmp(buf,s,length()); };
    bool eq(const char *s) const { return !xstrcmp(buf,s); }
    bool ne(const char *s) const { return !eq(s); }
    size_t length() const { return xstrlen(buf); }
@@ -234,6 +235,7 @@ public:
    bool begins_with(const char *s) const { return begins_with(s,strlen(s)); };
    bool ends_with(const char *o_buf,size_t o_len) const;
    bool ends_with(const char *s) const { return ends_with(s,strlen(s)); };
+   bool prefixes(const char *s) const { return !strncmp(buf,s,length()); };
    bool eq(const char *o_buf,size_t o_len) const;
    bool eq(const char *s) const { return eq(s,strlen(s)); }
    bool eq(const xstring&o) const { return eq(o.get(),o.length()); }
@@ -265,6 +267,9 @@ public:
    xstring& append_quoted(const char *s) { return append_quoted(s,strlen(s)); }
 
    xstring& hex_decode();
+
+   xstring& c_lc();
+   xstring& c_ucfirst();
 
    static xstring null;
 };

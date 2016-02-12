@@ -585,4 +585,29 @@ xstring& xstring::append_url_encoded(const char *s,int len,const char *unsafe,un
    return *this;
 }
 
+xstring& xstring::c_lc() {
+   char *p=buf;
+   int r=len;
+   while(r>0) {
+      *p=c_tolower(*p);
+      p++,r--;
+   }
+   return *this;
+}
+xstring& xstring::c_ucfirst() {
+   char *p=buf;
+   int r=len;
+   bool first=true;
+   while(r>0) {
+      if(c_isalpha(*p)) {
+	 *p=(first?c_toupper(*p):c_tolower(*p));
+	 first=false;
+      } else {
+	 first=true;
+      }
+      p++,r--;
+   }
+   return *this;
+}
+
 xstring xstring::null;
