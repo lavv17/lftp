@@ -1249,7 +1249,7 @@ int Torrent::Do()
 	 return MOVED;
       }
       if(!metainfo_copy->Done())
-      	 return m;
+	 return m;
       LogNote(9,"meta-data EOF\n");
       int rest;
       const char *metainfo_buf;
@@ -2351,8 +2351,6 @@ int TorrentPeer::SendDataRequests(unsigned p)
    if(parent->my_bitfield->get_bit(p)
    || !peer_bitfield || !peer_bitfield->get_bit(p))
       return 0;
-
-assert(!parent->my_bitfield->get_bit(p));
 
    int sent=0;
    unsigned blocks=parent->BlocksInPiece(p);
