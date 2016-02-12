@@ -23,6 +23,7 @@
 #include "NetAccess.h"
 #include "buffer.h"
 #include "lftp_ssl.h"
+#include "HttpHeader.h"
 
 class Http : public NetAccess
 {
@@ -101,6 +102,7 @@ class Http : public NetAccess
    void SendPropfindBody();
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
+   static const xstring& extract_quoted_header_value(const char *value,const char **end=0);
    void GetBetterConnection(int level);
    void SetCookie(const char *val);
    void MakeCookie(xstring &cookie,const char *host,const char *path);
@@ -152,6 +154,11 @@ class Http : public NetAccess
 
    bool no_cache;
    bool no_cache_this;
+
+   int  auth_sent;
+   bool has_auth;
+   int proxy_auth_sent;
+   bool has_proxy_auth;
 
    bool use_propfind_now;
    const char *allprop;
