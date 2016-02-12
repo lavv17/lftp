@@ -44,51 +44,55 @@ file: foreach my $file (@ARGV) {
       $dir='.';
    }
    my @md5files=(glob("$dir/*md5{,sum}"),glob("$dir/*MD5{,SUM}"));
-   open MD5,'-|',qw{fgrep -w --},$name,'/dev/null',@md5files;
-   while(<MD5>) {
-      chomp;
-      my ($md5,$name1)=split;
-      (my $md5_file,$md5)=($md5=~m{(.*):(.*)});
-      $md5_file=~s{^\./}{};
-      next if $name1 ne $name;
-      my $ctx=Digest::MD5->new;
-      open FILE,'<',$file;
-      $ctx->addfile(*FILE);
-      close FILE;
-      if(lc($md5) ne $ctx->hexdigest) {
-	 print STDERR "$file: MD5 digest mismatch (md5 file: $md5_file)\n";
-	 $err++;
-	 $verified++;
-      } else {
-	 print "$file: MD5 OK (md5 file: $md5_file)\n";
-	 $verified++;
+   if(@md5files) {
+      open MD5,'-|',qw{fgrep -w --},$name,'/dev/null',@md5files;
+      while(<MD5>) {
+	 chomp;
+	 my ($md5,$name1)=split;
+	 (my $md5_file,$md5)=($md5=~m{(.*):(.*)});
+	 $md5_file=~s{^\./}{};
+	 next if $name1 ne $name;
+	 my $ctx=Digest::MD5->new;
+	 open FILE,'<',$file;
+	 $ctx->addfile(*FILE);
+	 close FILE;
+	 if(lc($md5) ne $ctx->hexdigest) {
+	    print STDERR "$file: MD5 digest mismatch (md5 file: $md5_file)\n";
+	    $err++;
+	    $verified++;
+	 } else {
+	    print "$file: MD5 OK (md5 file: $md5_file)\n";
+	    $verified++;
+	 }
       }
+      close MD5;
    }
-   close MD5;
 
    next file if $verified;
 
    my @sfvfiles=(glob("$dir/*.sfv"),glob("$dir/*.SFV"));
-   open SFV,'-|',qw{fgrep -w --},$name,'/dev/null',@sfvfiles;
-   while(<SFV>) {
-      chomp;
-      my ($name1,$crc32)=split;
-      (my $sfv_file,$name1)=($name1=~m{(.*):(.*)});
-      $sfv_file=~s{^\./}{};
-      next if $name1 ne $name;
-      open FILE,'<',$file;
-      my $crc321=crc32(*FILE);
-      close FILE;
-      if($crc321!=hex($crc32)) {
-	 print STDERR "$file: CRC32 mismatch (sfv file: $sfv_file)\n";
-	 $err++;
-	 $verified++;
-      } else {
-	 print "$file: CRC32 OK (sfv file: $sfv_file)\n";
-	 $verified++;
+   if(@sfvfiles) {
+      open SFV,'-|',qw{fgrep -w --},$name,'/dev/null',@sfvfiles;
+      while(<SFV>) {
+	 chomp;
+	 my ($name1,$crc32)=split;
+	 (my $sfv_file,$name1)=($name1=~m{(.*):(.*)});
+	 $sfv_file=~s{^\./}{};
+	 next if $name1 ne $name;
+	 open FILE,'<',$file;
+	 my $crc321=crc32(*FILE);
+	 close FILE;
+	 if($crc321!=hex($crc32)) {
+	    print STDERR "$file: CRC32 mismatch (sfv file: $sfv_file)\n";
+	    $err++;
+	    $verified++;
+	 } else {
+	    print "$file: CRC32 OK (sfv file: $sfv_file)\n";
+	    $verified++;
+	 }
       }
+      close SFV;
    }
-   close SFV;
 
    next file if $verified;
 
