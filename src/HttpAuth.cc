@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "HttpAuth.h"
-#include "HttpHeader.h"
 
 xarray_p<HttpAuth> HttpAuth::cache;
 
@@ -89,10 +88,11 @@ HttpAuth *HttpAuth::Get(target_t t,const char *p_uri,const char *p_user)
    return 0;
 }
 
-void HttpAuthBasic::Send(const SMTaskRef<IOBuffer>& buf)
+const HttpHeader *HttpAuthBasic::MakeHeader()
 {
    xstring& auth=xstring::get_tmp(user).append(':').append(pass);
    char *buf64=string_alloca(base64_length(auth.length())+1);
    base64_encode(auth,buf64,auth.length());
-   buf->Format("%s: Basic %s\r\n",GetHeader(),buf64);
+   header.SetValue(auth.set("Basic ").append(buf64));
+   return &header;
 }

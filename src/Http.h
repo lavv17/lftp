@@ -49,6 +49,7 @@ class Http : public NetAccess
    void Init();
 
    void	Send(const char *format,...) PRINTF_LIKE(2,3);
+   void Send(const HttpHeader *hdr);
 
    class Connection
    {

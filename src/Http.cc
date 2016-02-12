@@ -307,6 +307,11 @@ void Http::Send(const char *format,...)
    conn->send_buf->Put(str);
 }
 
+void Http::Send(const HttpHeader *hdr)
+{
+   Send("%s: %s\r\n",hdr->GetName(),hdr->GetValue());
+}
+
 void Http::AppendHostEncoded(xstring& buf,const char *host)
 {
    if(is_ipv6_address(host))
@@ -423,7 +428,7 @@ void Http::SendProxyAuth()
    HttpAuth *auth=HttpAuth::Get(HttpAuth::PROXY,GetFileURL(file,NO_USER),proxy_user);
    if(auth) {
       proxy_auth_sent++;
-      auth->Send(conn->send_buf);
+      Send(auth->MakeHeader());
       return;
    }
    SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
@@ -435,7 +440,7 @@ void Http::SendAuth()
    HttpAuth *auth=HttpAuth::Get(HttpAuth::WWW,GetFileURL(file,NO_USER),user);
    if(auth) {
       auth_sent++;
-      auth->Send(conn->send_buf);
+      Send(auth->MakeHeader());
       return;
    }
 return;
@@ -1008,7 +1013,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 const char *uri=GetFileURL(file,NO_USER);
 
 	 Ref<HttpAuth::Challenge> chal(new HttpAuth::Challenge(value));
-	 bool stale=!strcasecmp(chal->GetParam("stale"),"true");
+	 bool stale=!xstrcasecmp(chal->GetParam("stale"),"true");
 	 if(status_code==H_Unauthorized) {
 	    if(auth_sent>(stale?1:0))
 	       return;

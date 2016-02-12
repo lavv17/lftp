@@ -29,7 +29,8 @@ class HttpHeader {
 public:
    HttpHeader(const char *p_name) : name(p_name) {}
    void SetValue(const xstring& v) { value.set(v); }
-   void Pack(const SMTaskRef<IOBuffer>&);
+   const char *GetName() const { return name; }
+   const char *GetValue() const { return value; }
 
    static const xstring& extract_quoted_value(const char *value,const char **p_end=0);
 };

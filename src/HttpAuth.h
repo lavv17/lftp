@@ -22,7 +22,7 @@
 
 #include "xmap.h"
 #include "xarray.h"
-#include "buffer.h"
+#include "HttpHeader.h"
 
 class HttpAuth
 {
@@ -41,7 +41,10 @@ public:
       Challenge(const char *);
       const xstring& GetScheme() { return scheme; }
       const xstring& GetRealm() { return GetParam("realm"); }
-      const xstring& GetParam(const char *p) { return *param.lookup(p); }
+      const xstring& GetParam(const char *p) {
+	 const xstring *v=param.lookup(p);
+	 return v?*v:xstring::null;
+      }
    };
 
 protected:
@@ -50,16 +53,17 @@ protected:
    Ref<Challenge> chal;
    xstring user;
    xstring pass;
-   const char *GetHeader() { return target==WWW?"Authorization":"Proxy-Authorization"; }
+   HttpHeader header;
 
    // array is enough as there are not too many HttpAuth objects.
    static xarray_p<HttpAuth> cache;
 
 public:
    HttpAuth(target_t t,const char *p_uri,Challenge *p_chal,const char *p_user,const char *p_pass)
-      :  target(t), uri(p_uri), chal(p_chal), user(p_user), pass(p_pass) {}
+      :  target(t), uri(p_uri), chal(p_chal), user(p_user), pass(p_pass),
+	 header(t==WWW?"Authorization":"Proxy-Authorization") {}
    virtual ~HttpAuth() {}
-   virtual void Send(const SMTaskRef<IOBuffer> &buf) = 0;
+   virtual const HttpHeader *MakeHeader() = 0;
    bool ApplicableForURI(const char *) const;
    bool Matches(target_t t,const char *p_uri,const char *p_user);
 
@@ -74,7 +78,7 @@ class HttpAuthBasic : public HttpAuth
 public:
    HttpAuthBasic(target_t t,const char *p_uri,Challenge *p_chal,const char *p_user,const char *p_pass)
       :  HttpAuth(t,p_uri,p_chal,p_user,p_pass) {}
-   void Send(const SMTaskRef<IOBuffer> &buf);
+   const HttpHeader *MakeHeader();
 };
 
 class HttpAuthDigest : public HttpAuth
