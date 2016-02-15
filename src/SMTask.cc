@@ -30,6 +30,12 @@
 #include "Timer.h"
 #include "misc.h"
 
+#ifdef TASK_DEBUG
+# define DEBUG(x) do{printf x;fflush(stdout);}while(0)
+#else
+# define DEBUG(x) do{}while(0)
+#endif
+
 xlist_head<SMTask>  SMTask::all_tasks;
 xlist_head<SMTask>  SMTask::ready_tasks;
 xlist_head<SMTask>  SMTask::new_tasks;
@@ -58,15 +64,14 @@ SMTask::SMTask()
    ref_count=0;
    deleting=false;
    new_tasks.add(new_tasks_node);
-#ifdef TASK_DEBUG
-   printf("new SMTask %p (count=%d)\n",this,all_tasks.count());
-#endif
+   DEBUG(("new SMTask %p (count=%d)\n",this,all_tasks.count()));
 }
 
 void  SMTask::Suspend()
 {
    if(suspended)
       return;
+   DEBUG(("Suspend(%p) from %p\n",this,current));
    if(!IsSuspended())
       SuspendInternal();
    suspended=true;
@@ -83,6 +88,7 @@ void  SMTask::SuspendSlave()
 {
    if(suspended_slave)
       return;
+   DEBUG(("SuspendSlave(%p) from %p\n",this,current));
    if(!IsSuspended())
       SuspendInternal();
    suspended_slave=true;
@@ -103,9 +109,7 @@ void SMTask::ResumeInternal()
 
 SMTask::~SMTask()
 {
-#ifdef TASK_DEBUG
-   printf("delete SMTask %p (count=%d)\n",this,all_tasks.count());
-#endif
+   DEBUG(("delete SMTask %p (count=%d)\n",this,all_tasks.count()));
    assert(!running);
    assert(!ref_count);
    assert(deleting);
