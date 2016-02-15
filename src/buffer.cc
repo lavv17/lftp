@@ -502,6 +502,8 @@ int IOBuffer::Do()
 	 RateAdd(res);
 	 buffer_ptr+=res;
 	 event_time=now;
+	 if(eof)
+	    PutEOF_LL();
 	 return MOVED;
       }
       break;
