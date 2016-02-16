@@ -33,6 +33,10 @@ class IOBufferSSL : public IOBuffer
    int Put_LL(const char *buf,int size);
    int PutEOF_LL();
 
+   int want_mask() const { return (ssl->want_in()?POLLIN:0)|(ssl->want_out()?POLLOUT:0); }
+   int block_mask() const { int wm=want_mask(); return wm?wm:POLLIN; }
+   int dir_mask() const { return (mode==GET?POLLIN:POLLOUT); }
+
 public:
    IOBufferSSL(lftp_ssl *s,dir_t m) : IOBuffer(m), my_ssl(s), ssl(my_ssl) {}
    IOBufferSSL(const Ref<lftp_ssl>& s,dir_t m) : IOBuffer(m), ssl(s) {}

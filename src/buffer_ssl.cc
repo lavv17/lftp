@@ -29,54 +29,20 @@
 
 int IOBufferSSL::Do()
 {
+   int m=STALL;
+
    if(Done() || Error())
-      return STALL;
+      return m;
 
-   int res=0;
+   if(mode==PUT && Size()==0 && ssl->handshake_done && !eof)
+      return m;
 
-   switch(mode)
-   {
-   case PUT:
-      if(Size()==0 && ssl->handshake_done)
-	 return STALL;
-      res=Put_LL(buffer+buffer_ptr,Size());
-      if(res>0)
-      {
-	 buffer_ptr+=res;
-	 event_time=now;
-	 if(eof)
-	    PutEOF_LL();
-	 return MOVED;
-      }
-      break;
+   // cannot use want_mask before trying to read/write, since ssl can be shared
+   if(!ssl->handshake_done || eof || Ready(ssl->fd,dir_mask()))
+      m|=super::Do();
 
-   case GET:
-      if(eof)
-	 return STALL;
-      res=Get_LL(GET_BUFSIZE);
-      if(res>0)
-      {
-	 EmbraceNewData(res);
-	 event_time=now;
-	 return MOVED;
-      }
-      if(eof)
-      {
-	 event_time=now;
-	 return MOVED;
-      }
-      break;
-   }
-   if(res<0)
-   {
-      event_time=now;
-      return MOVED;
-   }
-   if(ssl->want_in())
-      Block(ssl->fd,POLLIN);
-   if(ssl->want_out())
-      Block(ssl->fd,POLLOUT);
-   return STALL;
+   Block(ssl->fd,block_mask());
+   return m;
 }
 
 int IOBufferSSL::Get_LL(int size)
@@ -84,10 +50,10 @@ int IOBufferSSL::Get_LL(int size)
    int res=ssl->read(GetSpace(size),size);
    if(res<0)
    {
-      if(res==ssl->RETRY)
+      if(res==ssl->RETRY) {
+	 SetNotReady(ssl->fd,want_mask());
 	 return 0;
-      else // error
-      {
+      } else { // error
 	 SetError(ssl->error,ssl->fatal);
 	 return -1;
       }
@@ -102,10 +68,10 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
    int res=ssl->write(buf,size);
    if(res<0)
    {
-      if(res==ssl->RETRY)
+      if(res==ssl->RETRY) {
+	 SetNotReady(ssl->fd,want_mask());
 	 return 0;
-      else // error
-      {
+      } else { // error
 	 SetError(ssl->error,ssl->fatal);
 	 return -1;
       }
