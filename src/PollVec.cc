@@ -63,9 +63,6 @@ void PollVec::FDSetNotReady(int fd,int mask)
 
 void  PollVec::Block()
 {
-   if(WillNotBlock())
-      return;
-
    if(nfds<1 && tv_timeout.tv_sec<0)
    {
       /* dead lock */
