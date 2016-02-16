@@ -54,13 +54,16 @@ ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::N
 ResDecl max_redir    ("xfer:max-redirections", "5",ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl buffer_size  ("xfer:buffer-size","0x10000",ResMgr::UNumberValidate,ResMgr::NoClosure);
 
+// It's bad when lftp receives data in small chunks, try to accumulate
+// data in a kernel buffer using a delay and slurp it at once:
 enum {
    // Delays in microseconds
    MAX_DELAY=30000,
    DELAY_STEP=30,
    // This size is related to socket buffer size.
    // When it is too large, tcp slowdown happens.
-   MAX_READ_TO_DELAY=0x4000,
+   // SSL has packet size 0x4000, so we have to use a lower threshold.
+   MAX_READ_TO_DELAY=0x3F00,
 };
 
 // FileCopy
