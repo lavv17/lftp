@@ -9,6 +9,7 @@ Version 4.7.0 - 2015-??-??
 * get: new settings xfer:backup-suffix and xfer:keep-backup.
 * get/put/mget/mput/pget/get1: add -q (quiet) option.
 * edit: allow creating a new file.
+* new debug option -T (truncate output file).
 
 Version 4.6.5 - 2015-12-10
 

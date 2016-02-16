@@ -423,7 +423,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "exact application of the setting. See lftp(1) for details.\n"
          "If set is called with no variable then only altered settings are listed.\n"
 	 "It can be changed by options:\n"
-   	 " -a  list all settings, including default values\n"
+	 " -a  list all settings, including default values\n"
 	 " -d  list only default values, not necessary current ones\n")},
    {"shell", ALIAS_FOR2("!",shell)},
    {"site",    cmd_ls,	   N_("site <site-cmd>"),
@@ -432,7 +432,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"sleep",   cmd_sleep, 0, HELP_IN_MODULE},
    {"slot",    cmd_slot, 0,
         N_("Usage: slot [<label>]\n"
-   	"List assigned slots.\n"
+	"List assigned slots.\n"
 	"If <label> is specified, switch to the slot named <label>.\n")},
    {"source",  cmd_source, N_("source <file>"),
 	 N_("Execute commands recorded in file <file>\n")},
@@ -832,7 +832,7 @@ Job *CmdExec::builtin_open()
       switch(c)
       {
       case('s'):
-      	if (*optarg) ChangeSlot(optarg);
+	if (*optarg) ChangeSlot(optarg);
         break;
       case('p'):
 	 port=optarg;
@@ -846,7 +846,7 @@ Job *CmdExec::builtin_open()
 	 if(sep==NULL)
 	    sep=strchr(optarg,':');
 	 if(sep==NULL)
-   	    break;
+	    break;
 	 *sep=0;
 	 pass=sep+1;
 	 insecure=true;
@@ -2055,23 +2055,18 @@ CMD(debug)
    bool	 show_pid=false;
    bool	 show_time=false;
    bool	 show_context=false;
+   int	 trunc=0;
 
    int opt;
-   while((opt=args->getopt("o:ptc"))!=EOF)
+   while((opt=args->getopt("To:ptc"))!=EOF)
    {
       switch(opt)
       {
+      case('T'):
+	 trunc=O_TRUNC;
+	 break;
       case('o'):
 	 debug_file_name=optarg;
-	 if(fd!=-1)
-	    close(fd);
-	 fd=open(debug_file_name,O_WRONLY|O_CREAT|O_APPEND|O_NONBLOCK,0600);
-	 if(fd==-1)
-	 {
-	    perror(debug_file_name);
-	    return 0;
-	 }
-	 fcntl(fd,F_SETFD,FD_CLOEXEC);
 	 break;
       case 'p':
 	 show_pid=true;
@@ -2086,6 +2081,16 @@ CMD(debug)
 	 eprintf(_("Try `help %s' for more information.\n"),op);
 	 return 0;
       }
+   }
+
+   if(debug_file_name) {
+      fd=open(debug_file_name,O_WRONLY|O_CREAT|O_APPEND|O_NONBLOCK|trunc,0600);
+      if(fd==-1)
+      {
+	 perror(debug_file_name);
+	 return 0;
+      }
+      fcntl(fd,F_SETFD,FD_CLOEXEC);
    }
 
    if(fd==-1)
@@ -2247,7 +2252,7 @@ CMD(kill)
       {
 	 eprintf(_("%s: %s - not a number\n"),op,arg);
 	 exit_code=1;
-      	 continue;
+	 continue;
       }
       n=atoi(arg);
       if(Job::Running(n))
@@ -2845,7 +2850,7 @@ CMD(bookmark)
 	    return 0;
 	 }
 	 lftp_bookmarks.Add(key,value);
-   	 exit_code=0;
+	 exit_code=0;
       }
    }
    else if(!strcasecmp(op,"delete"))
