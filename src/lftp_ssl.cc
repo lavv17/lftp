@@ -229,7 +229,6 @@ lftp_ssl_gnutls_instance::lftp_ssl_gnutls_instance()
    crl_list=0;
    crl_list_size=0;
 
-   Suspend();
    gnutls_global_init();
    gnutls_global_set_log_function(lftp_ssl_gnutls_log_func);
    gnutls_global_set_log_level(9);
@@ -246,7 +245,7 @@ lftp_ssl_gnutls_instance::~lftp_ssl_gnutls_instance()
 }
 
 
-lftp_ssl_gnutls_instance *lftp_ssl_gnutls::instance;
+Ref<lftp_ssl_gnutls_instance> lftp_ssl_gnutls::instance;
 
 void lftp_ssl_gnutls::global_init()
 {
@@ -255,7 +254,6 @@ void lftp_ssl_gnutls::global_init()
 }
 void lftp_ssl_gnutls::global_deinit()
 {
-   SMTask::Delete(instance);
    instance=0;
 }
 lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
@@ -745,7 +743,7 @@ error:
 #elif USE_OPENSSL
 //static int lftp_ssl_passwd_callback(char *buf,int size,int rwflag,void *userdata);
 
-lftp_ssl_openssl_instance *lftp_ssl_openssl::instance;
+Ref<lftp_ssl_openssl_instance> lftp_ssl_openssl::instance;
 
 static char file[256];
 static void lftp_ssl_write_rnd()
@@ -760,7 +758,6 @@ void lftp_ssl_openssl::global_init()
 }
 void lftp_ssl_openssl::global_deinit()
 {
-   delete instance;
    instance=0;
 }
 

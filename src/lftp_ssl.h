@@ -30,6 +30,7 @@
 #  include <openssl/x509v3.h>
 # endif
 
+#include "Ref.h"
 #include "xstring.h"
 
 class lftp_ssl_base
@@ -68,8 +69,8 @@ typedef gnutls_x509_crt_fmt gnutls_x509_crt_fmt_t;
 typedef gnutls_datum gnutls_datum_t;
 #endif
 
-#include "SMTask.h"
-class lftp_ssl_gnutls_instance : public SMTask
+#include "ResMgr.h"
+class lftp_ssl_gnutls_instance : public ResClient
 {
    gnutls_x509_crl_t *crl_list;
    unsigned crl_list_size;
@@ -82,12 +83,11 @@ class lftp_ssl_gnutls_instance : public SMTask
 public:
    lftp_ssl_gnutls_instance();
    ~lftp_ssl_gnutls_instance();
-   int Do() { return STALL; }
    void Reconfig(const char *);
 };
 class lftp_ssl_gnutls : public lftp_ssl_base
 {
-   static lftp_ssl_gnutls_instance *instance;
+   static Ref<lftp_ssl_gnutls_instance> instance;
    gnutls_session_t session;
    gnutls_certificate_credentials_t cred;
    void verify_certificate_chain(const gnutls_datum_t *cert_chain,int cert_chain_length);
@@ -121,7 +121,7 @@ public:
 };
 class lftp_ssl_openssl : public lftp_ssl_base
 {
-   static lftp_ssl_openssl_instance *instance;
+   static Ref<lftp_ssl_openssl_instance> instance;
    SSL *ssl;
    bool check_fatal(int res);
    int do_handshake();
