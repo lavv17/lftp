@@ -93,7 +93,8 @@ public:
 
    static void Schedule();
    static int CollectGarbage();
-   static void Block() { block.Block(); }
+   static void Block();
+   static time_t last_block;
 
    void Suspend();
    void Resume();

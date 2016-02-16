@@ -48,6 +48,7 @@ int	 SMTask::stack_ptr;
 
 PollVec	 SMTask::block;
 TimeDate SMTask::now;
+time_t	 SMTask::last_block;
 
 static SMTask *init_task=new SMTaskInit;
 
@@ -252,6 +253,15 @@ void SMTask::Schedule()
    CollectGarbage();
    if(res)
       block.NoWait();
+}
+
+void SMTask::Block()
+{
+   // use timer to force periodic select to find out which FDs are ready.
+   if(block.WillNotBlock() && last_block==now.UnixTime())
+      return;
+   block.Block();
+   last_block=now.UnixTime();
 }
 
 int SMTaskInit::Do()
