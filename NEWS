@@ -1,4 +1,4 @@
-Version 4.7.0 - 2015-??-??
+Version 4.7.0 - 2016-??-??
 
 * ftp: add MODE Z support.
 * ftp: new settings ftp:use-mode-z, ftp:compressed-re, ftp:mode-z-level.
@@ -10,6 +10,7 @@ Version 4.7.0 - 2015-??-??
 * get/put/mget/mput/pget/get1: add -q (quiet) option.
 * edit: allow creating a new file.
 * new debug option -T (truncate output file).
+* optimized ssl for speed and lower syscall count.
 
 Version 4.6.5 - 2015-12-10
 
