@@ -36,6 +36,8 @@ extern "C" {
 # endif
 #elif defined(HAVE_TERMCAP_H)
 # include <termcap.h>
+#else
+# error No header file for tigetstr or tgetstr found. Install ncurses-dev or termcap-dev.
 #endif
 }
 #include <stdlib.h>
