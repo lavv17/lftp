@@ -1106,7 +1106,7 @@ int Http::Do()
 	 const char *b;
 	 int len;
 	 propfind->Get(&b,&len);
-	 FileSet *fs=HttpListInfo::ParseProps(b,len,GetCwd());
+	 Ref<FileSet> fs(HttpListInfo::ParseProps(b,len,GetCwd()));
 	 propfind=0;
 	 if(fs)
 	 {
@@ -1250,7 +1250,7 @@ int Http::Do()
 	 return m;
 
       if(!NextTry())
-      	 return MOVED;
+	 return MOVED;
 
       retry_after=0;
 
@@ -2092,7 +2092,7 @@ int Http::SendEOT()
 	    keep_alive=false;
 	 }
 	 sent_eot=true;
-      	 return(OK);
+	 return(OK);
       }
       return(DO_AGAIN);
    }
@@ -2369,7 +2369,7 @@ void Http::SetCookie(const char *value_const)
       if(!strncasecmp(entry,"path=",5))
       {
 	 path=alloca_strdup(entry+5);
-      	 continue;
+	 continue;
       }
 
       if(!strncasecmp(entry,"domain=",7))
