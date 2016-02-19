@@ -1103,6 +1103,7 @@ int Http::Do()
       }
       if(propfind->Eof())
       {
+	 LogNote(9,"got EOF on PROPFIND reply");
 	 const char *b;
 	 int len;
 	 propfind->Get(&b,&len);
@@ -1110,16 +1111,18 @@ int Http::Do()
 	 propfind=0;
 	 if(fs)
 	 {
-	    if(mode==ARRAY_INFO)
-	       fileset_for_info->Merge(fs);
-	    FileInfo *fi=fs->curr();
-	    if(fi && fi->Has(fi->TYPE))
+	    if(mode==CHANGE_DIR)
 	    {
-	       if(mode==CHANGE_DIR)
+	       fs->rewind();
+	       FileInfo *fi=fs->curr();
+	       if(fi && fi->Has(fi->TYPE))
+	       {
+		  LogNote(9,"new-cwd: %s",fi->GetLongName());
 		  new_cwd->is_file=(fi->filetype!=fi->DIRECTORY);
-	       fi->MakeLongName();
-	       LogNote(9,"%s",fi->longname.get());
+	       }
 	    }
+	    else if(mode==ARRAY_INFO)
+	       fileset_for_info->Merge(fs);
 	 }
 	 m=MOVED;
 	 state=DONE;
