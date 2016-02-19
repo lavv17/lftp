@@ -40,15 +40,28 @@ struct xml_context
       if(base_dir.length()>1)
 	 base_dir.chomp('/');
    }
-   const char *top(int i=0) { return stack.count()>i ? stack[stack.count()-i-1].get() : 0; }
+   const char *top(int i=0) const {
+      return stack.count()>i ? stack[stack.count()-i-1].get() : 0;
+   }
+
+   void log_tag(const char *end="") const {
+      const char *tag=top();
+      Log::global->Format(10,"XML: %*s<%s%s>\n",stack.length()*2,"",end,tag);
+   }
+   void log_tag_end() const { log_tag("/"); }
+   void log_data(const char *data) const {
+      Log::global->Format(10,"XML: %*s`%s'\n",stack.length()*2+2,"",data);
+   }
 };
 
 void xml_context::push(const char *s)
 {
    stack.append(s);
+   log_tag();
 }
 void xml_context::pop()
 {
+   log_tag_end();
    stack.chop();
 }
 
@@ -90,6 +103,7 @@ static void chardata_handle(void *data, const char *chardata, int len)
    char *s=string_alloca(len+1);
    memcpy(s,chardata,len);
    s[len]=0;
+   ctx->log_data(s);
    const char *tag=ctx->top();
    if(!strcmp(tag, "DAV:href") && !xstrcmp(ctx->top(1), "DAV:response"))
    {
