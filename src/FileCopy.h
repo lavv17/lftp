@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ public:
    bool WritePending() { return put && put->WritePending(); }
 
    void LogTransfer();
-   static SMTaskRef<Log> transfer_log;
+   static Ref<Log> transfer_log;
 };
 
 class FileVerificator : public SMTask

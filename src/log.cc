@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@
 #include "SMTask.h"
 #include "strftime.h"
 
-SMTaskRef<Log> Log::global;
+Ref<Log> Log::global;
 
-void Log::Init()
+Log::Log()
 {
    output=-1;
    need_close_output=false;
@@ -78,14 +78,14 @@ void Log::DoWrite(const char *s)
       }
       if(show_time)
       {
-	 time_t t=now;
+	 time_t t=SMTask::now;
 	 char *ts=string_alloca(21);
 	 strftime(ts,21,"%Y-%m-%d %H:%M:%S ",localtime(&t));
 	 write(output,ts,20);
       }
       if(show_context)
       {
-	 const char *ctx=current->GetLogContext();
+	 const char *ctx=SMTask::GetCurrentLogContext();
 	 if(ctx)
 	 {
 	    write(output,ctx,strlen(ctx));
@@ -96,11 +96,6 @@ void Log::DoWrite(const char *s)
    int len=strlen(s);
    write(output,s,len);
    at_line_start=(s[len-1]=='\n');
-}
-
-int Log::Do()
-{
-   return STALL;
 }
 
 void Log::Format(int l,const char *f,...)

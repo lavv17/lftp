@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "SMTask.h"
+#include "Ref.h"
 
-class Log : public SMTask
+class Log
 {
    int output;
    bool need_close_output;
@@ -49,7 +49,7 @@ class Log : public SMTask
    int level;
 
 public:
-   static SMTaskRef<Log> global;
+   static Ref<Log> global;
 
    bool WillOutput(int l);
    void DoWrite(const char *str);
@@ -67,8 +67,7 @@ public:
 
    bool IsTTY() { return tty; }
 
-   void Init();
-   Log() { Init(); }
+   Log();
    ~Log();
 
    int Do();

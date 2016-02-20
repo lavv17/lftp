@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2013 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,6 +107,7 @@ public:
    bool IsSuspended() { return suspended|suspended_slave; }
 
    virtual const char *GetLogContext() { return 0; }
+   static const char *GetCurrentLogContext() { return current->GetLogContext(); }
 
    SMTask();
 

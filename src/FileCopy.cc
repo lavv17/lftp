@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -636,7 +636,7 @@ void FileCopy::Kill(int sig)
    if(put) put->Kill(sig);
 }
 
-SMTaskRef<Log> FileCopy::transfer_log;
+Ref<Log> FileCopy::transfer_log;
 
 void FileCopy::LogTransfer()
 {
