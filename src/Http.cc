@@ -1705,8 +1705,10 @@ int Http::Do()
 	 return MOVED;
       }
       if(!xstrcmp(last_method,"PROPFIND")
-      && (mode==ARRAY_INFO || mode==CHANGE_DIR))
+      && (mode==ARRAY_INFO || mode==CHANGE_DIR)) {
+	 LogNote(9,"accepting XML for PROPFIND...");
 	 propfind=new IOBufferFileAccess(this);
+      }
 
       if(mode==CHANGE_DIR && !propfind)
       {
