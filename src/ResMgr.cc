@@ -711,7 +711,7 @@ void NumberPair::Set(const char *s0)
    n2=(s2?parse1(s2):n1);
    no_n2=(s2 && !*s2);
 
-   if(!error_text) {
+   if(!error_text && Log::global) {
       Log::global->Format(10,"%s translated to pair %lld%c%lld (%d,%d)\n",
 	 s0,n1,sep,n2,no_n1,no_n2);
    }
