@@ -1450,11 +1450,11 @@ int Http::Do()
 	       {
 		  chunked_trailer=false;
 		  chunked=false;
-		  if(propfind)
+		  if(propfind) {
+		     // we avoid the DONE state since we have yet to handle propfind data
 		     propfind->PutEOF();
-		  if(mode==ARRAY_INFO)
 		     state=CONNECTED;
-		  else
+		  } else
 		     state=DONE;
 		  return MOVED;
 	       }
