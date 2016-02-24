@@ -66,10 +66,10 @@ public:
    char *Combine();
 
    // encode unsafe chars as %XY
-   static xstring& encode(const char *s,int len,const char *unsafe,unsigned flags=0);
-   static xstring& encode(const xstring &s,const char *unsafe,unsigned flags=0) { return encode(s,s.length(),unsafe,flags); }
-   static xstring& encode(const char *s,const char *unsafe,unsigned flags=0) { return encode(s,strlen(s),unsafe,flags); }
-   static xstring& decode(const char *) __attribute__((warn_unused_result));
+   static const xstring& encode(const char *s,int len,const char *unsafe,unsigned flags=0);
+   static const xstring& encode(const xstring &s,const char *unsafe,unsigned flags=0) { return encode(s,s.length(),unsafe,flags); }
+   static const xstring& encode(const char *s,const char *unsafe,unsigned flags=0) { return encode(s,strlen(s),unsafe,flags); }
+   static const xstring& decode(const char *) __attribute__((warn_unused_result));
 
    static bool is_url(const char *p);
    static int path_index(const char *p);

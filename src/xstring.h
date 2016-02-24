@@ -148,6 +148,8 @@ public:
    void _set(const char *s) { buf=xstrdup(s); }
 
    xstring_c& url_decode(int flags=0);
+
+   static const xstring_c null;
 };
 class xstring_ca : public xstring_c
 {
@@ -271,7 +273,7 @@ public:
    xstring& c_lc();
    xstring& c_ucfirst();
 
-   static xstring null;
+   static const xstring null;
 };
 class xstring_clonable : public xstring {};
 

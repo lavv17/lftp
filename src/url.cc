@@ -348,13 +348,13 @@ char *ParsedURL::Combine(const char *home,bool use_rfc1738)
    return u.borrow();
 }
 
-xstring& url::decode(const char *p)
+const xstring& url::decode(const char *p)
 {
    if(!p)
       return xstring::null;
    return xstring::get_tmp(p).url_decode();
 }
-xstring& url::encode(const char *s,int len,const char *unsafe,unsigned flags)
+const xstring& url::encode(const char *s,int len,const char *unsafe,unsigned flags)
 {
    if(!s)
       return xstring::null;

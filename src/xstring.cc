@@ -610,4 +610,5 @@ xstring& xstring::c_ucfirst() {
    return *this;
 }
 
-xstring xstring::null;
+const xstring xstring::null;
+const xstring_c xstring_c::null;

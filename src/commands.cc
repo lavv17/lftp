@@ -2837,10 +2837,7 @@ CMD(bookmark)
 	 {
 	    value=session->GetConnectURL(flags);
 	    // encode some more characters, special to CmdExec parser.
-	    xstring& a=url::encode(value,"&;|\"'\\");
-	    if(value[0] && last_char(value)!='/')
-	       a.append('/');
-	    value=a;
+	    value=url::encode(value,"&;|\"'\\");
 	 }
 	 if(value==0 || value[0]==0)
 	    value="\"\"";
