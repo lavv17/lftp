@@ -106,6 +106,8 @@ CMD(false);
 # define cmd_torrent 0
 #endif
 
+enum { DEFAULT_DEBUG_LEVEL=9 };
+
 const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 {
    {"!",       cmd_shell,  N_("!<shell-command>"),
@@ -285,12 +287,15 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("`lftp' is the first command executed by lftp after rc files\n"
 	 " -f <file>           execute commands from the file and exit\n"
 	 " -c <cmd>            execute the commands and exit\n"
+	 " --norc              don't execute rc files from the home directory\n"
 	 " --help              print this help and exit\n"
 	 " --version           print lftp version and exit\n"
-	 "Other options are the same as in `open' command\n"
+	 "Other options are the same as in `open' command:\n"
 	 " -e <cmd>            execute the command just after selecting\n"
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
+	 " -s <slot>           assign the connection to this slot\n"
+	 " -d                  switch on debugging mode\n"
 	 " <site>              host name, URL or bookmark name\n")},
    {"ln",      cmd_ln,	    N_("ln [-s] <file1> <file2>"),
 	 N_("Link <file1> to <file2>\n")},
@@ -345,6 +350,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -u <user>[,<pass>]  use the user/password for authentication\n"
 	 " -p <port>           use the port for connection\n"
 	 " -s <slot>           assign the connection to this slot\n"
+	 " -d                  switch on debugging mode\n"
 	 " <site>              host name, URL or bookmark name\n")},
    {"pget",    cmd_get,    N_("pget [OPTS] <rfile> [-o <lfile>]"),
 	 N_("Gets the specified file using several connections. This can speed up transfer,\n"
@@ -727,16 +733,27 @@ void CmdExec::Exit(int code)
    return;
 }
 
+void CmdExec::enable_debug(const char *opt)
+{
+   int level=DEFAULT_DEBUG_LEVEL;
+   if(opt && isdigit((unsigned char)opt[0]))
+      level=atoi(opt);
+   Log::global->Enable();
+   Log::global->SetLevel(level);
+   Log::global->SetOutput(2,false);
+   Log::global->ShowNothing();
+}
+
 CmdFeeder *lftp_feeder=0;
 Job *CmdExec::builtin_lftp()
 {
    int c;
    xstring cmd;
-   bool debug=false;
    static struct option lftp_options[]=
    {
       {"help",no_argument,0,'h'},
       {"version",no_argument,0,'v'},
+      {"debug",optional_argument,0,'d'},
       {0,0,0,0}
    };
 
@@ -761,18 +778,14 @@ Job *CmdExec::builtin_lftp()
 	 cmd.append("\n\n");
 	 break;
       case('d'):
-	 debug=true;
+	 enable_debug(optarg);
 	 break;
       }
    }
    opterr=true;
 
    if(cmd)
-   {
       PrependCmd(cmd);
-      if(debug)
-	 PrependCmd("debug;");
-   }
 
    if(Done() && lftp_feeder)  // no feeder and no commands
    {
@@ -795,7 +808,6 @@ Job *CmdExec::builtin_open()
 {
    ReuseSavedSession();
 
-   bool	 debug=false;
    const char *port=NULL;
    const char *host=NULL;
    const char *path=NULL;
@@ -812,6 +824,7 @@ Job *CmdExec::builtin_open()
       OPT_USER,
       OPT_PASSWORD,
       OPT_ENV_PASSWORD,
+      OPT_NORC,
    };
    static struct option open_options[]=
    {
@@ -824,6 +837,7 @@ Job *CmdExec::builtin_open()
       {"no-bookmark",no_argument,0,'B'},
       {"slot",required_argument,0,'s'},
       {"help",no_argument,0,'h'},
+      {"norc",no_argument,0,OPT_NORC},
       {0,0,0,0}
    };
 
@@ -862,7 +876,7 @@ Job *CmdExec::builtin_open()
 	 pass=getenv("LFTP_PASSWORD");
 	 break;
       case('d'):
-	 debug=true;
+	 enable_debug(optarg);
 	 break;
       case('e'):
 	 cmd_to_exec=optarg;
@@ -870,6 +884,11 @@ Job *CmdExec::builtin_open()
       case('B'):
 	 no_bm=true;
 	 break;
+      case(OPT_NORC):
+	 if(!strcmp(op,"lftp"))
+	    break;
+	 eprintf(_("%s: unrecognized option '%s'\n"),op,"--norc");
+	 goto help;
       case('h'):
 	 if(!strcmp(op,"lftp"))
 	 {
@@ -877,6 +896,7 @@ Job *CmdExec::builtin_open()
 	    return 0;
 	 }
       case('?'):
+      help:
 	 if(!strcmp(op,"lftp"))
 	    eprintf(_("Try `%s --help' for more information\n"),op);
 	 else
@@ -1058,9 +1078,6 @@ Job *CmdExec::builtin_open()
       s.append('\n');
       PrependCmd(s);
    }
-
-   if(debug)
-      PrependCmd("debug\n");
 
    if(slot)
       ConnectionSlot::Set(slot,session);
@@ -2048,7 +2065,7 @@ CMD(exit)
 CMD(debug)
 {
    const char *op=args->a0();
-   int	 new_dlevel=9;
+   int	 new_dlevel=DEFAULT_DEBUG_LEVEL;
    char	 *debug_file_name=0;
    int 	 fd=-1;
    bool  enabled=true;

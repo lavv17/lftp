@@ -259,6 +259,8 @@ public:
 
    static const char *CmdByIndex(int i);
 
+   void enable_debug(const char *opt=0);
+
    int	 last_bg;
    bool	 wait_all;
 
