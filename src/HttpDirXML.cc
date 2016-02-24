@@ -110,8 +110,10 @@ static void chardata_handle(void *data, const char *chardata, int len)
       ParsedURL u(s,true);
       s=alloca_strdup(u.path);
       int s_len=strlen(s);
+      bool is_directory=false;
       if(s_len>0 && s[s_len-1]=='/')
       {
+	 is_directory=true;
 	 if(s_len>1)
 	    s[--s_len]=0;
 	 ctx->fi->SetType(ctx->fi->DIRECTORY);
@@ -124,7 +126,7 @@ static void chardata_handle(void *data, const char *chardata, int len)
       }
       if(s[0]=='/' && s[1]=='~')
 	 s++;
-      ctx->fi->SetName(ctx->base_dir.eq(s) ? "." : basename_ptr(s));
+      ctx->fi->SetName(ctx->base_dir.eq(s) && is_directory ? "." : basename_ptr(s));
    }
    else if(!strcmp(tag,"DAV:getcontentlength"))
    {

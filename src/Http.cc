@@ -1119,6 +1119,10 @@ int Http::Do()
 	       {
 		  LogNote(9,"new-cwd: %s",fi->GetLongName());
 		  new_cwd->is_file=(fi->filetype!=fi->DIRECTORY);
+		  if(new_cwd->url.last_char()=='/' && new_cwd->is_file)
+		     new_cwd->url.rtrim('/');
+		  else if(new_cwd->url.last_char()!='/' && !new_cwd->is_file)
+		     new_cwd->url.append('/');
 	       }
 	    }
 	    else if(mode==ARRAY_INFO)
