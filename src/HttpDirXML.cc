@@ -32,16 +32,29 @@ struct xml_context
    Ref<FileSet> fs;
    Ref<FileInfo> fi;
    xstring base_dir;
+   xstring chardata;
 
    void push(const char *);
    void pop();
+   void process_chardata();
+
    void set_base_dir(const char *d) {
       base_dir.set(d);
       if(base_dir.length()>1)
 	 base_dir.chomp('/');
    }
-   const char *top(int i=0) const {
-      return stack.count()>i ? stack[stack.count()-i-1].get() : 0;
+   const xstring_c& top(int i=0) const {
+      return stack.count()>i ? stack[stack.count()-i-1] : xstring_c::null;
+   }
+
+   bool in(const char *tag) const {
+      return top().eq(tag);
+   }
+   bool in(const char *tag0,const char *tag1) const {
+      return top(0).eq(tag0) && top(1).eq(tag1);
+   }
+   bool has_chardata() const {
+      return chardata.length()>0;
    }
 
    void log_tag(const char *end="") const {
@@ -49,8 +62,8 @@ struct xml_context
       Log::global->Format(10,"XML: %*s<%s%s>\n",stack.length()*2,"",end,tag);
    }
    void log_tag_end() const { log_tag("/"); }
-   void log_data(const char *data) const {
-      Log::global->Format(10,"XML: %*s`%s'\n",stack.length()*2+2,"",data);
+   void log_data() const {
+      Log::global->Format(10,"XML: %*s`%s'\n",stack.length()*2+2,"",chardata.get());
    }
 };
 
@@ -58,40 +71,94 @@ void xml_context::push(const char *s)
 {
    stack.append(s);
    log_tag();
+
+   if(in("DAV:response"))
+   {
+      delete fi;
+      fi=new FileInfo;
+   }
+   else if(in("DAV:collection"))
+   {
+      fi->SetType(fi->DIRECTORY);
+      fi->SetMode(0755);
+   }
+   chardata.truncate();
 }
+
 void xml_context::pop()
 {
+   if(has_chardata())
+      process_chardata();
+   if(in("DAV:response"))
+   {
+      if(fi && fi->name)
+      {
+	 if(!fs)
+	    fs=new FileSet;
+	 fs->Add(fi.borrow());
+      }
+   }
    log_tag_end();
    stack.chop();
+}
+
+void xml_context::process_chardata()
+{
+   log_data();
+   if(in("DAV:href","DAV:response"))
+   {
+      ParsedURL u(chardata,true);
+      xstring& s=u.path;
+      bool is_directory=false;
+      if(s.last_char()=='/')
+      {
+	 is_directory=true;
+	 s.chomp('/');
+	 fi->SetType(fi->DIRECTORY);
+	 fi->SetMode(0755);
+      }
+      else
+      {
+	 fi->SetType(fi->NORMAL);
+	 fi->SetMode(0644);
+      }
+      if(s.begins_with("/~"))
+	 s.set_substr(0,1,0,0);
+      fi->SetName(base_dir.eq(s) && is_directory ? "." : basename_ptr(s));
+   }
+   else if(in("DAV:getcontentlength"))
+   {
+      long long size_ll=0;
+      if(sscanf(chardata,"%lld",&size_ll)==1)
+	 fi->SetSize(size_ll);
+   }
+   else if(in("DAV:getlastmodified"))
+   {
+      time_t tm=Http::atotm(chardata);
+      if(tm!=Http::ATOTM_ERROR)
+	 fi->SetDate(tm,0);
+   }
+   else if(in("DAV:creator-displayname"))
+   {
+      fi->SetUser(chardata);
+   }
+   else if(in("http://apache.org/dav/props/executable"))
+   {
+      if(chardata[0]=='T')
+	 fi->SetMode(0755);
+      else if(chardata[0]=='F')
+	 fi->SetMode(0644);
+   }
 }
 
 static void start_handle(void *data, const char *el, const char **attr)
 {
    xml_context *ctx=(xml_context*)data;
    ctx->push(el);
-   if(!strcmp(ctx->top(), "DAV:response"))
-   {
-      delete ctx->fi;
-      ctx->fi=new FileInfo;
-   }
-   else if(!strcmp(ctx->top(), "DAV:collection"))
-   {
-      ctx->fi->SetType(ctx->fi->DIRECTORY);
-      ctx->fi->SetMode(0755);
-   }
 }
 static void end_handle(void *data, const char *el)
 {
    xml_context *ctx=(xml_context*)data;
-   if(!strcmp(ctx->top(), "DAV:response"))
-   {
-      if(ctx->fi && ctx->fi->name)
-      {
-	 if(!ctx->fs)
-	    ctx->fs=new FileSet;
-	 ctx->fs->Add(ctx->fi.borrow());
-      }
-   }
    ctx->pop();
 }
 static void chardata_handle(void *data, const char *chardata, int len)
@@ -99,58 +166,7 @@ static void chardata_handle(void *data, const char *chardata, int len)
    xml_context *ctx=(xml_context*)data;
    if(!ctx->fi)
       return;
-
-   char *s=string_alloca(len+1);
-   memcpy(s,chardata,len);
-   s[len]=0;
-   ctx->log_data(s);
-   const char *tag=ctx->top();
-   if(!strcmp(tag, "DAV:href") && !xstrcmp(ctx->top(1), "DAV:response"))
-   {
-      ParsedURL u(s,true);
-      s=alloca_strdup(u.path);
-      int s_len=strlen(s);
-      bool is_directory=false;
-      if(s_len>0 && s[s_len-1]=='/')
-      {
-	 is_directory=true;
-	 if(s_len>1)
-	    s[--s_len]=0;
-	 ctx->fi->SetType(ctx->fi->DIRECTORY);
-	 ctx->fi->SetMode(0755);
-      }
-      else
-      {
-	 ctx->fi->SetType(ctx->fi->NORMAL);
-	 ctx->fi->SetMode(0644);
-      }
-      if(s[0]=='/' && s[1]=='~')
-	 s++;
-      ctx->fi->SetName(ctx->base_dir.eq(s) && is_directory ? "." : basename_ptr(s));
-   }
-   else if(!strcmp(tag,"DAV:getcontentlength"))
-   {
-      long long size_ll=0;
-      if(sscanf(s,"%lld",&size_ll)==1)
-	 ctx->fi->SetSize(size_ll);
-   }
-   else if(!strcmp(tag,"DAV:getlastmodified"))
-   {
-      time_t tm=Http::atotm(s);
-      if(tm!=Http::ATOTM_ERROR)
-	 ctx->fi->SetDate(tm,0);
-   }
-   else if(!strcmp(tag,"DAV:creator-displayname"))
-   {
-      ctx->fi->SetUser(s);
-   }
-   else if(!strcmp(tag,"http://apache.org/dav/props/executable"))
-   {
-      if(s[0]=='T')
-	 ctx->fi->SetMode(0755);
-      else if(s[0]=='F')
-	 ctx->fi->SetMode(0644);
-   }
+   ctx->chardata.append(chardata,len);
 }
 
 FileSet *HttpListInfo::ParseProps(const char *b,int len,const char *base_dir)
