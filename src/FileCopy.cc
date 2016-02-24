@@ -495,8 +495,12 @@ void FileCopy::LineBuffered(int s)
 
 off_t FileCopy::GetPos() const
 {
-   if(put)
-      return put->GetRealPos() - put->Buffered();
+   if(put) {
+      off_t pos = put->GetRealPos() - put->Buffered();
+      // sometimes Buffered overestimates the amount of buffered data
+      if(pos<0)
+	 pos=0;
+   }
    if(get)
       return get->GetRealPos();
    return 0;
