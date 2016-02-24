@@ -491,12 +491,38 @@ void Http::DirFile(xstring& path,const xstring& ecwd,const xstring& efile) const
       path.append('/');
       path.append(efile);
    } else {
+      size_t min_len=path.length()+1;
       if(ecwd[0]!='/')
 	 path.append('/');
       path.append(ecwd);
       if(ecwd.last_char()!='/' && efile.length()>0)
 	 path.append('/');
-      path.append(efile);
+
+      // reduce . and .. at beginning of efile:
+      //  * get the minimum path length (so that we don't remove ~user)
+      //  * skip .; handle .. using basename_ptr to chomp the path.
+      if(path[min_len]=='~') {
+	 while(path[min_len] && path[min_len]!='/')
+	    ++min_len;
+	 if(path[min_len]=='/')
+	    ++min_len;
+      }
+      const char *e=efile;
+      while(e[0]=='.') {
+	 if(e[1]=='/' || e[1]==0)
+	    ++e;
+	 else if(e[1]=='.' && (e[2]=='/' || e[2]==0)) {
+	    if(path.length()<=min_len)
+	       break;
+	    const char *bn=basename_ptr(path+min_len);
+	    path.truncate(bn-path);
+	    e+=2;
+	 } else
+	    break;
+	 if(*e=='/')
+	    ++e;
+      }
+      path.append(e);
    }
 
    // remove "/~" or "/~/"
