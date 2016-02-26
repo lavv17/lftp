@@ -33,6 +33,7 @@ public:
    const char *GetValue() const { return value; }
 
    static const xstring& extract_quoted_value(const char *value,const char **p_end=0);
+   static xstring& append_quoted_value(xstring& s,const char *v);
 };
 
 #endif//HTTPHEADER_H

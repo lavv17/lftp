@@ -45,3 +45,14 @@ const xstring& HttpHeader::extract_quoted_value(const char *value,const char **p
    }
    return value1;
 }
+
+xstring& HttpHeader::append_quoted_value(xstring& s,const char *v)
+{
+   s.append('"');
+   while(*v) {
+      if(*v=='\\' || *v=='"')
+	 s.append('\\');
+      s.append(*v++);
+   }
+   return s.append('"');
+}
