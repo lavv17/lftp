@@ -84,8 +84,12 @@ class Http : public NetAccess
    static void AppendHostEncoded(xstring&,const char *);
    void SendMethod(const char *,const char *);
    const char *last_method;
+   xstring_c last_uri;
+   xstring_c last_url; // for proxy requests
+
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY, HTTP_PROPFIND } special;
    xstring special_data;
+
    void DirFile(xstring& path,const xstring& ecwd,const xstring& efile) const;
    void SendAuth();
    void SendProxyAuth();
@@ -157,8 +161,8 @@ class Http : public NetAccess
    bool no_cache_this;
 
    int  auth_sent;
+   int	proxy_auth_sent;
    bool has_auth;
-   int proxy_auth_sent;
    bool has_proxy_auth;
 
    bool use_propfind_now;

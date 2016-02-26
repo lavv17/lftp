@@ -37,6 +37,9 @@ public:
       void SetParam(const char *p,int p_len,const xstring &v) {
 	 param.add(xstring::get_tmp(p,p_len).c_lc(),new xstring(v.copy()));
       }
+      void SetParam(const xstring &p,const xstring &v) {
+	 param.add(p,new xstring(v.copy()));
+      }
    public:
       Challenge(const char *);
       const xstring& GetScheme() { return scheme; }
@@ -55,6 +58,8 @@ protected:
    xstring pass;
    HttpHeader header;
 
+   static xstring& append_quoted(xstring& s,const char *n,const char *v);
+
    // array is enough as there are not too many HttpAuth objects.
    static xarray_p<HttpAuth> cache;
 
@@ -63,7 +68,9 @@ public:
       :  target(t), uri(p_uri), chal(p_chal), user(p_user), pass(p_pass),
 	 header(t==WWW?"Authorization":"Proxy-Authorization") {}
    virtual ~HttpAuth() {}
-   virtual const HttpHeader *MakeHeader() = 0;
+   virtual bool IsValid() const { return true; }
+   virtual bool Update(const char *p_method,const char *p_uri,const char *entity_hash=0) { return true; }
+   const HttpHeader *GetHeader() { return &header; }
    bool ApplicableForURI(const char *) const;
    bool Matches(target_t t,const char *p_uri,const char *p_user);
 
@@ -75,17 +82,23 @@ public:
 
 class HttpAuthBasic : public HttpAuth
 {
+   void MakeHeader();
 public:
    HttpAuthBasic(target_t t,const char *p_uri,Challenge *p_chal,const char *p_user,const char *p_pass)
-      :  HttpAuth(t,p_uri,p_chal,p_user,p_pass) {}
-   const HttpHeader *MakeHeader();
+      :  HttpAuth(t,p_uri,p_chal,p_user,p_pass) { MakeHeader(); }
 };
 
 class HttpAuthDigest : public HttpAuth
 {
+   xstring cnonce;   // random client nonce
+   xstring HA1;	     // "session key" A1 in lower-case hex
+   unsigned nc;
+   void MakeHA1();
 public:
    HttpAuthDigest(target_t t,const char *p_uri,Challenge *p_chal,const char *p_user,const char *p_pass)
-      :  HttpAuth(t,p_uri,p_chal,p_user,p_pass) {}
+      :  HttpAuth(t,p_uri,p_chal,p_user,p_pass), nc(0) { MakeHA1(); }
+   bool IsValid() const { return HA1.length()>0; }
+   bool Update(const char *p_method,const char *p_uri,const char *entity_hash);
 };
 
 #endif//HTTPAUTH_H

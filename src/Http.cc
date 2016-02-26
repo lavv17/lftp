@@ -168,6 +168,11 @@ void Http::Init()
    no_cache_this=false;
    no_cache=false;
 
+   auth_sent=0;
+   has_auth=false;
+   proxy_auth_sent=0;
+   has_proxy_auth=false;
+
    use_propfind_now=true;
    allprop="";
    allprop_len=0;
@@ -205,6 +210,8 @@ void Http::MoveConnectionHere(Http *o)
    conn->ResumeInternal();
    rate_limit=o->rate_limit.borrow();
    last_method=o->last_method; o->last_method=0;
+   last_uri.move_here(o->last_uri);
+   last_url.move_here(o->last_url);
    timeout_timer.Reset(o->timeout_timer);
    state=CONNECTED;
    o->Disconnect();
@@ -228,6 +235,8 @@ void Http::DisconnectLL()
 	 SetError(STORE_FAILED,0);
    }
    last_method=0;
+   last_uri.unset();
+   last_url.unset();
    ResetRequestData();
    state=DISCONNECTED;
 }
@@ -288,6 +297,10 @@ void Http::Close()
    }
    array_send=0;
    no_cache_this=false;
+   auth_sent=0;
+   proxy_auth_sent=0;
+   has_auth=false;
+   has_proxy_auth=false;
    no_ranges=false;
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
@@ -360,6 +373,12 @@ void Http::SendMethod(const char *method,const char *efile)
    if(*efile=='\0')
       efile="/";
 
+   last_uri.set(efile+(proxy?url::path_index(efile):0));
+   if(last_uri.length()==0)
+      last_uri.set("/");
+   if(proxy)
+      last_url.set(efile);
+
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost.get());
    if(user_agent && user_agent[0])
@@ -426,9 +445,9 @@ void Http::SendProxyAuth()
    if(!proxy || !proxy_user || !proxy_pass)
       return;
    HttpAuth *auth=HttpAuth::Get(HttpAuth::PROXY,GetFileURL(file,NO_USER),proxy_user);
-   if(auth) {
+   if(auth && auth->Update(last_method,last_url)) {
       proxy_auth_sent++;
-      Send(auth->MakeHeader());
+      Send(auth->GetHeader());
       return;
    }
    SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
@@ -436,18 +455,25 @@ void Http::SendProxyAuth()
 
 void Http::SendAuth()
 {
+   if(!has_auth) {
+      if(hftp && user && pass && QueryBool("use-authorization",proxy)) {
+	 SendBasicAuth("Authorization",user,pass);
+	 return;
+      }
+      if(!hftp) {
+	 const char *auth=Query("authorization",hostname);
+	 if(auth && *auth) {
+	    SendBasicAuth("Authorization",auth);
+	    return;
+	 }
+      }
+   }
    has_auth=false;
    HttpAuth *auth=HttpAuth::Get(HttpAuth::WWW,GetFileURL(file,NO_USER),user);
-   if(auth) {
+   if(auth && auth->Update(last_method,last_uri,0)) {
       auth_sent++;
-      Send(auth->MakeHeader());
-      return;
+      Send(auth->GetHeader());
    }
-return;
-   if(user && pass && !(hftp && !QueryBool("use-authorization",proxy)))
-      SendBasicAuth("Authorization",user,pass);
-   else if(!hftp)
-      SendBasicAuth("Authorization",Query("authorization",hostname));
 }
 void Http::SendCacheControl()
 {
@@ -1013,7 +1039,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 const char *uri=GetFileURL(file,NO_USER);
 
 	 Ref<HttpAuth::Challenge> chal(new HttpAuth::Challenge(value));
-	 bool stale=!xstrcasecmp(chal->GetParam("stale"),"true");
+	 bool stale=chal->GetParam("stale").eq_nc("true");
 	 if(status_code==H_Unauthorized) {
 	    if(auth_sent>(stale?1:0))
 	       return;
