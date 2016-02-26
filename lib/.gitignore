@@ -300,3 +300,5 @@ glthread
 /time_rz.c
 /timegm.c
 stddef.h
+/memcasecmp.c
+/memcasecmp.h

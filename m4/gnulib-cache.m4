@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2015 Free Software Foundation, Inc.
+# Copyright (C) 2002-2016 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --local-dir=gl --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --libtool --macro-prefix=gl alloca-opt arpa_inet crypto/md5 crypto/sha1 environ filemode fnmatch fnmatch-gnu getopt-gnu gettext gettimeofday git-version-gen glob human iconv_open inet_pton lchown longlong lstat mbswidth memmem mktime modechange parse-datetime passfd poll readlink regex sockets socklen strdup-posix strftime strptime strstr strtok_r unsetenv vsnprintf vsnprintf-posix wcwidth
+#   gnulib-tool --import --local-dir=gl --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --libtool --macro-prefix=gl alloca-opt arpa_inet crypto/md5 crypto/sha1 environ filemode fnmatch fnmatch-gnu getopt-gnu gettext gettimeofday git-version-gen glob human iconv_open inet_pton lchown longlong lstat mbswidth memcasecmp memmem mktime modechange parse-datetime passfd poll readlink regex sockets socklen strdup-posix strftime strptime strstr strtok_r unsetenv vsnprintf vsnprintf-posix wcwidth
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([gl])
@@ -52,6 +52,7 @@ gl_MODULES([
   longlong
   lstat
   mbswidth
+  memcasecmp
   memmem
   mktime
   modechange
