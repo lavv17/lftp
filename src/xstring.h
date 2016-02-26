@@ -134,6 +134,7 @@ public:
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
+   const char *move_here(xstring_c& s) { return set_allocated(s.borrow()); }
    const char *vset(...) ATTRIBUTE_SENTINEL;
    void truncate(size_t n=0) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
@@ -141,6 +142,7 @@ public:
    bool prefixes(const char *s) const { return !strncmp(buf,s,length()); };
    bool eq(const char *s) const { return !xstrcmp(buf,s); }
    bool ne(const char *s) const { return !eq(s); }
+   bool eq_nc(const char *s) const { return !xstrcasecmp(buf,s); }
    size_t length() const { return xstrlen(buf); }
    void set_length(size_t n) { if(buf) buf[n]=0; }
 
@@ -242,6 +244,9 @@ public:
    bool ne(const xstring&o) const { return !eq(o); }
    int cmp(const char *o_buf,size_t o_len) const;
    int cmp(const xstring&o) const { return cmp(o.get(),o.length()); }
+   bool eq_nc(const char *o_buf,size_t o_len) const;
+   bool eq_nc(const char *s) const { return eq_nc(s,strlen(s)); }
+   bool eq_nc(const xstring&o) const { return eq_nc(o.get(),o.length()); }
    bool chomp(char c='\n');
    void rtrim(char c=' ');
    char last_char() const { return len>0?buf[len-1]:0; }
