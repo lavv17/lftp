@@ -450,23 +450,13 @@ void Http::SendProxyAuth()
       Send(auth->GetHeader());
       return;
    }
-   SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
 }
 
 void Http::SendAuth()
 {
-   if(!auth_scheme) {
-      if(hftp && user && pass && QueryBool("use-authorization",proxy)) {
-	 SendBasicAuth("Authorization",user,pass);
-	 return;
-      }
-      if(!hftp) {
-	 const char *auth=Query("authorization",hostname);
-	 if(auth && *auth) {
-	    SendBasicAuth("Authorization",auth);
-	    return;
-	 }
-      }
+   if(!auth_scheme && hftp && user && pass && QueryBool("use-authorization",proxy)) {
+      SendBasicAuth("Authorization",user,pass);
+      return;
    }
    auth_scheme=HttpAuth::NONE;
    HttpAuth *auth=HttpAuth::Get(HttpAuth::WWW,GetFileURL(file,NO_USER),user);
@@ -1034,6 +1024,21 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       return;
    }
    case_hh("WWW-Authenticate",'W') {
+      const char *user=this->user;
+      const char *pass=this->pass;
+      if(!user || !pass) {
+	 // try auth info from http:authorization setting
+	 const char *auth_c=Query("authorization",hostname);
+         if(auth_c && *auth_c) {
+	    char *auth=alloca_strdup(auth_c);
+	    char *colon=strchr(auth,':');
+	    if(colon) {
+	       *colon=0;
+	       user=auth;
+	       pass=colon+1;
+	    }
+	 }
+      }
       if(user && pass) {
 	 // FIXME: keep a request queue, get the URI from the queue.
 	 const char *uri=GetFileURL(file,NO_USER);
