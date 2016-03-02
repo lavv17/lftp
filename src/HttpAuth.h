@@ -28,9 +28,11 @@ class HttpAuth
 {
 public:
    enum target_t { WWW, PROXY };
+   enum scheme_t { NONE=0, BASIC, DIGEST };
 
    class Challenge
    {
+      scheme_t scheme_code;
       xstring scheme;
       xmap_p<xstring> param;
 
@@ -43,6 +45,7 @@ public:
    public:
       Challenge(const char *);
       const xstring& GetScheme() { return scheme; }
+      scheme_t GetSchemeCode() { return scheme_code; }
       const xstring& GetRealm() { return GetParam("realm"); }
       const xstring& GetParam(const char *p) {
 	 const xstring *v=param.lookup(p);

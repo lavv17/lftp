@@ -24,6 +24,7 @@
 #include "buffer.h"
 #include "lftp_ssl.h"
 #include "HttpHeader.h"
+#include "HttpAuth.h"
 
 class Http : public NetAccess
 {
@@ -162,8 +163,8 @@ class Http : public NetAccess
 
    int  auth_sent;
    int	proxy_auth_sent;
-   bool has_auth;
-   bool has_proxy_auth;
+   HttpAuth::scheme_t auth_scheme;
+   HttpAuth::scheme_t proxy_auth_scheme;
 
    bool use_propfind_now;
    const char *allprop;

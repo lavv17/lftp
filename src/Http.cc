@@ -169,9 +169,9 @@ void Http::Init()
    no_cache=false;
 
    auth_sent=0;
-   has_auth=false;
    proxy_auth_sent=0;
-   has_proxy_auth=false;
+   auth_scheme=HttpAuth::NONE;
+   proxy_auth_scheme=HttpAuth::NONE;
 
    use_propfind_now=true;
    allprop="";
@@ -299,8 +299,8 @@ void Http::Close()
    no_cache_this=false;
    auth_sent=0;
    proxy_auth_sent=0;
-   has_auth=false;
-   has_proxy_auth=false;
+   auth_scheme=HttpAuth::NONE;
+   proxy_auth_scheme=HttpAuth::NONE;
    no_ranges=false;
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
@@ -441,7 +441,7 @@ void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
 
 void Http::SendProxyAuth()
 {
-   has_proxy_auth=false;
+   proxy_auth_scheme=HttpAuth::NONE;
    if(!proxy || !proxy_user || !proxy_pass)
       return;
    HttpAuth *auth=HttpAuth::Get(HttpAuth::PROXY,GetFileURL(file,NO_USER),proxy_user);
@@ -455,7 +455,7 @@ void Http::SendProxyAuth()
 
 void Http::SendAuth()
 {
-   if(!has_auth) {
+   if(!auth_scheme) {
       if(hftp && user && pass && QueryBool("use-authorization",proxy)) {
 	 SendBasicAuth("Authorization",user,pass);
 	 return;
@@ -468,7 +468,7 @@ void Http::SendAuth()
 	 }
       }
    }
-   has_auth=false;
+   auth_scheme=HttpAuth::NONE;
    HttpAuth *auth=HttpAuth::Get(HttpAuth::WWW,GetFileURL(file,NO_USER),user);
    if(auth && auth->Update(last_method,last_uri,0)) {
       auth_sent++;
@@ -1043,11 +1043,19 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 if(status_code==H_Unauthorized) {
 	    if(auth_sent>(stale?1:0))
 	       return;
-	    has_auth|=HttpAuth::New(HttpAuth::WWW,uri,chal.borrow(),user,pass);
+	    HttpAuth::scheme_t new_scheme=chal->GetSchemeCode();
+	    if(new_scheme<=auth_scheme)
+	       return;
+	    if(HttpAuth::New(HttpAuth::WWW,uri,chal.borrow(),user,pass))
+	       auth_scheme=new_scheme;
 	 } else if(status_code==H_Proxy_Authentication_Required) {
 	    if(proxy_auth_sent>(stale?1:0))
 	       return;
-	    has_proxy_auth|=HttpAuth::New(HttpAuth::PROXY,uri,chal.borrow(),proxy_user,proxy_pass);
+	    HttpAuth::scheme_t new_scheme=chal->GetSchemeCode();
+	    if(new_scheme<=proxy_auth_scheme)
+	       return;
+	    if(HttpAuth::New(HttpAuth::PROXY,uri,chal.borrow(),proxy_user,proxy_pass))
+	       proxy_auth_scheme=new_scheme;
 	 }
       }
       return;
@@ -1657,8 +1665,8 @@ int Http::Do()
 	 return MOVED;
       }
 
-      if((status_code==H_Unauthorized && has_auth)
-      || (status_code==H_Proxy_Authentication_Required && has_proxy_auth)) {
+      if((status_code==H_Unauthorized && auth_scheme)
+      || (status_code==H_Proxy_Authentication_Required && proxy_auth_scheme)) {
 	 // retry with authentication
 	 state=RECEIVING_BODY;
 	 LogErrorText();

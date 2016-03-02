@@ -24,6 +24,7 @@
 xarray_p<HttpAuth> HttpAuth::cache;
 
 HttpAuth::Challenge::Challenge(const char *p_chal)
+   : scheme_code(HttpAuth::NONE)
 {
    const char *end=p_chal+strlen(p_chal);
 
@@ -43,19 +44,28 @@ HttpAuth::Challenge::Challenge(const char *p_chal)
 	 ++space;
       auth_param=space;
    }
+
+   if(scheme.eq("Basic"))
+      scheme_code=HttpAuth::BASIC;
+   else if(scheme.eq("Digest"))
+      scheme_code=HttpAuth::DIGEST;
 }
 
 bool HttpAuth::New(target_t t,const char *p_uri,Challenge *p_chal,const char *p_user,const char *p_pass)
 {
    Ref<Challenge> chal(p_chal);
-   const xstring& scheme=chal->GetScheme();
    Ref<HttpAuth> auth;
-   if(scheme.eq("Basic")) {
+   switch(chal->GetSchemeCode()) {
+   case BASIC:
       auth=new HttpAuthBasic(t,p_uri,chal.borrow(),p_user,p_pass);
-   } else if(scheme.eq("Digest")) {
+      break;
+   case DIGEST:
       auth=new HttpAuthDigest(t,p_uri,chal.borrow(),p_user,p_pass);
+      break;
+   case NONE:
+      return false;
    }
-   if(!auth || !auth->IsValid())
+   if(!auth->IsValid())
       return false;
    CleanCache(t,p_uri,p_user);
    cache.append(auth.borrow());
