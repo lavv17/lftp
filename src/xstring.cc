@@ -23,6 +23,9 @@
 #include "xstring.h"
 #include "trio.h"
 #include "c-ctype.h"
+CDECL_BEGIN
+#include "memcasecmp.h"
+CDECL_END
 
 void xstring::get_space(size_t s)
 {
@@ -180,6 +183,16 @@ bool xstring::ends_with(const char *o_buf,size_t o_len) const
 bool xstring::eq(const char *o_buf,size_t o_len) const
 {
    return len==o_len && begins_with(o_buf,o_len);
+}
+bool xstring::eq_nc(const char *o_buf,size_t o_len) const
+{
+   if(len!=o_len)
+      return false;
+   if(buf==o_buf)
+      return true;
+   if(!buf || !o_buf)
+      return false;
+   return !memcasecmp(buf,o_buf,o_len);
 }
 int xstring::cmp(const char *o_buf,size_t o_len) const
 {

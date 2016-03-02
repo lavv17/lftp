@@ -33,6 +33,7 @@
 #include "ResMgr.h"
 #include "log.h"
 #include "url.h"
+#include "HttpAuth.h"
 #include "HttpDir.h"
 #include "misc.h"
 #include "buffer_ssl.h"
@@ -167,6 +168,11 @@ void Http::Init()
    no_cache_this=false;
    no_cache=false;
 
+   auth_sent=0;
+   proxy_auth_sent=0;
+   auth_scheme=HttpAuth::NONE;
+   proxy_auth_scheme=HttpAuth::NONE;
+
    use_propfind_now=true;
    allprop="";
    allprop_len=0;
@@ -204,6 +210,8 @@ void Http::MoveConnectionHere(Http *o)
    conn->ResumeInternal();
    rate_limit=o->rate_limit.borrow();
    last_method=o->last_method; o->last_method=0;
+   last_uri.move_here(o->last_uri);
+   last_url.move_here(o->last_url);
    timeout_timer.Reset(o->timeout_timer);
    state=CONNECTED;
    o->Disconnect();
@@ -227,6 +235,8 @@ void Http::DisconnectLL()
 	 SetError(STORE_FAILED,0);
    }
    last_method=0;
+   last_uri.unset();
+   last_url.unset();
    ResetRequestData();
    state=DISCONNECTED;
 }
@@ -287,6 +297,10 @@ void Http::Close()
    }
    array_send=0;
    no_cache_this=false;
+   auth_sent=0;
+   proxy_auth_sent=0;
+   auth_scheme=HttpAuth::NONE;
+   proxy_auth_scheme=HttpAuth::NONE;
    no_ranges=false;
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
@@ -304,6 +318,11 @@ void Http::Send(const char *format,...)
       return;
    LogSend(5,str);
    conn->send_buf->Put(str);
+}
+
+void Http::Send(const HttpHeader *hdr)
+{
+   Send("%s: %s\r\n",hdr->GetName(),hdr->GetValue());
 }
 
 void Http::AppendHostEncoded(xstring& buf,const char *host)
@@ -353,6 +372,12 @@ void Http::SendMethod(const char *method,const char *efile)
    */
    if(*efile=='\0')
       efile="/";
+
+   last_uri.set(efile+(proxy?url::path_index(efile):0));
+   if(last_uri.length()==0)
+      last_uri.set("/");
+   if(proxy)
+      last_url.set(efile);
 
    Send("%s %s HTTP/1.1\r\n",method,efile);
    Send("Host: %s\r\n",ehost.get());
@@ -416,16 +441,29 @@ void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
 
 void Http::SendProxyAuth()
 {
-   if(proxy && proxy_user && proxy_pass)
-      SendBasicAuth("Proxy-Authorization",proxy_user,proxy_pass);
+   proxy_auth_scheme=HttpAuth::NONE;
+   if(!proxy || !proxy_user || !proxy_pass)
+      return;
+   HttpAuth *auth=HttpAuth::Get(HttpAuth::PROXY,GetFileURL(file,NO_USER),proxy_user);
+   if(auth && auth->Update(last_method,last_url)) {
+      proxy_auth_sent++;
+      Send(auth->GetHeader());
+      return;
+   }
 }
 
 void Http::SendAuth()
 {
-   if(user && pass && !(hftp && !QueryBool("use-authorization",proxy)))
+   if(!auth_scheme && hftp && user && pass && QueryBool("use-authorization",proxy)) {
       SendBasicAuth("Authorization",user,pass);
-   else if(!hftp)
-      SendBasicAuth("Authorization",Query("authorization",hostname));
+      return;
+   }
+   auth_scheme=HttpAuth::NONE;
+   HttpAuth *auth=HttpAuth::Get(HttpAuth::WWW,GetFileURL(file,NO_USER),user);
+   if(auth && auth->Update(last_method,last_uri,0)) {
+      auth_sent++;
+      Send(auth->GetHeader());
+   }
 }
 void Http::SendCacheControl()
 {
@@ -871,31 +909,6 @@ void Http::ProceedArrayInfo()
    }
 }
 
-static const char *extract_quoted_header_value(const char *value)
-{
-   static xstring value1;
-   if(*value=='"')
-   {
-      value++;
-      value1.set(value);
-      char *store=value1.get_non_const();
-      while(*value && *value!='"')
-      {
-	 if(*value=='\\' && value[1])
-	    value++;
-	 *store++=*value++;
-      }
-      *store=0;
-   }
-   else
-   {
-      int end=strcspn(value,"()<>@,;:\\\"/[]?={} \t");
-      value1.set(value);
-      value1.truncate(end);
-   }
-   return value1;
-}
-
 void Http::HandleHeaderLine(const char *name,const char *value)
 {
    // use a perfect hash
@@ -1022,7 +1035,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       const char *filename=strstr(value,"filename=");
       if(!filename)
 	 return;
-      filename=extract_quoted_header_value(filename+9);
+      filename=HttpHeader::extract_quoted_value(filename+9);
       SetSuggestedFileName(filename);
       return;
    }
@@ -1031,8 +1044,50 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       const char *cs=strstr(value,"charset=");
       if(cs)
       {
-	 cs=extract_quoted_header_value(cs+8);
+	 cs=HttpHeader::extract_quoted_value(cs+8);
 	 entity_charset.set(cs);
+      }
+      return;
+   }
+   case_hh("WWW-Authenticate",'W') {
+      const char *user=this->user;
+      const char *pass=this->pass;
+      if(!user || !pass) {
+	 // try auth info from http:authorization setting
+	 const char *auth_c=Query("authorization",hostname);
+         if(auth_c && *auth_c) {
+	    char *auth=alloca_strdup(auth_c);
+	    char *colon=strchr(auth,':');
+	    if(colon) {
+	       *colon=0;
+	       user=auth;
+	       pass=colon+1;
+	    }
+	 }
+      }
+      if(user && pass) {
+	 // FIXME: keep a request queue, get the URI from the queue.
+	 const char *uri=GetFileURL(file,NO_USER);
+
+	 Ref<HttpAuth::Challenge> chal(new HttpAuth::Challenge(value));
+	 bool stale=chal->GetParam("stale").eq_nc("true");
+	 if(status_code==H_Unauthorized) {
+	    if(auth_sent>(stale?1:0))
+	       return;
+	    HttpAuth::scheme_t new_scheme=chal->GetSchemeCode();
+	    if(new_scheme<=auth_scheme)
+	       return;
+	    if(HttpAuth::New(HttpAuth::WWW,uri,chal.borrow(),user,pass))
+	       auth_scheme=new_scheme;
+	 } else if(status_code==H_Proxy_Authentication_Required) {
+	    if(proxy_auth_sent>(stale?1:0))
+	       return;
+	    HttpAuth::scheme_t new_scheme=chal->GetSchemeCode();
+	    if(new_scheme<=proxy_auth_scheme)
+	       return;
+	    if(HttpAuth::New(HttpAuth::PROXY,uri,chal.borrow(),proxy_user,proxy_pass))
+	       proxy_auth_scheme=new_scheme;
+	 }
       }
       return;
    }
@@ -1648,6 +1703,16 @@ int Http::Do()
 	 return MOVED;
       }
 
+      if((status_code==H_Unauthorized && auth_scheme)
+      || (status_code==H_Proxy_Authentication_Required && proxy_auth_scheme)) {
+	 // retry with authentication
+	 state=RECEIVING_BODY;
+	 LogErrorText();
+	 Disconnect();
+	 DontSleep();
+	 return MOVED;
+      }
+
       if(!H_2XX(status_code))
       {
 	 xstring err;
@@ -1655,7 +1720,8 @@ int Http::Do()
 
 	 if(H_REDIRECTED(status_code))
 	 {
-	    if(location && !url::is_url(location)
+	    bool is_url=(location && url::is_url(location));
+	    if(location && !is_url
 	    && mode==QUOTE_CMD && !strncasecmp(file,"POST ",5)
 	    && tunnel_state!=TUNNEL_WAITING)
 	    {
@@ -1688,6 +1754,14 @@ int Http::Do()
 		  strcpy(slash+1,location);
 	       }
 	       location.set(new_location);
+	    } else if(is_url && !hftp) {
+	       ParsedURL url(location);
+	       if(url.proto.eq(GetProto()) && !xstrcasecmp(url.host,hostname)
+	       && user && !url.user) {
+		  // use the same user name after redirect to the same site.
+		  url.user.set(user);
+		  location.set_allocated(url.Combine());
+	       }
 	    }
 	    err.setf("%s (%s -> %s)",status+status_consumed,file.get(),
 				    location?location.get():"nowhere");

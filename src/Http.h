@@ -23,6 +23,8 @@
 #include "NetAccess.h"
 #include "buffer.h"
 #include "lftp_ssl.h"
+#include "HttpHeader.h"
+#include "HttpAuth.h"
 
 class Http : public NetAccess
 {
@@ -48,6 +50,7 @@ class Http : public NetAccess
    void Init();
 
    void	Send(const char *format,...) PRINTF_LIKE(2,3);
+   void Send(const HttpHeader *hdr);
 
    class Connection
    {
@@ -82,8 +85,12 @@ class Http : public NetAccess
    static void AppendHostEncoded(xstring&,const char *);
    void SendMethod(const char *,const char *);
    const char *last_method;
+   xstring_c last_uri;
+   xstring_c last_url; // for proxy requests
+
    enum { HTTP_NONE=0, HTTP_POST, HTTP_MOVE, HTTP_COPY, HTTP_PROPFIND } special;
    xstring special_data;
+
    void DirFile(xstring& path,const xstring& ecwd,const xstring& efile) const;
    void SendAuth();
    void SendProxyAuth();
@@ -101,6 +108,7 @@ class Http : public NetAccess
    void SendPropfindBody();
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
+   static const xstring& extract_quoted_header_value(const char *value,const char **end=0);
    void GetBetterConnection(int level);
    void SetCookie(const char *val);
    void MakeCookie(xstring &cookie,const char *host,const char *path);
@@ -152,6 +160,11 @@ class Http : public NetAccess
 
    bool no_cache;
    bool no_cache_this;
+
+   int  auth_sent;
+   int	proxy_auth_sent;
+   HttpAuth::scheme_t auth_scheme;
+   HttpAuth::scheme_t proxy_auth_scheme;
 
    bool use_propfind_now;
    const char *allprop;
