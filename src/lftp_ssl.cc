@@ -873,8 +873,6 @@ lftp_ssl_openssl::lftp_ssl_openssl(int fd1,handshake_mode_t m,const char *h)
    ssl=SSL_new(instance->ssl_ctx);
    SSL_set_fd(ssl,fd);
    SSL_ctrl(ssl,SSL_CTRL_MODE,SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER,0);
-   BIO *wbio=SSL_get_wbio(ssl);
-   BIO_set_write_buf_size(wbio,0x20000);
 
    if(h && ResMgr::QueryBool("ssl:use-sni",h)) {
       if(!SSL_set_tlsext_host_name(ssl, h))
