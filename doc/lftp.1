@@ -16,8 +16,6 @@
 .\" You should have received a copy of the GNU General Public License
 .\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .\"
-.\" $Id: lftp.1,v 1.149 2011/06/28 09:36:24 lav Exp $
-.\"
 .\"-------
 .\" Sp  space down the interparagraph distance
 .\"-------
@@ -41,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "02 Dec 2015"
+.TH lftp 1 "05 Mar 2016"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1722,6 +1720,9 @@ time.
 .BR ftp:use-mdtm-overloaded \ (boolean)
 when true, lftp uses two argument MDTM command to set file modification
 time on uploaded files. Default is false.
+.TP
+.BR ftp:use-mlsd \ (boolean)
+when true, lftp will use MLSD command for directory listing if supported by the server.
 .TP
 .BR ftp:use-mode-z \ (boolean)
 when true, lftp will use "MODE Z" if supported by the server to perform
