@@ -12,6 +12,7 @@ Version 4.7.0 - 2016-??-??
 * new debug option -T (truncate output file).
 * optimized ssl for speed and lower syscall count.
 * http: add support for digest authentication.
+* fixed webdav directory listing.
 
 Version 4.6.5 - 2015-12-10
 
