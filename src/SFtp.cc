@@ -601,7 +601,7 @@ void SFtp::SendRequest()
 	 break;
       }
       unsigned options=SSH_FXF_RENAME_NATIVE;
-      if(QueryBool("xfer:clobber",0))
+      if(rename_f)
 	 options|=SSH_FXF_RENAME_OVERWRITE;
       SendRequest(new Request_RENAME(WirePath(file),WirePath(file1),
 			options,protocol_version),Expect::DEFAULT);

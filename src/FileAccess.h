@@ -134,6 +134,7 @@ protected:
    int max_retries;
 
    bool	 mkdir_p;
+   bool	 rename_f;
 
    int	 saved_errno;
 
@@ -227,7 +228,7 @@ public:
    void AsciiTransfer() { ascii=true; }
    virtual void Close();
 
-   void Rename(const char *rfile,const char *to) { Open2(rfile,to,RENAME); }
+   void Rename(const char *rfile,const char *to,bool clobber=false);
    void Link(const char *f1,const char *f2) { Open2(f1,f2,LINK); }
    void Symlink(const char *f1,const char *f2) { Open2(f1,f2,SYMLINK); }
    void Mkdir(const char *rfile,bool allpath=false);

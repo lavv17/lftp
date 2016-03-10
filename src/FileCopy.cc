@@ -883,7 +883,8 @@ int FileCopyPeerFA::Do()
 	 if(suggested_filename && auto_rename)
 	 {
 	    const char *new_name=dir_file(dirname(file),suggested_filename);
-	    session->Rename(file,new_name);
+	    bool clobber=temp_file;
+	    session->Rename(file,new_name,clobber);
 	    return MOVED;
 	 }
 	 done=true;

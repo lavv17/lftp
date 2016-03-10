@@ -66,6 +66,7 @@ void FileAccess::Init()
    error_code=OK;
    saved_errno=0;
    mkdir_p=false;
+   rename_f=false;
    ascii=false;
    norest_manual=false;
 
@@ -114,6 +115,7 @@ void  FileAccess::Open(const char *fn,int mode,off_t offs)
    pos=offs;
    this->mode=mode;
    mkdir_p=false;
+   rename_f=false;
    Timeout(0);
 
    switch((open_mode)mode)
@@ -147,7 +149,7 @@ const char *FileAccess::StrError(int err)
       return("Error 0");
    case(SEE_ERRNO):
       if(error)
-   	 return str.vset(error.get(),": ",strerror(saved_errno),NULL);
+	 return str.vset(error.get(),": ",strerror(saved_errno),NULL);
       return(strerror(saved_errno));
    case(LOOKUP_ERROR):
       return(error);
@@ -155,29 +157,29 @@ const char *FileAccess::StrError(int err)
       return("Class is not Open()ed");
    case(NO_FILE):
       if(error)
-   	 return str.vset(_("Access failed: "),error.get(),NULL);
+	 return str.vset(_("Access failed: "),error.get(),NULL);
       return(_("File cannot be accessed"));
    case(NO_HOST):
       return(_("Not connected"));
    case(FATAL):
       if(error)
-   	 return str.vset(_("Fatal error"),": ",error.get(),NULL);
+	 return str.vset(_("Fatal error"),": ",error.get(),NULL);
       return(_("Fatal error"));
    case(STORE_FAILED):
       return(_("Store failed - you have to reput"));
    case(LOGIN_FAILED):
       if(error)
-   	 return str.vset(_("Login failed"),": ",error.get(),NULL);
+	 return str.vset(_("Login failed"),": ",error.get(),NULL);
       return(_("Login failed"));
    case(NOT_SUPP):
       if(error)
-   	 return str.vset(_("Operation not supported"),": ",error.get(),NULL);
+	 return str.vset(_("Operation not supported"),": ",error.get(),NULL);
       return(_("Operation not supported"));
    case(FILE_MOVED):
       if(error)
-   	 return str.vset(_("File moved"),": ",error.get(),NULL);
+	 return str.vset(_("File moved"),": ",error.get(),NULL);
       else
-   	 return str.vset(_("File moved to `"),location?location.get():"?","'",NULL);
+	 return str.vset(_("File moved to `"),location?location.get():"?","'",NULL);
    }
    return("");
 }
@@ -212,6 +214,12 @@ void FileAccess::Open2(const char *f,const char *f1,open_mode o)
    cache->TreeChanged(this,file);
    cache->FileChanged(this,file);
    cache->FileChanged(this,file1);
+}
+
+void FileAccess::Rename(const char *rfile,const char *to,bool clobber)
+{
+   Open2(rfile,to,RENAME);
+   rename_f=clobber;
 }
 
 void FileAccess::Mkdir(const char *fn,bool allp)
