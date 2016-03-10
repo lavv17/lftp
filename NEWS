@@ -13,6 +13,8 @@ Version 4.7.0 - 2016-??-??
 * optimized ssl for speed and lower syscall count.
 * http: add support for digest authentication.
 * fixed webdav directory listing.
+* ssl: log server's certificate fingerprint.
+* ssl: allow disabling certificate verification by its fingerprint.
 
 Version 4.6.5 - 2015-12-10
 

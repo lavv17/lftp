@@ -49,7 +49,7 @@ public:
    enum code { RETRY=-2, ERROR=-1, DONE=0 };
 
    void set_error(const char *s1,const char *s2);
-   void set_cert_error(const char *s);
+   void set_cert_error(const char *s,const xstring& fp);
 };
 
 #if USE_GNUTLS
@@ -95,6 +95,7 @@ class lftp_ssl_gnutls : public lftp_ssl_base
    void verify_last_cert(gnutls_x509_crt_t crt);
    int do_handshake();
    bool check_fatal(int res);
+   static const xstring& get_fp(gnutls_x509_crt_t crt);
 public:
    static void global_init();
    static void global_deinit();
@@ -126,6 +127,7 @@ class lftp_ssl_openssl : public lftp_ssl_base
    bool check_fatal(int res);
    int do_handshake();
    const char *strerror();
+   static const xstring& get_fp(X509 *crt);
 public:
    static int verify_crl(X509_STORE_CTX *ctx);
    static int verify_callback(int ok,X509_STORE_CTX *ctx);

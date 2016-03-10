@@ -56,9 +56,19 @@ void lftp_ssl_base::set_error(const char *s1,const char *s2)
    else
       error.set(s1);
 }
-void lftp_ssl_base::set_cert_error(const char *s)
+void lftp_ssl_base::set_cert_error(const char *s,const xstring& fp)
 {
+   bool verify_default=ResMgr::QueryBool("ssl:verify-certificate",hostname);
    bool verify=ResMgr::QueryBool("ssl:verify-certificate",hostname);
+   xstring fp_hex;
+   if(fp) {
+      for(unsigned i=0; i<fp.length(); i++)
+	 fp_hex.appendf("%02X:",(unsigned char)fp[i]);
+      fp_hex.chomp(':');
+      if(verify && verify_default)
+	 verify=ResMgr::QueryBool("ssl:verify-certificate",fp_hex);
+      s=xstring::format("%s (%s)",s,fp_hex.get());
+   }
    const char *const warn=verify?"ERROR":"WARNING";
    Log::global->Format(0,"%s: Certificate verification: %s\n",warn,s);
    if(verify && !error)
@@ -366,7 +376,7 @@ void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,
    bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
    if(check_hostname) {
       if(!gnutls_x509_crt_check_hostname(cert[0], hostname))
-	 set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)));
+	 set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)),get_fp(cert[0]));
    } else {
       Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled\n");
    }
@@ -429,7 +439,7 @@ void lftp_ssl_gnutls::verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issue
 	 strcat(msg,": no issuer was found");
       if(crt_status & GNUTLS_CERT_SIGNER_NOT_CA)
 	 strcat(msg,": issuer is not a CA");
-      set_cert_error(msg);
+      set_cert_error(msg,get_fp(crt));
    }
    else
       Log::global->Format(9, "  Trusted\n");
@@ -438,16 +448,16 @@ void lftp_ssl_gnutls::verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issue
     /* Now check the expiration dates.
      */
     if (gnutls_x509_crt_get_activation_time(crt) > now)
-	set_cert_error("Not yet activated");
+	set_cert_error("Not yet activated",get_fp(crt));
 
     if (gnutls_x509_crt_get_expiration_time(crt) < now)
-	set_cert_error("Expired");
+	set_cert_error("Expired",get_fp(crt));
 
     /* Check if the certificate is revoked.
      */
     ret = gnutls_x509_crt_check_revocation(crt, instance->crl_list, instance->crl_list_size);
     if (ret == 1) {		/* revoked */
-	set_cert_error("Revoked");
+	set_cert_error("Revoked",get_fp(crt));
     }
 }
 
@@ -486,7 +496,7 @@ void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
       strcpy(msg,"Not trusted");
       if (crt_status & GNUTLS_CERT_SIGNER_NOT_CA)
 	 strcat(msg,": Issuer is not a CA");
-      set_cert_error(msg);
+      set_cert_error(msg,get_fp(crt));
    }
    else
       Log::global->Format(9, "  Trusted\n");
@@ -495,16 +505,16 @@ void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
    /* Now check the expiration dates.
     */
    if(gnutls_x509_crt_get_activation_time(crt) > now)
-      set_cert_error("Not yet activated");
+      set_cert_error("Not yet activated",get_fp(crt));
 
    if(gnutls_x509_crt_get_expiration_time(crt) < now)
-      set_cert_error("Expired");
+      set_cert_error("Expired",get_fp(crt));
 
    /* Check if the certificate is revoked.
     */
    ret = gnutls_x509_crt_check_revocation(crt, instance->crl_list, instance->crl_list_size);
    if (ret == 1) {		/* revoked */
-      set_cert_error("Revoked");
+      set_cert_error("Revoked",get_fp(crt));
    }
 }
 
@@ -542,14 +552,14 @@ int lftp_ssl_gnutls::do_handshake()
 
    if(gnutls_certificate_type_get(session)!=GNUTLS_CRT_X509)
    {
-      set_cert_error("Unsupported certificate type");
+      set_cert_error("Unsupported certificate type",xstring::null);
       return DONE; // FIXME: handle openpgp as well
    }
 
    unsigned cert_list_size=0;
    const gnutls_datum_t *cert_list=gnutls_certificate_get_peers(session,&cert_list_size);
    if(cert_list==NULL || cert_list_size==0)
-      set_cert_error("No certificate was found!");
+      set_cert_error("No certificate was found!",xstring::null);
    else
       verify_certificate_chain(cert_list,cert_list_size);
 
@@ -630,6 +640,18 @@ void lftp_ssl_gnutls::copy_sid(const lftp_ssl_gnutls *o)
    if(gnutls_session_get_data(o->session,session_data,&session_data_size)!=GNUTLS_E_SUCCESS)
       return;
    gnutls_session_set_data(session,session_data,session_data_size);
+}
+
+#include <sha1.h>
+const xstring& lftp_ssl_gnutls::get_fp(gnutls_x509_crt_t cert)
+{
+   static xstring fp;
+   fp.truncate();
+   size_t fp_len=SHA1_DIGEST_SIZE;
+   if(gnutls_x509_crt_get_fingerprint(cert,GNUTLS_DIG_SHA1,fp.add_space(fp_len),&fp_len))
+      return xstring::null;
+   fp.add_commit(fp_len);
+   return fp;
 }
 
 #if LFTP_LIBGNUTLS_VERSION_CODE < 0x010201
@@ -917,14 +939,8 @@ lftp_ssl_openssl::~lftp_ssl_openssl()
    ssl=0;
 }
 
-static const char *verify_callback_host;
-static int lftp_ssl_connect(SSL *ssl,const char *h)
-{
-   verify_callback_host=h;
-   int res=SSL_connect(ssl);
-   verify_callback_host=0;
-   return res;
-}
+static lftp_ssl_openssl *verify_callback_ssl;
+
 bool lftp_ssl_openssl::check_fatal(int res)
 {
    return !(SSL_get_error(ssl,res)==SSL_ERROR_SYSCALL
@@ -941,7 +957,9 @@ int lftp_ssl_openssl::do_handshake()
       return RETRY;
    }
    errno=0;
-   int res=lftp_ssl_connect(ssl,hostname);
+   verify_callback_ssl=this;
+   int res=SSL_connect(ssl);
+   verify_callback_ssl=0;
    if(res<=0)
    {
       if(BIO_sock_should_retry(res))
@@ -1023,17 +1041,12 @@ void lftp_ssl_openssl::copy_sid(const lftp_ssl_openssl *o)
    SSL_copy_session_id(ssl,o->ssl);
 }
 
-static int certificate_verify_error;
-
 const char *lftp_ssl_openssl::strerror()
 {
    SSL_load_error_strings();
    int error=ERR_get_error();
    const char *ssl_error=0;
-   if(ERR_GET_LIB(error)==ERR_LIB_SSL
-   && ERR_GET_REASON(error)==SSL_R_CERTIFICATE_VERIFY_FAILED)
-      ssl_error=X509_verify_cert_error_string(certificate_verify_error);
-   else if(ERR_GET_LIB(error)==ERR_LIB_SSL)
+   if(ERR_GET_LIB(error)==ERR_LIB_SSL)
       ssl_error=ERR_reason_error_string(error);
    else
       ssl_error=ERR_error_string(error,NULL);
@@ -1345,7 +1358,7 @@ void lftp_ssl_openssl::check_certificate()
   if (!server_cert)
     {
       set_cert_error(xstring::format(_("No certificate presented by %s.\n"),
-                 quotearg_style (escape_quoting_style, hostname)));
+                 quotearg_style (escape_quoting_style, hostname)),xstring::null);
       return;
     }
 
@@ -1446,7 +1459,7 @@ void lftp_ssl_openssl::check_certificate()
   else if(matched == 0) {
     /* an alternative name field existed, but didn't match and then
        we MUST fail */
-    set_cert_error(xstring::format("subjectAltName does not match %s", quote(hostname)));
+    set_cert_error(xstring::format("subjectAltName does not match %s", quote(hostname)),get_fp(server_cert));
   }
   else {
     /* we have to look to the last occurence of a commonName in the
@@ -1492,7 +1505,7 @@ void lftp_ssl_openssl::check_certificate()
         if(peer_CN && ((int)strlen((char *)peer_CN) != j)) {
           /* there was a terminating zero before the end of string, this
              cannot match and we return failure! */
-          set_cert_error("illegal cert name field (contains NUL character)");
+          set_cert_error("illegal cert name field (contains NUL character)",get_fp(server_cert));
         }
       }
     }
@@ -1502,18 +1515,18 @@ void lftp_ssl_openssl::check_certificate()
     else {
       /* convert peer_CN from UTF8 */
       if(!convert_from_utf8((char*)peer_CN, strlen((char*)peer_CN)))
-	 set_cert_error("invalid cert name field (cannot convert from UTF8)");
+	 set_cert_error("invalid cert name field (cannot convert from UTF8)",get_fp(server_cert));
     }
 
     if(cert_error)
       /* error already detected, pass through */
       ;
     else if(!peer_CN) {
-      set_cert_error("unable to obtain common name from peer certificate");
+      set_cert_error("unable to obtain common name from peer certificate",get_fp(server_cert));
     }
     else if(!cert_hostcheck((const char *)peer_CN, hostname)) {
         set_cert_error(xstring::format("certificate subject name %s does not match "
-              "target host name %s", quote_n(0,(const char *)peer_CN), quote_n(1,hostname)));
+              "target host name %s", quote_n(0,(const char *)peer_CN), quote_n(1,hostname)),get_fp(server_cert));
     }
     else {
       Log::global->Format(9, "Certificate verification: common name: %s matched\n", quote((char*)peer_CN));
@@ -1524,136 +1537,17 @@ void lftp_ssl_openssl::check_certificate()
 }
 /* end curl code */
 
-/* begin wget-1.12 code */
-#if 0
-#define ASTERISK_EXCLUDES_DOT   /* mandated by rfc2818 */
-
-/* Return true is STRING (case-insensitively) matches PATTERN, false
-   otherwise.  The recognized wildcard character is "*", which matches
-   any character in STRING except ".".  Any number of the "*" wildcard
-   may be present in the pattern.
-
-   This is used to match of hosts as indicated in rfc2818: "Names may
-   contain the wildcard character * which is considered to match any
-   single domain name component or component fragment. E.g., *.a.com
-   matches foo.a.com but not bar.foo.a.com. f*.com matches foo.com but
-   not bar.com [or foo.bar.com]."
-
-   If the pattern contain no wildcards, pattern_match(a, b) is
-   equivalent to !strcasecmp(a, b).  */
-
-static bool
-pattern_match (const char *pattern, const char *string)
+#include <sha1.h>
+const xstring&  lftp_ssl_openssl::get_fp(X509 *cert)
 {
-  const char *p = pattern, *n = string;
-  char c;
-  for (; (c = c_tolower (*p++)) != '\0'; n++)
-    if (c == '*')
-      {
-        for (c = c_tolower (*p); c == '*'; c = c_tolower (*++p))
-          ;
-        for (; *n != '\0'; n++)
-          if (c_tolower (*n) == c && pattern_match (p, n))
-            return true;
-#ifdef ASTERISK_EXCLUDES_DOT
-          else if (*n == '.')
-            return false;
-#endif
-        return c == '\0';
-      }
-    else
-      {
-        if (c != c_tolower (*n))
-          return false;
-      }
-  return *n == '\0';
+   static xstring fp;
+   fp.truncate();
+   unsigned fp_len=SHA1_DIGEST_SIZE;
+   if(!X509_digest(cert, EVP_sha1(), (unsigned char*)fp.add_space(fp_len), &fp_len))
+      return xstring::null;
+   fp.add_commit(fp_len);
+   return fp;
 }
-
-/* Verify the validity of the certificate presented by the server.
-   Also check that the "common name" of the server, as presented by
-   its certificate, corresponds to HOST.  (HOST typically comes from
-   the URL and is what the user thinks he's connecting to.)
-
-   This assumes that ssl_connect_wget has successfully finished, i.e. that
-   the SSL handshake has been performed and that FD is connected to an
-   SSL handle.
-
-   If opt.check_cert is true (the default), this returns 1 if the
-   certificate is valid, 0 otherwise.  If opt.check_cert is 0, the
-   function always returns 1, but should still be called because it
-   warns the user about any problems with the certificate.  */
-
-void lftp_ssl_openssl::check_certificate_wget ()
-{
-  X509 *cert;
-  char common_name[256];
-
-  cert = SSL_get_peer_certificate (ssl);
-  if (!cert)
-    {
-      set_cert_error(xstring::format(_("No certificate presented by %s.\n"),
-                 quotearg_style (escape_quoting_style, hostname)));
-      return;
-    }
-
-  /* LAV: certificate validity is already checked in callback. */
-
-  /* Check that HOST matches the common name in the certificate.
-     #### The following remains to be done:
-
-     - It should use dNSName/ipAddress subjectAltName extensions if
-       available; according to rfc2818: "If a subjectAltName extension
-       of type dNSName is present, that MUST be used as the identity."
-
-     - When matching against common names, it should loop over all
-       common names and choose the most specific one, i.e. the last
-       one, not the first one, which the current code picks.
-
-     - Ensure that ASN1 strings from the certificate are encoded as
-       UTF-8 which can be meaningfully compared to HOST.  */
-
-  X509_NAME *xname = X509_get_subject_name(cert);
-  common_name[0] = '\0';
-  X509_NAME_get_text_by_NID (xname, NID_commonName, common_name,
-                             sizeof (common_name));
-
-  if (!pattern_match (common_name, hostname))
-    {
-      set_cert_error(xstring::format(_("certificate common name %s doesn't match requested host name %s"),
-                 quote_n (0, common_name), quote_n (1, hostname)));
-    }
-  else
-    {
-      /* We now determine the length of the ASN1 string. If it differs from
-       * common_name's length, then there is a \0 before the string terminates.
-       * This can be an instance of a null-prefix attack.
-       *
-       * https://www.blackhat.com/html/bh-usa-09/bh-usa-09-archives.html#Marlinspike
-       * */
-
-      int i = -1, j;
-      X509_NAME_ENTRY *xentry;
-      ASN1_STRING *sdata;
-
-      if (xname) {
-        for (;;)
-          {
-            j = X509_NAME_get_index_by_NID (xname, NID_commonName, i);
-            if (j == -1) break;
-            i = j;
-          }
-      }
-
-      xentry = X509_NAME_get_entry(xname,i);
-      sdata = X509_NAME_ENTRY_get_data(xentry);
-      if (strlen (common_name) != (size_t)ASN1_STRING_length (sdata))
-          set_cert_error(_("certificate common name is invalid (contains a NUL character)"));
-    }
-
-  X509_free (cert);
-}
-#endif
-/* end wget code */
 
 int lftp_ssl_openssl::verify_callback(int ok,X509_STORE_CTX *ctx)
 {
@@ -1677,24 +1571,11 @@ int lftp_ssl_openssl::verify_callback(int ok,X509_STORE_CTX *ctx)
       ok=0;
 
    int error=X509_STORE_CTX_get_error(ctx);
-
-   bool verify=ResMgr::QueryBool("ssl:verify-certificate",verify_callback_host);
-
    if(!ok)
-   {
-      Log::global->Format(0,"%s: Certificate verification: %s\n",
-			  verify?"ERROR":"WARNING",
-			  X509_verify_cert_error_string(error));
-   }
-
-   if(!verify)
-      ok=1;
-
-   if(!ok)
-      certificate_verify_error=error;
+      verify_callback_ssl->set_cert_error(X509_verify_cert_error_string(error),get_fp(cert));
 
    prev_cert=cert;
-   return ok;
+   return 1;
 }
 #endif // USE_OPENSSL
 
