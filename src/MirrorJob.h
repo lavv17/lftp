@@ -262,6 +262,7 @@ public:
    void SetMaxErrorCount(int ec) { max_error_count=ec; }
    void SetOnChange(const char *oc);
    static const char *AddPattern(Ref<PatternSet>& exclude,char opt,const char *optarg);
+   static const char *AddPatternsFrom(Ref<PatternSet>& exclude,char opt,const char *file);
 };
 
 #endif//MIRRORJOB_H

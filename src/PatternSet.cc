@@ -104,8 +104,10 @@ PatternSet::Regex::Regex(const char *p) : Pattern(p)
    if(errcode)
    {
       size_t need=regerror(errcode,0,0,0);
-      error.get_space(need-1);
-      error.set_length(regerror(errcode,0,error.get_non_const(),need)-1);
+      xstring& e=xstring::get_tmp();
+      e.get_space(need-1);
+      e.set_length(regerror(errcode,0,e.get_non_const(),need)-1);
+      error.setf(_("regular expression `%s': %s"),p,e.get());
    }
 }
 PatternSet::Regex::~Regex()

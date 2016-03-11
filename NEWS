@@ -15,6 +15,7 @@ Version 4.7.0 - 2016-??-??
 * fixed webdav directory listing.
 * ssl: log server's certificate fingerprint.
 * ssl: allow disabling certificate verification by its fingerprint.
+* new mirror options: --{in,ex}clude-rx-from, --{in,ex}clude-glob-from.
 
 Version 4.6.5 - 2015-12-10
 

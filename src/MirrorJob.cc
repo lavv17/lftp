@@ -299,8 +299,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    if((flags&CONTINUE)
 	    && old->Has(file->TYPE) && old->filetype==old->NORMAL
 	    && (flags&IGNORE_TIME ||
-	    	(file->Has(file->DATE) && old->Has(old->DATE)
-	    	&& file->date + file->date.ts_prec < old->date - old->date.ts_prec))
+		(file->Has(file->DATE) && old->Has(old->DATE)
+		&& file->date + file->date.ts_prec < old->date - old->date.ts_prec))
 	    && file->Has(file->SIZE) && old->Has(old->SIZE)
 	    && file->size >= old->size)
 	    {
@@ -1007,7 +1007,7 @@ int   MirrorJob::Do()
       while(transfer_count<parallel && state==WAITING_FOR_TRANSFER)
       {
 	 file=to_transfer->curr();
-      	 if(!file)
+	 if(!file)
 	 {
 	    // go to the next step only when all transfers have finished
 	    if(waiting_num>0)
@@ -1568,6 +1568,30 @@ const char *MirrorJob::AddPattern(Ref<PatternSet>& exclude,char opt,const char *
    return NULL; // no error
 }
 
+const char *MirrorJob::AddPatternsFrom(Ref<PatternSet>& exclude,char opt,const char *file)
+{
+   FILE *f=fopen(file,"r");
+   if(!f)
+      return xstring::format("%s: %s",file,strerror(errno));
+
+   xstring line;
+   const char *err=0;
+   int c;
+   while(!feof(f)) {
+      line.truncate();
+      while((c=getc(f))!=EOF && c!='\n')
+	 line.append(c);
+      if(line.length()>0) {
+	 err=AddPattern(exclude,opt,line);
+	 if(err)
+	    break;
+      }
+   }
+
+   fclose(f);
+   return err;
+}
+
 const char *MirrorJob::SetRecursionMode(const char *m)
 {
    struct { const char name[8]; recursion_mode_t mode; } map[]={
@@ -1634,6 +1658,10 @@ CMD(mirror)
       {"exclude",required_argument,0,'x'},
       {"include-glob",required_argument,0,'I'},
       {"exclude-glob",required_argument,0,'X'},
+      {"include-rx-from",required_argument,0,'i'+'f'},
+      {"exclude-rx-from",required_argument,0,'x'+'f'},
+      {"include-glob-from",required_argument,0,'I'+'f'},
+      {"exclude-glob-from",required_argument,0,'X'+'f'},
       {"only-newer",no_argument,0,'n'},
       {"no-recursion",no_argument,0,'r'},
       {"no-perms",no_argument,0,'p'},
@@ -1756,8 +1784,20 @@ CMD(mirror)
 	 const char *err=MirrorJob::AddPattern(exclude,opt,optarg);
 	 if(err)
 	 {
-	    eprintf(_("%s: regular expression `%s': %s\n"),
-	       args->a0(),optarg,err);
+	    eprintf("%s: %s\n",args->a0(),err);
+	    goto no_job;
+	 }
+	 break;
+      }
+      case('x'+'f'):
+      case('i'+'f'):
+      case('X'+'f'):
+      case('I'+'f'):
+      {
+	 const char *err=MirrorJob::AddPatternsFrom(exclude,opt-'f',optarg);
+	 if(err)
+	 {
+	    eprintf("%s: %s\n",args->a0(),err);
 	    goto no_job;
 	 }
 	 break;

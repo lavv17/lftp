@@ -57,7 +57,7 @@ public:
 
    char **borrow() { return set.borrow(); }
 
-   void qsort(xarray_p<char>::cmp_t cmp) { set.qsort(cmp); }
+   void qsort(xarray_m<char>::cmp_t cmp) { set.qsort(cmp); }
    static int default_cmp(const char **a,const char **b) { return strcmp(*a,*b); }
    void qsort() { qsort(default_cmp); }
 };
