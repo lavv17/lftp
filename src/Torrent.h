@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,11 +97,12 @@ class TorrentPiece
 {
    unsigned sources_count;	    // how many peers have the piece
    unsigned downloader_count;	    // how many downloaders of the piece are there
+   float ratio;
    RefToArray<const TorrentPeer*> downloader; // which peers download the blocks
    Ref<BitField> block_map;	    // which blocks are present.
 
 public:
-   TorrentPiece() : sources_count(0), downloader_count(0) {}
+   TorrentPiece() : sources_count(0), downloader_count(0), ratio(0) {}
    ~TorrentPiece() {}
 
    unsigned get_sources_count() const { return sources_count; }
@@ -151,6 +152,9 @@ public:
    bool any_blocks_present() const {
       return block_map; // it's allocated when setting any bit
    }
+
+   float get_ratio() const { return ratio; }
+   void add_ratio(float add) { ratio+=add; }
 };
 
 struct TorrentFile
@@ -341,6 +345,9 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    unsigned long long total_sent;
    unsigned long long total_left;
 
+   void AccountSend(unsigned p,unsigned len);
+   void AccountRecv(unsigned p,unsigned len);
+
    void SetError(Error *);
    void SetError(const char *);
 
@@ -376,7 +383,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    }
 
    void RebuildPiecesNeeded();
-   Timer pieces_needed_rebuild_timer;
+   Timer pieces_timer; // for periodic pieces scanning
    xarray<unsigned> pieces_needed;
    static int PiecesNeededCmp(const unsigned *a,const unsigned *b);
    unsigned last_piece;
@@ -384,6 +391,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    unsigned min_piece_sources;
    unsigned avg_piece_sources;
    unsigned pieces_available_pct;
+   float current_ppr;
 
    void SetPieceNotWanted(unsigned piece);
    void SetDownloader(unsigned piece,unsigned block,const TorrentPeer *o,const TorrentPeer *n);
@@ -415,6 +423,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    bool SeededEnough() const;
    float stop_on_ratio;
+   float seed_min_ppr;
    Timer seed_timer;
    Timer timeout_timer;
 
@@ -490,6 +499,8 @@ public:
    bool Private() const { return is_private; }
    double GetRatio() const;
    void CalcPiecesStats();
+   void CalcPerPieceRatio();
+   float GetPerPieceRatio() const { return current_ppr; }
    unsigned MinPieceSources() const { return min_piece_sources; }
    double AvgPieceSources() const { return avg_piece_sources/256.; }
    unsigned PiecesAvailablePct() const { return pieces_available_pct; }

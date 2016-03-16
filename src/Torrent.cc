@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ static ResType torrent_vars[] = {
    {"torrent:max-peers", "60", ResMgr::UNumberValidate},
    {"torrent:save-metadata", "yes", ResMgr::BoolValidate, ResMgr::NoClosure},
    {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate},
+   {"torrent:seed-min-ppr", "1.0", ResMgr::FloatValidate},
    {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate},
    {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate},
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
@@ -218,7 +219,7 @@ void Torrent::StopListenerUDP()
 
 Torrent::Torrent(const char *mf,const char *c,const char *od)
    : metainfo_url(mf),
-     pieces_needed_rebuild_timer(10),
+     pieces_timer(10),
      cwd(c), output_dir(od), rate_limit(mf),
      seed_timer("torrent:seed-max-time",0),
      timeout_timer("torrent:timeout",0),
@@ -257,10 +258,12 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    max_peers=60;
    seed_min_peers=3;
    stop_on_ratio=2;
+   seed_min_ppr=1,
    last_piece=TorrentPeer::NO_PIECE;
    min_piece_sources=0;
    avg_piece_sources=0;
    pieces_available_pct=0;
+   current_ppr=0;
    Reconfig(0);
 
    if(!my_peer_id) {
@@ -372,6 +375,18 @@ double Torrent::GetRatio() const
 void Torrent::SetDownloader(unsigned piece,unsigned block,const TorrentPeer *o,const TorrentPeer *n)
 {
    piece_info[piece].set_downloader(block,o,n,BlocksInPiece(piece));
+}
+
+void Torrent::AccountSend(unsigned p,unsigned len)
+{
+   total_sent+=len;
+   send_rate.Add(len);
+   piece_info[p].add_ratio(float(len)/PieceLength(p));
+}
+void Torrent::AccountRecv(unsigned p,unsigned len)
+{
+   total_recv+=len;
+   recv_rate.Add(len);
 }
 
 BeNode *Torrent::Lookup(xmap_p<BeNode>& dict,const char *name,BeNode::be_type_t type)
@@ -507,7 +522,8 @@ int Torrent::PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskR
 
 bool Torrent::SeededEnough() const
 {
-   return (stop_on_ratio>0 && GetRatio()>=stop_on_ratio)
+   return (stop_on_ratio>0 && GetRatio()>=stop_on_ratio
+	   && GetPerPieceRatio()>=seed_min_ppr)
       || seed_timer.Stopped();
 }
 
@@ -1013,6 +1029,17 @@ void Torrent::CalcPiecesStats()
    }
    avg_piece_sources=avg_piece_sources*256/(total_pieces-complete_pieces);
    pieces_available_pct=pieces_available_pct*100/(total_pieces-complete_pieces);
+   CalcPerPieceRatio();
+}
+
+void Torrent::CalcPerPieceRatio()
+{
+   current_ppr=100;
+   for(unsigned i=0; i<total_pieces; i++) {
+      float ppr=piece_info[i].get_ratio();
+      if(current_ppr>ppr)
+	 current_ppr=ppr;
+   }
 }
 
 void Torrent::RebuildPiecesNeeded()
@@ -1036,7 +1063,7 @@ void Torrent::RebuildPiecesNeeded()
    cmp_torrent=this;
    pieces_needed.qsort(PiecesNeededCmp);
    CalcPiecesStats();
-   pieces_needed_rebuild_timer.Reset();
+   pieces_timer.Reset();
 }
 
 TorrentBuild::TorrentBuild(const char *path) :
@@ -1426,12 +1453,18 @@ int Torrent::Do()
       OptimisticUnchoke();
 
    // rebuild lists of needed pieces
-   if(!complete && (pieces_needed.count()==0 || pieces_needed_rebuild_timer.Stopped()))
+   if(!complete && (pieces_needed.count()==0 || pieces_timer.Stopped()))
       RebuildPiecesNeeded();
 
-   if(complete && SeededEnough()) {
-      Shutdown();
-      return MOVED;
+   if(complete) {
+      if(pieces_timer.Stopped()) {
+	 CalcPerPieceRatio();
+	 pieces_timer.Reset();
+      }
+      if(SeededEnough()) {
+	 Shutdown();
+	 return MOVED;
+      }
    }
 
    return m;
@@ -2044,6 +2077,7 @@ void Torrent::Reconfig(const char *name)
    max_peers=ResMgr::Query("torrent:max-peers",c);
    seed_min_peers=ResMgr::Query("torrent:seed-min-peers",c);
    stop_on_ratio=ResMgr::Query("torrent:stop-on-ratio",c);
+   seed_min_ppr=ResMgr::Query("torrent:seed-min-ppr",c);
    rate_limit.Reconfig(name,metainfo_url);
    if(listener)
       StartDHT();
@@ -2101,7 +2135,7 @@ const xstring& Torrent::Status()
       if(end_game)
 	 buf.append(" end-game");
    } else {
-      buf.appendf("complete, ratio:%f",GetRatio());
+      buf.appendf("complete, ratio:%f, ppr:%f",GetRatio(),GetPerPieceRatio());
    }
    return buf;
 }
@@ -2337,9 +2371,8 @@ void TorrentPeer::SendDataReply()
    LogSend(8,xstring::format("piece:%u begin:%u size:%u",p->index,p->begin,p->req_length));
    PacketPiece(p->index,p->begin,data).Pack(send_buf);
    peer_sent+=data.length();
-   parent->total_sent+=data.length();
-   parent->send_rate.Add(data.length());
    peer_send_rate.Add(data.length());
+   parent->AccountSend(p->index,data.length());
    BytesPut(data.length());
    activity_timer.Reset();
 }
@@ -2825,9 +2858,8 @@ void TorrentPeer::HandlePacket(Packet *p)
 
 	 int len=pp->data.length();
 	 peer_recv+=len;
-	 parent->total_recv+=len;
-	 parent->recv_rate.Add(len);
 	 peer_recv_rate.Add(len);
+	 parent->AccountRecv(pp->index,len);
 
 	 // request another block from the same piece
 	 if(am_interested && (!peer_choking || InFastSet(pp->index)))
@@ -4008,6 +4040,8 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
 	 torrent->MinPieceSources(),torrent->AvgPieceSources(),torrent->PiecesAvailablePct());
       if(torrent->GetRatio()>0)
 	 s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
+      if(torrent->GetPerPieceRatio()>0)
+	 s.appendf("%sper-piece-ratio: %f\n",tab,torrent->GetPerPieceRatio());
    }
 
    if(v>2) {
