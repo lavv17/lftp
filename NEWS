@@ -1,20 +1,22 @@
-Version 4.7.0 - 2016-??-??
+Version 4.7.0 - 2016-03-??
 
 * ftp: add MODE Z support.
 * ftp: new settings ftp:use-mode-z, ftp:compressed-re, ftp:mode-z-level.
 * ftp: add MFF support for chmod.
 * ftp: prefer EPSV by default.
 * ftp: prefer CWD-relative paths.
+* ftp: enable MLSD by default (when supported).
+* http: add support for digest authentication.
+* http: fixed webdav directory listing.
+* sftp: fixed mirror to sftp with xfer:use-temp-file set.
+* ssl: optimized ssl for speed and lower syscall count.
+* ssl: log server's certificate fingerprint.
+* ssl: allow disabling certificate verification by its fingerprint.
 * get: rename backup file back if new file cannot be retrieved.
 * get: new settings xfer:backup-suffix and xfer:keep-backup.
 * get/put/mget/mput/pget/get1: add -q (quiet) option.
 * edit: allow creating a new file.
 * new debug option -T (truncate output file).
-* optimized ssl for speed and lower syscall count.
-* http: add support for digest authentication.
-* fixed webdav directory listing.
-* ssl: log server's certificate fingerprint.
-* ssl: allow disabling certificate verification by its fingerprint.
 * new mirror options: --{in,ex}clude-rx-from, --{in,ex}clude-glob-from.
 
 Version 4.6.5 - 2015-12-10
