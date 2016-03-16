@@ -600,9 +600,14 @@ void SFtp::SendRequest()
 	 SetError(NOT_SUPP);
 	 break;
       }
-      unsigned options=SSH_FXF_RENAME_NATIVE;
-      if(rename_f)
-	 options|=SSH_FXF_RENAME_OVERWRITE;
+      unsigned options=0;
+      if(rename_f) {
+	 options=SSH_FXF_RENAME_OVERWRITE;
+	 if(protocol_version<5) {
+	    // overwrite is not supported, remove the target explicitly
+	    SendRequest(new Request_REMOVE(WirePath(file1)),Expect::IGNORE);
+	 }
+      }
       SendRequest(new Request_RENAME(WirePath(file),WirePath(file1),
 			options,protocol_version),Expect::DEFAULT);
       state=WAITING;
