@@ -252,7 +252,7 @@ static ResType lftp_vars[] = {
    {"ftp:use-hftp",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-mdtm",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-mdtm-overloaded",	 "no",	  ResMgr::BoolValidate,0},
-   {"ftp:use-mlsd",		 "no",    ResMgr::BoolValidate,0},
+   {"ftp:use-mlsd",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-mode-z",		 "yes",	  ResMgr::BoolValidate,0},
    {"ftp:use-pret",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-site-chmod",	 "yes",   ResMgr::BoolValidate,0},
