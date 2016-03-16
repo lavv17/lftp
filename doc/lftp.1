@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "05 Mar 2016"
+.TH lftp 1 "16 Mar 2016"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -2118,7 +2118,8 @@ when true, use Server Name Indication (SNI) TLS extension.
 .TP
 .BR ssl:verify-certificate \ (boolean)
 if set to yes, then verify server's certificate to be signed by a known
-Certificate Authority and not be on Certificate Revocation List.
+Certificate Authority and not be on Certificate Revocation List. You can
+specify either host name or certificate fingerprint in the closure.
 .TP
 .BR ssl:priority " (string)"
 free form priority string for GnuTLS. If built with OpenSSL the understood
