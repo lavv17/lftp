@@ -2159,6 +2159,10 @@ independently of ratio. It can be set to infinity if needed.
 minimum number of peers when the torrent is complete. If there are less,
 new peers are actively searched for.
 .TP
+.BR torrent:stop-min-ppr " (real number)"
+minimum per-piece-ratio to stop seeding. Use it to avoid a situation when
+a popular piece causes quick raise of the total ratio.
+.TP
 .BR torrent:stop-on-ratio " (real number)"
 torrent stops when it's complete and ratio reached this number.
 .TP

@@ -423,7 +423,7 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
 
    bool SeededEnough() const;
    float stop_on_ratio;
-   float seed_min_ppr;
+   float stop_min_ppr;
    Timer seed_timer;
    Timer timeout_timer;
 

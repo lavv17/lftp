@@ -46,8 +46,8 @@ static ResType torrent_vars[] = {
    {"torrent:port-range", "6881-6889", ResMgr::RangeValidate, ResMgr::NoClosure},
    {"torrent:max-peers", "60", ResMgr::UNumberValidate},
    {"torrent:save-metadata", "yes", ResMgr::BoolValidate, ResMgr::NoClosure},
+   {"torrent:stop-min-ppr", "1.4", ResMgr::FloatValidate},
    {"torrent:stop-on-ratio", "2.0", ResMgr::FloatValidate},
-   {"torrent:seed-min-ppr", "1.0", ResMgr::FloatValidate},
    {"torrent:seed-max-time", "30d", ResMgr::TimeIntervalValidate},
    {"torrent:seed-min-peers", "3", ResMgr::UNumberValidate},
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
@@ -258,7 +258,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    max_peers=60;
    seed_min_peers=3;
    stop_on_ratio=2;
-   seed_min_ppr=1,
+   stop_min_ppr=1,
    last_piece=TorrentPeer::NO_PIECE;
    min_piece_sources=0;
    avg_piece_sources=0;
@@ -523,7 +523,7 @@ int Torrent::PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskR
 bool Torrent::SeededEnough() const
 {
    return (stop_on_ratio>0 && GetRatio()>=stop_on_ratio
-	   && GetPerPieceRatio()>=seed_min_ppr)
+	   && GetPerPieceRatio()>=stop_min_ppr)
       || seed_timer.Stopped();
 }
 
@@ -2077,7 +2077,7 @@ void Torrent::Reconfig(const char *name)
    max_peers=ResMgr::Query("torrent:max-peers",c);
    seed_min_peers=ResMgr::Query("torrent:seed-min-peers",c);
    stop_on_ratio=ResMgr::Query("torrent:stop-on-ratio",c);
-   seed_min_ppr=ResMgr::Query("torrent:seed-min-ppr",c);
+   stop_min_ppr=ResMgr::Query("torrent:stop-min-ppr",c);
    rate_limit.Reconfig(name,metainfo_url);
    if(listener)
       StartDHT();
