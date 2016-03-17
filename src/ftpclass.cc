@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -390,7 +390,7 @@ void Ftp::TransferCheck(int act)
    if(act==426 && copy_mode==COPY_NONE)
    {
       if(conn->data_sock==-1 && strstr(line,"Broken pipe"))
-   	 return;
+	 return;
    }
    if(act==426 && mode==STORE)
    {
@@ -1561,8 +1561,8 @@ int   Ftp::Do()
 	 const char *pass_to_use=(pass?pass:anon_pass);
 	 if(allow_skey && skey_pass)
 	    pass_to_use=skey_pass;
- 	 else if(allow_netkey && netkey_pass)
- 	    pass_to_use=netkey_pass;
+	 else if(allow_netkey && netkey_pass)
+	    pass_to_use=netkey_pass;
 	 else if(proxy && !conn->proxy_is_http && proxy_user && proxy_pass
 	 && !strcmp(proxy_auth_type,"joined"))
 	    pass_to_use=xstring::cat(pass_to_use,"@",proxy_pass.get(),NULL);
@@ -2164,7 +2164,7 @@ int   Ftp::Do()
       || (copy_mode!=COPY_NONE && copy_passive))
       {
 	 state=DATASOCKET_CONNECTING_STATE;
-      	 goto datasocket_connecting_state;
+	 goto datasocket_connecting_state;
       }
       state=ACCEPTING_STATE;
    }
@@ -2297,7 +2297,7 @@ int   Ftp::Do()
 	 conn->data_iobuf=new IOBufferFDStream(new FDStream(conn->data_sock,"data-socket"),IOBuffer::GET);
       /* fallthrough */
       case PASV_HTTP_PROXY_CONNECTED:
-      	 if(HttpProxyReplyCheck(conn->data_iobuf))
+	 if(HttpProxyReplyCheck(conn->data_iobuf))
 	    goto pre_waiting_150;
 	 goto usual_return;
       }
@@ -3944,7 +3944,6 @@ void Ftp::TuneConnectionAfterFEAT()
 
 void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
 {
-//   bool trust=QueryBool("trust-feat",hostname);
    if(trust) {
       // turn off these pre-FEAT extensions only when trusting FEAT reply,
       // as some servers forget to advertise them.
@@ -4035,6 +4034,8 @@ void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
    if(!trust) {
       // turn on EPSV support based on some other modern features
       epsv_supported|=mlst_supported|host_supported;
+      // same for AUTH
+      auth_supported|=epsv_supported;
    }
    have_feat_info=true;
 }
@@ -4261,7 +4262,7 @@ void Ftp::CheckResp(int act)
 	 if(conn->aborted_data_sock!=-1)
 	    SocketConnect(conn->aborted_data_sock,&conn->data_sa);
 
-      	 break;
+	 break;
       }
       if(cmd_unsupported(act) && cc==Expect::EPSV
       && conn->can_do_pasv && QueryBool("prefer-epsv",hostname))
@@ -4329,7 +4330,7 @@ void Ftp::CheckResp(int act)
       {
 	 conn->SendCmd2("RNTO",file1);
 	 expect->Push(Expect::FILE_ACCESS);
-      	 break;
+	 break;
       }
       goto file_access;
 

@@ -6,6 +6,7 @@ Version 4.7.0 - 2016-03-??
 * ftp: prefer EPSV by default.
 * ftp: prefer CWD-relative paths.
 * ftp: enable MLSD by default (when supported).
+* ftp: assume AUTH is supported based on other newer features.
 * http: add support for digest authentication.
 * http: fixed webdav directory listing.
 * sftp: fixed mirror to sftp with xfer:use-temp-file set.
