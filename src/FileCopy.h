@@ -86,7 +86,7 @@ public:
 
    void SetDate(time_t d,int p=0);
    void SetSize(off_t s);
-   void SetEntitySize(off_t s) { e_size=s; }
+   void SetEntitySize(off_t s) { if(!ascii) e_size=s; }
 
    void DontCopyDate() { do_set_date=false; }
    void DontVerify() { do_verify=false; }
