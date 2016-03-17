@@ -8,11 +8,13 @@ LFTP includes the following features (some may be missed in this list):
 * Automatic OPIE/SKEY support in FTP protocol.
 * FXP transfers support (between two FTP servers, bypassing client machine).
 * FTP listings support: unix-style, NT, EPLF, OS/2, AS400, MacWebStar, MLSD.
+* FTP implicit compression (MODE Z) support.
 * Automatic reconnect and retry of an operation on retriable errors or timeout.
 * IPv6 support in both FTP and HTTP.
 * FISH protocol support. It uses ssh with no special program on server side.
 * SFTP protocol v3-v6 support.
 * HTTP/1.1 keep-alive support.
+* HTTP basic and digest authentication.
 * Partial WebDAV support.
 * BitTorrent protocol support (including IPv6).
 * BitTorrent extensions: Fast, DHT, PEX, Multi-tracker, Metadata, magnet.
