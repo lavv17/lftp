@@ -2135,7 +2135,9 @@ const xstring& Torrent::Status()
       if(end_game)
 	 buf.append(" end-game");
    } else {
-      buf.appendf("complete, ratio:%f, ppr:%f",GetRatio(),GetPerPieceRatio());
+      buf.appendf("complete, ratio:%.2f",GetRatio());
+      if(GetPerPieceRatio()>0)
+	 buf.appendf(", ppr:%.2f",GetPerPieceRatio());
    }
    return buf;
 }
@@ -4038,10 +4040,12 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
    if(torrent->IsDownloading()) {
       s.appendf("%spiece availability: min %u, avg %.2f, %d%% available\n",tab,
 	 torrent->MinPieceSources(),torrent->AvgPieceSources(),torrent->PiecesAvailablePct());
-      if(torrent->GetRatio()>0)
-	 s.appendf("%sratio: %f\n",tab,torrent->GetRatio());
-      if(torrent->GetPerPieceRatio()>0)
-	 s.appendf("%sper-piece-ratio: %f\n",tab,torrent->GetPerPieceRatio());
+      if(torrent->GetRatio()>0) {
+	 s.appendf("%sratio: %.2f",tab,torrent->GetRatio());
+	 if(torrent->GetPerPieceRatio()>0)
+	    s.appendf(", per-piece-ratio: %.2f",torrent->GetPerPieceRatio());
+	 s.append('\n');
+      }
    }
 
    if(v>2) {
