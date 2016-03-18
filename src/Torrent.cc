@@ -2749,7 +2749,7 @@ void TorrentPeer::HandlePacket(Packet *p)
 	 PacketPort *pp=static_cast<PacketPort*>(p);
 	 LogRecv(5,xstring::format("port(%u)",pp->port));
 	 udp_port=pp->port;
-	 if(DHT_Enabled()) {
+	 if(DHT_Enabled() && Torrent::dht) {
 	    sockaddr_u a(addr);
 	    a.set_port(udp_port);
 	    Torrent::GetDHT(a)->SendPing(a);
