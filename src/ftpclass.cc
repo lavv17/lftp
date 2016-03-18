@@ -4034,8 +4034,10 @@ void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
    if(!trust) {
       // turn on EPSV support based on some other modern features
       epsv_supported|=mlst_supported|host_supported;
+#if USE_SSL
       // same for AUTH
       auth_supported|=epsv_supported;
+#endif
    }
    have_feat_info=true;
 }
