@@ -18,7 +18,8 @@ Version 4.7.0 - 2016-03-??
 * get/put/mget/mput/pget/get1: add -q (quiet) option.
 * edit: allow creating a new file.
 * new debug option -T (truncate output file).
-* new mirror options: --{in,ex}clude-rx-from, --{in,ex}clude-glob-from.
+* new mirror options: --{in,ex}clude-{rx,glob}-from.
+* new mirror options: --Remove-source-dirs, --Move.
 
 Version 4.6.5 - 2015-12-10
 
