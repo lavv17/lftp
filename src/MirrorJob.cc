@@ -461,6 +461,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 mj->pget_n=pget_n;
 	 mj->pget_minchunk=pget_minchunk;
 	 mj->remove_source_files=remove_source_files;
+	 mj->remove_source_dirs=remove_source_dirs;
 	 mj->skip_noaccess=skip_noaccess;
 	 mj->create_target_dir=create_target_dir;
 	 mj->no_target_dir=no_target_dir;
@@ -513,10 +514,12 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    }
 	    else
 	       stats.new_symlinks++;
+	    Report(_("Making symbolic link `%s' to `%s'"),target_name_rel,file->symlink.get());
 	    mvJob *j=new mvJob(target_session->Clone(),file->symlink,target_name,FA::SYMLINK);
 	    if(remove_target)
 	       j->RemoveTargetFirst();
 	    AddWaiting(j);
+	    RemoveSourceLater(file);
 	    break;
 	 }
 
@@ -533,33 +536,31 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       goto skip;
 	 }
 
-	 if(file->Has(file->SYMLINK))
+	 struct stat st;
+	 if(lstat(target_name,&st)!=-1)
 	 {
-	    struct stat st;
-	    if(lstat(target_name,&st)!=-1)
+	    Report(_("Removing old local file `%s'"),target_name_rel);
+	    stats.mod_symlinks++;
+	    if(remove(target_name)==-1)
 	    {
-	       Report(_("Removing old local file `%s'"),target_name_rel);
-	       stats.mod_symlinks++;
-	       if(remove(target_name)==-1)
-	       {
-		  eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
-		  goto skip;
-	       }
+	       eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
+	       goto skip;
 	    }
-	    else
-	    {
-	       if(flags&ONLY_EXISTING)
-	       {
-		  Report(_("Skipping symlink `%s' (only-existing)"),target_name_rel);
-		  goto skip;
-	       }
-	       stats.new_symlinks++;
-	    }
-	    Report(_("Making symbolic link `%s' to `%s'"),target_name_rel,file->symlink.get());
-	    res=symlink(file->symlink,target_name);
-	    if(res==-1)
-	       eprintf("mirror: symlink(%s): %s\n",target_name,strerror(errno));
 	 }
+	 else
+	 {
+	    if(flags&ONLY_EXISTING)
+	    {
+	       Report(_("Skipping symlink `%s' (only-existing)"),target_name_rel);
+	       goto skip;
+	    }
+	    stats.new_symlinks++;
+	 }
+	 Report(_("Making symbolic link `%s' to `%s'"),target_name_rel,file->symlink.get());
+	 res=symlink(file->symlink,target_name);
+	 if(res==-1)
+	    eprintf("mirror: symlink(%s): %s\n",target_name,strerror(errno));
+	 RemoveSourceLater(file);
 	 break;
       }
    case FileInfo::UNKNOWN:
@@ -1198,7 +1199,7 @@ int   MirrorJob::Do()
 	 if(FlagSet(ALLOW_CHOWN) && same)
 	    same->LocalChown(target_dir);
       }
-      if(remove_source_files && same)
+      if(remove_source_files && (same || to_rm_src))
 	 goto pre_SOURCE_REMOVING_SAME;
    pre_FINISHING:
       set_state(FINISHING);
@@ -1212,6 +1213,35 @@ int   MirrorJob::Do()
       }
       if(waiting_num>0)
 	 break;
+
+      // all jobs finished.
+      if(remove_source_dirs) {
+	 // remove source directory once.
+	 remove_source_dirs=false;
+	 if(script)
+	 {
+	    ArgV args("rmdir");
+	    args.Append(source_session->GetFileURL(source_dir));
+	    xstring_ca cmd(args.CombineQuoted());
+	    fprintf(script,"%s\n",cmd.get());
+	 }
+	 if(!script_only)
+	 {
+	    ArgV *args=new ArgV("rmdir");
+	    args->Append(source_dir);
+	    args->seek(1);
+	    rmJob *j=new rmJob(source_session->Clone(),args);
+	    j->cmdline.set_allocated(args->Combine());
+	    j->Rmdir();
+	    JobStarted(j);
+	 }
+	 if(source_relative_dir)
+	    Report(_("Removing source directory `%s'"),source_relative_dir.get());
+	 m=MOVED;
+	 break;
+      }
+
+      // all jobs finished and src dir removed, if needed.
 
       transfer_count++; // parent mirror will decrement it.
       if(parent_mirror)
@@ -1231,6 +1261,10 @@ int   MirrorJob::Do()
       goto pre_DONE;
 
    pre_SOURCE_REMOVING_SAME:
+      if(!same)
+	 same=to_rm_src.borrow();
+      else if(to_rm_src)
+	 same->Merge(to_rm_src);
       same->rewind();
       set_state(SOURCE_REMOVING_SAME);
       m=MOVED;
@@ -1342,6 +1376,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
    use_cache=false;
    remove_source_files=false;
+   remove_source_dirs=false;
    skip_noaccess=false;
 
    parallel=1;
@@ -1632,6 +1667,7 @@ CMD(mirror)
       OPT_ONLY_EXISTING,
       OPT_PERMS,
       OPT_REMOVE_SOURCE_FILES,
+      OPT_REMOVE_SOURCE_DIRS,
       OPT_SCRIPT,
       OPT_SCRIPT_ONLY,
       OPT_SIZE_RANGE,
@@ -1678,6 +1714,8 @@ CMD(mirror)
       {"no-dereference",no_argument,0,OPT_NO_DEREFERENCE},
       {"use-cache",no_argument,0,OPT_USE_CACHE},
       {"Remove-source-files",no_argument,0,OPT_REMOVE_SOURCE_FILES},
+      {"Remove-source-dirs",no_argument,0,OPT_REMOVE_SOURCE_DIRS},
+      {"Move",no_argument,0,OPT_REMOVE_SOURCE_DIRS},
       {"parallel",optional_argument,0,'P'},
       {"ignore-time",no_argument,0,OPT_IGNORE_TIME},
       {"ignore-size",no_argument,0,OPT_IGNORE_SIZE},
@@ -1722,6 +1760,7 @@ CMD(mirror)
    const char *older_than=0;
    Ref<Range> size_range;
    bool  remove_source_files=false;
+   bool  remove_source_dirs=false;
    bool	 skip_noaccess=ResMgr::QueryBool("mirror:skip-noaccess",0);
    int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
    int	 use_pget=ResMgr::Query("mirror:use-pget-n",0);
@@ -1854,6 +1893,9 @@ CMD(mirror)
 	 break;
       case(OPT_REMOVE_SOURCE_FILES):
 	 remove_source_files=true;
+	 break;
+      case(OPT_REMOVE_SOURCE_DIRS):
+	 remove_source_dirs=true;
 	 break;
       case(OPT_IGNORE_TIME):
 	 flags|=MirrorJob::IGNORE_TIME;
@@ -2060,6 +2102,8 @@ CMD(mirror)
    j->UseCache(use_cache);
    if(remove_source_files)
       j->RemoveSourceFiles();
+   if(remove_source_dirs)
+      j->RemoveSourceDirs();
    if(skip_noaccess)
       j->SkipNoAccess();
    if(parallel<0)

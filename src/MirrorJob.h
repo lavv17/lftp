@@ -74,8 +74,17 @@ private:
    Ref<FileSet> to_rm_mismatched;
    Ref<FileSet> old_files_set;
    Ref<FileSet> new_files_set;
+   Ref<FileSet> to_rm_src;
    void	 InitSets(const FileSet *src,const FileSet *dst);
    bool only_dirs;
+
+   void RemoveSourceLater(const FileInfo *fi) {
+      if(!remove_source_files)
+	 return;
+      if(!to_rm_src)
+	 to_rm_src=new FileSet();
+      to_rm_src->Add(new FileInfo(*fi));
+   }
 
    void AddBytesTransferred(long long b) {
       bytes_transferred+=b;
@@ -147,6 +156,7 @@ private:
    bool script_needs_closing;
    bool use_cache;
    bool remove_source_files;
+   bool remove_source_dirs;
    bool skip_noaccess;
 
    int parallel;
@@ -245,6 +255,7 @@ public:
 
    void  UseCache(bool u) { use_cache=u; }
    void	 RemoveSourceFiles() { remove_source_files=true; }
+   void	 RemoveSourceDirs() { remove_source_files=remove_source_dirs=true; }
    void	 SkipNoAccess() { skip_noaccess=true; }
 
    void  SetParallel(int p) { parallel=p; }
