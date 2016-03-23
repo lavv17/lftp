@@ -1476,7 +1476,7 @@ int Torrent::Do()
 
 void Torrent::BlackListPeer(const TorrentPeer *peer,const char *timeout)
 {
-   if(peer->IsPassive() || shutting_down)
+   if(peer->IsPassive() || GetTorrentsCount()==0)
       return;
    if(!black_list)
       black_list=new TorrentBlackList();
