@@ -116,7 +116,7 @@ const char *plural(const char *format,...)
    if(res==0)
       res=malloc(res_size=256);
    if(res==0)
-      return 0;
+      goto va_end_out;
 
    store=res;
 
@@ -128,7 +128,7 @@ const char *plural(const char *format,...)
 	 int dif=store-res;		  \
 	 res=realloc(res,res_size*=2);	  \
 	 if(res==0)			  \
-	    return 0;			  \
+	    goto va_end_out;		  \
 	 store=res+dif;			  \
       } /* end ALLOCATE */
 
@@ -207,6 +207,7 @@ const char *plural(const char *format,...)
 out:
    ALLOCATE;
    *store=0;
+va_end_out:
    va_end(va);
    return res;
 }
