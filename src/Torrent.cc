@@ -263,7 +263,8 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    min_piece_sources=0;
    avg_piece_sources=0;
    pieces_available_pct=0;
-   current_ppr=0;
+   current_min_ppr=0;
+   current_max_ppr=0;
    Reconfig(0);
 
    if(!my_peer_id) {
@@ -523,7 +524,7 @@ int Torrent::PeersCompareSendRate(const SMTaskRef<TorrentPeer> *p1,const SMTaskR
 bool Torrent::SeededEnough() const
 {
    return (stop_on_ratio>0 && GetRatio()>=stop_on_ratio
-	   && GetPerPieceRatio()>=stop_min_ppr)
+	   && GetMinPerPieceRatio()>=stop_min_ppr)
       || seed_timer.Stopped();
 }
 
@@ -1034,11 +1035,14 @@ void Torrent::CalcPiecesStats()
 
 void Torrent::CalcPerPieceRatio()
 {
-   current_ppr=100;
+   current_min_ppr=1024;
+   current_max_ppr=0;
    for(unsigned i=0; i<total_pieces; i++) {
       float ppr=piece_info[i].get_ratio();
-      if(current_ppr>ppr)
-	 current_ppr=ppr;
+      if(current_min_ppr>ppr)
+	 current_min_ppr=ppr;
+      if(current_max_ppr<ppr)
+	 current_max_ppr=ppr;
    }
 }
 
@@ -1472,7 +1476,7 @@ int Torrent::Do()
 
 void Torrent::BlackListPeer(const TorrentPeer *peer,const char *timeout)
 {
-   if(peer->IsPassive())
+   if(peer->IsPassive() || shutting_down)
       return;
    if(!black_list)
       black_list=new TorrentBlackList();
@@ -2135,9 +2139,8 @@ const xstring& Torrent::Status()
       if(end_game)
 	 buf.append(" end-game");
    } else {
-      buf.appendf("complete, ratio:%.2f",GetRatio());
-      if(GetPerPieceRatio()>0)
-	 buf.appendf(", ppr:%.2f",GetPerPieceRatio());
+      buf.appendf("complete, ratio:%.2f/%.2f/%.2f",
+	 GetMinPerPieceRatio(),GetRatio(),GetMaxPerPieceRatio());
    }
    return buf;
 }
@@ -4041,10 +4044,9 @@ xstring& TorrentJob::FormatStatus(xstring& s,int v,const char *tab)
       s.appendf("%spiece availability: min %u, avg %.2f, %d%% available\n",tab,
 	 torrent->MinPieceSources(),torrent->AvgPieceSources(),torrent->PiecesAvailablePct());
       if(torrent->GetRatio()>0) {
-	 s.appendf("%sratio: %.2f",tab,torrent->GetRatio());
-	 if(torrent->GetPerPieceRatio()>0)
-	    s.appendf(", per-piece-ratio: %.2f",torrent->GetPerPieceRatio());
-	 s.append('\n');
+	 s.appendf("%sratio: %.2f/%.2f/%.2f\n",tab,
+	    torrent->GetMinPerPieceRatio(),torrent->GetRatio(),
+	    torrent->GetMaxPerPieceRatio());
       }
    }
 

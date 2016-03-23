@@ -391,7 +391,8 @@ class Torrent : public SMTask, protected ProtoLog, public ResClient
    unsigned min_piece_sources;
    unsigned avg_piece_sources;
    unsigned pieces_available_pct;
-   float current_ppr;
+   float current_min_ppr;
+   float current_max_ppr;
 
    void SetPieceNotWanted(unsigned piece);
    void SetDownloader(unsigned piece,unsigned block,const TorrentPeer *o,const TorrentPeer *n);
@@ -500,7 +501,8 @@ public:
    double GetRatio() const;
    void CalcPiecesStats();
    void CalcPerPieceRatio();
-   float GetPerPieceRatio() const { return current_ppr; }
+   float GetMinPerPieceRatio() const { return current_min_ppr; }
+   float GetMaxPerPieceRatio() const { return current_max_ppr; }
    unsigned MinPieceSources() const { return min_piece_sources; }
    double AvgPieceSources() const { return avg_piece_sources/256.; }
    unsigned PiecesAvailablePct() const { return pieces_available_pct; }
