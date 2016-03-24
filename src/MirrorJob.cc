@@ -386,7 +386,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 CopyJob *cp=(use_pget ? new pgetJob(c,file->name,pget_n) : new CopyJob(c,file->name,"mirror"));
 	 if(file->Has(file->DATE))
 	    cp->SetDate(file->date);
-	 if(file->Has(file->SIZE))
+	 if(file->Has(file->SIZE) && !FlagSet(IGNORE_SIZE))
 	    cp->SetSize(file->size);
 	 TransferStarted(cp);
 	 cp->cmdline.vset("\\transfer `",source_name_rel,"'",NULL);

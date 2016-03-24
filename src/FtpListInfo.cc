@@ -263,8 +263,8 @@ FileInfo *ParseFtpLongList_NT(char *line,int *err,const char *tz)
    if(t==0)
       ERR;
    int hour,minute;
-   char am;
-   if(sscanf(t,"%2d:%2d%c",&hour,&minute,&am)!=3)
+   char am='A'; // AM/PM is optional
+   if(sscanf(t,"%2d:%2d%c",&hour,&minute,&am)<2)
       ERR;
    t = NEXT_TOKEN;
    if(t==0)
