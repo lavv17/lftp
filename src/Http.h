@@ -122,7 +122,7 @@ class Http : public NetAccess
       {
 	 if(!conn)
 	    return 0;
-	 if(state==CONNECTING)
+	 if(state==CONNECTING || tunnel_state==TUNNEL_WAITING)
 	    return 1;
 	 return 2;
       }

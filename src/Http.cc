@@ -214,6 +214,7 @@ void Http::MoveConnectionHere(Http *o)
    last_url.move_here(o->last_url);
    timeout_timer.Reset(o->timeout_timer);
    state=CONNECTED;
+   tunnel_state=o->tunnel_state;
    o->Disconnect();
    ResumeInternal();
 }
