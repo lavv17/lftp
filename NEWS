@@ -1,4 +1,4 @@
-Version 4.7.0 - 2016-03-??
+Version 4.7.0 - 2016-03-28
 
 * ftp: add MODE Z support.
 * ftp: new settings ftp:use-mode-z, ftp:compressed-re, ftp:mode-z-level.
@@ -9,6 +9,7 @@ Version 4.7.0 - 2016-03-??
 * ftp: assume AUTH is supported based on other newer features.
 * http: add support for digest authentication.
 * http: fixed webdav directory listing.
+* http: fixed a coredump when using a proxy for https.
 * sftp: fixed mirror to sftp with xfer:use-temp-file set.
 * ssl: optimized ssl for speed and lower syscall count.
 * ssl: log server's certificate fingerprint.
