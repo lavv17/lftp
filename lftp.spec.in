@@ -47,7 +47,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(644 root root 755)
-%doc ABOUT-NLS BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO lftp.lsm
+%doc ABOUT-NLS BUGS COPYING FAQ FEATURES NEWS README* THANKS TODO
 %config /etc/lftp.conf
 %attr(755 root root) %{_bindir}/*
 %if %use_modules
