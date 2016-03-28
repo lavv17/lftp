@@ -27,7 +27,7 @@
 class HttpAuth
 {
 public:
-   enum target_t { WWW, PROXY };
+   enum target_t { WWW=0, PROXY };
    enum scheme_t { NONE=0, BASIC, DIGEST };
 
    class Challenge

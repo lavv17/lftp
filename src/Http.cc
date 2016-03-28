@@ -112,6 +112,7 @@ enum {
 #define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == H_Requested_Range_Not_Satisfiable)
 #define H_TRANSIENT(x)	((x)==H_Request_Timeout || (x)==H_Bad_Gateway || (x)==H_Service_Unavailable || (x)==H_Gateway_Timeout)
 #define H_UNSUPPORTED(x) ((x)==H_Bad_Request || (x)==H_Not_Implemented)
+#define H_AUTH_REQ(x)	((x)==H_Unauthorized || (x)==H_Proxy_Authentication_Required)
 
 #ifndef EINPROGRESS
 #define EINPROGRESS -1
@@ -168,10 +169,8 @@ void Http::Init()
    no_cache_this=false;
    no_cache=false;
 
-   auth_sent=0;
-   proxy_auth_sent=0;
-   auth_scheme=HttpAuth::NONE;
-   proxy_auth_scheme=HttpAuth::NONE;
+   auth_sent[0]=auth_sent[1]=0;
+   auth_scheme[0]=auth_scheme[1]=HttpAuth::NONE;
 
    use_propfind_now=true;
    allprop="";
@@ -227,12 +226,15 @@ void Http::DisconnectLL()
       LogNote(7,_("Closing HTTP connection"));
       conn=0;
    }
-   if((mode==STORE && state!=DONE && real_pos>0)
-   && !Error())
-   {
-      if(last_method && !strcmp(last_method,"POST"))
+
+   if(!Error() && !H_AUTH_REQ(status_code))
+      auth_sent[0]=auth_sent[1]=0;
+
+   if(state!=DONE && (real_pos>0 || special==HTTP_POST) && !Error()) {
+      if(last_method && !strcmp(last_method,"POST")
+      && !H_AUTH_REQ(status_code))
 	 SetError(FATAL,_("POST method failed"));
-      else
+      else if(mode==STORE)
 	 SetError(STORE_FAILED,0);
    }
    last_method=0;
@@ -298,10 +300,8 @@ void Http::Close()
    }
    array_send=0;
    no_cache_this=false;
-   auth_sent=0;
-   proxy_auth_sent=0;
-   auth_scheme=HttpAuth::NONE;
-   proxy_auth_scheme=HttpAuth::NONE;
+   auth_sent[0]=auth_sent[1]=0;
+   auth_scheme[0]=auth_scheme[1]=HttpAuth::NONE;
    no_ranges=false;
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
@@ -440,31 +440,30 @@ void Http::SendBasicAuth(const char *tag,const char *user,const char *pass)
    SendBasicAuth(tag,xstring::cat(user,":",pass,NULL));
 }
 
+void Http::SendAuth(HttpAuth::target_t target,const char *user,const char *uri)
+{
+   auth_scheme[target]=HttpAuth::NONE;
+   if(!user)
+      return;
+   HttpAuth *auth=HttpAuth::Get(target,GetFileURL(file,NO_USER),user);
+   if(auth && auth->Update(last_method,uri)) {
+      auth_sent[target]++;
+      Send(auth->GetHeader());
+   }
+}
+
 void Http::SendProxyAuth()
 {
-   proxy_auth_scheme=HttpAuth::NONE;
-   if(!proxy || !proxy_user || !proxy_pass)
-      return;
-   HttpAuth *auth=HttpAuth::Get(HttpAuth::PROXY,GetFileURL(file,NO_USER),proxy_user);
-   if(auth && auth->Update(last_method,last_url)) {
-      proxy_auth_sent++;
-      Send(auth->GetHeader());
-      return;
-   }
+   SendAuth(HttpAuth::PROXY,proxy_user,last_url);
 }
 
 void Http::SendAuth()
 {
-   if(!auth_scheme && hftp && user && pass && QueryBool("use-authorization",proxy)) {
+   if(hftp && !auth_scheme[HttpAuth::WWW] && user && pass && QueryBool("use-authorization",proxy)) {
       SendBasicAuth("Authorization",user,pass);
       return;
    }
-   auth_scheme=HttpAuth::NONE;
-   HttpAuth *auth=HttpAuth::Get(HttpAuth::WWW,GetFileURL(file,NO_USER),user);
-   if(auth && auth->Update(last_method,last_uri,0)) {
-      auth_sent++;
-      Send(auth->GetHeader());
-   }
+   SendAuth(HttpAuth::WWW,user,last_uri);
 }
 void Http::SendCacheControl()
 {
@@ -910,6 +909,27 @@ void Http::ProceedArrayInfo()
    }
 }
 
+void Http::NewAuth(const char *hdr,HttpAuth::target_t target,const char *user,const char *pass)
+{
+   if(!user || !pass)
+      return;
+
+   // FIXME: keep a request queue, get the URI from the queue.
+   const char *uri=GetFileURL(file,NO_USER);
+
+   Ref<HttpAuth::Challenge> chal(new HttpAuth::Challenge(hdr));
+   bool stale=chal->GetParam("stale").eq_nc("true");
+
+   if(auth_sent[target]>(stale?1:0))
+      return;
+
+   HttpAuth::scheme_t new_scheme=chal->GetSchemeCode();
+   if(new_scheme<=auth_scheme[target])
+      return;
+   if(HttpAuth::New(target,uri,chal.borrow(),user,pass))
+      auth_scheme[target]=new_scheme;
+}
+
 void Http::HandleHeaderLine(const char *name,const char *value)
 {
    // use a perfect hash
@@ -1051,6 +1071,8 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       return;
    }
    case_hh("WWW-Authenticate",'W') {
+      if(status_code!=H_Unauthorized)
+	 return;
       const char *user=this->user;
       const char *pass=this->pass;
       if(!user || !pass) {
@@ -1066,30 +1088,13 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	    }
 	 }
       }
-      if(user && pass) {
-	 // FIXME: keep a request queue, get the URI from the queue.
-	 const char *uri=GetFileURL(file,NO_USER);
-
-	 Ref<HttpAuth::Challenge> chal(new HttpAuth::Challenge(value));
-	 bool stale=chal->GetParam("stale").eq_nc("true");
-	 if(status_code==H_Unauthorized) {
-	    if(auth_sent>(stale?1:0))
-	       return;
-	    HttpAuth::scheme_t new_scheme=chal->GetSchemeCode();
-	    if(new_scheme<=auth_scheme)
-	       return;
-	    if(HttpAuth::New(HttpAuth::WWW,uri,chal.borrow(),user,pass))
-	       auth_scheme=new_scheme;
-	 } else if(status_code==H_Proxy_Authentication_Required) {
-	    if(proxy_auth_sent>(stale?1:0))
-	       return;
-	    HttpAuth::scheme_t new_scheme=chal->GetSchemeCode();
-	    if(new_scheme<=proxy_auth_scheme)
-	       return;
-	    if(HttpAuth::New(HttpAuth::PROXY,uri,chal.borrow(),proxy_user,proxy_pass))
-	       proxy_auth_scheme=new_scheme;
-	 }
-      }
+      NewAuth(value,HttpAuth::WWW,user,pass);
+      return;
+   }
+   case_hh("Proxy-Authenticate",'P') {
+      if(status_code!=H_Proxy_Authentication_Required)
+	 return;
+      NewAuth(value,HttpAuth::PROXY,proxy_user,proxy_pass);
       return;
    }
    default:
@@ -1704,8 +1709,8 @@ int Http::Do()
 	 return MOVED;
       }
 
-      if((status_code==H_Unauthorized && auth_scheme)
-      || (status_code==H_Proxy_Authentication_Required && proxy_auth_scheme)) {
+      if((status_code==H_Unauthorized && auth_scheme[HttpAuth::WWW])
+      || (status_code==H_Proxy_Authentication_Required && auth_scheme[HttpAuth::PROXY])) {
 	 // retry with authentication
 	 retries--;
 	 state=RECEIVING_BODY;

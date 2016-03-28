@@ -161,10 +161,11 @@ class Http : public NetAccess
    bool no_cache;
    bool no_cache_this;
 
-   int  auth_sent;
-   int	proxy_auth_sent;
-   HttpAuth::scheme_t auth_scheme;
-   HttpAuth::scheme_t proxy_auth_scheme;
+   // for WWW[0] and PROXY[1]
+   int  auth_sent[2];
+   HttpAuth::scheme_t auth_scheme[2];
+   void NewAuth(const char *hdr,HttpAuth::target_t target,const char *user,const char *pass);
+   void SendAuth(HttpAuth::target_t target,const char *user,const char *uri);
 
    bool use_propfind_now;
    const char *allprop;
