@@ -1282,7 +1282,7 @@ int Http::Do()
 		  file_url.append('/');
 	       file_url.append_url_encoded(cwd,URL_PATH_UNSAFE);
 	    }
-	    if(*scan!='/')
+	    if(*scan!='/' && file_url.last_char()!='/')
 	       file_url.append('/');
 	    file_url.append(scan);
 	    file_url.truncate_at(' ');
@@ -1707,6 +1707,7 @@ int Http::Do()
       if((status_code==H_Unauthorized && auth_scheme)
       || (status_code==H_Proxy_Authentication_Required && proxy_auth_scheme)) {
 	 // retry with authentication
+	 retries--;
 	 state=RECEIVING_BODY;
 	 LogErrorText();
 	 Disconnect();
