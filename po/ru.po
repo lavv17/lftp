@@ -1315,6 +1315,10 @@ msgid ""
 " -k  keep the temporary file\n"
 " -o <temp>  explicit temporary file location\n"
 msgstr ""
+"Скачать файл с сервера во временный локальный файл, запустить на нём\n"
+"редактор и загрузить файл назад на сервер, если он был изменён.\n"
+" -k  не удалять временный локальный файл\n"
+" -o <temp>  использовать указанное имя для временного файла\n"
 
 #: src/commands.cc:247
 msgid "exit [<code>|bg]"
@@ -1698,7 +1702,7 @@ msgstr ""
 
 #: src/commands.cc:375
 msgid "queue [OPTS] [<cmd>]"
-msgstr ""
+msgstr "queue [КЛЮЧИ] [<команда>]"
 
 #: src/commands.cc:376
 msgid ""
@@ -1776,7 +1780,7 @@ msgstr ""
 
 #: src/commands.cc:414
 msgid "repeat [OPTS] [delay] [command]"
-msgstr ""
+msgstr "repeat [КЛЮЧИ] [задержка] [команда]"
 
 #: src/commands.cc:416
 msgid ""
@@ -2792,6 +2796,14 @@ msgid ""
 " --dht-bootstrap=<node>  bootstrap DHT by sending a query to the node\n"
 " --share        share specified file or directory\n"
 msgstr ""
+"Запустить задание BitTorrent жля указанного торрента, который может быть\n"
+"указан как локальный torrent-файл, URL, magnet-ссылка или простой info_hash\n"
+"записанный в формате hex или base32. Шаблоны заменяются на список локальных\n"
+"файлов. Ключи:\n"
+" -O <база>      указывает базовый каталог, куда класть полученные файлы\n"
+" --force-valid  не проверять целостность локальных файлов при запуске\n"
+" --dht-bootstrap=<узел>  инициализировать DHT посылкой запроса на <узел>\n"
+" --share        опубликовать указанный файл или каталог\n"
 
 #: src/TorrentTracker.cc:176
 msgid "not started"
