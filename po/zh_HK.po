@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 3.5.11\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2016-03-25 15:54+0300\n"
+"POT-Creation-Date: 2016-04-04 11:11+0300\n"
 "PO-Revision-Date: 2007-05-13 20:18+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -404,7 +404,7 @@ msgstr "execl(/bin/sh) 失敗：%s\n"
 msgid "total"
 msgstr "總數"
 
-#: src/Fish.cc:75 src/Http.cc:1160 src/SFtp.cc:77 src/ftpclass.cc:1254
+#: src/Fish.cc:75 src/Http.cc:1174 src/SFtp.cc:77 src/ftpclass.cc:1254
 #, c-format
 msgid "Closing idle connection"
 msgstr "關閉閒置連線"
@@ -413,7 +413,7 @@ msgstr "關閉閒置連線"
 msgid "Running connect program"
 msgstr "正在執行進行連線的程式"
 
-#: src/Fish.cc:590 src/Http.cc:1438 src/SFtp.cc:743 src/SFtp.cc:1076
+#: src/Fish.cc:590 src/Http.cc:1452 src/SFtp.cc:743 src/SFtp.cc:1076
 #: src/SFtp.cc:1077 src/ftpclass.cc:2798 src/ftpclass.cc:3018
 #, c-format
 msgid "Peer closed connection"
@@ -424,7 +424,7 @@ msgstr "對方關閉了連線"
 msgid "extra server response"
 msgstr "額外的伺服器回應"
 
-#: src/Fish.cc:989 src/Http.cc:2234 src/Http.cc:2241 src/SFtp.cc:1316
+#: src/Fish.cc:989 src/Http.cc:2249 src/Http.cc:2256 src/SFtp.cc:1316
 #: src/ftpclass.cc:4485 src/Torrent.cc:3552 src/TorrentTracker.cc:625
 msgid "Connecting..."
 msgstr "嘗試連線……"
@@ -433,16 +433,16 @@ msgstr "嘗試連線……"
 msgid "Connected"
 msgstr "成功連線"
 
-#: src/Fish.cc:993 src/Http.cc:2243 src/SFtp.cc:1320 src/ftpclass.cc:4468
+#: src/Fish.cc:993 src/Http.cc:2258 src/SFtp.cc:1320 src/ftpclass.cc:4468
 #: src/ftpclass.cc:4496 src/ftpclass.cc:4510 src/TorrentTracker.cc:627
 msgid "Waiting for response..."
 msgstr "正在等待回應……"
 
-#: src/Fish.cc:995 src/Http.cc:2246 src/SFtp.cc:1322 src/ftpclass.cc:4530
+#: src/Fish.cc:995 src/Http.cc:2261 src/SFtp.cc:1322 src/ftpclass.cc:4530
 msgid "Receiving data"
 msgstr "下載中"
 
-#: src/Fish.cc:997 src/Http.cc:2239 src/SFtp.cc:1324 src/ftpclass.cc:4528
+#: src/Fish.cc:997 src/Http.cc:2254 src/SFtp.cc:1324 src/ftpclass.cc:4528
 msgid "Sending data"
 msgstr "上傳中"
 
@@ -461,95 +461,95 @@ msgstr "正在擷取檔案清單 (%lld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s：%s：檔案早已存在，而且沒有設定 xfer:clobber 變數\n"
 
-#: src/Http.cc:227
+#: src/Http.cc:228
 #, c-format
 msgid "Closing HTTP connection"
 msgstr "正在關閉 HTTP 連線"
 
-#: src/Http.cc:234
+#: src/Http.cc:238
 msgid "POST method failed"
 msgstr "使用 POST 方法失敗"
 
-#: src/Http.cc:1309
+#: src/Http.cc:1323
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
-#: src/Http.cc:1359 src/ftpclass.cc:1372 src/Torrent.cc:3220
+#: src/Http.cc:1373 src/ftpclass.cc:1372 src/Torrent.cc:3220
 #: src/Torrent.cc:3759 src/TorrentTracker.cc:394
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "無法建立地址族羣 %d 的 socket"
 
-#: src/Http.cc:1385 src/ftpclass.cc:1403
+#: src/Http.cc:1399 src/ftpclass.cc:1403
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Socket 錯誤 (%s) - 準備重新連線"
 
-#: src/Http.cc:1465
+#: src/Http.cc:1479
 #, c-format
 msgid "Sending request..."
 msgstr "正在送出要求……"
 
-#: src/Http.cc:1503
+#: src/Http.cc:1517
 #, c-format
 msgid "Hit EOF while fetching headers"
 msgstr "讀取標頭時檔案已終結了"
 
-#: src/Http.cc:1609
+#: src/Http.cc:1623
 #, c-format
 msgid "Could not parse HTTP status line"
 msgstr "無法分析 HTTP 狀態"
 
-#: src/Http.cc:1640
+#: src/Http.cc:1654
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "快取記憶中沒有該物件，但 http:cache-control 的設定為 only-if-cached"
 
-#: src/Http.cc:1846
+#: src/Http.cc:1861
 #, c-format
 msgid "Receiving body..."
 msgstr "正在下載內容……"
 
-#: src/Http.cc:1997
+#: src/Http.cc:2012
 #, c-format
 msgid "Hit EOF"
 msgstr "檔案終結"
 
-#: src/Http.cc:2000
+#: src/Http.cc:2015
 #, c-format
 msgid "Received not enough data, retrying"
 msgstr "接收的資料不足，繼續嘗試"
 
-#: src/Http.cc:2011
+#: src/Http.cc:2026
 #, c-format
 msgid "Received all"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:2016
+#: src/Http.cc:2031
 #, c-format
 msgid "Received all (total)"
 msgstr "已收到所有資料"
 
-#: src/Http.cc:2040 src/Http.cc:2064
+#: src/Http.cc:2055 src/Http.cc:2079
 msgid "chunked format violated"
 msgstr "資料格式錯誤"
 
-#: src/Http.cc:2050
+#: src/Http.cc:2065
 #, c-format
 msgid "Received last chunk"
 msgstr "已收到最後的片段"
 
-#: src/Http.cc:2228 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2243 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4478 src/TorrentTracker.cc:623
 #, c-format
 msgid "Resolving host address..."
 msgstr "正在解析主機地址……"
 
-#: src/Http.cc:2236 src/ftpclass.cc:4471
+#: src/Http.cc:2251 src/ftpclass.cc:4471
 msgid "Connection idle"
 msgstr "連線閒置"
 
-#: src/Http.cc:2244
+#: src/Http.cc:2259
 msgid "Fetching headers..."
 msgstr "正在讀取標頭資料……"
 

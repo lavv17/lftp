@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2016-03-25 15:54+0300\n"
+"POT-Creation-Date: 2016-04-04 11:11+0300\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -403,7 +403,7 @@ msgstr "execl(/bin/sh) a échoué : %s\n"
 msgid "total"
 msgstr "total"
 
-#: src/Fish.cc:75 src/Http.cc:1160 src/SFtp.cc:77 src/ftpclass.cc:1254
+#: src/Fish.cc:75 src/Http.cc:1174 src/SFtp.cc:77 src/ftpclass.cc:1254
 #, c-format
 msgid "Closing idle connection"
 msgstr "Fermeture de la connexion inutile"
@@ -412,7 +412,7 @@ msgstr "Fermeture de la connexion inutile"
 msgid "Running connect program"
 msgstr "Exécution du programme de connexion"
 
-#: src/Fish.cc:590 src/Http.cc:1438 src/SFtp.cc:743 src/SFtp.cc:1076
+#: src/Fish.cc:590 src/Http.cc:1452 src/SFtp.cc:743 src/SFtp.cc:1076
 #: src/SFtp.cc:1077 src/ftpclass.cc:2798 src/ftpclass.cc:3018
 #, c-format
 msgid "Peer closed connection"
@@ -423,7 +423,7 @@ msgstr "Connexion interrompue par le tiers"
 msgid "extra server response"
 msgstr "réponse du serveur supplémentaire"
 
-#: src/Fish.cc:989 src/Http.cc:2234 src/Http.cc:2241 src/SFtp.cc:1316
+#: src/Fish.cc:989 src/Http.cc:2249 src/Http.cc:2256 src/SFtp.cc:1316
 #: src/ftpclass.cc:4485 src/Torrent.cc:3552 src/TorrentTracker.cc:625
 msgid "Connecting..."
 msgstr "Connexion..."
@@ -432,16 +432,16 @@ msgstr "Connexion..."
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/Fish.cc:993 src/Http.cc:2243 src/SFtp.cc:1320 src/ftpclass.cc:4468
+#: src/Fish.cc:993 src/Http.cc:2258 src/SFtp.cc:1320 src/ftpclass.cc:4468
 #: src/ftpclass.cc:4496 src/ftpclass.cc:4510 src/TorrentTracker.cc:627
 msgid "Waiting for response..."
 msgstr "En attente de réponse..."
 
-#: src/Fish.cc:995 src/Http.cc:2246 src/SFtp.cc:1322 src/ftpclass.cc:4530
+#: src/Fish.cc:995 src/Http.cc:2261 src/SFtp.cc:1322 src/ftpclass.cc:4530
 msgid "Receiving data"
 msgstr "Réception des données"
 
-#: src/Fish.cc:997 src/Http.cc:2239 src/SFtp.cc:1324 src/ftpclass.cc:4528
+#: src/Fish.cc:997 src/Http.cc:2254 src/SFtp.cc:1324 src/ftpclass.cc:4528
 msgid "Sending data"
 msgstr "Émission des données"
 
@@ -460,95 +460,95 @@ msgstr "Récupération de la liste des fichiers (%lld) [%s]"
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s : %s : le fichier existe déjà et xfer:clobber n'est pas défini\n"
 
-#: src/Http.cc:227
+#: src/Http.cc:228
 #, c-format
 msgid "Closing HTTP connection"
 msgstr "Fermeture de la connexion HTTP"
 
-#: src/Http.cc:234
+#: src/Http.cc:238
 msgid "POST method failed"
 msgstr "échec de la méthode POST"
 
-#: src/Http.cc:1309
+#: src/Http.cc:1323
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp à travers http ne peut travailler sans proxy, définissez hftp:proxy."
 
-#: src/Http.cc:1359 src/ftpclass.cc:1372 src/Torrent.cc:3220
+#: src/Http.cc:1373 src/ftpclass.cc:1372 src/Torrent.cc:3220
 #: src/Torrent.cc:3759 src/TorrentTracker.cc:394
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "ne peut créer un socket de la famille %d"
 
-#: src/Http.cc:1385 src/ftpclass.cc:1403
+#: src/Http.cc:1399 src/ftpclass.cc:1403
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Erreur de socket (%s) - reconnexion"
 
-#: src/Http.cc:1465
+#: src/Http.cc:1479
 #, c-format
 msgid "Sending request..."
 msgstr "Émission des requêtes..."
 
-#: src/Http.cc:1503
+#: src/Http.cc:1517
 #, c-format
 msgid "Hit EOF while fetching headers"
 msgstr "Reçu une fin de fichier en lisant les entêtes"
 
-#: src/Http.cc:1609
+#: src/Http.cc:1623
 #, c-format
 msgid "Could not parse HTTP status line"
 msgstr "Ne peut analyser la ligne d'état HTTP"
 
-#: src/Http.cc:1640
+#: src/Http.cc:1654
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "L'objet n'est pas caché, et http:cache-control a only-if-cached"
 
-#: src/Http.cc:1846
+#: src/Http.cc:1861
 #, c-format
 msgid "Receiving body..."
 msgstr "Réception du corps..."
 
-#: src/Http.cc:1997
+#: src/Http.cc:2012
 #, c-format
 msgid "Hit EOF"
 msgstr "Fin de fichier atteinte"
 
-#: src/Http.cc:2000
+#: src/Http.cc:2015
 #, c-format
 msgid "Received not enough data, retrying"
 msgstr "Pas assez de données reçues, nouvelle tentative"
 
-#: src/Http.cc:2011
+#: src/Http.cc:2026
 #, c-format
 msgid "Received all"
 msgstr "Tout reçu"
 
-#: src/Http.cc:2016
+#: src/Http.cc:2031
 #, c-format
 msgid "Received all (total)"
 msgstr "Tout reçu (total)"
 
-#: src/Http.cc:2040 src/Http.cc:2064
+#: src/Http.cc:2055 src/Http.cc:2079
 msgid "chunked format violated"
 msgstr "format en « chunk » violé"
 
-#: src/Http.cc:2050
+#: src/Http.cc:2065
 #, c-format
 msgid "Received last chunk"
 msgstr "Dernier fragment reçu"
 
-#: src/Http.cc:2228 src/Resolver.cc:168 src/Resolver.cc:210
+#: src/Http.cc:2243 src/Resolver.cc:168 src/Resolver.cc:210
 #: src/ftpclass.cc:4478 src/TorrentTracker.cc:623
 #, c-format
 msgid "Resolving host address..."
 msgstr "Résolution de l'adresse..."
 
-#: src/Http.cc:2236 src/ftpclass.cc:4471
+#: src/Http.cc:2251 src/ftpclass.cc:4471
 msgid "Connection idle"
 msgstr "Connexion stagnante"
 
-#: src/Http.cc:2244
+#: src/Http.cc:2259
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 
