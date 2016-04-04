@@ -1,3 +1,9 @@
+Version 4.7.1 - 2016-04-04
+
+* http: fixed authentication for proxy, transient errors, max-retries=1.
+* http: fixed put with authentication not to use HEAD request.
+* translations updated (cs, ru).
+
 Version 4.7.0 - 2016-03-28
 
 * ftp: add MODE Z support.
