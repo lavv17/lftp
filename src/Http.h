@@ -144,9 +144,11 @@ class Http : public NetAccess
    int array_send;
 
    bool chunked;
+   bool chunked_trailer;
    long chunk_size;
    off_t chunk_pos;
-   bool chunked_trailer;
+
+   off_t request_pos;
 
    Ref<DirectedBuffer> inflate;
    SMTaskRef<IOBuffer> propfind;

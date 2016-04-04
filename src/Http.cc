@@ -159,9 +159,11 @@ void Http::Init()
    array_send=0;
 
    chunked=false;
+   chunked_trailer=false;
    chunk_size=CHUNK_SIZE_UNKNOWN;
    chunk_pos=0;
-   chunked_trailer=false;
+
+   request_pos=0;
 
    no_ranges=false;
    seen_ranges_bytes=false;
@@ -230,13 +232,16 @@ void Http::DisconnectLL()
    if(!Error() && !H_AUTH_REQ(status_code))
       auth_sent[0]=auth_sent[1]=0;
 
-   if(state!=DONE && (real_pos>0 || special==HTTP_POST) && !Error()) {
-      if(last_method && !strcmp(last_method,"POST")
-      && !H_AUTH_REQ(status_code))
+   if(state!=DONE && (real_pos>0 || special==HTTP_POST)
+   && !Error() && !H_AUTH_REQ(status_code)) {
+      if(last_method && !strcmp(last_method,"POST"))
 	 SetError(FATAL,_("POST method failed"));
       else if(mode==STORE)
 	 SetError(STORE_FAILED,0);
    }
+   if(mode==STORE && H_AUTH_REQ(status_code))
+      pos=real_pos=request_pos; // resend all the data again
+
    last_method=0;
    last_uri.unset();
    last_url.unset();
@@ -257,9 +262,10 @@ void Http::ResetRequestData()
    keep_alive_max=-1;
    array_send=fileset_for_info?fileset_for_info->curr_index():0;
    chunked=false;
+   chunked_trailer=false;
    chunk_size=CHUNK_SIZE_UNKNOWN;
    chunk_pos=0;
-   chunked_trailer=false;
+   request_pos=0;
    propfind=0;
    inflate=0;
    seen_ranges_bytes=false;
@@ -723,6 +729,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	 Send("Content-length: %lld\r\n",(long long)(entity_size-pos));
       if(pos>0 && entity_size<0)
       {
+	 request_pos=pos;
 	 if(limit==FILE_END)
 	    Send("Range: bytes=%lld-\r\n",(long long)pos);
 	 else
@@ -730,6 +737,7 @@ void Http::SendRequest(const char *connection,const char *f)
       }
       else if(pos>0)
       {
+	 request_pos=pos;
 	 Send("Range: bytes=%lld-%lld/%lld\r\n",(long long)pos,
 		     (long long)((limit==FILE_END || limit>entity_size ? entity_size : limit)-1),
 		     (long long)entity_size);
@@ -828,9 +836,10 @@ void Http::SendRequest(const char *connection,const char *f)
 
    keep_alive=false;
    chunked=false;
+   chunked_trailer=false;
    chunk_size=CHUNK_SIZE_UNKNOWN;
    chunk_pos=0;
-   chunked_trailer=false;
+   request_pos=0;
    inflate=0;
    no_ranges=false;
 
@@ -1030,9 +1039,9 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(!strcasecmp(value,"chunked"))
       {
 	 chunked=true;
+	 chunked_trailer=false;
 	 chunk_size=CHUNK_SIZE_UNKNOWN;	  // expecting first chunk
 	 chunk_pos=0;
-	 chunked_trailer=false;
       }
       return;
 
