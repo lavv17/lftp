@@ -1,7 +1,7 @@
 # Czech translation of lftp.
 # Copyright (C) 2009 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is distributed under the same license as the lftp package.
-# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011, 2012, 2013.
+# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011, 2012, 2013, 2016.
 #
 # handshake → dojednání (spojení)
 # option → volba
@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.4.7\n"
+"Project-Id-Version: lftp 4.7.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2016-04-04 11:11+0300\n"
-"PO-Revision-Date: 2013-05-25 07:49+0200\n"
+"PO-Revision-Date: 2016-03-31 17:21+02:00\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -47,9 +47,9 @@ msgid "%s: option '%s' is ambiguous; possibilities:"
 msgstr "%s: volba „%s“ není jednoznačná; možnosti:"
 
 #: lib/getopt.c:619
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s' is ambiguous\n"
-msgstr "%s: volba „-W %s“ není jednoznačná\n"
+msgstr "%s: volba „%s“ není jednoznačná\n"
 
 #: lib/getopt.c:654 lib/getopt.c:658
 #, c-format
@@ -346,7 +346,7 @@ msgstr ""
 
 #: src/FileCopy.cc:352
 msgid "file size decreased during transfer"
-msgstr ""
+msgstr "velikost souboru se během přenosu snížila"
 
 #: src/FileCopy.cc:1185
 #, c-format
@@ -625,9 +625,9 @@ msgid "%s%d error$|s$ detected\n"
 msgstr "%s%d $chyba nalezena|chyby nalezeny|chyb nalezeno$\n"
 
 #: src/MirrorJob.cc:230
-#, fuzzy, c-format
+#, c-format
 msgid "Finished %s"
-msgstr "[%u] Dokončeno. %s\n"
+msgstr "Dokončeno %s"
 
 #: src/MirrorJob.cc:322 src/MirrorJob.cc:511 src/MirrorJob.cc:1124
 #, c-format
@@ -635,9 +635,9 @@ msgid "Removing old file `%s'"
 msgstr "Odstraňuje se starý soubor „%s“"
 
 #: src/MirrorJob.cc:324
-#, fuzzy, c-format
+#, c-format
 msgid "Overwriting old file `%s'"
-msgstr "Odstraňuje se starý soubor „%s“"
+msgstr "Přepisuje se starý soubor „%s“"
 
 #: src/MirrorJob.cc:333
 #, c-format
@@ -660,9 +660,9 @@ msgid "Removing old local file `%s'"
 msgstr "Odstraňuje se starý místní soubor „%s“"
 
 #: src/MirrorJob.cc:479
-#, fuzzy, c-format
+#, c-format
 msgid "Scanning directory `%s'"
-msgstr "Vytváří se adresář „%s“"
+msgstr "Prohlíží se adresář „%s“"
 
 #: src/MirrorJob.cc:481
 #, c-format
@@ -705,14 +705,14 @@ msgid "Removing old directory `%s'"
 msgstr "Odstraňuje se starý adresář „%s“"
 
 #: src/MirrorJob.cc:1239
-#, fuzzy, c-format
+#, c-format
 msgid "Removing source directory `%s'"
-msgstr "Odstraňuje se starý adresář „%s“"
+msgstr "Odstraňuje se zdrojový adresář „%s“"
 
 #: src/MirrorJob.cc:1305
-#, fuzzy, c-format
+#, c-format
 msgid "Removing source file `%s'"
-msgstr "Odstraňuje se starý soubor „%s“"
+msgstr "Odstraňuje se zdrojový soubor „%s“"
 
 #: src/MirrorJob.cc:1325
 #, c-format
@@ -720,9 +720,9 @@ msgid "Retrying mirror...\n"
 msgstr "Znovu se zkouší zrcadlení…\n"
 
 #: src/MirrorJob.cc:1648
-#, fuzzy, c-format
+#, c-format
 msgid "%s must be one of: %s"
-msgstr "musí být jedno z: C, S, E, P nebo prázdná hodnota"
+msgstr "%s musí být jeden z: %s"
 
 #: src/MirrorJob.cc:1978 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1136 src/commands.cc:1226 src/commands.cc:1598
@@ -738,17 +738,18 @@ msgstr "Podrobnosti získáte příkazem „help %s“.\n"
 #: src/MirrorJob.cc:2002
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
-msgstr ""
+msgstr "%s: nejednoznačný zdrojový adresář („%s“ nebo „%s“?)\n"
 
 #: src/MirrorJob.cc:2024
-#, fuzzy, c-format
+#, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
-msgstr "nejednoznačný argument %s u %s"
+msgstr "%s: nejednoznačný cílový adresář („%s“ nebo „%s“?)\n"
 
 #: src/MirrorJob.cc:2065
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
+"%s: je vyžadován zdrojový adresář (mirror:require-source je nastaveno)\n"
 
 #: src/MirrorJob.cc:2156
 msgid ""
@@ -1047,21 +1048,21 @@ msgstr "%.2f MB/s"
 
 # Bytes per second
 #: src/Speedometer.cc:103
-#, fuzzy, c-format
+#, c-format
 msgid "%.0f B/s"
-msgstr "%.0f B/s"
+msgstr "%.0f B/s"
 
 # Kilobytes per scond
 #: src/Speedometer.cc:105
-#, fuzzy, c-format
+#, c-format
 msgid "%.1f KiB/s"
-msgstr "%.1f kB/s"
+msgstr "%.1f KiB/s"
 
 # Megabytes per second
 #: src/Speedometer.cc:107
-#, fuzzy, c-format
+#, c-format
 msgid "%.2f MiB/s"
-msgstr "%.2f MB/s"
+msgstr "%.2f MiB/s"
 
 # This is time quantum, not a time point
 #: src/Speedometer.cc:129
@@ -1310,12 +1311,10 @@ msgstr ""
 "velikost písmen, přidejte do cls-completion-default „-i“.\n"
 
 #: src/commands.cc:216
-#, fuzzy
 msgid "debug [OPTS] [<level>|off]"
-msgstr "debug [<úroveň>|off] [-o <soubor>]"
+msgstr "debug [VOLBY] [<úroveň>|off]"
 
 #: src/commands.cc:217
-#, fuzzy
 msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file\n"
@@ -1324,7 +1323,10 @@ msgid ""
 " -t  show timestamps\n"
 msgstr ""
 "Nastaví úroveň ladění na zadanou hodnotu, nebo jej úplně vypne („off“).\n"
-" -o <soubor>  ladicí zprávy přesměruje do souboru.\n"
+" -o <soubor>  ladicí výstup přesměruje do souboru\n"
+" -c           zobrazí kontext zpráv\n"
+" -p           zobrazí PID\n"
+" -t           zobrazí časové značky\n"
 
 #: src/commands.cc:222
 msgid "du [options] <dirs>"
@@ -1373,9 +1375,8 @@ msgstr ""
 "     --exclude=CESTA   vynechá soubory, které odpovídají CESTĚ\n"
 
 #: src/commands.cc:241
-#, fuzzy
 msgid "edit [OPTS] <file>"
-msgstr "mget [VOLBY] <soubory>"
+msgstr "edit [VOLBY] <soubor>"
 
 #: src/commands.cc:242
 msgid ""
@@ -1384,6 +1385,10 @@ msgid ""
 " -k  keep the temporary file\n"
 " -o <temp>  explicit temporary file location\n"
 msgstr ""
+"Vzdálený soubor uloží do dočasné místního souboru, pustí na něm editor\n"
+"a soubor nahraje zpět na server, pokud se změnil.\n"
+" -k            ponechá dočasný soubor\n"
+" -o <dočasný>  explicitní umístnění dočasného souboru\n"
 
 #: src/commands.cc:247
 msgid "exit [<code>|bg]"
@@ -1504,7 +1509,6 @@ msgid "lftp [OPTS] <site>"
 msgstr "lftp [VOLBY] <server>"
 
 #: src/commands.cc:287
-#, fuzzy
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -1523,12 +1527,14 @@ msgstr ""
 "„lftp“ je první příkaz vykonaný klientem lftp po rc souborech\n"
 " -f <soubor>              vykoná příkazy ze souboru a skončí\n"
 " -c <příkaz>              vykoná příkazy a skončí\n"
+" --norc                   nevykoná rc soubory z domovského adresáře\n"
 " --help                   vypíše tuto nápovědu a skončí\n"
 " --version                vypíše verzi lftp a skončí\n"
 "Další volby jsou stejné jako u příkazu „open“\n"
 " -e <příkaz>              vykoná příkaz bezprostředně po výběru\n"
 " -u <uživatel>[,<heslo>]  autentizuje se pomocí uživatel/heslo\n"
 " -p <port>                připojí se port\n"
+" -s <slot>                přiřadí spojení tomuto slotu\n"
 " <server>                 název stroje, URL nebo název záložky\n"
 
 #: src/commands.cc:300
@@ -1586,12 +1592,10 @@ msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [VOLBY] [vzdálený [místní]]"
 
 #: src/commands.cc:320
-#, fuzzy
 msgid "mkdir [OPTS] <dirs>"
-msgstr "mkdir [-p] <adresáře>"
+msgstr "mkdir [VOLBY] <adresáře>"
 
 #: src/commands.cc:321
-#, fuzzy
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
@@ -1599,6 +1603,7 @@ msgid ""
 msgstr ""
 "Vytvoří vzdálené adresáře\n"
 " -p  vytvoří všechny úrovně cesty\n"
+" -f  je zticha, potlačí hlášky\n"
 
 #: src/commands.cc:324
 msgid "module name [args]"
@@ -1685,7 +1690,6 @@ msgid "open [OPTS] <site>"
 msgstr "open [VOLBY] <server>"
 
 #: src/commands.cc:348
-#, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -1700,6 +1704,7 @@ msgstr ""
 " -u <uživatel>[,<heslo>]  autentizuje se pomocí uživatel/heslo\n"
 " -p <port>                připojí se port\n"
 " -s <slot>                přiřadí spojení do tohoto slotu\n"
+" -d                       zapne režim ladění\n"
 " <server>                 název stroje, URL nebo název záložky\n"
 
 #: src/commands.cc:355
@@ -1963,9 +1968,8 @@ msgid "Execute commands recorded in file <file>\n"
 msgstr "Vykoná příkazy zaznamenané v <souboru>\n"
 
 #: src/commands.cc:446
-#, fuzzy
 msgid "torrent [OPTS] <file|URL>..."
-msgstr "torrent [-O <adresář>] <soubor|URL>…"
+msgstr "torrent [VOLBY] <soubor|URL>…"
 
 #: src/commands.cc:447
 msgid "user <user|URL> [<pass>]"
@@ -2069,9 +2073,9 @@ msgstr ""
 "příkaz shellu „fg“, potřebujete-li se vrátit do lftp (pokud neskončil).\n"
 
 #: src/commands.cc:890
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%s'\n"
-msgstr "%s: nerozpoznaná volba „%c%s“\n"
+msgstr "%s: nerozpoznaná volba „%s“\n"
 
 #: src/commands.cc:901 src/commands.cc:3475
 #, c-format
@@ -2461,9 +2465,8 @@ msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD je dle ftp:use-mlsd zakázán"
 
 #: src/ftpclass.cc:1649
-#, fuzzy
 msgid "MFF and SITE CHMOD are not supported by this site"
-msgstr "Tento server nepodporuje SITE CHMOD"
+msgstr "Tento server nepodporuje MFF a SITE CHMOD"
 
 #: src/ftpclass.cc:1654
 msgid "MLST and MLSD are not supported by this site"
@@ -2474,9 +2477,9 @@ msgid "unsupported network protocol"
 msgstr "nepodporovaný síťový protokol"
 
 #: src/ftpclass.cc:2181 src/ftpclass.cc:2276
-#, fuzzy, c-format
+#, c-format
 msgid "Data socket error (%s) - reconnecting"
-msgstr "Chyba socketu (%s) – obnovuje se spojení"
+msgstr "Chyba datového socketu (%s) – obnovuje se spojení"
 
 #: src/ftpclass.cc:2209
 #, c-format
@@ -2724,16 +2727,15 @@ msgstr "heslo pro ftp:proxy: "
 #: src/resource.cc:69
 #, c-format
 msgid "%s must be one of: "
-msgstr ""
+msgstr "%s musí být jedno z: "
 
 #: src/resource.cc:71
-#, fuzzy
 msgid "must be one of: "
-msgstr "musí být jedno z: C, S, E, P nebo prázdná hodnota"
+msgstr "musí být jedno z: "
 
 #: src/resource.cc:83
 msgid ", or empty"
-msgstr ""
+msgstr ", nebo prázdná hodnota"
 
 #: src/resource.cc:115
 msgid "only PUT and POST values allowed"
@@ -2768,22 +2770,23 @@ msgstr ""
 
 #: src/Torrent.cc:611
 msgid "announced via "
-msgstr ""
+msgstr "oznámeno přes "
 
 #: src/Torrent.cc:625
-#, fuzzy, c-format
+#, c-format
 msgid "next announce in %s"
-msgstr "další požadavek za %s"
+msgstr "další oznámení za %s"
 
 #: src/Torrent.cc:1168
 #, c-format
 msgid "%d file$|s$ found, now scanning %s"
 msgstr ""
+"%d $soubor nalezen |soubory nalezeny|souborů nalezeno$, nyní se prohledává %s"
 
 #: src/Torrent.cc:1169
-#, fuzzy, c-format
+#, c-format
 msgid "%d file$|s$ found"
-msgstr "%d $adresa nalezena|adresy nalezeny|adres nalezeno$"
+msgstr "%d $soubor nalezen|soubory nalezeny|souborů nalezeno$"
 
 #: src/Torrent.cc:2093 src/Torrent.cc:2103
 #, c-format
@@ -2814,9 +2817,8 @@ msgid "peer unexpectedly closed connection after %s"
 msgstr "protistrana nečekaně uzavřela spojení po %s"
 
 #: src/Torrent.cc:3275 src/Torrent.cc:3392
-#, fuzzy
 msgid "peer unexpectedly closed connection"
-msgstr "protistrana nečekaně uzavřela spojení po %s"
+msgstr "protistrana nečekaně uzavřela spojení"
 
 #: src/Torrent.cc:3277 src/Torrent.cc:3278
 #, c-format
@@ -2849,7 +2851,7 @@ msgstr "Přijato spojení z [%s]:%d"
 #: src/Torrent.cc:3935
 #, c-format
 msgid "peer sent unknown info_hash=%s in handshake"
-msgstr ""
+msgstr "protistrana poslala v rámci dojednání spojení neznámý info_hash=%s"
 
 #: src/Torrent.cc:3959
 #, c-format
@@ -2872,24 +2874,24 @@ msgid "Seeding in background...\n"
 msgstr "Vysemeňování na pozadí…\n"
 
 #: src/Torrent.cc:4187
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --share conflicts with --output-directory.\n"
-msgstr "%s: --summarize je v rozporu s --max-depth=%i\n"
+msgstr "%s: --share je v rozporu s --output-directory.\n"
 
 #: src/Torrent.cc:4191
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --share conflicts with --only-new.\n"
-msgstr "%s: --summarize je v rozporu s --max-depth=%i\n"
+msgstr "%s: --share je v rozporu s --only-new.\n"
 
 #: src/Torrent.cc:4195
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --share conflicts with --only-incomplete.\n"
-msgstr "%s: --summarize je v rozporu s --max-depth=%i\n"
+msgstr "%s: --share je v rozporu s --only-incomplete.\n"
 
 #: src/Torrent.cc:4237
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Please specify a file or directory to share.\n"
-msgstr "%s: Prosím, zadejte metadata souboru nebo URL.\n"
+msgstr "%s: Prosím, zadejte soubor nebo adresář pro sdílení.\n"
 
 #: src/Torrent.cc:4239
 #, c-format
@@ -2908,10 +2910,18 @@ msgid ""
 " --dht-bootstrap=<node>  bootstrap DHT by sending a query to the node\n"
 " --share        share specified file or directory\n"
 msgstr ""
+"Spustí bittorrentovou úlohu nad zadaným souborem torrent, což může být\n"
+"místní soubor, URL, magnet link nebo obyčejný info_hash zapsaný\n"
+"v šestnáctkové soustavě nebo v base32. Místní zástupné znaky se expandují.\n"
+"Volby jsou:\n"
+" -O <cesta>     určuje adresář, kam se mají umístit soubory\n"
+" --force-valid  přeskočí kontrolu souborů\n"
+" --dht-bootstrap=<uzel>  zahájí DHT zasláním dotazu uzlu\n"
+" --share        sdílí zadaný soubor nebo adresář\n"
 
 #: src/TorrentTracker.cc:176
 msgid "not started"
-msgstr ""
+msgstr "nezačalo"
 
 #: src/TorrentTracker.cc:179
 #, c-format
