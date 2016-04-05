@@ -2,21 +2,21 @@
 # Copyright (C) 2001, 02, 05, 07 Alexander V. Lukyanov <lav@yars.free.net>
 #
 # Abel Cheung <abelcheung@gmail.com>, 2001, 02, 05, 07.
-# Jeff Huang <s8321414@gmail.com>, 2015.
+# Jeff Huang <s8321414@gmail.com>, 2015, 2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.6.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2016-04-04 11:11+0300\n"
-"PO-Revision-Date: 2015-09-15 19:48+0800\n"
+"PO-Revision-Date: 2016-04-05 11:41+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
-"Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
+"Language-Team: Chinese <chinese-l10n@googlegroups.com>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: lib/argmatch.c:133
 #, c-format
@@ -470,8 +470,7 @@ msgstr "使用 POST 方法失敗"
 
 #: src/Http.cc:1323
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
+msgstr "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
 #: src/Http.cc:1373 src/ftpclass.cc:1372 src/Torrent.cc:3220
 #: src/Torrent.cc:3759 src/TorrentTracker.cc:394
@@ -688,9 +687,9 @@ msgid "Removing old directory `%s'"
 msgstr "刪除 ‘%s’ 舊目錄"
 
 #: src/MirrorJob.cc:1239
-#, fuzzy, c-format
+#, c-format
 msgid "Removing source directory `%s'"
-msgstr "刪除 ‘%s’ 舊目錄"
+msgstr "正在移除 ‘%s’ 來源目錄"
 
 #: src/MirrorJob.cc:1305
 #, c-format
@@ -1466,7 +1465,6 @@ msgid "lftp [OPTS] <site>"
 msgstr "lftp [選項] <站台>"
 
 #: src/commands.cc:287
-#, fuzzy
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -1485,12 +1483,15 @@ msgstr ""
 "‘lftp’是讀入設定檔後第一個 lftp 會執行的指令\n"
 " -f <檔案>               執行在 <檔案> 裡指定的指令並離開\n"
 " -c <指令>               執行指令並離開\n"
+" --norc              不要從家目錄執行設定檔\n"
 " --help                  印出此項說明文字並離開\n"
 " --version               印出 lftp 版本並離開\n"
-"其它選項和‘open’指令的一樣\n"
+"其它選項和‘open’指令的一樣：\n"
 " -e <指令>               選擇檔案執行所指定的指令\n"
 " -u <用戶名稱>[,<密碼>]  使用用戶名稱和密碼登入\n"
 " -p <連接埠>             使用該連接埠連線\n"
+" -s <插槽>           將連線指派給此插槽\n"
+" -d                  開啟除錯模式\n"
 " <站台>                  主機名稱、URL 或書籤名稱\n"
 
 #: src/commands.cc:300
@@ -1639,7 +1640,6 @@ msgid "open [OPTS] <site>"
 msgstr "open [選項] <站台>"
 
 #: src/commands.cc:348
-#, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -1654,6 +1654,7 @@ msgstr ""
 " -u <用戶名稱>[,<密碼>]  使用指定的用戶名稱及密碼登入\n"
 " -p <連接埠>             使用指定連接埠來連線\n"
 " -s <位置>           將連線分配給該位置\n"
+" -d                  開啟除錯模式e\n"
 " <站台>                  主機名稱、URL 或書籤名稱\n"
 
 #: src/commands.cc:355
@@ -1928,8 +1929,7 @@ msgstr "wait [<工作編號>]"
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
-msgstr ""
-"等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
+msgstr "等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
 
 #: src/commands.cc:455
 msgid "zcat <files>"
@@ -2004,9 +2004,9 @@ msgstr ""
 "使用「fg」 shell 指令以將 lftp 拉回前景，如果它還在執行中的話。\n"
 
 #: src/commands.cc:890
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%s'\n"
-msgstr "%s：‘%c%s’ 選項無法辨識\n"
+msgstr "%s：‘%s’ 選項無法辨識\n"
 
 #: src/commands.cc:901 src/commands.cc:3475
 #, c-format
@@ -2390,9 +2390,8 @@ msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "ftp:use-mlsd 設定關閉了 MLSD 功能"
 
 #: src/ftpclass.cc:1649
-#, fuzzy
 msgid "MFF and SITE CHMOD are not supported by this site"
-msgstr "該站台不支援 SITE CHMOD"
+msgstr "該站台不支援 MFF 與 SITE CHMOD"
 
 #: src/ftpclass.cc:1654
 msgid "MLST and MLSD are not supported by this site"
