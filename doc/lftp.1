@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 Mar 2016"
+.TH lftp 1 "13 Apr 2016"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -56,7 +56,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.7.0.
+This man page documents lftp version 4.7.2.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -1851,6 +1851,9 @@ directories with hftp protocol. Default is off.
 if set to off, lftp will not try to use `PROPFIND' to get directory contents
 with hftp protocol and use `GET' instead. Default is off.
 .TP
+.BR hftp:use-range \ (boolean)
+when true, lftp will use Range header for transfer restart.
+.TP
 .BR hftp:use-type \ (boolean)
 If set to off, lftp won't try to append `;type=' to URLs passed to proxy.
 Some broken proxies don't handle it correctly. Default is on.
@@ -1911,6 +1914,9 @@ directories with HTTP protocol. Default is on.
 .BR http:use-propfind \ (boolean)
 if set to off, lftp will not try to use `PROPFIND' to get directory contents
 with HTTP protocol and use `GET' instead. Default is on.
+.TP
+.BR http:use-range \ (boolean)
+when true, lftp will use Range header for transfer restart.
 .TP
 .BR http:user-agent " (string)"
 the string lftp sends in User-Agent header of HTTP request.
@@ -2228,6 +2234,10 @@ the period over which weighted average rate is calculated to be shown.
 .TP
 .BR xfer:temp-file-name \ (string)
 temporary file name pattern, first asterisk is replaced by the original file name.
+.TP
+.BR xfer:timeout " (time interval)"
+maximum time without any transfer progress. It can be used to limit maximum
+time to retry a transfer from a server not supporting transfer restart.
 .TP
 .BR xfer:use-temp-file \ (boolean)
 when true, a file will be transferred to a temporary file in the same directory and then renamed.
