@@ -53,7 +53,7 @@ static ResType torrent_vars[] = {
    {"torrent:ip", "", ResMgr::IPv4AddrValidate, ResMgr::NoClosure},
    {"torrent:retracker", ""},
    {"torrent:use-dht", "yes", ResMgr::BoolValidate, ResMgr::NoClosure},
-   {"torrent:timeout", "7d", ResMgr::TimeIntervalValidate},
+   {"torrent:timeout", "7d", ResMgr::TimeIntervalValidate, ResMgr::NoClosure},
 #if INET6
    {"torrent:ipv6", "", ResMgr::IPv6AddrValidate, ResMgr::NoClosure},
 #endif
