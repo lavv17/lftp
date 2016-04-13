@@ -308,7 +308,7 @@ void Http::Close()
    no_cache_this=false;
    auth_sent[0]=auth_sent[1]=0;
    auth_scheme[0]=auth_scheme[1]=HttpAuth::NONE;
-   no_ranges=false;
+   no_ranges=!QueryBool("use-range",hostname);
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
    special_data.set(0);
@@ -841,7 +841,7 @@ void Http::SendRequest(const char *connection,const char *f)
    chunk_pos=0;
    request_pos=0;
    inflate=0;
-   no_ranges=false;
+   no_ranges=!QueryBool("use-range",hostname);
 
    conn->send_buf->SetPos(0);
 }
@@ -2303,6 +2303,7 @@ void Http::Reconfig(const char *name)
 
    user_agent=ResMgr::Query("http:user-agent",c);
    use_propfind_now=(use_propfind_now && QueryBool("use-propfind",c));
+   no_ranges=(no_ranges || !QueryBool("use-range",hostname));
 
    allprop=	// PROPFIND request
       "<?xml version=\"1.0\" ?>"
@@ -2339,6 +2340,7 @@ void Http::ResetLocationData()
    Reconfig();
    state=DISCONNECTED;
    use_propfind_now=QueryBool("use-propfind",hostname);
+   no_ranges=!QueryBool("use-range",hostname);
 }
 
 DirList *Http::MakeDirList(ArgV *args)
