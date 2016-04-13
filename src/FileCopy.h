@@ -174,6 +174,9 @@ private:
    int put_buf;
    off_t put_eof_pos;
 
+   off_t high_watermark;
+   Timer high_watermark_timeout;
+
    Time start_time;
    Time end_time;
 

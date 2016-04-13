@@ -202,6 +202,13 @@ int FileCopy::Do()
 	 SetError(_("seek failed"));
 	 return MOVED;
       }
+
+      if(high_watermark_timeout.Stopped())
+      {
+	 SetError(_("no progress timeout"));
+	 return MOVED;
+      }
+
       if(get->GetSize()>0 && get->GetRealPos()>get->GetSize())
       {
 	 get->SetSize(NO_SIZE_YET);
@@ -332,6 +339,12 @@ int FileCopy::Do()
       rate_add-=put_buf-s;
       RateAdd(rate_add);
 
+      if(high_watermark<put_pos+s)
+      {
+	 high_watermark=put_pos+s;
+	 high_watermark_timeout.Reset();
+      }
+
       if(get->range_limit!=FILE_END && get->range_limit<=get->GetRealPos())
       {
 	 debug((10,"copy: get reached range limit\n"));
@@ -427,7 +440,8 @@ int FileCopy::Do()
 FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
    : get(s), put(d), cont(c),
    rate("xfer:rate-period"),
-   rate_for_eta("xfer:eta-period")
+   rate_for_eta("xfer:eta-period"),
+   high_watermark_timeout("xfer:timeout",0)
 {
    set_state(INITIAL);
    int max_buf=buffer_size.Query(0);
@@ -437,6 +451,7 @@ FileCopy::FileCopy(FileCopyPeer *s,FileCopyPeer *d,bool c)
    d->SetMaxBuffered(max_buf);
    put_buf=0;
    put_eof_pos=0;
+   high_watermark=0;
    bytes_count=0;
    fail_if_cannot_seek=false;
    fail_if_broken=true;

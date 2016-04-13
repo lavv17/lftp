@@ -391,6 +391,7 @@ static ResType lftp_vars[] = {
    {"xfer:max-log-size",	 "1M",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
    {"xfer:use-temp-file",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:temp-file-name",	 ".in.*", 0,ResMgr::NoClosure},
+   {"xfer:timeout",		 "1d",	  ResMgr::TimeIntervalValidate,ResMgr::NoClosure},
    {"xfer:clobber",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:make-backup",		 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:keep-backup",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
