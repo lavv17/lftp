@@ -531,13 +531,17 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       const xstring& id=r->lookup_str("id");
       if(id.length()!=20)
 	 return;
+
       const sockaddr_compact& ip=sockaddr_compact::cast(r->lookup_str("ip"));
       if(ip && !ValidNodeId(node_id,ip)) {
-	 if(!ip_voted.lookup(src.compact_addr())) {
-	    sockaddr_u reported_ip(ip);
-	    LogNote(2,"%s reported our IP as %s",src.to_string(),reported_ip.address());
+	 const xstring &src_ip=xstring::get_tmp(src.address());
+	 if(src_ip.eq(ip.address())) {
+	    LogError(2,"%s incorrectly reported our IP as %s (ignored)",src.to_string(),ip.address());
+	 } else if(!ip_voted.lookup(src_ip)) {
+	    ip_voted.add(src_ip,true);
 	    unsigned& votes=ip_votes.lookup_Lv(ip);
 	    votes++;
+	    LogNote(2,"%s reported our IP as %s (votes=%u)",src.to_string(),ip.address(),votes);
 	    if(votes>=4) {
 	       // we have incorrect node_id, restart with correct one.
 	       MakeNodeId(node_id,ip);
@@ -546,6 +550,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	    }
 	 }
       }
+
       FoundNode(id,src,true);
       if(q.eq("get_peers")) {
 	 const xstring& info_hash=req->GetSearchTarget();
