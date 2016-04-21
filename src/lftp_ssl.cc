@@ -266,6 +266,11 @@ void lftp_ssl_gnutls::global_deinit()
 {
    instance=0;
 }
+
+#ifndef GNUTLS_NONBLOCK // for gnutls < 3.0
+# define GNUTLS_NONBLOCK 0
+#endif
+
 lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
    : lftp_ssl_base(fd1,m,h)
 {
@@ -273,7 +278,7 @@ lftp_ssl_gnutls::lftp_ssl_gnutls(int fd1,handshake_mode_t m,const char *h)
 
    cred=0;
 
-   gnutls_init(&session,(m==CLIENT?GNUTLS_CLIENT:GNUTLS_SERVER));
+   gnutls_init(&session,(m==CLIENT?GNUTLS_CLIENT:GNUTLS_SERVER)|GNUTLS_NONBLOCK);
    gnutls_set_default_priority(session);
 
    gnutls_transport_set_ptr(session,(gnutls_transport_ptr_t)fd);
