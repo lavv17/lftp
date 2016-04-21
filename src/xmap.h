@@ -80,7 +80,7 @@ public:
       entry **e=_lookup(key);
       if(e && *e)
 	 return payload(*e);
-      return zero;
+      return add(key,zero);
    }
    const T& lookup(const xstring& key) const {
       entry *e=_lookup_c(key);
@@ -91,7 +91,7 @@ public:
    const T& lookup(const char *key) const { return lookup(xstring::get_tmp(key)); }
    T& operator[](const xstring& key) { return lookup_Lv(key); }
    void remove(const xstring& key) { _remove(_lookup(key)); }
-   void add(const xstring& key,T e0) { payload(_add(key))=e0; }
+   T& add(const xstring& key,T e0) { return payload(_add(key))=e0; }
    const T& each_begin() { entry *e=_each_begin(); return e?payload(e):zero; }
    const T& each_next()  { entry *e=_each_next();  return e?payload(e):zero; }
    void move_here(xmap<T> &o) { _move_here(o); }
