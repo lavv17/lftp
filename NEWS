@@ -3,6 +3,7 @@ Version 4.7.2 - 2016-04-??
 * http: new settings http:use-range and hftp:use-range.
 * new setting xfer:timeout.
 * torrent: fixed our external IP voting.
+* torrent/DHT: mark nodes which change node_id often as bad.
 * translations updated (zh_TW).
 
 Version 4.7.1 - 2016-04-04

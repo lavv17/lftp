@@ -45,19 +45,20 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       bool responded; // has ever responded to our query
       bool in_routes; // belongs to the routing table;
       int ping_lost_count;
+      int id_change_count;
 
       bool IsGood() const { return !good_timer.Stopped(); }
       void SetGood() { good_timer.Reset(); }
-      bool IsBad() const { return !IsGood() && ping_lost_count>=2; }
+      bool IsBad() const { return (!IsGood() && ping_lost_count>=2) || id_change_count>=2; }
       void LostPing() { ping_lost_count++; }
       void ResetLostPing() { ping_lost_count=0; }
-      bool IsBetterThan(const Node *node,const xstring& target) const;
 
       const char *GetName() const { return addr.to_string(); }
 
       Node(const xstring& i,const sockaddr_u& a)
 	 : id(i.copy()), addr(a), good_timer(15*60), token_timer(5*60),
-	   ping_timer(30), responded(false), in_routes(false), ping_lost_count(0)
+	   ping_timer(30), responded(false), in_routes(false),
+	   ping_lost_count(0), id_change_count(0)
       {
 	 good_timer.AddRandom(5);
 	 ping_timer.Stop();

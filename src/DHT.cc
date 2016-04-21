@@ -140,7 +140,7 @@ int DHT::Do()
 	    xarray<Node*>& nodes=routes[i]->nodes;
 	    int q_num=PingQuestionable(nodes,nodes.count()-K);
 	    if(nodes.count()>K+q_num)
-	       routes[i]->RemoveNode(K); // too may candidates, trim one
+	       routes[i]->RemoveNode(K); // too many candidates, trim one
 	 }
       }
       // remove bad peers
@@ -763,6 +763,7 @@ void DHT::ChangeNodeId(Node *n,const xstring& new_node_id)
 {
    LogNote(1,"node_id changed for %s, old_node_id=%s, new_node_id=%s",
       n->GetName(),n->id.hexdump(),new_node_id.hexdump());
+   n->id_change_count++;
 
    // change node_id in the in-flight requests
    for(Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
