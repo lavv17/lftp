@@ -48,6 +48,13 @@ public:
 	 return ((buf[length()-2]&255)<<8)|(buf[length()-1]&255);
       return 0;
    }
+   void set_port(int p) {
+      if(length()==18 || length()==6) {
+	 buf[length()-2]=((p>>8)&255);
+	 buf[length()-1]=(p&255);
+      }
+   }
+   const char *address() const;
    static sockaddr_compact& get_tmp() {
       return *(sockaddr_compact*)&xstring::get_tmp("",0);
    }
@@ -102,6 +109,11 @@ union sockaddr_u
    const sockaddr_compact& compact() const;
    sockaddr_compact& compact_addr() const;
 };
+
+inline const char *sockaddr_compact::address() const
+{
+   return sockaddr_u(*this).address();
+}
 
 class Networker
 {
