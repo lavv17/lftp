@@ -47,20 +47,30 @@ int IOBufferSSL::Do()
 
 int IOBufferSSL::Get_LL(int size)
 {
-   int res=ssl->read(GetSpace(size),size);
-   if(res<0)
-   {
-      if(res==ssl->RETRY) {
-	 SetNotReady(ssl->fd,want_mask());
-	 return 0;
-      } else { // error
-	 SetError(ssl->error,ssl->fatal);
-	 return -1;
+   int total=0;
+   int max_read=0;
+   char *space=GetSpace(size);
+   while(total<size-max_read) {
+      int res=ssl->read(space+total,size-total);
+      if(res<0)
+      {
+	 if(res==ssl->RETRY) {
+	    SetNotReady(ssl->fd,want_mask());
+	    break;
+	 } else { // error
+	    SetError(ssl->error,ssl->fatal);
+	    break;
+	 }
       }
+      if(res==0) {
+	 eof=true;
+	 break;
+      }
+      total+=res;
+      if(max_read<res)
+	 max_read=res;
    }
-   if(res==0)
-      eof=true;
-   return res;
+   return total;
 }
 
 int IOBufferSSL::Put_LL(const char *buf,int size)

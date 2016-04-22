@@ -1,5 +1,6 @@
 Version 4.7.2 - 2016-04-??
 
+* ssl: improved ssl performance for small read sizes.
 * http: new settings http:use-range and hftp:use-range.
 * new setting xfer:timeout.
 * torrent: fixed our external IP voting.
