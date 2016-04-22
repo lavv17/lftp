@@ -302,3 +302,5 @@ glthread
 stddef.h
 /memcasecmp.c
 /memcasecmp.h
+/hard-locale.c
+/hard-locale.h
