@@ -1661,6 +1661,10 @@ void FDCache::Close(const char *name)
       if(f.last_used!=0) {
 	 if(f.fd!=-1) {
 	    ProtoLog::LogNote(9,"closing %s",name);
+#ifdef HAVE_POSIX_FADVISE
+	    if(i==O_RDONLY) // avoid filling up the cache
+	       posix_fadvise(f.fd,0,0,POSIX_FADV_DONTNEED);
+#endif
 	    close(f.fd);
 	 }
 	 cache[i].remove(n);
