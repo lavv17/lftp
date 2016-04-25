@@ -774,6 +774,9 @@ bool temporary_network_error(int err)
 #ifdef ECONNABORTED
    case(ECONNABORTED):
 #endif
+#ifdef EADDRNOTAVAIL
+   case(EADDRNOTAVAIL):
+#endif
       return true;
    }
    return false;
