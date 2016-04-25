@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 2012-2014 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2012-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +97,16 @@ int DHT::Do()
 	    if(n) {
 	       n->LostPing();
 	       LogNote(4,"DHT node %s has lost %d packets",n->GetName(),n->ping_lost_count);
+	       if(n->IsBad()) {
+		  LogNote(9,"removing bad node %s",n->GetName());
+		  RemoveNode(n);
+	       } else if(n->ping_lost_count>=2 && n->in_routes) {
+		  int i=FindRoute(n->id);
+		  if(i>=0 && routes[i]->nodes.count()>K) {
+		     LogNote(9,"replacing node %s",n->GetName());
+		     RemoveNode(n);
+		  }
+	       }
 	    }
 	 }
       }
@@ -174,9 +184,11 @@ int DHT::Do()
 	    int bytes=routes[i]->prefix_bits/8;
 	    int bits=routes[i]->prefix_bits%8;
 	    xstring random_id(routes[i]->prefix.get(),bytes+(bits>0));
-	    unsigned mask=(1<<(8-bits))-1;
-	    if(bits>0)
+	    if(bits>0) {
+	       unsigned mask=(1<<(8-bits))-1;
+	       assert(!(random_id[bytes]&mask));
 	       random_id.get_non_const()[bytes]|=(random()/13)&mask;
+	    }
 	    while(random_id.length()<20)
 	       random_id.append(char(random()/13));
 	    StartSearch(new Search(random_id));
@@ -378,11 +390,6 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
    LogRecv(4,xstring::format("received DHT %s from %s %s",MessageType(p),
       src.to_string(),p->Format1()));
    int pkt_len=p->str.length();
-   if(rate_limit.BytesAllowedToGet()<pkt_len) {
-      LogError(9,"dropping incoming message (rate limit exceeded)");
-      return;
-   }
-   rate_limit.BytesGot(pkt_len);
    const xstring& t=p->lookup_str("t");
    if(!t)
       return;
@@ -390,6 +397,11 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
    if(!y)
       return;
    if(y.eq("q")) {
+      if(rate_limit.BytesAllowedToGet()<pkt_len) {
+	 LogError(9,"dropping incoming message (rate limit exceeded)");
+	 return;
+      }
+      rate_limit.BytesGot(pkt_len);
       const xstring& q=p->lookup_str("q");
       if(!q)
 	 return;
@@ -700,6 +712,8 @@ void DHT::StartSearch(Search *s)
    if(n.count()==0) {
       LogError(2,"no good nodes found in the routing table");
       FindNodes(s->target_id,n,K,false);
+      if(n.count()==0)
+	 LogError(1,"no stale nodes found in the routing table");
    }
    for(int i=0; i<n.count(); i++)
       s->ContinueOn(this,n[i]);
@@ -791,12 +805,12 @@ void DHT::AddNode(Node *n)
    if(nodes.count()==1 && search.count()==0)
       Bootstrap();
 }
-int DHT::FindRoute(const xstring& id,int i)
+int DHT::FindRoute(const xstring& id,int i,int skew)
 {
    // routes are ordered by prefix length decreasing
    // the first route bucket always matches our node_id
    for( ; i<routes.count(); i++) {
-      if(routes[i]->PrefixMatch(id)) {
+      if(routes[i]->PrefixMatch(id,skew)) {
 	 return i;
       }
    }
@@ -867,7 +881,7 @@ try_again:
    }
 
    if(nodes.count()>=K && i==0 && r->prefix_bits<160) {
-      // split the bucket
+      LogNote(9,"splitting route bucket 0, nodes=%d",nodes.count());
       int bits=r->prefix_bits;
       size_t byte=bits/8;
       unsigned mask = 1<<(7-bits%8);
@@ -875,10 +889,11 @@ try_again:
 	 r->prefix.append('\0');
       xstring p1(r->prefix.copy());
       xstring p2(r->prefix.copy());
-      p1.get_non_const()[byte]&=~mask;
-      p2.get_non_const()[byte]|=mask;
+      // new bit in p1 is already cleared.
+      p2.get_non_const()[byte]|=mask; // set new bit in p2
       RouteBucket *b1=new RouteBucket(bits+1,p1);
       RouteBucket *b2=new RouteBucket(bits+1,p2);
+      // distribute the nodes between two buckets
       for(int j=0; j<nodes.count(); j++) {
 	 if(nodes[j]->id[byte]&mask)
 	    b2->nodes.append(nodes[j]);
@@ -894,9 +909,8 @@ try_again:
 	 routes.insert(b2,1);
 	 i=(n->id[byte]&mask)?1:0;
       }
-      LogNote(9,"splitted route bucket 0");
-      LogNote(9,"new route[0] prefix=%s",routes[0]->to_string());
-      LogNote(9,"new route[1] prefix=%s",routes[1]->to_string());
+      LogNote(9,"new route[0] prefix=%s nodes=%d",routes[0]->to_string(),routes[0]->nodes.count());
+      LogNote(9,"new route[1] prefix=%s nodes=%d",routes[1]->to_string(),routes[1]->nodes.count());
       assert(routes[0]->PrefixMatch(node_id));
       goto try_again;
    }
@@ -942,8 +956,12 @@ void DHT::RouteBucket::RemoveNode(int i)
    nodes[i]->in_routes=false;
    nodes.remove(i);
 }
-bool DHT::RouteBucket::PrefixMatch(const xstring& id) const
+bool DHT::RouteBucket::PrefixMatch(const xstring& id,int skew) const
 {
+   assert(skew>=0);
+   int prefix_bits=this->prefix_bits-skew;
+   if(prefix_bits<=0)
+      return true;
    int bytes=prefix_bits/8;
    int bits=prefix_bits%8;
    unsigned mask=~((1<<(8-bits))-1);
@@ -966,20 +984,18 @@ const char *DHT::RouteBucket::to_string() const
 void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool only_good)
 {
    a.truncate();
-   int i=0;
-   while(a.count()<max_count && i<routes.count()) {
-      i=FindRoute(target_id,i);
-      if(i==-1)
-	 return;
+   for(int skew=0; skew<160; skew++) {
+      int i=FindRoute(target_id,0,skew);
+      if(i<0)
+	 continue;
       const xarray<Node*> &nodes=routes[i]->nodes;
-      int limit=max_count-a.count();
-      for(int j=0; j<nodes.count() && limit>0; j++) {
+      for(int j=0; j<nodes.count(); j++) {
 	 if(!nodes[j]->IsBad() && (!only_good || nodes[j]->IsGood())) {
 	    a.append(nodes[j]);
-	    limit--;
+	    if(a.count()>=max_count)
+	       return;
 	 }
       }
-      i++;
    }
 }
 void DHT::AddPeer(const xstring& info_hash,const sockaddr_compact& a,bool seed)

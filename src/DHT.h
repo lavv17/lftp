@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2012-2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
 
       bool IsFresh() const { return !fresh_timer.Stopped(); }
       void SetFresh() { fresh_timer.Reset(); }
-      bool PrefixMatch(const xstring& i) const;
+      bool PrefixMatch(const xstring& i,int skew=0) const;
       void RemoveNode(Node *n);
       void RemoveNode(int i);
 
@@ -175,7 +175,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    void AddRoute(Node *);
    void RemoveRoute(Node *n);
    Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s=0);
-   int FindRoute(const xstring& i,int start=0);
+   int FindRoute(const xstring& i,int start=0,int skew=0);
    void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good);
    void StartSearch(Search *s);
    void RestartSearch(Search *s);
