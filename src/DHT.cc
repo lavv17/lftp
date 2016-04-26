@@ -179,7 +179,7 @@ int DHT::Do()
    if(refresh_timer.Stopped()) {
       for(int i=0; i<routes.count(); i++) {
 	 if(!routes[i]->IsFresh()) {
-	    LogNote(9,"refreshing route bucket %d",i);
+	    LogNote(9,"refreshing route bucket %d (prefix=%s)",i,routes[i]->to_string());
 	    // make random id in the range
 	    int bytes=routes[i]->prefix_bits/8;
 	    int bits=routes[i]->prefix_bits%8;
@@ -918,7 +918,7 @@ try_again:
       int q_num=PingQuestionable(nodes,nodes.count()-K+1);
       // check if we have already candidates for the questionable nodes
       if(nodes.count()>=K+q_num) {
-	 LogNote(9,"skipping node %s (too many in route bucket %d)",n->GetName(),i);
+	 LogNote(9,"skipping node %s, route bucket %d (prefix=%s) has %d nodes",n->GetName(),i,r->to_string(),nodes.count());
 	 return;
       }
    }
@@ -1084,6 +1084,7 @@ void DHT::Restart()
 }
 void DHT::Save(const SMTaskRef<IOBuffer>& buf)
 {
+   Enter(this);
    xmap_p<BeNode> state;
    state.add("id",new BeNode(node_id));
    int count=0;
@@ -1106,6 +1107,7 @@ void DHT::Save(const SMTaskRef<IOBuffer>& buf)
       LogNote(9,"route bucket %d: nodes count=%d prefix=%s",i,
 	 (int)r->nodes.count(),r->to_string());
    }
+   Leave();
 }
 void DHT::Load(const SMTaskRef<IOBuffer>& buf)
 {
