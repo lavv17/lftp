@@ -220,7 +220,7 @@ int DHT::Do()
       m=MOVED;
    }
 
-   if(send_queue.count()>0 && MaySendMessage()) {
+   while(send_queue.count()>0 && MaySendMessage()) {
       SendMessage(send_queue.next().borrow());
       m=MOVED;
    }
