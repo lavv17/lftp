@@ -37,6 +37,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       xstring token;
       xstring my_token;
       xstring my_last_token;
+      xstring origin_id;
       sockaddr_u addr;
 
       Timer good_timer; // 15 minutes, questionable when expired
@@ -46,23 +47,24 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       bool in_routes; // belongs to the routing table;
       int ping_lost_count;
       int id_change_count;
+      int bad_node_count;
 
       bool IsGood() const { return !good_timer.Stopped(); }
       void SetGood() { good_timer.Reset(); }
       bool IsBad() const { return (!IsGood() && ping_lost_count>=2) || id_change_count>=2; }
       void LostPing() { ping_lost_count++; }
       void ResetLostPing() { ping_lost_count=0; }
+      void SetOrigin(const Node *o) { origin_id.set(o->id); }
 
       const char *GetName() const { return addr.to_string(); }
 
       Node(const xstring& i,const sockaddr_u& a)
 	 : id(i.copy()), addr(a), good_timer(15*60), token_timer(5*60),
 	   ping_timer(30), responded(false), in_routes(false),
-	   ping_lost_count(0), id_change_count(0)
+	   ping_lost_count(0), id_change_count(0), bad_node_count(0)
       {
-	 good_timer.AddRandom(5);
+	 good_timer.Stop();
 	 ping_timer.Stop();
-	 ping_timer.AddRandom(5);
       }
 
       const xstring& GetToken();
@@ -180,6 +182,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    void StartSearch(Search *s);
    void RestartSearch(Search *s);
    void AddPeer(const xstring& ih,const sockaddr_compact& ca,bool seed);
+   Node *GetOrigin(const Node *n);
 
    unsigned t; // transaction id
 

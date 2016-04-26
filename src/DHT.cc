@@ -563,7 +563,9 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 }
       }
 
-      FoundNode(id,src,true);
+      Node *node=FoundNode(id,src,true);
+      if(!node)
+	 return;
       if(q.eq("get_peers")) {
 	 const xstring& info_hash=req->GetSearchTarget();
 	 Torrent *torrent=Torrent::FindTorrent(info_hash);
@@ -626,7 +628,9 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	       a.set_compact(data+20,6);
 	       data+=26;
 	       len-=26;
-	       FoundNode(id,a,false,s);
+	       Node *new_node=FoundNode(id,a,false,s);
+	       if(new_node)
+		  new_node->SetOrigin(node);
 	    }
 	 }
 #if INET6
@@ -641,7 +645,9 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	       a.set_compact(data+20,18);
 	       data+=38;
 	       len-=38;
-	       FoundNode(id,a,false,s);
+	       Node *new_node=FoundNode(id,a,false,s);
+	       if(new_node)
+		  new_node->SetOrigin(node);
 	    }
 	 }
 #endif //INET6
@@ -730,6 +736,15 @@ void DHT::RestartSearch(Search *s)
       s->ContinueOn(this,n[i]);
 }
 
+DHT::Node *DHT::GetOrigin(const Node *n) {
+   if(!n->origin_id)
+      return 0;
+   Node *origin=nodes.lookup(n->origin_id);
+   if(!origin || origin==n)
+      return 0;
+   return origin;
+}
+
 DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s)
 {
    if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast()) {
@@ -761,6 +776,9 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,S
    if(responded) {
       n->responded=true;
       n->ResetLostPing();
+      Node *origin=GetOrigin(n);
+      if(origin)
+	 origin->bad_node_count/=2;
    }
    if(n->responded)
       n->SetGood();
@@ -773,6 +791,10 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,S
 }
 void DHT::RemoveNode(Node *n)
 {
+   Node *origin=GetOrigin(n);
+   if(origin && !n->responded && n->ping_lost_count>1) {
+      origin->bad_node_count++;
+   }
    RemoveRoute(n);
    node_by_addr.remove(n->addr.compact());
    nodes.remove(n->id);
