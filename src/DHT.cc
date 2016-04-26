@@ -411,6 +411,11 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       const xstring& id=a->lookup_str("id");
       if(id.length()!=20)
 	 return;
+      if(id.eq(node_id)) {
+	 LogError(9,"duplicate node_id from %s",src.to_string());
+	 black_list.Add(src,"1d");
+	 return;
+      }
       Node *node=FoundNode(id,src,false);
       if(!node)
 	 return;
@@ -548,7 +553,9 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       if(ip && !ValidNodeId(node_id,ip)) {
 	 const xstring &src_ip=xstring::get_tmp(src.address());
 	 if(src_ip.eq(ip.address())) {
-	    LogError(2,"%s incorrectly reported our IP as %s (ignored)",src.to_string(),ip.address());
+	    LogError(2,"%s incorrectly reported our IP as %s",src.to_string(),ip.address());
+	    black_list.Add(src,"1d");
+	    return;
 	 } else if(!ip_voted.lookup(src_ip)) {
 	    ip_voted.add(src_ip,true);
 	    unsigned& votes=ip_votes.lookup_Lv(ip);
@@ -752,18 +759,27 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,S
       return 0;
    }
 
-   if(a.family()!=af) {
-      assert(!responded); // we should not get replies from different AF
-      const SMTaskRef<DHT>& d=Torrent::GetDHT(a);
-      d->Enter();
-      d->FoundNode(id,a,false);
-      d->Leave();
+   if(a.family()!=af)
+      return 0;
+
+   if(black_list.Listed(a)) {
+      LogNote(9,"node %s is blacklisted",a.to_string());
       return 0;
    }
+
    Node *n=nodes.lookup(id);
    if(!n) {
       n=node_by_addr.lookup(a.compact());
       if(n) {
+	 if(!responded) {
+	    // change node id only by a message from the node.
+	    return 0;
+	 }
+	 if(n->id_change_count>0) {
+	    LogError(9,"%s changes node id again",n->addr.to_string());
+	    BlackListNode(n,"1d");
+	    return 0;
+	 }
 	 ChangeNodeId(n,id);
       } else {
 	 n=new Node(id,a);
@@ -794,6 +810,8 @@ void DHT::RemoveNode(Node *n)
    Node *origin=GetOrigin(n);
    if(origin && !n->responded && n->ping_lost_count>1) {
       origin->bad_node_count++;
+      if(origin->bad_node_count>2*K)
+	 BlackListNode(origin,"1h");
    }
    RemoveRoute(n);
    node_by_addr.remove(n->addr.compact());
@@ -817,6 +835,20 @@ void DHT::ChangeNodeId(Node *n,const xstring& new_node_id)
    nodes.add(n->id,n);
    AddRoute(n);
 }
+void DHT::BlackListNode(Node *n,const char *timeout)
+{
+   black_list.Add(n->addr,timeout);
+   for(int i=0; i<send_queue.count(); i++) {
+      if(send_queue[i]->node_id.eq(n->id))
+	 send_queue.remove(i);
+   }
+   for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
+      if(r->GetNodeId().eq(n->id))
+	 sent_req.remove(sent_req.each_key());
+   }
+   RemoveNode(n);
+}
+
 void DHT::AddNode(Node *n)
 {
    assert(n->id.length()==20);
@@ -1162,12 +1194,6 @@ void DHT::Load(const SMTaskRef<IOBuffer>& buf)
       data+=node_len;
       len-=node_len;
       FoundNode(id,a,false);
-      // loaded node is not good by default (learned long ago).
-      Node *n=DHT::nodes.lookup(id);
-      if(n) {
-	 n->good_timer.Stop();
-	 n->ping_timer.Stop();
-      }
    }
    // refresh routes after loading
    for(int i=0; i<routes.count(); i++)
@@ -1198,4 +1224,25 @@ void DHT::Load()
 void DHT::Reconfig(const char *name)
 {
    rate_limit.Reconfig(name,"DHT");
+}
+
+bool DHT::BlackList::Listed(const sockaddr_u& addr)
+{
+   const xstring &key=addr.to_xstring();
+   Timer *e=bl.lookup(key);
+   if(!e)
+      return false;
+   if(e->Stopped()) {
+      Log::global->Format(4,"---- black-delisting node %s\n",key.get());
+      bl.remove(key);
+      return false;
+   }
+   return true;
+}
+void DHT::BlackList::Add(const sockaddr_u &a,const char *t)
+{
+   if(Listed(a))
+      return;
+   Log::global->Format(4,"---- black-listing node %s (%s)\n",a.to_string(),t);
+   bl.add(a.to_xstring(),new Timer(TimeIntervalR(t)));
 }

@@ -144,9 +144,17 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       xarray_p<Peer> peers;
       void AddPeer(Peer *);
    };
+   class BlackList
+   {
+      xmap_p<Timer> bl;
+   public:
+      bool Listed(const sockaddr_u &a);
+      void Add(const sockaddr_u &a,const char *t="1h");
+   };
 
    int af;
 
+   BlackList black_list;
    RateLimit rate_limit;
    RefQueue<Request> send_queue;
    xmap_p<Request> sent_req; // the key is "t"
@@ -174,6 +182,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    void AddNode(Node *);
    void RemoveNode(Node *);
    void ChangeNodeId(Node *n,const xstring& new_node_id);
+   void BlackListNode(Node *n,const char *timeout);
    void AddRoute(Node *);
    void RemoveRoute(Node *n);
    Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s=0);
