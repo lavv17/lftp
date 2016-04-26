@@ -828,7 +828,7 @@ void DHT::AddNode(Node *n)
 
    AddRoute(n);
 
-   if(nodes.count()==1 && search.count()==0)
+   if(nodes.count()==1 && search.count()==0 && !state_io)
       Bootstrap();
 }
 int DHT::FindRoute(const xstring& id,int i,int skew)
