@@ -268,7 +268,7 @@ Torrent::Torrent(const char *mf,const char *c,const char *od)
    Reconfig(0);
 
    if(!my_peer_id) {
-      my_peer_id.set("-lftp46-");
+      my_peer_id.set("-lftp47-");
       my_peer_id.appendf("%04x",(unsigned)getpid() & 0xffff);
       my_peer_id.appendf("%08x",(unsigned)now.UnixTime());
       assert(my_peer_id.length()==PEER_ID_LEN);
@@ -310,12 +310,14 @@ void Torrent::Shutdown()
 {
    if(shutting_down)
       return;
+   Enter(this);
    LogNote(3,"Shutting down...");
    shutting_down=true;
    shutting_down_timer.Reset();
    ShutdownTrackers();
    DenounceDHT();
    PrepareToDie();
+   Leave();
 }
 
 void Torrent::AddTorrent(Torrent *t)
@@ -1745,8 +1747,12 @@ int FDCache::OpenFile(const char *file,int m,off_t size)
    if(ci==O_RDWR) {
       struct stat st;
       // check if it is newly created file, then allocate space
-      if(fstat(fd,&st)!=-1 && st.st_size==0)
-	 posix_fallocate(fd,0,size);
+      if(fstat(fd,&st)!=-1 && st.st_size==0) {
+	 if(posix_fallocate(fd,0,size)==-1) {
+	    ProtoLog::LogError(9,"space allocation for %s (%lld bytes) failed: %s",
+	       file,(long long)size,strerror(errno));
+	 }
+      }
    }
 #endif//HAVE_POSIX_FALLOCATE
 #ifdef HAVE_POSIX_FADVISE
@@ -3883,6 +3889,8 @@ int TorrentListener::Do()
 bool TorrentListener::MaySendUDP()
 {
    // limit udp rate
+   if(last_sent_udp_count>=10 && now==last_sent_udp)
+      UpdateNow();
    TimeDiff time_passed(now,last_sent_udp);
    if(time_passed.MilliSeconds()<1) {
       if(last_sent_udp_count>=10) {
