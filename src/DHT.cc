@@ -674,6 +674,7 @@ bool DHT::Search::IsFeasible(const xstring &id) const
    }
    return false;
 }
+
 void DHT::Search::ContinueOn(DHT *d,const Node *n)
 {
    if(searched.exists(n->id)) {
@@ -704,28 +705,31 @@ void DHT::Search::ContinueOn(DHT *d,const Node *n)
    searched.add(n->id,true);
    search_timer.Reset();
 }
+
 void DHT::StartSearch(Search *s)
 {
    LogNote(9,"starting search for %s",s->target_id.hexdump());
    xarray<Node*> n;
    FindNodes(s->target_id,n,K,true);
-   if(n.count()==0) {
-      LogError(2,"no good nodes found in the routing table");
+   if(n.count()<=K/2) {
+      LogNote(2,"too few good nodes found in the routing table");
       FindNodes(s->target_id,n,K,false);
       if(n.count()==0)
-	 LogError(1,"no stale nodes found in the routing table");
+	 LogError(1,"no nodes found in the routing table");
    }
    for(int i=0; i<n.count(); i++)
       s->ContinueOn(this,n[i]);
    search.add(s->target_id,s);
 }
+
 void DHT::RestartSearch(Search *s)
 {
    xarray<Node*> n;
-   FindNodes(s->target_id,n,K,true);
+   FindNodes(s->target_id,n,K,true,&s->searched);
    for(int i=0; i<n.count(); i++)
       s->ContinueOn(this,n[i]);
 }
+
 DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s)
 {
    if(a.port()==0 || a.is_private() || a.is_reserved() || a.is_multicast()) {
@@ -981,7 +985,7 @@ const char *DHT::RouteBucket::to_string() const
    return buf;
 }
 
-void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool only_good)
+void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool only_good,const xmap<bool> *exclude)
 {
    a.truncate();
    for(int skew=0; skew<160; skew++) {
@@ -990,7 +994,9 @@ void DHT::FindNodes(const xstring& target_id,xarray<Node*> &a,int max_count,bool
 	 continue;
       const xarray<Node*> &nodes=routes[i]->nodes;
       for(int j=0; j<nodes.count(); j++) {
-	 if(!nodes[j]->IsBad() && (!only_good || nodes[j]->IsGood())) {
+	 if(!nodes[j]->IsBad() && (!only_good || nodes[j]->IsGood())
+	 && nodes[j]->ping_lost_count<2 && a.search(nodes[j])==-1
+	 && (!exclude || !exclude->exists(nodes[j]->id))) {
 	    a.append(nodes[j]);
 	    if(a.count()>=max_count)
 	       return;

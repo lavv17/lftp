@@ -176,7 +176,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    void RemoveRoute(Node *n);
    Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s=0);
    int FindRoute(const xstring& i,int start=0,int skew=0);
-   void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good);
+   void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good,const xmap<bool> *exclude=0);
    void StartSearch(Search *s);
    void RestartSearch(Search *s);
    void AddPeer(const xstring& ih,const sockaddr_compact& ca,bool seed);
