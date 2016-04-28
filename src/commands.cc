@@ -2307,9 +2307,7 @@ CMD(set)
    }
    args->back();
    const char *ac=args->getnext();
-   char *a=alloca_strdup(ac);
-
-   if(a==0)
+   if(ac==0)
    {
       xstring_ca s(ResMgr::Format(with_defaults,only_defaults));
       OutputJob *out=new OutputJob(output.borrow(), args->a0());
@@ -2317,6 +2315,7 @@ CMD(set)
       return j;
    }
 
+   char *a=alloca_strdup(ac);
    char *sl=strchr(a,'/');
    char *closure=0;
    if(sl)
