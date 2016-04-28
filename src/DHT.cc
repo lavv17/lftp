@@ -396,7 +396,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
    const xstring& y=p->lookup_str("y");
    if(!y)
       return;
-   if(y.eq("q")) {
+   if(y.eq("q")) { // query
       if(rate_limit.BytesAllowedToGet()<pkt_len) {
 	 LogError(9,"dropping incoming message (rate limit exceeded)");
 	 return;
@@ -411,11 +411,6 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
       const xstring& id=a->lookup_str("id");
       if(id.length()!=20)
 	 return;
-      if(id.eq(node_id)) {
-	 LogError(9,"duplicate node_id from %s",src.to_string());
-	 black_list.Add(src,"1d");
-	 return;
-      }
       Node *node=FoundNode(id,src,false);
       if(!node)
 	 return;
@@ -541,12 +536,16 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
    }
 
    const xstring& q=req->data->lookup_str("q");
-   if(y.eq("r")) {
+   if(y.eq("r")) { // reply
       BeNode *r=p->lookup("r",BeNode::BE_DICT);
       if(!r)
 	 return;
       const xstring& id=r->lookup_str("id");
       if(id.length()!=20)
+	 return;
+
+      Node *node=FoundNode(id,src,true);
+      if(!node)
 	 return;
 
       const sockaddr_compact& ip=sockaddr_compact::cast(r->lookup_str("ip"));
@@ -570,9 +569,6 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 }
       }
 
-      Node *node=FoundNode(id,src,true);
-      if(!node)
-	 return;
       if(q.eq("get_peers")) {
 	 const xstring& info_hash=req->GetSearchTarget();
 	 Torrent *torrent=Torrent::FindTorrent(info_hash);
@@ -659,7 +655,7 @@ void DHT::HandlePacket(BeNode *p,const sockaddr_u& src)
 	 }
 #endif //INET6
       }
-   } else if(y.eq("e")) {
+   } else if(y.eq("e")) { // error
       int code=0;
       const char *msg="unknown";
       BeNode *e=p->lookup("e",BeNode::BE_LIST);
@@ -761,6 +757,11 @@ DHT::Node *DHT::FoundNode(const xstring& id,const sockaddr_u& a,bool responded,S
 
    if(a.family()!=af)
       return 0;
+
+   if(id.eq(node_id)) {
+      LogNote(9,"node %s has our own id",a.to_string());
+      return 0;
+   }
 
    if(black_list.Listed(a)) {
       LogNote(9,"node %s is blacklisted",a.to_string());
