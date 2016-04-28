@@ -83,6 +83,12 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       bool PrefixMatch(const xstring& i,int skew=0) const;
       void RemoveNode(Node *n);
       void RemoveNode(int i);
+      bool HasGoodNodes() const {
+	 for(int i=0; i<nodes.count(); i++)
+	    if(nodes[i]->IsGood())
+	       return true;
+	 return false;
+      }
 
       RouteBucket(int pb,const xstring& p)
 	 : prefix_bits(pb), prefix(p.copy()), fresh_timer(15*60)
@@ -185,6 +191,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
    void BlackListNode(Node *n,const char *timeout);
    void AddRoute(Node *);
    void RemoveRoute(Node *n);
+   bool SplitRoute0();
    Node *FoundNode(const xstring& id,const sockaddr_u& a,bool responded,Search *s=0);
    int FindRoute(const xstring& i,int start=0,int skew=0);
    void FindNodes(const xstring& i,xarray<Node*> &a,int max_count,bool only_good,const xmap<bool> *exclude=0);

@@ -884,13 +884,13 @@ void DHT::RemoveRoute(Node *n)
 }
 void DHT::AddRoute(Node *n)
 {
+try_again:
    int i=FindRoute(n->id);
    if(i==-1) {
       assert(routes.count()==0);
       routes.append(new RouteBucket(0,xstring::null));
       i=0;
    }
-try_again:
    const Ref<RouteBucket>& r=routes[i];
    xarray<Node*> &nodes=r->nodes;
    // check if the node is already in the bucket
@@ -939,45 +939,17 @@ try_again:
       }
    }
 
-   if(nodes.count()>=K && i==0 && r->prefix_bits<160) {
-      LogNote(9,"splitting route bucket 0, nodes=%d",nodes.count());
-      int bits=r->prefix_bits;
-      size_t byte=bits/8;
-      unsigned mask = 1<<(7-bits%8);
-      if(r->prefix.length()<=byte)
-	 r->prefix.append('\0');
-      xstring p1(r->prefix.copy());
-      xstring p2(r->prefix.copy());
-      // new bit in p1 is already cleared.
-      p2.get_non_const()[byte]|=mask; // set new bit in p2
-      RouteBucket *b1=new RouteBucket(bits+1,p1);
-      RouteBucket *b2=new RouteBucket(bits+1,p2);
-      // distribute the nodes between two buckets
-      for(int j=0; j<nodes.count(); j++) {
-	 if(nodes[j]->id[byte]&mask)
-	    b2->nodes.append(nodes[j]);
-	 else
-	    b1->nodes.append(nodes[j]);
-      }
-      if(node_id[byte]&mask) {
-	 routes[0]=b2;
-	 routes.insert(b1,1);
-	 i=(n->id[byte]&mask)?0:1;
-      } else {
-	 routes[0]=b1;
-	 routes.insert(b2,1);
-	 i=(n->id[byte]&mask)?1:0;
-      }
-      LogNote(9,"new route[0] prefix=%s nodes=%d",routes[0]->to_string(),routes[0]->nodes.count());
-      LogNote(9,"new route[1] prefix=%s nodes=%d",routes[1]->to_string(),routes[1]->nodes.count());
-      assert(routes[0]->PrefixMatch(node_id));
+   if(state_io && i==0 && nodes.count()>=K && SplitRoute0())
       goto try_again;
-   }
+
    if(nodes.count()>=K) {
       int q_num=PingQuestionable(nodes,nodes.count()-K+1);
       // check if we have already candidates for the questionable nodes
       if(nodes.count()>=K+q_num) {
-	 LogNote(9,"skipping node %s, route bucket %d (prefix=%s) has %d nodes",n->GetName(),i,r->to_string(),nodes.count());
+	 if(i==0 && SplitRoute0())
+	    goto try_again;
+	 else
+	    LogNote(9,"skipping node %s, route bucket %d (prefix=%s) has %d nodes",n->GetName(),i,r->to_string(),nodes.count());
 	 return;
       }
    }
@@ -985,6 +957,47 @@ try_again:
    LogNote(3,"adding node %s to route bucket %d (prefix=%s)",n->GetName(),i,r->to_string());
    n->in_routes=true;
    nodes.append(n);
+}
+bool DHT::SplitRoute0()
+{
+   const Ref<RouteBucket>& r=routes[0];
+   xarray<Node*> &nodes=r->nodes;
+
+   if(nodes.count()<K || r->prefix_bits>=160)
+      return false;
+   if(routes.count()>1 && !routes[1]->HasGoodNodes() && !state_io)
+      return false;
+
+   LogNote(9,"splitting route bucket 0, nodes=%d",nodes.count());
+   int bits=r->prefix_bits;
+   size_t byte=bits/8;
+   unsigned mask = 1<<(7-bits%8);
+   if(r->prefix.length()<=byte)
+      r->prefix.append('\0');
+   xstring p1(r->prefix.copy());
+   xstring p2(r->prefix.copy());
+   // new bit in p1 is already cleared.
+   p2.get_non_const()[byte]|=mask; // set new bit in p2
+   RouteBucket *b1=new RouteBucket(bits+1,p1);
+   RouteBucket *b2=new RouteBucket(bits+1,p2);
+   // distribute the nodes between two buckets
+   for(int j=0; j<nodes.count(); j++) {
+      if(nodes[j]->id[byte]&mask)
+	 b2->nodes.append(nodes[j]);
+      else
+	 b1->nodes.append(nodes[j]);
+   }
+   if(node_id[byte]&mask) {
+      routes[0]=b2;
+      routes.insert(b1,1);
+   } else {
+      routes[0]=b1;
+      routes.insert(b2,1);
+   }
+   LogNote(9,"new route[0] prefix=%s nodes=%d",routes[0]->to_string(),routes[0]->nodes.count());
+   LogNote(9,"new route[1] prefix=%s nodes=%d",routes[1]->to_string(),routes[1]->nodes.count());
+   assert(routes[0]->PrefixMatch(node_id));
+   return true;
 }
 int DHT::PingQuestionable(const xarray<Node*>& nodes,int limit)
 {
