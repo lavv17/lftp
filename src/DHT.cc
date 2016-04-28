@@ -84,21 +84,12 @@ int DHT::Do()
       for(const Request *r=sent_req.each_begin(); r; r=sent_req.each_next()) {
 	 if(!r->Expired())
 	    continue;
+	 Ref<Request> rr(sent_req.borrow(sent_req.each_key()));
 	 LogError(4,"DHT request %s to %s timed out",r->data->lookup_str("q").get(),r->addr.to_string());
 	 Node *n=nodes.lookup(r->GetNodeId());
 	 if(n) {
 	    n->LostPing();
 	    LogNote(4,"DHT node %s has lost %d packets",n->GetName(),n->ping_lost_count);
-	    if(n->IsBad()) {
-	       LogNote(9,"removing bad node %s",n->GetName());
-	       RemoveNode(n);
-	    } else if(n->ping_lost_count>=2 && n->in_routes) {
-	       int i=FindRoute(n->id);
-	       if(i>=0 && routes[i]->nodes.count()>K) {
-		  LogNote(9,"replacing node %s",n->GetName());
-		  RemoveNode(n);
-	       }
-	    }
 	 }
 	 const xstring& target=r->GetSearchTarget();
 	 if(target) {
@@ -108,7 +99,6 @@ int DHT::Do()
 	    if(s && !s->best_node_id)
 	       RestartSearch(s);
 	 }
-	 sent_req.remove(sent_req.each_key());
       }
       sent_req_expire_scan.Reset();
    }
