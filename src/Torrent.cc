@@ -1360,31 +1360,20 @@ int Torrent::Do()
 	    BeNode *n=nodes->list[i];
 	    if(n->type!=BeNode::BE_LIST || n->list.count()<2)
 	       continue;
-	    BeNode *b_ip=n->list[0];
+	    BeNode *b_host=n->list[0];
 	    BeNode *b_port=n->list[1];
-	    if(b_ip->type!=BeNode::BE_STR || b_port->type!=BeNode::BE_INT)
+	    if(b_host->type!=BeNode::BE_STR || b_port->type!=BeNode::BE_INT)
 	       continue;
-	    sockaddr_u a;
+	    if(b_port->num<=0 || b_port->num>=65535)
+	       continue;
+	    ParsedURL u;
+	    u.host.set(b_host->str);
+	    u.port.set(xstring::format("%u",(unsigned)b_port->num));
+	    xstring_ca node(u.Combine());
+	    dht->AddBootstrapNode(node);
 #if INET6
-	    if(b_ip->str.instr(':')>=0) {
-	       a.sa.sa_family=AF_INET6;
-	       if(inet_pton(AF_INET6,b_ip->str,&a.in6.sin6_addr)<=0)
-		  continue;
-	       if(b_port->num<=0 || b_port->num>=0x10000)
-		  continue;
-	       a.set_port(b_port->num);
-	       dht_ipv6->SendPing(a);
-	    } else
+	    dht_ipv6->AddBootstrapNode(node);
 #endif
-	    {
-	       a.sa.sa_family=AF_INET;
-	       if(!inet_aton(b_ip->str,&a.in.sin_addr))
-		  continue;
-	       if(b_port->num<=0 || b_port->num>=0x10000)
-		  continue;
-	       a.set_port(b_port->num);
-	       dht->SendPing(a);
-	    }
 	 }
       }
 

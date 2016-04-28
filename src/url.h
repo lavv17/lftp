@@ -34,6 +34,7 @@ public:
 
    xstring_c orig_url;
 
+   ParsedURL() {}
    ParsedURL(const char *url,bool proto_required=false,bool use_rfc1738=true);
    void parse(const char *url,bool proto_required=false,bool use_rfc1738=true);
    ~ParsedURL();
