@@ -56,7 +56,7 @@ public:
 
    entry *_each_begin();
    entry *_each_next();
-   const xstring& each_key() const { return last_entry->key; }
+   const xstring& each_key() const { return last_entry ? last_entry->key : xstring::null; }
    bool each_finished() const { return last_entry==0; }
 
    int count() const { return entry_count; }
