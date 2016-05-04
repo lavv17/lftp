@@ -1632,6 +1632,7 @@ void FDCache::Clean()
 	    continue;
 	 }
 	 if(f->last_used+max_time<now.UnixTime()) {
+	    ProtoLog::LogNote(9,"closing %s",cache.each_key().get());
 	    close(f->fd);
 	    cache.remove(cache.each_key());
 	 }
