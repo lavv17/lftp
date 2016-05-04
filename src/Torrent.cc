@@ -1595,14 +1595,16 @@ FDCache::~FDCache()
 void FDCache::Clean()
 {
    for(int i=0; i<3; i++) {
-      for(const FD *f=&cache[i].each_begin(); f->last_used; f=&cache[i].each_next()) {
-	 if(f->fd==-1 && f->last_used+1<now.UnixTime()) {
-	    cache[i].remove(cache[i].each_key());
+      xmap<FD>& cache=this->cache[i];
+      for(const FD *f=&cache.each_begin(); f->last_used; f=&cache.each_next()) {
+	 if(f->fd==-1) {
+	    if(f->last_used+1<now.UnixTime())
+	       cache.remove(cache.each_key());
 	    continue;
 	 }
 	 if(f->last_used+max_time<now.UnixTime()) {
 	    close(f->fd);
-	    cache[i].remove(cache[i].each_key());
+	    cache.remove(cache.each_key());
 	 }
       }
    }
@@ -1632,10 +1634,13 @@ void FDCache::Close(const char *name)
 void FDCache::CloseAll()
 {
    for(int i=0; i<3; i++) {
-      for(const FD *f=&cache[i].each_begin(); f->last_used; f=&cache[i].each_next()) {
-	 if(f->fd!=-1)
+      xmap<FD>& cache=this->cache[i];
+      for(const FD *f=&cache.each_begin(); f->last_used; f=&cache.each_next()) {
+	 if(f->fd!=-1) {
+	    ProtoLog::LogNote(9,"closing %s",cache.each_key().get());
 	    close(f->fd);
-	 cache[i].remove(cache[i].each_key());
+	 }
+	 cache.remove(cache.each_key());
       }
    }
 }
@@ -1646,9 +1651,12 @@ bool FDCache::CloseOne()
    int oldest_time=0;
    const xstring *oldest_key=0;
    for(int i=0; i<3; i++) {
-      for(const FD *f=&cache[i].each_begin(); f!=&cache[i].zero; f=&cache[i].each_next()) {
+      xmap<FD>& cache=this->cache[i];
+      for(const FD *f=&cache.each_begin(); f->last_used; f=&cache.each_next()) {
+	 if(f->fd==-1)
+	    continue;
 	 if(oldest_key==0 || f->last_used<oldest_time) {
-	    oldest_key=&cache[i].each_key();
+	    oldest_key=&cache.each_key();
 	    oldest_time=f->last_used;
 	    oldest_fd=f->fd;
 	    oldest_mode=i;
@@ -1657,8 +1665,10 @@ bool FDCache::CloseOne()
    }
    if(!oldest_key)
       return false;
-   if(oldest_fd!=-1)
+   if(oldest_fd!=-1) {
+      ProtoLog::LogNote(9,"closing %s",oldest_key->get());
       close(oldest_fd);
+   }
    cache[oldest_mode].remove(*oldest_key);
    return true;
 }
@@ -2328,6 +2338,8 @@ void TorrentPeer::SendDataReply()
    Enter(parent);
    const xstring& data=parent->RetrieveBlock(p->index,p->begin,p->req_length);
    Leave(parent);
+   if(!Connected()) // we can be disconnected by parent
+      return;
    if(data.length()!=p->req_length) {
       if(parent->my_bitfield->get_bit(p->index))
 	 parent->SetError(xstring::format("failed to read piece %u",p->index));
