@@ -4,6 +4,8 @@ Version 4.7.2 - 2016-04-??
 * http: new settings http:use-range and hftp:use-range.
 * new setting xfer:timeout.
 * torrent: discard cached data after validating.
+* torrent: fixed a coredump on a file read error.
+* torrent: fixed closing oldest cached FD.
 * torrent/DHT: fixed our external IP voting.
 * torrent/DHT: black-list nodes which change node_id often.
 * torrent/DHT: black-list nodes which report many bad nodes.
