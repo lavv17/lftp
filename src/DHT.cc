@@ -1201,7 +1201,7 @@ void DHT::Load(const SMTaskRef<IOBuffer>& buf)
    }
    // refresh routes after loading
    for(int i=0; i<routes.count(); i++)
-      routes[i]->fresh_timer.StopDelayed(i+3);
+      routes[i]->fresh_timer.StopDelayed(i*15+3);
 }
 void DHT::Save()
 {
