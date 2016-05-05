@@ -339,15 +339,6 @@ void FileAccess::Login(const char *user1,const char *pass1)
    ResetLocationData();
 }
 
-void FileAccess::AnonymousLogin()
-{
-   Close();
-   user.set(0);
-   pass.set(0);
-   pass_open=false;
-   ResetLocationData();
-}
-
 void FileAccess::ResetLocationData()
 {
    cwd.Set(default_cwd,false,0);

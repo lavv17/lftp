@@ -211,8 +211,8 @@ public:
    void Connect(const char *h,const char *p);
    void ConnectVerify();
    void PathVerify(const Path &);
-   virtual void AnonymousLogin();
    virtual void Login(const char *u,const char *p);
+   void AnonymousLogin() { Login(0,0); }
 
    // reset location-related state on Connect/Login/AnonymousLogin
    virtual void ResetLocationData();
