@@ -37,9 +37,9 @@ public:
    ArgV(int new_c,const char * const *new_v) : StringSet(new_v,new_c) { ind=0; }
    ~ArgV();
 
-   void Append(const char *s) { StringSet::Append(s); }
-   void Append(int a) { char buf[32]; sprintf(buf,"%d",a); Append(buf); }
-   void Add(const char *a) { Append(a); } // alias
+   ArgV& Append(const char *s) { StringSet::Append(s); return *this; }
+   ArgV& Append(int a) { char buf[32]; sprintf(buf,"%d",a); return Append(buf); }
+   ArgV& Add(const char *a) { return Append(a); } // alias
 
    char *Combine(int start_index=0,int end_index=0) const;
 
