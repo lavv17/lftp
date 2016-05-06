@@ -33,6 +33,7 @@ public:
    int Write(const void *buf,int size);
    int StoreStatus();
    void Reconfig(const char *) {}
+   void Login(const char *,const char *) {}
 
    ListInfo *MakeListInfo(const char *path);
    DirList *MakeDirList(ArgV *);
