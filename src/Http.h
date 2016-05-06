@@ -169,6 +169,9 @@ class Http : public NetAccess
    void NewAuth(const char *hdr,HttpAuth::target_t target,const char *user,const char *pass);
    void SendAuth(HttpAuth::target_t target,const char *user,const char *uri);
 
+   xstring_c auth_user;
+   xstring_c auth_pass;
+
    bool use_propfind_now;
    const char *allprop;
    int allprop_len;

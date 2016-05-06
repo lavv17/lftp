@@ -469,7 +469,7 @@ void Http::SendAuth()
       SendBasicAuth("Authorization",user,pass);
       return;
    }
-   SendAuth(HttpAuth::WWW,user,last_uri);
+   SendAuth(HttpAuth::WWW,user?user:auth_user,last_uri);
 }
 void Http::SendCacheControl()
 {
@@ -1082,22 +1082,10 @@ void Http::HandleHeaderLine(const char *name,const char *value)
    case_hh("WWW-Authenticate",'W') {
       if(status_code!=H_Unauthorized)
 	 return;
-      const char *user=this->user;
-      const char *pass=this->pass;
-      if(!user || !pass) {
-	 // try auth info from http:authorization setting
-	 const char *auth_c=Query("authorization",hostname);
-         if(auth_c && *auth_c) {
-	    char *auth=alloca_strdup(auth_c);
-	    char *colon=strchr(auth,':');
-	    if(colon) {
-	       *colon=0;
-	       user=auth;
-	       pass=colon+1;
-	    }
-	 }
-      }
-      NewAuth(value,HttpAuth::WWW,user,pass);
+      if(user && pass)
+	 NewAuth(value,HttpAuth::WWW,user,pass);
+      else
+	 NewAuth(value,HttpAuth::WWW,auth_user,auth_pass);
       return;
    }
    case_hh("Proxy-Authenticate",'P') {
@@ -2313,6 +2301,20 @@ void Http::Reconfig(const char *name)
    if(!QueryBool("use-allprop",c))
       allprop="";
    allprop_len=strlen(allprop);
+
+   if(!user || !pass) {
+      // get auth info from http:authorization setting
+      const char *auth_c=Query("authorization",hostname);
+      if(auth_c && *auth_c) {
+	 char *auth=alloca_strdup(auth_c);
+	 char *colon=strchr(auth,':');
+	 if(colon) {
+	    *colon=0;
+	    auth_user.set(auth);
+	    auth_pass.set(colon+1);
+	 }
+      }
+   }
 }
 
 bool Http::SameSiteAs(const FileAccess *fa) const
