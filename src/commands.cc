@@ -749,16 +749,33 @@ Job *CmdExec::builtin_lftp()
 {
    int c;
    xstring cmd;
+   xstring rc;
+   ArgV open("open");
+   open.Add("--lftp");
+
+   enum {
+      OPT_USER,
+      OPT_PASSWORD,
+      OPT_ENV_PASSWORD,
+   };
    static struct option lftp_options[]=
    {
       {"help",no_argument,0,'h'},
       {"version",no_argument,0,'v'},
       {"debug",optional_argument,0,'d'},
+      {"rcfile",required_argument,0,'r'},
+      // other options are for "open" command
+      {"port",required_argument,0,'p'},
+      {"user",required_argument,0,OPT_USER},
+      {"password",required_argument,0,OPT_PASSWORD},
+      {"env-password",no_argument,0,OPT_ENV_PASSWORD},
+      {"execute",required_argument,0,'e'},
+      {"no-bookmark",no_argument,0,'B'},
+      {"slot",required_argument,0,'s'},
       {0,0,0,0}
    };
 
-   opterr=false;
-   while((c=args->getopt_long("+f:c:vhd",lftp_options))!=EOF)
+   while((c=args->getopt_long("+f:c:vhdu:p:e:s:B",lftp_options))!=EOF)
    {
       switch(c)
       {
@@ -776,30 +793,73 @@ Job *CmdExec::builtin_lftp()
       case('c'):
 	 cmd.set_allocated(args->CombineCmd(args->getindex()-1));
 	 cmd.append("\n\n");
+	 args->seek(args->count());
 	 break;
       case('d'):
 	 enable_debug(optarg);
 	 break;
+      case('r'):
+	 rc.append("&&source ").append_quoted(optarg);
+	 break;
+
+      // "open" command options are passed along
+      case('s'):
+	 open.Add("-s");
+	 break;
+      case('p'):
+	 open.Add("-p").Add(optarg);
+	 break;
+      case('u'):
+	 open.Add("-u").Add(optarg);
+	 break;
+      case(OPT_USER):
+	 open.Add("--user").Add(optarg);
+	 break;
+      case(OPT_PASSWORD):
+	 open.Add("--password").Add(optarg);
+	 break;
+      case(OPT_ENV_PASSWORD):
+	 open.Add("--env-password");
+	 break;
+      case('e'):
+	 open.Add("-e").Add(optarg);
+	 break;
+      case('B'):
+	 open.Add("-B");
+	 break;
+
+      case('?'):
+	 eprintf(_("Try `%s --help' for more information\n"),args->a0());
+	 return 0;
       }
    }
-   opterr=true;
 
-   if(cmd)
-      PrependCmd(cmd);
+   for(const char *arg=args->getcurr(); arg; arg=args->getnext())
+      open.Add(arg);
 
-   if(Done() && lftp_feeder)  // no feeder and no commands
+   // feeder should be set before PrependCmd
+   if(!cmd && lftp_feeder)  // no feeder and no commands
    {
       SetCmdFeeder(lftp_feeder);
       lftp_feeder=0;
       FeedCmd("||command exit\n");   // if the command fails, quit
    }
 
-   if(!cmd)
-   {
-      /* if no lftp-specific options were found, call open */
-      args->rewind();
-      return builtin_open();
+   // prepended commands are executed in reverse order: rc, cmd, open
+   if(open.count()>2) {
+      if(cmd) {
+	 eprintf(_("%s: -c, -f, -v, -h conflict with other `open' options and arguments\n"),args->a0());
+	 return 0;
+      }
+      xstring_ca open_cmd(open.CombineQuoted());
+      PrependCmd(open_cmd);
    }
+
+   if(cmd)
+      PrependCmd(cmd);
+   if(rc)
+      PrependCmd(rc);
+
    exit_code=0;
    return 0;
 }
@@ -824,7 +884,7 @@ Job *CmdExec::builtin_open()
       OPT_USER,
       OPT_PASSWORD,
       OPT_ENV_PASSWORD,
-      OPT_NORC,
+      OPT_LFTP,
    };
    static struct option open_options[]=
    {
@@ -836,12 +896,11 @@ Job *CmdExec::builtin_open()
       {"debug",optional_argument,0,'d'},
       {"no-bookmark",no_argument,0,'B'},
       {"slot",required_argument,0,'s'},
-      {"help",no_argument,0,'h'},
-      {"norc",no_argument,0,OPT_NORC},
+      {"lftp",no_argument,0,OPT_LFTP},
       {0,0,0,0}
    };
 
-   while((c=args->getopt_long("u:p:e:s:dBh",open_options))!=EOF)
+   while((c=args->getopt_long("u:p:e:s:dB",open_options))!=EOF)
    {
       switch(c)
       {
@@ -884,24 +943,11 @@ Job *CmdExec::builtin_open()
       case('B'):
 	 no_bm=true;
 	 break;
-      case(OPT_NORC):
-	 if(!strcmp(op,"lftp"))
-	    break;
-	 eprintf(_("%s: unrecognized option '%s'\n"),op,"--norc");
-	 goto help;
-      case('h'):
-	 if(!strcmp(op,"lftp"))
-	 {
-	    PrependCmd("help lftp");
-	    return 0;
-	 }
+      case(OPT_LFTP):
+	 op="lftp";
+	 break;
       case('?'):
-      help:
-	 if(!strcmp(op,"lftp"))
-	    eprintf(_("Try `%s --help' for more information\n"),op);
-	 else
-	    eprintf(_("Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"),
-	       op);
+	 eprintf(_("Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"),op);
 	 return 0;
       }
    }
@@ -990,7 +1036,7 @@ Job *CmdExec::builtin_open()
 	    FileAccess *new_session=FileAccess::New(uc.proto,host,port);
 	    if(!new_session)
 	    {
-	       eprintf("%s: %s%s\n",args->a0(),uc.proto.get(),
+	       eprintf("%s: %s%s\n",op,uc.proto.get(),
 			_(" - not supported protocol"));
 	       return 0;
 	    }
@@ -1020,7 +1066,7 @@ Job *CmdExec::builtin_open()
       }
       if(host && host[0] && session->GetHostName()==0)
 	 session->Connect(host,port);
-      if(user)
+      if(user && *session->GetProto())
       {
 	 if(!pass)
 	    pass=GetPass(_("Password: "));
