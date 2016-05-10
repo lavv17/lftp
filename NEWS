@@ -1,8 +1,9 @@
-Version 4.7.2 - 2016-04-??
+Version 4.7.2 - 2016-05-??
 
+* new setting xfer:timeout.
 * ssl: improved ssl performance for small read sizes.
 * http: new settings http:use-range and hftp:use-range.
-* new setting xfer:timeout.
+* http: fixed setting http:authorization.
 * torrent: discard cached data after validating.
 * torrent: fixed a coredump on a file read error.
 * torrent: fixed closing oldest cached FD.
