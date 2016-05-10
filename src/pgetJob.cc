@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <errno.h>
+#include <fcntl.h>
 #include "pgetJob.h"
 #include "url.h"
 #include "misc.h"
@@ -164,6 +165,15 @@ int pgetJob::Do()
       {
 	 SaveStatus();
 	 status_timer.Reset();
+#ifdef HAVE_POSIX_FALLOCATE
+	 // allocate space after creating *.lftp-pget-status file,
+	 // so that the incomplete status is more obvious.
+	 const Ref<FDStream>& local=c->put->GetLocal();
+	 if(posix_fallocate(local->getfd(),0,size)==-1) {
+	    eprintf(_("pget: warning: space allocation for %s (%lld bytes) failed: %s\n"),
+	       local->name.get(),(long long)size,strerror(errno));
+	 }
+#endif//HAVE_POSIX_FALLOCATE
       }
    }
 
@@ -344,7 +354,7 @@ pgetJob::ChunkXfer *pgetJob::NewChunk(const char *remote,off_t start,off_t limit
 {
    const Ref<FDStream>& local=c->put->GetLocal();
    FileCopyPeerFDStream
-	       	*dst_peer=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
+		*dst_peer=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
    dst_peer->NeedSeek(); // seek before writing
    dst_peer->SetBase(0);
 
