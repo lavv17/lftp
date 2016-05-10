@@ -5,6 +5,7 @@ Version 4.7.2 - 2016-05-??
 * pget: allocate all needed disk space at once.
 * http: new settings http:use-range and hftp:use-range.
 * http: fixed setting http:authorization.
+* mirror: changed --Move option to keep source dir if it ends with a slash.
 * torrent: discard cached data after validating.
 * torrent: fixed a coredump on a file read error.
 * torrent: fixed closing oldest cached FD.
