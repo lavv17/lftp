@@ -1215,7 +1215,7 @@ int   MirrorJob::Do()
 	 break;
 
       // all jobs finished.
-      if(remove_source_dirs) {
+      if(remove_source_dirs && source_dir.last_char()!='/') {
 	 // remove source directory once.
 	 remove_source_dirs=false;
 	 if(script)

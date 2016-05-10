@@ -145,6 +145,7 @@ public:
    bool eq_nc(const char *s) const { return !xstrcasecmp(buf,s); }
    size_t length() const { return xstrlen(buf); }
    void set_length(size_t n) { if(buf) buf[n]=0; }
+   char last_char() const { size_t len=length(); return len>0?buf[len-1]:0; }
 
    void unset() { xfree(buf); buf=0; }
    void _set(const char *s) { buf=xstrdup(s); }
