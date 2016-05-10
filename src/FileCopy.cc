@@ -1253,8 +1253,10 @@ int FileCopyPeerFA::Get_LL(int len)
 		  file.set(loc);
 	    }
 
-	    size=NO_SIZE_YET;
-	    date=NO_DATE_YET;
+	    if(want_size || size!=NO_SIZE)
+	       WantSize();
+	    if(want_date || date!=NO_DATE)
+	       WantDate();
 
 	    upload_state.Clear();
 	    current->Timeout(0); // retry with new location.
