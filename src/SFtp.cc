@@ -997,8 +997,10 @@ void SFtp::HandleExpect(Expect *e)
    case Expect::WRITE_STATUS:
       if(reply->TypeIs(SSH_FXP_STATUS))
       {
-	 if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_OK)
+	 if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_OK) {
+	    TrySuccess();
 	    break;
+	 }
       }
       SetError(NO_FILE,reply);
       break;
@@ -1226,7 +1228,6 @@ int SFtp::Write(const void *buf,int size)
    if(size<=0)
       return 0;
    file_buf->Put(static_cast<const char*>(buf),size);
-   TrySuccess();
    rate_limit->BytesPut(size);
    pos+=size;
    real_pos+=size;
