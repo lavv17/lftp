@@ -1026,6 +1026,7 @@ void SFtp::HandleExpect(Expect *e)
 
 void SFtp::RequestMoreData()
 {
+   Enter(this);
    if(mode==RETRIEVE) {
       int req_len=size_read;
       SendRequest(new Request_READ(handle,request_pos,req_len),Expect::DATA);
@@ -1033,6 +1034,7 @@ void SFtp::RequestMoreData()
    } else if(mode==LIST || mode==LONG_LIST) {
       SendRequest(new Request_READDIR(handle),Expect::DATA);
    }
+   Leave(this);
 }
 
 int SFtp::HandleReplies()
