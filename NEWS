@@ -1,5 +1,6 @@
 Version 4.7.2 - 2016-05-??
 
+* ftp: fixed loss of 17th file from MLSD listing.
 * new setting xfer:timeout.
 * ssl: improved ssl performance for small read sizes.
 * pget: allocate all needed disk space at once.

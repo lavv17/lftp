@@ -115,16 +115,15 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
 	       best_err1=&err[i];
 	    if(*best_err2>err[i] && best_err1!=&err[i])
 	       best_err2=&err[i];
-	    if(*best_err2 > (*best_err1+1)*16)
-	    {
-	       i=best_err1-err;
-	       guessed_parser=line_parsers[i];
-	       the_set=&set[i];
-	       the_err=&err[i];
-	       break;
-	    }
 	    if(*best_err1>16)
 	       goto leave; // too many errors with best parser.
+	 }
+	 if(*best_err2 > (*best_err1+1)*16)
+	 {
+	    i=best_err1-err;
+	    guessed_parser=line_parsers[i];
+	    the_set=&set[i];
+	    the_err=&err[i];
 	 }
       }
       else
