@@ -466,6 +466,7 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {".notempty",cmd_notempty,0,0},
    {".true",   cmd_true,   0,0},
    {".false",  cmd_false,  0,0},
+   {".mplist", cmd_ls,	   0,0},
 };
 const int CmdExec::static_cmd_table_length=sizeof(static_cmd_table)/sizeof(static_cmd_table[0]);
 
@@ -1415,6 +1416,8 @@ CMD(ls)
       if(!strcmp(op,"site"))
 	 args->insarg(1,"SITE");
    }
+   else if(!strcmp(op,".mplist"))
+      mode=FA::MP_LIST;
 
    xstring_ca a(args->Combine(nlist?1:0));
 
