@@ -1213,7 +1213,9 @@ int SFtp::Write(const void *buf,int size)
       return(0);
 
    Resume();
+   Enter(this);
    Do();
+   Leave(this);
    if(Error())
       return(error_code);
 
