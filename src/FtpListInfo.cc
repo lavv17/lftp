@@ -809,7 +809,7 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
 	 continue;
       }
    }
-   if(name==0 || !type_known)
+   if(name==0 || !*name || !type_known)
       ERR;
 
    fi=new FileInfo(name);
@@ -834,7 +834,7 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
    return fi;
 }
 
-Ftp::FtpLineParser Ftp::line_parsers[number_of_parsers+1]={
+Ftp::FtpLineParser Ftp::line_parsers[number_of_parsers]={
    ParseFtpLongList_UNIX,
    ParseFtpLongList_NT,
    ParseFtpLongList_EPLF,
@@ -842,5 +842,4 @@ Ftp::FtpLineParser Ftp::line_parsers[number_of_parsers+1]={
    ParseFtpLongList_AS400,
    ParseFtpLongList_OS2,
    ParseFtpLongList_MacWebStar,
-   0
 };
