@@ -1416,8 +1416,10 @@ CMD(ls)
       if(!strcmp(op,"site"))
 	 args->insarg(1,"SITE");
    }
-   else if(!strcmp(op,".mplist"))
+   else if(!strcmp(op,".mplist")) {
+      nlist=true;
       mode=FA::MP_LIST;
+   }
 
    xstring_ca a(args->Combine(nlist?1:0));
 
