@@ -91,6 +91,8 @@ void FileSetOutput::print(FileSet &fs, const JobRef<OutputJob>& o) const
 	 else mode[0] = '-';
 
 	 c.add(mode, "");
+      } else if(have & FileInfo::MODE) {
+	 c.add("           ", "");
       }
 
       if((have & FileInfo::NLINKS) && (mode & NLINKS)) {
