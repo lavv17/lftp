@@ -222,6 +222,7 @@ void Http::MoveConnectionHere(Http *o)
 
 void Http::DisconnectLL()
 {
+   Enter(this);
    rate_limit=0;
    if(conn)
    {
@@ -247,6 +248,7 @@ void Http::DisconnectLL()
    last_url.unset();
    ResetRequestData();
    state=DISCONNECTED;
+   Leave(this);
 }
 
 void Http::ResetRequestData()
@@ -877,6 +879,10 @@ int Http::SendArrayInfoRequest()
 	 name=&xstring::get_tmp(*name);
 	 name->append('/');
       }
+      if(fi->uri)
+	 file_url.set(dir_file(GetConnectURL(),fi->uri));
+      else
+	 file_url.unset();
       SendRequest(array_send==fileset_for_info->count()-1 ? 0 : "keep-alive", *name);
       req_count++;
    }
@@ -1566,6 +1572,14 @@ int Http::Do()
 		     }
 		     goto pre_RECEIVING_BODY;
 		  }
+		  FileInfo *fi=fileset_for_info->curr();
+		  if(H_REDIRECTED(status_code)) {
+		     HandleRedirection();
+		     if(location)
+			fi->SetRedirect(location);
+		  } else if(H_2XX(status_code) && !fi->Has(fi->TYPE)) {
+		     fi->SetType(last_uri.last_char()=='/'?fi->DIRECTORY:fi->NORMAL);
+		  }
 		  ProceedArrayInfo();
 		  return MOVED;
 	       }
@@ -1724,49 +1738,7 @@ int Http::Do()
 
 	 if(H_REDIRECTED(status_code))
 	 {
-	    bool is_url=(location && url::is_url(location));
-	    if(location && !is_url
-	    && mode==QUOTE_CMD && !strncasecmp(file,"POST ",5)
-	    && tunnel_state!=TUNNEL_WAITING)
-	    {
-	       const char *the_file=file;
-
-	       const char *scan=file+5;
-	       while(*scan==' ')
-		  scan++;
-	       char *the_post_file=alloca_strdup(scan);
-	       char *space=strchr(the_post_file,' ');
-	       if(space)
-		  *space=0;
-	       the_file=the_post_file;
-
-	       char *new_location=alloca_strdup2(GetConnectURL(),
-				    strlen(the_file)+strlen(location));
-	       int p_ind=url::path_index(new_location);
-	       if(location[0]=='/')
-		  strcpy(new_location+p_ind,location);
-	       else
-	       {
-		  if(the_file[0]=='/')
-		     strcpy(new_location+p_ind,the_file);
-		  else
-		  {
-		     char *slash=strrchr(new_location,'/');
-		     strcpy(slash+1,the_file);
-		  }
-		  char *slash=strrchr(new_location,'/');
-		  strcpy(slash+1,location);
-	       }
-	       location.set(new_location);
-	    } else if(is_url && !hftp) {
-	       ParsedURL url(location);
-	       if(url.proto.eq(GetProto()) && !xstrcasecmp(url.host,hostname)
-	       && user && !url.user) {
-		  // use the same user name after redirect to the same site.
-		  url.user.set(user);
-		  location.set_allocated(url.Combine());
-	       }
-	    }
+	    HandleRedirection();
 	    err.setf("%s (%s -> %s)",status+status_consumed,file.get(),
 				    location?location.get():"nowhere");
 	    code=FILE_MOVED;
@@ -1915,6 +1887,53 @@ system_error:
    return MOVED;
 }
 
+void Http::HandleRedirection()
+{
+   bool is_url=(location && url::is_url(location));
+   if(location && !is_url
+   && mode==QUOTE_CMD && !strncasecmp(file,"POST ",5)
+   && tunnel_state!=TUNNEL_WAITING)
+   {
+      const char *the_file=file;
+
+      const char *scan=file+5;
+      while(*scan==' ')
+	 scan++;
+      char *the_post_file=alloca_strdup(scan);
+      char *space=strchr(the_post_file,' ');
+      if(space)
+	 *space=0;
+      the_file=the_post_file;
+
+      char *new_location=alloca_strdup2(GetConnectURL(),
+			   strlen(the_file)+strlen(location));
+      int p_ind=url::path_index(new_location);
+      if(location[0]=='/')
+	 strcpy(new_location+p_ind,location);
+      else
+      {
+	 if(the_file[0]=='/')
+	    strcpy(new_location+p_ind,the_file);
+	 else
+	 {
+	    char *slash=strrchr(new_location,'/');
+	    strcpy(slash+1,the_file);
+	 }
+	 char *slash=strrchr(new_location,'/');
+	 strcpy(slash+1,location);
+      }
+      location.set(new_location);
+   } else if(is_url && !hftp) {
+      ParsedURL url(location);
+      if(url.proto.eq(GetProto()) && !xstrcasecmp(url.host,hostname)
+      && user && !url.user) {
+	 // use the same user name after redirect to the same site.
+	 url.user.set(user);
+	 location.set_allocated(url.Combine());
+      }
+   }
+}
+
 FileAccess *Http::New() { return new Http(); }
 FileAccess *HFtp::New() { return new HFtp(); }
 
@@ -1952,6 +1971,7 @@ int Http::Read(Buffer *buf,int size)
    int res=DO_AGAIN;
    if(state==RECEIVING_BODY && real_pos>=0)
    {
+      Enter(this);
       res=_Read(buf,size);
       if(res>0)
       {
@@ -1960,6 +1980,7 @@ int Http::Read(Buffer *buf,int size)
 	    rate_limit->BytesGot(res);
 	 TrySuccess();
       }
+      Leave(this);
    }
    return res;
 }

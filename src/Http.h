@@ -109,6 +109,7 @@ class Http : public NetAccess
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
    static const xstring& extract_quoted_header_value(const char *value,const char **end=0);
+   void HandleRedirection();
    void GetBetterConnection(int level);
    void SetCookie(const char *val);
    void MakeCookie(xstring &cookie,const char *host,const char *path);
