@@ -50,10 +50,16 @@ void  FileInfo::Merge(const FileInfo& f)
 {
    if(strcmp(basename_ptr(name),basename_ptr(f.name)))
       return;
-// int sim=defined&f.defined;
-   int dif=(~defined)&f.defined;
-   if(dif&MODE)
+   MergeInfo(f,~defined);
+}
+void  FileInfo::MergeInfo(const FileInfo& f,unsigned dif)
+{
+   dif&=f.defined;
+   if(dif&MODE) {
       SetMode(f.mode);
+      if(mode!=SYMLINK && mode!=REDIRECT)
+	 symlink.unset();
+   }
    if(dif&DATE || (defined&DATE && f.defined&DATE && f.date.ts_prec<date.ts_prec))
       SetDate(f.date,f.date.ts_prec);
    if(dif&SIZE)
@@ -484,7 +490,7 @@ void FileSet::Count(int *d,int *f,int *s,int *o) const
 	 if(f) (*f)++; break;
       case(FileInfo::SYMLINK):
 	 if(s) (*s)++; break;
-      case(FileInfo::UNKNOWN):
+      default:
 	 if(o) (*o)++;
       }
    }
@@ -720,12 +726,6 @@ FileInfo::FileInfo(const FileInfo &fi)
    nlinks=fi.nlinks;
    longname.set(fi.longname);
 }
-FileInfo::FileInfo(const char *n)
-{
-   Init();
-   SetName(n);
-}
-
 FileInfo::~FileInfo()
 {
 }
@@ -1004,6 +1004,7 @@ void FileInfo::MakeLongName()
    case UNKNOWN:   break;
    case DIRECTORY: filetype_c='d'; break;
    case SYMLINK:   filetype_c='l'; break;
+   case REDIRECT:  filetype_c='L'; break;
    }
    int mode1=(defined&MODE?mode:
       (filetype_c=='d'?0755:(filetype_c=='l'?0777:0644)));

@@ -51,6 +51,7 @@ public:
    xstring  name;
    xstring  longname;
    xstring_c symlink;
+   xstring_c uri;
    mode_t   mode;
    FileTimestamp date;
    off_t    size;
@@ -63,7 +64,8 @@ public:
       UNKNOWN=0,
       DIRECTORY,
       SYMLINK,
-      NORMAL
+      NORMAL,
+      REDIRECT,
    };
    type	 filetype;
 
@@ -85,7 +87,8 @@ public:
    void Init();
    FileInfo() { Init(); }
    FileInfo(const FileInfo &fi);
-   FileInfo(const char *n);
+   FileInfo(const char *n) { Init(); SetName(n); }
+   FileInfo(const xstring& n) { Init(); SetName(n); }
    ~FileInfo();
 
    void SetName(const char *n) { name.set(n); def(NAME); }
@@ -100,10 +103,13 @@ public:
    void SetDate(time_t t,int prec) { date.set(t,prec); def(DATE); }
    void SetType(type t) { filetype=t; def(TYPE); }
    void SetSymlink(const char *s) { symlink.set(s); filetype=SYMLINK; def(TYPE|SYMLINK_DEF); }
+   void SetRedirect(const char *s) { symlink.set(s); filetype=REDIRECT; def(TYPE|SYMLINK_DEF); }
+   const char *GetRedirect() const { return symlink; }
    void	SetSize(off_t s) { size=s; def(SIZE); }
    void	SetNlink(int n) { nlinks=n; def(NLINKS); }
 
    void	 Merge(const FileInfo&);
+   void  MergeInfo(const FileInfo& f,unsigned mask);
 
    bool	 SameAs(const FileInfo *,int ignore) const;
    bool	 OlderThan(time_t t) const;

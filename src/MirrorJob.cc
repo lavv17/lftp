@@ -273,6 +273,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
    switch(filetype)
    {
       case(FileInfo::NORMAL):
+      case(FileInfo::REDIRECT):
       {
 	 bool remove_target=false;
 	 bool cont_this=false;
