@@ -404,6 +404,31 @@ do_again:
    if(done)
       return m;
 
+   if(redir_resolution) {
+      if(redir_session && redir_session->OpenMode()==FA::ARRAY_INFO) {
+	 res=redir_session->Done();
+	 if(res==FA::DO_AGAIN || res==FA::IN_PROGRESS)
+	    return m;
+	 redir_session->Close();
+	 redir_fs->rewind();
+	 FileInfo *fi=redir_fs->curr();
+	 if(ResolveRedirect(fi))
+	    return MOVED;
+	 result->curr()->MergeInfo(*fi,~0U);
+	 result->next();
+      }
+      redir_count=0;
+      for(FileInfo *fi=result->curr(); fi; fi=result->next()) {
+	 if(ResolveRedirect(fi))
+	    return MOVED;
+      }
+
+      FileAccess::cache->UpdateFileSet(session,"",FA::MP_LIST,result);
+      FileAccess::cache->UpdateFileSet(session,"",FA::LONG_LIST,result);
+      done=true;
+      return MOVED;
+   }
+
    if(session->OpenMode()==FA::ARRAY_INFO)
    {
       res=session->Done();
@@ -412,10 +437,11 @@ do_again:
       if(res==FA::IN_PROGRESS)
 	 return m;
       session->Close();
-      FileAccess::cache->UpdateFileSet(session,"",FA::MP_LIST,result);
-      FileAccess::cache->UpdateFileSet(session,"",FA::LONG_LIST,result);
-      done=true;
-      return MOVED;
+      // start redirection resolution.
+      redir_resolution=true;
+      result->rewind();
+      m=MOVED;
+      goto do_again;
    }
 
    if(!ubuf)
@@ -567,8 +593,59 @@ got_fileset:
    return m;
 }
 
+bool GenericParseListInfo::ResolveRedirect(const FileInfo *fi)
+{
+   if(fi->filetype!=fi->REDIRECT || redir_count>=max_redir)
+      return false;
+
+   redir_count++;
+   Log::global->Format(9,"ListInfo: resolving redirection %s -> %s\n",fi->name.get(),fi->GetRedirect());
+
+   Ref<FileInfo> redir_fi(new FileInfo());
+   redir_fi->Need(fi->need);
+
+   xstring loc(fi->GetRedirect());
+   ParsedURL u(loc,true);
+   if(!u.proto) {
+      // relative URI
+      redir_session=session->Clone();
+      if(loc[0]=='/' || fi->uri) {
+	 if(loc[0]!='/') {
+	    const char *slash=strrchr(fi->uri,'/');
+	    if(slash)
+	       loc.prepend(fi->uri,slash+1-fi->uri);
+	 }
+	 redir_fi->uri.set(loc);
+	 redir_fi->name.set(loc);
+	 redir_fi->name.url_decode();
+      } else {
+	 loc.url_decode();
+	 const char *slash=strrchr(fi->name,'/');
+	 if(slash)
+	    redir_fi->name.nset(fi->name,slash+1-fi->name);
+	 redir_fi->name.append(loc);
+      }
+   } else { // u.proto
+      // absolute URL
+      redir_session=FileAccess::New(&u);
+      redir_fi->name.set(u.path?u.path.get():"/");
+      redir_fi->uri.set(url::path_ptr(u.orig_url));
+   }
+
+   if(!redir_fs)
+      redir_fs=new FileSet();
+   else
+      redir_fs->Empty();
+   redir_fs->Add(redir_fi.borrow());
+   redir_session->GetInfoArray(redir_fs.get_non_const());
+   redir_session->Roll();
+
+   return true;
+}
+
 GenericParseListInfo::GenericParseListInfo(FileAccess *s,const char *p)
-   : ListInfo(s,p)
+   : ListInfo(s,p), redir_resolution(false), redir_count(0),
+     max_redir(ResMgr::Query("xfer:max-redirections",0))
 {
    get_time_for_dirs=true;
    can_get_prec_time=true;

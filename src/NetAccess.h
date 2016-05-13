@@ -109,6 +109,13 @@ public:
 
 class GenericParseListInfo : public ListInfo
 {
+   bool redir_resolution;
+   int redir_count;
+   int max_redir;
+   FileAccessRef redir_session;
+   Ref<FileSet> redir_fs;
+   bool ResolveRedirect(const FileInfo *fi);
+
 protected:
    int mode;
    SMTaskRef<IOBuffer> ubuf;
