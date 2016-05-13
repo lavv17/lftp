@@ -206,6 +206,8 @@ public:
    xstring& set_substr(int start,size_t sublen,const char *,size_t);
    xstring& set_substr(int start,size_t sublen,const char *);
    xstring& set_substr(int start,size_t sublen,const xstring &s) { return set_substr(start,sublen,s.get(),s.length()); }
+   xstring& prepend(const char *s,size_t len) { return set_substr(0,0,s,len); }
+   xstring& prepend(const xstring &s) { return prepend(s.get(),s.length()); }
 
    xstring& append(const char *s);
    xstring& append(char c);
