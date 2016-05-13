@@ -1,7 +1,7 @@
 /*
  * plural word form chooser for i18n
  *
- * Copyright (c) 1998 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1998,2016 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This file is in public domain.
  */
