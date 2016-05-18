@@ -4,7 +4,7 @@ EXTRA_DIST = lftp.conf FAQ MIRRORS BUGS FEATURES\
 if NEED_TRIO
    TRIO = trio
 endif
-SUBDIRS = m4 doc lib $(TRIO) src po
+SUBDIRS = m4 doc lib $(TRIO) src po tests
 ACLOCAL_AMFLAGS = -I m4
 
 install-data-local:
@@ -34,7 +34,7 @@ release-check:
 			"--without-gnutls --without-openssl" \
 			"--with-modules --without-gnutls --without-openssl"; \
 	 do \
-	 	echo "Testing $$opt ..."; \
+		echo "Testing $$opt ..."; \
 		make DISTCHECK_CONFIGURE_FLAGS="$$opt" distcheck >/dev/null || exit 1; \
 	 done
 
