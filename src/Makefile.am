@@ -9,14 +9,6 @@ EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS)
 
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h attach.cc attach.h
 
-noinst_PROGRAMS = example1 example2 example1-cmd
-noinst_LTLIBRARIES = example-module1.la
-example1_SOURCES = example1.cc
-example1_cmd_SOURCES = example1-cmd.cc
-example2_SOURCES = example2.cc
-example_module1_la_SOURCES = example-module1.cc
-example_module1_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
-
 TASK_MODULES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la
 JOB_MODULES = cmd-mirror.la cmd-sleep.la cmd-torrent.la
 if WITH_MODULES
@@ -105,10 +97,6 @@ lftp_CPPFLAGS = $(AM_CPPFLAGS) $(READLINE_CFLAGS)
 lftp_LDFLAGS = -export-dynamic $(READLINE_LDFLAGS)
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(READLINE_LIBS)
 lftp_DEPENDENCIES = liblftp-jobs.la
-
-example1_LDADD = liblftp-tasks.la
-example1_cmd_LDADD = liblftp-jobs.la liblftp-tasks.la
-example2_LDADD = liblftp-tasks.la
 
 CLEANFILES = *.la
 

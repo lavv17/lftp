@@ -88,7 +88,7 @@ char data[]=
 
 int main()
 {
-   Ftp *ftp=new Ftp();
+   FA *ftp=FileAccess::New("ftp");
 
    int err=0;
    FileSet *set=ftp->ParseLongList(data,sizeof(data),&err);

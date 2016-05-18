@@ -1,0 +1,8 @@
+*.log
+*.trs
+.libs/
+ftp-cls-l
+ftp-list
+ftp-mlsd
+http-get
+module1
