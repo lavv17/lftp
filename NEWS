@@ -1,4 +1,4 @@
-Version 4.7.2 - 2016-05-??
+Version 4.7.2 - 2016-05-18
 
 * ftp: fixed loss of 17th file from MLSD listing.
 * new setting xfer:timeout.
