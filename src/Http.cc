@@ -754,6 +754,7 @@ void Http::SendRequest(const char *connection,const char *f)
 	    weekday_names[t->tm_wday],t->tm_mday,month_names[t->tm_mon],
 	    t->tm_year+1900,t->tm_hour,t->tm_min,t->tm_sec);
 	 Send("Last-Modified: %s\r\n",d);
+	 Send("X-OC-MTime: %ld\r\n",(long)entity_date);	 // for OwnCloud
       }
       break;
 
