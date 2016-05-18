@@ -96,7 +96,7 @@ protected:
 public:
    int Do();
    int Done() { return state==DONE; }
-   int ExitCode() { return state!=DONE || errors; }
+   int ExitCode() { return state!=DONE || (errors && !quiet); }
 
    void Init();
    FinderJob(FileAccess *s);
