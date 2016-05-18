@@ -7,8 +7,10 @@ Version 4.7.2 - 2016-05-??
 * http: new settings http:use-range and hftp:use-range.
 * http: fixed setting http:authorization.
 * http: resolve redirections when getting files information.
+* http: include X-OC-MTime header in PUT requests for OwnCloud.
 * mirror: changed --Move option to keep source dir if it ends with a slash.
 * mirror: fixed timestamp mirroring when the source site sends redirections.
+* mirror: don't report errors when the target does not support chmod.
 * torrent: discard cached data after validating.
 * torrent: fixed a coredump on a file read error.
 * torrent: fixed closing oldest cached FD.
