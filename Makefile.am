@@ -35,12 +35,14 @@ release-check:
 			"--with-modules --without-gnutls --without-openssl"; \
 	 do \
 		echo "Testing $$opt ..."; \
-		make DISTCHECK_CONFIGURE_FLAGS="$$opt" distcheck >/dev/null || exit 1; \
+		if test "$$opt"; then $(MAKE) distclean >/dev/null && $(srcdir)/configure -q $$opt || exit 1; fi; \
+		$(MAKE) V=0 check || exit 1; \
 	 done
+	$(MAKE) V=0 DISTCHECK_CONFIGURE_FLAGS=-q distcheck
 
 release:
-	make release-check
-	make release-ftp
+	$(MAKE) release-check
+	$(MAKE) release-ftp
 
 release-ftp:
 	mv $(PACKAGE)-$(VERSION).tar.gz $(REL_DIR)/$(PACKAGE)-$(VERSION).tar.gz
