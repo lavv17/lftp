@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I../lib -I$(top_srcdir)/trio -I$(top_srcdir)/src
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/trio -I$(top_srcdir)/src
 
 if WITH_MODULES
   PROTO_FTP =

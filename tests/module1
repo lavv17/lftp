@@ -1,0 +1,8 @@
+#!/bin/sh
+
+test -f .libs/module1.so || { echo No modules support; exit 77; }
+
+../src/lftp <<EOF
+module module1
+test1
+EOF
