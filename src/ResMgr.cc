@@ -825,7 +825,7 @@ const char *ResMgr::FileCreatable(xstring_c *value)
    if(!**value)
       return 0;
    const char *error=FileAccessible(value,W_OK,false);
-   if(error && errno!=ENOENT)
+   if(!error || (error && errno!=ENOENT))
       return error;
    const char *bn=basename_ptr(*value);
    xstring_c dir(dirname(*value));
