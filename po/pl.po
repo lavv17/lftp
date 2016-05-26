@@ -1,16 +1,16 @@
 # Polish translation of lftp.
 # Copyright (C) 1998-2000 Free Software Foundation, Inc.
 # Arkadiusz Miśkiewicz <misiek@pld-linux.org>, 1998-2004
-# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2015
+# Jakub Bogusz <qboosh@pld-linux.org>, 2002-2016
 # some updates by Tomasz Kłoczko <kloczek@pld.org.pl>, 2003
 # Adam Gołębiowski <adamg@pld-linux.org>, 2004-2006
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.5.3a\n"
+"Project-Id-Version: lftp 4.7.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2016-05-18 16:15+0300\n"
-"PO-Revision-Date: 2015-06-28 15:00+0200\n"
+"PO-Revision-Date: 2016-05-20 15:00+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -320,7 +320,7 @@ msgstr "wyszukiwanie nie powiodło się"
 
 #: src/FileCopy.cc:208
 msgid "no progress timeout"
-msgstr ""
+msgstr "bez limitu czasu postępu"
 
 #: src/FileCopy.cc:236
 msgid "cannot seek on data source"
@@ -702,9 +702,9 @@ msgid "Removing old directory `%s'"
 msgstr "Usuwanie starego katalogu `%s'"
 
 #: src/MirrorJob.cc:1240
-#, fuzzy, c-format
+#, c-format
 msgid "Removing source directory `%s'"
-msgstr "Usuwanie starego katalogu `%s'"
+msgstr "Usuwanie katalogu źródłowego `%s'"
 
 #: src/MirrorJob.cc:1306
 #, c-format
@@ -1503,7 +1503,6 @@ msgid "lftp [OPTS] <site>"
 msgstr "lftp [OPCJE] <site>"
 
 #: src/commands.cc:287
-#, fuzzy
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -1522,12 +1521,15 @@ msgstr ""
 "`lftp' jest pierwszą komendą uruchamianą przez lftp po plikach rc\n"
 " -f <plik>           wykonanie poleceń z pliku <plik> i wyjście\n"
 " -c <komenda>        wykonanie polecenia <komenda> i wyjście\n"
-" --help              wyświetl pomoc i zakończ działanie\n"
-" --version           wyświetl wersję lftp i zakończ działanie\n"
+" --norc              bez wykonywania plików rc z katalogu domowego\n"
+" --help              wyświetlenie pomocy i zakończenia działania\n"
+" --version           wyświetlenie wersji lftp i zakończenie działania\n"
 "Inne opcje są takie same jak dla polecenia `open'\n"
 " -e <komenda>        wykonanie polecenia <komenda> od razu po wybieraniu\n"
-" -u <user>[,<hasło>] użyj user/hasło do uwierzytelnienia\n"
-" -p <port>           użyj portu <port> do połączeniu\n"
+" -u <user>[,<hasło>] użycie user/hasło do uwierzytelnienia\n"
+" -p <port>           użycie portu <port> do połączenia\n"
+" -s <slot>           przypisanie połączenia do przegródki <slot>\n"
+" -d                  włączenie trybu diagnostycznego\n"
 " <site>              nazwa hosta, URL lub nazwa zakładki\n"
 
 #: src/commands.cc:300
@@ -1684,7 +1686,6 @@ msgid "open [OPTS] <site>"
 msgstr "open [OPCJE] <site>"
 
 #: src/commands.cc:348
-#, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -1694,11 +1695,12 @@ msgid ""
 " -d                  switch on debugging mode\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"Wybierz server, URL lub zakładkę\n"
-" -e <cmd>            wykonaj zaraz po wyborze polecenie <cmd>\n"
-" -u <user>[,<pass>]  użyj user/pass do uwierzytelnienia\n"
-" -p <port>           użyj portu <port> do połączenia\n"
-" -s <slot>           przypisz połączenie do <slotu>\n"
+"Wybór serwera, URL-a lub zakładki\n"
+" -e <cmd>            wykonanie polecenia zaraz po wyborze\n"
+" -u <user>[,<hasło>] użycie user/hasło do uwierzytelnienia\n"
+" -p <port>           użycie portu <port> do połączenia\n"
+" -s <slot>           przypisanie połączenia do przegródki <slot>\n"
+" -d                  włączenie trybu diagnostycznego\n"
 " <site>              nazwa hosta, URL lub zakładka\n"
 
 #: src/commands.cc:355
@@ -2074,7 +2076,7 @@ msgstr "Spróbuj `%s --help' by uzyskać więcej informacji\n"
 #: src/commands.cc:852
 #, c-format
 msgid "%s: -c, -f, -v, -h conflict with other `open' options and arguments\n"
-msgstr ""
+msgstr "%s: -c, -f, -v i -h są w konflikcie z pozostałymi opcjami i argumentami `open'\n"
 
 #: src/commands.cc:951
 #, c-format
@@ -2454,9 +2456,8 @@ msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD jest zablokowane przez ftp:use-mlsd"
 
 #: src/ftpclass.cc:1649
-#, fuzzy
 msgid "MFF and SITE CHMOD are not supported by this site"
-msgstr "SITE CHMOD nie jest obsługiwane przez ten serwer"
+msgstr "MFF i SITE CHMOD nie są obsługiwane przez ten serwer"
 
 #: src/ftpclass.cc:1654
 msgid "MLST and MLSD are not supported by this site"
@@ -2700,7 +2701,7 @@ msgstr "nieznany rozmiar pliku źródłowego"
 #: src/pgetJob.cc:173
 #, c-format
 msgid "pget: warning: space allocation for %s (%lld bytes) failed: %s\n"
-msgstr ""
+msgstr "pget: uwaga: przydzielenie miejsca dla %s (bajtów: %lld) nie powiodło się: %s\n"
 
 #: src/pgetJob.cc:234
 #, c-format
@@ -2939,13 +2940,3 @@ msgstr "[%u] Dołączono do terminala %s. %s\n"
 #, c-format
 msgid "[%u] Attached to terminal.\n"
 msgstr "[%u] Dołączono do terminala.\n"
-
-#, fuzzy
-#~ msgid "%s: unrecognized option '%s'\n"
-#~ msgstr "%s: nieznana opcja '%c%s'\n"
-
-#~ msgid "%s: regular expression `%s': %s\n"
-#~ msgstr "%s: wyrażenie regularne `%s': %s\n"
-
-#~ msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
-#~ msgstr "SITE CHMOD jest zablokowane przez ftp:use-site-chmod"
