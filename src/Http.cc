@@ -167,6 +167,8 @@ void Http::Init()
 
    no_ranges=false;
    seen_ranges_bytes=false;
+   entity_date_set=false;
+   sending_proppatch=false;
 
    no_cache_this=false;
    no_cache=false;
@@ -175,8 +177,6 @@ void Http::Init()
    auth_scheme[0]=auth_scheme[1]=HttpAuth::NONE;
 
    use_propfind_now=true;
-   allprop="";
-   allprop_len=0;
 
    retry_after=0;
 
@@ -237,10 +237,10 @@ void Http::DisconnectLL()
    && !Error() && !H_AUTH_REQ(status_code)) {
       if(last_method && !strcmp(last_method,"POST"))
 	 SetError(FATAL,_("POST method failed"));
-      else if(mode==STORE)
+      else if(mode==STORE && !sending_proppatch)
 	 SetError(STORE_FAILED,0);
    }
-   if(mode==STORE && H_AUTH_REQ(status_code))
+   if(mode==STORE && H_AUTH_REQ(status_code) && !sending_proppatch)
       pos=real_pos=request_pos; // resend all the data again
 
    last_method=0;
@@ -271,6 +271,7 @@ void Http::ResetRequestData()
    propfind=0;
    inflate=0;
    seen_ranges_bytes=false;
+   entity_date_set=false;
 }
 
 void Http::Close()
@@ -280,7 +281,8 @@ void Http::Close()
    if(conn && conn->recv_buf)
       conn->recv_buf->Roll();	// try to read any remaining data
    if(conn && keep_alive && (keep_alive_max>0 || keep_alive_max==-1)
-   && mode!=STORE && !conn->recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
+   && (mode!=STORE || sending_proppatch) && !conn->recv_buf->Eof()
+   && (state==RECEIVING_BODY || state==DONE))
    {
       conn->recv_buf->Resume();
       conn->recv_buf->Roll();
@@ -314,7 +316,16 @@ void Http::Close()
    use_propfind_now=QueryBool("use-propfind",hostname);
    special=HTTP_NONE;
    special_data.set(0);
+   sending_proppatch=false;
    super::Close();
+}
+
+void Http::Send(const xstring& str)
+{
+   if(str.length()==0)
+      return;
+   LogSend(5,str);
+   conn->send_buf->Put(str);
 }
 
 void Http::Send(const char *format,...)
@@ -323,10 +334,7 @@ void Http::Send(const char *format,...)
    va_start(va,format);
    xstring& str=xstring::vformat(format,va);
    va_end(va);
-   if(str.length()==0)
-      return;
-   LogSend(5,str);
-   conn->send_buf->Put(str);
+   Send(str);
 }
 
 void Http::Send(const HttpHeader *hdr)
@@ -582,16 +590,46 @@ void Http::SendPropfind(const xstring& efile,int depth)
 {
    SendMethod("PROPFIND",efile);
    Send("Depth: %d\r\n",depth);
-   if(allprop_len>0)
+   if(allprop.length()>0)
    {
       Send("Content-Type: text/xml\r\n");
-      Send("Content-Length: %d\r\n",allprop_len);
+      Send("Content-Length: %d\r\n",int(allprop.length()));
    }
 }
 void Http::SendPropfindBody()
 {
-   if(allprop_len>0)
-      Send("%s",allprop);
+   Send(allprop);
+}
+
+const xstring& Http::FormatLastModified(time_t lm)
+{
+   static const char weekday_names[][4]={
+      "Sun","Mon","Tue","Wed","Thu","Fri","Sat"
+   };
+   const struct tm *t=gmtime(&lm);
+   return xstring::format("%s, %2d %s %04d %02d:%02d:%02d GMT",
+      weekday_names[t->tm_wday],t->tm_mday,month_names[t->tm_mon],
+      t->tm_year+1900,t->tm_hour,t->tm_min,t->tm_sec);
+}
+
+void Http::SendProppatch(const xstring& efile)
+{
+   SendMethod("PROPPATCH",efile);
+   xstring prop(
+      "<?xml version=\"1.0\" ?>"
+      "<propertyupdate xmlns=\"DAV:\">"
+	 "<set>"
+	    "<prop>"
+	       "<getlastmodified>");
+   prop.append(FormatLastModified(entity_date)).append(
+	       "</getlastmodified>"
+	    "</prop>"
+	 "</set>"
+      "</propertyupdate>");
+   Send("Content-Type: text/xml\r\n");
+   Send("Content-Length: %d\r\n",int(prop.length()));
+   Send("\r\n");
+   Send(prop);
 }
 
 void Http::SendRequest(const char *connection,const char *f)
@@ -666,7 +704,7 @@ void Http::SendRequest(const char *connection,const char *f)
 
    if(pos==0)
       real_pos=0;
-   if(mode==STORE)    // can't seek before writing
+   if(mode==STORE && !sending_proppatch)    // can't seek before writing
       real_pos=pos;
 
 #ifdef DEBUG_MP_LIST
@@ -719,6 +757,10 @@ void Http::SendRequest(const char *connection,const char *f)
       break;
 
    case STORE:
+      if(sending_proppatch) {
+	 SendProppatch(efile);
+	 break;
+      }
       if(hftp || strcasecmp(Query("put-method",hostname),"POST"))
 	 SendMethod("PUT",efile);
       else
@@ -746,14 +788,7 @@ void Http::SendRequest(const char *connection,const char *f)
       }
       if(entity_date!=NO_DATE)
       {
-	 static const char weekday_names[][4]={
-	    "Sun","Mon","Tue","Wed","Thu","Fri","Sat"
-	 };
-	 const struct tm *t=gmtime(&entity_date);
-	 const char *d=xstring::format("%s, %2d %s %04d %02d:%02d:%02d GMT",
-	    weekday_names[t->tm_wday],t->tm_mday,month_names[t->tm_mon],
-	    t->tm_year+1900,t->tm_hour,t->tm_min,t->tm_sec);
-	 Send("Last-Modified: %s\r\n",d);
+	 Send("Last-Modified: %s\r\n",FormatLastModified(entity_date).get());
 	 Send("X-OC-MTime: %ld\r\n",(long)entity_date);	 // for OwnCloud
       }
       break;
@@ -823,7 +858,7 @@ void Http::SendRequest(const char *connection,const char *f)
    SendCacheControl();
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
-   else if(mode!=STORE)
+   else if(mode!=STORE || sending_proppatch)
       connection="keep-alive";
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
@@ -1101,6 +1136,10 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       NewAuth(value,HttpAuth::PROXY,proxy_user,proxy_pass);
       return;
    }
+   case_hh("X-OC-MTime",'X') {
+      if(!strcasecmp(value,"accepted"))
+	 entity_date_set=true;
+   }
    default:
       break;
    }
@@ -1237,7 +1276,7 @@ int Http::Do()
    case DISCONNECTED:
       if(mode==CLOSED || !hostname)
 	 return m;
-      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size)
+      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size && !sending_proppatch)
       {
 	 state=DONE;
 	 return MOVED;
@@ -1456,7 +1495,7 @@ int Http::Do()
 	 return MOVED;
       }
       ExpandTildeInCWD();
-      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size)
+      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size && !sending_proppatch)
       {
 	 state=DONE;
 	 return MOVED;
@@ -1477,13 +1516,13 @@ int Http::Do()
 
       state=RECEIVING_HEADER;
       m=MOVED;
-      if(mode==STORE)
+      if(mode==STORE && !sending_proppatch)
 	 rate_limit=new RateLimit(hostname);
 
    case RECEIVING_HEADER:
       if(conn->send_buf->Error() || conn->recv_buf->Error())
       {
-	 if((mode==STORE || special) && status_code && !H_2XX(status_code))
+	 if(((mode==STORE && !sending_proppatch) || special) && status_code && !H_2XX(status_code))
 	    goto pre_RECEIVING_BODY;   // assume error.
       handle_buf_error:
 	 if(conn->send_buf->Error())
@@ -1586,11 +1625,17 @@ int Http::Do()
 	       }
 	       else if(mode==STORE || mode==MAKE_DIR)
 	       {
-		  if((sent_eot || pos==entity_size) && H_2XX(status_code))
+		  if((sent_eot || pos==entity_size || sending_proppatch) && H_2XX(status_code))
 		  {
 		     state=DONE;
 		     Disconnect();
 		     state=DONE;
+		     if(mode==STORE && entity_date!=NO_DATE && !entity_date_set
+		     && use_propfind_now && !sending_proppatch) {
+			// send PROPPATCH in a separate request.
+			sending_proppatch=true;
+			state=DISCONNECTED;
+		     }
 		     return MOVED;
 		  }
 		  if(H_2XX(status_code))
@@ -1696,7 +1741,7 @@ int Http::Do()
 	 }
       }
 
-      if(mode==STORE && (!status || H_CONTINUE(status_code)) && !sent_eot)
+      if(mode==STORE && (!status || H_CONTINUE(status_code)) && !sent_eot && !sending_proppatch)
 	 Block(conn->sock,POLLOUT);
 
       return m;
@@ -2165,14 +2210,14 @@ int Http::Done()
 
 int Http::Buffered()
 {
-   if(mode!=STORE || !conn || !conn->send_buf)
+   if(mode!=STORE || !conn || !conn->send_buf || sending_proppatch)
       return 0;
    return conn->send_buf->Size()+SocketBuffered(conn->sock);
 }
 
 int Http::Write(const void *buf,int size)
 {
-   if(mode!=STORE)
+   if(mode!=STORE || sending_proppatch)
       return(0);
 
    Resume();
@@ -2315,14 +2360,15 @@ void Http::Reconfig(const char *name)
    use_propfind_now=(use_propfind_now && QueryBool("use-propfind",c));
    no_ranges=(no_ranges || !QueryBool("use-range",hostname));
 
-   allprop=	// PROPFIND request
-      "<?xml version=\"1.0\" ?>"
-      "<propfind xmlns=\"DAV:\">"
-        "<allprop/>"
-      "</propfind>\r\n";
-   if(!QueryBool("use-allprop",c))
-      allprop="";
-   allprop_len=strlen(allprop);
+   if(QueryBool("use-allprop",c)) {
+      allprop.set(   // PROPFIND request
+	 "<?xml version=\"1.0\" ?>"
+	 "<propfind xmlns=\"DAV:\">"
+	   "<allprop/>"
+	 "</propfind>\r\n");
+   } else {
+      allprop.unset();
+   }
 
    if(!user || !pass) {
       // get auth info from http:authorization setting

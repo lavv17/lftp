@@ -49,6 +49,7 @@ class Http : public NetAccess
 
    void Init();
 
+   void Send(const xstring& str);
    void	Send(const char *format,...) PRINTF_LIKE(2,3);
    void Send(const HttpHeader *hdr);
 
@@ -106,6 +107,9 @@ class Http : public NetAccess
    void ProceedArrayInfo();
    void SendPropfind(const xstring& efile,int depth);
    void SendPropfindBody();
+   static const xstring& FormatLastModified(time_t);
+   void SendProppatch(const xstring& efile);
+
    int status_code;
    void HandleHeaderLine(const char *name,const char *value);
    static const xstring& extract_quoted_header_value(const char *value,const char **end=0);
@@ -160,6 +164,8 @@ class Http : public NetAccess
 
    bool no_ranges;
    bool seen_ranges_bytes;
+   bool entity_date_set;
+   bool sending_proppatch;
 
    bool no_cache;
    bool no_cache_this;
@@ -174,8 +180,7 @@ class Http : public NetAccess
    xstring_c auth_pass;
 
    bool use_propfind_now;
-   const char *allprop;
-   int allprop_len;
+   xstring allprop;
 
    long retry_after;
 
