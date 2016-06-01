@@ -1,3 +1,7 @@
+* mirror: don't add source directory base name to the target if the source
+  ends with a slash.
+* fixed xfer:log-file setting to a writable file in a protected directory.
+
 Version 4.7.2 - 2016-05-18
 
 * ftp: fixed loss of 17th file from MLSD listing.
