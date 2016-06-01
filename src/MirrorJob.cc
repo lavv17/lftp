@@ -2039,7 +2039,7 @@ CMD(mirror)
 	    }
 	    target_dir=alloca_strdup(target_url.path);
 	 }
-	 if(last_char(arg)=='/' && basename_ptr(arg)[0]!='/')
+	 if(last_char(arg)=='/' && basename_ptr(arg)[0]!='/' && last_char(source_dir)!='/')
 	 {
 	    // user wants source dir name appended.
 	    const char *base=basename_ptr(source_dir);
@@ -2154,7 +2154,8 @@ CMD(mirror)
 CDECL void module_init()
 {
    CmdExec::RegisterCommand("mirror",cmd_mirror,0,
-	 N_("\nMirror specified remote directory to local directory\n\n"
+      N_("\n"
+	 "Mirror specified remote directory to local directory\n\n"
 	 " -c, --continue         continue a mirror job if possible\n"
 	 " -e, --delete           delete files not present at remote site\n"
 	 "     --delete-first     delete old files before transferring new ones\n"
@@ -2179,6 +2180,8 @@ CDECL void module_init()
 	 "\n"
 	 "When using -R, the first directory is local and the second is remote.\n"
 	 "If the second directory is omitted, basename of first directory is used.\n"
-	 "If both directories are omitted, current local and remote directories are used.\n")
+	 "If both directories are omitted, current local and remote directories are used.\n"
+	 "See lftp(1) for a complete list of options.\n"
+      )
    );
 }
