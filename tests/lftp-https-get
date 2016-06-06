@@ -1,0 +1,8 @@
+#!/bin/sh
+
+../src/lftp <<EOF
+# test if https is available first
+open https://localhost & || exit 77
+# try to get a file via https
+cat https://lftp.yar.ru/features.html
+EOF
