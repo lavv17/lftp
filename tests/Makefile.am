@@ -11,7 +11,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/trio -I$(top_srcdir)/src
 if WITH_MODULES
   PROTO_FTP =
   PROTO_HTTP =
-  AM_TESTS_ENVIRONMENT = LFTP_MODULE_PATH=$(top_builddir)/src/.libs:$(builddir)/.libs
+  TESTS_ENVIRONMENT = LFTP_MODULE_PATH=$(top_builddir)/src/.libs:$(builddir)/.libs
 else
   PROTO_FTP  = $(top_builddir)/src/proto-ftp.la
   PROTO_HTTP = $(top_builddir)/src/proto-http.la
