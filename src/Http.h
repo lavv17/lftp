@@ -142,6 +142,11 @@ class Http : public NetAccess
    bool sent_eot;
 
    bool ModeSupported();
+   bool ModeIs(open_mode m) const {
+      if(m==STORE)
+	 return mode==m && !sending_proppatch;
+      return mode==m;
+   }
 
    int  keep_alive_max;
    bool keep_alive;

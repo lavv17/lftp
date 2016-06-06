@@ -237,10 +237,10 @@ void Http::DisconnectLL()
    && !Error() && !H_AUTH_REQ(status_code)) {
       if(last_method && !strcmp(last_method,"POST"))
 	 SetError(FATAL,_("POST method failed"));
-      else if(mode==STORE && !sending_proppatch)
+      else if(ModeIs(STORE))
 	 SetError(STORE_FAILED,0);
    }
-   if(mode==STORE && H_AUTH_REQ(status_code) && !sending_proppatch)
+   if(ModeIs(STORE) && H_AUTH_REQ(status_code))
       pos=real_pos=request_pos; // resend all the data again
 
    last_method=0;
@@ -281,8 +281,7 @@ void Http::Close()
    if(conn && conn->recv_buf)
       conn->recv_buf->Roll();	// try to read any remaining data
    if(conn && keep_alive && (keep_alive_max>0 || keep_alive_max==-1)
-   && (mode!=STORE || sending_proppatch) && !conn->recv_buf->Eof()
-   && (state==RECEIVING_BODY || state==DONE))
+   && !ModeIs(STORE) && !conn->recv_buf->Eof() && (state==RECEIVING_BODY || state==DONE))
    {
       conn->recv_buf->Resume();
       conn->recv_buf->Roll();
@@ -704,7 +703,7 @@ void Http::SendRequest(const char *connection,const char *f)
 
    if(pos==0)
       real_pos=0;
-   if(mode==STORE && !sending_proppatch)    // can't seek before writing
+   if(ModeIs(STORE))    // can't seek before writing
       real_pos=pos;
 
 #ifdef DEBUG_MP_LIST
@@ -858,7 +857,7 @@ void Http::SendRequest(const char *connection,const char *f)
    SendCacheControl();
    if(mode==ARRAY_INFO && !use_head)
       connection="close";
-   else if(mode!=STORE || sending_proppatch)
+   else if(!ModeIs(STORE))
       connection="keep-alive";
    if(mode!=ARRAY_INFO || connection)
       Send("Connection: %s\r\n",connection?connection:"close");
@@ -1021,7 +1020,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 last=fsize-first-1;
       if(body_size<0)
 	 body_size=last-first+1;
-      if(mode!=STORE && mode!=MAKE_DIR)
+      if(!ModeIs(STORE) && !ModeIs(MAKE_DIR))
 	 entity_size=fsize;
       if(opt_size && H_2XX(status_code))
 	 *opt_size=fsize;
@@ -1276,7 +1275,7 @@ int Http::Do()
    case DISCONNECTED:
       if(mode==CLOSED || !hostname)
 	 return m;
-      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size && !sending_proppatch)
+      if(ModeIs(STORE) && pos>0 && entity_size>=0 && pos>=entity_size)
       {
 	 state=DONE;
 	 return MOVED;
@@ -1495,7 +1494,7 @@ int Http::Do()
 	 return MOVED;
       }
       ExpandTildeInCWD();
-      if(mode==STORE && pos>0 && entity_size>=0 && pos>=entity_size && !sending_proppatch)
+      if(ModeIs(STORE) && pos>0 && entity_size>=0 && pos>=entity_size)
       {
 	 state=DONE;
 	 return MOVED;
@@ -1516,13 +1515,13 @@ int Http::Do()
 
       state=RECEIVING_HEADER;
       m=MOVED;
-      if(mode==STORE && !sending_proppatch)
+      if(ModeIs(STORE))
 	 rate_limit=new RateLimit(hostname);
 
    case RECEIVING_HEADER:
       if(conn->send_buf->Error() || conn->recv_buf->Error())
       {
-	 if(((mode==STORE && !sending_proppatch) || special) && status_code && !H_2XX(status_code))
+	 if((ModeIs(STORE) || special) && status_code && !H_2XX(status_code))
 	    goto pre_RECEIVING_BODY;   // assume error.
       handle_buf_error:
 	 if(conn->send_buf->Error())
@@ -1623,15 +1622,15 @@ int Http::Do()
 		  ProceedArrayInfo();
 		  return MOVED;
 	       }
-	       else if(mode==STORE || mode==MAKE_DIR)
+	       else if(ModeIs(STORE) || ModeIs(MAKE_DIR) || sending_proppatch)
 	       {
 		  if((sent_eot || pos==entity_size || sending_proppatch) && H_2XX(status_code))
 		  {
 		     state=DONE;
 		     Disconnect();
 		     state=DONE;
-		     if(mode==STORE && entity_date!=NO_DATE && !entity_date_set
-		     && use_propfind_now && !sending_proppatch) {
+		     if(ModeIs(STORE) && entity_date!=NO_DATE && !entity_date_set
+		     && use_propfind_now) {
 			// send PROPPATCH in a separate request.
 			sending_proppatch=true;
 			state=DISCONNECTED;
@@ -1669,7 +1668,7 @@ int Http::Do()
 		  proto_version=0x09;
 		  status_code=H_Ok;
 		  LogError(0,_("Could not parse HTTP status line"));
-		  if(mode==STORE)
+		  if(ModeIs(STORE))
 		  {
 		     state=DONE;
 		     Disconnect();
@@ -1741,7 +1740,7 @@ int Http::Do()
 	 }
       }
 
-      if(mode==STORE && (!status || H_CONTINUE(status_code)) && !sent_eot && !sending_proppatch)
+      if(ModeIs(STORE) && (!status || H_CONTINUE(status_code)) && !sent_eot)
 	 Block(conn->sock,POLLOUT);
 
       return m;
@@ -1858,7 +1857,7 @@ int Http::Do()
       }
       // sometimes it's possible to derive entity size from body size.
       if(entity_size==NO_SIZE && body_size!=NO_SIZE
-      && pos==0 && mode!=STORE && mode!=MAKE_DIR && !inflate) {
+      && pos==0 && !ModeIs(STORE) && !ModeIs(MAKE_DIR) && !inflate) {
 	 entity_size=body_size;
 	 if(opt_size && H_2XX(status_code))
 	    *opt_size=body_size;
@@ -1868,7 +1867,7 @@ int Http::Do()
       rate_limit=new RateLimit(hostname);
       if(real_pos<0) // assume Range: did not work
       {
-	 if(mode!=STORE && mode!=MAKE_DIR && body_size>=0)
+	 if(!ModeIs(STORE) && !ModeIs(MAKE_DIR) && body_size>=0)
 	 {
 	    entity_size=body_size;
 	    if(opt_size && H_2XX(status_code))
@@ -2210,14 +2209,14 @@ int Http::Done()
 
 int Http::Buffered()
 {
-   if(mode!=STORE || !conn || !conn->send_buf || sending_proppatch)
+   if(!ModeIs(STORE) || !conn || !conn->send_buf)
       return 0;
    return conn->send_buf->Size()+SocketBuffered(conn->sock);
 }
 
 int Http::Write(const void *buf,int size)
 {
-   if(mode!=STORE || sending_proppatch)
+   if(!ModeIs(STORE))
       return(0);
 
    Resume();
@@ -2263,7 +2262,7 @@ int Http::SendEOT()
       return OK;
    if(Error())
       return(error_code);
-   if(mode==STORE)
+   if(ModeIs(STORE))
    {
       if(state==RECEIVING_HEADER && conn->send_buf->Size()==0)
       {
@@ -2305,7 +2304,7 @@ const char *Http::CurrentStatus()
    case CONNECTED:
       return(_("Connection idle"));
    case RECEIVING_HEADER:
-      if(mode==STORE && !sent_eot && !status)
+      if(ModeIs(STORE) && !sent_eot && !status)
 	 return(_("Sending data"));
       if(tunnel_state==TUNNEL_WAITING)
 	 return(_("Connecting..."));
