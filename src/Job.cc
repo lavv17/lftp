@@ -187,15 +187,23 @@ void Job::Kill(int n)
 
 void Job::KillAll()
 {
-   xlist_for_each_safe(Job,all_jobs,node,scan,next)
+   // Job::Kill may remove more than a single job from all_jobs list,
+   // collect list of jobs beforehand.
+   xarray<Job*> to_kill;
+   xlist_for_each(Job,all_jobs,node,scan)
       if(scan->jobno>=0)
-	 Job::Kill(scan);
+	 to_kill.append(scan);
+   for(int i=0; i<to_kill.count(); i++)
+      Kill(to_kill[i]);
    CollectGarbage();
 }
 void Job::Cleanup()
 {
-   xlist_for_each_safe(Job,all_jobs,node,scan,next)
-      Job::Kill(scan);
+   xarray<Job*> to_kill;
+   xlist_for_each(Job,all_jobs,node,scan)
+      to_kill.append(scan);
+   for(int i=0; i<to_kill.count(); i++)
+      Kill(to_kill[i]);
    CollectGarbage();
 }
 
@@ -521,7 +529,7 @@ Job *Job::FindAnyChild()
 {
    xlist_for_each(Job,children_jobs,node,scan)
       if(scan->jobno>=0)
-      	 return scan;
+	 return scan;
    return 0;
 }
 

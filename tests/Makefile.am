@@ -1,5 +1,5 @@
 check_PROGRAMS = ftp-mlsd ftp-list http-get ftp-cls-l
-check_SCRIPTS = module1 lftp-https-get
+check_SCRIPTS = module1 lftp-https-get lftp-queue-kill
 
 ftp_mlsd_SOURCES = ftp-mlsd.cc
 ftp_list_SOURCES = ftp-list.cc

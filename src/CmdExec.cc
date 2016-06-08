@@ -424,7 +424,7 @@ int CmdExec::Do()
 		  exit_code=0;
 		  builtin=BUILTIN_NONE;
 		  PrependCmd(xstring::get_tmp("open ").append_quoted(loc));
-	       	  return MOVED;
+		  return MOVED;
 	       }
 	    }
 	    // error
@@ -554,13 +554,13 @@ int CmdExec::Do()
 	 j->Bg();
 	 if(status_line)
 	    status_line->Clear();
- 	 if(interactive || verbose)
+	 if(interactive || verbose)
 	    j->SayFinal(); // final phrase like 'rm succeed'
 	 exit_code=j->ExitCode();
 	 RemoveWaiting(j);
 	 Delete(j);
 	 beep_if_long();
-      	 return MOVED;
+	 return MOVED;
       }
       if(interactive)
       {
@@ -976,7 +976,7 @@ void CmdExec::SetCmdFeeder(CmdFeeder *new_feeder)
 
 int CmdExec::AcceptSig(int sig)
 {
-   if(sig!=SIGINT)
+   if(sig!=SIGINT && sig!=SIGTERM)
       return STALL;
    if(builtin)
    {
@@ -1012,20 +1012,10 @@ int CmdExec::AcceptSig(int sig)
 	 if(res==WANTDIE)
 	 {
 	    exit_code=1;
-	    int jn=r->waiting_num;
-	    int *j=(int *)alloca(jn*sizeof(int));
-	    int k;
-	    for(k=0; k<jn; k++)
-	       j[k]=r->waiting[k]->jobno;
 	    RemoveWaiting(r);
 	    Delete(r);
 	    i--;
 	    limit--;
-	    for(k=0; k<jn; k++)
-	    {
-	       if(j[k]>=0)
-		  AddWaiting(FindJob(j[k])); // in case some jobs survived
-	    }
 	 }
       }
       if(waiting_num==0 && parent!=0)

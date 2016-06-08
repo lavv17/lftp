@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# "kill all" should terminate queued commands too.
+
+out=$(../src/lftp <<EOF
+queue sleep 1000
+queue sleep 2000
+kill all
+jobs
+EOF
+)
+test "$out" && exit 1
+exit 0
