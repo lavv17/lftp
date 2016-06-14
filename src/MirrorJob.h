@@ -127,8 +127,11 @@ private:
 
    double transfer_time_elapsed;
    TimeDate transfer_start_ts;
+
+   /* root_transfer_count is the global counter in the root mirror,
+    * and weight of a non-root mirror otherwise. */
    int	 root_transfer_count;
-   int	 &transfer_count;
+   int	 &transfer_count; // reference to root_mirror->root_transfer_count
 
    int	 flags;
    recursion_mode_t recursion_mode;

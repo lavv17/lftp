@@ -239,6 +239,7 @@ void MirrorJob::JobFinished(Job *j)
       stats.error_count++;
    RemoveWaiting(j);
    Delete(j);
+   assert(transfer_count>0);
    transfer_count--;
 }
 
@@ -708,6 +709,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
       }
       eprintf("mirror: %s\n",session->StrError(res));
       stats.error_count++;
+      assert(transfer_count>=root_transfer_count);
       transfer_count-=root_transfer_count;
       set_state(FINISHING);
       source_session->Close();
@@ -733,6 +735,7 @@ void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<Li
    {
       eprintf(_("mirror: protocol `%s' is not suitable for mirror\n"),
 	       session->GetProto());
+      assert(transfer_count>=root_transfer_count);
       transfer_count-=root_transfer_count;
       set_state(FINISHING);
       return;
@@ -761,6 +764,7 @@ void MirrorJob::HandleListInfo(SMTaskRef<ListInfo>& list_info, Ref<FileSet>& set
    {
       eprintf("mirror: %s\n",list_info->ErrorText());
       stats.error_count++;
+      assert(transfer_count>=root_transfer_count);
       transfer_count-=root_transfer_count;
       set_state(FINISHING);
       source_list_info=0;
@@ -901,6 +905,7 @@ int   MirrorJob::Do()
       if(source_list_info || target_list_info)
 	 return m;
 
+      assert(transfer_count>=root_transfer_count);
       transfer_count-=root_transfer_count; // leave room for transfers.
 
       if(FlagSet(DEPTH_FIRST) && source_set && !target_set)
@@ -931,6 +936,7 @@ int   MirrorJob::Do()
 	       root_mirror->target_set_recursive=target_set.borrow();
 	 }
 	 root_mirror->stats.dirs++;
+	 transfer_count++; // parent mirror will decrement it.
 	 goto pre_DONE;
       }
 
