@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.6.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2015-12-10 16:22+0300\n"
+"POT-Creation-Date: 2016-06-24 18:37+0300\n"
 "PO-Revision-Date: 2015-07-01 09:40+0300\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -170,7 +170,7 @@ msgstr "Модуль для команды `%s' не зарегистриров�
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, каталог=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:677
+#: src/CmdExec.cc:405 src/MirrorJob.cc:678
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
@@ -260,7 +260,7 @@ msgstr "Пересылка %d из %d $файла|файлов|файлов$ з�
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:1932 src/MirrorJob.cc:1954
+#: src/DummyProto.cc:65 src/MirrorJob.cc:1938 src/MirrorJob.cc:1960
 #: src/commands.cc:974 src/commands.cc:2171
 msgid " - not supported protocol"
 msgstr " - протокол не поддерживается"
@@ -273,8 +273,8 @@ msgstr "Ошибка доступа: "
 msgid "File cannot be accessed"
 msgstr "Доступ к файлу невозможен"
 
-#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1305 src/ftpclass.cc:4386
-#: src/ftpclass.cc:4395 src/Torrent.cc:3513
+#: src/FileAccess.cc:161 src/Fish.cc:984 src/SFtp.cc:1306 src/ftpclass.cc:4386
+#: src/ftpclass.cc:4395 src/Torrent.cc:3525
 msgid "Not connected"
 msgstr "Нет соединения"
 
@@ -414,43 +414,43 @@ msgstr "Закрытие неиспользуемого соединения"
 msgid "Running connect program"
 msgstr "Выполняется соединяющая программа"
 
-#: src/Fish.cc:590 src/Http.cc:1349 src/SFtp.cc:738 src/SFtp.cc:1071
-#: src/SFtp.cc:1072 src/ftpclass.cc:2750 src/ftpclass.cc:2970
+#: src/Fish.cc:590 src/Http.cc:1349 src/SFtp.cc:738 src/SFtp.cc:1073
+#: src/SFtp.cc:1074 src/ftpclass.cc:2750 src/ftpclass.cc:2970
 msgid "Peer closed connection"
 msgstr "Соединение закрыто удаленной машиной"
 
-#: src/Fish.cc:636 src/SFtp.cc:1096 src/ftpclass.cc:2900 src/ftpclass.cc:4023
+#: src/Fish.cc:636 src/SFtp.cc:1098 src/ftpclass.cc:2900 src/ftpclass.cc:4023
 msgid "extra server response"
 msgstr "непредвиденный ответ сервера"
 
-#: src/Fish.cc:989 src/Http.cc:2123 src/Http.cc:2130 src/SFtp.cc:1311
-#: src/ftpclass.cc:4398 src/Torrent.cc:3516 src/TorrentTracker.cc:621
+#: src/Fish.cc:989 src/Http.cc:2123 src/Http.cc:2130 src/SFtp.cc:1312
+#: src/ftpclass.cc:4398 src/Torrent.cc:3528 src/TorrentTracker.cc:621
 msgid "Connecting..."
 msgstr "Установка соединения..."
 
-#: src/Fish.cc:991 src/SFtp.cc:1313 src/ftpclass.cc:4404
+#: src/Fish.cc:991 src/SFtp.cc:1314 src/ftpclass.cc:4404
 msgid "Connected"
 msgstr "Соединен"
 
-#: src/Fish.cc:993 src/Http.cc:2132 src/SFtp.cc:1315 src/ftpclass.cc:4381
+#: src/Fish.cc:993 src/Http.cc:2132 src/SFtp.cc:1316 src/ftpclass.cc:4381
 #: src/ftpclass.cc:4409 src/ftpclass.cc:4423 src/TorrentTracker.cc:623
 msgid "Waiting for response..."
 msgstr "Ожидание ответа..."
 
-#: src/Fish.cc:995 src/Http.cc:2135 src/SFtp.cc:1317 src/ftpclass.cc:4443
+#: src/Fish.cc:995 src/Http.cc:2135 src/SFtp.cc:1318 src/ftpclass.cc:4443
 msgid "Receiving data"
 msgstr "Получение данных"
 
-#: src/Fish.cc:997 src/Http.cc:2128 src/SFtp.cc:1319 src/ftpclass.cc:4441
+#: src/Fish.cc:997 src/Http.cc:2128 src/SFtp.cc:1320 src/ftpclass.cc:4441
 msgid "Sending data"
 msgstr "Отправка данных"
 
-#: src/Fish.cc:999 src/SFtp.cc:1321
+#: src/Fish.cc:999 src/SFtp.cc:1322
 msgid "Done"
 msgstr "Готово"
 
-#: src/Fish.cc:1155 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2182
-#: src/SFtp.cc:2301
+#: src/Fish.cc:1155 src/FtpDirList.cc:123 src/HttpDir.cc:1356 src/SFtp.cc:2183
+#: src/SFtp.cc:2302
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Получение списка файлов (%lld) [%s]"
@@ -473,8 +473,8 @@ msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp через http прокси не может работать без прокси, установите hftp:proxy."
 
-#: src/Http.cc:1270 src/ftpclass.cc:1354 src/Torrent.cc:3184
-#: src/Torrent.cc:3723 src/TorrentTracker.cc:394
+#: src/Http.cc:1270 src/ftpclass.cc:1354 src/Torrent.cc:3196
+#: src/Torrent.cc:3735 src/TorrentTracker.cc:394
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "невозможно создать сокет для семейства адресов %d"
@@ -604,129 +604,129 @@ msgstr "%s%d ошиб$ка обнаружена|ки обнаружены|ок �
 msgid "Finished %s"
 msgstr "Завершено: %s"
 
-#: src/MirrorJob.cc:322 src/MirrorJob.cc:510 src/MirrorJob.cc:1123
+#: src/MirrorJob.cc:323 src/MirrorJob.cc:511 src/MirrorJob.cc:1129
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Удаление старого файла `%s'"
 
-#: src/MirrorJob.cc:324
+#: src/MirrorJob.cc:325
 #, c-format
 msgid "Overwriting old file `%s'"
 msgstr "Перезапись старого файла `%s'"
 
-#: src/MirrorJob.cc:333
+#: src/MirrorJob.cc:334
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Пропущен файл `%s' (only-existing)"
 
-#: src/MirrorJob.cc:339
+#: src/MirrorJob.cc:340
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Копирование файла `%s'"
 
-#: src/MirrorJob.cc:410
+#: src/MirrorJob.cc:411
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Пропущен каталог `%s' (only-existing)"
 
-#: src/MirrorJob.cc:429 src/MirrorJob.cc:541 src/MirrorJob.cc:818
+#: src/MirrorJob.cc:430 src/MirrorJob.cc:542 src/MirrorJob.cc:822
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Удаление старого локального файла `%s'"
 
-#: src/MirrorJob.cc:478
+#: src/MirrorJob.cc:479
 #, c-format
 msgid "Scanning directory `%s'"
 msgstr "Просмотр каталога `%s'"
 
-#: src/MirrorJob.cc:480
+#: src/MirrorJob.cc:481
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Копирование каталога `%s'"
 
-#: src/MirrorJob.cc:553
+#: src/MirrorJob.cc:554
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Пропущена символьная ссылка `%s' (only-existing)"
 
-#: src/MirrorJob.cc:558
+#: src/MirrorJob.cc:559
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Создание символьной ссылки `%s' на `%s'"
 
-#: src/MirrorJob.cc:732
+#: src/MirrorJob.cc:734
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: протокол `%s' не подходит для зеркалирования\n"
 
-#: src/MirrorJob.cc:839
+#: src/MirrorJob.cc:843
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Создание каталога `%s'"
 
-#: src/MirrorJob.cc:1080
+#: src/MirrorJob.cc:1086
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Старый каталог `%s' не удален"
 
-#: src/MirrorJob.cc:1082
+#: src/MirrorJob.cc:1088
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старый файл `%s' не удален"
 
-#: src/MirrorJob.cc:1121
+#: src/MirrorJob.cc:1127
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Удаление старого каталога `%s'"
 
-#: src/MirrorJob.cc:1271
+#: src/MirrorJob.cc:1277
 #, c-format
 msgid "Removing source file `%s'"
 msgstr "Удаление исходного файла `%s'"
 
-#: src/MirrorJob.cc:1291
+#: src/MirrorJob.cc:1297
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Повторный проход...\n"
 
-#: src/MirrorJob.cc:1589
+#: src/MirrorJob.cc:1595
 #, c-format
 msgid "%s must be one of: %s"
 msgstr "%s должно быть одним из: %s"
 
-#: src/MirrorJob.cc:1759
+#: src/MirrorJob.cc:1765
 #, c-format
 msgid "%s: regular expression `%s': %s\n"
 msgstr "%s: регулярное выражение `%s': %s\n"
 
-#: src/MirrorJob.cc:1896 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1902 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1119 src/commands.cc:1209 src/commands.cc:1581
 #: src/commands.cc:1612 src/commands.cc:1715 src/commands.cc:1801
 #: src/commands.cc:2080 src/commands.cc:2276 src/commands.cc:2438
 #: src/commands.cc:2466 src/commands.cc:2473 src/commands.cc:2769
 #: src/commands.cc:2796 src/commands.cc:2803 src/commands.cc:3136
-#: src/lftp.cc:267 src/Torrent.cc:4132
+#: src/lftp.cc:267 src/Torrent.cc:4144
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
 
-#: src/MirrorJob.cc:1920
+#: src/MirrorJob.cc:1926
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначен исходный каталог (`%s' или `%s'?)\n"
 
-#: src/MirrorJob.cc:1942
+#: src/MirrorJob.cc:1948
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначен конечный каталог (`%s' или `%s'?)\n"
 
-#: src/MirrorJob.cc:1983
+#: src/MirrorJob.cc:1989
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
 "%s: требуется указать исходный каталог (mirror:require-source установлено)\n"
 
-#: src/MirrorJob.cc:2072
+#: src/MirrorJob.cc:2078
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -797,7 +797,7 @@ msgstr ""
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Соединение с %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:204 src/Torrent.cc:3306
+#: src/NetAccess.cc:204 src/Torrent.cc:3318
 msgid "Timeout - reconnecting"
 msgstr "Превышение лимита времени ожидания - повторное соединение"
 
@@ -940,7 +940,7 @@ msgstr "нет такого %s сервиса"
 msgid "No address found"
 msgstr "Адресов не найдено"
 
-#: src/SFtp.cc:1087 src/SFtp.cc:1088
+#: src/SFtp.cc:1089 src/SFtp.cc:1090
 msgid "invalid server response format"
 msgstr "неверный формат ответа сервера"
 
@@ -2627,112 +2627,112 @@ msgstr ""
 msgid "%d file$|s$ found"
 msgstr "%d $файл найден|файла найдено|файлов найдено$"
 
-#: src/Torrent.cc:2054 src/Torrent.cc:2064
+#: src/Torrent.cc:2064 src/Torrent.cc:2074
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr "Получение мета-данных: %s"
 
-#: src/Torrent.cc:2056
+#: src/Torrent.cc:2066
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr "Проверка: %u/%u (%u%%) %s%s"
 
-#: src/Torrent.cc:2067
+#: src/Torrent.cc:2077
 msgid "Waiting for meta-data..."
 msgstr "Ожидание метаданных..."
 
-#: src/Torrent.cc:2075
+#: src/Torrent.cc:2085
 msgid "Shutting down: "
 msgstr "Останов: "
 
-#: src/Torrent.cc:3187
+#: src/Torrent.cc:3199
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr "Соединение с узлом %s, порт %u"
 
-#: src/Torrent.cc:3238 src/Torrent.cc:3355
+#: src/Torrent.cc:3250 src/Torrent.cc:3367
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr "удалённый узел неожиданно закрыл соединение после %s"
 
-#: src/Torrent.cc:3239 src/Torrent.cc:3356
+#: src/Torrent.cc:3251 src/Torrent.cc:3368
 msgid "peer unexpectedly closed connection"
 msgstr "удалённый узел неожиданно закрыл соединение"
 
-#: src/Torrent.cc:3241 src/Torrent.cc:3242
+#: src/Torrent.cc:3253 src/Torrent.cc:3254
 msgid "peer closed connection (before handshake)"
 msgstr "удалённый узел закрыл соединение (без обмена сообщениями)"
 
-#: src/Torrent.cc:3245 src/Torrent.cc:3358 src/Torrent.cc:3359
+#: src/Torrent.cc:3257 src/Torrent.cc:3370 src/Torrent.cc:3371
 msgid "invalid peer response format"
 msgstr "неверный формат ответа удалённого узла"
 
-#: src/Torrent.cc:3340 src/Torrent.cc:3341
+#: src/Torrent.cc:3352 src/Torrent.cc:3353
 msgid "peer closed connection"
 msgstr "удалённый узел закрыл соединение"
 
-#: src/Torrent.cc:3518
+#: src/Torrent.cc:3530
 msgid "Handshaking..."
 msgstr "Начало обмена сообщениями..."
 
-#: src/Torrent.cc:3778
+#: src/Torrent.cc:3790
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr "Не удалось выбрать порт из указанного диапазона torrent:port-range"
 
-#: src/Torrent.cc:3828
+#: src/Torrent.cc:3840
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr "Принято соединение от [%s]:%d"
 
-#: src/Torrent.cc:3890
+#: src/Torrent.cc:3902
 #, c-format
 msgid "peer sent unknown info_hash=%s in handshake"
 msgstr ""
 "удалённый узел прислал неизвестное значение info_hash=%s при начальном обмене"
 
-#: src/Torrent.cc:3914
+#: src/Torrent.cc:3926
 msgid "peer handshake timeout"
 msgstr "превышено время ожидания при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3926
+#: src/Torrent.cc:3938
 msgid "peer short handshake"
 msgstr "получено усечённое сообщение при начальном обмене с удалённым узлом"
 
-#: src/Torrent.cc:3928
+#: src/Torrent.cc:3940
 msgid "peer closed just accepted connection"
 msgstr "удалённый узел закрыл только что принятое соединение"
 
-#: src/Torrent.cc:3979
+#: src/Torrent.cc:3991
 #, c-format
 msgid "Seeding in background...\n"
 msgstr "Раздача продолжится в фоновом режиме...\n"
 
-#: src/Torrent.cc:4139
+#: src/Torrent.cc:4151
 #, c-format
 msgid "%s: --share conflicts with --output-directory.\n"
 msgstr "%s: --share конфликтует с --output-directory.\n"
 
-#: src/Torrent.cc:4143
+#: src/Torrent.cc:4155
 #, c-format
 msgid "%s: --share conflicts with --only-new.\n"
 msgstr "%s: --share конфликтует с --only-new.\n"
 
-#: src/Torrent.cc:4147
+#: src/Torrent.cc:4159
 #, c-format
 msgid "%s: --share conflicts with --only-incomplete.\n"
 msgstr "%s: --share конфликтует с --only-incomplete.\n"
 
-#: src/Torrent.cc:4189
+#: src/Torrent.cc:4201
 #, c-format
 msgid "%s: Please specify a file or directory to share.\n"
 msgstr "%s: Пожалуйста, укажите файл или каталог для раздачи.\n"
 
-#: src/Torrent.cc:4191
+#: src/Torrent.cc:4203
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr "%s: Пожалуйста, укажите torrent-файл или URL.\n"
 
-#: src/Torrent.cc:4221
+#: src/Torrent.cc:4233
 msgid ""
 "Start BitTorrent job for the given torrent-files, which can be a local "
 "file,\n"

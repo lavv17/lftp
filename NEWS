@@ -1,3 +1,13 @@
+Version 4.6.6 - 2016-06-24
+
+* fixed ascii mode transfers in some cases.
+* ftp: fixed loss of 17th file from MLSD listing.
+* http: fixed a memory leak when using PROPFIND for cd checking.
+* sftp: fixed infinite retries to upload.
+* mirror: fixed transfer count tracking in --scan-all-first mode.
+* torrent: fixed a coredump on a file read error.
+* torrent: fixed closing oldest cached FD.
+
 Version 4.6.5 - 2015-12-10
 
 * sftp: fixed handling of out-of-order replies.
