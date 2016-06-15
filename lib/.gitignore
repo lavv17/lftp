@@ -299,3 +299,5 @@ glthread
 /time-internal.h
 /time_rz.c
 /timegm.c
+/hard-locale.c
+/hard-locale.h
