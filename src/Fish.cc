@@ -394,7 +394,7 @@ void Fish::SendArrayInfoRequests()
 
 void Fish::SendMethod()
 {
-   const char *e=alloca_strdup(shell_encode(file));
+   const char *e=file?alloca_strdup(shell_encode(file)):0;
    const char *e1=shell_encode(file1);
    switch((open_mode)mode)
    {
