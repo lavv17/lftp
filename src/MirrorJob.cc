@@ -818,7 +818,9 @@ int   MirrorJob::Do()
 	 {
 	    if(S_ISDIR(st.st_mode))
 	    {
-	       if(!script_only)
+	       // try to enable write access
+	       // only if not enabled as chmod can clear sgid flags on directories
+	       if(!script_only && (st.st_mode!=(st.st_mode|0700)))
 		  chmod(target_dir,st.st_mode|0700);
 	       create_target_dir=false;
 	       goto pre_CHANGING_DIR_TARGET;
