@@ -101,6 +101,7 @@ private:
 
    bool create_target_dir;
    bool	no_target_dir;	   // target directory does not exist (for script_only)
+   bool remove_this_source_dir;
 
    SMTaskRef<ListInfo> source_list_info;
    SMTaskRef<ListInfo> target_list_info;

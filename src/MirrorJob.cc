@@ -790,6 +790,7 @@ int   MirrorJob::Do()
       source_redirections=0;
       source_session->Roll();
       set_state(CHANGING_DIR_SOURCE);
+      remove_this_source_dir=(remove_source_dirs && source_dir.last_char()!='/');
       m=MOVED;
       /*fallthrough*/
    case(CHANGING_DIR_SOURCE):
@@ -1222,9 +1223,9 @@ int   MirrorJob::Do()
 	 break;
 
       // all jobs finished.
-      if(remove_source_dirs && source_dir.last_char()!='/') {
+      if(remove_this_source_dir) {
 	 // remove source directory once.
-	 remove_source_dirs=false;
+	 remove_this_source_dir=false;
 	 if(script)
 	 {
 	    ArgV args("rmdir");
@@ -1365,6 +1366,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
 
    create_target_dir=true;
    no_target_dir=false;
+   remove_this_source_dir=false;
 
    flags=0;
    max_error_count=0;
