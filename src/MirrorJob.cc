@@ -425,9 +425,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       {
 		  // try to enable write access
 		  // only if not enabled as chmod can clear sgid flags on directories
-		  if(st.st_mode!=(st.st_mode|0700)) {
-		    chmod(target_name,st.st_mode|0700);
-		  }
+		  if(st.st_mode!=(st.st_mode|0700))
+		     chmod(target_name,st.st_mode|0700);
 		  create_target_dir=false;
 	       }
 	       else
