@@ -3271,7 +3271,7 @@ int TorrentPeer::Do()
    }
    if(recv_buf->Error())
    {
-      LogError(2,"recieve: %s",recv_buf->ErrorText());
+      LogError(2,"receive: %s",recv_buf->ErrorText());
       Disconnect(recv_buf->ErrorText());
       return MOVED;
    }
