@@ -1744,7 +1744,7 @@ int FDCache::OpenFile(const char *file,int m,off_t size)
    if(fd==-1 || size==0)
       return fd;
 #ifdef HAVE_POSIX_FALLOCATE
-   if(ci==O_RDWR) {
+   if(ci==O_RDWR && QueryBool("file:use-fallocate",0)) {
       struct stat st;
       // check if it is newly created file, then allocate space
       if(fstat(fd,&st)!=-1 && st.st_size==0) {

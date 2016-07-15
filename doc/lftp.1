@@ -1471,6 +1471,10 @@ local character set. It is set from current locale initially.
 .BR file:use-lock \ (boolean)
 when true, lftp uses advisory locking on local files when opening them.
 .TP
+.BR file:use-fallocate \ (boolean)
+when true, lftp uses posix_fallocate(3) to pre-allocate storage space and reduce
+file fragmentation in pget and torrent commands.
+.TP
 .BR fish:auto-confirm \ (boolean)
 when true, lftp answers ``yes'' to all ssh questions, in particular to the
 question about a new host key. Otherwise it answers ``no''.

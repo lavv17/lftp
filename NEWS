@@ -3,6 +3,7 @@ Version 4.7.3 - 2016-06-??
 * mirror: don't add source directory base name to the target if the source
   ends with a slash.
 * mirror: fixed transfer count tracking in --scan-all-first mode
+* new setting file:use-fallocate.
 * fixed "kill all" to remove queued commands.
 * fixed xfer:log-file setting to a writable file in a protected directory.
 * fixed xfer:clobber to allow output to non-plain files.
