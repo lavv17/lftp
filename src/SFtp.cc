@@ -1512,7 +1512,7 @@ void SFtp::SetError(int code,const Packet *reply)
    }
    Reply_STATUS *status=(Reply_STATUS*)reply;
    const char *message=status->GetMessage();
-   if(message)
+   if(message && *message)
    {
       SetError(code,utf8_to_lc(message));
       return;
