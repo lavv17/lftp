@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2016-05-18 16:15+0300\n"
+"POT-Creation-Date: 2016-07-15 13:55+0300\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -167,7 +167,7 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr "cd 成功, 当前目录=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:679
+#: src/CmdExec.cc:405 src/MirrorJob.cc:683
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
@@ -217,17 +217,17 @@ msgstr "\t正在运行\n"
 msgid "\tWaiting for command\n"
 msgstr "parse: 缺少过滤器命令\n"
 
-#: src/CmdExec.cc:1270
+#: src/CmdExec.cc:1260
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
 
-#: src/CmdExec.cc:1287
+#: src/CmdExec.cc:1277
 #, fuzzy, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "用法: %s module [args...]\n"
 
-#: src/CmdExec.cc:1293
+#: src/CmdExec.cc:1283
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr ""
@@ -257,7 +257,7 @@ msgstr "传输 %d/%d 文件失败\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "总共传输 %d 个文件\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:2015 src/MirrorJob.cc:2037
+#: src/DummyProto.cc:65 src/MirrorJob.cc:2028 src/MirrorJob.cc:2050
 #: src/commands.cc:1041 src/commands.cc:2250
 #, fuzzy
 msgid " - not supported protocol"
@@ -464,7 +464,7 @@ msgstr "\t完成\n"
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在获取文件列表 (%ld) [%s]"
 
-#: src/GetJob.cc:81
+#: src/GetJob.cc:79
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr ""
@@ -560,7 +560,7 @@ msgstr "连接空闲"
 msgid "Fetching headers..."
 msgstr "正在取得头..."
 
-#: src/Job.cc:285
+#: src/Job.cc:293
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] 完成 (%s)"
@@ -624,102 +624,102 @@ msgstr "%s 成功, 建立 %d 个目录\n"
 msgid "Finished %s"
 msgstr "[%lu] 完成. %s"
 
-#: src/MirrorJob.cc:323 src/MirrorJob.cc:512 src/MirrorJob.cc:1125
+#: src/MirrorJob.cc:324 src/MirrorJob.cc:516 src/MirrorJob.cc:1137
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
 msgstr "正在删除本地文件 `%s'"
 
-#: src/MirrorJob.cc:325
+#: src/MirrorJob.cc:326
 #, fuzzy, c-format
 msgid "Overwriting old file `%s'"
 msgstr "正在删除本地文件 `%s'"
 
-#: src/MirrorJob.cc:334
+#: src/MirrorJob.cc:335
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:340
+#: src/MirrorJob.cc:341
 #, fuzzy, c-format
 msgid "Transferring file `%s'"
 msgstr "上传本地文件 '%s'"
 
-#: src/MirrorJob.cc:411
+#: src/MirrorJob.cc:412
 #, fuzzy, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:430 src/MirrorJob.cc:543 src/MirrorJob.cc:820
+#: src/MirrorJob.cc:434 src/MirrorJob.cc:547 src/MirrorJob.cc:830
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "正在删除本地文件 `%s'"
 
-#: src/MirrorJob.cc:480
+#: src/MirrorJob.cc:484
 #, fuzzy, c-format
 msgid "Scanning directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:482
+#: src/MirrorJob.cc:486
 #, fuzzy, c-format
 msgid "Mirroring directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:518 src/MirrorJob.cc:560
+#: src/MirrorJob.cc:522 src/MirrorJob.cc:564
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "建立符号链接 `%s' 指向 `%s'"
 
-#: src/MirrorJob.cc:555
+#: src/MirrorJob.cc:559
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:734
+#: src/MirrorJob.cc:739
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "镜像: 协议 `%s' 不适合进行镜像\n"
 
-#: src/MirrorJob.cc:841
+#: src/MirrorJob.cc:851
 #, fuzzy, c-format
 msgid "Making directory `%s'"
 msgstr "建立远程目录 `%s'"
 
-#: src/MirrorJob.cc:1082
+#: src/MirrorJob.cc:1094
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:1084
+#: src/MirrorJob.cc:1096
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
 msgstr "没有删除旧的本地文件 `%s'"
 
-#: src/MirrorJob.cc:1123
+#: src/MirrorJob.cc:1135
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
 msgstr "删除旧的远程文件 `%s'"
 
-#: src/MirrorJob.cc:1240
+#: src/MirrorJob.cc:1252
 #, fuzzy, c-format
 msgid "Removing source directory `%s'"
 msgstr "删除旧的远程文件 `%s'"
 
-#: src/MirrorJob.cc:1306
+#: src/MirrorJob.cc:1318
 #, fuzzy, c-format
 msgid "Removing source file `%s'"
 msgstr "正在删除本地文件 `%s'"
 
-#: src/MirrorJob.cc:1326
+#: src/MirrorJob.cc:1338
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1649
+#: src/MirrorJob.cc:1662
 #, c-format
 msgid "%s must be one of: %s"
 msgstr ""
 
-#: src/MirrorJob.cc:1979 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1992 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1183 src/commands.cc:1273 src/commands.cc:1649
 #: src/commands.cc:1680 src/commands.cc:1787 src/commands.cc:1875
 #: src/commands.cc:2149 src/commands.cc:2355 src/commands.cc:2516
@@ -730,22 +730,22 @@ msgstr ""
 msgid "Try `help %s' for more information.\n"
 msgstr "请用 `help %s' 或得更多的信息.\n"
 
-#: src/MirrorJob.cc:2003
+#: src/MirrorJob.cc:2016
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2025
+#: src/MirrorJob.cc:2038
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2066
+#: src/MirrorJob.cc:2079
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2157
+#: src/MirrorJob.cc:2170
 #, fuzzy
 msgid ""
 "\n"
@@ -777,6 +777,7 @@ msgid ""
 "If the second directory is omitted, basename of first directory is used.\n"
 "If both directories are omitted, current local and remote directories are "
 "used.\n"
+"See lftp(1) for a complete list of options.\n"
 msgstr ""
 "\n"
 "把指定的远程目录镜像到本地\n"
@@ -2537,12 +2538,12 @@ msgstr "没有删除旧的远程文件 `%s'"
 msgid "the source file size is unknown"
 msgstr ""
 
-#: src/pgetJob.cc:173
+#: src/pgetJob.cc:174
 #, c-format
 msgid "pget: warning: space allocation for %s (%lld bytes) failed: %s\n"
 msgstr ""
 
-#: src/pgetJob.cc:234
+#: src/pgetJob.cc:236
 #, fuzzy, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s', 下载 %lu/%lu (%d%%) %s%s"

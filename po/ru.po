@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.6.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2016-05-18 16:15+0300\n"
+"POT-Creation-Date: 2016-07-15 13:55+0300\n"
 "PO-Revision-Date: 2016-03-22 09:58+0300\n"
 "Last-Translator: Alexander V. Lukyanov <lav@yars.free.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -170,7 +170,7 @@ msgstr "Модуль для команды `%s' не зарегистриров�
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, каталог=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:679
+#: src/CmdExec.cc:405 src/MirrorJob.cc:683
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: получено перенаправление на `%s'\n"
@@ -219,17 +219,17 @@ msgstr "\tВыполнение\n"
 msgid "\tWaiting for command\n"
 msgstr "\tОжидание команды\n"
 
-#: src/CmdExec.cc:1270
+#: src/CmdExec.cc:1260
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: команда `%s' не встроена при компиляции.\n"
 
-#: src/CmdExec.cc:1287
+#: src/CmdExec.cc:1277
 #, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "Использование: %s команда [аргументы...]\n"
 
-#: src/CmdExec.cc:1293
+#: src/CmdExec.cc:1283
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr "%s: не удалось создать локальный сеанс\n"
@@ -261,7 +261,7 @@ msgstr "Пересылка %d из %d $файла|файлов|файлов$ з�
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Всего перемещено: %d $файл|файла|файлов$\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:2015 src/MirrorJob.cc:2037
+#: src/DummyProto.cc:65 src/MirrorJob.cc:2028 src/MirrorJob.cc:2050
 #: src/commands.cc:1041 src/commands.cc:2250
 msgid " - not supported protocol"
 msgstr " - протокол не поддерживается"
@@ -463,7 +463,7 @@ msgstr "Готово"
 msgid "Getting file list (%lld) [%s]"
 msgstr "Получение списка файлов (%lld) [%s]"
 
-#: src/GetJob.cc:81
+#: src/GetJob.cc:79
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s: %s: файл уже существует и не задано xfer:clobber\n"
@@ -560,7 +560,7 @@ msgstr "Соединение не используется"
 msgid "Fetching headers..."
 msgstr "Получение заголовков HTTP..."
 
-#: src/Job.cc:285
+#: src/Job.cc:293
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Завершено (%s)"
@@ -623,102 +623,102 @@ msgstr "%s%d ошиб$ка обнаружена|ки обнаружены|ок �
 msgid "Finished %s"
 msgstr "Завершено: %s"
 
-#: src/MirrorJob.cc:323 src/MirrorJob.cc:512 src/MirrorJob.cc:1125
+#: src/MirrorJob.cc:324 src/MirrorJob.cc:516 src/MirrorJob.cc:1137
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Удаление старого файла `%s'"
 
-#: src/MirrorJob.cc:325
+#: src/MirrorJob.cc:326
 #, c-format
 msgid "Overwriting old file `%s'"
 msgstr "Перезапись старого файла `%s'"
 
-#: src/MirrorJob.cc:334
+#: src/MirrorJob.cc:335
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Пропущен файл `%s' (only-existing)"
 
-#: src/MirrorJob.cc:340
+#: src/MirrorJob.cc:341
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Копирование файла `%s'"
 
-#: src/MirrorJob.cc:411
+#: src/MirrorJob.cc:412
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Пропущен каталог `%s' (only-existing)"
 
-#: src/MirrorJob.cc:430 src/MirrorJob.cc:543 src/MirrorJob.cc:820
+#: src/MirrorJob.cc:434 src/MirrorJob.cc:547 src/MirrorJob.cc:830
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Удаление старого локального файла `%s'"
 
-#: src/MirrorJob.cc:480
+#: src/MirrorJob.cc:484
 #, c-format
 msgid "Scanning directory `%s'"
 msgstr "Просмотр каталога `%s'"
 
-#: src/MirrorJob.cc:482
+#: src/MirrorJob.cc:486
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Копирование каталога `%s'"
 
-#: src/MirrorJob.cc:518 src/MirrorJob.cc:560
+#: src/MirrorJob.cc:522 src/MirrorJob.cc:564
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Создание символьной ссылки `%s' на `%s'"
 
-#: src/MirrorJob.cc:555
+#: src/MirrorJob.cc:559
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Пропущена символьная ссылка `%s' (only-existing)"
 
-#: src/MirrorJob.cc:734
+#: src/MirrorJob.cc:739
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: протокол `%s' не подходит для зеркалирования\n"
 
-#: src/MirrorJob.cc:841
+#: src/MirrorJob.cc:851
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Создание каталога `%s'"
 
-#: src/MirrorJob.cc:1082
+#: src/MirrorJob.cc:1094
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Старый каталог `%s' не удален"
 
-#: src/MirrorJob.cc:1084
+#: src/MirrorJob.cc:1096
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старый файл `%s' не удален"
 
-#: src/MirrorJob.cc:1123
+#: src/MirrorJob.cc:1135
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Удаление старого каталога `%s'"
 
-#: src/MirrorJob.cc:1240
+#: src/MirrorJob.cc:1252
 #, c-format
 msgid "Removing source directory `%s'"
 msgstr "Удаление исходного каталога `%s'"
 
-#: src/MirrorJob.cc:1306
+#: src/MirrorJob.cc:1318
 #, c-format
 msgid "Removing source file `%s'"
 msgstr "Удаление исходного файла `%s'"
 
-#: src/MirrorJob.cc:1326
+#: src/MirrorJob.cc:1338
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Повторный проход...\n"
 
-#: src/MirrorJob.cc:1649
+#: src/MirrorJob.cc:1662
 #, c-format
 msgid "%s must be one of: %s"
 msgstr "%s должно быть одним из: %s"
 
-#: src/MirrorJob.cc:1979 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1992 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1183 src/commands.cc:1273 src/commands.cc:1649
 #: src/commands.cc:1680 src/commands.cc:1787 src/commands.cc:1875
 #: src/commands.cc:2149 src/commands.cc:2355 src/commands.cc:2516
@@ -729,23 +729,24 @@ msgstr "%s должно быть одним из: %s"
 msgid "Try `help %s' for more information.\n"
 msgstr "Запустите `help %s' для получения дополнительной информации.\n"
 
-#: src/MirrorJob.cc:2003
+#: src/MirrorJob.cc:2016
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначен исходный каталог (`%s' или `%s'?)\n"
 
-#: src/MirrorJob.cc:2025
+#: src/MirrorJob.cc:2038
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначен конечный каталог (`%s' или `%s'?)\n"
 
-#: src/MirrorJob.cc:2066
+#: src/MirrorJob.cc:2079
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
 "%s: требуется указать исходный каталог (mirror:require-source установлено)\n"
 
-#: src/MirrorJob.cc:2157
+#: src/MirrorJob.cc:2170
+#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -776,6 +777,7 @@ msgid ""
 "If the second directory is omitted, basename of first directory is used.\n"
 "If both directories are omitted, current local and remote directories are "
 "used.\n"
+"See lftp(1) for a complete list of options.\n"
 msgstr ""
 "\n"
 "Выполнить \"зеркалирование\" указанного каталога с сервера в локальный "
@@ -2600,13 +2602,13 @@ msgstr "файл назначения не локальный"
 msgid "the source file size is unknown"
 msgstr "размер исходного файла неизвестен"
 
-#: src/pgetJob.cc:173
+#: src/pgetJob.cc:174
 #, c-format
 msgid "pget: warning: space allocation for %s (%lld bytes) failed: %s\n"
 msgstr ""
 "pget: предупреждение: выделение места для %s (%lld байт) не удалось: %s\n"
 
-#: src/pgetJob.cc:234
+#: src/pgetJob.cc:236
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "`%s', принято %lld из %lld (%d%%) %s%s"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2016-05-18 16:15+0300\n"
+"POT-Creation-Date: 2016-07-15 13:55+0300\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -170,7 +170,7 @@ msgstr "Le module pour la commande « %s » n'a pas enregistré la commande.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, cwd=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:679
+#: src/CmdExec.cc:405 src/MirrorJob.cc:683
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s : reçu une redirection vers « %s »\n"
@@ -219,17 +219,17 @@ msgstr "\tEn cours d'exécution\n"
 msgid "\tWaiting for command\n"
 msgstr "\tEn attente de la commande\n"
 
-#: src/CmdExec.cc:1270
+#: src/CmdExec.cc:1260
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s : la commande « %s » n'est pas compilée.\n"
 
-#: src/CmdExec.cc:1287
+#: src/CmdExec.cc:1277
 #, fuzzy, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "Utilisation : %s module [args...]\n"
 
-#: src/CmdExec.cc:1293
+#: src/CmdExec.cc:1283
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr ""
@@ -259,7 +259,7 @@ msgstr "Le transfert de %d sur %d fichier$|s$ a échoué\n"
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Total %d fichier$|s$ transférés\n"
 
-#: src/DummyProto.cc:65 src/MirrorJob.cc:2015 src/MirrorJob.cc:2037
+#: src/DummyProto.cc:65 src/MirrorJob.cc:2028 src/MirrorJob.cc:2050
 #: src/commands.cc:1041 src/commands.cc:2250
 msgid " - not supported protocol"
 msgstr " - protocole non pris en charge"
@@ -459,7 +459,7 @@ msgstr "Terminé"
 msgid "Getting file list (%lld) [%s]"
 msgstr "Récupération de la liste des fichiers (%lld) [%s]"
 
-#: src/GetJob.cc:81
+#: src/GetJob.cc:79
 #, c-format
 msgid "%s: %s: file already exists and xfer:clobber is unset\n"
 msgstr "%s : %s : le fichier existe déjà et xfer:clobber n'est pas défini\n"
@@ -556,7 +556,7 @@ msgstr "Connexion stagnante"
 msgid "Fetching headers..."
 msgstr "Réception des entêtes..."
 
-#: src/Job.cc:285
+#: src/Job.cc:293
 #, c-format
 msgid "[%d] Done (%s)"
 msgstr "[%d] Terminé (%s)"
@@ -621,102 +621,102 @@ msgstr "%s%d $erreur détectée|erreurs détectées$\n"
 msgid "Finished %s"
 msgstr "[%lu] Terminé. %s"
 
-#: src/MirrorJob.cc:323 src/MirrorJob.cc:512 src/MirrorJob.cc:1125
+#: src/MirrorJob.cc:324 src/MirrorJob.cc:516 src/MirrorJob.cc:1137
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Suppression de l'ancien fichier « %s »"
 
-#: src/MirrorJob.cc:325
+#: src/MirrorJob.cc:326
 #, fuzzy, c-format
 msgid "Overwriting old file `%s'"
 msgstr "Suppression de l'ancien fichier « %s »"
 
-#: src/MirrorJob.cc:334
+#: src/MirrorJob.cc:335
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "On ignore le fichier « %s » (only-existing)"
 
-#: src/MirrorJob.cc:340
+#: src/MirrorJob.cc:341
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Transfert du fichier « %s »"
 
-#: src/MirrorJob.cc:411
+#: src/MirrorJob.cc:412
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "On ignore le répertoire « %s » (only-existing)"
 
-#: src/MirrorJob.cc:430 src/MirrorJob.cc:543 src/MirrorJob.cc:820
+#: src/MirrorJob.cc:434 src/MirrorJob.cc:547 src/MirrorJob.cc:830
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Suppression de l'ancien fichier local « %s »"
 
-#: src/MirrorJob.cc:480
+#: src/MirrorJob.cc:484
 #, fuzzy, c-format
 msgid "Scanning directory `%s'"
 msgstr "Création du répertoire « %s »"
 
-#: src/MirrorJob.cc:482
+#: src/MirrorJob.cc:486
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Duplication du répertoire « %s »"
 
-#: src/MirrorJob.cc:518 src/MirrorJob.cc:560
+#: src/MirrorJob.cc:522 src/MirrorJob.cc:564
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Création du lien symbolique « %s » vers « %s »"
 
-#: src/MirrorJob.cc:555
+#: src/MirrorJob.cc:559
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "On ignore le lien symbolique « %s » (only-existing)"
 
-#: src/MirrorJob.cc:734
+#: src/MirrorJob.cc:739
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror : le protocole « %s » ne convient pas pour une duplication\n"
 
-#: src/MirrorJob.cc:841
+#: src/MirrorJob.cc:851
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Création du répertoire « %s »"
 
-#: src/MirrorJob.cc:1082
+#: src/MirrorJob.cc:1094
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "L'ancien répertoire « %s » n'est pas supprimé"
 
-#: src/MirrorJob.cc:1084
+#: src/MirrorJob.cc:1096
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "L'ancien fichier « %s » n'est pas supprimé"
 
-#: src/MirrorJob.cc:1123
+#: src/MirrorJob.cc:1135
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Suppression de l'ancien répertoire « %s »"
 
-#: src/MirrorJob.cc:1240
+#: src/MirrorJob.cc:1252
 #, fuzzy, c-format
 msgid "Removing source directory `%s'"
 msgstr "Suppression de l'ancien répertoire « %s »"
 
-#: src/MirrorJob.cc:1306
+#: src/MirrorJob.cc:1318
 #, fuzzy, c-format
 msgid "Removing source file `%s'"
 msgstr "Suppression de l'ancien fichier « %s »"
 
-#: src/MirrorJob.cc:1326
+#: src/MirrorJob.cc:1338
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Réessaye la commande mirror...\n"
 
-#: src/MirrorJob.cc:1649
+#: src/MirrorJob.cc:1662
 #, fuzzy, c-format
 msgid "%s must be one of: %s"
 msgstr "doit être C, S, E, P, ou vide"
 
-#: src/MirrorJob.cc:1979 src/SleepJob.cc:144 src/SleepJob.cc:200
+#: src/MirrorJob.cc:1992 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1183 src/commands.cc:1273 src/commands.cc:1649
 #: src/commands.cc:1680 src/commands.cc:1787 src/commands.cc:1875
 #: src/commands.cc:2149 src/commands.cc:2355 src/commands.cc:2516
@@ -727,22 +727,23 @@ msgstr "doit être C, S, E, P, ou vide"
 msgid "Try `help %s' for more information.\n"
 msgstr "Essayez « help %s » pour plus d'informations.\n"
 
-#: src/MirrorJob.cc:2003
+#: src/MirrorJob.cc:2016
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2025
+#: src/MirrorJob.cc:2038
 #, fuzzy, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "Argument %s ambigu pour %s"
 
-#: src/MirrorJob.cc:2066
+#: src/MirrorJob.cc:2079
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2157
+#: src/MirrorJob.cc:2170
+#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -773,6 +774,7 @@ msgid ""
 "If the second directory is omitted, basename of first directory is used.\n"
 "If both directories are omitted, current local and remote directories are "
 "used.\n"
+"See lftp(1) for a complete list of options.\n"
 msgstr ""
 "\n"
 "Duplique le répertoire distant spécifié vers le répertoire local\n"
@@ -2707,12 +2709,12 @@ msgstr "le fichier cible est distant"
 msgid "the source file size is unknown"
 msgstr "la taille du fichier source est inconnue"
 
-#: src/pgetJob.cc:173
+#: src/pgetJob.cc:174
 #, c-format
 msgid "pget: warning: space allocation for %s (%lld bytes) failed: %s\n"
 msgstr ""
 
-#: src/pgetJob.cc:234
+#: src/pgetJob.cc:236
 #, c-format
 msgid "`%s', got %lld of %lld (%d%%) %s%s"
 msgstr "« %s », lu %lld sur %lld (%d%%) %s%s"
