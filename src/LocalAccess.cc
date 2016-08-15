@@ -175,10 +175,11 @@ int LocalAccess::Do()
       done=true;
       return MOVED;
    }
-   case(REMOVE): {
+   case(REMOVE):
+   case(REMOVE_DIR): {
       const char *f=dir_file(cwd,file);
       LogNote(5,"remove(%s)",f);
-      if(remove(f)==-1)
+      if((mode==REMOVE?remove:rmdir)(f)==-1)
       {
 	 errno_handle();
 	 error_code=NO_FILE;
@@ -186,14 +187,6 @@ int LocalAccess::Do()
       done=true;
       return MOVED;
    }
-   case(REMOVE_DIR):
-      if(rmdir(dir_file(cwd,file))==-1)
-      {
-	 errno_handle();
-	 error_code=NO_FILE;
-      }
-      done=true;
-      return MOVED;
    case(RENAME):
    case(LINK):
    case(SYMLINK):
