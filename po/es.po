@@ -17,58 +17,57 @@ msgstr ""
 "Content-Transfer-Encoding: 8-bit\n"
 
 #: lib/argmatch.c:133
-#, fuzzy, c-format
+#, c-format
 msgid "invalid argument %s for %s"
-msgstr "argumento inválido para `--sort'"
+msgstr "%s argumento inválido para %s"
 
 #: lib/argmatch.c:134
 #, c-format
 msgid "ambiguous argument %s for %s"
-msgstr ""
+msgstr "%s argumento ambiguo para %s"
 
 #: lib/argmatch.c:153
-#, fuzzy
 msgid "Valid arguments are:"
-msgstr "argumento inválido para `--sort'"
+msgstr "Argumentos válidos son:"
 
 #: lib/error.c:191
 msgid "Unknown system error"
-msgstr ""
+msgstr "Error de sistema desconocido"
 
 #: lib/getopt.c:575 lib/getopt.c:604
 #, c-format
 msgid "%s: option '%s' is ambiguous; possibilities:"
-msgstr ""
+msgstr "%s: opción '%s' es ambigua; posibilidades:"
 
 #: lib/getopt.c:619
 #, c-format
 msgid "%s: option '%s' is ambiguous\n"
-msgstr ""
+msgstr "%s: opción '%s' es ambigua\n"
 
 #: lib/getopt.c:654 lib/getopt.c:658
 #, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s: opción '--%s' no es válida como argumento\n"
 
 #: lib/getopt.c:667 lib/getopt.c:672
 #, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s: opción '%c%s' no es válida como argumento\n"
 
 #: lib/getopt.c:715 lib/getopt.c:734
 #, c-format
 msgid "%s: option '--%s' requires an argument\n"
-msgstr ""
+msgstr "%s: opción '--%s' necesita un argumento\n"
 
 #: lib/getopt.c:772 lib/getopt.c:775
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '--%s'\n"
-msgstr "%s: se recibió redirección a `%s'\n"
+msgstr "%s: opción desconocida para `--%s'\n"
 
 #: lib/getopt.c:783 lib/getopt.c:786
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%c%s'\n"
-msgstr "%s: se recibió redirección a `%s'\n"
+msgstr "%s: opción desconocida para `%c%s'\n"
 
 #: lib/getopt.c:835 lib/getopt.c:838
 #, fuzzy, c-format
@@ -78,22 +77,22 @@ msgstr "opción inválida"
 #: lib/getopt.c:891 lib/getopt.c:908 lib/getopt.c:1118 lib/getopt.c:1136
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
-msgstr ""
+msgstr "%s: requiere un argumento -- '%c'\n"
 
 #: lib/getopt.c:964 lib/getopt.c:980
 #, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
-msgstr ""
+msgstr "%s: opción '-W %s' es ambigua\n"
 
 #: lib/getopt.c:1004 lib/getopt.c:1022
 #, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
-msgstr ""
+msgstr "%s: opción '-W %s' no permite argumento\n"
 
 #: lib/getopt.c:1043 lib/getopt.c:1061
 #, c-format
 msgid "%s: option '-W %s' requires an argument\n"
-msgstr ""
+msgstr "%s: opción '-W %s' require un argumento\n"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
@@ -126,22 +125,22 @@ msgstr ""
 
 #: lib/xalloc-die.c:34
 msgid "memory exhausted"
-msgstr ""
+msgstr "memoria agotada"
 
 #: src/ChmodJob.cc:80
 #, c-format
 msgid "Failed to change mode of `%s' to %04o (%s).\n"
-msgstr ""
+msgstr "Error al cambiar el modo de '%s' a '%04o' (%s).\n"
 
 #: src/ChmodJob.cc:83
 #, c-format
 msgid "Mode of `%s' changed to %04o (%s).\n"
-msgstr ""
+msgstr "Modo de '%s' cambiado a '%04o' (%s).\n"
 
 #: src/ChmodJob.cc:88
 #, c-format
 msgid "Failed to change mode of `%s' because no old mode is available.\n"
-msgstr ""
+msgstr "Falló cambiar el modo de '%s' por no estar disponible el modo antiguo\n"
 
 #: src/CmdExec.cc:105
 #, c-format
@@ -193,7 +192,7 @@ msgstr "\tEjecutando primitiva `%s' [%s]\n"
 
 #: src/CmdExec.cc:741
 msgid "Queue is stopped."
-msgstr ""
+msgstr "Cola se ha detenido"
 
 #: src/CmdExec.cc:746
 msgid "Now executing:"
@@ -230,7 +229,7 @@ msgstr "Uso: %s módulo [args...]\n"
 #: src/CmdExec.cc:1283
 #, c-format
 msgid "%s: cannot create local session\n"
-msgstr ""
+msgstr "%s: no se pudo crear una sesión local\n"
 
 #: src/CopyJob.cc:82
 #, c-format
@@ -309,7 +308,7 @@ msgstr "1 byte cacheado"
 
 #: src/FileCopy.cc:142
 msgid "copy: destination file is already complete\n"
-msgstr ""
+msgstr "copy: el archivo de destino está completo\n"
 
 #: src/FileCopy.cc:183
 msgid "copy: put is broken\n"
@@ -331,11 +330,11 @@ msgstr "no se pudo hacer seek en la fuente de datos"
 #: src/FileCopy.cc:239
 #, c-format
 msgid "copy: put rolled back to %lld, seeking get accordingly\n"
-msgstr ""
+msgstr "copy: put en rolled back a %lld, solicitado por get\n"
 
 #: src/FileCopy.cc:252
 msgid "copy: all data received, but get rolled back\n"
-msgstr ""
+msgstr "copy: toda la data recibida pero get un rolled back\n"
 
 #: src/FileCopy.cc:268
 #, c-format
@@ -344,7 +343,7 @@ msgstr ""
 
 #: src/FileCopy.cc:365
 msgid "file size decreased during transfer"
-msgstr ""
+msgstr "el tamaño del archivo disminuyo durante la transferencia"
 
 #: src/FileCopy.cc:1200
 #, c-format
@@ -357,11 +356,11 @@ msgstr "nombre de archivo no encontrado em URL"
 
 #: src/FileCopy.cc:2071
 msgid "Verify command failed without a message"
-msgstr ""
+msgstr "Comando Verify fallo sin mensaje"
 
 #: src/FileCopy.h:280
 msgid "Verifying..."
-msgstr ""
+msgstr "Verificando..."
 
 #: src/FileCopyFtp.cc:95
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
@@ -387,7 +386,7 @@ msgstr "ftp:fxp-force está activado pero FXP no está disponible"
 
 #: src/FileSetOutput.cc:230
 msgid "non-option arguments found"
-msgstr ""
+msgstr "sin opcion para argumentos encontrada"
 
 #: src/Filter.cc:165
 #, fuzzy
@@ -420,7 +419,7 @@ msgstr "Cerrando conexión ociosa"
 
 #: src/Fish.cc:164 src/SFtp.cc:179
 msgid "Running connect program"
-msgstr ""
+msgstr "Ejecutando programa de conección"
 
 #: src/Fish.cc:590 src/Http.cc:1447 src/SFtp.cc:743 src/SFtp.cc:1080
 #: src/SFtp.cc:1081 src/ftpclass.cc:2798 src/ftpclass.cc:3018
@@ -512,7 +511,7 @@ msgstr "No se pudo interpretar la línea de estado HTTP"
 
 #: src/Http.cc:1657
 msgid "Object is not cached and http:cache-control has only-if-cached"
-msgstr ""
+msgstr "Objecto no es cacheado y http:cache-control tiene only-if-cached"
 
 #: src/Http.cc:1822
 #, c-format
@@ -639,7 +638,7 @@ msgstr "Borrando archivo antiguo `%s'"
 #: src/MirrorJob.cc:335
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
-msgstr ""
+msgstr "Omitiendo archivo '%s'"
 
 #: src/MirrorJob.cc:341
 #, c-format
@@ -674,7 +673,7 @@ msgstr "Creando enlace simbólico `%s' a `%s'"
 #: src/MirrorJob.cc:559
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
-msgstr ""
+msgstr "Omitiendo enlace simbolico `%s'"
 
 #: src/MirrorJob.cc:739
 #, c-format
@@ -714,12 +713,12 @@ msgstr "Borrando archivo antiguo `%s'"
 #: src/MirrorJob.cc:1338
 #, c-format
 msgid "Retrying mirror...\n"
-msgstr ""
+msgstr "Recibiendo mirror...\n"
 
 #: src/MirrorJob.cc:1662
 #, c-format
 msgid "%s must be one of: %s"
-msgstr ""
+msgstr "%s debe ser uno de: %s"
 
 #: src/MirrorJob.cc:1992 src/SleepJob.cc:144 src/SleepJob.cc:200
 #: src/commands.cc:1183 src/commands.cc:1273 src/commands.cc:1649
@@ -735,20 +734,19 @@ msgstr "Pruebe `help %s' para mayor información.\n"
 #: src/MirrorJob.cc:2016
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
-msgstr ""
+msgstr "%s: ambiguo directorio de origen (¿`%s' o `%s'?)\n"
 
 #: src/MirrorJob.cc:2038
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
-msgstr ""
+msgstr "%s: ambiguo directorio de destino (¿`%s' o `%s'?)\n"
 
 #: src/MirrorJob.cc:2079
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
-msgstr ""
+msgstr "%s: directorio origen es requerido (mirror:require-source está configurado)\n"
 
 #: src/MirrorJob.cc:2170
-#, fuzzy
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -807,6 +805,7 @@ msgstr ""
 "Al usar -R, el primer directorio es local y el segundo es remoto.\n"
 "Si se omite el segundo, se usa el nombre base del primero.\n"
 "Si se omiten ambos, se usan los directorios local y remoto actuales.\n"
+"Mira el manual lftp(1) para una completa lista de opciones.\n"
 
 #: src/NetAccess.cc:148
 #, c-format
@@ -833,7 +832,7 @@ msgstr "variable max-retries excedida"
 #: src/OutputJob.cc:145
 #, c-format
 msgid "%s (filter)"
-msgstr ""
+msgstr "%s (filtro)"
 
 #  Juaa... me divierte mucho esta traducción, y ma sí... =)
 #: src/PollVec.cc:69
@@ -843,16 +842,16 @@ msgstr "%s: BUG - abrazo mortal detectado\n"
 
 #: src/PtyShell.cc:68
 msgid "pseudo-tty allocation failed: "
-msgstr ""
+msgstr "pseudo-tty falló asignación"
 
 #: src/QueueFeeder.cc:68
 msgid "Added job$|s$"
-msgstr ""
+msgstr "Agregado job$|s$"
 
 #: src/QueueFeeder.cc:164 src/QueueFeeder.cc:185
 #, c-format
 msgid "No queued jobs.\n"
-msgstr ""
+msgstr "No trabajos en cola.\n"
 
 #: src/QueueFeeder.cc:166
 #, fuzzy, c-format
@@ -861,16 +860,16 @@ msgstr "%s: Ninguna cola está activa.\n"
 
 #: src/QueueFeeder.cc:171 src/QueueFeeder.cc:192
 msgid "Deleted job$|s$"
-msgstr ""
+msgstr "Elimitado job$|s$"
 
 #: src/QueueFeeder.cc:187
 #, c-format
 msgid "No queued jobs match \"%s\".\n"
-msgstr ""
+msgstr "No encontrado trabajdos en cola según \"%s\".\n"
 
 #: src/QueueFeeder.cc:212 src/QueueFeeder.cc:230
 msgid "Moved job$|s$"
-msgstr ""
+msgstr "Movido job$s|s$"
 
 #: src/QueueFeeder.cc:354
 #, fuzzy
@@ -916,7 +915,7 @@ msgstr "Formato de tiempo inválido, debe ser <tiempo><unidad>, p.ej. 2h30m."
 
 #: src/ResMgr.cc:686
 msgid "integer overflow"
-msgstr ""
+msgstr "overflow de integer"
 
 #: src/ResMgr.cc:772
 msgid "Invalid IPv4 numeric address"
@@ -934,7 +933,7 @@ msgstr "Operación no soportada"
 
 #: src/ResMgr.cc:862
 msgid "no closure defined for this setting"
-msgstr ""
+msgstr "No se ha definido cierre para esta configuración"
 
 #: src/Resolver.cc:229
 msgid "host name resolve timeout"
@@ -947,7 +946,7 @@ msgstr "---- Se encontr$ó|aron$ %d direcci$ón|ones$\n"
 
 #: src/Resolver.cc:734
 msgid "DNS resolution not trusted."
-msgstr ""
+msgstr "Resolución DNS no confiable"
 
 #: src/Resolver.cc:840
 msgid "Host name lookup failure"
@@ -969,11 +968,11 @@ msgstr "respuesta extra del servidor"
 
 #: src/SleepJob.cc:99
 msgid "Sleeping forever"
-msgstr ""
+msgstr "Durmiendo para siempre"
 
 #: src/SleepJob.cc:100
 msgid "Sleep time left: "
-msgstr ""
+msgstr "Tiempo de Sleep faltante:"
 
 #: src/SleepJob.cc:108
 #, c-format
@@ -988,12 +987,12 @@ msgstr "%s: se requiere un argumento. "
 #: src/SleepJob.cc:262
 #, c-format
 msgid "%s: date-time specification missed\n"
-msgstr ""
+msgstr "%s: date-time falta\n"
 
 #: src/SleepJob.cc:269
 #, c-format
 msgid "%s: date-time parse error\n"
-msgstr ""
+msgstr "%s: date-time error de parseo\n"
 
 #: src/SleepJob.cc:303
 msgid ""
@@ -1004,8 +1003,7 @@ msgid ""
 msgstr ""
 "Uso: sleep <lapso>[unidad]\n"
 "Espera la cantidad de tiempo dada. El argumento lapso puede ser seguido\n"
-"opcionalmente por una unidad: d - días, h - horas, m - minutos, s - "
-"segundos.\n"
+"opcionalmente por una unidad: d - días, h - horas, m - minutos, s - segundos.\n"
 "Por omisión se asume que el tiempo se da en segundos.\n"
 
 #: src/SleepJob.cc:310
