@@ -33,6 +33,17 @@ void SSH_Access::MakePtyBuffers()
    pty_recv_buf=new IOBufferFDStream(new FDStream(fd,"pseudo-tty"),IOBuffer::GET);
 }
 
+static bool ends_with(const char *b,const char *e,const char *suffix)
+{
+   int len=strlen(suffix);
+   return (e-b>=len && !strncasecmp(e-len,suffix,len));
+}
+static bool begins_with(const char *b,const char *e,const char *suffix)
+{
+   int len=strlen(suffix);
+   return (e-b>=len && !strncasecmp(b,suffix,len));
+}
+
 int SSH_Access::HandleSSHMessage()
 {
    int m=STALL;
@@ -42,17 +53,11 @@ int SSH_Access::HandleSSHMessage()
    const char *eol=find_char(b,s,'\n');
    if(!eol)
    {
-      const char *p="password:";
-      const char *p_for="password for ";
-      const char *y="(yes/no)?";
-      int p_len=strlen(p);
-      int p_for_len=strlen(p_for);
-      int y_len=strlen(y);
       if(s>0 && b[s-1]==' ')
 	 s--;
-      if((s>=p_len && !strncasecmp(b+s-p_len,p,p_len))
-      || (s>10 && !strncmp(b+s-2,"':",2))
-      || (s>p_for_len && b[s-1]==':' && !strncasecmp(b,p_for,p_for_len)))
+      if(ends_with(b,b+s,"password:")
+      || (ends_with(b,b+s,"':") && s>10)
+      || (begins_with(b,b+s,"password for ") && b[s-1]==':'))
       {
 	 if(!pass)
 	 {
@@ -70,7 +75,7 @@ int SSH_Access::HandleSSHMessage()
 	 password_sent++;
 	 return m;
       }
-      if(s>=y_len && !strncasecmp(b+s-y_len,y,y_len))
+      if(ends_with(b,b+s,"(yes/no)?"))
       {
 	 const char *answer=QueryBool("auto-confirm",hostname)?"yes\n":"no\n";
 	 pty_recv_buf->Put(answer);
@@ -93,19 +98,18 @@ int SSH_Access::HandleSSHMessage()
       LogSSHMessage();
       return m;
    }
-   const char *f=N_("Host key verification failed");
-   if(!strncasecmp(b,f,strlen(f)))
+   if(begins_with(b,b+s,"Host key verification failed"))
    {
       LogSSHMessage();
-      SetError(FATAL,_(f));
+      SetError(FATAL,xstring::get_tmp(b,eol-b));
       return MOVED;
    }
    if(eol>b && eol[-1]=='\r')
       eol--;
    if(!hostname_valid) {
-      f=N_("Name or service not known");
-      int f_len=strlen(f);
-      if(eol-b>=f_len && !strncasecmp(eol-f_len,f,f_len)) {
+      if(ends_with(b,eol,"Name or service not known")
+      || ends_with(b,eol,"No address associated with hostname"))
+      {
 	 LogSSHMessage();
 	 SetError(LOOKUP_ERROR,xstring::get_tmp(b,eol-b));
 	 return MOVED;
