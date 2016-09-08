@@ -34,6 +34,7 @@ protected:
    int password_sent;
    const char *greeting;
    bool received_greeting;
+   bool hostname_valid;
 
    xstring last_ssh_message;
    time_t last_ssh_message_time;
@@ -49,11 +50,13 @@ protected:
    SSH_Access(const char *g) :
       password_sent(0),
       greeting(g), received_greeting(false),
+      hostname_valid(false),
       last_ssh_message_time(0) {}
 
    SSH_Access(const SSH_Access *o) : NetAccess(o),
       password_sent(0),
       greeting(o->greeting), received_greeting(false),
+      hostname_valid(o->hostname_valid),
       last_ssh_message_time(0) {}
 };
 

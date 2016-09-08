@@ -102,12 +102,14 @@ int SSH_Access::HandleSSHMessage()
    }
    if(eol>b && eol[-1]=='\r')
       eol--;
-   f=N_("Name or service not known");
-   int f_len=strlen(f);
-   if(eol-b>=f_len && !strncasecmp(eol-f_len,f,f_len)) {
-      LogSSHMessage();
-      SetError(LOOKUP_ERROR,xstring::get_tmp(b,eol-b));
-      return MOVED;
+   if(!hostname_valid) {
+      f=N_("Name or service not known");
+      int f_len=strlen(f);
+      if(eol-b>=f_len && !strncasecmp(eol-f_len,f,f_len)) {
+	 LogSSHMessage();
+	 SetError(LOOKUP_ERROR,xstring::get_tmp(b,eol-b));
+	 return MOVED;
+      }
    }
    LogSSHMessage();
    return MOVED;
@@ -145,8 +147,10 @@ void SSH_Access::LogSSHMessage()
    if(last_ssh_message.begins_with("ssh: "))
       last_ssh_message.set(last_ssh_message+5);
 
-   if(!received_greeting && last_ssh_message.eq(greeting))
+   if(!received_greeting && last_ssh_message.eq(greeting)) {
       received_greeting=true;
+      hostname_valid=true;
+   }
 }
 
 void SSH_Access::DisconnectLL()
@@ -172,6 +176,7 @@ void SSH_Access::MoveConnectionHere(SSH_Access *o)
    pty_recv_buf=o->pty_recv_buf.borrow();
    ssh=o->ssh.borrow();
    received_greeting=o->received_greeting;
+   hostname_valid|=o->hostname_valid;
    password_sent=o->password_sent;
    last_ssh_message.move_here(o->last_ssh_message);
    last_ssh_message_time=o->last_ssh_message_time; o->last_ssh_message_time=0;
