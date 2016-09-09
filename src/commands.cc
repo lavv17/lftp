@@ -739,10 +739,9 @@ void CmdExec::enable_debug(const char *opt)
    int level=DEFAULT_DEBUG_LEVEL;
    if(opt && isdigit((unsigned char)opt[0]))
       level=atoi(opt);
-   Log::global->Enable();
-   Log::global->SetLevel(level);
-   Log::global->SetOutput(2,false);
-   Log::global->ShowNothing();
+   const char *c="debug";
+   ResMgr::Set("log:enabled",c,"yes");
+   ResMgr::Set("log:level",c,xstring::format("%d",level));
 }
 
 CmdFeeder *lftp_feeder=0;
@@ -2117,8 +2116,7 @@ CMD(debug)
 {
    const char *op=args->a0();
    int	 new_dlevel=DEFAULT_DEBUG_LEVEL;
-   char	 *debug_file_name=0;
-   int 	 fd=-1;
+   const char *debug_file_name=0;
    bool  enabled=true;
    bool	 show_pid=false;
    bool	 show_time=false;
@@ -2151,21 +2149,6 @@ CMD(debug)
       }
    }
 
-   if(debug_file_name) {
-      fd=open(debug_file_name,O_WRONLY|O_CREAT|O_APPEND|O_NONBLOCK|trunc,0600);
-      if(fd==-1)
-      {
-	 perror(debug_file_name);
-	 return 0;
-      }
-      fcntl(fd,F_SETFD,FD_CLOEXEC);
-   }
-
-   if(fd==-1)
-      Log::global->SetOutput(2,false);
-   else
-      Log::global->SetOutput(fd,true);
-
    const char *a=args->getcurr();
    if(a)
    {
@@ -2182,17 +2165,20 @@ CMD(debug)
       }
    }
 
-   if(enabled)
-   {
-      Log::global->Enable();
-      Log::global->SetLevel(new_dlevel);
-   }
-   else
-      Log::global->Disable();
+   if(debug_file_name && trunc)
+      truncate(debug_file_name,0);
 
-   Log::global->ShowPID(show_pid);
-   Log::global->ShowTime(show_time);
-   Log::global->ShowContext(show_context);
+   const char *c="debug";
+   if(debug_file_name)
+      ResMgr::Set("log:file",c,debug_file_name);
+
+   ResMgr::Set("log:enabled",c,enabled?"yes":"no");
+   if(enabled)
+      ResMgr::Set("log:level",c,xstring::format("%d",new_dlevel));
+
+   ResMgr::Set("log:show-pid",c,show_pid?"yes":"no");
+   ResMgr::Set("log:show-time",c,show_time?"yes":"no");
+   ResMgr::Set("log:show-ctx",c,show_context?"yes":"no");
 
 #if 0
    if(interactive)

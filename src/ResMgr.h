@@ -51,8 +51,10 @@ struct ResType
    bool QueryBool(const char *closure) const;
    bool QueryTriBool(const char *closure,bool a) const;
 
-   const char *Set(const char *cclosure,const char *cvalue);
-   static const char *Set(const char *name,const char *closure,const char *value);
+   const char *Set(const char *cclosure,const char *cvalue,bool def=false);
+   static const char *Set(const char *name,const char *closure,const char *value,bool def=false);
+   static const char *SetDefault(const char *name,const char *closure,const char *value)
+      { return Set(name,closure,value,true); }
 
    void Register();
    void Unregister();
@@ -82,6 +84,7 @@ class Resource
    const ResType *type;
    xstring_c value;
    xstring_c closure;
+   bool def;
 
    xlist<Resource> all_node;
    xlist<Resource> type_value_node;
@@ -89,7 +92,7 @@ class Resource
    bool ClosureMatch(const char *cl_data);
    void Format(xstring& buf) const;
 
-   Resource(ResType *type,const char *closure,const char *value);
+   Resource(ResType *type,const char *closure,const char *value,bool def=false);
 public:
    ~Resource();
 };

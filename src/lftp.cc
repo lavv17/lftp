@@ -402,9 +402,10 @@ static void detach()
 	 if(fd!=1 && fd!=2)
 	    close(fd);
       }
-      Log::global->ShowPID();
-      Log::global->ShowTime();
-      Log::global->ShowContext();
+      const char *c="debug";
+      ResMgr::Set("log:show-pid",c,"yes");
+      ResMgr::Set("log:show-time",c,"yes");
+      ResMgr::Set("log:show-ctx",c,"yes");
    }
    close(0);	  // close stdin.
    open("/dev/null",O_RDONLY); // reopen it, just in case.
@@ -562,7 +563,7 @@ int   main(int argc,char **argv)
    top_exec=new CmdExec(0,0);
    hook_signals();
    top_exec->SetStatusLine(new StatusLine(1));
-   Log::global=new Log;
+   Log::global=new Log("debug");
    Log::global->SetCB(tty_clear);
 
    source_if_exist(SYSCONFDIR"/lftp.conf");

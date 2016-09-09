@@ -668,8 +668,10 @@ void FileCopy::LogTransfer()
    if(!transfer_log)
    {
       const char *fname = ResMgr::Query("xfer:log-file", 0);
-      if(!fname || !*fname)
+      if(!fname || !*fname) {
 	 fname = dir_file(get_lftp_data_dir(),"transfer_log");
+	 fname = alloca_strdup(fname); // protect the string
+      }
       struct stat st;
       if(stat(fname,&st)!=-1) {
 	 if(st.st_size > long(ResMgr::Query("xfer:max-log-size",0))) {
@@ -679,15 +681,11 @@ void FileCopy::LogTransfer()
 	    }
 	 }
       }
-      int fd = open(fname,O_WRONLY|O_APPEND|O_CREAT,0600);
-      if(fd==-1)
-	 return;
-      fcntl(fd,F_SETFD,FD_CLOEXEC);
-      transfer_log=new Log;
-      transfer_log->SetOutput(fd,true);
-      transfer_log->ShowNothing();
-      transfer_log->ShowTime();	 // nothing but time
-      transfer_log->Enable();
+      const char *c="xfer";
+      ResMgr::SetDefault("log:enabled",c,"yes");
+      ResMgr::SetDefault("log:show-time",c,"yes");
+      ResMgr::SetDefault("log:file",c,fname);
+      transfer_log=new Log(c);
    }
    long long range_limit=GetRangeLimit();
    if(range_limit==FILE_END)

@@ -20,6 +20,7 @@
 #include <config.h>
 
 #include <stdarg.h>
+#include <fcntl.h>
 #include "trio.h"
 #include "xstring.h"
 #include "log.h"
@@ -28,7 +29,19 @@
 
 Ref<Log> Log::global;
 
-Log::Log()
+static ResType log_vars[] = {
+   {"log:enabled",   "no", ResMgr::BoolValidate},
+   {"log:level",     "9",  ResMgr::UNumberValidate},
+   {"log:show-time", "no", ResMgr::BoolValidate},
+   {"log:show-pid",  "no", ResMgr::BoolValidate},
+   {"log:show-ctx",  "no", ResMgr::BoolValidate},
+   {"log:file",	     "",   ResMgr::FileCreatable},
+   {0}
+};
+static ResDecls log_vars_register(log_vars);
+
+Log::Log(const char *name)
+   : name(name)
 {
    output=-1;
    need_close_output=false;
@@ -40,6 +53,7 @@ Log::Log()
    show_time=true;
    show_context=true;
    at_line_start=true;
+   Reconfig(0);
 }
 
 bool Log::WillOutput(int l)
@@ -133,4 +147,30 @@ void Log::SetOutput(int o,bool need_close)
    need_close_output=need_close;
    if(output!=-1)
       tty=isatty(output);
+}
+
+void Log::Reconfig(const char *n) {
+   enabled=QueryBool("log:enabled");
+   level=Query("log:level");
+   show_time=QueryBool("log:show-time");
+   show_pid=QueryBool("log:show-pid");
+   show_context=QueryBool("log:show-ctx");
+
+   if(!n || !strcmp(n,"log:file")) {
+      const char *file=Query("log:file");
+      int fd=2;
+      bool need_close_fd=false;
+      if(file && *file) {
+	 fd=open(file,O_WRONLY|O_CREAT|O_APPEND|O_NONBLOCK,0600);
+	 if(fd==-1) {
+	    perror(file);
+	    fd=2;
+	 } else {
+	    need_close_fd=true;
+	    fcntl(fd,F_SETFD,FD_CLOEXEC);
+	 }
+      }
+      if(fd!=output)
+	 SetOutput(fd,need_close_fd);
+   }
 }

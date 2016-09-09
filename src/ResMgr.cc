@@ -132,7 +132,7 @@ const ResType *ResType::FindRes(const char *name)
    return type;
 }
 
-const char *ResType::Set(const char *name,const char *cclosure,const char *cvalue)
+const char *ResType::Set(const char *name,const char *cclosure,const char *cvalue,bool def)
 {
    ResType *type;
    // find type of given variable
@@ -140,10 +140,10 @@ const char *ResType::Set(const char *name,const char *cclosure,const char *cvalu
    if(msg)
       return msg;
 
-   return type->Set(cclosure,cvalue);
+   return type->Set(cclosure,cvalue,def);
 }
 
-const char *ResType::Set(const char *cclosure,const char *cvalue)
+const char *ResType::Set(const char *cclosure,const char *cvalue,bool def)
 {
    const char *msg=0;
 
@@ -162,6 +162,8 @@ const char *ResType::Set(const char *cclosure,const char *cvalue)
       // find the old value
       if(closure==scan->closure || !xstrcmp(scan->closure,closure))
       {
+	 if(def)
+	    return 0;
 	 need_reconfig=true;
 	 delete scan;
 	 break;
@@ -169,7 +171,7 @@ const char *ResType::Set(const char *cclosure,const char *cvalue)
    }
    if(value)
    {
-      (void)new Resource(this,closure,value);
+      (void)new Resource(this,closure,value,def);
       need_reconfig=true;
    }
    if(need_reconfig)
@@ -257,8 +259,10 @@ char *ResType::Format(bool with_defaults,bool only_defaults)
    {
       // just created Resources are also in all_list.
       xarray<const Resource*> arr;
-      xlist_for_each(Resource,Resource::all_list,node,scan)
-	 arr.append(scan);
+      xlist_for_each(Resource,Resource::all_list,node,scan) {
+	 if(!scan->def || with_defaults)
+	    arr.append(scan);
+      }
       arr.qsort(PResourceCompare);
       for(int i=0; i<arr.count(); i++)
 	 arr[i]->Format(buf);
@@ -455,8 +459,8 @@ bool ResValue::to_tri_bool(bool a) const
    return to_bool();
 }
 
-Resource::Resource(ResType *type,const char *closure,const char *value)
-   : type(type), value(value), closure(closure), all_node(this), type_value_node(this)
+Resource::Resource(ResType *type,const char *closure,const char *value,bool def)
+   : type(type), value(value), closure(closure), def(def), all_node(this), type_value_node(this)
 {
    all_list.add_tail(all_node);
    type->type_value_list->add_tail(type_value_node);

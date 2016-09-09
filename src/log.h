@@ -24,9 +24,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "Ref.h"
+#include "ResMgr.h"
 
-class Log
+class Log : public ResClient
 {
+   const char *name;
    int output;
    bool need_close_output;
    bool tty;
@@ -48,6 +50,9 @@ class Log
    bool enabled;
    int level;
 
+protected:
+   void SetOutput(int o,bool need_close);
+
 public:
    static Ref<Log> global;
 
@@ -57,27 +62,18 @@ public:
    void Format(int l,const char *fmt,...) PRINTF_LIKE(3,4);
    void vFormat(int l,const char *fmt,va_list v);
 
-   void SetLevel(int l) { level=l; }
-   void Enable()  { enabled=true;  }
-   void Disable() { enabled=false; }
-
-   void SetOutput(int o,bool need_close);
-
    void SetCB(tty_cb_t cb) { tty_cb=cb; }
 
    bool IsTTY() { return tty; }
 
-   Log();
+   Log(const char *name);
    ~Log();
 
-   int Do();
-
-   void ShowPID(bool yes=true) { show_pid=yes; }
-   void ShowTime(bool yes=true) { show_time=yes; }
-   void ShowContext(bool yes=true) { show_context=yes; }
-   void ShowNothing() { show_pid=show_time=show_context=false; }
-
    static void Cleanup();
+
+   const char *ResPrefix() const { return "log"; }
+   const char *ResClosure() const { return name; }
+   void Reconfig(const char *);
 };
 
 #endif // LOG_H
