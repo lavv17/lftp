@@ -322,8 +322,7 @@ void HttpTracker::SendTrackerRequest(const char *event)
    request.appendf("&port=%d",GetPort());
    request.appendf("&uploaded=%llu",GetTotalSent());
    request.appendf("&downloaded=%llu",GetTotalRecv());
-   if(HasMetadata())
-      request.appendf("&left=%llu",GetTotalLeft());
+   request.appendf("&left=%llu",HasMetadata()?GetTotalLeft():123456789ULL);
    request.append("&compact=1&no_peer_id=1");
    if(event)
       request.appendf("&event=%s",event);
