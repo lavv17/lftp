@@ -753,7 +753,7 @@ void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<Li
    if(flags&RETR_SYMLINKS)
       list_info->FollowSymlinks();
 
-   list_info->SetExclude(relative_dir,exclude);
+   list_info->SetExclude(relative_dir,top_exclude?top_exclude:exclude);
    list_info->Roll();
 }
 
@@ -1722,6 +1722,7 @@ CMD(mirror)
       {"verbose",optional_argument,0,'v'},
       {"newer-than",required_argument,0,'N'},
       {"file",required_argument,0,'f'},
+      {"directory",required_argument,0,'F'},
       {"older-than",required_argument,0,OPT_OLDER_THAN},
       {"size-range",required_argument,0,OPT_SIZE_RANGE},
       {"dereference",no_argument,0,'L'},
@@ -1786,6 +1787,7 @@ CMD(mirror)
    const char *recursion_mode=0;
 
    Ref<PatternSet> exclude;
+   Ref<PatternSet> top_exclude;
 
    if(!ResMgr::QueryBool("mirror:set-permissions",0))
       flags|=MirrorJob::NO_PERMS;
@@ -1798,7 +1800,7 @@ CMD(mirror)
    const char *target_dir=NULL;
 
    args->rewind();
-   while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LP:af:O:",mirror_opts,0))!=EOF)
+   while((opt=args->getopt_long("esi:x:I:X:nrpcRvN:LP:af:F:O:",mirror_opts,0))!=EOF)
    {
       switch(opt)
       {
@@ -1875,11 +1877,17 @@ CMD(mirror)
       case('N'):
 	 newer_than=optarg;
 	 break;
-      case('f'):
-      {
-	 // mirror for a single file (or glob pattern).
+      case('f'): // mirror for a single file (or glob pattern).
 	 recursion_mode="never";
-	 MirrorJob::AddPattern(exclude,'I',basename_ptr(optarg));
+	 /*fallthrough*/
+      case('F'): // mirror for a single directory (or glob pattern).
+      {
+	 xstring pattern(basename_ptr(optarg));
+	 if(opt=='F' && pattern.last_char()!='/')
+	    pattern.append('/');
+	 if(!top_exclude)
+	    top_exclude=new PatternSet();
+	 top_exclude->Add(PatternSet::INCLUDE,new PatternSet::Glob(pattern));
 	 source_dir=dirname(optarg);
 	 source_dir=alloca_strdup(source_dir); // save the temp string
 	 break;
@@ -2106,6 +2114,7 @@ CMD(mirror)
    j->SetFlags(flags,1);
    j->SetVerbose(verbose);
    j->SetExclude(exclude.borrow());
+   j->SetTopExclude(top_exclude.borrow());
 
    if(newer_than)
       j->SetNewerThan(newer_than);

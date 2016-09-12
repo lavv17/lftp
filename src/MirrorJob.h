@@ -138,6 +138,7 @@ private:
    recursion_mode_t recursion_mode;
    int	 max_error_count;
 
+   Ref<PatternSet> top_exclude;
    Ref<PatternSet> my_exclude;
    const PatternSet *exclude;
 
@@ -249,6 +250,7 @@ public:
    void	 SetExclude(const PatternSet *x) { exclude=x; }
    void	 SetSizeRange(Range *r) { my_size_range=r; size_range=my_size_range; }
    void	 SetSizeRange(const Range *r) { size_range=r; }
+   void	 SetTopExclude(PatternSet *x) { top_exclude=x; }
 
    void	 SetVerbose(int v) { verbose_report=v; }
 
