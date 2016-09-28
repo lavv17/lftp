@@ -1785,6 +1785,8 @@ CMD(mirror)
    const char *script_file=0;
    const char *on_change=0;
    const char *recursion_mode=0;
+   bool single_file=false;
+   bool single_dir=false;
 
    Ref<PatternSet> exclude;
    Ref<PatternSet> top_exclude;
@@ -1878,18 +1880,26 @@ CMD(mirror)
 	 newer_than=optarg;
 	 break;
       case('f'): // mirror for a single file (or glob pattern).
-	 recursion_mode="never";
+	 single_file=true;
 	 /*fallthrough*/
       case('F'): // mirror for a single directory (or glob pattern).
       {
 	 xstring pattern(basename_ptr(optarg));
-	 if(opt=='F' && pattern.last_char()!='/')
-	    pattern.append('/');
+	 if(opt=='F') {
+	    single_dir=true;
+	    if(pattern.last_char()!='/')
+	       pattern.append('/');
+	 }
 	 if(!top_exclude)
 	    top_exclude=new PatternSet();
 	 top_exclude->Add(PatternSet::INCLUDE,new PatternSet::Glob(pattern));
-	 source_dir=dirname(optarg);
-	 source_dir=alloca_strdup(source_dir); // save the temp string
+	 const char *dir=dirname(optarg);
+	 if(source_dir && strcmp(source_dir,dir)) {
+	    eprintf(_("%s: multiple --file or --directory options must have the same base directory\n"),args->a0());
+	    goto no_job;
+	 }
+	 if(!source_dir)
+	    source_dir=alloca_strdup(dir); // save the temp string
 	 break;
       }
       case('O'):
@@ -2137,6 +2147,9 @@ CMD(mirror)
       j->SetParallel(parallel);
    if(use_pget>1 && !(flags&MirrorJob::ASCII))
       j->SetPGet(use_pget);
+
+   if(!recursion_mode && single_file && !single_dir)
+      recursion_mode="never";
 
    if(recursion_mode) {
       const char *err=j->SetRecursionMode(recursion_mode);
