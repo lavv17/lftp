@@ -290,12 +290,18 @@ void FileSet::SubtractAny(const FileSet *set)
 
 void FileSet::SubtractNotIn(const FileSet *set)
 {
+   if(!set) {
+      Empty();
+      return;
+   }
    for(int i=0; i<fnum; i++)
       if(!set->FindByName(files[i]->name))
 	 Sub(i--);
 }
 void FileSet::SubtractSameType(const FileSet *set)
 {
+   if(!set)
+      return;
    for(int i=0; i<fnum; i++)
    {
       FileInfo *f=set->FindByName(files[i]->name);
@@ -306,6 +312,8 @@ void FileSet::SubtractSameType(const FileSet *set)
 }
 void FileSet::SubtractDirs(const FileSet *set)
 {
+   if(!set)
+      return;
    for(int i=0; i<fnum; i++)
    {
       if(!files[i]->TypeIs(FileInfo::DIRECTORY))
@@ -317,6 +325,8 @@ void FileSet::SubtractDirs(const FileSet *set)
 }
 void FileSet::SubtractNotOlderDirs(const FileSet *set)
 {
+   if(!set)
+      return;
    for(int i=0; i<fnum; i++)
    {
       if(!files[i]->TypeIs(FileInfo::DIRECTORY)
