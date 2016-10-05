@@ -165,17 +165,15 @@ int pgetJob::Do()
       {
 	 SaveStatus();
 	 status_timer.Reset();
-#ifdef HAVE_POSIX_FALLOCATE
 	 if(ResMgr::QueryBool("file:use-fallocate",0)) {
 	    // allocate space after creating *.lftp-pget-status file,
 	    // so that the incomplete status is more obvious.
 	    const Ref<FDStream>& local=c->put->GetLocal();
-	    if(posix_fallocate(local->getfd(),0,size)==-1) {
+	    if(lftp_fallocate(local->getfd(),size)==-1 && errno!=ENOSYS && errno!=EOPNOTSUPP) {
 	       eprintf(_("pget: warning: space allocation for %s (%lld bytes) failed: %s\n"),
 		  local->name.get(),(long long)size,strerror(errno));
 	    }
 	 }
-#endif//HAVE_POSIX_FALLOCATE
       }
    }
 

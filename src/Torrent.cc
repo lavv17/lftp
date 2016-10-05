@@ -1743,18 +1743,16 @@ int FDCache::OpenFile(const char *file,int m,off_t size)
       fcntl(fd,F_SETFD,FD_CLOEXEC);
    if(fd==-1 || size==0)
       return fd;
-#ifdef HAVE_POSIX_FALLOCATE
    if(ci==O_RDWR && QueryBool("file:use-fallocate",0)) {
       struct stat st;
       // check if it is newly created file, then allocate space
       if(fstat(fd,&st)!=-1 && st.st_size==0) {
-	 if(posix_fallocate(fd,0,size)==-1) {
+	 if(lftp_fallocate(fd,size)==-1 && errno!=ENOSYS && errno!=EOPNOTSUPP) {
 	    ProtoLog::LogError(9,"space allocation for %s (%lld bytes) failed: %s",
 	       file,(long long)size,strerror(errno));
 	 }
       }
    }
-#endif//HAVE_POSIX_FALLOCATE
 #ifdef HAVE_POSIX_FADVISE
    if(ci==O_RDONLY) {
       // validation mode (when validating, size>0)

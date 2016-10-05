@@ -1050,3 +1050,15 @@ bool is_ipv6_address(const char *s)
    return false;
 #endif
 }
+
+int lftp_fallocate(int fd,off_t sz)
+{
+#if defined(HAVE_FALLOCATE)
+   return fallocate(fd,0,0,sz);
+#elif defined(HAVE_POSIX_FALLOCATE)
+   return posix_fallocate(fd,0,sz);
+#else
+   errno=ENOSYS;
+   return -1;
+#endif
+}

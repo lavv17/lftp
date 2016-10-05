@@ -141,4 +141,6 @@ bool xtld_name_ok(const char *name);
 bool is_ipv4_address(const char *);
 bool is_ipv6_address(const char *);
 
+int lftp_fallocate(int fd,off_t sz);
+
 #endif // MISC_H

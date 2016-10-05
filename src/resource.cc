@@ -357,9 +357,7 @@ static ResType lftp_vars[] = {
 
    {"file:charset",		 "",	  ResMgr::CharsetValidate,ResMgr::NoClosure},
    {"file:use-lock",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
-#ifdef HAVE_POSIX_FALLOCATE
    {"file:use-fallocate",	 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
-#endif
 
    {"dns:cache-enable",		 "yes",	  ResMgr::BoolValidate,0},
    {"dns:cache-expire",		 "1h",	  ResMgr::TimeIntervalValidate,0},

@@ -428,7 +428,7 @@ LFTP_FUNC_SSCANF_CONST
 AC_CHECK_FUNCS([statfs\
  killpg setpgid tcgetattr vsnprintf snprintf sscanf \
  gethostbyname2 getipnodebyname getaddrinfo getnameinfo setsid random\
- inet_aton setlocale dn_expand socketpair])
+ inet_aton setlocale dn_expand socketpair fallocate])
 lftp_VA_COPY
 LFTP_ENVIRON_CHECK
 AC_CHECK_DECLS([vsnprintf,snprintf,unsetenv,random,inet_aton,strptime,strtok_r,dn_expand,memmem],,,[
