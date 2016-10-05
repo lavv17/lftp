@@ -56,7 +56,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.7.3.
+This man page documents lftp version 4.7.4.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -660,6 +660,9 @@ T}
 \-f \fIFILE\fP,	\-\-file=\fIFILE\fP	T{
 mirror a single file or globbed group (e.g. /path/to/*.txt)
 T}
+\-F \fIDIR\fP,	\-\-directory=\fIDIR\fP	T{
+mirror a single directory or globbed group (e.g. /path/to/dir*)
+T}
 \-O \fIDIR\fP,	\-\-target-directory=\fIDIR\fP	T{
 target base path or URL
 T}
@@ -745,12 +748,17 @@ directory only if it is older or missing on the target side. Be aware that
 when a file changes the directory timestamp may stay the same, so mirror
 won't process that directory.
 .PP
+The options \-\-file and \-\-directory may be used multiple times and even
+mixed provided that base directories of the paths are the same.
+.PP
 You can mirror between two servers if you specify URLs instead of directories.
 FXP is automatically used for transfers between FTP servers, if possible.
 .PP
 Some FTP servers hide dot-files by default (e.g. \fI.htaccess\fP), and show
 them only when LIST command is used with \-a option. In such case try to use
 `set ftp:list-options \-a'.
+.PP The recursion modes `newer' and `missing' conflict with \-\-scan\-all\-first,
+\-\-depth\-first, \-\-no\-empty\-dirs and setting mirror:no\-empty\-dirs=true.
 
 .B mkdir
 .RB "[" \-p "] "
@@ -1472,8 +1480,8 @@ local character set. It is set from current locale initially.
 when true, lftp uses advisory locking on local files when opening them.
 .TP
 .BR file:use-fallocate \ (boolean)
-when true, lftp uses posix_fallocate(3) to pre-allocate storage space and reduce
-file fragmentation in pget and torrent commands.
+when true, lftp uses fallocate(2) or posix_fallocate(3) to pre-allocate
+storage space and reduce file fragmentation in pget and torrent commands.
 .TP
 .BR fish:auto-confirm \ (boolean)
 when true, lftp answers ``yes'' to all ssh questions, in particular to the
