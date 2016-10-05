@@ -710,6 +710,22 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 	 no_target_dir=true;
 	 return;
       }
+      if(session==source_session && create_target_dir
+      && !FlagSet(NO_EMPTY_DIRS) && !skip_noaccess)
+      {
+	 // create target dir even if failed to cd to source dir.
+	 if(script)
+	    fprintf(script,"mkdir %s\n",target_session->GetFileURL(target_dir));
+	 if(!script_only)
+	 {
+	    ArgV *a=new ArgV("mkdir");
+	    a->Append(target_dir);
+	    mkdirJob *mkj=new mkdirJob(target_session->Clone(),a);
+	    mkj->cmdline.set_allocated(a->Combine());
+	    JobStarted(mkj);
+	 }
+      }
+      remove_this_source_dir=false;
       eprintf("mirror: %s\n",session->StrError(res));
       stats.error_count++;
       assert(transfer_count>=root_transfer_count);
@@ -789,11 +805,14 @@ int   MirrorJob::Do()
    switch(state)
    {
    case(INITIAL_STATE):
+      remove_this_source_dir=(remove_source_dirs && source_dir.last_char()!='/');
+      if(!strcmp(target_dir,".") || !strcmp(target_dir,"..") || (FlagSet(SCAN_ALL_FIRST) && parent_mirror))
+	 create_target_dir=false;
+
       source_session->Chdir(source_dir);
       source_redirections=0;
       source_session->Roll();
       set_state(CHANGING_DIR_SOURCE);
-      remove_this_source_dir=(remove_source_dirs && source_dir.last_char()!='/');
       m=MOVED;
       /*fallthrough*/
    case(CHANGING_DIR_SOURCE):
@@ -807,8 +826,6 @@ int   MirrorJob::Do()
 
    pre_MAKE_TARGET_DIR:
    {
-      if(!strcmp(target_dir,".") || !strcmp(target_dir,"..") || (FlagSet(SCAN_ALL_FIRST) && parent_mirror))
-	 create_target_dir=false;
       if(!create_target_dir)
 	 goto pre_CHANGING_DIR_TARGET;
       if(target_is_local)
@@ -1980,7 +1997,6 @@ CMD(mirror)
 	 break;
       case(OPT_NO_EMPTY_DIRS):
 	 no_empty_dirs=true;
-	 flags|=MirrorJob::NO_EMPTY_DIRS|MirrorJob::DEPTH_FIRST;
 	 break;
       case(OPT_DEPTH_FIRST):
 	 flags|=MirrorJob::DEPTH_FIRST;
@@ -2120,6 +2136,13 @@ CMD(mirror)
    if(no_empty_dirs)
       flags|=MirrorJob::NO_EMPTY_DIRS|MirrorJob::DEPTH_FIRST;
 
+   if(recursion_mode && strcasecmp(recursion_mode,"always")
+   && (flags&MirrorJob::DEPTH_FIRST)) {
+      eprintf("%s: --recursion-mode=%s conflicts with other specified options\n",
+	 args->a0(),recursion_mode);
+      return 0;
+   }
+
    JobRef<MirrorJob> j(new MirrorJob(0,source_session.borrow(),target_session.borrow(),source_dir,target_dir));
    j->SetFlags(flags,1);
    j->SetVerbose(verbose);
@@ -2190,33 +2213,16 @@ CDECL void module_init()
 {
    CmdExec::RegisterCommand("mirror",cmd_mirror,0,
       N_("\n"
-	 "Mirror specified remote directory to local directory\n\n"
-	 " -c, --continue         continue a mirror job if possible\n"
-	 " -e, --delete           delete files not present at remote site\n"
-	 "     --delete-first     delete old files before transferring new ones\n"
-	 " -s, --allow-suid       set suid/sgid bits according to remote site\n"
-	 "     --allow-chown      try to set owner and group on files\n"
-	 "     --ignore-time      ignore time when deciding whether to download\n"
-	 " -n, --only-newer       download only newer files (-c won't work)\n"
-	 " -r, --no-recursion     don't go to subdirectories\n"
-	 " -p, --no-perms         don't set file permissions\n"
-	 "     --no-umask         don't apply umask to file modes\n"
+	 "Mirror specified remote directory to local directory\n"
+	 "\n"
 	 " -R, --reverse          reverse mirror (put files)\n"
-	 " -L, --dereference      download symbolic links as files\n"
-	 " -N, --newer-than=SPEC  download only files newer than specified time\n"
-	 " -P, --parallel[=N]     download N files in parallel\n"
-	 " -i RX, --include RX    include matching files\n"
-	 " -x RX, --exclude RX    exclude matching files\n"
-	 "                        RX is extended regular expression\n"
-	 " -v, --verbose[=N]      verbose operation\n"
-	 "     --log=FILE         write lftp commands being executed to FILE\n"
-	 "     --script=FILE      write lftp commands to FILE, but don't execute them\n"
-	 "     --just-print, --dry-run    same as --script=-\n"
+	 "Lots of other options are documented in the man page lftp(1).\n"
 	 "\n"
 	 "When using -R, the first directory is local and the second is remote.\n"
-	 "If the second directory is omitted, basename of first directory is used.\n"
+	 "If the second directory is omitted, basename of the first directory is used.\n"
 	 "If both directories are omitted, current local and remote directories are used.\n"
-	 "See lftp(1) for a complete list of options.\n"
+	 "\n"
+	 "See the man page lftp(1) for a complete documentation.\n"
       )
    );
 }
