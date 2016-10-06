@@ -9,11 +9,9 @@ int main(int argc,char **argv)
 {
    program_name=argv[0];
 
-   Log::global=new Log;
-   Log::global->SetOutput(2,false);
-   Log::global->SetLevel(5);
-   Log::global->Enable();
-   Log::global->ShowNothing();
+   Log::global=new Log("debug");
+   ResMgr::Set("log:level",0,"5");
+   ResMgr::Set("log:enabled",0,"true");
 
    FileAccess *f=FileAccess::New("http","lftp.yar.ru");
    if(!f)
