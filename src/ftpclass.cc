@@ -1529,6 +1529,12 @@ int   Ftp::Do()
 		     portname?":":NULL,portname.get(),NULL));
 	    }
 	 }
+	 if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
+	 {
+	    SendAuth(Query("ssl-auth",hostname));
+	    if(state!=CONNECTED_STATE)
+	       return MOVED;
+	 }
       }
 
       skey_pass.set(0);
