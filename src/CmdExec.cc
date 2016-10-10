@@ -906,6 +906,8 @@ const char *CmdExec::FormatPrompt(const char *scan)
       { 'L', lcwdb },
       { '[', StartIgn },
       { ']', EndIgn },
+      { 'b', session->GetBookmark() },
+      { 'B', session->GetBookmark()?session->GetBookmark():session->GetHostName() },
       { 0, "" }
    };
    static xstring_c prompt;
