@@ -763,7 +763,6 @@ static char **lftp_completion (const char *text,int start,int end)
 
       if(rg)
       {
-	 rg->NoMatchPeriod();
 	 rg->NoInhibitTilde();
 	 if(fso.patterns_casefold) {
 	    rl_variable_bind("completion-ignore-case", "1");
@@ -950,13 +949,13 @@ backslash_quote (char *string)
     {
       switch (c)
 	{
- 	case '(': case ')':
- 	case '{': case '}':			/* reserved words */
- 	case '^':
- 	case '$': case '`':			/* expansion chars */
+	case '(': case ')':
+	case '{': case '}':			/* reserved words */
+	case '^':
+	case '$': case '`':			/* expansion chars */
 	  if(!shell_cmd)
 	    goto def;
- 	case '*': case '[': case '?': case ']':	/* globbing chars */
+	case '*': case '[': case '?': case ']':	/* globbing chars */
 	  if(!shell_cmd && !quote_glob)
 	    goto def;
 	case ' ': case '\t': case '\n':		/* IFS white space */

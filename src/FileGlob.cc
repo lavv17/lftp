@@ -236,6 +236,7 @@ GenericGlob::GenericGlob(FileAccess *s,const char *n_pattern)
    {
       updir_glob=new GenericGlob(s,dir);
       updir_glob->DirectoriesOnly();
+      updir_glob->Suspend(); // don't run now, wait for options.
    }
 }
 
@@ -248,6 +249,14 @@ int GenericGlob::Do()
 
    if(!dir_list && updir_glob)
    {
+      if(updir_glob->IsSuspended())
+      {
+	 // pass the options.
+	 updir_glob->MatchPeriod(match_period);
+	 updir_glob->InhibitTilde(inhibit_tilde);
+	 updir_glob->CaseFold(casefold);
+	 updir_glob->Resume();
+      }
       if(updir_glob->Error())
       {
 	 SetError(updir_glob->ErrorText());

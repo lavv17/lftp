@@ -45,6 +45,10 @@ public:
    void NoInhibitTilde() { inhibit_tilde=false; }
    void CaseFold() { casefold=true; }
 
+   void MatchPeriod(bool y) { match_period=y; }
+   void InhibitTilde(bool y) { inhibit_tilde=y; }
+   void CaseFold(bool y) { casefold=y; }
+
    static bool HasWildcards(const char *);
    static void UnquoteWildcards(char *);
 };
