@@ -39,9 +39,11 @@
 #include "ConnectionSlot.h"
 #include "SignalHook.h"
 #include "FileGlob.h"
+#include "bookmark.h"
 #ifdef WITH_MODULES
 # include "module.h"
 #endif
+
 
 xlist_head<FileAccess> FileAccess::all_fa;
 const FileAccessRef FileAccessRef::null;
@@ -254,6 +256,10 @@ bool FileAccess::SameSiteAs(const FileAccess *fa) const
    return SameProtoAs(fa);
 }
 
+const char *FileAccess::GetBookmark() const
+{
+   return lftp_bookmarks.LookupFirstKeyByValue(GetConnectURL(2));
+}
 const char *FileAccess::GetFileURL(const char *f,int flags) const
 {
    static xstring url;
