@@ -174,10 +174,26 @@ KeyValueDB::Pair **KeyValueDB::LookupPair(const char *key) const
    return 0;
 }
 
+KeyValueDB::Pair **KeyValueDB::LookupFirstPairByValue(const char *value) const
+{
+   for(const Pair * const*p=&chain; *p; p=&(*p)->next)
+   {
+      if((*p)->ValueCompare(value)==0)
+	 return const_cast<KeyValueDB::Pair **>(p);
+   }
+   return 0;
+}
+
 const char *KeyValueDB::Lookup(const char *key) const
 {
    const Pair * const*p=LookupPair(key);
    return p ? (*p)->value.get() : 0;
+}
+
+const char *KeyValueDB::LookupFirstKeyByValue(const char *value) const
+{
+   const Pair * const*p=LookupFirstPairByValue(value);
+   return p ? (*p)->key.get() : 0;
 }
 
 int KeyValueDB::Lock(int fd,int type)
