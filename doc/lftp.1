@@ -1344,6 +1344,13 @@ a backslash
 .B \e?
 skips next character if previous substitution was empty.
 .TP
+.B \eb
+The bookmark which the connected remote site corresponds to.
+.TP
+.B \eB
+The bookmark which the connected remote site corresponds to, if available.
+If there is no bookmark associated, the hostname (see \fB\\h\fP) is used.
+.TP
 .B \e[
 begin a sequence of non-printing characters, which could be used to
 embed a terminal control sequence into the prompt
