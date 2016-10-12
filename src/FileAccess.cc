@@ -258,7 +258,7 @@ bool FileAccess::SameSiteAs(const FileAccess *fa) const
 
 const char *FileAccess::GetBookmark() const
 {
-   return lftp_bookmarks.LookupFirstKeyByValue(GetConnectURL(2));
+   return lftp_bookmarks.LookupFirstKeyByValue(GetConnectURL(WITH_PASSWORD));
 }
 const char *FileAccess::GetFileURL(const char *f,int flags) const
 {
