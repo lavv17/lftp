@@ -1512,15 +1512,10 @@ int   Ftp::Do()
 		  portname?":":"",portname?portname.get():"",NULL));
 	    expect->Push(Expect::PASS_PROXY);
 	    conn->SendCmd2("PASS",proxy_pass);
+	    auth_allowed=true;
 	 }
 	 else // no proxy auth, or type is `open' or `user'.
 	 {
-	    bool use_open=!strcmp(proxy_auth_type,"open");
-	    if(!use_open)
-	    {
-	       user_to_use=xstring::cat(user_to_use,"@",hostname.get(),
-		     portname?":":NULL,portname.get(),NULL);
-	    }
 	    if(proxy_user && proxy_pass)
 	    {
 	       expect->Push(Expect::USER_PROXY);
@@ -1528,13 +1523,18 @@ int   Ftp::Do()
 	       expect->Push(Expect::PASS_PROXY);
 	       conn->SendCmd2("PASS",proxy_pass);
 	    }
-	    if(use_open)
+	    if(!strcmp(proxy_auth_type,"open"))
 	    {
 	       expect->Push(Expect::OPEN_PROXY);
 	       conn->SendCmd2("OPEN",xstring::cat(hostname.get(),
 		     portname?":":NULL,portname.get(),NULL));
+	       auth_allowed=true;
 	    }
-            auth_allowed=true;
+	    else // "user" or no proxy auth
+	    {
+	       user_to_use=xstring::cat(user_to_use,"@",hostname.get(),
+		     portname?":":NULL,portname.get(),NULL);
+	    }
 	 }
 #if USE_SSL
 	 if(auth_allowed)
@@ -1544,7 +1544,7 @@ int   Ftp::Do()
 	       SendAuth(Query("ssl-auth",hostname));
 	       if(state!=CONNECTED_STATE)
 	          return MOVED;
-            
+
                // We are now waiting for auth TLS.
 	       conn->ssl_after_proxy=true;
 
