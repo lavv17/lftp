@@ -1535,7 +1535,7 @@ int   Ftp::Do()
 	    }
 	 }
 #if USE_SSL
-	 if(strcmp(proxy_auth_type,"joined") || strcmp(proxy_auth_type,"joined-acct"))
+	 if(strcmp(proxy_auth_type,"joined") != 0 && strcmp(proxy_auth_type,"joined-acct") != 0)
          {
 	    if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
 	    {
