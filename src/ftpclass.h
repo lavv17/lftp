@@ -119,6 +119,8 @@ class Ftp : public NetAccess
       bool tvfs_supported;
       bool mode_z_supported;
 
+      bool ssl_after_proxy;
+
       off_t last_rest;	// last successful REST position.
       off_t rest_pos;	// the number sent with REST command.
 

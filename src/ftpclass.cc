@@ -1004,6 +1004,8 @@ Ftp::Connection::Connection(const char *c)
    may_show_password=false;
    can_do_pasv=true;
 
+   ssl_after_proxy=false; // Are we in the SSL stage, after using a proxy?
+
    nop_time=0;
    nop_count=0;
    nop_offset=0;
@@ -1485,7 +1487,11 @@ int   Ftp::Do()
 
       const char *user_to_use=(user?user.get():anon_user.get());
       const char *proxy_auth_type=Query("proxy-auth-type",proxy);
-      if(proxy && !conn->proxy_is_http)
+
+      // Only enter if we are using a proxy, and not a http proxy.
+      // If we are in the ssl-auth stage after using a proxy, skip this.
+      bool auth_allowed=false;
+      if(proxy && !conn->proxy_is_http && !conn->ssl_after_proxy)
       {
 	 if(!strcmp(proxy_auth_type,"joined") && proxy_user && proxy_pass)
 	 {
@@ -1528,7 +1534,25 @@ int   Ftp::Do()
 	       conn->SendCmd2("OPEN",xstring::cat(hostname.get(),
 		     portname?":":NULL,portname.get(),NULL));
 	    }
+            auth_allowed=true;
 	 }
+#if USE_SSL
+	 if(auth_allowed)
+         {
+	    if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
+	    {
+	       SendAuth(Query("ssl-auth",hostname));
+	       if(state!=CONNECTED_STATE)
+	          return MOVED;
+            
+               // We are now waiting for auth TLS.
+	       conn->ssl_after_proxy=true;
+
+	       if(conn->auth_sent && !expect->IsEmpty())
+                  goto usual_return;
+	    }
+         }
+#endif
       }
 
       skey_pass.set(0);
