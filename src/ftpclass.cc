@@ -1490,6 +1490,7 @@ int   Ftp::Do()
 
       // Only enter if we are using a proxy, and not a http proxy.
       // If we are in the ssl-auth stage after using a proxy, skip this.
+      bool auth_allowed=false;
       if(proxy && !conn->proxy_is_http && !conn->ssl_after_proxy)
       {
 	 if(!strcmp(proxy_auth_type,"joined") && proxy_user && proxy_pass)
@@ -1533,9 +1534,10 @@ int   Ftp::Do()
 	       conn->SendCmd2("OPEN",xstring::cat(hostname.get(),
 		     portname?":":NULL,portname.get(),NULL));
 	    }
+            auth_allowed=true;
 	 }
 #if USE_SSL
-	 if(strcmp(proxy_auth_type,"joined") != 0 && strcmp(proxy_auth_type,"joined-acct") != 0)
+	 if(auth_allowed)
          {
 	    if(QueryBool((user && pass)?"ssl-allow":"ssl-allow-anonymous",hostname))
 	    {
