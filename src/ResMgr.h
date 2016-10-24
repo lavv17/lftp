@@ -124,6 +124,7 @@ public:
    static const char *FileCreatable(xstring_c *value);
    static const char *CharsetValidate(xstring_c *value);
    static const char *NoClosure(xstring_c *);
+   static const char *HasClosure(xstring_c *);
    static bool str2bool(const char *value);
 
    static int ResourceCompare(const Resource *a,const Resource *b);

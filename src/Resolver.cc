@@ -187,6 +187,9 @@ int   Resolver::Do()
 	    pipe_to_child[0]=-1;
 	    buf=new IOBufferFDStream(new FDStream(pipe_to_child[1],"<pipe-out>"),IOBuffer::PUT);
 	    DoGethostbyname();
+	    buf->PutEOF();
+	    while(buf->Size()>0 && !buf->Error() && !buf->Broken())
+	       buf->Roll();  // should flush quickly.
 	    _exit(0);
 	 }
 	 // parent
@@ -870,7 +873,7 @@ void Resolver::DoGethostbyname()
 	 {
 	    buf->Put("P");
 	    buf->Format(_("no such %s service"),tproto);
-	    goto flush;
+	    return;
 	 }
       }
    }
@@ -881,7 +884,13 @@ void Resolver::DoGethostbyname()
    if(!use_fork && Deleted())
       return;
 
-   LookupOne(hostname);
+   const char *h=ResMgr::Query("dns:name",hostname);
+   if(!h || !*h)
+      h=hostname;
+   char *hs=alloca_strdup(h);
+   char *tok;
+   for(hs=strtok_r(hs,",",&tok); hs; hs=strtok_r(NULL,",",&tok))
+      LookupOne(hs);
 
    if(!use_fork && Deleted())
       return;
@@ -892,19 +901,11 @@ void Resolver::DoGethostbyname()
       if(error==0)
 	 error=_("No address found");
       buf->Put(error);
-      goto flush;
+      return;
    }
    buf->Put("O");
    buf->Put((const char*)addr.get(),addr.count()*addr.get_element_size());
    addr.unset();
-
-flush:
-   buf->PutEOF();
-   if(use_fork)
-   {
-      while(buf->Size()>0 && !buf->Error() && !buf->Broken())
-	 buf->Roll();  // should flush quickly.
-   }
 }
 
 void Resolver::Reconfig(const char *name)

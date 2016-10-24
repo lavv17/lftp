@@ -1473,6 +1473,12 @@ to lookup an address.
 If > 0, lftp will try only this number of times to look up an address of each
 address family in dns:order.
 .TP
+.BR dns:name \ (string)
+This setting can be used to substitute a host name alias with another name
+or IP address. The host name alias is used as the setting closure, the
+substituted name or IP address is in the value. Multiple names or IP
+addresses can be separated by comma.
+.TP
 .BR file:charset \ (string)
 local character set. It is set from current locale initially.
 .TP

@@ -364,6 +364,7 @@ static ResType lftp_vars[] = {
    {"dns:cache-size",		 "256",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
    {"dns:fatal-timeout",	 "7d",	  ResMgr::TimeIntervalValidate,0},
    {"dns:max-retries",		 "1000",  ResMgr::UNumberValidate,0},
+   {"dns:name",			 "",	  0,ResMgr::HasClosure},
 #if INET6
 # define DEFAULT_ORDER "inet6 inet"
 #else

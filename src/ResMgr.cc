@@ -152,7 +152,8 @@ const char *ResType::Set(const char *cclosure,const char *cvalue,bool def)
       return msg;
 
    xstring_c closure(cclosure);
-   if(closure && closure_valid && (msg=closure_valid(&closure))!=0)
+   if((closure || closure_valid==ResMgr::HasClosure)
+   && closure_valid && (msg=closure_valid(&closure))!=0)
       return msg;
 
    bool need_reconfig=false;
@@ -864,6 +865,13 @@ const char *ResMgr::CharsetValidate(xstring_c *value)
 const char *ResMgr::NoClosure(xstring_c *)
 {
    return _("no closure defined for this setting");
+}
+
+const char *ResMgr::HasClosure(xstring_c *c)
+{
+   if(!*c || !**c)
+      return _("a closure is required for this setting");
+   return 0;
 }
 
 const char *ResMgr::UNumberPairValidate(xstring_c *value)
