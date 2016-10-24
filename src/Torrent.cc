@@ -1638,6 +1638,8 @@ void FDCache::Clean()
 	 }
       }
    }
+   while(Count()>max_count)
+      CloseOne();
    if(Count()>0)
       clean_timer.Reset();
 }
