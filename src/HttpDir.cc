@@ -709,9 +709,10 @@ static int parse_html(const char *buf,int buf_len,bool eof,const Ref<Buffer>& li
 	 { "img", "lowsrc" },
 	 { "input", "src" },
 	 { "layer", "src" },
-	 { "table", "background"},
-	 { "th", "background"},
-	 { "td", "background"},
+	 { "table", "background" },
+	 { "th", "background" },
+	 { "td", "background" },
+	 { "link", "href" },
 	 /* Tags below this line are treated specially.  */
 	 { "base", "href" },
 	 { "meta", "content" },
@@ -742,6 +743,14 @@ static int parse_html(const char *buf,int buf_len,bool eof,const Ref<Buffer>& li
    // ok, found the target.
 
    decode_amps(link_target);  // decode all &amp; and similar
+
+   // inherit the protocol if omitted
+   if(link_target.begins_with("//") && prefix && prefix->proto) {
+      xstring& new_link=xstring::get_tmp("")
+	 .append_url_encoded(prefix->proto,URL_UNSAFE,0)
+	 .append(':').append(link_target);
+      link_target.swap(new_link);
+   }
 
    if(hftp)
    {
