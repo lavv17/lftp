@@ -66,6 +66,7 @@ static bool inhibit_tilde;
 
 static bool shell_cmd;
 static bool quote_glob;
+static bool quote_glob_basename;
 
 char *command_generator(const char *text,int state)
 {
@@ -384,6 +385,9 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    || !strcmp(buf,"mrm"))
       quote_glob=true;
 
+   if(!strcmp(buf,"cls"))
+      quote_glob_basename=true;
+
    if(!strcmp(buf,"cd")
    || !strcmp(buf,"mkdir"))
       return REMOTE_DIR; /* append slash automatically */
@@ -619,6 +623,7 @@ static char **lftp_completion (const char *text,int start,int end)
    rl_ignore_some_completions_function=0;
    shell_cmd=false;
    quote_glob=false;
+   quote_glob_basename=false;
    inhibit_tilde=false;
    delete glob_res;
    glob_res=0;
@@ -942,6 +947,7 @@ backslash_quote (char *string)
 {
   int c;
   char *result, *r, *s;
+  char *bn = basename_ptr(string);
 
   result = (char*)xmalloc (2 * strlen (string) + 1);
 
@@ -956,8 +962,9 @@ backslash_quote (char *string)
 	  if(!shell_cmd)
 	    goto def;
 	case '*': case '[': case '?': case ']':	/* globbing chars */
-	  if(!shell_cmd && !quote_glob)
+	  if(!shell_cmd && !quote_glob && (!quote_glob_basename || s<bn))
 	    goto def;
+	  /*fallthrough*/
 	case ' ': case '\t': case '\n':		/* IFS white space */
 	case '"': case '\'': case '\\':		/* quoting chars */
 	case '|': case '&': case ';':		/* shell metacharacters */
