@@ -327,6 +327,9 @@ int clsJob::Do()
 	 // leave the final / on the path, to prevent the dirname of
 	 // "file/*" from being treated as a file
 	 dir.truncate(bn-dir); // this can result in dir eq ""
+      } else {
+	 // no need to glob, just unquote metacharacters.
+	 Glob::UnquoteWildcards(const_cast<char*>(bn));
       }
 
       list_info=new GetFileInfo(session, dir, fso->list_directories);
