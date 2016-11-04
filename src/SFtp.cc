@@ -1169,7 +1169,7 @@ int SFtp::Read(Buffer *buf,int size)
       return error_code;
    if(mode==CLOSED)
       return 0;
-   if(state==DONE)
+   if(state==DONE && !(file_buf && file_buf->Size()>0))
       return 0;	  // eof
    if(state==FILE_RECV)
    {
@@ -1181,7 +1181,10 @@ int SFtp::Read(Buffer *buf,int size)
 	 if(entity_size<0 || request_pos<entity_size || RespQueueSize()<2)
 	    RequestMoreData();
       }
+   }
 
+   if(file_buf && file_buf->Size()>0)
+   {
       const char *buf1;
       int size1;
       file_buf->Get(&buf1,&size1);
