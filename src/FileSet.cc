@@ -407,7 +407,10 @@ void FileSet::ExcludeCompound()
 {
    for(int i=0; i<fnum; i++)
    {
-      if(strchr(files[i]->name,'/'))
+      const char *name=files[i]->name;
+      if(!strncmp(name,"./~",3))
+	 name+=3;
+      if(strchr(name,'/'))
 	 Sub(i--);
    }
 }
