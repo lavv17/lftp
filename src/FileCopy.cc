@@ -662,9 +662,13 @@ void FileCopy::LogTransfer()
    if(!ResMgr::QueryBool("xfer:log",0))
       return;
    const char *src=get->GetURL();
-   const char *dst=put->GetURL();
-   if(!src || !dst)
+   if(!src)
       return;
+   src=alloca_strdup(src);
+   const char *dst=put->GetURL();
+   if(!dst)
+      return;
+   dst=alloca_strdup(dst);
    if(!transfer_log)
    {
       const char *fname = ResMgr::Query("xfer:log-file", 0);
