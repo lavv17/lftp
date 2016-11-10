@@ -21,11 +21,9 @@
 
 #include <stdarg.h>
 #include <fcntl.h>
-#include "trio.h"
 #include "xstring.h"
 #include "log.h"
 #include "SMTask.h"
-#include "strftime.h"
 
 Ref<Log> Log::global;
 
@@ -79,35 +77,28 @@ void Log::DoWrite(const char *s)
 {
    if(!s || !*s)
       return;
+   int len=strlen(s);
    if(at_line_start)
    {
+      xstring& buf=xstring::get_tmp("");
       if(tty_cb && tty)
 	 tty_cb();
       if(show_pid)
-      {
-	 char *pid=string_alloca(15);
-	 pid[14]=0;
-	 snprintf(pid,14,"[%ld] ",(long)getpid());
-	 write(output,pid,strlen(pid));
-      }
+	 buf.appendf("[%ld] ",(long)getpid());
       if(show_time)
-      {
-	 time_t t=SMTask::now;
-	 char *ts=string_alloca(21);
-	 strftime(ts,21,"%Y-%m-%d %H:%M:%S ",localtime(&t));
-	 write(output,ts,20);
-      }
+	 buf.append(SMTask::now.IsoDateTime()).append(' ');
       if(show_context)
       {
 	 const char *ctx=SMTask::GetCurrentLogContext();
 	 if(ctx)
-	 {
-	    write(output,ctx,strlen(ctx));
-	    write(output," ",1);
-	 }
+	    buf.append(ctx).append(' ');
+      }
+      if(buf.length()>0) {
+	 buf.append(s,len);
+	 s=buf;
+	 len=buf.length();
       }
    }
-   int len=strlen(s);
    write(output,s,len);
    at_line_start=(s[len-1]=='\n');
 }
