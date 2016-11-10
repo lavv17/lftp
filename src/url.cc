@@ -293,8 +293,11 @@ const char *url::path_ptr(const char *base)
 
 char *ParsedURL::Combine(const char *home,bool use_rfc1738)
 {
-   xstring u("");
-
+   xstring buf("");
+   return CombineTo(buf,home,use_rfc1738).borrow();
+}
+xstring& ParsedURL::CombineTo(xstring& u,const char *home,bool use_rfc1738)
+{
    bool is_file=!xstrcmp(proto,"file");
    bool is_ftp=(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"));
 
@@ -345,7 +348,7 @@ char *ParsedURL::Combine(const char *home,bool use_rfc1738)
       }
       u.append(url::encode(path+p_offset,URL_PATH_UNSAFE));
    }
-   return u.borrow();
+   return u;
 }
 
 const xstring& url::decode(const char *p)

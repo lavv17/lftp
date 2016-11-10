@@ -256,13 +256,11 @@ bool FileAccess::SameSiteAs(const FileAccess *fa) const
 
 const char *FileAccess::GetFileURL(const char *f,int flags) const
 {
-   static xstring url;
-
    const char *proto=GetVisualProto();
    if(proto[0]==0)
       return "";
 
-   ParsedURL u("");
+   ParsedURL u;
 
    u.proto.set(proto);
    if(!(flags&NO_USER))
@@ -281,9 +279,8 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
 	 if(f_path.url)
 	 {
 	    int f_path_index=url::path_index(f_path.url);
-	    url.set_allocated(u.Combine(home));
-	    url.append(f_path.url+f_path_index);
-	    return url;
+	    return u.CombineTo(xstring::get_tmp(""),home)
+	       .append(f_path.url+f_path_index);
 	 }
       }
 
@@ -295,7 +292,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
       if(is_dir && url::dir_needs_trailing_slash(proto) && u.path.last_char()!='/')
 	 u.path.append('/');
    }
-   return url.set_allocated(u.Combine(home));
+   return u.CombineTo(xstring::get_tmp(""),home);
 }
 
 const char *FileAccess::GetConnectURL(int flags) const

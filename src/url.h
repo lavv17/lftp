@@ -39,6 +39,7 @@ public:
    void parse(const char *url,bool proto_required=false,bool use_rfc1738=true);
    ~ParsedURL();
 
+   xstring& CombineTo(xstring &buf,const char *home=0,bool use_rfc1738=true);
    // returns allocated memory
    char *Combine(const char *home=0,bool use_rfc1738=true);
 };
