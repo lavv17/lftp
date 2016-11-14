@@ -47,7 +47,7 @@ CDECL_BEGIN
 
 #define USE_VARARGS 1
 #define PREFER_STDARG 1
-#include "readline/readline.h"
+#include <readline/readline.h>
 CDECL_END
 
 #ifndef GLOB_PERIOD

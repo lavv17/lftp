@@ -19,10 +19,11 @@
 
 #include <config.h>
 #include <stdio.h>
-#include <readline.h>
-#include <history.h>
 #include <stdlib.h>
 #include <string.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
 #include "lftp_rl.h"
 
 /* complete.cc */
