@@ -1,3 +1,16 @@
+Version 4.7.4 - 2016-11-16
+
+* mirror: new option --directory (-F) for source directories glob pattern.
+* mirror: fixed coredump with --depth-first + --recursion=newer.
+* mirror: create inaccessible directories anyway.
+* pget, torrent: avoid long delays in posix_fallocate(3) call.
+* new setting dns:name for host aliases.
+* ftp: allow SSL after certain types of ftp proxy.
+* http: fixed interpretation of links without a protocol.
+* cls: fixed glob metacharacter unquoting.
+* sftp: fixed mirroring of files with a leading tilde.
+* fixed transfer logging.
+
 Version 4.7.3 - 2016-07-15
 
 * mirror: don't add source directory base name to the target if the source
