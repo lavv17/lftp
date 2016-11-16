@@ -304,3 +304,11 @@ stddef.h
 /memcasecmp.h
 /hard-locale.c
 /hard-locale.h
+/basename-lgpl.c
+/dirname-lgpl.c
+/dirname.h
+/flexmember.h
+/getprogname.c
+/getprogname.h
+/limits.in.h
+/stripslash.c

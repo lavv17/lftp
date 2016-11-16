@@ -243,3 +243,7 @@
 /timegm.m4
 /memcasecmp.m4
 /hard-locale.m4
+/dirname.m4
+/double-slash-root.m4
+/getprogname.m4
+/limits-h.m4
