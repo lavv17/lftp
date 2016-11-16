@@ -311,4 +311,5 @@ stddef.h
 /getprogname.c
 /getprogname.h
 /limits.in.h
+limits.h
 /stripslash.c
