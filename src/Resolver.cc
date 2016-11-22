@@ -318,6 +318,8 @@ void Resolver::AddAddress(int family,const char *address,int len, unsigned int s
    case AF_INET6:
       if(sizeof(add.in6.sin6_addr) != len)
          return;
+      if(IN6_IS_ADDR_LINKLOCAL(address) && scope==0)
+	 return; // link-local addresses are meaningless without a scope
       memcpy(&add.in6.sin6_addr,address,len);
       add.in6.sin6_port=port_number;
 # ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
