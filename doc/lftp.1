@@ -2434,7 +2434,8 @@ for magnet links, cached metadata can be loaded from the directory.
 It can also serve as torrent history, file names are the info_hash of torrents.
 .TP
 .I "~/.netrc"
-The file is consulted to get default login and password to FTP server.
+The file is consulted to get default login and password to a server
+when it is specified without a protocol to the `open' command.
 Passwords are also searched here if an URL with user name but with no
 password is used.
 
