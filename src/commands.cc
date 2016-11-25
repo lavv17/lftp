@@ -272,7 +272,9 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "If entry type cannot be determined, it will be included in the list.\n"
 	 " -f  plain files (default)\n"
 	 " -d  directories\n"
-	 " -a  all types\n")},
+	 " -a  all types\n"
+	 " --exist      return zero exit code when the patterns expand to non-empty list\n"
+	 " --not-exist  return zero exit code when the patterns expand to an empty list\n")},
    {"help",    cmd_help,   N_("help [<cmd>]"),
 	 N_("Print help for command <cmd>, or list of available commands\n")},
    {"jobs",    cmd_jobs,   "jobs [-v] [<job_no...>]",
