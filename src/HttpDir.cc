@@ -276,6 +276,21 @@ static bool try_apache_listing(file_info &info,const char *str)
    }
    return false;
 }
+static bool try_apache_listing_iso(file_info &info,const char *str)
+{
+   info.clear();
+
+   // apache listing with ISO time: YYYY-MM-DD hh:mm size
+   int n=sscanf(str,"%4d-%2d-%2d %2d:%2d %30s",
+	       &info.year,&info.month,&info.day,
+	       &info.hour,&info.minute,info.size_str);
+   if(n==6 && (info.size_str[0]=='-' || is_ascii_digit(info.size_str[0])))
+   {
+      debug("apache listing matched (ISO time)");
+      return true;
+   }
+   return false;
+}
 static bool try_apache_listing_unusual(file_info &info,const char *str)
 {
    info.clear();
@@ -579,6 +594,7 @@ static bool try_csm_proxy(file_info &info,const char *str)
 	      Log::global->Format(10,
 		      "* try_csm_proxy: unknown file type '%s'\n",
 		      additional_file_info);
+	      return false;
 	  }
       }
    }
@@ -1000,6 +1016,7 @@ parse_url_again:
       remove_tags(str);
 
       if(try_apache_listing(info,str)		&& info.validate()) goto got_info;
+      if(try_apache_listing_iso(info,str)	&& info.validate()) goto got_info;
       if(try_apache_listing_unusual(info,str)	&& info.validate()) goto got_info;
       if(try_netscape_proxy(info,str)		&& info.validate()) goto got_info;
       if(try_squid_eplf(info,str) && info.validate())
