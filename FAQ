@@ -39,3 +39,7 @@ A: Use "SET CYGWIN=TTY".  This must be done before starting a shell, if any.
 Q: lftp consumes 100% CPU on MacOS X Tiger just waiting at the command prompt.
 A: See http://www.mail-archive.com/lftp%40uniyar.ac.ru/msg02101.html for
    a workaround for MacOS X bug.
+
+Q: lftp hangs in "Making data connection" state.
+A: Try "set ftp:prefer-epsv no". Probably a router on the path to the server
+   does not recognize the EPSV command.
