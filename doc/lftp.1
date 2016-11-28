@@ -205,10 +205,20 @@ stored as `\-'. You can do `cd \-' to change the directory back.
 The previous directory for each site is also stored on disk,
 so you can do `open site; cd \-' even after lftp restart.
 
-.BR chmod " \fImode files\fP"
+.BR chmod " [" OPTS "] " "\fImode files...\fP"
 .PP
-Change permission mask on remote files. The mode must be an octal number.
-
+Change permission mask on remote files. The mode can be an octal number or a symbolic mode (see chmod(1)).
+.PP
+.Sp
+.in +0.5i
+.TS
+l1	l	lx	.
+-c,	--changes	like verbose but report only when a change is made
+-f,	--quiet	suppress most error messages
+-v,	--verbose	output a diagnostic for every file processed
+-R,	--recursive	change files and directories recursively
+.TE
+.P
 .BR close " [" \-a "]"
 .PP
 Close idle connections.  By default only with the current server, use
