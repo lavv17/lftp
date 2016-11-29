@@ -161,7 +161,7 @@ int Fish::Do()
       cmd->Add(hostname);
       cmd->Add(init);
       xstring_ca cmd_str(cmd->Combine(0));
-      Log::global->Format(9,"---- %s (%s)\n",_("Running connect program"),cmd_str.get());
+      LogNote(9,"%s (%s)\n",_("Running connect program"),cmd_str.get());
       ssh=new PtyShell(cmd);
       ssh->UsePipes();
       state=CONNECTING;
@@ -650,7 +650,7 @@ int Fish::HandleReplies()
       if(!message)
 	 break;
       home_auto.set(message);
-      Log::global->Format(9,"---- home set to %s\n",home_auto.get());
+      LogNote(9,"home set to %s\n",home_auto.get());
       PropagateHomeAuto();
       if(!home)
 	 set_home(home_auto);

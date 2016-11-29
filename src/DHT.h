@@ -150,7 +150,7 @@ class DHT : public SMTask, protected ProtoLog, public ResClient
       xarray_p<Peer> peers;
       void AddPeer(Peer *);
    };
-   class BlackList
+   class BlackList : private ProtoLog
    {
       xmap_p<Timer> bl;
    public:

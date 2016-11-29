@@ -948,7 +948,7 @@ public:
    const char *Status();
 };
 
-class TorrentBlackList
+class TorrentBlackList : private ProtoLog
 {
    xmap_p<Timer> bl;
    void check_expire();

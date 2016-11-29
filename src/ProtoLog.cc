@@ -21,12 +21,22 @@
 #include "log.h"
 #include "ProtoLog.h"
 
+ProtoLog::Tags *ProtoLog::tags;
+
+void ProtoLog::init_tags()
+{
+   if(!tags)
+      tags=new Tags();
+   if(!tags->recv)
+      tags->Reconfig(0);
+}
+
 bool ProtoLog::WillOutput(int level)
 {
    return Log::global && Log::global->WillOutput(level);
 }
 
-void  ProtoLog::Log2(int level,xstring& str)
+void ProtoLog::Log2(int level,xstring& str)
 {
    if(!WillOutput(level))
       return;
@@ -35,35 +45,61 @@ void  ProtoLog::Log2(int level,xstring& str)
    str.append('\n');
    Log::global->Write(level,str);
 }
-void  ProtoLog::Log3(int level,const char *prefix,const char *str0)
+void ProtoLog::Log3(int level,const char *prefix,const char *str0)
 {
    if(!WillOutput(level))
       return;
    Log2(level,xstring::get_tmp(prefix).append(str0));
 }
+void ProtoLog::LogVF(int level,const char *prefix,const char *fmt,va_list v)
+{
+   if(!WillOutput(level))
+      return;
+   Log2(level,xstring::get_tmp(prefix).vappendf(fmt,v));
+}
 void ProtoLog::LogError(int level,const char *fmt,...)
 {
    if(!WillOutput(level))
       return;
+   init_tags();
    va_list v;
    va_start(v,fmt);
-   Log2(level,xstring::get_tmp("**** ").vappendf(fmt,v));
+   LogVF(level,tags->error,fmt,v);
    va_end(v);
 }
 void ProtoLog::LogNote(int level,const char *fmt,...)
 {
    if(!WillOutput(level))
       return;
+   init_tags();
    va_list v;
    va_start(v,fmt);
-   Log2(level,xstring::get_tmp("---- ").vappendf(fmt,v));
+   LogVF(level,tags->note,fmt,v);
    va_end(v);
 }
 void ProtoLog::LogRecv(int level,const char *line)
 {
-   Log3(level,"<--- ",line);
+   init_tags();
+   Log3(level,tags->recv,line);
 }
 void ProtoLog::LogSend(int level,const char *line)
 {
-   Log3(level,"---> ",line);
+   init_tags();
+   Log3(level,tags->send,line);
+}
+void ProtoLog::LogRecvF(int level,const char *fmt,...)
+{
+   init_tags();
+   va_list v;
+   va_start(v,fmt);
+   LogVF(level,tags->recv,fmt,v);
+   va_end(v);
+}
+void ProtoLog::LogSendF(int level,const char *fmt,...)
+{
+   init_tags();
+   va_list v;
+   va_start(v,fmt);
+   LogVF(level,tags->send,fmt,v);
+   va_end(v);
 }

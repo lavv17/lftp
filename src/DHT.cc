@@ -1237,7 +1237,7 @@ bool DHT::BlackList::Listed(const sockaddr_u& addr)
    if(!e)
       return false;
    if(e->Stopped()) {
-      Log::global->Format(4,"---- black-delisting node %s\n",key.get());
+      LogNote(4,"black-delisting node %s\n",key.get());
       bl.remove(key);
       return false;
    }
@@ -1247,6 +1247,6 @@ void DHT::BlackList::Add(const sockaddr_u &a,const char *t)
 {
    if(Listed(a))
       return;
-   Log::global->Format(4,"---- black-listing node %s (%s)\n",a.to_string(),t);
+   LogNote(4,"black-listing node %s (%s)\n",a.to_string(),t);
    bl.add(a.to_xstring(),new Timer(TimeIntervalR(t)));
 }

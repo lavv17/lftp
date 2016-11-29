@@ -3423,7 +3423,7 @@ TorrentPeer::unpack_status_t TorrentPeer::UnpackPacket(SMTaskRef<IOBuffer>& b,To
    if(res!=UNPACK_SUCCESS)
       return res;
 
-   Log::global->Format(11,"<--- got a packet, length=%d, type=%d(%s)\n",
+   LogRecvF(11,"got a packet, length=%d, type=%d(%s)\n",
       probe->GetLength(),probe->GetPacketType(),probe->GetPacketTypeText());
 
    switch(probe->GetPacketType())
@@ -3715,7 +3715,7 @@ void TorrentBlackList::check_expire()
 {
    for(Timer *e=bl.each_begin(); e; e=bl.each_next()) {
       if(e->Stopped()) {
-	 Log::global->Format(4,"---- black-delisting peer %s\n",bl.each_key().get());
+	 LogNote(4,"black-delisting peer %s\n",bl.each_key().get());
 	 bl.remove(bl.each_key());
       }
    }
@@ -3725,7 +3725,7 @@ void TorrentBlackList::Add(const sockaddr_u &a,const char *t)
    check_expire();
    if(Listed(a))
       return;
-   Log::global->Format(4,"---- black-listing peer %s (%s)\n",(const char*)a,t);
+   LogNote(4,"black-listing peer %s (%s)\n",(const char*)a,t);
    bl.add(a.to_xstring(),new Timer(TimeIntervalR(t)));
 }
 bool TorrentBlackList::Listed(const sockaddr_u &a)

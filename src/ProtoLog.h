@@ -25,13 +25,34 @@
 class ProtoLog
 {
    static bool WillOutput(int level);
+
+   struct Tags : public ResClient {
+      const char *recv;
+      const char *send;
+      const char *note;
+      const char *error;
+      void Reconfig(const char *n) {
+	 if(n && strncmp(n,"log:prefix-",11))
+	    return;
+	 recv=Query("log:prefix-recv",0);
+	 send=Query("log:prefix-send",0);
+	 note=Query("log:prefix-note",0);
+	 error=Query("log:prefix-error",0);
+      }
+   };
+   static Tags *tags;
+   static void init_tags();
+
 public:
    static void Log2(int level,xstring& str);
    static void Log3(int level,const char *prefix,const char *str);
+   static void LogVF(int level,const char *prefix,const char *fmt,va_list v);
    static void LogError(int level,const char *fmt,...) PRINTF_LIKE(2,3);
    static void LogNote(int level,const char *fmt,...) PRINTF_LIKE(2,3);
    static void LogRecv(int level,const char *line);
    static void LogSend(int level,const char *line);
+   static void LogRecvF(int level,const char *fmt,...) PRINTF_LIKE(2,3);
+   static void LogSendF(int level,const char *fmt,...) PRINTF_LIKE(2,3);
 };
 
 #endif//PROTOLOG_H

@@ -34,6 +34,10 @@ static ResType log_vars[] = {
    {"log:show-pid",  "no", ResMgr::BoolValidate},
    {"log:show-ctx",  "no", ResMgr::BoolValidate},
    {"log:file",	     "",   ResMgr::FileCreatable},
+   {"log:prefix-recv","<--- "},
+   {"log:prefix-send","---> "},
+   {"log:prefix-note","---- "},
+   {"log:prefix-error","**** "},
    {0}
 };
 static ResDecls log_vars_register(log_vars);

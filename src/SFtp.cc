@@ -448,7 +448,7 @@ SFtp::unpack_status_t SFtp::UnpackPacket(Buffer *b,SFtp::Packet **p)
    if(res!=UNPACK_SUCCESS)
       return res;
 
-   Log::global->Format(9,"<--- got a packet, length=%d, type=%d(%s), id=%u\n",
+   LogRecvF(9,"got a packet, length=%d, type=%d(%s), id=%u\n",
       probe.GetLength(),probe.GetPacketType(),probe.GetPacketTypeText(),probe.GetID());
 
    switch(probe.GetPacketType())
@@ -526,7 +526,7 @@ void SFtp::SendRequest(Packet *request,Expect::expect_t tag,int i)
 {
    request->SetID(ssh_id++);
    request->ComputeLength();
-   Log::global->Format(9,"---> sending a packet, length=%d, type=%d(%s), id=%u\n",
+   LogSendF(9,"sending a packet, length=%d, type=%d(%s), id=%u\n",
       request->GetLength(),request->GetPacketType(),request->GetPacketTypeText(),request->GetID());
    request->Pack(send_buf.get_non_const());
    PushExpect(new Expect(request,tag,i));
