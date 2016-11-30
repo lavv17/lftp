@@ -71,22 +71,17 @@ bool Log::WillOutput(int l)
    return true;
 }
 
-void Log::Write(int l,const char *s)
+void Log::Write(int l,const char *s,int len)
 {
    if(!WillOutput(l))
       return;
-   DoWrite(s);
+   DoWrite(s,len);
 }
-void Log::DoWrite(const char *s)
+void Log::DoWrite(const char *s,int len)
 {
-   if(!s || !*s)
+   if(len==0)
       return;
-   int len=strlen(s);
-   if(at_line_start)
-   {
-      xstring& buf=xstring::get_tmp("");
-      if(tty_cb && tty)
-	 tty_cb();
+   if(buf.length()==0 || buf.last_char()=='\n') {
       if(show_pid)
 	 buf.appendf("[%ld] ",(long)getpid());
       if(show_time)
@@ -97,14 +92,24 @@ void Log::DoWrite(const char *s)
 	 if(ctx)
 	    buf.append(ctx).append(' ');
       }
-      if(buf.length()>0) {
-	 buf.append(s,len);
-	 s=buf;
-	 len=buf.length();
-      }
    }
-   write(output,s,len);
-   at_line_start=(s[len-1]=='\n');
+   buf.append(s,len);
+   if(buf.last_char()!='\n')
+      return;
+
+   if(tty_cb && tty)
+      tty_cb();
+   int res=write(output,buf,buf.length());
+   if(res==-1) {
+      if(E_RETRY(errno))
+	 return;
+      ResMgr::Set("log:enabled",name,"no");
+      return;
+   }
+   if(res==(int)buf.length())
+      buf.truncate();
+   else
+      buf.set_substr(0,res,"",0);
 }
 
 void Log::Format(int l,const char *f,...)

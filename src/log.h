@@ -50,6 +50,8 @@ class Log : public ResClient
    bool enabled;
    int level;
 
+   xstring buf;
+
 protected:
    void SetOutput(int o,bool need_close);
 
@@ -57,8 +59,11 @@ public:
    static Ref<Log> global;
 
    bool WillOutput(int l);
-   void DoWrite(const char *str);
-   void Write(int l,const char *str);
+   void DoWrite(const char *str,int len);
+   void DoWrite(const xstring &str) { DoWrite(str,str.length()); }
+   void Write(int l,const char *str,int len);
+   void Write(int l,const char *str) { Write(l,str,xstrlen(str)); }
+   void Write(int l,const xstring &str) { Write(l,str,str.length()); }
    void Format(int l,const char *fmt,...) PRINTF_LIKE(3,4);
    void vFormat(int l,const char *fmt,va_list v);
 
