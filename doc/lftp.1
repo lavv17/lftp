@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "15 Jul 2016"
+.TH lftp 1 "30 Nov 2016"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -56,7 +56,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.7.4.
+This man page documents lftp version 4.7.5.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -1953,6 +1953,32 @@ the string lftp sends in User-Agent header of HTTP request.
 .BR https:proxy " (string)"
 specifies https proxy. Default value is taken from environment variable \fBhttps_proxy\fP.
 .TP
+.BR log:enabled \ (boolean)
+when true, the log messages are output. The closure for this and other `log:'
+variables is either `debug' for debug messages or `xfer' for transfer logging.
+.TP
+.BR log:file " (string)"
+the target output file for logging. When empty, \fBstderr\fP is used.
+.TP
+.BR log:level " (number)"
+the log verbosity level. Currently it's only defined for `debug' closure.
+.TP
+.BR log:prefix-error " (string)"
+.TP
+.BR log:prefix-note " (string)"
+.TP
+.BR log:prefix-recv " (string)"
+.TP
+.BR log:prefix-send " (string)"
+the prefixes for corresponding types of debug messages.
+.TP
+.BR log:show-ctx \ (boolean)
+.TP
+.BR log:show-pid \ (boolean)
+.TP
+.BR log:show-time \ (boolean)
+select additional information in the log messages.
+.TP
 .BR mirror:dereference " (boolean)"
 when true, mirror will dereference symbolic links by default.
 You can override it by \-\-no\-dereference option. Default if false.
@@ -2291,6 +2317,7 @@ The closure for `dns:', `net:', `ftp:', `http:', `hftp:' domain variables
 is currently just the host name as you specify it in the `open' command
 (with some exceptions where closure is meaningless, e.g. dns:cache-size).
 For some `cmd:' domain variables the closure is current URL without path.
+For `log:' domain variables the closure is either `debug' or `xfer'.
 For other variables it is not currently used. See examples in the sample
 \fIlftp.conf\fR.
 .PP
