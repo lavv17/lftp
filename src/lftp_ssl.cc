@@ -638,7 +638,7 @@ bool lftp_ssl_gnutls::want_out()
 }
 void lftp_ssl_gnutls::copy_sid(const lftp_ssl_gnutls *o)
 {
-   size_t session_data_size;
+   size_t session_data_size=0;
    void *session_data;
    int res=gnutls_session_get_data(o->session,NULL,&session_data_size);
    if(res!=GNUTLS_E_SUCCESS && res!=GNUTLS_E_SHORT_MEMORY_BUFFER)
