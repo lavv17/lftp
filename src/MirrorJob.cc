@@ -1391,6 +1391,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    remove_this_source_dir=false;
 
    flags=0;
+   recursion_mode=RECURSION_ALWAYS;
    max_error_count=0;
 
    exclude=0;
