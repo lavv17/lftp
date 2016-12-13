@@ -988,6 +988,8 @@ Ftp::Connection::Connection(const char *c)
    site_chmod_supported=true;
    site_utime_supported=true;
    site_utime2_supported=true;
+   site_symlink_supported=true;
+   site_mkdir_supported=false;
    pret_supported=false;
    utf8_supported=false;
    lang_supported=false;
@@ -1951,6 +1953,8 @@ int   Ftp::Do()
 	 goto pre_WAITING_STATE;
       case(MAKE_DIR):
 	 command="MKD";
+	 if(mkdir_p && conn->site_mkdir_supported)
+	    command="SITE MKDIR";
 	 append_file=true;
 	 want_type=conn->type;
 	 break;
@@ -1982,6 +1986,10 @@ int   Ftp::Do()
 	 want_type=conn->type;
 	 break;
       case(SYMLINK):
+	 if(!conn->site_symlink_supported) {
+	    SetError(NOT_SUPP,_("SITE SYMLINK is not supported by the server"));
+	    return MOVED;
+	 }
 	 command="SITE SYMLINK";
 	 append_file=true;
 	 want_type=conn->type;
@@ -2001,7 +2009,6 @@ int   Ftp::Do()
       case(CONNECT_VERIFY):
       case(CLOSED):
 	 state=EOF_STATE;
-	 return MOVED;
       }
 
       if(want_type!=conn->type)
@@ -2039,7 +2046,7 @@ int   Ftp::Do()
       if(mode==QUOTE_CMD || mode==CHANGE_MODE || (mode==LONG_LIST && use_stat_for_list)
       || mode==REMOVE || mode==REMOVE_DIR || mode==MAKE_DIR || mode==RENAME)
       {
-	 if(mode==MAKE_DIR && mkdir_p)
+	 if(mode==MAKE_DIR && mkdir_p && !conn->site_mkdir_supported)
 	 {
 	    Ref<StringSet> dirs(MkdirMakeSet());
 	    for(int i=0; i<dirs->Count(); i++)
@@ -4034,6 +4041,14 @@ void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
 	 epsv_supported=true;
       else if(!strcasecmp(f,"TVFS"))
 	 tvfs_supported=true;
+      else if(!strncasecmp(f,"MODE Z",6)) {
+	 mode_z_supported=true;
+	 mode_z_opts_supported.set(f[6]==' '?f+7:NULL);
+      }
+      else if(!strcasecmp(f,"SITE SYMLINK"))
+	 site_symlink_supported=true;
+      else if(!strcasecmp(f,"SITE MKDIR"))
+	 site_mkdir_supported=true;
 #if USE_SSL
       else if(!strncasecmp(f,"AUTH ",5))
       {
@@ -4049,10 +4064,6 @@ void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
 	 cpsv_supported=true;
       else if(!strcasecmp(f,"SSCN"))
 	 sscn_supported=true;
-      else if(!strncasecmp(f,"MODE Z",6)) {
-	 mode_z_supported=true;
-	 mode_z_opts_supported.set(f[6]==' '?f+7:NULL);
-      }
 #endif // USE_SSL
    }
    if(!trust) {
@@ -4245,6 +4256,13 @@ void Ftp::CheckResp(int act)
 	    conn->site_chmod_supported=false;
 	 else if(exp->cmd.begins_with("MFF"))
 	    conn->mff_supported=false;
+	 SetError(NO_FILE,all_lines);
+	 break;
+      }
+      if(mode==SYMLINK && site_cmd_unsupported(act))
+      {
+	 if(exp->cmd.begins_with("SITE SYMLINK"))
+	    conn->site_symlink_supported=false;
 	 SetError(NO_FILE,all_lines);
 	 break;
       }

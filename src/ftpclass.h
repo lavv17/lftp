@@ -107,6 +107,8 @@ class Ftp : public NetAccess
       bool site_chmod_supported;
       bool site_utime_supported;
       bool site_utime2_supported;   // two-argument SITE UTIME
+      bool site_symlink_supported;
+      bool site_mkdir_supported;
       bool pret_supported;
       bool utf8_supported;
       bool lang_supported;
