@@ -523,7 +523,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    mvJob *j=new mvJob(target_session->Clone(),file->symlink,target_name,FA::SYMLINK);
 	    if(remove_target)
 	       j->RemoveTargetFirst();
-	    AddWaiting(j);
+	    JobStarted(j);
 	    RemoveSourceLater(file);
 	    break;
 	 }
