@@ -2171,8 +2171,7 @@ CMD(debug)
       truncate(debug_file_name,0);
 
    const char *c="debug";
-   if(debug_file_name)
-      ResMgr::Set("log:file",c,debug_file_name);
+   ResMgr::Set("log:file",c,debug_file_name?debug_file_name:"");
 
    ResMgr::Set("log:enabled",c,enabled?"yes":"no");
    if(enabled)
