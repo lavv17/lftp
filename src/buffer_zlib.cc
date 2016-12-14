@@ -43,26 +43,29 @@ void DataInflator::PutTranslated(Buffer *target,const char *put_buf,int size)
       size_t put_size=size;
       int size_coeff=6;
       size_t store_size=size_coeff*put_size+256;
-      char *store_space=target->GetSpace(store_size);
-      char *store_buf=store_space;
+      char *store_buf=target->GetSpace(store_size);
       // do the inflation
       z.next_in=(Bytef*)put_buf;
       z.avail_in=put_size;
       z.next_out=(Bytef*)store_buf;
       z.avail_out=store_size;
       int ret = inflate(&z, Z_NO_FLUSH);
-      assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
       switch (ret) {
+      case Z_OK:
+	 break;
+      case Z_STREAM_END:
+	 z_err=ret;
+	 PutEOF();
+	 break;
       case Z_NEED_DICT:
-	 ret = Z_DATA_ERROR;     /* and fall through */
-      case Z_DATA_ERROR:
-      case Z_MEM_ERROR:
+	 ret = Z_DATA_ERROR;
+	 if(!z.msg)
+	    z.msg=const_cast<char*>("missing dictionary");
+	 /* fallthrough */
+      default:
 	 z_err=ret;
 	 target->SetError(xstring::cat("zlib inflate error: ",z.msg,NULL),true);
 	 return;
-      case Z_STREAM_END:
-	 z_err=ret;
-	 break;
       }
       int inflated_size=store_size-z.avail_out;
       int processed_size=put_size-z.avail_in;
@@ -87,11 +90,7 @@ void DataInflator::PutTranslated(Buffer *target,const char *put_buf,int size)
 DataInflator::DataInflator()
 {
    /* allocate inflate state */
-   z.zalloc = Z_NULL;
-   z.zfree = Z_NULL;
-   z.opaque = Z_NULL;
-   z.avail_in = 0;
-   z.next_in = Z_NULL;
+   memset(&z,0,sizeof(z));
    z_err = inflateInit2(&z, 32+MAX_WBITS);
 }
 DataInflator::~DataInflator()
@@ -114,32 +113,32 @@ void DataDeflator::PutTranslated(Buffer *target,const char *put_buf,int size)
       Get(&put_buf,&size);
       from_untranslated=true;
    }
+   int size_coeff=1;
    // process all data we can, save the rest in the untranslated buffer
    while(size>0 || flush==Z_FINISH)
    {
       size_t put_size=size;
-      int size_coeff=1;
       size_t store_size=size_coeff*put_size+256;
-      char *store_space=target->GetSpace(store_size);
-      char *store_buf=store_space;
+      char *store_buf=target->GetSpace(store_size);
       // do the deflation
       z.next_in=(Bytef*)put_buf;
       z.avail_in=put_size;
       z.next_out=(Bytef*)store_buf;
       z.avail_out=store_size;
       int ret = deflate(&z,flush);
-      assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
       switch (ret) {
+      case Z_OK:
+	 break;
       case Z_BUF_ERROR:
 	 size_coeff*=2;
 	 continue;
-      case Z_MEM_ERROR:
-	 z_err=ret;
-	 target->SetError(xstring::cat("zlib deflate error: ",z.msg,NULL),true);
-	 return;
       case Z_STREAM_END:
 	 z_err=ret;
 	 break;
+      default:
+	 z_err=ret;
+	 target->SetError(xstring::cat("zlib deflate error: ",z.msg,NULL),true);
+	 return;
       }
       int deflated_size=store_size-z.avail_out;
       int processed_size=put_size-z.avail_in;
@@ -166,11 +165,7 @@ void DataDeflator::PutTranslated(Buffer *target,const char *put_buf,int size)
 DataDeflator::DataDeflator(int level)
 {
    /* allocate deflate state */
-   z.zalloc = Z_NULL;
-   z.zfree = Z_NULL;
-   z.opaque = Z_NULL;
-   z.avail_in = 0;
-   z.next_in = Z_NULL;
+   memset(&z,0,sizeof(z));
    z_err = deflateInit(&z, level);
 }
 DataDeflator::~DataDeflator()
