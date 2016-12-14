@@ -2477,9 +2477,13 @@ int   Ftp::Do()
 	    if(conn->data_iobuf->Size()>0)
 	       m=MOVED;
 	 }
-	 if(conn->data_iobuf->Size()==0 && conn->data_iobuf->Eof())
+	 if(conn->data_iobuf->Size()==0
+	 && (conn->data_iobuf->Eof() || conn->data_iobuf->TranslationEOF()))
 	 {
-	    LogNote(9,"Got EOF on data connection");
+	    if(conn->data_iobuf->Eof())
+	       LogNote(9,"Got EOF on data connection");
+	    else if(conn->data_iobuf->TranslationEOF())
+	       LogNote(9,"Whole entity has been received and decoded");
 	    conn->data_iobuf->PutEOF(); // for ssl shutdown
 	    DataClose();
 	    if(expect->IsEmpty())
