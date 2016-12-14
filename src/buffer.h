@@ -227,6 +227,7 @@ public:
    virtual FgData *GetFgData(bool) { return 0; }
    virtual const char *Status() { return ""; }
    virtual int Buffered() { return Size(); }
+   virtual bool TranslationEOF() const { return translator?translator->Eof():false; }
 
    // Put method with Put_LL shortcut
    void Put(const char *,int);
@@ -252,6 +253,7 @@ class IOBufferStacked : public IOBuffer
 
 public:
    IOBufferStacked(IOBuffer *b) : IOBuffer(b->GetDirection()), down(b) {}
+   bool TranslationEOF() const { return down->TranslationEOF()||IOBuffer::TranslationEOF(); }
    void PrepareToDie() { down=0; }
    const Time& EventTime() { return down->EventTime(); }
    int Do();
