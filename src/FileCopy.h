@@ -258,6 +258,8 @@ public:
 
    void LogTransfer();
    static Ref<Log> transfer_log;
+
+   static const char *TempFileName(const char *file);
 };
 
 class FileVerificator : public SMTask

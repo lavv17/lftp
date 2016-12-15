@@ -791,7 +791,7 @@ void FileCopyPeer::Seek(off_t offs)
    broken=false;
 }
 
-const char *FileCopyPeer::UseTempFile(const char *file)
+const char *FileCopy::TempFileName(const char *file)
 {
    if(!ResMgr::QueryBool("xfer:use-temp-file",0))
       return file;
@@ -800,12 +800,7 @@ const char *FileCopyPeer::UseTempFile(const char *file)
    if(temp.length()==0 || temp.eq("*"))
       return file;
 
-   auto_rename=true;
-   temp_file=true;
-
    const char *name=basename_ptr(file);
-   SetSuggestedFileName(name);
-
    int subst_pos=temp.instr('*');
    if(subst_pos>=0)
       temp.set_substr(subst_pos,1,name);
@@ -818,6 +813,19 @@ const char *FileCopyPeer::UseTempFile(const char *file)
 	 temp.append('.').append(name);
    }
    return dir_file(dirname(file),temp);
+}
+
+const char *FileCopyPeer::UseTempFile(const char *file)
+{
+   const char *temp=FileCopy::TempFileName(file);
+   if(temp==file)
+      return file;
+
+   auto_rename=true;
+   temp_file=true;
+   SetSuggestedFileName(basename_ptr(file));
+
+   return temp;
 }
 
 FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
