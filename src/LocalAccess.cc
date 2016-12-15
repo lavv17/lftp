@@ -590,7 +590,7 @@ int LocalListInfo::Do()
 	 if(!--count)
 	    return MOVED;	// let other tasks run
       }
-      result->Exclude(exclude_prefix,exclude);
+      result->Exclude(exclude_prefix,exclude,excluded.get_non_const());
       done=true;
       m=MOVED;
    }

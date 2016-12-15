@@ -468,6 +468,7 @@ class ListInfo : public FileAccessOperation
 protected:
    FileAccess::Path saved_cwd;
    Ref<FileSet> result;
+   Ref<FileSet> excluded;
 
    const char *exclude_prefix;
    const PatternSet *exclude;
@@ -483,11 +484,12 @@ protected:
 public:
    ListInfo(FileAccess *session,const char *path);
 
-   void SetExclude(const char *p,const PatternSet *e) { exclude_prefix=p; exclude=e; }
+   void SetExclude(const char *p,const PatternSet *e) { exclude_prefix=p; exclude=e; excluded=new FileSet(); }
    void TryRecursive(bool y=true) { try_recursive=y; }
 
    // caller has to delete the resulting FileSet itself.
    FileSet *GetResult() { return result.borrow(); }
+   FileSet *GetExcluded() { return excluded.borrow(); }
    bool IsRecursive() const { return is_recursive; }
 
    void Need(unsigned mask) { need|=mask; }
