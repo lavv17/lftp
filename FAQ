@@ -43,3 +43,7 @@ A: See http://www.mail-archive.com/lftp%40uniyar.ac.ru/msg02101.html for
 Q: lftp hangs in "Making data connection" state.
 A: Try "set ftp:prefer-epsv no". Probably a router on the path to the server
    does not recognize the EPSV command.
+
+Q: ssl:key-file setting is not applied to sftp and fish connections.
+A: Use sftp:connect-program and fish:connect-program settings instead, e.g.:
+   "ssh -a -x -i path-to-key-file"
