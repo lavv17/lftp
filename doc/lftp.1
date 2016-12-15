@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "30 Nov 2016"
+.TH lftp 1 "15 Dec 2016"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1510,7 +1510,7 @@ Default is empty which means the same as local.
 .BR fish:connect-program \ (string)
 the program to use for connecting to remote server. It should support `\-l' option
 for user name, `\-p' for port number. Default is `ssh \-a \-x'. You can set it to
-`rsh', for example.
+`rsh', for example. For private key authentication add `\-i' option with the key file.
 .TP
 .BR fish:shell \ (string)
 use specified shell on server side. Default is /bin/sh. On some systems,
@@ -2131,16 +2131,16 @@ for SFTP protocol version prior to 4. Version 4 and later always use UTF-8.
 .TP
 .BR sftp:connect-program \ (string)
 the program to use for connecting to remote server. It should support `\-l' option
-for user name, `\-p' for port number. Default is `ssh \-a \-x'. You can set it to
-`rsh', for example.
+for user name, `\-p' for port number. Default is `ssh \-a \-x'.
+For private key authentication add `\-i' option with the key file.
 .TP
 .BR sftp:max-packets-in-flight \ (number)
 The maximum number of unreplied packets in flight. If round trip time is
 significant, you should increase this and size-read/size-write. Default is 16.
 .TP
 .BR sftp:protocol-version \ (number)
-The protocol number to negotiate. Default is 4. The actual protocol version
-used depends on server.
+The protocol number to negotiate. Default is 6. The actual protocol version
+used depends on the server.
 .TP
 .BR sftp:server-program \ (string)
 The server program implementing SFTP protocol. If it does not contain a slash `/',
@@ -2175,7 +2175,9 @@ use specified file as Certificate Revocation List certificate.
 use specified directory as Certificate Revocation List certificate repository (OpenSSL only).
 .TP
 .BR ssl:key-file " (path to file)"
-use specified file as your private key.
+use specified file as your private key. This setting is only used for ftps
+and https protocols. For sftp and fish protocols use sftp:connect-program
+and fish:connect-program respectively (add `\-i' option to ssh).
 .TP
 .BR ssl:cert-file " (path to file)"
 use specified file as your certificate.
