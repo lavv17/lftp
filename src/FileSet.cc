@@ -121,6 +121,12 @@ void FileSet::Sub(int i)
    if(ind>i)
       ind--;
 }
+FileInfo *FileSet::Borrow(int i)
+{
+   FileInfo *fi=files[i].borrow();
+   Sub(i);
+   return fi;
+}
 
 void FileSet::Merge(const FileSet *set)
 {
@@ -498,11 +504,14 @@ void FileSet::Count(int *d,int *f,int *s,int *o) const
       switch(files[i]->filetype)
       {
       case(FileInfo::DIRECTORY):
-	 if(d) (*d)++; break;
+	 if(d) (*d)++;
+	 break;
       case(FileInfo::NORMAL):
-	 if(f) (*f)++; break;
+	 if(f) (*f)++;
+	 break;
       case(FileInfo::SYMLINK):
-	 if(s) (*s)++; break;
+	 if(s) (*s)++;
+	 break;
       default:
 	 if(o) (*o)++;
       }
@@ -570,7 +579,7 @@ static bool do_exclude_match(const char *prefix,const FileInfo *fi,const Pattern
    return x->MatchExclude(name);
 }
 
-void  FileSet::Exclude(const char *prefix,const PatternSet *x)
+void  FileSet::Exclude(const char *prefix,const PatternSet *x,FileSet *fsx)
 {
    if(!x)
       return;
@@ -578,7 +587,10 @@ void  FileSet::Exclude(const char *prefix,const PatternSet *x)
    {
       if(do_exclude_match(prefix,files[i],x))
       {
-	 Sub(i);
+	 if(fsx)
+	    fsx->Add(Borrow(i));
+	 else
+	    Sub(i);
 	 i--;
       }
    }

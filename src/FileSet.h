@@ -154,6 +154,7 @@ private:
    int	 ind;
 
    void	 Sub(int);
+   FileInfo *Borrow(int);
 
    void add_before(int pos,FileInfo *fi);
 
@@ -191,7 +192,7 @@ public:
    void	 SortByPatternList(const char *list_c);
    void	 ReverseSort();
 
-   void	 Exclude(const char *prefix,const PatternSet *x);
+   void	 Exclude(const char *prefix,const PatternSet *x,FileSet *fsx=0);
    void	 ExcludeDots();
    void	 ExcludeCompound();
    void	 ExcludeUnaccessible(const char *user=0);
