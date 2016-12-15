@@ -710,6 +710,9 @@ Type=pdir;Modify=20021029173810;Perm=el;Unique=BP8AAjJufAA; ..
 Type=dir;Modify=20010118144705;Perm=e;Unique=BP8AAjNufAA; bin
 Type=dir;Modify=19981021003019;Perm=el;Unique=BP8AAlhufAA; pub
 Type=file;Size=12303;Modify=19970124132601;Perm=r;Unique=BP8AAo9ufAA; mailserv.FAQ
+modify=20161215062118;perm=flcdmpe;type=dir;UNIX.group=503;UNIX.mode=0700; directory-name
+modify=20161213121618;perm=adfrw;size=6369064;type=file;UNIX.group=503;UNIX.mode=0644; file-name
+modify=20120103123744;perm=adfrw;size=11;type=OS.unix=symlink;UNIX.group=0;UNIX.mode=0777; www
 */
 FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
 {
@@ -720,8 +723,7 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
    time_t date=NO_DATE;
    const char *owner=0;
    const char *group=0;
-   bool dir=false;
-   bool type_known=false;
+   FileInfo::type type=FileInfo::UNKNOWN;
    int perms=-1;
 
    char *space=strstr(line,"; ");
@@ -743,14 +745,18 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
       || !strcasecmp(tok,"Type=pdir")
       || !strcasecmp(tok,"Type=dir"))
       {
-	 dir=true;
-	 type_known=true;
+	 type=FileInfo::DIRECTORY;
 	 continue;
       }
       if(!strcasecmp(tok,"Type=file"))
       {
-	 dir=false;
-	 type_known=true;
+	 type=FileInfo::NORMAL;
+	 continue;
+      }
+      if(!strcasecmp(tok,"Type=OS.unix=symlink"))
+      {
+	 type=FileInfo::SYMLINK;
+	 continue;
       }
       if(!strncasecmp(tok,"Modify=",7))
       {
@@ -809,7 +815,7 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
 	 continue;
       }
    }
-   if(name==0 || !*name || !type_known)
+   if(name==0 || !*name || type==FileInfo::UNKNOWN)
       ERR;
 
    fi=new FileInfo(name);
@@ -817,13 +823,7 @@ FileInfo *ParseFtpLongList_MLSD(char *line,int *err,const char *)
       fi->SetSize(size);
    if(date!=NO_DATE)
       fi->SetDate(date,0);
-   if(type_known)
-   {
-      if(dir)
-	 fi->SetType(fi->DIRECTORY);
-      else
-	 fi->SetType(fi->NORMAL);
-   }
+   fi->SetType(type);
    if(perms!=-1)
       fi->SetMode(perms);
    if(owner)
