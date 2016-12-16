@@ -293,9 +293,14 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	       if(old && ((old->Has(old->SIZE) && old->size!=st.st_size)
 			||(old->Has(old->DATE) && old->date!=st.st_mtime)))
 		  goto skip;  // the file has changed after mirror start
+	       if(!script_only && access(target_name,W_OK)==-1)
+	       {
+		  // try to enable write access.
+		  chmod(target_name,st.st_mode|0200);
+	       }
 	    }
 	 }
-	 FileInfo *old=target_set->FindByName(file->name);
+	 FileInfo *old=target_set->FindByName(FileCopy::TempFileName(file->name));
 	 if(old)
 	 {
 	    if((flags&CONTINUE)
@@ -307,14 +312,6 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    && file->size >= old->size)
 	    {
 	       cont_this=true;
-	       if(target_is_local && !script_only)
-	       {
-		  if(access(target_name,W_OK)==-1)
-		  {
-		     // try to enable write access.
-		     chmod(target_name,st.st_mode|0200);
-		  }
-	       }
 	       stats.mod_files++;
 	    }
 	    else if(!to_rm_mismatched->FindByName(file->name))
@@ -773,7 +770,7 @@ void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<Li
    list_info->Roll();
 }
 
-void MirrorJob::HandleListInfo(SMTaskRef<ListInfo>& list_info, Ref<FileSet>& set)
+void MirrorJob::HandleListInfo(SMTaskRef<ListInfo>& list_info, Ref<FileSet>& set, Ref<FileSet> *fsx)
 {
    if(!list_info)
       return;
@@ -791,6 +788,8 @@ void MirrorJob::HandleListInfo(SMTaskRef<ListInfo>& list_info, Ref<FileSet>& set
       return;
    }
    set=list_info->GetResult();
+   if(fsx)
+      *fsx=list_info->GetExcluded();
    list_info=0;
    set->ExcludeDots(); // don't need .. and .
 }
@@ -922,7 +921,7 @@ int   MirrorJob::Do()
       return m;	  // give time to other tasks
    case(GETTING_LIST_INFO):
       HandleListInfo(source_list_info,source_set);
-      HandleListInfo(target_list_info,target_set);
+      HandleListInfo(target_list_info,target_set,&target_set_excluded);
       if(state!=GETTING_LIST_INFO)
 	 return MOVED;
       if(source_list_info || target_list_info)
@@ -958,6 +957,13 @@ int   MirrorJob::Do()
 	    else
 	       root_mirror->target_set_recursive=target_set.borrow();
 	 }
+	 if(target_set_excluded) {
+	    target_set_excluded->PrependPath(target_relative_dir);
+	    if(root_mirror->target_set_excluded)
+	       root_mirror->target_set_excluded->Merge(target_set_excluded);
+	    else
+	       root_mirror->target_set_excluded=target_set_excluded.borrow();
+	 }
 	 root_mirror->stats.dirs++;
 	 transfer_count++; // parent mirror will decrement it.
 	 goto pre_DONE;
@@ -981,6 +987,9 @@ int   MirrorJob::Do()
       to_rm->rewind();
       to_rm_mismatched->Count(&stats.del_dirs,&stats.del_files,&stats.del_symlinks,&stats.del_files);
       to_rm_mismatched->rewind();
+
+      target_set->Merge(target_set_excluded);
+      target_set_excluded=0;
 
       set_state(TARGET_REMOVE_OLD_FIRST);
       goto TARGET_REMOVE_OLD_FIRST_label;
@@ -1211,7 +1220,8 @@ int   MirrorJob::Do()
 	    ChmodJob *cj=new ChmodJob(target_session->Clone(),
 				 file->mode&~mode_mask,a);
 	    cj->cmdline.set_allocated(a->Combine());
-	    cj->BeQuiet(); // chmod is not supported on all servers; be quiet.
+	    if(!verbose_report)
+	       cj->BeQuiet(); // chmod is not supported on all servers; be quiet.
 	    JobStarted(cj);
 	    m=MOVED;
 	 }

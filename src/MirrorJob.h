@@ -64,6 +64,7 @@ private:
    long long bytes_transferred;
    long long bytes_to_transfer;
    Ref<FileSet> target_set;
+   Ref<FileSet> target_set_excluded;
    Ref<FileSet> source_set;
    Ref<FileSet> target_set_recursive;
    Ref<FileSet> source_set_recursive;
@@ -178,7 +179,7 @@ private:
    void HandleChdir(FileAccessRef& session, int &redirections);
    void HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<ListInfo>& list_info,
 	    const char *relative_dir);
-   void HandleListInfo(SMTaskRef<ListInfo>& list_info,Ref<FileSet>& set);
+   void HandleListInfo(SMTaskRef<ListInfo>& list_info,Ref<FileSet>& set,Ref<FileSet> *fsx=0);
 
    void TransferStarted(class CopyJob *cp);
    void JobStarted(Job *j);
