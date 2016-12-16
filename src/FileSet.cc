@@ -130,6 +130,8 @@ FileInfo *FileSet::Borrow(int i)
 
 void FileSet::Merge(const FileSet *set)
 {
+   if(!set)
+      return;
    for(int i=0; i<set->fnum; i++)
    {
       const Ref<FileInfo>& fi=set->files[i];
