@@ -1,3 +1,17 @@
+Version 4.7.5 - 2016-12-19
+
+* http: recognize apache listing with ISO date/time.
+* ipv6: ignore link-local address without a scope.
+* new settings log:prefix-{recv,send,note,error}.
+* documentation and help improvements.
+* mirror: fixed recursion mode initialization.
+* mirror: fixed assertion failure when creating remote symlinks.
+* mirror: show chmod errors when verbose.
+* fixed debug command to switch output to stderr if no output file given.
+* ftp: add "site mkdir" support for "mkdir -p".
+* ftp: fixed a long delay in "mode z" with ProFTPD.
+* ftp: fixed a failed assertion in "mode z".
+
 Version 4.7.4 - 2016-11-16
 
 * mirror: new option --directory (-F) for source directories glob pattern.
