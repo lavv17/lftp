@@ -2,7 +2,6 @@ lib/argmatch.c
 lib/error.c
 lib/getopt.c
 lib/human.c
-lib/parse-datetime.c
 lib/quotearg.c
 lib/strtol.c
 lib/xalloc-die.c
