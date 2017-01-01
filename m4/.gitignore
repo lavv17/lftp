@@ -247,3 +247,6 @@
 /double-slash-root.m4
 /getprogname.m4
 /limits-h.m4
+/builtin-expect.m4
+/getlogin.m4
+/minmax.m4

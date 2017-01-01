@@ -313,3 +313,4 @@ stddef.h
 /limits.in.h
 limits.h
 /stripslash.c
+/minmax.h
