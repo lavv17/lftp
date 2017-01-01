@@ -1,4 +1,4 @@
-Version 4.7.5 - 2016-12-19
+Version 4.7.5 - 2017-01-01
 
 * http: recognize apache listing with ISO date/time.
 * ipv6: ignore link-local address without a scope.
