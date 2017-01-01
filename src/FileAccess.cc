@@ -1056,6 +1056,9 @@ void FileAccess::ClassInit()
    SignalHook::ClassInit();
    ResMgr::ClassInit();
 
+   if(!Log::global)
+      Log::global=new Log("debug");
+
    _ftp;
    _file;
    _http;

@@ -60,7 +60,7 @@ Log::Log(const char *name)
 
 bool Log::WillOutput(int l)
 {
-   if(!this || !enabled || l>level || output==-1)
+   if(!enabled || l>level || output==-1)
       return false;
    if(tty)
    {
