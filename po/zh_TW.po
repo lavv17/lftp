@@ -2,13 +2,13 @@
 # Copyright (C) 2001, 02, 05, 07 Alexander V. Lukyanov <lav@yars.free.net>
 #
 # Abel Cheung <abelcheung@gmail.com>, 2001, 02, 05, 07.
-# Jeff Huang <s8321414@gmail.com>, 2015, 2016.
+# Jeff Huang <s8321414@gmail.com>, 2015, 2016, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.6.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2016-12-19 11:03+0300\n"
-"PO-Revision-Date: 2016-05-19 08:52+0800\n"
+"PO-Revision-Date: 2017-01-03 07:39+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <chinese-l10n@googlegroups.com>\n"
 "Language: zh_TW\n"
@@ -130,23 +130,22 @@ msgid "memory exhausted"
 msgstr "記憶體耗盡"
 
 #: src/ArgV.cc:107
-#, fuzzy
 msgid "option requires an argument"
-msgstr "%s：選項 ‘%s’ 需要參數\n"
+msgstr "選項需要一個參數"
 
 #: src/ArgV.cc:109 src/ArgV.cc:118
 msgid "invalid option"
 msgstr "選項無效"
 
 #: src/ArgV.cc:114
-#, fuzzy, c-format
+#, c-format
 msgid "option `%s' requires an argument"
-msgstr "%s：選項 ‘%s’ 需要參數\n"
+msgstr "選項 ‘%s’ 需要一個參數"
 
 #: src/ArgV.cc:116
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized option `%s'"
-msgstr "%s：‘%s’ 選項無法辨識\n"
+msgstr "‘%s’ 選項無法辨識"
 
 #: src/attach.h:138
 #, c-format
@@ -630,7 +629,6 @@ msgid "glob [OPTS] <cmd> <args>"
 msgstr "glob [選項] <指令> <參數>"
 
 #: src/commands.cc:269
-#, fuzzy
 msgid ""
 "Expand wildcards and run specified command.\n"
 "Options can be used to expand wildcards to list of files, directories,\n"
@@ -651,6 +649,8 @@ msgstr ""
 " -f  普通檔案 (預設)\n"
 " -d  目錄\n"
 " -a  所有類型\n"
+" --exist      當樣式被展開為非空清單時，返回狀態碼 0\n"
+" --not-exist  當樣式被展開為空清單時，返回狀態碼 0\n"
 
 #: src/commands.cc:278
 msgid "help [<cmd>]"
@@ -1157,8 +1157,7 @@ msgstr "wait [<工作編號>]"
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
-msgstr ""
-"等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
+msgstr "等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
 
 #: src/commands.cc:457
 msgid "zcat <files>"
@@ -1875,9 +1874,8 @@ msgid "MLST and MLSD are not supported by this site"
 msgstr "該站台不支援 MLST 和 MLSD"
 
 #: src/ftpclass.cc:1990
-#, fuzzy
 msgid "SITE SYMLINK is not supported by the server"
-msgstr "該站台不支援 MLST 和 MLSD"
+msgstr "伺服器不支援 SITE SYMLINK"
 
 #: src/ftpclass.cc:2163
 msgid "unsupported network protocol"
@@ -2025,8 +2023,7 @@ msgstr "使用 POST 方法失敗"
 
 #: src/Http.cc:1318
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
+msgstr "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
 #: src/Http.cc:1474
 #, c-format
@@ -2152,7 +2149,7 @@ msgstr "將終端機附著在指定的背景 lftp 行程上。\n"
 #: src/lftp_ssl.cc:1367
 #, c-format
 msgid "No certificate presented by %s.\n"
-msgstr ""
+msgstr "沒有由 %s 提供的憑證。\n"
 
 #: src/LocalAccess.cc:604 src/NetAccess.cc:659
 msgid "Getting directory contents"
@@ -2311,7 +2308,7 @@ msgstr "%s 必須為以下之一：%s"
 msgid ""
 "%s: multiple --file or --directory options must have the same base "
 "directory\n"
-msgstr ""
+msgstr "%s：多個 --file 或 --directory 選項必須有相同的基礎資料夾\n"
 
 #: src/MirrorJob.cc:2061
 #, c-format
@@ -2344,6 +2341,17 @@ msgid ""
 "\n"
 "See the man page lftp(1) for a complete documentation.\n"
 msgstr ""
+"\n"
+"將指定的遠端目錄鏡像至本機目錄\n"
+"\n"
+" -R, --reverse          將鏡像順序反過來（放置檔案）\n"
+"許多其他選項都在 lftp(1) 手冊頁中有詳細的文件。\n"
+"\n"
+"當使用 -R 時，第一個目錄是本機目錄，而第二個目錄為遠端目錄。\n"
+"若第二個目錄被忽略，將會使用第一個目錄的基礎名稱。\n"
+"若兩個目錄都被忽略，將會使用目前的本機與遠端目錄。\n"
+"\n"
+"檢視 lftp(1) 手冊頁來取得完整的文件。\n"
 
 #: src/mkdirJob.cc:128
 #, c-format
@@ -2410,9 +2418,9 @@ msgid "parse: missing redirection filename\n"
 msgstr "分析：缺少了重新導向的檔案名稱\n"
 
 #: src/PatternSet.cc:110
-#, fuzzy, c-format
+#, c-format
 msgid "regular expression `%s': %s"
-msgstr "%s：正規表示式 ‘%s’：%s\n"
+msgstr "正規表示式 ‘%s’：%s"
 
 #: src/pgetJob.cc:127
 msgid "pget: falling back to plain get"
@@ -2537,9 +2545,8 @@ msgid "no closure defined for this setting"
 msgstr "本設定值並沒有定義 closure"
 
 #: src/ResMgr.cc:873
-#, fuzzy
 msgid "a closure is required for this setting"
-msgstr "本設定值並沒有定義 closure"
+msgstr "本設定值需要 closure"
 
 #: src/Resolver.cc:232
 msgid "host name resolve timeout"
@@ -2552,7 +2559,7 @@ msgstr "找到 %d 個地址"
 
 #: src/Resolver.cc:322
 msgid "Link-local IPv6 address should have a scope"
-msgstr ""
+msgstr "連結本機 IPv6 地址需要有 scope"
 
 #: src/Resolver.cc:741
 msgid "DNS resolution not trusted."
