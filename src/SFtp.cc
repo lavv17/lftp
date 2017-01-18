@@ -1480,6 +1480,7 @@ const char *SFtp::Reply_STATUS::GetCodeText()
       "Connection lost",
       "Operation not supported",
       "Invalid handle",
+      "No such path",
       "File already exists",
       "Write protect",
       "No media",
