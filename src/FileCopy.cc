@@ -47,7 +47,6 @@
 #include "ArgV.h"
 
 #define skip_threshold 0x1000
-#define debug(a) Log::global->Format a
 
 ResDecl rate_period  ("xfer:rate-period","15", ResMgr::UNumberValidate,ResMgr::NoClosure);
 ResDecl eta_period   ("xfer:eta-period", "120",ResMgr::UNumberValidate,ResMgr::NoClosure);
@@ -659,7 +658,8 @@ Ref<Log> FileCopy::transfer_log;
 
 void FileCopy::LogTransfer()
 {
-   if(!ResMgr::QueryBool("xfer:log",0))
+   const char *log_ctx="xfer";
+   if(!ResMgr::QueryBool("log:enabled",log_ctx))
       return;
    const char *src=get->GetURL();
    if(!src)
@@ -670,27 +670,7 @@ void FileCopy::LogTransfer()
       return;
    dst=alloca_strdup(dst);
    if(!transfer_log)
-   {
-      const char *fname = ResMgr::Query("xfer:log-file", 0);
-      if(!fname || !*fname) {
-	 fname = dir_file(get_lftp_data_dir(),"transfer_log");
-	 fname = alloca_strdup(fname); // protect the string
-      }
-      struct stat st;
-      if(stat(fname,&st)!=-1) {
-	 if(st.st_size > long(ResMgr::Query("xfer:max-log-size",0))) {
-	    debug((9,"rotating xfer-log %s\n",fname));
-	    if(rename(fname,xstring::cat(fname,".old",NULL))==-1) {
-	       debug((1,"rename(%s): %s\n",fname,strerror(errno)));
-	    }
-	 }
-      }
-      const char *c="xfer";
-      ResMgr::SetDefault("log:enabled",c,"yes");
-      ResMgr::SetDefault("log:show-time",c,"yes");
-      ResMgr::SetDefault("log:file",c,fname);
-      transfer_log=new Log(c);
-   }
+      transfer_log=new Log(log_ctx);
    long long range_limit=GetRangeLimit();
    if(range_limit==FILE_END)
       range_limit=get->GetPos();

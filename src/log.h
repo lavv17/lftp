@@ -81,4 +81,6 @@ public:
    void Reconfig(const char *);
 };
 
+#define debug(a) do { if(Log::global) Log::global->Format a; } while(0)
+
 #endif // LOG_H

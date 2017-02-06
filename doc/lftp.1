@@ -1963,6 +1963,9 @@ the target output file for logging. When empty, \fBstderr\fP is used.
 .BR log:level " (number)"
 the log verbosity level. Currently it's only defined for `debug' closure.
 .TP
+.BR log:max-size " (number)"
+maximum size of the log file. When the size is reached, the file is renamed and started anew.
+.TP
 .BR log:prefix-error " (string)"
 .TP
 .BR log:prefix-note " (string)"
@@ -2270,17 +2273,8 @@ show terse ETA (only high order parts). Default is true.
 .BR xfer:keep-backup \ (boolean)
 when true, the backup file created before replacing an existing file is not removed after successful transfer.
 .TP
-.BR xfer:log \ (boolean)
-when true, lftp logs transfers to a file from xfer:log-file setting.
-.TP
-.BR xfer:log-file " (path to file)"
-the file to log transfers to. Default is \fI~/.local/share/lftp/transfer_log\fR or \fI~/.lftp/transfer_log\fR.
-.TP
 .BR xfer:make-backup \ (boolean)
 when true, lftp renames pre-existing file adding xfer:backup-suffix instead of overwriting it.
-.TP
-.BR xfer:max-log-size " (number)"
-maximum size of the transfer log file. When the size is reached, the file is renamed and started anew.
 .TP
 .BR xfer:max-redirections " (number)"
 maximum number of redirections. This can be useful for downloading over HTTP.
@@ -2447,8 +2441,8 @@ The file things are logged to when lftp moves into the background in
 nohup mode.
 .TP
 .I "~/.local/share/lftp/transfer_log \fPor\fI ~/.lftp/transfer_log"
-The file transfers are logged to when xfer:log setting is set to `yes'.
-The location can be changed by xfer:log-file setting.
+The file transfers are logged to when log:enabled/xfer setting is set to `yes'.
+The location can be changed by log:file/xfer setting.
 .TP
 .I "~/.local/share/lftp/bookmarks \fPor\fI ~/.lftp/bookmarks"
 The file is used to store lftp's bookmarks.  See the \fBbookmark\fR

@@ -387,9 +387,7 @@ static ResType lftp_vars[] = {
    {"xfer:destination-directory","",	  0,0},
    {"xfer:verify",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:verify-command",	 "",	  ResMgr::FileExecutable,0},
-   {"xfer:log",			 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:auto-rename",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
-   {"xfer:log-file",              "",     ResMgr::FileCreatable,ResMgr::NoClosure},
    {"xfer:max-log-size",	 "1M",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
    {"xfer:use-temp-file",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:temp-file-name",	 ".in.*", 0,ResMgr::NoClosure},
@@ -500,5 +498,10 @@ void ResType::ClassInit()
    if(time_style && *time_style)
       Set("cmd:time-style",0,time_style);
 
-   Set("xfer:verify-command",0,PKGDATADIR"/verify-file");
+   SetDefault("xfer:verify-command",0,PKGDATADIR"/verify-file");
+
+   const char *ctx="xfer";
+   SetDefault("log:enabled",ctx,"yes");
+   SetDefault("log:show-time",ctx,"yes");
+   SetDefault("log:file",ctx,dir_file(get_lftp_data_dir(),"transfer_log"));
 }

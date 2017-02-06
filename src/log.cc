@@ -21,6 +21,8 @@
 
 #include <stdarg.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "xstring.h"
 #include "log.h"
 #include "SMTask.h"
@@ -34,6 +36,7 @@ static ResType log_vars[] = {
    {"log:show-pid",  "no", ResMgr::BoolValidate},
    {"log:show-ctx",  "no", ResMgr::BoolValidate},
    {"log:file",	     "",   ResMgr::FileCreatable},
+   {"log:max-size",  "1M", ResMgr::UNumberValidate},
    {"log:prefix-recv","<--- "},
    {"log:prefix-send","---> "},
    {"log:prefix-note","---- "},
@@ -161,6 +164,14 @@ void Log::Reconfig(const char *n) {
       int fd=2;
       bool need_close_fd=false;
       if(file && *file) {
+	 struct stat st;
+	 if(stat(file,&st)!=-1) {
+	    if(st.st_size > long(Query("log:max-size"))) {
+	       debug((9,"rotating log %s\n",file));
+	       if(rename(file,xstring::cat(file,".old",NULL))==-1)
+		  debug((1,"rename(%s): %s\n",file,strerror(errno)));
+	    }
+	 }
 	 fd=open(file,O_WRONLY|O_CREAT|O_APPEND|O_NONBLOCK,0600);
 	 if(fd==-1) {
 	    perror(file);

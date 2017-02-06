@@ -90,8 +90,6 @@ const bool Ftp::ftps=false;
 #define cmd_unsupported(code) ((code)==500 || (code)==502)
 #define site_cmd_unsupported(code) (cmd_unsupported((code)) || (code)==501)
 
-#define debug(a) Log::global->Format a
-
 #ifndef EINPROGRESS
 #define EINPROGRESS -1
 #endif

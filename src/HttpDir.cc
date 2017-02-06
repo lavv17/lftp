@@ -259,6 +259,7 @@ bool file_info::validate()
 }
 
 
+#undef debug
 #define debug(str) Log::global->Format(10,"* %s\n",str)
 
 static bool try_apache_listing(file_info &info,const char *str)
