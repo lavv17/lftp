@@ -197,17 +197,17 @@ decode:
       if(!fa)
 	 return;
       orig_url.set(0);
-      char *orig_path=alloca_strdup(path);
+
       proto.set(fa->GetProto());
       user.set(fa->GetUser());
       pass.set(fa->GetPassword());
       host.set(fa->GetHostName());
       port.set(fa->GetPort());
-      path.set(fa->GetCwd());
-      orig_path+=(orig_path!=0 && orig_path[0]=='/');
-      path.set(dir_file(fa->GetCwd(),path));
-      if(!orig_path || orig_path[0]==0)
-	 path.append('/');
+
+      FA::Path cwd(fa->GetCwd());
+      if(path)
+	 cwd.Change(path+(path[0]=='/'));
+      path.set(cwd);
    }
    else if(!xstrcmp(proto,"bm"))
    {
