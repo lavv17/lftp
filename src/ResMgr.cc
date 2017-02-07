@@ -75,18 +75,22 @@ int ResType::VarNameCmp(const char *good_name,const char *name)
    return res;
 }
 
-const char *ResType::FindVar(const char *name,const ResType **type)
+bool ResType::IsAlias() const
+{
+   return closure_valid==ResMgr::AliasValidate;
+}
+
+const char *ResType::FindVar(const char *name,const ResType **type,const char **re_closure)
 {
    const ResType *exact_proto=0;
    const ResType *exact_name=0;
+   int sub=0;
 
    *type=types_by_name->lookup(name);
    if(*type)
-      return 0;	// exact match
+      goto found; // exact match
 
-   int sub=0;
-   const ResType *type_scan;
-   for(type_scan=types_by_name->each_begin(); type_scan; type_scan=types_by_name->each_next())
+   for(const ResType *type_scan=types_by_name->each_begin(); type_scan; type_scan=types_by_name->each_next())
    {
       switch(VarNameCmp(type_scan->name,name))
       {
@@ -115,12 +119,28 @@ const char *ResType::FindVar(const char *name,const ResType **type)
 	 break;
       }
    }
-   if(!type_scan && sub==0)
+   if(!*type && sub==0)
       return _("no such variable");
    if(sub==1)
-      return 0;
+      goto found;
    *type=0;
    return _("ambiguous variable name");
+
+found:
+   if((*type)->IsAlias()) {
+      const char *alias_c=(*type)->GetAliasTarget();
+      char *alias=alloca_strdup(alias_c);
+      char *slash=strchr(alias,'/');
+      if(slash) {
+	 *slash=0;
+	 if(re_closure)
+	    *re_closure=alias_c+(slash+1-alias);
+      }
+      *type=types_by_name->lookup(alias);
+      if(!*type)
+	 return "invalid compatibility alias";
+   }
+   return 0;
 }
 
 const ResType *ResType::FindRes(const char *name)
@@ -136,7 +156,7 @@ const char *ResType::Set(const char *name,const char *cclosure,const char *cvalu
 {
    ResType *type;
    // find type of given variable
-   const char *msg=FindVar(name,&type);
+   const char *msg=FindVar(name,&type,&cclosure);
    if(msg)
       return msg;
 
@@ -249,7 +269,7 @@ char *ResType::Format(bool with_defaults,bool only_defaults)
    if(with_defaults || only_defaults)
    {
       for(ResType *dscan=types_by_name->each_begin(); dscan; dscan=types_by_name->each_next())
-	 if(only_defaults || dscan->SimpleQuery(0)==0)
+	 if((only_defaults || dscan->SimpleQuery(0)==0) && !dscan->IsAlias())
 	    created.append(new Resource(dscan,
 	       0,xstrdup(dscan->defvalue?dscan->defvalue:"(nil)")));
    }
@@ -283,7 +303,8 @@ char **ResType::Generator(void)
    StringSet res;
 
    for(ResType *dscan=types_by_name->each_begin(); dscan; dscan=types_by_name->each_next())
-      res.Append(dscan->name);
+      if(!dscan->IsAlias())
+	 res.Append(dscan->name);
 
    res.qsort();
    return res.borrow();
@@ -409,6 +430,11 @@ const char *ResMgr::UNumberValidate(xstring_c *value)
 
    return 0;
 }
+const char *ResMgr::AliasValidate(xstring_c *)
+{
+   return "";
+}
+
 unsigned long long ResValue::to_unumber(unsigned long long max) const
 {
    if (is_nil())

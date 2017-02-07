@@ -51,6 +51,9 @@ struct ResType
    bool QueryBool(const char *closure) const;
    bool QueryTriBool(const char *closure,bool a) const;
 
+   bool IsAlias() const;
+   const char *GetAliasTarget() const { return defvalue; }
+
    const char *Set(const char *cclosure,const char *cvalue,bool def=false);
    static const char *Set(const char *name,const char *closure,const char *value,bool def=false);
    static const char *SetDefault(const char *name,const char *closure,const char *value)
@@ -70,8 +73,8 @@ struct ResType
       DIFFERENT=-1
    };
    static int VarNameCmp(const char *name1,const char *name2);
-   static const char *FindVar(const char *name,const ResType **type);
-   static const char *FindVar(const char *name,ResType **type) { return FindVar(name,const_cast<const ResType **>(type)); }
+   static const char *FindVar(const char *name,const ResType **type,const char **re_closure=0);
+   static const char *FindVar(const char *name,ResType **type,const char **re_closure=0) { return FindVar(name,const_cast<const ResType **>(type),re_closure); }
    static const ResType *FindRes(const char *name);
 };
 
@@ -126,6 +129,7 @@ public:
    static const char *NoClosure(xstring_c *);
    static const char *HasClosure(xstring_c *);
    static bool str2bool(const char *value);
+   static const char *AliasValidate(xstring_c *);
 
    static int ResourceCompare(const Resource *a,const Resource *b);
 };

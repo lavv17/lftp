@@ -397,6 +397,11 @@ static ResType lftp_vars[] = {
    {"xfer:keep-backup",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:backup-suffix",	 "~%Y%m%d%H%M%S~",0,ResMgr::NoClosure},
 
+   // deprecated settings
+   {"xfer:log",		   "log:enable/xfer",   0,ResMgr::AliasValidate},
+   {"xfer:log-file",	   "log:file/xfer",	0,ResMgr::AliasValidate},
+   {"xfer:max-log-size",   "log:max-size/xfer",	0,ResMgr::AliasValidate},
+
 #if USE_SSL
    {"ssl:ca-file",		 "",	  ResMgr::FileReadable,ResMgr::NoClosure},
    {"ssl:crl-file",		 "",	  ResMgr::FileReadable,ResMgr::NoClosure},
