@@ -288,6 +288,7 @@ static bool try_apache_listing_iso(file_info &info,const char *str)
    if(n==6 && (info.size_str[0]=='-' || is_ascii_digit(info.size_str[0])))
    {
       debug("apache listing matched (ISO time)");
+      info.month--;
       return true;
    }
    return false;
