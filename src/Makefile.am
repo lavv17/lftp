@@ -50,7 +50,7 @@ cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_torrent_la_LDFLAGS= -module -avoid-version -rpath $(pkgverlibdir)
 liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
-liblftp_network_la_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CPPFLAGS) $(OPENSSL_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
+liblftp_network_la_CPPFLAGS = $(AM_CPPFLAGS) $(OPENSSL_CPPFLAGS) $(ZLIB_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir)
 liblftp_network_la_LIBADD  = $(SOCKSLIBS) $(OPENSSL_LDFLAGS) $(OPENSSL_LIBS) $(LIBGNUTLS_LIBS) $(GNULIB) $(ZLIB_LDFLAGS) $(ZLIB)
 
