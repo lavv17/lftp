@@ -1,3 +1,14 @@
+Version 4.7.6 - 2017-02-15
+
+* obsolete settings xfer:log, xfer:log-file, xfer:max-log-size are now
+  aliased to log:enabled/xfer, log:file/xfer and log:max-size/xfer.
+* fixed a missing SFTP status message.
+* fixed a coredump when opening "slot:name" without a path in the slot.
+* fixed XDG directories description in the man page.
+* fixed off-by-one month error in apache file listing with ISO dates.
+* fixed compilation on some systems.
+* updated zh_TW translation.
+
 Version 4.7.5 - 2017-01-01
 
 * http: recognize apache listing with ISO date/time.
