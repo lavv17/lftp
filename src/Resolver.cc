@@ -318,11 +318,11 @@ void Resolver::AddAddress(int family,const char *address,int len, unsigned int s
    case AF_INET6:
       if(sizeof(add.in6.sin6_addr) != len)
          return;
-      if(IN6_IS_ADDR_LINKLOCAL((const struct in6_addr*)address) && scope==0) {
+      memcpy(&add.in6.sin6_addr,address,len);
+      if(IN6_IS_ADDR_LINKLOCAL(&add.in6.sin6_addr) && scope==0) {
 	 error=_("Link-local IPv6 address should have a scope");
 	 return;
       }
-      memcpy(&add.in6.sin6_addr,address,len);
       add.in6.sin6_port=port_number;
 # ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
       add.in6.sin6_scope_id=scope;
