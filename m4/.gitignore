@@ -250,3 +250,4 @@
 /builtin-expect.m4
 /getlogin.m4
 /minmax.m4
+/pthread_rwlock_rdlock.m4
