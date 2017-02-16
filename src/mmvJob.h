@@ -27,6 +27,7 @@
 
 class mmvJob : public SessionJob
 {
+   xstring_c op;
    xqueue_m<char> wcd;
    xqueue_m<char> src;
    xstring dst_dir;
@@ -52,7 +53,7 @@ public:
    void	 SayFinal();
 
    void	 doOpen(const char *src) const;
-   const char *cmd() const { return m==FA::RENAME ? "mv" : "ln"; }
+   const char *cmd() const { return op; }
 
    mmvJob(FileAccess *session,const ArgV *args,const char *t,FA::open_mode m=FA::RENAME);
    void RemoveTargetFirst() { remove_target=true; }
