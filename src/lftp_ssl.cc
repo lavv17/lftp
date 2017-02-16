@@ -772,6 +772,31 @@ error:
 #elif USE_OPENSSL
 //static int lftp_ssl_passwd_callback(char *buf,int size,int rwflag,void *userdata);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+// for compatibility with older versions
+X509_OBJECT *X509_OBJECT_new()
+{
+    X509_OBJECT *ret;
+    return (X509_OBJECT*)OPENSSL_malloc(sizeof(*ret));
+}
+void X509_OBJECT_free(X509_OBJECT *a)
+{
+    if (a == NULL)
+        return;
+    X509_OBJECT_free_contents(a);
+    OPENSSL_free(a);
+}
+X509_CRL *X509_OBJECT_get0_X509_CRL(X509_OBJECT *a)
+{
+    if (a == NULL) return NULL;
+    if (a->type != X509_LU_CRL) return NULL;
+    return a->data.crl;
+}
+# define X509_CRL_get0_nextUpdate(x) X509_CRL_get_nextUpdate(x)
+# define ASN1_STRING_get0_data(x) ASN1_STRING_data(x)
+# define X509_REVOKED_get0_serialNumber(x) (x->serialNumber)
+#endif // OPENSSL_VERSION_NUMBER < 0x10100000L
+
 Ref<lftp_ssl_openssl_instance> lftp_ssl_openssl::instance;
 
 static char file[256];
@@ -1066,16 +1091,16 @@ const char *lftp_ssl_openssl::strerror()
  * Comments by Ralf. */
 int lftp_ssl_openssl::verify_crl(X509_STORE_CTX *ctx)
 {
-    X509_OBJECT obj;
-    X509_NAME *subject;
-    X509_NAME *issuer;
-    X509 *xs;
-    X509_CRL *crl;
-    X509_REVOKED *revoked;
-    X509_STORE_CTX store_ctx;
+    X509_OBJECT *obj=0;
+    X509_NAME *subject=0;
+    X509_NAME *issuer=0;
+    X509 *xs=0;
+    X509_CRL *crl=0;
+    X509_REVOKED *revoked=0;
+    X509_STORE_CTX *store_ctx=0;
     long serial;
     int i, n, rc;
-    char *cp;
+    char *cp=0;
 
     /*
      * Unless a revocation store for CRLs was created we
@@ -1126,11 +1151,12 @@ int lftp_ssl_openssl::verify_crl(X509_STORE_CTX *ctx)
      * Try to retrieve a CRL corresponding to the _subject_ of
      * the current certificate in order to verify it's integrity.
      */
-    memset((char *)&obj, 0, sizeof(obj));
-    X509_STORE_CTX_init(&store_ctx, instance->crl_store, NULL, NULL);
-    rc = X509_STORE_get_by_subject(&store_ctx, X509_LU_CRL, subject, &obj);
-    X509_STORE_CTX_cleanup(&store_ctx);
-    crl = obj.data.crl;
+    obj = X509_OBJECT_new();
+    store_ctx = X509_STORE_CTX_new();
+    X509_STORE_CTX_init(store_ctx, instance->crl_store, NULL, NULL);
+    rc = X509_STORE_get_by_subject(store_ctx, X509_LU_CRL, subject, obj);
+    X509_STORE_CTX_free(store_ctx); store_ctx=0;
+    crl = X509_OBJECT_get0_X509_CRL(obj);
     if (rc > 0 && crl != NULL) {
         /*
          * Verify the signature on this CRL
@@ -1138,38 +1164,39 @@ int lftp_ssl_openssl::verify_crl(X509_STORE_CTX *ctx)
         if (X509_CRL_verify(crl, X509_get_pubkey(xs)) <= 0) {
             Log::global->Format(0,"Invalid signature on CRL!\n");
             X509_STORE_CTX_set_error(ctx, X509_V_ERR_CRL_SIGNATURE_FAILURE);
-            X509_OBJECT_free_contents(&obj);
+            X509_OBJECT_free(obj); obj=0;
             return 0;
         }
 
         /*
          * Check date of CRL to make sure it's not expired
          */
-        i = X509_cmp_current_time(X509_CRL_get_nextUpdate(crl));
+        i = X509_cmp_current_time(X509_CRL_get0_nextUpdate(crl));
         if (i == 0) {
             Log::global->Format(0,"Found CRL has invalid nextUpdate field.\n");
             X509_STORE_CTX_set_error(ctx, X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD);
-            X509_OBJECT_free_contents(&obj);
+            X509_OBJECT_free(obj); obj=0;
             return 0;
         }
         if (i < 0) {
             Log::global->Format(0,"Found CRL is expired - revoking all certificates until you get updated CRL.\n");
             X509_STORE_CTX_set_error(ctx, X509_V_ERR_CRL_HAS_EXPIRED);
-            X509_OBJECT_free_contents(&obj);
+            X509_OBJECT_free(obj); obj=0;
             return 0;
         }
-        X509_OBJECT_free_contents(&obj);
+        X509_OBJECT_free(obj); obj=0;
     }
 
     /*
      * Try to retrieve a CRL corresponding to the _issuer_ of
      * the current certificate in order to check for revocation.
      */
-    memset((char *)&obj, 0, sizeof(obj));
-    X509_STORE_CTX_init(&store_ctx, instance->crl_store, NULL, NULL);
-    rc = X509_STORE_get_by_subject(&store_ctx, X509_LU_CRL, issuer, &obj);
-    X509_STORE_CTX_cleanup(&store_ctx);
-    crl = obj.data.crl;
+    obj = X509_OBJECT_new();
+    store_ctx = X509_STORE_CTX_new();
+    X509_STORE_CTX_init(store_ctx, instance->crl_store, NULL, NULL);
+    rc = X509_STORE_get_by_subject(store_ctx, X509_LU_CRL, issuer, obj);
+    X509_STORE_CTX_free(store_ctx); store_ctx=0;
+    crl = X509_OBJECT_get0_X509_CRL(obj);
     if (rc > 0 && crl != NULL) {
         /*
          * Check if the current certificate is revoked by this CRL
@@ -1177,20 +1204,21 @@ int lftp_ssl_openssl::verify_crl(X509_STORE_CTX *ctx)
         n = sk_X509_REVOKED_num(X509_CRL_get_REVOKED(crl));
         for (i = 0; i < n; i++) {
             revoked = sk_X509_REVOKED_value(X509_CRL_get_REVOKED(crl), i);
-            if (ASN1_INTEGER_cmp(revoked->serialNumber, X509_get_serialNumber(xs)) == 0) {
-                serial = ASN1_INTEGER_get(revoked->serialNumber);
+	    const ASN1_INTEGER *revoked_serial = X509_REVOKED_get0_serialNumber(revoked);
+            if (ASN1_INTEGER_cmp(revoked_serial, X509_get_serialNumber(xs)) == 0) {
+                serial = ASN1_INTEGER_get(revoked_serial);
                 cp = X509_NAME_oneline(issuer, NULL, 0);
                 Log::global->Format(0,
 		    "Certificate with serial %ld (0x%lX) revoked per CRL from issuer %s\n",
                         serial, serial, cp ? cp : "(ERROR)");
-                free(cp);
+                free(cp); cp=0;
 
                 X509_STORE_CTX_set_error(ctx, X509_V_ERR_CERT_REVOKED);
-                X509_OBJECT_free_contents(&obj);
+                X509_OBJECT_free(obj); obj=0;
                 return 0;
             }
         }
-        X509_OBJECT_free_contents(&obj);
+        X509_OBJECT_free(obj); obj=0;
     }
     return 1;
 }
@@ -1422,13 +1450,13 @@ void lftp_ssl_openssl::check_certificate()
       /* only check alternatives of the same type the target is */
       if(check->type == target) {
         /* get data and length */
-        const char *altptr = (char *)ASN1_STRING_data(check->d.ia5);
+        const char *altptr = (char *)ASN1_STRING_get0_data(check->d.ia5);
         size_t altlen = (size_t) ASN1_STRING_length(check->d.ia5);
 
         switch(target) {
         case GEN_DNS: /* name/pattern comparison */
           /* The OpenSSL man page explicitly says: "In general it cannot be
-             assumed that the data returned by ASN1_STRING_data() is null
+             assumed that the data returned by ASN1_STRING_get0_data() is null
              terminated or does not contain embedded nulls." But also that
              "The actual format of the data will depend on the actual string
              type itself: for example for and IA5String the data will be ASCII"
@@ -1501,7 +1529,7 @@ void lftp_ssl_openssl::check_certificate()
           if(j >= 0) {
             peer_CN = (unsigned char*)OPENSSL_malloc(j+1);
             if(peer_CN) {
-              memcpy(peer_CN, ASN1_STRING_data(tmp), j);
+              memcpy(peer_CN, ASN1_STRING_get0_data(tmp), j);
               peer_CN[j] = '\0';
             }
           }
