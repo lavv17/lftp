@@ -30,9 +30,9 @@ dist-hook:
 REL_DIR=/home/lav/www-lftp/ftp
 
 release-check:
-	for opt in "" "--with-modules" "--without-gnutls" "--without-openssl" \
+	for opt in "--with-modules" "--without-gnutls" "--without-openssl" \
 			"--without-gnutls --without-openssl" \
-			"--with-modules --without-gnutls --without-openssl"; \
+			"--with-modules --without-gnutls --without-openssl" ""; \
 	 do \
 		echo "Testing $$opt ..."; \
 		if test "$$opt"; then $(MAKE) distclean >/dev/null && $(srcdir)/configure -q $$opt || exit 1; fi; \
