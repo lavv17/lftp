@@ -344,7 +344,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
    {"mv",      cmd_mv,	   N_("mv <file1> <file2>"),
 	 N_("Rename <file1> to <file2>\n")},
    {"mmv",      cmd_mmv,   N_("mmv [OPTS] <files> <target-dir>"),
-	 N_("Move <files> to <target-directory> with wildcard expansion\n")},
+	 N_("Move <files> to <target-directory> with wildcard expansion\n"
+	 " -O <dir>  specifies the target directory (alternative way)\n")},
    {"nlist",   cmd_ls,     N_("[re]nlist [<args>]"),
 	 N_("List remote file names.\n"
 	 "By default, nlist output is cached, to see new listing use `renlist' or\n"
@@ -2491,13 +2492,14 @@ CMD(mmv)
    const char *target_dir=0;
    args->rewind();
    int opt;
-   while((opt=args->getopt_long("eO:",mmv_opts,0))!=EOF)
+   while((opt=args->getopt_long("eO:t:",mmv_opts,0))!=EOF)
    {
       switch(opt)
       {
       case('e'):
 	 remove_target=true;
 	 break;
+      case('t'):
       case('O'):
 	 target_dir=optarg;
 	 break;
@@ -2512,7 +2514,7 @@ CMD(mmv)
       target_dir=alloca_strdup(target_dir);
       args->delarg(args->count()-1);
    }
-   if(!target_dir) {
+   if(!target_dir || args->getindex()>=args->count()) {
       eprintf(_("Usage: %s [OPTS] <files> <target-dir>\n"),args->a0());
       goto help;
    }
@@ -2524,11 +2526,11 @@ CMD(mmv)
 
 CMD(mv)
 {
-   if(args->count()!=3)
+   if(args->count()!=3
+   || (args->count()==3 && last_char(args->getarg(2))=='/'))
    {
-      // xgettext:c-format
-      eprintf(_("Usage: mv <file1> <file2>\n"));
-      return 0;
+      args->setarg(0,"mmv");
+      return cmd_mmv(parent);
    }
    Job *j=new mvJob(session->Clone(),args->getarg(1),args->getarg(2));
    return j;
