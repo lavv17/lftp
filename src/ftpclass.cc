@@ -2566,6 +2566,12 @@ int   Ftp::Do()
       if(copy_mode!=COPY_NONE)
 	 goto notimeout_return;
 
+      if(expect->IsEmpty() && !eof)
+      {
+	 eof=true;
+	 m=MOVED;
+      }
+
       goto usual_return;
    }
    case WAITING_CCC_SHUTDOWN:
