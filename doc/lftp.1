@@ -174,6 +174,7 @@ edit	start editor on bookmarks file
 import <type>	import foreign bookmarks
 list	list bookmarks (default)
 .TE
+.in
 .P
 .B cache
 .RI " [" subcommand ]
@@ -192,6 +193,7 @@ expire \fINx\fP	T{
 set cache expiration time to \fIN\fP seconds (\fIx\fP=s) minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
 T}
 .TE
+.in
 .P
 .BR cat " \fIfiles\fP"
 .PP
@@ -218,6 +220,7 @@ l1	l	lx	.
 -v,	--verbose	output a diagnostic for every file processed
 -R,	--recursive	change files and directories recursively
 .TE
+.in
 .P
 .BR close " [" \-a "]"
 .PP
@@ -282,6 +285,7 @@ T}
 use specified time format
 T}
 .TE
+.in
 .P
 .BR command " \fIcmd args...\fP
 .PP
@@ -300,8 +304,8 @@ l1	l	lx	.
 \-p	show PID
 \-t	show timestamps
 .TE
-.PP
-
+.in
+.P
 .BR echo " [" \-n "] \fIstring\fR"
 .PP
 Prints (echos) the given string to the display.
@@ -317,8 +321,8 @@ l1	l	lx	.
 \-k	keep the temporary file
 \-o <temp>	explicit temporary file location
 .TE
-.PP
-
+.in
+.P
 .BR eval " [" -f " \fIformat\fR ] " \fIargs...\fR
 .PP
 without -f it executes given arguments as a command. With -f, arguments
@@ -358,8 +362,8 @@ l1	l	lx	.
 \-d \fIMD\fP,	\-\-max\-depth=\fIMD\fP	specify maximum scan depth
 \-l,	\-\-ls 	use long listing format
 .TE
-.PP
-
+.in
+.P
 .BR ftpcopy
 .PP
 Obsolete. Use one of the following instead:
@@ -395,6 +399,7 @@ l	lx	.
 specifies base directory or URL where files should be placed
 T}
 .TE
+.in
 .PP
 Examples:
 .Ds
@@ -429,6 +434,7 @@ T}
 position in target file to write data at
 T}
 .TE
+.in
 .P
 .B glob
 .RI " [" OPTS "] "
@@ -445,6 +451,7 @@ l	lx	.
 \-\-exist	return zero exit code when the patterns expand to non-empty list
 \-\-not\-exist	return zero exit code when the patterns expand to an empty list
 .TE
+.in
 .PP
 Examples:
 .Ds
@@ -471,8 +478,8 @@ l	lx	.
 \-v	verbose, several \-v increase verbosity
 \-r	list just one specified job without recursion
 .TE
+.in
 .P
-
 .B kill
 all|\fIjob_no\fP
 .PP
@@ -537,6 +544,7 @@ T}
 specifies base directory or URL where files should be placed
 T}
 .TE
+.in
 .P
 .B mirror
 .RI [ OPTS "] [" source
@@ -711,7 +719,7 @@ T}
 same as \-\-allow-chown \-\-allow-suid \-\-no-umask
 T}
 .TE
-.P
+.in
 When using \-R, the source directory is local and the target is remote.
 If the target directory is omitted, base name of the source directory is used.
 If both directories are omitted, current local and remote directories are used.
@@ -814,19 +822,39 @@ T}
 specifies base directory or URL where files should be placed
 T}
 .TE
+.in
 .P
 .B mrm
 \fIfile(s)\fP
 .PP
 Same as `glob rm'. Removes specified file(s) with wildcard expansion.
 
-.B mv
-\fIfile1\fP \fIfile2\fP
+.B mmv
+.RB [ \-O " \fIdirectory\fP]"
+.RB "\fIfile(s)\fP \fIdirectory\fP"
 .PP
-Rename \fIfile1\fP to \fIfile2\fP.
+Move specified files to a target directory. The target directory can be
+specified after \-O option or as the last argument.
+.PP
+.Sp
+.in +0.5i
+.TS
+l	lx	.
+\-O <dir>	T{
+specifies the target directory where files should be placed
+T}
+.TE
+.in
+.P
+.B mv
+.RB "\fIfile1\fP \fIfile2\fP"
+.PP
+Rename \fIfile1\fP to \fIfile2\fP. No wildcard exmapsion is performed.
+If you give more than two arguments, or the last argument ends with a slash,
+then \fBmmv\fP command is executed instead.
 
 .B nlist
-[\fIargs\fP]
+.RB "[\fIargs\fP]"
 .PP
 List remote file names
 
@@ -853,6 +881,7 @@ l	lx	.
 \-\-env\-password	take password from \fBLFTP_PASSWORD\fP environment variable
 \fIsite\fP	host name, URL or bookmark name
 .TE
+.in
 .P
 .B pget
 .RI [ OPTS ]
@@ -874,6 +903,7 @@ T}
 set maximum number of connections (default is taken from \fBpget:default-n\fP setting)
 T}
 .TE
+.in
 .P
 .B put
 .RB [ \-E ]
@@ -903,6 +933,7 @@ T}
 specifies base directory or URL where files should be placed
 T}
 .TE
+.in
 .P
 .B pwd
 .RB [ \-p ]
@@ -950,6 +981,7 @@ l	lx	.
 Output in a format that can be used to re-queue. Useful with \-\-delete.
 T}
 .TE
+.in
 .PP
 Examples:
 .Ds
@@ -976,6 +1008,7 @@ queue \-d "get*zip"	T{
 Delete all commands matching "get*zip".
 T}
 .TE
+.in
 .P
 .B quote
 \fIcmd\fP
@@ -1034,6 +1067,7 @@ l	lx	.
 \-\-until\-ok	stop when command exits with zero code
 \-\-weak     	stop when lftp moves to background.
 .TE
+.in
 .PP
 Examples:
 .Ds
@@ -1078,6 +1112,7 @@ l	lx	.
 \-a	list all settings, including default values
 \-d	list only default values, not necessary current ones
 .TE
+.in
 .P
 .B site
 \fIsite_cmd\fP
@@ -1158,6 +1193,7 @@ share specified file or directory using BitTorrent protocol. Magnet link
 is printed when it's ready.
 T}
 .TE
+.in
 .P
 .B user
 \fIuser\fP [\fIpass\fP]
