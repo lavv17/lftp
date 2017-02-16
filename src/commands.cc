@@ -55,6 +55,7 @@
 #include "OutputJob.h"
 #include "echoJob.h"
 #include "EditJob.h"
+#include "mmvJob.h"
 
 #include "misc.h"
 #include "alias.h"
@@ -88,7 +89,7 @@ CMD(module); CMD(mrm); CMD(mv); CMD(open); CMD(pwd); CMD(queue);
 CMD(repeat); CMD(rm); CMD(scache); CMD(set); CMD(shell); CMD(sleep);
 CMD(slot); CMD(source); CMD(subsh); CMD(suspend); CMD(tasks); CMD(torrent);
 CMD(user); CMD(ver); CMD(wait); CMD(empty); CMD(notempty); CMD(true);
-CMD(false);
+CMD(false); CMD(mmv);
 
 #define HELP_IN_MODULE "m"
 #define ALIAS_FOR(cmd) cmd_##cmd,0,#cmd
@@ -340,8 +341,10 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -O <base> specifies base directory or URL where files should be placed\n")},
    {"mrm",     cmd_mrm,    N_("mrm <files>"),
 	 N_("Removes specified files with wildcard expansion\n")},
-   {"mv",      cmd_mv,	    N_("mv <file1> <file2>"),
+   {"mv",      cmd_mv,	   N_("mv <file1> <file2>"),
 	 N_("Rename <file1> to <file2>\n")},
+   {"mmv",      cmd_mmv,   N_("mmv [OPTS] <files> <target-dir>"),
+	 N_("Move <files> to <target-directory> with wildcard expansion\n")},
    {"nlist",   cmd_ls,     N_("[re]nlist [<args>]"),
 	 N_("List remote file names.\n"
 	 "By default, nlist output is cached, to see new listing use `renlist' or\n"
@@ -2472,6 +2475,51 @@ CMD(subsh)
    e->FeedCmd("\n");
    e->cmdline.vset("(",c,")",NULL);
    return e;
+}
+
+CMD(mmv)
+{
+   static const struct option mmv_opts[]=
+   {
+      {"target-directory",required_argument,0,'O'},
+      {"destination-directory",required_argument,0,'O'},
+      {"remove-target-first",no_argument,0,'e'},
+      {0}
+   };
+
+   bool remove_target=false;
+   const char *target_dir=0;
+   args->rewind();
+   int opt;
+   while((opt=args->getopt_long("eO:",mmv_opts,0))!=EOF)
+   {
+      switch(opt)
+      {
+      case('e'):
+	 remove_target=true;
+	 break;
+      case('O'):
+	 target_dir=optarg;
+	 break;
+      case('?'):
+      help:
+	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
+	 return 0;
+      }
+   }
+   if(!target_dir && args->count()>=3) {
+      target_dir=args->getarg(args->count()-1);
+      target_dir=alloca_strdup(target_dir);
+      args->delarg(args->count()-1);
+   }
+   if(!target_dir) {
+      eprintf(_("Usage: %s [OPTS] <files> <target-dir>\n"),args->a0());
+      goto help;
+   }
+   mmvJob *j=new mmvJob(session->Clone(),args,target_dir,FA::RENAME);
+   if(remove_target)
+      j->RemoveTargetFirst();
+   return j;
 }
 
 CMD(mv)
