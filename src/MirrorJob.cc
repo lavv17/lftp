@@ -43,6 +43,7 @@
 #define set_state(s) do { state=(s); \
    Log::global->Format(11,"mirror(%p) enters state %s\n", this, #s); } while(0)
 #define waiting_num waiting.count()
+#define transfer_count root_mirror->root_transfer_count
 
 xstring& MirrorJob::FormatStatus(xstring& s,int v,const char *tab)
 {
@@ -241,6 +242,24 @@ void MirrorJob::JobFinished(Job *j)
    Delete(j);
    assert(transfer_count>0);
    transfer_count--;
+}
+
+off_t MirrorJob::GetBytesCount()
+{
+   long long bytes_count=Job::GetBytesCount();
+   if(!parent_mirror) {
+      // bytes_transferred is cumulative over the mirror tree,
+      // add it on the top only
+      bytes_count+=bytes_transferred;
+   }
+   return bytes_count;
+}
+double MirrorJob::GetTimeSpent()
+{
+   double t=transfer_time_elapsed;
+   if(transfer_count>0)
+      t+=now-root_mirror->transfer_start_ts;
+   return t;
 }
 
 void  MirrorJob::HandleFile(FileInfo *file)
@@ -661,6 +680,28 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
    }
 }
 
+/* root_transfer_count of child mirrors contains the value to add or
+   subtract from transfer_count when doing "cd", "mkdir", "ls" on the source
+   or target directories. This would prevent other mirrors (siblings, etc)
+   from starting more jobs.
+
+   root_transfer_count is initialized once in ctor, so that change of
+   mirror:parallel-directories setting won't disbalance the count.
+*/
+void MirrorJob::MirrorStarted()
+{
+   if(!parent_mirror)
+      return;
+   transfer_count+=root_transfer_count;
+}
+void MirrorJob::MirrorFinished()
+{
+   if(!parent_mirror)
+      return;
+   assert(transfer_count>=root_transfer_count);
+   transfer_count-=root_transfer_count;
+}
+
 void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 {
    if(!session->IsOpen())
@@ -708,7 +749,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 	 return;
       }
       if(session==source_session && create_target_dir
-      && !FlagSet(NO_EMPTY_DIRS) && !skip_noaccess)
+      && !FlagSet(NO_EMPTY_DIRS) && !skip_noaccess && parent_mirror)
       {
 	 // create target dir even if failed to cd to source dir.
 	 if(script)
@@ -725,8 +766,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
       remove_this_source_dir=false;
       eprintf("mirror: %s\n",session->StrError(res));
       stats.error_count++;
-      assert(transfer_count>=root_transfer_count);
-      transfer_count-=root_transfer_count;
+      MirrorFinished();
       set_state(FINISHING);
       source_session->Close();
       target_session->Close();
@@ -751,8 +791,7 @@ void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<Li
    {
       eprintf(_("mirror: protocol `%s' is not suitable for mirror\n"),
 	       session->GetProto());
-      assert(transfer_count>=root_transfer_count);
-      transfer_count-=root_transfer_count;
+      MirrorFinished();
       set_state(FINISHING);
       return;
    }
@@ -780,8 +819,7 @@ void MirrorJob::HandleListInfo(SMTaskRef<ListInfo>& list_info, Ref<FileSet>& set
    {
       eprintf("mirror: %s\n",list_info->ErrorText());
       stats.error_count++;
-      assert(transfer_count>=root_transfer_count);
-      transfer_count-=root_transfer_count;
+      MirrorFinished();
       set_state(FINISHING);
       source_list_info=0;
       target_list_info=0;
@@ -927,8 +965,7 @@ int   MirrorJob::Do()
       if(source_list_info || target_list_info)
 	 return m;
 
-      assert(transfer_count>=root_transfer_count);
-      transfer_count-=root_transfer_count; // leave room for transfers.
+      MirrorFinished(); // leave room for transfers.
 
       if(FlagSet(DEPTH_FIRST) && source_set && !target_set)
       {
@@ -1063,7 +1100,7 @@ int   MirrorJob::Do()
 	       if(FlagSet(NO_EMPTY_DIRS) && stats.dirs==0 && only_dirs)
 		  goto pre_FINISHING_FIX_LOCAL;
 
-	       transfer_count+=root_transfer_count;
+	       MirrorStarted();
 	       goto pre_MAKE_TARGET_DIR;
 	    }
 	    goto pre_TARGET_REMOVE_OLD;
@@ -1385,7 +1422,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    bytes_transferred(0), bytes_to_transfer(0),
    source_dir(new_source_dir), target_dir(new_target_dir),
    transfer_time_elapsed(0), root_transfer_count(0),
-   transfer_count(parent?parent->transfer_count:root_transfer_count),
    verbose_report(0),
    parent_mirror(parent), root_mirror(parent?parent->root_mirror:this)
 {
@@ -1434,9 +1470,10 @@ MirrorJob::MirrorJob(MirrorJob *parent,
       // If parallel_dirs is true, allow parent mirror to continue
       // processing other directories, otherwise block it until we
       // get file sets and start transfers.
+      // See also comment at MirrorJob::MirrorStarted().
       root_transfer_count=parallel_dirs?1:1024;
-      transfer_count+=root_transfer_count;
    }
+   MirrorStarted();
 }
 
 MirrorJob::~MirrorJob()
