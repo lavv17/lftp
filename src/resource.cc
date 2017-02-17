@@ -398,7 +398,7 @@ static ResType lftp_vars[] = {
    {"xfer:backup-suffix",	 "~%Y%m%d%H%M%S~",0,ResMgr::NoClosure},
 
    // deprecated settings
-   {"xfer:log",		   "log:enable/xfer",   0,ResMgr::AliasValidate},
+   {"xfer:log",		   "log:enabled/xfer",   0,ResMgr::AliasValidate},
    {"xfer:log-file",	   "log:file/xfer",	0,ResMgr::AliasValidate},
    {"xfer:max-log-size",   "log:max-size/xfer",	0,ResMgr::AliasValidate},
 
