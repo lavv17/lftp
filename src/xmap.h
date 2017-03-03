@@ -94,6 +94,7 @@ public:
    T& add(const xstring& key,T e0) { return payload(_add(key))=e0; }
    const T& each_begin() { entry *e=_each_begin(); return e?payload(e):zero; }
    const T& each_next()  { entry *e=_each_next();  return e?payload(e):zero; }
+   const T& each_curr()  { return last_entry?payload(last_entry):zero; }
    void move_here(xmap<T> &o) { _move_here(o); }
    void empty() { _empty(); }
    bool exists(const xstring& key) const { return _lookup_c(key); }
@@ -143,6 +144,7 @@ public:
    void add(const char *key,T *e0) { add(xstring::get_tmp(key),e0); }
    T *each_begin() { entry *e=_each_begin(); return e?payload(e):0; }
    T *each_next()  { entry *e=_each_next();  return e?payload(e):0; }
+   T *each_curr()  { return last_entry?payload(last_entry):0; }
    void each_set(T *n) { payload_Lv(last_entry)=n; }
    void move_here(xmap_p<T> &o) { _move_here(o); }
    void empty() {
