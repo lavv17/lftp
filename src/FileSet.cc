@@ -130,17 +130,41 @@ FileInfo *FileSet::Borrow(int i)
 
 void FileSet::Merge(const FileSet *set)
 {
+   assert(!sorted);
    if(!set)
       return;
-   for(int i=0; i<set->fnum; i++)
-   {
-      const Ref<FileInfo>& fi=set->files[i];
-      int pos = FindGEIndByName(fi->name);
-      if(pos < fnum && !strcmp(files[pos]->name,fi->name))
-	 files[pos]->Merge(*fi);
-      else
-	 add_before(pos,new FileInfo(*fi));
+   RefArray<FileInfo> new_set;
+   int i=0;
+   int j=0;
+   while(i<set->fnum && j<fnum) {
+      Ref<FileInfo>& fi1=files[j];
+      const Ref<FileInfo>& fi2=set->files[i];
+      int cmp = strcmp(fi1->name,fi2->name);
+      if(cmp==0) {
+	 fi1->Merge(*fi2);
+	 new_set.append(fi1.borrow());
+	 i++; j++;
+      } else if(cmp>0) {
+	 new_set.append(new FileInfo(*fi2));
+	 i++;
+      } else {
+	 new_set.append(fi1.borrow());
+	 j++;
+      }
    }
+   while(i<set->fnum) {
+      const Ref<FileInfo>& fi2=set->files[i];
+      new_set.append(new FileInfo(*fi2));
+      i++;
+   }
+   if(new_set.count()==0)
+      return;
+   while(j<fnum) {
+      Ref<FileInfo>& fi1=files[j];
+      new_set.append(fi1.borrow());
+      j++;
+   }
+   files.move_here(new_set);
 }
 
 void FileSet::PrependPath(const char *path)
