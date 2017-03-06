@@ -154,8 +154,9 @@ void FileSet::Merge(const FileSet *set)
    if(!set || !set->fnum)
       return;
 
+   // estimate work to be done by Merge_insert
    int pos = FindGEIndByName(set->files[0]->name);
-   if((fnum-pos)/2*set->fnum < fnum) {
+   if(fnum-pos < fnum*2/set->fnum) {
       Merge_insert(set);
       return;
    }
