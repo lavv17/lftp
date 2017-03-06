@@ -128,11 +128,32 @@ FileInfo *FileSet::Borrow(int i)
    return fi;
 }
 
+void FileSet::Merge_insert(const FileSet *set)
+{
+   if(!set)
+      return;
+   for(int i=0; i<set->fnum; i++)
+   {
+      const Ref<FileInfo>& fi=set->files[i];
+      int pos = FindGEIndByName(fi->name);
+      if(pos < fnum && !strcmp(files[pos]->name,fi->name))
+	 files[pos]->Merge(*fi);
+      else
+	 add_before(pos,new FileInfo(*fi));
+   }
+}
 void FileSet::Merge(const FileSet *set)
 {
    assert(!sorted);
-   if(!set)
+   if(!set || !set->fnum)
       return;
+
+   int pos = FindGEIndByName(set->files[0]->name);
+   if((fnum-pos)/2*set->fnum < fnum) {
+      Merge_insert(set);
+      return;
+   }
+
    RefArray<FileInfo> new_set;
    int i=0;
    int j=0;

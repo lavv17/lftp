@@ -172,6 +172,7 @@ public:
 
    void	 Add(FileInfo *);
    void	 Merge(const FileSet *);
+   void	 Merge_insert(const FileSet *set);
    void	 SubtractSame(const FileSet *,int ignore);
    void	 SubtractAny(const FileSet *);
    void  SubtractTimeCmp(bool (FileInfo::*cmp)(time_t) const,time_t);
