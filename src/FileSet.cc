@@ -128,6 +128,12 @@ FileInfo *FileSet::Borrow(int i)
    return fi;
 }
 
+void FileSet::assert_sorted() const
+{
+   for(int i=0; i<fnum-1; i++)
+      assert(strcmp(files[i]->name,files[i+1]->name)<0);
+}
+
 void FileSet::Merge_insert(const FileSet *set)
 {
    if(!set)

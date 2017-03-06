@@ -157,6 +157,7 @@ private:
    FileInfo *Borrow(int);
 
    void add_before(int pos,FileInfo *fi);
+   void assert_sorted() const;
 
 public:
    FileSet();
