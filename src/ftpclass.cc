@@ -814,8 +814,7 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
       return PASV_NO_ADDRESS_YET;
    }
 
-   socklen_t len=sizeof(conn->data_sa);
-   getpeername(conn->control_sock,&conn->data_sa.sa,&len);
+   conn->data_sa=conn->peer_sa;
    if(conn->data_sa.sa.sa_family==AF_INET)
       conn->data_sa.in.sin_port=htons(port);
 #if INET6
@@ -3979,6 +3978,8 @@ void Ftp::TuneConnectionAfterFEAT()
    }
    if(conn->mlst_attr_supported)
       SendOPTS_MLST();
+   if(proxy)
+      conn->epsv_supported=false;
 }
 
 void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
