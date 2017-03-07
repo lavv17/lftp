@@ -202,6 +202,7 @@ void GlobURL::NewGlob(const char *p)
 GlobURL::GlobURL(const FileAccessRef& s,const char *p,type_select t)
    : orig_session(s), session(orig_session), type(t)
 {
+   nullglob=ResMgr::QueryBool("cmd:nullglob",0);
    NewGlob(p);
 }
 GlobURL::~GlobURL() {}
@@ -209,7 +210,7 @@ GlobURL::~GlobURL() {}
 FileSet *GlobURL::GetResult()
 {
    FileSet &list=*glob->GetResult();
-   if(list.count()==0 && !ResMgr::QueryBool("cmd:nullglob",0))
+   if(list.count()==0 && !nullglob)
       list.Add(new FileInfo(glob->GetPattern()));
    if(session==orig_session)
       return &list;
