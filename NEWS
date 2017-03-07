@@ -1,3 +1,12 @@
+Version 4.7.7 - 2017-03-07
+
+* mirror: fixed coredump when source directory does not exist.
+* mirror: don't create target directory if can't enter to the source directory.
+* ftp: fixed a rare hang when a NOOP was sent between "transfer ok" reply
+  and EOF on data socket.
+* fixed xfer:log setting (compatibility alias).
+* ftp: don't use EPSV with a proxy.
+
 Version 4.7.6 - 2017-02-15
 
 * obsolete settings xfer:log, xfer:log-file, xfer:max-log-size are now
