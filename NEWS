@@ -1,3 +1,9 @@
+* du: allow multiple --exclude options to be combined.
+* mirror: improved performance of --scan-all-first for big trees.
+* mmv: new command for file moving; redirect mv to mmv in certain cases.
+* fixed compilation with newer openssl (1.1.0 and later).
+* du: allow multiple --exclude options to be combined.
+
 Version 4.7.7 - 2017-03-07
 
 * mirror: fixed coredump when source directory does not exist.
