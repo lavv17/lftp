@@ -31,7 +31,7 @@
 #include "url.h"
 #include "ResMgr.h"
 
-ResDecl res_nullglob("cmd:nullglob","no",ResMgr::BoolValidate,ResMgr::NoClosure);
+ResDecl res_nullglob("cmd:nullglob","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
 
 // Glob implementation
 Glob::Glob(FileAccess *s,const char *p)
