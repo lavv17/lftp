@@ -128,7 +128,13 @@ FileInfo *FileSet::Borrow(int i)
    return fi;
 }
 
-void FileSet::Merge(const FileSet *set)
+void FileSet::assert_sorted() const
+{
+   for(int i=0; i<fnum-1; i++)
+      assert(strcmp(files[i]->name,files[i+1]->name)<0);
+}
+
+void FileSet::Merge_insert(const FileSet *set)
 {
    if(!set)
       return;
@@ -141,6 +147,52 @@ void FileSet::Merge(const FileSet *set)
       else
 	 add_before(pos,new FileInfo(*fi));
    }
+}
+void FileSet::Merge(const FileSet *set)
+{
+   assert(!sorted);
+   if(!set || !set->fnum)
+      return;
+
+   // estimate work to be done by Merge_insert
+   int pos = FindGEIndByName(set->files[0]->name);
+   if(fnum-pos < fnum*2/set->fnum) {
+      Merge_insert(set);
+      return;
+   }
+
+   RefArray<FileInfo> new_set;
+   int i=0;
+   int j=0;
+   while(i<set->fnum && j<fnum) {
+      Ref<FileInfo>& fi1=files[j];
+      const Ref<FileInfo>& fi2=set->files[i];
+      int cmp = strcmp(fi1->name,fi2->name);
+      if(cmp==0) {
+	 fi1->Merge(*fi2);
+	 new_set.append(fi1.borrow());
+	 i++; j++;
+      } else if(cmp>0) {
+	 new_set.append(new FileInfo(*fi2));
+	 i++;
+      } else {
+	 new_set.append(fi1.borrow());
+	 j++;
+      }
+   }
+   while(i<set->fnum) {
+      const Ref<FileInfo>& fi2=set->files[i];
+      new_set.append(new FileInfo(*fi2));
+      i++;
+   }
+   if(new_set.count()==0)
+      return;
+   while(j<fnum) {
+      Ref<FileInfo>& fi1=files[j];
+      new_set.append(fi1.borrow());
+      j++;
+   }
+   files.move_here(new_set);
 }
 
 void FileSet::PrependPath(const char *path)
