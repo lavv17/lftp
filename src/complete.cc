@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -403,6 +403,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
    || !strcmp(buf,"more")
    || !strcmp(buf,"mrm")
    || !strcmp(buf,"mv")
+   || !strcmp(buf,"mmv")
    || !strcmp(buf,"nlist")
    || !strcmp(buf,"rm")
    || !strcmp(buf,"rmdir")
