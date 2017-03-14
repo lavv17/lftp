@@ -3057,7 +3057,7 @@ CMD(du)
    bool print_totals=false;
    bool all_files=false;
    bool file_count=false;
-   const char *exclude=0;
+   Ref<PatternSet> exclude;
    int human_opts=0;
 
    exit_code=1;
@@ -3120,7 +3120,9 @@ CMD(du)
 	 }
 	 break;
       case OPT_EXCLUDE:
-	 exclude=optarg;
+	 if(!exclude)
+	    exclude=new PatternSet();
+	 exclude->Add(PatternSet::EXCLUDE,new PatternSet::Glob(optarg));
 	 break;
       case '?':
       default:
@@ -3170,11 +3172,7 @@ CMD(du)
    if(separate_dirs && maxdepth != -1)
       j->set_maxdepth(maxdepth);
    if(exclude)
-   {
-      PatternSet *p=new PatternSet();
-      p->Add(p->EXCLUDE,new PatternSet::Glob(exclude));
-      j->SetExclude(p);
-   }
+      j->SetExclude(exclude.borrow());
    return j;
 }
 
