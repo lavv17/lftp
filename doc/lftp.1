@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "15 Dec 2016"
+.TH lftp 1 "16 Mar 2017"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -56,7 +56,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.7.5.
+This man page documents lftp version 4.8.0.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -1914,7 +1914,8 @@ directories with hftp protocol. Default is off.
 .TP
 .BR hftp:use-propfind \ (boolean)
 if set to off, lftp will not try to use `PROPFIND' to get directory contents
-with hftp protocol and use `GET' instead. Default is off.
+with hftp protocol and use `GET' instead. Default is off. When enabled, lftp
+will also use PROPPATCH to set file modification time after uploading.
 .TP
 .BR hftp:use-range \ (boolean)
 when true, lftp will use Range header for transfer restart.
@@ -1978,7 +1979,8 @@ directories with HTTP protocol. Default is on.
 .TP
 .BR http:use-propfind \ (boolean)
 if set to off, lftp will not try to use `PROPFIND' to get directory contents
-with HTTP protocol and use `GET' instead. Default is on.
+with HTTP protocol and use `GET' instead. Default is off. When enabled, lftp
+will also use PROPPATCH to set `Last-Modified' property after a file upload.
 .TP
 .BR http:use-range \ (boolean)
 when true, lftp will use Range header for transfer restart.
