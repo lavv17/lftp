@@ -269,15 +269,19 @@ void  MirrorJob::HandleFile(FileInfo *file)
 
    // TODO: get rid of local hacks.
 
+   const char *dst_name=file->name;
+   if(FlagSet(TARGET_FLAT))
+      dst_name=basename_ptr(dst_name);
+
    // dir_name returns pointer to static data - need to dup it.
    const char *source_name=dir_file(source_dir,file->name);
    source_name=alloca_strdup(source_name);
-   const char *target_name=dir_file(target_dir,file->name);
+   const char *target_name=dir_file(target_dir,dst_name);
    target_name=alloca_strdup(target_name);
 
    const char *source_name_rel=dir_file(source_relative_dir,file->name);
    source_name_rel=alloca_strdup(source_name_rel);
-   const char *target_name_rel=dir_file(target_relative_dir,file->name);
+   const char *target_name_rel=dir_file(target_relative_dir,dst_name);
    target_name_rel=alloca_strdup(target_name_rel);
 
    FileInfo::type filetype=FileInfo::NORMAL;
@@ -392,7 +396,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(target_is_local)
 	    dst_peer=new FileCopyPeerFDStream(new FileStream(target_name,O_WRONLY|O_CREAT|(cont_this?0:O_TRUNC)),FileCopyPeer::PUT);
 	 else
-	    dst_peer=new FileCopyPeerFA(target_session->Clone(),file->name,FA::STORE);
+	    dst_peer=new FileCopyPeerFA(target_session->Clone(),dst_name,FA::STORE);
 
 	 FileCopy *c=FileCopy::New(src_peer,dst_peer,cont_this);
 	 if(remove_source_files)
@@ -417,8 +421,16 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(recursion_mode==RECURSION_NEVER || FlagSet(NO_RECURSION))
 	    goto skip;
 
+
 	 bool create_target_dir=true;
 	 const FileInfo *old=0;
+
+	 if(FlagSet(TARGET_FLAT)) {
+	    create_target_dir=false;
+	    target_name=target_dir;
+	    goto do_submirror;
+	 }
+
 	 if(target_set)
 	    old=target_set->FindByName(file->name);
 	 if(!old)
@@ -458,6 +470,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    }
 	 }
 
+      do_submirror:
 	 // launch sub-mirror
 	 MirrorJob *mj=new MirrorJob(this,
 	    source_session->Clone(),target_session->Clone(),
@@ -591,8 +604,11 @@ skip:
    return;
 }
 
-void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
+void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
 {
+   if(FlagSet(TARGET_FLAT) && !parent_mirror && dest)
+      source->Sort(FileSet::BYNAME_FLAT);
+
    source->Count(NULL,&stats.tot_files,&stats.tot_symlinks,&stats.tot_files);
 
    to_rm=new FileSet(dest);
@@ -658,6 +674,15 @@ void  MirrorJob::InitSets(const FileSet *source,const FileSet *dest)
 
    if(!(flags&DELETE))
       to_transfer->SubtractAny(to_rm_mismatched);
+
+   if(FlagSet(TARGET_FLAT) && !parent_mirror && dest) {
+      source->Unsort();
+      to_transfer->UnsortFlat();
+      to_transfer->SubtractDirs();
+      same->UnsortFlat();
+      to_mkdir->Empty();
+      new_files_set->UnsortFlat();
+   }
 
    const char *sort_by=ResMgr::Query("mirror:sort-by",0);
    bool desc=strstr(sort_by,"-desc");
@@ -949,7 +974,9 @@ int   MirrorJob::Do()
       m=MOVED;
       if(!source_set)
 	 HandleListInfoCreation(source_session,source_list_info,source_relative_dir);
-      if(!target_set && !create_target_dir && (!FlagSet(DEPTH_FIRST) || FlagSet(ONLY_EXISTING)))
+      if(!target_set && !create_target_dir
+      && (!FlagSet(DEPTH_FIRST) || FlagSet(ONLY_EXISTING))
+      && !(FlagSet(TARGET_FLAT) && parent_mirror))
 	 HandleListInfoCreation(target_session,target_list_info,target_relative_dir);
       if(state!=GETTING_LIST_INFO)
       {
@@ -1206,6 +1233,8 @@ int   MirrorJob::Do()
 	 goto pre_FINISHING_FIX_LOCAL;
 
       to_transfer->rewind();
+      if(FlagSet(TARGET_FLAT))
+	 to_transfer->Sort(FileSet::BYNAME_FLAT);
       set_state(TARGET_CHMOD);
       m=MOVED;
       /*fallthrough*/
@@ -1268,13 +1297,15 @@ int   MirrorJob::Do()
    pre_FINISHING_FIX_LOCAL:
       if(target_is_local && !script_only)     // FIXME
       {
-	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true);
+	 const bool flat=FlagSet(TARGET_FLAT);
+	 to_transfer->Sort(FileSet::BYNAME_FLAT);
+	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true,flat);
 	 if(flags&ALLOW_CHOWN)
-	    to_transfer->LocalChown(target_dir);
+	    to_transfer->LocalChown(target_dir,flat);
 	 if(!FlagSet(NO_PERMS) && same)
-	    same->LocalChmod(target_dir,get_mode_mask());
+	    same->LocalChmod(target_dir,get_mode_mask(),flat);
 	 if(FlagSet(ALLOW_CHOWN) && same)
-	    same->LocalChown(target_dir);
+	    same->LocalChown(target_dir,flat);
       }
       if(remove_source_files && (same || to_rm_src))
 	 goto pre_SOURCE_REMOVING_SAME;
@@ -1763,6 +1794,7 @@ CMD(mirror)
       OPT_RECURSION,
       OPT_UPLOAD_OLDER,
       OPT_TRANSFER_ALL,
+      OPT_TARGET_FLAT,
    };
    static const struct option mirror_opts[]=
    {
@@ -1823,6 +1855,7 @@ CMD(mirror)
       {"recursion",required_argument,0,OPT_RECURSION},
       {"upload-older",no_argument,0,OPT_UPLOAD_OLDER},
       {"transfer-all",no_argument,0,OPT_TRANSFER_ALL},
+      {"flat",no_argument,0,OPT_TARGET_FLAT},
       {0}
    };
 
@@ -2069,6 +2102,9 @@ CMD(mirror)
 	 break;
       case(OPT_TRANSFER_ALL):
 	 flags|=MirrorJob::TRANSFER_ALL;
+	 break;
+      case(OPT_TARGET_FLAT):
+	 flags|=MirrorJob::TARGET_FLAT|MirrorJob::SCAN_ALL_FIRST|MirrorJob::DEPTH_FIRST;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());

@@ -143,13 +143,14 @@ class PatternSet;
 class FileSet
 {
 public:
-   enum sort_e { BYNAME, BYSIZE, DIRSFIRST, BYRANK, BYDATE };
+   enum sort_e { BYNAME, BYSIZE, DIRSFIRST, BYRANK, BYDATE, BYNAME_FLAT };
 
 private:
    RefArray<FileInfo> files;
 
    /* indexes when sort != NAME: */
    xarray<int> sorted;
+   sort_e sort_mode;
 
    int	 ind;
 
@@ -193,6 +194,7 @@ public:
    void  Unsort();
    void	 SortByPatternList(const char *list_c);
    void	 ReverseSort();
+   void	 UnsortFlat();
 
    void	 Exclude(const char *prefix,const PatternSet *x,FileSet *fsx=0);
    void	 ExcludeDots();
@@ -204,9 +206,9 @@ public:
    FileInfo *next();
 
    void	 LocalRemove(const char *dir);
-   void	 LocalUtime(const char *dir,bool only_dirs=false);
-   void	 LocalChmod(const char *dir,mode_t mask=0);
-   void	 LocalChown(const char *dir);
+   void	 LocalUtime(const char *dir,bool only_dirs=false,bool flat=false);
+   void	 LocalChmod(const char *dir,mode_t mask=0,bool flat=false);
+   void	 LocalChown(const char *dir,bool flat=false);
 
    void Count(int *d,int *f,int *s,int *o) const;
    void CountBytes(long long *b) const;

@@ -202,7 +202,7 @@ void FileSet::PrependPath(const char *path)
 }
 
 FileSet::FileSet()
-   : ind(0)
+   : sort_mode(BYNAME), ind(0)
 {
 }
 
@@ -227,44 +227,44 @@ static int (*compare)(const char *s1, const char *s2);
 static int rev_cmp;
 static RefArray<FileInfo> *files_cmp;
 
-static int sort_name(const void *s1, const void *s2)
+static int sort_name(const int *s1, const int *s2)
 {
-   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
-   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
+   const FileInfo *p1=(*files_cmp)[*s1];
+   const FileInfo *p2=(*files_cmp)[*s2];
    return compare(p1->name, p2->name) * rev_cmp;
 }
 
-static int sort_size(const void *s1, const void *s2)
+static int sort_size(const int *s1, const int *s2)
 {
-   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
-   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
+   const FileInfo *p1=(*files_cmp)[*s1];
+   const FileInfo *p2=(*files_cmp)[*s2];
    if(p1->size > p2->size) return -rev_cmp;
    if(p1->size < p2->size) return rev_cmp;
    return 0;
 }
 
-static int sort_dirs(const void *s1, const void *s2)
+static int sort_dirs(const int *s1, const int *s2)
 {
-   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
-   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
+   const FileInfo *p1=(*files_cmp)[*s1];
+   const FileInfo *p2=(*files_cmp)[*s2];
    if((p1->filetype == FileInfo::DIRECTORY) && !(p2->filetype == FileInfo::DIRECTORY)) return -rev_cmp;
    if(!(p1->filetype == FileInfo::DIRECTORY) && (p2->filetype == FileInfo::DIRECTORY)) return rev_cmp;
    return 0;
 }
 
-static int sort_rank(const void *s1, const void *s2)
+static int sort_rank(const int *s1, const int *s2)
 {
-   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
-   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
+   const FileInfo *p1=(*files_cmp)[*s1];
+   const FileInfo *p2=(*files_cmp)[*s2];
    if(p1->GetRank()==p2->GetRank())
       return sort_name(s1,s2);
    return p1->GetRank()<p2->GetRank() ? -rev_cmp : rev_cmp;
 }
 
-static int sort_date(const void *s1, const void *s2)
+static int sort_date(const int *s1, const int *s2)
 {
-   const FileInfo *p1=(*files_cmp)[*static_cast<const int*>(s1)];
-   const FileInfo *p2=(*files_cmp)[*static_cast<const int*>(s2)];
+   const FileInfo *p1=(*files_cmp)[*s1];
+   const FileInfo *p2=(*files_cmp)[*s2];
    if(p1->date==p2->date)
       return sort_name(s1,s2);
    return p1->date>p2->date ? -rev_cmp : rev_cmp;
@@ -283,19 +283,29 @@ void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
    rev_cmp=(reverse?-1:1);
    files_cmp=&files;
 
+   xmap<bool> dup;
    sorted.truncate();
-   for(int i=0; i<fnum; i++)
+   for(int i=0; i<fnum; i++) {
+      if(newsort==BYNAME_FLAT && sort_mode!=BYNAME_FLAT) {
+	 Ref<FileInfo>& fi=files[i];
+	 fi->longname.set(fi->name);
+	 fi->name.set(basename_ptr(fi->name));
+	 if(dup.exists(fi->name))
+	    continue;
+	 dup.add(fi->name,true);
+      }
       sorted.append(i);
-
-   int *s=sorted.get_non_const();
-   int sz=sorted.get_element_size();
-   switch(newsort) {
-   case BYNAME: qsort(s, fnum, sz, sort_name); break;
-   case BYSIZE: qsort(s, fnum, sz, sort_size); break;
-   case DIRSFIRST: qsort(s, fnum, sz, sort_dirs); break;
-   case BYRANK: qsort(s, fnum, sz, sort_rank); break;
-   case BYDATE: qsort(s, fnum, sz, sort_date); break;
    }
+
+   switch(newsort) {
+   case BYNAME_FLAT: /*fallthrough*/
+   case BYNAME: sorted.qsort(sort_name); break;
+   case BYSIZE: sorted.qsort(sort_size); break;
+   case DIRSFIRST: sorted.qsort(sort_dirs); break;
+   case BYRANK: sorted.qsort(sort_rank); break;
+   case BYDATE: sorted.qsort(sort_date); break;
+   }
+   sort_mode=newsort;
 }
 
 // reverse current sort order
@@ -313,11 +323,21 @@ void FileSet::ReverseSort()
    }
 }
 
-/* Remove the current sort, allowing new entries to be added.
- * (Nothing uses this ... */
+/* Remove the current sort, allowing new entries to be added. */
 void FileSet::Unsort()
 {
    sorted.unset();
+   if(sort_mode==BYNAME_FLAT)
+      UnsortFlat();
+   sort_mode=BYNAME;
+}
+
+void FileSet::UnsortFlat()
+{
+   for(int i=0; i<files.count(); i++) {
+      assert(files[i]->longname!=0);
+      files[i]->name.move_here(files[i]->longname);
+   }
 }
 
 void FileSet::Empty()
@@ -662,7 +682,7 @@ void FileSet::Dump(const char *tag) const
 
 // *** Manipulations with set of local files
 
-void FileSet::LocalUtime(const char *dir,bool only_dirs)
+void FileSet::LocalUtime(const char *dir,bool only_dirs,bool flat)
 {
    for(int i=0; i<fnum; i++)
    {
@@ -676,7 +696,10 @@ void FileSet::LocalUtime(const char *dir,bool only_dirs)
 	 if(only_dirs && file->filetype!=file->DIRECTORY)
 	    continue;
 
-	 const char *local_name=dir_file(dir,file->name);
+	 const char *name=file->name;
+	 if(flat)
+	    name=basename_ptr(name);
+	 const char *local_name=dir_file(dir,name);
 	 struct utimbuf ut;
 	 struct stat st;
 	 ut.actime=ut.modtime=file->date;
@@ -686,7 +709,7 @@ void FileSet::LocalUtime(const char *dir,bool only_dirs)
       }
    }
 }
-void FileSet::LocalChmod(const char *dir,mode_t mask)
+void FileSet::LocalChmod(const char *dir,mode_t mask,bool flat)
 {
    for(int i=0; i<fnum; i++)
    {
@@ -697,7 +720,10 @@ void FileSet::LocalChmod(const char *dir,mode_t mask)
 	 && file->filetype==file->SYMLINK)
 	    continue;
 
-	 const char *local_name=dir_file(dir,file->name);
+	 const char *name=file->name;
+	 if(flat)
+	    name=basename_ptr(name);
+	 const char *local_name=dir_file(dir,name);
 
 	 struct stat st;
 	 mode_t new_mode=file->mode&~mask;
@@ -707,7 +733,7 @@ void FileSet::LocalChmod(const char *dir,mode_t mask)
       }
    }
 }
-void FileSet::LocalChown(const char *dir)
+void FileSet::LocalChown(const char *dir,bool flat)
 {
    for(int i=0; i<fnum; i++)
    {
@@ -721,7 +747,10 @@ void FileSet::LocalChown(const char *dir)
 #define lchown chown
 #endif
 
-	 const char *local_name=dir_file(dir,file->name);
+	 const char *name=file->name;
+	 if(flat)
+	    name=basename_ptr(name);
+	 const char *local_name=dir_file(dir,name);
 
 	 struct stat st;
 

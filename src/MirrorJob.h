@@ -76,7 +76,7 @@ private:
    Ref<FileSet> old_files_set;
    Ref<FileSet> new_files_set;
    Ref<FileSet> to_rm_src;
-   void	 InitSets(const FileSet *src,const FileSet *dst);
+   void	 InitSets(Ref<FileSet>& src,const FileSet *dst);
    bool only_dirs;
 
    void RemoveSourceLater(const FileInfo *fi) {
@@ -216,6 +216,7 @@ public:
       OVERWRITE=1<<20,
       UPLOAD_OLDER=1<<21,
       TRANSFER_ALL=1<<22,
+      TARGET_FLAT=1<<23,
    };
    void SetFlags(int f,bool v)
    {
