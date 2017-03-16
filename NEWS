@@ -5,6 +5,7 @@
 * fixed compilation with newer openssl (1.1.0 and later).
 * du: allow multiple --exclude options to be combined.
 * new setting cmd:nullglob for `glob' command prefix.
+* http: use proppatch to set last-modified property.
 
 Version 4.7.7 - 2017-03-07
 
