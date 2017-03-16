@@ -65,6 +65,7 @@ class GlobURL
    FileAccessRef my_session;
    FileAccessRefC session;
    xstring_c url_prefix;
+   bool nullglob;
 public:
    SMTaskRef<Glob> glob;
 
@@ -89,6 +90,7 @@ public:
    void NoMatchPeriod()	   { if(glob) glob->NoMatchPeriod(); }
    void NoInhibitTilde()   { if(glob) glob->NoInhibitTilde(); }
    void CaseFold()	   { if(glob) glob->CaseFold(); }
+   void NullGlob(bool y=true) { nullglob=y; }
 
 private:
    type_select type;

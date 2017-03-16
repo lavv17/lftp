@@ -1157,6 +1157,7 @@ Job *CmdExec::builtin_glob()
    int opt;
    GlobURL::type_select glob_type=GlobURL::FILES_ONLY;
    const char *cmd=0;
+   bool nullglob=false;
 
    static struct option glob_options[]=
    {
@@ -1180,9 +1181,11 @@ Job *CmdExec::builtin_glob()
 	 break;
       case('e'):
 	 cmd=".notempty";
+	 nullglob=true;
 	 break;
       case('E'):
 	 cmd=".empty";
+	 nullglob=true;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),op);
@@ -1210,6 +1213,8 @@ Job *CmdExec::builtin_glob()
       return cmd_command(this);
    }
    glob=new GlobURL(session,pat,glob_type);
+   if(nullglob)
+      glob->NullGlob();
    RevertToSavedSession();
    builtin=BUILTIN_GLOB;
    return this;

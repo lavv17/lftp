@@ -29,6 +29,9 @@
 #include "FileGlob.h"
 #include "misc.h"
 #include "url.h"
+#include "ResMgr.h"
+
+ResDecl res_nullglob("cmd:nullglob","yes",ResMgr::BoolValidate,ResMgr::NoClosure);
 
 // Glob implementation
 Glob::Glob(FileAccess *s,const char *p)
@@ -199,6 +202,7 @@ void GlobURL::NewGlob(const char *p)
 GlobURL::GlobURL(const FileAccessRef& s,const char *p,type_select t)
    : orig_session(s), session(orig_session), type(t)
 {
+   nullglob=ResMgr::QueryBool("cmd:nullglob",0);
    NewGlob(p);
 }
 GlobURL::~GlobURL() {}
@@ -206,6 +210,8 @@ GlobURL::~GlobURL() {}
 FileSet *GlobURL::GetResult()
 {
    FileSet &list=*glob->GetResult();
+   if(list.count()==0 && !nullglob)
+      list.Add(new FileInfo(glob->GetPattern()));
    if(session==orig_session)
       return &list;
    for(int i=0; list[i]; i++)
