@@ -421,12 +421,11 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(recursion_mode==RECURSION_NEVER || FlagSet(NO_RECURSION))
 	    goto skip;
 
-
-	 bool create_target_dir=true;
+	 bool create_target_subdir=true;
 	 const FileInfo *old=0;
 
 	 if(FlagSet(TARGET_FLAT)) {
-	    create_target_dir=false;
+	    create_target_subdir=false;
 	    target_name=target_dir;
 	    goto do_submirror;
 	 }
@@ -443,7 +442,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 }
 	 else if(old->TypeIs(old->DIRECTORY))
 	 {
-	    create_target_dir=false;
+	    create_target_subdir=false;
 	 }
 	 if(target_is_local && !script_only)
 	 {
@@ -455,7 +454,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 		  // only if not enabled as chmod can clear sgid flags on directories
 		  if(st.st_mode!=(st.st_mode|0700))
 		     chmod(target_name,st.st_mode|0700);
-		  create_target_dir=false;
+		  create_target_subdir=false;
 	       }
 	       else
 	       {
@@ -465,7 +464,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 		     eprintf("mirror: remove(%s): %s\n",target_name,strerror(errno));
 		     goto skip;
 		  }
-		  create_target_dir=true;
+		  create_target_subdir=true;
 	       }
 	    }
 	 }
@@ -478,35 +477,10 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 AddWaiting(mj);
 	 mj->cmdline.vset("\\mirror `",source_name_rel,"'",NULL);
 
-	 // inherit flags and other things
-	 mj->SetFlags(flags,1);
-	 mj->UseCache(use_cache);
-
-	 mj->SetExclude(exclude);
-
 	 mj->source_relative_dir.set(source_name_rel);
 	 mj->target_relative_dir.set(target_name_rel);
 
-	 mj->verbose_report=verbose_report;
-	 mj->newer_than=newer_than;
-	 mj->older_than=older_than;
-	 mj->size_range=size_range;
-	 mj->parallel=parallel;
-	 mj->pget_n=pget_n;
-	 mj->pget_minchunk=pget_minchunk;
-	 mj->remove_source_files=remove_source_files;
-	 mj->remove_source_dirs=remove_source_dirs;
-	 mj->skip_noaccess=skip_noaccess;
-	 mj->create_target_dir=create_target_dir;
-	 mj->no_target_dir=no_target_dir;
-	 mj->recursion_mode=recursion_mode;
-
-	 mj->script=script;
-	 mj->script_needs_closing=false;
-	 mj->script_name.set(script_name);
-	 mj->script_only=script_only;
-
-	 mj->max_error_count=max_error_count;
+	 mj->create_target_dir=create_target_subdir;
 
 	 if(verbose_report>=3) {
 	    if(FlagSet(SCAN_ALL_FIRST))
@@ -1503,6 +1477,32 @@ MirrorJob::MirrorJob(MirrorJob *parent,
       // get file sets and start transfers.
       // See also comment at MirrorJob::MirrorStarted().
       root_transfer_count=parallel_dirs?1:1024;
+
+      // inherit flags and other things
+      SetFlags(parent->flags,1);
+      UseCache(parent->use_cache);
+
+      SetExclude(parent->exclude);
+
+      verbose_report=parent->verbose_report;
+      newer_than=parent->newer_than;
+      older_than=parent->older_than;
+      size_range=parent->size_range;
+      parallel=parent->parallel;
+      pget_n=parent->pget_n;
+      pget_minchunk=parent->pget_minchunk;
+      remove_source_files=parent->remove_source_files;
+      remove_source_dirs=parent->remove_source_dirs;
+      skip_noaccess=parent->skip_noaccess;
+      no_target_dir=parent->no_target_dir;
+      recursion_mode=parent->recursion_mode;
+
+      script=parent->script;
+      script_needs_closing=false;
+      script_name.set(parent->script_name);
+      script_only=parent->script_only;
+
+      max_error_count=parent->max_error_count;
    }
    MirrorStarted();
 }
