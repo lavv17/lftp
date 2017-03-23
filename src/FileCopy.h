@@ -55,6 +55,7 @@ protected:
    bool removing;
    bool file_removed;
    bool temp_file;
+   bool do_mkdir;
 
    bool done;
 
@@ -91,6 +92,7 @@ public:
    void DontCopyDate() { do_set_date=false; }
    void DontVerify() { do_verify=false; }
    bool NeedDate() { return do_set_date; }
+   void MakeTargetDir() { do_mkdir=true; }
 
    void SetRange(const off_t s,const off_t lim);
 

@@ -828,6 +828,7 @@ FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
    removing=false;
    file_removed=false;
    temp_file=false;
+   do_mkdir=false;
    use_cache=true;
    write_allowed=true;
    done=false;
@@ -843,7 +844,18 @@ int FileCopyPeerFA::Do()
    int m=STALL;
    int res;
 
-   if(session->OpenMode()==FA::RENAME)
+   if(session->OpenMode()==FA::MAKE_DIR)
+   {
+      // doing mkdir
+      int res=session->Done();
+      if(res==FA::IN_PROGRESS)
+	 return m;
+      if(res<0)
+	 debug((3,"mkdir failed: %s\n",session->StrError(res)));
+      session->Close();
+      m=MOVED;
+   }
+   else if(session->OpenMode()==FA::RENAME)
    {
       int res=session->Done();
       if(res==FA::IN_PROGRESS)
@@ -856,6 +868,14 @@ int FileCopyPeerFA::Do()
       }
       session->Close();
       done=true;
+      return MOVED;
+   }
+
+   if(do_mkdir) {
+      // do mkdir just once
+      do_mkdir=false;
+      assert(!session->IsOpen());
+      session->Mkdir(dirname(file),true);
       return MOVED;
    }
 
@@ -1525,6 +1545,11 @@ int FileCopyPeerFDStream::Do()
    int m=STALL;
    if(Done() || Error())
       return m;
+
+   if(do_mkdir) {
+      do_mkdir=false;
+      create_directories(dirname(stream->full_name).get_non_const());
+   }
 
    if(verify)
    {
