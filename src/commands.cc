@@ -3478,6 +3478,8 @@ CMD(get1)
       }
    }
 
+   dst=alloca_strdup(dst); // save tmp xstring
+
    FileCopyPeer *src_peer=0;
    FileCopyPeer *dst_peer=0;
 
