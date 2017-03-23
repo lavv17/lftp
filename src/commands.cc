@@ -3379,6 +3379,7 @@ CMD(get1)
       {"output",required_argument,0,'o'},
       {"remove-source-later",no_argument,0,'E'},
       {"remove-target-first",no_argument,0,'e'},
+      {"make-target-dir",no_argument,0,'d'},
       {"quiet",no_argument,0,'q'},
       {0,0,0,0}
    };
@@ -3388,11 +3389,12 @@ CMD(get1)
    bool cont=false;
    bool ascii=false;
    bool quiet=false;
+   bool do_mkdir=false;
    long long source_region_begin=0,source_region_end=FILE_END;
    long long target_region_begin=0,target_region_end=FILE_END;
    int n,p;
 
-   while((opt=args->getopt_long("arco:",get1_options))!=EOF)
+   while((opt=args->getopt_long("arco:d",get1_options))!=EOF)
    {
       switch(opt)
       {
@@ -3425,6 +3427,9 @@ CMD(get1)
 	 break;
       case('q'):
 	 quiet=true;
+	 break;
+      case('d'):
+	 do_mkdir=true;
 	 break;
       case '?':
       usage:
@@ -3494,6 +3499,8 @@ CMD(get1)
    dst_peer->AutoRename(auto_rename && ResMgr::QueryBool("xfer:auto-rename",0));
    if(!cont && (target_region_begin>0 || target_region_end!=FILE_END))
       dst_peer->SetRange(target_region_begin,target_region_end);
+   if(do_mkdir)
+      dst_peer->MakeTargetDir();
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
 
