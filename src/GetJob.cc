@@ -164,6 +164,8 @@ try_next:
    FileCopyPeer *dst_peer=CreateCopyPeer(session,dst,FA::STORE);
    if(!dst_peer)
       goto try_next;
+   if(make_dirs)
+      dst_peer->MakeTargetDir();
    FileCopyPeer *src_peer=CreateCopyPeer(session,src,FA::RETRIEVE);
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
@@ -188,6 +190,7 @@ void GetJob::RemoveBackupFile()
 GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
    : CopyJobEnv(s,a,c)
 {
+   make_dirs=false;
    delete_files=false;
    remove_target_first=false;
    truncate_target_first=!cont;

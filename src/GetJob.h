@@ -37,6 +37,7 @@ protected:
    FileCopyPeer *CreateCopyPeer(const FileAccessRef& session,const char *path,FA::open_mode mode);
    void	 NextFile();
 
+   bool make_dirs;
    bool delete_files;
    bool remove_target_first;
    bool truncate_target_first;

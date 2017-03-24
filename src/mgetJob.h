@@ -26,24 +26,18 @@
 
 class mgetJob : public GetJob
 {
-   Ref<GlobURL> rg;
-   JobRef<mkdirJob> mkdir_job;
-   Ref<ArgV> mkdir_args;
-   int mkdir_base_arg;
-   Ref<ArgV> m_args;
+   Ref<GlobURL> glob;
+   xqueue_m<char> wcd;
    xstring_c output_dir;
 
-   bool	 make_dirs;
-   void	 make_directory(const char *d);
-
-   void LocalGlob(const char *p);
+   FileAccessRef local_session;
 
 public:
    int	 Do();
    xstring& FormatStatus(xstring&,int,const char *);
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
 
-   mgetJob(FileAccess *session,ArgV *args,bool c,bool md);
+   mgetJob(FileAccess *session,const ArgV *args,bool c,bool md);
    ~mgetJob();
 
    void OutputDir(char *o) { output_dir.set_allocated(o); }

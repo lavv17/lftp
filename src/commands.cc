@@ -1809,10 +1809,7 @@ CMD(get)
 	 goto err;
       }
       delete get_args;
-      // remove options
-      while(args->getindex()>1)
-	 args->delarg(1);
-      mgetJob *j=new mgetJob(session->Clone(),args.borrow(),cont,make_dirs);
+      mgetJob *j=new mgetJob(session->Clone(),args,cont,make_dirs);
       if(reverse)
 	 j->Reverse();
       if(del)
