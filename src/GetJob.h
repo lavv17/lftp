@@ -41,12 +41,8 @@ protected:
    bool delete_files;
    bool remove_target_first;
    bool truncate_target_first;
-   xstring backup_file;
-   mode_t file_mode;
    Ref<FDStream> local;
    bool reverse;
-
-   void RemoveBackupFile();
 
 public:
    GetJob(FileAccess *s,ArgV *a,bool c=false);

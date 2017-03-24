@@ -334,6 +334,9 @@ bool OutputFilter::usesfd(int n_fd)
    return n_fd<=2;
 }
 
+
+#define NO_MODE ((mode_t)-1)
+
 void FileStream::setmtime(const FileTimestamp &ts)
 {
    getfd(); // this might create the file... But can fail retriably. FIXME.
@@ -349,7 +352,8 @@ void FileStream::setmtime(const FileTimestamp &ts)
 }
 FileStream::FileStream(const char *fname,int new_mode)
    : FDStream(-1,fname), mode(new_mode), create_mode(0664),
-     do_lock(ResMgr::QueryBool("file:use-lock",0))
+     do_lock(ResMgr::QueryBool("file:use-lock",0)),
+     old_file_mode(NO_MODE)
 {
    if(name[0]=='/')
       full_name.set(name);
@@ -376,10 +380,51 @@ void FileStream::remove_if_empty()
       remove();
 }
 
+void FileStream::revert_backup()
+{
+   if(backup_file) {
+      rename(backup_file,full_name);
+      backup_file.unset();
+   }
+}
+void FileStream::remove_backup()
+{
+   if(backup_file && !ResMgr::QueryBool("xfer:keep-backup",0)) {
+      ::remove(backup_file);
+      backup_file.unset();
+   }
+   if(old_file_mode!=NO_MODE)
+      chmod(full_name,old_file_mode);
+}
+
 int   FileStream::getfd()
 {
    if(fd!=-1 || error() || closed)
       return fd;
+
+   bool clobber=!(mode&O_EXCL);
+   bool truncate=(mode&O_TRUNC);
+
+   struct stat st;
+   if((!clobber || truncate) && stat(full_name,&st)!=-1 && st.st_size>0 && S_ISREG(st.st_mode))
+   {
+      if(!clobber)
+      {
+	 error_text.vset(name.get(),": ",_("file already exists and xfer:clobber is unset"),NULL);
+	 return -1;
+      }
+      if(truncate && ResMgr::QueryBool("xfer:make-backup",0))
+      {
+	 /* rename old file if exists and size>0 */
+	 xstring_ca suffix(xstrftime(ResMgr::Query("xfer:backup-suffix",0),SMTask::now));
+	 backup_file.vset(full_name.get(),suffix.get(),NULL);
+	 if(rename(full_name,backup_file)!=0)
+	    backup_file.set(0);
+	 else
+	    create_mode=old_file_mode=st.st_mode;
+      }
+   }
+
    int new_fd=open(full_name,mode|O_NONBLOCK|O_BINARY,create_mode);
    if(new_fd==-1)
    {
