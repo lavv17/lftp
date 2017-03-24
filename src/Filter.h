@@ -72,6 +72,8 @@ public:
    virtual pid_t GetProcGroup() const { return 0; }
    virtual bool broken() { return false; }
    virtual bool can_seek() { return false; }
+   virtual void revert_backup() {}
+   virtual void remove_backup() {}
 };
 
 class OutputFilter : public FDStream

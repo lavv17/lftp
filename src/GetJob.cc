@@ -33,25 +33,6 @@
 
 #define super CopyJobEnv
 
-int   GetJob::Do()
-{
-   int m=STALL;
-
-   if(cp && cp->Done() && local)
-   {
-      if(cp->Error()) {
-	 // in case of errors, move the backup to original location
-	 local.Cast<FileStream>()->revert_backup();
-      } else {
-	 // now we can delete the old file, since there is a new one
-	 local.Cast<FileStream>()->remove_backup();
-      }
-   }
-   if(super::Do()==MOVED)
-      m=MOVED;
-   return m;
-}
-
 FileCopyPeer *GetJob::SrcLocal(const char *src)
 {
    const char *f=(cwd && src[0]!='/') ? dir_file(cwd,src) : src;
@@ -64,7 +45,7 @@ FileCopyPeer *GetJob::DstLocal(const char *dst)
    dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
 
-   local=new FileStream(f,flags); // local is for pget.
+   FileStream *local=new FileStream(f,flags);
    FileCopyPeerFDStream *p=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
    p->CloseWhenDone();
    return p;
@@ -97,8 +78,11 @@ FileCopyPeer *GetJob::CreateCopyPeer(FileAccess *session,const char *path,FA::op
 FileCopyPeer *GetJob::CreateCopyPeer(const FileAccessRef& session,const char *path,FA::open_mode mode)
 {
    ParsedURL url(path,true);
-   if(IsRemoteNonURL(url,mode))
+   if(IsRemoteNonURL(url,mode)) {
+      if(parallel>1) // need to clone the session for parallel transfers
+	 return new FileCopyPeerFA(session->Clone(),path,mode);
       return new FileCopyPeerFA(session,path,mode);
+   }
    return CreateCopyPeer(url,path,mode);
 }
 FileCopyPeer *GetJob::CreateCopyPeer(const ParsedURL &url,const char *path,FA::open_mode mode)
@@ -117,18 +101,13 @@ FileCopyPeer *GetJob::CreateCopyPeer(const char *path,FA::open_mode mode)
 void GetJob::NextFile()
 {
 try_next:
-   local=0;
-
    if(!args)
       return;
 
    const char *src=args->getnext();
    const char *dst=args->getnext();
    if(!src || !dst)
-   {
-      SetCopier(0,0);
       return;
-   }
 
    FileCopyPeer *dst_peer=CreateCopyPeer(session,dst,FA::STORE);
    if(!dst_peer)
@@ -144,7 +123,7 @@ try_next:
    if(remove_target_first)
       c->RemoveTargetFirst();
 
-   SetCopier(c,src);
+   AddCopier(c,src);
 }
 
 GetJob::GetJob(FileAccess *s,ArgV *a,bool c)

@@ -78,9 +78,11 @@ public:
    void SetRangeLimit(off_t lim) { return c->SetRangeLimit(lim); }
    void SetDate(const FileTimestamp& d) { c->SetDate(d); }
    void SetSize(off_t s)   { c->SetSize(s); }
-   const SMTaskRef<FileCopy>& GetCopy() { return c; }
-   const SMTaskRef<FileCopyPeer>& GetPut() { return c->put; }
-   const SMTaskRef<FileCopyPeer>& GetGet() { return c->get; }
+   const SMTaskRef<FileCopy>& GetCopy() const { return c; }
+   const SMTaskRef<FileCopyPeer>& GetPut() const { return c->put; }
+   const SMTaskRef<FileCopyPeer>& GetGet() const { return c->get; }
+
+   const Ref<FDStream>& GetLocal() const { return GetPut()->GetLocal(); }
 
    const char *Status(const StatusLine *s,bool base=false);
    void ShowRunStatus(const SMTaskRef<StatusLine>&);
@@ -110,6 +112,7 @@ protected:
    bool done;
    int errors;
    int count;
+   int parallel;
    off_t bytes;
    TimeDate transfer_start_ts;
    double time_spent;
@@ -150,6 +153,8 @@ public:
    off_t GetBytesCount() { return bytes+Job::GetBytesCount(); }
 
    void Quiet(bool q) { quiet=q; }
+
+   void SetParallel(int n) { parallel=n; }
 };
 
 #endif // COPYJOB_H

@@ -497,7 +497,6 @@ void FileCopy::SetError(const char *str)
 {
    error_text.set(str);
    get=0;
-   put=0;
 }
 
 void FileCopy::LineBuffered(int s)

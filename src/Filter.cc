@@ -53,6 +53,7 @@ void FDStream::MakeErrorText(int e)
    if(NonFatalError(e))
       return;  // not a serious error - can be retried
    error_text.vset(name.get(),": ",strerror(e),NULL);
+   revert_backup();
 }
 void FDStream::SetCwd(const char *new_cwd)
 {

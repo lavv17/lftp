@@ -35,19 +35,16 @@ class GetJob : public CopyJobEnv, ResClient
 protected:
    FileCopyPeer *CreateCopyPeer(FileAccess *session,const char *path,FA::open_mode mode);
    FileCopyPeer *CreateCopyPeer(const FileAccessRef& session,const char *path,FA::open_mode mode);
-   void	 NextFile();
+   void	NextFile();
 
    bool make_dirs;
    bool delete_files;
    bool remove_target_first;
    bool truncate_target_first;
-   Ref<FDStream> local;
    bool reverse;
 
 public:
    GetJob(FileAccess *s,ArgV *a,bool c=false);
-
-   int	 Do();
 
    void DeleteFiles() { delete_files=true; }
    void RemoveSourceLater() { delete_files=true; }

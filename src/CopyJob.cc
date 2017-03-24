@@ -189,6 +189,7 @@ CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
    cp=0;
    errors=0;
    count=0;
+   parallel=1;
    bytes=0;
    time_spent=0;
    no_status=false;
@@ -205,7 +206,7 @@ int CopyJobEnv::Do()
    int m=STALL;
    if(done)
       return m;
-   if(waiting_num<1)
+   if(waiting_num<parallel)
    {
       NextFile();
       if(waiting_num==0)
@@ -220,13 +221,23 @@ int CopyJobEnv::Do()
    if(j==0)
       return m;
    RemoveWaiting(j);
-   if(j->ExitCode()!=0)
+   if(j->GetLocal())
+   {
+      if(j->Error()) {
+	 // in case of errors, move the backup to original location
+	 j->GetLocal()->revert_backup();
+      } else {
+	 // now we can delete the old file, since there is a new one
+	 j->GetLocal()->remove_backup();
+      }
+   }
+   if(j->Error())
       errors++;
    count++;
    bytes+=j->GetBytesCount();
-   Delete(j);
    if(cp==j)
       cp=0;
+   Delete(j);
    if(waiting_num>0 && cp==0)
       cp=(CopyJob*)waiting[0];
    if(waiting.count()==0)
