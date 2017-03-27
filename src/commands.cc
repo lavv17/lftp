@@ -1717,8 +1717,9 @@ CMD(get)
    bool cont=false;
    const char *opts="+cEeuaO:q";
    const char *op=args->a0();
-   ArgV	 *get_args=new ArgV(op);
+   Ref<ArgV> get_args(new ArgV(op));
    int n_conn=1;
+   int parallel=1;
    bool del=false;
    bool del_target=false;
    bool ascii=false;
@@ -1726,12 +1727,12 @@ CMD(get)
    bool make_dirs=false;
    bool reverse=false;
    bool quiet=false;
-   xstring_c output_dir;
+   const char *output_dir=0;
 
    if(!strncmp(op,"re",2))
    {
       cont=true;
-      opts="+EuaO:q";
+      opts="+EuaO:qP:";
    }
    if(!strcmp(op,"pget"))
    {
@@ -1742,22 +1743,17 @@ CMD(get)
    {
       reverse=true;
    }
-   else if(!strcmp(op,"mget"))
+   else if(!strcmp(op,"mget") || !strcmp(op,"mput"))
    {
       glob=true;
-      opts="cEeadO:q";
-   }
-   else if(!strcmp(op,"mput"))
-   {
-      glob=true;
-      opts="cEeadO:q";
-      reverse=true;
+      opts="cEeadO:qP:";
+      reverse=(op[1]=='p');
    }
    if(!reverse)
    {
       const char *od=ResMgr::Query("xfer:destination-directory",session->GetHostName());
       if(od && *od)
-	 output_dir.set(od);
+	 output_dir=od;
    }
    while((opt=args->getopt(opts))!=EOF)
    {
@@ -1787,18 +1783,24 @@ CMD(get)
 	 make_dirs=true;
 	 break;
       case('O'):
-	 output_dir.set(optarg);
+	 output_dir=optarg;
 	 break;
       case('q'):
 	 quiet=true;
 	 break;
+      case('P'):
+	 if(optarg)
+	    parallel=atoi(optarg);
+	 else
+	    parallel=3;
+	 break;
       case('?'):
       err:
 	 eprintf(_("Try `help %s' for more information.\n"),op);
-	 delete get_args;
 	 return 0;
       }
    }
+   JobRef<GetJob> j;
    if(glob)
    {
       if(args->getcurr()==0)
@@ -1808,53 +1810,49 @@ CMD(get)
 	 eprintf(_("File name missed. "));
 	 goto err;
       }
-      delete get_args;
-      mgetJob *j=new mgetJob(session->Clone(),args,cont,make_dirs);
-      if(reverse)
-	 j->Reverse();
-      if(del)
-	 j->DeleteFiles();
-      if(ascii)
-	 j->Ascii();
+      mgetJob *mj=new mgetJob(session->Clone(),args,cont,make_dirs);
       if(output_dir)
-	 j->OutputDir(output_dir.borrow());
-      j->Quiet(quiet);
-      return j;
+	 mj->OutputDir(output_dir);
+      j=mj;
    }
-   args->back();
-   const char *a=args->getnext();
-   if(a==0)
-      goto file_name_missed;
-   while(a)
+   else
    {
-      const char *src=a;
-      const char *dst=0;
-      a=args->getnext();
-      if(a && !strcmp(a,"-o"))
+      args->back();
+      const char *a=args->getnext();
+      if(a==0)
+	 goto file_name_missed;
+      while(a)
       {
-	 dst=args->getnext();
+	 const char *src=a;
+	 const char *dst=0;
 	 a=args->getnext();
+	 if(a && !strcmp(a,"-o"))
+	 {
+	    dst=args->getnext();
+	    a=args->getnext();
+	 }
+	 if(reverse)
+	    src=expand_home_relative(src);
+	 dst=output_file_name(src,dst,!reverse,output_dir,false);
+	 get_args->Append(src);
+	 get_args->Append(dst);
       }
-      if(reverse)
-	 src=expand_home_relative(src);
-      dst=output_file_name(src,dst,!reverse,output_dir,false);
-      get_args->Append(src);
-      get_args->Append(dst);
+      j=new GetJob(session->Clone(),get_args.borrow(),cont);
    }
-
-   GetJob *j=new GetJob(session->Clone(),get_args,cont);
+   if(reverse)
+      j->Reverse();
    if(del)
       j->DeleteFiles();
    if(del_target)
       j->RemoveTargetFirst();
    if(ascii)
       j->Ascii();
-   if(reverse)
-      j->Reverse();
    if(n_conn!=1)
       j->SetCopyJobCreator(new pCopyJobCreator(n_conn));
+   if(parallel>0)
+      j->SetParallel(parallel);
    j->Quiet(quiet);
-   return j;
+   return j.borrow();
 }
 
 CMD(edit)

@@ -40,7 +40,7 @@ public:
    mgetJob(FileAccess *session,const ArgV *args,bool c,bool md);
    ~mgetJob();
 
-   void OutputDir(char *o) { output_dir.set_allocated(o); }
+   void OutputDir(const char *o) { output_dir.set(o); }
 };
 
 #endif // MGETJOB_H
