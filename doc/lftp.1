@@ -2334,6 +2334,9 @@ when true, lftp renames pre-existing file adding xfer:backup-suffix instead of o
 maximum number of redirections. This can be useful for downloading over HTTP.
 0 prohibits redirections.
 .TP
+.BR xfer:parallel \ (number)
+the default number of parallel transfers in a single get/put/mget/mput command.
+.TP
 .BR xfer:rate-period \ (seconds)
 the period over which weighted average rate is calculated to be shown.
 .TP

@@ -189,7 +189,7 @@ CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
    cp=0;
    errors=0;
    count=0;
-   parallel=1;
+   parallel=ResMgr::Query("xfer:parallel",0);
    bytes=0;
    time_spent=0;
    no_status=false;

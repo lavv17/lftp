@@ -1719,7 +1719,7 @@ CMD(get)
    const char *op=args->a0();
    Ref<ArgV> get_args(new ArgV(op));
    int n_conn=1;
-   int parallel=1;
+   int parallel=0;
    bool del=false;
    bool del_target=false;
    bool ascii=false;
