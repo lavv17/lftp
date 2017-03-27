@@ -24,7 +24,6 @@
 #include "misc.h"
 #include "ArgV.h"
 #include "url.h"
-#include "LocalAccess.h"
 
 void mgetJob::ShowRunStatus(const SMTaskRef<StatusLine>& s)
 {
@@ -50,7 +49,7 @@ xstring& mgetJob::FormatStatus(xstring& buf,int v,const char *prefix)
 
 mgetJob::mgetJob(FileAccess *session,const ArgV *a,bool c,bool md)
    : GetJob(session,new ArgV(a->a0()),c),
-   local_session(new LocalAccess())
+   local_session(FileAccess::New("file"))
 {
    make_dirs=md;
    for(int i=a->getindex(); i<a->count(); i++)
