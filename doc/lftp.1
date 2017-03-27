@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "16 Mar 2017"
+.TH lftp 1 "27 Mar 2017"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -379,8 +379,10 @@ lftp would fallback to plain copy (via client) if FXP transfer cannot be
 initiated or ftp:use-fxp is false.
 
 .BR get " [" \-E ]
-.RB [ \-a "] [" \-c "] [" \-e "] [" \-O
-.RB "\fIbase\fP] \fIrfile\fP [" \-o " \fIlfile\fP] ..."
+.RB [ \-a "] [" \-c "] [" \-e ]
+.RB [ \-P " \fIN\fP]"
+.RB [ \-O " \fIbase\fP]"
+.RB "\fIrfile\fP [" \-o " \fIlfile\fP] ..."
 .PP
 Retrieve the remote file \fIrfile\fP and store it as the local file
 \fIlfile\fP.  If \-o is omitted, the file is stored to local file named as
@@ -395,6 +397,7 @@ l	lx	.
 \-E	delete source files after successful transfer
 \-e	delete target file before the transfer
 \-a	use ascii mode (binary is the default)
+\-P \fIN\fP	download \fIN\fP files in parallel
 \-O <base>	T{
 specifies base directory or URL where files should be placed
 T}
@@ -427,6 +430,7 @@ T}
 delete source files after successful transfer
 T}
 \-a	use ascii mode (binary is the default)
+\-d	create the directory of the target file
 \-\-source\-region=<from-to>	T{
 transfer specified region of source file
 T}
@@ -526,6 +530,8 @@ or
 
 .BR mget " [" \-c "] [" \-d "]"
 .RB [ \-a "] [" \-E "]"
+.RB [ \-e ]
+.RB [ \-P " \fIN\fP]"
 .RB [ \-O " \fIbase\fP] \fIfiles\fP"
 .PP
 Gets selected files with expanded wildcards.
@@ -539,7 +545,9 @@ l	lx	.
 create directories the same as file names and get the files into them instead of current directory.
 T}
 \-E	delete source files after successful transfer
+\-e	delete target file before the transfer
 \-a	use ascii mode (binary is the default)
+\-P \fIN\fP	download \fIN\fP files in parallel
 \-O <base>	T{
 specifies base directory or URL where files should be placed
 T}
@@ -802,6 +810,8 @@ Same as `cat \fIfiles\fP | more'. if \fBPAGER\fP is set, it is used as filter.
 
 .BR mput " [" \-c "] [" \-d "]"
 .RB [ \-a "] [" \-E "]"
+.RB [ \-e ]
+.RB [ \-P " \fIN\fP]"
 .RB [ \-O " \fIbase\fP] \fIfiles\fP"
 .PP
 Upload files with wildcard expansion. By default it uses the base name of
@@ -817,7 +827,9 @@ T}
 \-E	T{
 delete source files after successful transfer (dangerous)
 T}
+\-e	delete target file before the transfer
 \-a	use ascii mode (binary is the default)
+\-P \fIN\fP	upload \fIN\fP files in parallel
 \-O <base>	T{
 specifies base directory or URL where files should be placed
 T}
@@ -909,6 +921,8 @@ T}
 .RB [ \-E ]
 .RB [ \-a ]
 .RB [ \-c ]
+.RB [ \-e ]
+.RB [ \-P " \fIN\fP]"
 .RB [ "\-O \fIbase\fP" ]
 .I lfile
 .RB [ "\-o \fIrfile\fP" ]
@@ -928,7 +942,9 @@ T}
 \-E	T{
 delete source files after successful transfer (dangerous)
 T}
+\-e	delete target file before the transfer
 \-a	use ascii mode (binary is the default)
+\-P \fIN\fP	upload \fIN\fP files in parallel
 \-O <base>	T{
 specifies base directory or URL where files should be placed
 T}
