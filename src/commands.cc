@@ -1713,9 +1713,24 @@ CMD(cat)
 
 CMD(get)
 {
+   static struct option get_options[] = {
+      {"continue",no_argument,0,'c'},
+      {"Remove-source-files",no_argument,0,'E'},
+      {"remove-target",no_argument,0,'e'},
+      {"ascii",no_argument,0,'a'},
+      {"target-directory",required_argument,0,'O'},
+      {"destination-directory",required_argument,0,'O'},
+      {"quiet",no_argument,0,'q'},
+      {"parallel",optional_argument,0,'P'},
+      {"use-pget-n",optional_argument,0,'n'},
+      {"glob",no_argument,0,256+'g'},
+      {"reverse",no_argument,0,256+'R'},
+      {0}
+   };
+   const char *opts="+cEeaO:qP";
+
    int opt;
    bool cont=false;
-   const char *opts="+cEeuaO:q";
    const char *op=args->a0();
    Ref<ArgV> get_args(new ArgV(op));
    int n_conn=1;
@@ -1732,11 +1747,11 @@ CMD(get)
    if(!strncmp(op,"re",2))
    {
       cont=true;
-      opts="+EuaO:qP:";
+      opts="+EaO:qP:";
    }
    if(!strcmp(op,"pget"))
    {
-      opts="+n:ceuO:q";
+      opts="+n:ceO:q";
       n_conn=0; // default, which means to take pget:default-n
    }
    else if(!strcmp(op,"put") || !strcmp(op,"reput"))
@@ -1755,7 +1770,7 @@ CMD(get)
       if(od && *od)
 	 output_dir=od;
    }
-   while((opt=args->getopt(opts))!=EOF)
+   while((opt=args->getopt_long(opts,get_options))!=EOF)
    {
       switch(opt)
       {
@@ -1763,12 +1778,15 @@ CMD(get)
 	 cont=true;
 	 break;
       case('n'):
-	 if(!isdigit((unsigned char)optarg[0]))
-	 {
-	    eprintf(_("%s: -n: Number expected. "),op);
-	    goto err;
-	 }
-	 n_conn=atoi(optarg);
+	 if(optarg) {
+	    if(!isdigit((unsigned char)optarg[0]))
+	    {
+	       eprintf(_("%s: %s: Number expected. "),"-n",op);
+	       goto err;
+	    }
+	    n_conn=atoi(optarg);
+	 } else
+	    n_conn=3;
 	 break;
       case('E'):
 	 del=true;
@@ -1789,16 +1807,31 @@ CMD(get)
 	 quiet=true;
 	 break;
       case('P'):
-	 if(optarg)
+	 if(optarg) {
+	    if(!isdigit((unsigned char)optarg[0]))
+	    {
+	       eprintf(_("%s: %s: Number expected. "),"-P",op);
+	       goto err;
+	    }
 	    parallel=atoi(optarg);
-	 else
+	 } else
 	    parallel=3;
+	 break;
+      case(256+'R'):
+	 reverse=!reverse;
+	 break;
+      case(256+'g'):
+	 glob=true;
 	 break;
       case('?'):
       err:
 	 eprintf(_("Try `help %s' for more information.\n"),op);
 	 return 0;
       }
+   }
+   if(cont && del_target) {
+      eprintf(_("%s: --continue conflicts with --remove-target.\n"),op);
+      return 0;
    }
    JobRef<GetJob> j;
    if(glob)
