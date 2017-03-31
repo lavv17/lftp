@@ -2080,7 +2080,7 @@ int   Ftp::Do()
       }
       if(mode==LINK || mode==SYMLINK) {
 	 conn->SendCmdF("%s %s %s",command,file_to_append,file1.get());
-	 expect->Push(Expect::FILE_ACCESS);
+	 expect->Push(new Expect(Expect::FILE_ACCESS,0,command));
 	 goto pre_WAITING_STATE;
       }
 
