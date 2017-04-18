@@ -77,7 +77,8 @@ void Timer::AddRandom(double r) {
 }
 void Timer::Set(const TimeInterval &i)
 {
-   resource=closure=0;
+   resource.unset();
+   closure.unset();
    start=SMTask::now;
    set_last_setting(i);
 }
@@ -101,8 +102,8 @@ void Timer::SetResource(const char *r,const char *c)
 {
    if(resource!=r || closure!=c)
    {
-      resource=r;
-      closure=c;
+      resource.set(r);
+      closure.set(c);
       start=now;
       reconfig(r);
    }
@@ -124,8 +125,6 @@ void Timer::reconfig(const char *r)
 }
 void Timer::init()
 {
-   resource=0;
-   closure=0;
    random_max=0;
    all_timers.add(all_timers_node);
 }
@@ -151,8 +150,8 @@ Timer::Timer(const char *r,const char *c) : last_setting(0,0),
    all_timers_node(this), running_timers_node(this)
 {
    init();
-   resource=r;
-   closure=c;
+   resource.set(r);
+   closure.set(c);
    start=now;
    reconfig(r);
 }
