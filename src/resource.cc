@@ -224,6 +224,7 @@ static ResType lftp_vars[] = {
    {"ftp:rest-list",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:rest-stor",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:timezone",		 "GMT",   0,0},
+   {"ftp:too-many-re",		 "(Too many|No more) connections",ResMgr::ERegExpValidate,0},
    {"ftp:skey-allow",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:skey-force",		 "no",    ResMgr::BoolValidate,0},
    {"ftp:netkey-allow",		 "yes",   ResMgr::BoolValidate,0},
@@ -329,6 +330,7 @@ static ResType lftp_vars[] = {
 #endif
    {"net:timeout",		 "5m",	  ResMgr::TimeIntervalValidate,0},
    {"net:connection-limit",	 "0",	  ResMgr::UNumberValidate,0},
+   {"net:connection-limit-timer","5m",	  ResMgr::TimeIntervalValidate,0},
    {"net:connection-takeover",	 "yes",   ResMgr::BoolValidate,0},
 
    {"mirror:sort-by",		 "name",  SortByValidate,ResMgr::NoClosure},

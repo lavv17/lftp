@@ -1311,6 +1311,7 @@ int   Ftp::Do()
    {
       // walk through ftp classes and try to find identical idle ftp session
       // first try "easy" cases of session take-over.
+      int connection_limit=GetConnectionLimit();
       for(int i=0; i<3; i++)
       {
 	 bool limit_reached=last_connection_failed
@@ -4137,8 +4138,18 @@ void Ftp::CheckResp(int act)
    if(is1XX(act)) // intermediate responses are ignored
       return;
 
-   if(act==421)	  // server is going to disconnect, don't try sending QUIT.
+   if(act==421) { // server is going to disconnect:
+      // don't try sending QUIT.
       conn->quit_sent=true;
+      // adjust connection limit
+      const char *rexp=Query("too-many-re",hostname);
+      if(re_match(line,rexp,REG_ICASE)) {
+	 SiteData *data=GetSiteData();
+	 if(data->GetConnectionLimit()==0)
+	    data->SetConnectionLimit(CountConnections());
+	 data->DecreaseConnectionLimit();
+      }
+   }
 
    Expect *exp=expect->Pop();
    if(!exp)

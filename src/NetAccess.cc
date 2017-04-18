@@ -33,6 +33,8 @@
 
 #define super FileAccess
 
+xmap_p<NetAccess::SiteData> NetAccess::site_data;
+
 void NetAccess::Init()
 {
    resolver=0;
@@ -284,6 +286,7 @@ bool NetAccess::ReconnectAllowed()
 {
    if(max_retries>0 && retries>=max_retries)
       return true; // it will fault later - no need to wait.
+   int connection_limit=GetConnectionLimit();
    if(connection_limit>0 && connection_limit<=CountConnections())
       return false;
    if(reconnect_timer.Stopped())
@@ -293,6 +296,7 @@ bool NetAccess::ReconnectAllowed()
 
 const char *NetAccess::DelayingMessage()
 {
+   int connection_limit=GetConnectionLimit();
    if(connection_limit>0 && connection_limit<=CountConnections())
       return _("Connection limit reached");
    long remains=reconnect_timer.TimeLeft();
