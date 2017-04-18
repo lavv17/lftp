@@ -254,11 +254,11 @@ bool FileAccess::SameSiteAs(const FileAccess *fa) const
    return SameProtoAs(fa);
 }
 
-const char *FileAccess::GetFileURL(const char *f,int flags) const
+const xstring& FileAccess::GetFileURL(const char *f,int flags) const
 {
    const char *proto=GetVisualProto();
    if(proto[0]==0)
-      return "";
+      return xstring::get_tmp("");
 
    ParsedURL u;
 
@@ -295,7 +295,7 @@ const char *FileAccess::GetFileURL(const char *f,int flags) const
    return u.CombineTo(xstring::get_tmp(""),home);
 }
 
-const char *FileAccess::GetConnectURL(int flags) const
+const xstring& FileAccess::GetConnectURL(int flags) const
 {
    return GetFileURL(0,flags);
 }
@@ -656,7 +656,7 @@ void SessionPool::Print(FILE *f)
    // sort?
 
    for(i=0; i<n; i++)
-      fprintf(f,"%d\t%s\n",arr[i],pool[arr[i]]->GetConnectURL());
+      fprintf(f,"%d\t%s\n",arr[i],pool[arr[i]]->GetConnectURL().get());
 }
 
 FileAccess *SessionPool::GetSession(int n)
