@@ -1988,6 +1988,7 @@ void FileVerificator::InitVerify(const char *f)
       return;
    ArgV *args=new ArgV(ResMgr::Query("xfer:verify-command",0));
    args->Append(f);
+   Log::global->Format(9,"running %s %s\n",args->a0(),f);
    verify_process=new InputFilter(args);
    verify_process->StderrToStdout();
    verify_buffer=new IOBufferFDStream(verify_process.Cast<FDStream>(),IOBuffer::GET);
