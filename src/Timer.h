@@ -31,8 +31,8 @@ class Timer
    Time stop;
    TimeInterval last_setting;
    double random_max;
-   const char *resource;
-   const char *closure;
+   xstring_c resource;
+   xstring_c closure;
 
    static int infty_count;
    static xlist_head<Timer> all_timers;
