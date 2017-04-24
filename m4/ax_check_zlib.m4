@@ -105,7 +105,7 @@ then
   ZLIB_OLD_LDFLAGS="$LDFLAGS"
   ZLIB_OLD_CPPFLAGS="$CPPFLAGS"
   if test -n "${ZLIB_HOME}"; then
-        LDFLAGS="$LDFLAGS -L${ZLIB_HOME}/lib -R${ZLIB_HOME}/lib"
+        LDFLAGS="$LDFLAGS -L${ZLIB_HOME}/lib"
         CPPFLAGS="$CPPFLAGS -I${ZLIB_HOME}/include"
   fi
   AC_LANG_SAVE
@@ -119,6 +119,7 @@ then
     # If both library and header were found, action-if-found
     #
     m4_ifblank([$1],[
+		LDFLAGS="$LDFLAGS -R${ZLIB_HOME}/lib"
                 LIBS="-lz $LIBS"
                 AC_DEFINE([HAVE_LIBZ], [1],
                           [Define to 1 if you have `z' library (-lz)])

@@ -109,7 +109,7 @@ AC_DEFUN([AX_LIB_EXPAT],
 
     if test -n "$expat_prefix"; then
         expat_include_dir="$expat_prefix/include"
-        expat_ld_flags="-L$expat_prefix/lib -R$expat_prefix/lib"
+        expat_ld_flags="-L$expat_prefix/lib"
         expat_lib_flags="-lexpat"
         run_expat_test="yes"
     elif test "$expat_requested" = "yes"; then
@@ -180,7 +180,7 @@ p = NULL;
                 )],
                 [
                 EXPAT_LIBS="$expat_lib_flags"
-                EXPAT_LDFLAGS="$expat_ld_flags"
+                EXPAT_LDFLAGS="$expat_ld_flags -R$expat_prefix/lib"
                 expat_lib_found="yes"
                 AC_MSG_RESULT([found])
                 ],

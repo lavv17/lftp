@@ -306,7 +306,7 @@ fi
 
 AX_CHECK_ZLIB([
    AC_SUBST([ZLIB],[-lz])
-   AC_SUBST([ZLIB_LDFLAGS],["-L${ZLIB_HOME}/lib"])
+   AC_SUBST([ZLIB_LDFLAGS],["-L${ZLIB_HOME}/lib -R${ZLIB_HOME}/lib"])
    AC_SUBST([ZLIB_CPPFLAGS],["-I${ZLIB_HOME}/include"])
 ],[
    AC_MSG_ERROR([cannot find -lz library, install zlib-devel package])
