@@ -107,7 +107,7 @@ AC_DEFUN([lftp_LIB_READLINE],
 	if test -f "$readline_include_dir/readline/readline.h"; then
 	    readline_include_dir="$readline_include_dir/readline"
 	fi
-        readline_ld_flags="-L$readline_prefix/lib"
+        readline_ld_flags="-L$readline_prefix/lib -R$readline_prefix/lib"
         readline_lib_flags="-lreadline"
         run_readline_test="yes"
     elif test "$readline_requested" = "yes"; then
