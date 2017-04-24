@@ -314,3 +314,9 @@ stddef.h
 limits.h
 /stripslash.c
 /minmax.h
+/_Noreturn.h
+/getopt-cdefs.in.h
+/getopt-core.h
+/getopt-ext.h
+/getopt-pfx-core.h
+/getopt-pfx-ext.h
