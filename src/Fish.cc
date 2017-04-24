@@ -144,25 +144,23 @@ int Fish::Do()
       const char *prog=Query("connect-program",hostname);
       if(!prog || !prog[0])
 	 prog="ssh -a -x";
-      char *a=alloca_strdup(prog);
-      ArgV *cmd=new ArgV;
-      for(a=strtok(a," "); a; a=strtok(0," "))
-	 cmd->Add(a);
+      ArgV args;
       if(user)
       {
-	 cmd->Add("-l");
-	 cmd->Add(user);
+	 args.Add("-l");
+	 args.Add(user);
       }
       if(portname)
       {
-	 cmd->Add("-p");
-	 cmd->Add(portname);
+	 args.Add("-p");
+	 args.Add(portname);
       }
-      cmd->Add(hostname);
-      cmd->Add(init);
-      xstring_ca cmd_str(cmd->Combine(0));
+      args.Add(hostname);
+      args.Add(init);
+      xstring_ca cmd_q(args.CombineShellQuoted(0));
+      xstring& cmd_str=xstring::cat(prog," ",cmd_q.get(),NULL);
       LogNote(9,"%s (%s)\n",_("Running connect program"),cmd_str.get());
-      ssh=new PtyShell(cmd);
+      ssh=new PtyShell(cmd_str);
       ssh->UsePipes();
       state=CONNECTING;
       timeout_timer.Reset();
