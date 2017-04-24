@@ -4,7 +4,7 @@ EXTRA_DIST = lftp.conf FAQ MIRRORS BUGS FEATURES\
 if NEED_TRIO
    TRIO = trio
 endif
-SUBDIRS = m4 doc lib $(TRIO) src po tests
+SUBDIRS = m4 doc lib $(TRIO) src po contrib tests
 ACLOCAL_AMFLAGS = -I m4
 
 install-data-local:

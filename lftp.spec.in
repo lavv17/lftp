@@ -57,3 +57,5 @@ rm -rf %{buildroot}
 %{_mandir}/man*/*
 %attr(755 root root) %{_datadir}/lftp/*
 %{_datadir}/locale/*/*/*
+%{_datadir}/applications/*
+%{_datadir}/icons/*/*/*/*

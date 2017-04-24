@@ -618,6 +618,7 @@ AC_CONFIG_FILES([doc/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([m4/Makefile])
 AC_CONFIG_FILES([trio/Makefile])
+AC_CONFIG_FILES([contrib/Makefile])
 AC_CONFIG_FILES([tests/Makefile])
 AC_CONFIG_FILES([lftp.spec])
 
