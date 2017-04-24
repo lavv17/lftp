@@ -1713,12 +1713,28 @@ CMD(cat)
 
 CMD(get)
 {
+   static struct option get_options[] = {
+      {"continue",no_argument,0,'c'},
+      {"Remove-source-files",no_argument,0,'E'},
+      {"remove-target",no_argument,0,'e'},
+      {"ascii",no_argument,0,'a'},
+      {"target-directory",required_argument,0,'O'},
+      {"destination-directory",required_argument,0,'O'},
+      {"quiet",no_argument,0,'q'},
+      {"parallel",optional_argument,0,'P'},
+      {"use-pget-n",optional_argument,0,'n'},
+      {"glob",no_argument,0,256+'g'},
+      {"reverse",no_argument,0,256+'R'},
+      {0}
+   };
+   const char *opts="+cEeaO:qP";
+
    int opt;
    bool cont=false;
-   const char *opts="+cEeuaO:q";
    const char *op=args->a0();
-   ArgV	 *get_args=new ArgV(op);
+   Ref<ArgV> get_args(new ArgV(op));
    int n_conn=1;
+   int parallel=0;
    bool del=false;
    bool del_target=false;
    bool ascii=false;
@@ -1726,40 +1742,35 @@ CMD(get)
    bool make_dirs=false;
    bool reverse=false;
    bool quiet=false;
-   xstring_c output_dir;
+   const char *output_dir=0;
 
    if(!strncmp(op,"re",2))
    {
       cont=true;
-      opts="+EuaO:q";
+      opts="+EaO:qP:";
    }
    if(!strcmp(op,"pget"))
    {
-      opts="+n:ceuO:q";
+      opts="+n:ceO:q";
       n_conn=0; // default, which means to take pget:default-n
    }
    else if(!strcmp(op,"put") || !strcmp(op,"reput"))
    {
       reverse=true;
    }
-   else if(!strcmp(op,"mget"))
+   else if(!strcmp(op,"mget") || !strcmp(op,"mput"))
    {
       glob=true;
-      opts="cEeadO:q";
-   }
-   else if(!strcmp(op,"mput"))
-   {
-      glob=true;
-      opts="cEeadO:q";
-      reverse=true;
+      opts="cEeadO:qP:";
+      reverse=(op[1]=='p');
    }
    if(!reverse)
    {
       const char *od=ResMgr::Query("xfer:destination-directory",session->GetHostName());
       if(od && *od)
-	 output_dir.set(od);
+	 output_dir=od;
    }
-   while((opt=args->getopt(opts))!=EOF)
+   while((opt=args->getopt_long(opts,get_options))!=EOF)
    {
       switch(opt)
       {
@@ -1767,12 +1778,15 @@ CMD(get)
 	 cont=true;
 	 break;
       case('n'):
-	 if(!isdigit((unsigned char)optarg[0]))
-	 {
-	    eprintf(_("%s: -n: Number expected. "),op);
-	    goto err;
-	 }
-	 n_conn=atoi(optarg);
+	 if(optarg) {
+	    if(!isdigit((unsigned char)optarg[0]))
+	    {
+	       eprintf(_("%s: %s: Number expected. "),"-n",op);
+	       goto err;
+	    }
+	    n_conn=atoi(optarg);
+	 } else
+	    n_conn=3;
 	 break;
       case('E'):
 	 del=true;
@@ -1787,18 +1801,39 @@ CMD(get)
 	 make_dirs=true;
 	 break;
       case('O'):
-	 output_dir.set(optarg);
+	 output_dir=optarg;
 	 break;
       case('q'):
 	 quiet=true;
 	 break;
+      case('P'):
+	 if(optarg) {
+	    if(!isdigit((unsigned char)optarg[0]))
+	    {
+	       eprintf(_("%s: %s: Number expected. "),"-P",op);
+	       goto err;
+	    }
+	    parallel=atoi(optarg);
+	 } else
+	    parallel=3;
+	 break;
+      case(256+'R'):
+	 reverse=!reverse;
+	 break;
+      case(256+'g'):
+	 glob=true;
+	 break;
       case('?'):
       err:
 	 eprintf(_("Try `help %s' for more information.\n"),op);
-	 delete get_args;
 	 return 0;
       }
    }
+   if(cont && del_target) {
+      eprintf(_("%s: --continue conflicts with --remove-target.\n"),op);
+      return 0;
+   }
+   JobRef<GetJob> j;
    if(glob)
    {
       if(args->getcurr()==0)
@@ -1808,56 +1843,49 @@ CMD(get)
 	 eprintf(_("File name missed. "));
 	 goto err;
       }
-      delete get_args;
-      // remove options
-      while(args->getindex()>1)
-	 args->delarg(1);
-      mgetJob *j=new mgetJob(session->Clone(),args.borrow(),cont,make_dirs);
-      if(reverse)
-	 j->Reverse();
-      if(del)
-	 j->DeleteFiles();
-      if(ascii)
-	 j->Ascii();
+      mgetJob *mj=new mgetJob(session->Clone(),args,cont,make_dirs);
       if(output_dir)
-	 j->OutputDir(output_dir.borrow());
-      j->Quiet(quiet);
-      return j;
+	 mj->OutputDir(output_dir);
+      j=mj;
    }
-   args->back();
-   const char *a=args->getnext();
-   if(a==0)
-      goto file_name_missed;
-   while(a)
+   else
    {
-      const char *src=a;
-      const char *dst=0;
-      a=args->getnext();
-      if(a && !strcmp(a,"-o"))
+      args->back();
+      const char *a=args->getnext();
+      if(a==0)
+	 goto file_name_missed;
+      while(a)
       {
-	 dst=args->getnext();
+	 const char *src=a;
+	 const char *dst=0;
 	 a=args->getnext();
+	 if(a && !strcmp(a,"-o"))
+	 {
+	    dst=args->getnext();
+	    a=args->getnext();
+	 }
+	 if(reverse)
+	    src=expand_home_relative(src);
+	 dst=output_file_name(src,dst,!reverse,output_dir,false);
+	 get_args->Append(src);
+	 get_args->Append(dst);
       }
-      if(reverse)
-	 src=expand_home_relative(src);
-      dst=output_file_name(src,dst,!reverse,output_dir,false);
-      get_args->Append(src);
-      get_args->Append(dst);
+      j=new GetJob(session->Clone(),get_args.borrow(),cont);
    }
-
-   GetJob *j=new GetJob(session->Clone(),get_args,cont);
+   if(reverse)
+      j->Reverse();
    if(del)
       j->DeleteFiles();
    if(del_target)
       j->RemoveTargetFirst();
    if(ascii)
       j->Ascii();
-   if(reverse)
-      j->Reverse();
    if(n_conn!=1)
       j->SetCopyJobCreator(new pCopyJobCreator(n_conn));
+   if(parallel>0)
+      j->SetParallel(parallel);
    j->Quiet(quiet);
-   return j;
+   return j.borrow();
 }
 
 CMD(edit)
@@ -3379,6 +3407,7 @@ CMD(get1)
       {"output",required_argument,0,'o'},
       {"remove-source-later",no_argument,0,'E'},
       {"remove-target-first",no_argument,0,'e'},
+      {"make-target-dir",no_argument,0,'d'},
       {"quiet",no_argument,0,'q'},
       {0,0,0,0}
    };
@@ -3388,11 +3417,12 @@ CMD(get1)
    bool cont=false;
    bool ascii=false;
    bool quiet=false;
+   bool do_mkdir=false;
    long long source_region_begin=0,source_region_end=FILE_END;
    long long target_region_begin=0,target_region_end=FILE_END;
    int n,p;
 
-   while((opt=args->getopt_long("arco:",get1_options))!=EOF)
+   while((opt=args->getopt_long("arco:d",get1_options))!=EOF)
    {
       switch(opt)
       {
@@ -3425,6 +3455,9 @@ CMD(get1)
 	 break;
       case('q'):
 	 quiet=true;
+	 break;
+      case('d'):
+	 do_mkdir=true;
 	 break;
       case '?':
       usage:
@@ -3478,6 +3511,8 @@ CMD(get1)
       }
    }
 
+   dst=alloca_strdup(dst); // save tmp xstring
+
    FileCopyPeer *src_peer=0;
    FileCopyPeer *dst_peer=0;
 
@@ -3492,6 +3527,8 @@ CMD(get1)
    dst_peer->AutoRename(auto_rename && ResMgr::QueryBool("xfer:auto-rename",0));
    if(!cont && (target_region_begin>0 || target_region_end!=FILE_END))
       dst_peer->SetRange(target_region_begin,target_region_end);
+   if(do_mkdir)
+      dst_peer->MakeTargetDir();
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
 

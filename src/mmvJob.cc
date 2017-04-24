@@ -31,7 +31,7 @@ mmvJob::mmvJob(FileAccess *session,const ArgV *args,const char *t,FA::open_mode 
 {
    op.set(args->a0());
    for(int i=args->getindex(); i<args->count(); i++)
-      wcd.push(strdup(args->getarg(i)));
+      wcd.push(xstrdup(args->getarg(i)));
 }
 
 void mmvJob::doOpen() const

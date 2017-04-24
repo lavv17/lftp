@@ -33,30 +33,6 @@
 
 #define super CopyJobEnv
 
-#define NO_MODE ((mode_t)-1)
-
-int   GetJob::Do()
-{
-   int m=STALL;
-
-   if(cp && cp->Done())
-   {
-      if(cp->Error()) {
-	 // in case of errors, move the backup to original location
-	 if(local && backup_file)
-	    rename(backup_file,local->full_name);
-      } else {
-	 // now we can delete the old file, since there is a new one
-	 RemoveBackupFile();
-	 if(file_mode!=NO_MODE && local)
-	    chmod(local->full_name,file_mode);
-      }
-   }
-   if(super::Do()==MOVED)
-      m=MOVED;
-   return m;
-}
-
 FileCopyPeer *GetJob::SrcLocal(const char *src)
 {
    const char *f=(cwd && src[0]!='/') ? dir_file(cwd,src) : src;
@@ -65,35 +41,11 @@ FileCopyPeer *GetJob::SrcLocal(const char *src)
 FileCopyPeer *GetJob::DstLocal(const char *dst)
 {
    bool clobber=(cont || QueryBool("xfer:clobber",0));
-   int flags=O_WRONLY|O_CREAT|(truncate_target_first?O_TRUNC:0);
+   int flags=O_WRONLY|O_CREAT|(truncate_target_first?O_TRUNC:0)|(clobber?0:O_EXCL);
    dst=expand_home_relative(dst);
    const char *f=(cwd && dst[0]!='/') ? dir_file(cwd,dst) : dst;
 
-   struct stat st;
-   if(stat(f,&st)!=-1)
-   {
-      if(st.st_size>0 && S_ISREG(st.st_mode))
-      {
-	 if(!clobber)
-	 {
-	    eprintf(_("%s: %s: file already exists and xfer:clobber is unset\n"),op,dst);
-	    errors++;
-	    count++;
-	    return 0;
-	 }
-	 if(truncate_target_first && QueryBool("xfer:make-backup",0))
-	 {
-	    /* rename old file if exists and size>0 */
-	    xstring_ca suffix(xstrftime(Query("xfer:backup-suffix",0),now));
-	    backup_file.set(f).append(suffix);
-	    if(rename(f,backup_file)!=0)
-	       backup_file.set(0);
-	    else
-	       file_mode=st.st_mode;
-	 }
-      }
-   }
-   local=new FileStream(f,flags); // local is for pget.
+   FileStream *local=new FileStream(f,flags);
    FileCopyPeerFDStream *p=new FileCopyPeerFDStream(local,FileCopyPeer::PUT);
    p->CloseWhenDone();
    return p;
@@ -126,8 +78,11 @@ FileCopyPeer *GetJob::CreateCopyPeer(FileAccess *session,const char *path,FA::op
 FileCopyPeer *GetJob::CreateCopyPeer(const FileAccessRef& session,const char *path,FA::open_mode mode)
 {
    ParsedURL url(path,true);
-   if(IsRemoteNonURL(url,mode))
+   if(IsRemoteNonURL(url,mode)) {
+      if(parallel>1) // need to clone the session for parallel transfers
+	 return new FileCopyPeerFA(session->Clone(),path,mode);
       return new FileCopyPeerFA(session,path,mode);
+   }
    return CreateCopyPeer(url,path,mode);
 }
 FileCopyPeer *GetJob::CreateCopyPeer(const ParsedURL &url,const char *path,FA::open_mode mode)
@@ -146,24 +101,19 @@ FileCopyPeer *GetJob::CreateCopyPeer(const char *path,FA::open_mode mode)
 void GetJob::NextFile()
 {
 try_next:
-   file_mode=NO_MODE;
-   backup_file.set(0);
-   local=0;
-
    if(!args)
       return;
 
    const char *src=args->getnext();
    const char *dst=args->getnext();
    if(!src || !dst)
-   {
-      SetCopier(0,0);
       return;
-   }
 
    FileCopyPeer *dst_peer=CreateCopyPeer(session,dst,FA::STORE);
    if(!dst_peer)
       goto try_next;
+   if(make_dirs)
+      dst_peer->MakeTargetDir();
    FileCopyPeer *src_peer=CreateCopyPeer(session,src,FA::RETRIEVE);
 
    FileCopy *c=FileCopy::New(src_peer,dst_peer,cont);
@@ -173,24 +123,15 @@ try_next:
    if(remove_target_first)
       c->RemoveTargetFirst();
 
-   SetCopier(c,src);
-}
-
-void GetJob::RemoveBackupFile()
-{
-   if(backup_file && !QueryBool("xfer:keep-backup",0))
-   {
-      remove(backup_file);
-      backup_file.set(0);
-   }
+   AddCopier(c,src);
 }
 
 GetJob::GetJob(FileAccess *s,ArgV *a,bool c)
    : CopyJobEnv(s,a,c)
 {
+   make_dirs=false;
    delete_files=false;
    remove_target_first=false;
    truncate_target_first=!cont;
-   file_mode=NO_MODE;
    reverse=false;
 }

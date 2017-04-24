@@ -72,6 +72,8 @@ public:
    virtual pid_t GetProcGroup() const { return 0; }
    virtual bool broken() { return false; }
    virtual bool can_seek() { return false; }
+   virtual void revert_backup() {}
+   virtual void remove_backup() {}
 };
 
 class OutputFilter : public FDStream
@@ -137,8 +139,11 @@ public:
 class FileStream : public FDStream
 {
    int mode;
-   int create_mode;
+   mode_t create_mode;
    bool do_lock;
+
+   xstring_c backup_file;
+   mode_t old_file_mode;
 public:
    FileStream(const char *fname,int open_mode);
    ~FileStream();
@@ -151,7 +156,9 @@ public:
    bool can_seek();
    off_t get_size();
    void set_lock(bool flag=true) { do_lock=flag; }
-   void set_create_mode(int m) { create_mode=m; }
+   void set_create_mode(mode_t m) { create_mode=m; }
+   void revert_backup();
+   void remove_backup();
 };
 
 #endif /* FILTER_H */

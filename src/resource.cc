@@ -396,6 +396,7 @@ static ResType lftp_vars[] = {
    {"xfer:make-backup",		 "yes",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:keep-backup",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"xfer:backup-suffix",	 "~%Y%m%d%H%M%S~",0,ResMgr::NoClosure},
+   {"xfer:parallel",		 "1",	  ResMgr::UNumberValidate,ResMgr::NoClosure},
 
    // deprecated settings
    {"xfer:log",		   "log:enabled/xfer",   0,ResMgr::AliasValidate},
