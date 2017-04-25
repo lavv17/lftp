@@ -31,6 +31,7 @@
 #include "misc.h"
 #include "log.h"
 #include "ArgV.h"
+#include <malloc.h>
 
 #define super SSH_Access
 
@@ -1172,30 +1173,30 @@ void FishDirList::ResumeInternal()
 static FileSet *ls_to_FileSet(const char *b,int len)
 {
    FileSet *set=new FileSet;
-   while(len>0) {
-      // find one line
-      const char *line=b;
-      int ll=len;
-      const char *eol=find_char(b,len,'\n');
-      if(eol) {
-	 ll=eol-b;
-	 len-=ll+1;
-	 b+=ll+1;
-      } else {
-	 len=0;
-      }
+   char *buf=(char*) malloc(len+1);
+   if (buf == NULL) {
+        fprintf(stderr, "failed to allocate memory.\n");
+        exit(-1);
+   }
+   memcpy(buf,b,len);
+   buf[len]=0;
+   for(char *line=strtok(buf,"\n"); line; line=strtok(0,"\n"))
+   {
+      int ll=strlen(line);
       if(ll && line[ll-1]=='\r')
-	 --ll;
+	 line[--ll]=0;
       if(ll==0)
 	 continue;
 
-      FileInfo *f=FileInfo::parse_ls_line(line,ll,"GMT");
+      FileInfo *f=FileInfo::parse_ls_line(line,"GMT");
 
       if(!f)
 	 continue;
 
       set->Add(f);
    }
+
+   free(buf);
    return set;
 }
 
