@@ -1,5 +1,6 @@
 language: c++
-sudo: false
+sudo: true
+dist: trusty
 
 compiler:
     - clang
@@ -22,5 +23,20 @@ addons:
 
 script:
     - ./bootstrap
-    - ./configure
-    - make release-check
+    - ./configure --prefix=/usr
+    - make -j4
+    - make install DESTDIR=$(readlink -f appdir) ; find appdir/
+    - # Dear upstream developer, can you make the Makefile do the next 4 lines?
+    - mkdir -p appdir/usr/share/icons/hicolor/48x48/apps/
+    - cp contrib/lftp-icon.png appdir/usr/share/icons/hicolor/48x48/apps/
+    - mkdir -p appdir/usr/share/applications 
+    - cp contrib/lftp.desktop appdir/usr/share/applications
+    
+after_success:
+  - appdir/usr/bin/lftp -c "get https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage" 
+  - chmod a+x linuxdeployqt*.AppImage
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
+  - ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop -appimage
+  - find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - curl --upload-file ./LFTP*.AppImage https://transfer.sh/LFTP-git.$(git rev-parse --short HEAD)-x86_64.AppImage
