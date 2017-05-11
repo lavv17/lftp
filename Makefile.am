@@ -27,6 +27,7 @@ dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
 
+# release rules
 REL_DIR=/home/lav/www-lftp/ftp
 
 release-check:
@@ -52,3 +53,30 @@ release-ftp:
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.bz2; \
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.xz; \
 	    md5sum $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION).tar.bz2 $(PACKAGE)-$(VERSION).tar.xz > $(PACKAGE)-$(VERSION).md5sum)
+
+
+# AppImage building rules
+linuxdeployqt=linuxdeployqt-continuous-$(build_cpu).AppImage
+lftp_desktop=$(prefix)/share/applications/lftp.desktop
+lftp_appimage=lftp-$(host_cpu).AppImage
+CLEANFILES=$(lftp_appimage)
+DISTCLEANFILES=$(linuxdeployqt)
+
+$(linuxdeployqt):
+	test -x src/lftp || $(MAKE) $(AM_MAKEFLAGS) all
+	LFTP_MODULE_PATH=$(top_builddir)/src/.libs $(top_builddir)/src/lftp -c \
+	    "get https://github.com/probonopd/linuxdeployqt/releases/download/continuous/$(linuxdeployqt)"
+	chmod a+x $(linuxdeployqt)
+
+$(lftp_appimage): $(linuxdeployqt)
+	$(MAKE) $(AM_MAKEFLAGS) install DESTDIR="`readlink -f appdir`"
+	unset QTDIR QT_PLUGIN_PATH LD_LIBRARY_PATH \
+	&& ./$(linuxdeployqt) ./appdir$(lftp_desktop) -bundle-non-qt-libs \
+	&& ./$(linuxdeployqt) ./appdir$(lftp_desktop) -appimage
+	-rm -rf appdir
+
+appimage: $(lftp_appimage)
+.PHONY: appimage
+
+clean-local:
+	-rm -rf appdir
