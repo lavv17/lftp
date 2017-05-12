@@ -106,6 +106,8 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
 	 {
 	    tmp_line.set(line);	 // parser can clobber the line - work on a copy
 	    FileInfo *info=(*line_parsers[i])(tmp_line.get_non_const(),&err[i],tz);
+	    if(info && info->name.length()>1)
+	       info->name.chomp('/');
 	    if(info && !strchr(info->name,'/'))
 	       set[i]->Add(info);
 	    else
@@ -129,6 +131,8 @@ FileSet *Ftp::ParseLongList(const char *buf,int len,int *err_ret) const
       else
       {
 	 FileInfo *info=(*guessed_parser)(line.get_non_const(),the_err,tz);
+	 if(info && info->name.length()>1)
+	    info->name.chomp('/');
 	 if(info && !strchr(info->name,'/'))
 	    (*the_set)->Add(info);
 	 else
