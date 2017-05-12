@@ -28,6 +28,58 @@
 class NetAccess : public FileAccess, public Networker
 {
 protected:
+   class SiteData
+   {
+      int current_connection_limit;
+      int connection_limit;
+      Timer connection_limit_timer;
+
+   public:
+      SiteData(const xstring &site)
+	 : current_connection_limit(0), connection_limit(0),
+	   connection_limit_timer("net:connection-limit-timer",site) {}
+
+      void SetConnectionLimit(int L) {
+	 connection_limit=L;
+	 if(L && current_connection_limit>=L) {
+	    current_connection_limit=L;
+	    connection_limit_timer.Stop();
+	 }
+      }
+      int GetConnectionLimit() {
+	 if(current_connection_limit
+	 && (!connection_limit || connection_limit>current_connection_limit)
+	 && connection_limit_timer.Stopped()) {
+	    current_connection_limit++;
+	    if(!connection_limit || connection_limit>current_connection_limit)
+	       connection_limit_timer.Reset();
+	 }
+	 return current_connection_limit;
+      }
+      void DecreaseConnectionLimit() {
+	 if(current_connection_limit>1) {
+	    current_connection_limit--;
+	    connection_limit_timer.Reset();
+	 }
+      }
+   };
+
+   static xmap_p<NetAccess::SiteData> site_data;
+   SiteData *GetSiteData() const {
+      const xstring& key=GetConnectURL(NO_PATH);
+      SiteData *data=site_data.lookup(key);
+      if(!data) {
+	 data=new SiteData(key);
+	 site_data.add(key,data);
+      }
+      data->SetConnectionLimit(connection_limit);
+      return data;
+   }
+
+   int GetConnectionLimit() {
+      return GetSiteData()->GetConnectionLimit();
+   }
+
    SMTaskRef<Resolver> resolver;
 
    xarray<sockaddr_u> peer;

@@ -846,7 +846,7 @@ void Http::SendRequest(const char *connection,const char *f)
    case RENAME:
       {
 	 SendMethod("MOVE",efile);
-	 Send("Destination: %s\r\n",GetFileURL(file1));
+	 Send("Destination: %s\r\n",GetFileURL(file1).get());
       }
    }
    if(proxy && !https)

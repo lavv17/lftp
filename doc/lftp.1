@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "27 Mar 2017"
+.TH lftp 1 "18 Apr 2017"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -1778,6 +1778,10 @@ This setting can be GMT offset [+|-]HH[:MM[:SS]] or any valid TZ value
 Set it to an empty value to assume local timezone specified by environment
 variable TZ.
 .TP
+.BR ftp:too-many-re \ (regexp)
+Decrease the dynamic connection limit when 421 reply line matches this
+regular expression.
+.TP
 .BR ftp:trust-feat \ (string)
 When true, assume that FEAT returned data are correct and don't use
 common protocol extensions like SIZE, MDTM, REST if they are not listed.
@@ -2094,6 +2098,9 @@ environment variable LFTP_MODULE_PATH. Default is `PKGLIBDIR/VERSION:PKGLIBDIR'.
 .TP
 .BR net:connection-limit \ (number)
 maximum number of concurrent connections to the same site. 0 means unlimited.
+.TP
+.BR net:connection-limit-timer " (time interval)"
+increase the dynamic connection limit after this time interval.
 .TP
 .BR net:connection-takeover \ (boolean)
 if true, foreground connections have priority over background ones and can

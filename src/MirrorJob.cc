@@ -377,7 +377,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    if(remove_source_files)
 	       args.Append("-E");
 	    args.Append("-O");
-	    args.Append(target_is_local?target_dir.get()
+	    args.Append(target_is_local?target_dir
 			:target_session->GetConnectURL());
 	    args.Append(source_session->GetFileURL(file->name));
 	    xstring_ca cmd(args.CombineQuoted());
@@ -752,7 +752,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
       {
 	 // create target dir even if failed to cd to source dir.
 	 if(script)
-	    fprintf(script,"mkdir %s\n",target_session->GetFileURL(target_dir));
+	    fprintf(script,"mkdir %s\n",target_session->GetFileURL(target_dir).get());
 	 if(!script_only)
 	 {
 	    ArgV *a=new ArgV("mkdir");
@@ -1056,7 +1056,7 @@ int   MirrorJob::Do()
 	 if(!file->TypeIs(file->DIRECTORY))
 	    continue;
 	 if(script)
-	    fprintf(script,"mkdir %s\n",target_session->GetFileURL(file->name));
+	    fprintf(script,"mkdir %s\n",target_session->GetFileURL(file->name).get());
 	 if(!script_only)
 	 {
 	    ArgV *a=new ArgV("mkdir");

@@ -1277,7 +1277,7 @@ int FileCopyPeerFA::Get_LL(int len)
    }
    else if(res==0)
    {
-      debug((10,"copy-peer: EOF on %s\n",session->GetFileURL(session->GetFile())));
+      debug((10,"copy-peer: EOF on %s\n",session->GetFileURL(session->GetFile()).get()));
       eof=true;
       FileAccess::cache->Add(session,file,FAmode,FA::OK,this);
       SetSuggestedFileName(session->GetSuggestedFileName());

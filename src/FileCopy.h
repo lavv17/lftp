@@ -346,7 +346,7 @@ public:
 
    const char *GetDescriptionForLog()
       {
-	 return orig_url ? orig_url.get() : session->GetFileURL(file);
+	 return orig_url ? orig_url : session->GetFileURL(file);
       }
    const char *GetURL() { return GetDescriptionForLog(); }
    FileCopyPeer *Clone();
