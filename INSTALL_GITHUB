@@ -1,0 +1,18 @@
+Compiling LFTP from github source
+=================================
+
+ * Make sure compile tools are installed
+ * Install dependencies: `sudo apt-get install gnulib gnutls-bin libgnutls28-dev ncurses-dev`
+ * Create configuration files`./autogen.sh`
+ * if it fails with error:
+
+    configure: creating ./config.status
+    config.status: error: cannot find input file: `Makefile.in'
+
+    try `libtoolize`, then again `./autogen.sh`
+
+ * Compile: `make`
+ * Executable now at: `./src/lftp --version`
+
+In case of errors, search for error message within this repository: https://github.com/lavv17/lftp
+There may be issue reports providing a solution.
