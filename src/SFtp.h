@@ -740,6 +740,7 @@ private:
    void MoveConnectionHere(SFtp *o);
 
    bool	 eof;
+   bool	 dir;
 
    void	 SendRequest();
    void	 SendRequest(Packet *req,Expect::expect_t exp,int i=0);
