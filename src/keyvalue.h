@@ -47,6 +47,11 @@ public:
 	 {
 	    return strcmp(s,key);
 	 }
+
+      int ValueCompare(const char *s) const
+         {
+            return strcmp(s,value);
+         }
       void SetValue(const char *v) { value.set(v); }
    };
 
@@ -60,6 +65,7 @@ protected:
 	 delete to_free;
       }
    Pair **LookupPair(const char *key) const;
+   Pair **LookupFirstPairByValue(const char *value) const;
    void AddPair(Pair *p)
       {
 	 p->next=chain;
@@ -80,6 +86,7 @@ public:
    void Add(const char *id,const char *value);
    void Remove(const char *id);
    const char *Lookup(const char *id) const;
+   const char *LookupFirstKeyByValue(const char *value) const;
    void Empty()
       {
 	 while(chain)
@@ -127,6 +134,11 @@ public:
    static int KeyCompare(const Pair *a,const Pair *b)
       {
 	 return strcmp(a->key,b->key);
+      }
+
+   static int ValueCompare(const Pair *a,const Pair *b)
+      {
+         return strcmp(a->value,b->value);
       }
    static int VKeyCompare(const void *a,const void *b);
 };
