@@ -571,7 +571,7 @@ got_fileset:
 	 {
 	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
-	       //file->filetype=file->NORMAL;
+	       file->filetype=file->UNKNOWN;
 	       file->defined &= ~(file->SIZE|file->SYMLINK_DEF|file->MODE|file->DATE|file->TYPE);
 	       file->Need(file->SIZE|file->DATE);
 	    }

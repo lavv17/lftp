@@ -2279,6 +2279,7 @@ int SFtpListInfo::Do()
 	 {
 	    if(file->filetype==file->SYMLINK && follow_symlinks)
 	    {
+	       file->filetype=file->UNKNOWN;
 	       file->defined &= ~(file->SIZE|file->DATE|file->SYMLINK_DEF|file->MODE|file->TYPE|file->USER|file->GROUP);
 	       file->Need(file->SIZE|file->DATE|file->MODE|file->TYPE|file->USER|file->GROUP);
 	    }
