@@ -58,7 +58,7 @@ release-ftp:
 # AppImage building rules
 linuxdeployqt=linuxdeployqt-continuous-$(build_cpu).AppImage
 lftp_desktop=$(prefix)/share/applications/lftp.desktop
-lftp_appimage=lftp-$(host_cpu).AppImage
+lftp_appimage=$(PACKAGE)-$(VERSION)-$(host_cpu).AppImage
 CLEANFILES=$(lftp_appimage)
 DISTCLEANFILES=$(linuxdeployqt)
 
@@ -73,6 +73,7 @@ $(lftp_appimage): $(linuxdeployqt)
 	unset QTDIR QT_PLUGIN_PATH LD_LIBRARY_PATH \
 	&& ./$(linuxdeployqt) ./appdir$(lftp_desktop) -bundle-non-qt-libs \
 	&& ./$(linuxdeployqt) ./appdir$(lftp_desktop) -appimage
+	mv -f lftp-$(host_cpu).AppImage $(lftp_appimage)
 	-rm -rf appdir
 
 appimage: $(lftp_appimage)
