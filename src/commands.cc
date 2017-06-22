@@ -1199,6 +1199,7 @@ Job *CmdExec::builtin_glob()
    if(args->count()<2)
    {
       eprintf(_("Usage: %s [OPTS] command args...\n"),op);
+      RevertToSavedSession();
       return 0;
    }
    assert(args_glob==0 && glob==0);
@@ -1210,12 +1211,12 @@ Job *CmdExec::builtin_glob()
    {
       args_glob=0;
       args->rewind();
+      RevertToSavedSession();
       return cmd_command(this);
    }
    glob=new GlobURL(session,pat,glob_type);
    if(nullglob)
       glob->NullGlob();
-   RevertToSavedSession();
    builtin=BUILTIN_GLOB;
    return this;
 }

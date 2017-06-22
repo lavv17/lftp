@@ -293,7 +293,7 @@ void CmdExec::ExecParsed(ArgV *a,FDStream *o,bool b)
 
 bool CmdExec::Idle()
 {
-   return(waiting_num==0 && (cmd_buf.Size()==0 || partial_cmd));
+   return(waiting_num==0 && builtin==BUILTIN_NONE && (cmd_buf.Size()==0 || partial_cmd));
 }
 
 int CmdExec::Done()
@@ -496,6 +496,7 @@ int CmdExec::Do()
 	       if(status_line)
 		  status_line->Clear();
 	       exit_code=prev_exit_code;
+	       RevertToSavedSession();
 	       exec_parsed_command();
 	       return MOVED;
 	    }
