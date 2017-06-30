@@ -180,7 +180,7 @@ p = NULL;
                 )],
                 [
                 EXPAT_LIBS="$expat_lib_flags"
-                EXPAT_LDFLAGS="$expat_ld_flags"
+                EXPAT_LDFLAGS="$expat_ld_flags -R$expat_prefix/lib"
                 expat_lib_found="yes"
                 AC_MSG_RESULT([found])
                 ],
