@@ -1,4 +1,5 @@
-* du: allow multiple --exclude options to be combined.
+Version 4.8.0 - 2017-07-10
+
 * mirror: improved performance of --scan-all-first for big trees.
 * mirror: new --flat option to flatten the target directory structure.
 * mmv: new command for file moving; redirect mv to mmv in certain cases.
@@ -6,6 +7,14 @@
 * du: allow multiple --exclude options to be combined.
 * new setting cmd:nullglob for `glob' command prefix.
 * http: use proppatch to set last-modified property.
+* new settings net:connection-limit-timer and ftp:too-many-re.
+* ftp: dynamically ajust connection limit.
+* ftp: fixed core dump on LINK/SYMLINK when the command is not supported.
+* get1: fixed -o option.
+* sftp,fish: connect-program setting is now passed to the shell for execution.
+* get/mget/put/mput: add -P option for parallel transfers and long options.
+* appimage: new make target for making an AppImage file.
+* fixed "local glob".
 
 Version 4.7.7 - 2017-03-07
 
