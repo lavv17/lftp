@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.8\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2017-03-07 15:03+0300\n"
+"POT-Creation-Date: 2017-07-10 15:39+0300\n"
 "PO-Revision-Date: 2015-08-18 12:36+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
@@ -33,69 +33,44 @@ msgstr "неоднозначний аргумент %s для %s"
 msgid "Valid arguments are:"
 msgstr "Допустимі аргументи:"
 
-#: lib/error.c:191
+#: lib/error.c:195
 msgid "Unknown system error"
 msgstr "Невідома системна помилка"
 
-#: lib/getopt.c:575 lib/getopt.c:604
-#, c-format
-msgid "%s: option '%s' is ambiguous; possibilities:"
-msgstr "%s: параметр «%s» не є однозначним. Можливі варіанти:"
-
-#: lib/getopt.c:619
-#, c-format
-msgid "%s: option '%s' is ambiguous\n"
+#: lib/getopt.c:278
+#, fuzzy, c-format
+msgid "%s: option '%s%s' is ambiguous\n"
 msgstr "%s: параметр «%s» не є однозначним\n"
 
-#: lib/getopt.c:654 lib/getopt.c:658
-#, c-format
-msgid "%s: option '--%s' doesn't allow an argument\n"
-msgstr "%s: додавання аргументів до параметра «--%s» не передбачено\n"
+#: lib/getopt.c:284
+#, fuzzy, c-format
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
+msgstr "%s: параметр «%s» не є однозначним. Можливі варіанти:"
 
-#: lib/getopt.c:667 lib/getopt.c:672
-#, c-format
-msgid "%s: option '%c%s' doesn't allow an argument\n"
-msgstr "%s: додавання аргументів до параметра «%c%s» не передбачено\n"
-
-#: lib/getopt.c:715 lib/getopt.c:734
-#, c-format
-msgid "%s: option '--%s' requires an argument\n"
-msgstr "%s: до параметра «--%s» слід додати аргумент\n"
-
-#: lib/getopt.c:772 lib/getopt.c:775
-#, c-format
-msgid "%s: unrecognized option '--%s'\n"
-msgstr "%s: невідомий параметр «--%s»\n"
-
-#: lib/getopt.c:783 lib/getopt.c:786
-#, c-format
-msgid "%s: unrecognized option '%c%s'\n"
+#: lib/getopt.c:319
+#, fuzzy, c-format
+msgid "%s: unrecognized option '%s%s'\n"
 msgstr "%s: невідомий параметр «%c%s»\n"
 
-#: lib/getopt.c:835 lib/getopt.c:838
+#: lib/getopt.c:345
+#, fuzzy, c-format
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr "%s: додавання аргументів до параметра «%c%s» не передбачено\n"
+
+#: lib/getopt.c:360
+#, fuzzy, c-format
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr "%s: до параметра «--%s» слід додати аргумент\n"
+
+#: lib/getopt.c:621
 #, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s: некоректний параметр — «%c»\n"
 
-#: lib/getopt.c:891 lib/getopt.c:908 lib/getopt.c:1118 lib/getopt.c:1136
+#: lib/getopt.c:636 lib/getopt.c:682
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s: до параметра слід додати аргумент — «%c»\n"
-
-#: lib/getopt.c:964 lib/getopt.c:980
-#, c-format
-msgid "%s: option '-W %s' is ambiguous\n"
-msgstr "%s: параметр «-W %s» не є однозначним\n"
-
-#: lib/getopt.c:1004 lib/getopt.c:1022
-#, c-format
-msgid "%s: option '-W %s' doesn't allow an argument\n"
-msgstr "%s: додавання аргументів до параметра «-W %s» не передбачено\n"
-
-#: lib/getopt.c:1043 lib/getopt.c:1061
-#, c-format
-msgid "%s: option '-W %s' requires an argument\n"
-msgstr "%s: до параметра «-W %s» слід додати аргумент\n"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
@@ -118,11 +93,11 @@ msgstr "%s: до параметра «-W %s» слід додати аргуме
 #. If you don't know what to put here, please see
 #. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:354
+#: lib/quotearg.c:362
 msgid "`"
 msgstr "«"
 
-#: lib/quotearg.c:355
+#: lib/quotearg.c:363
 msgid "'"
 msgstr "»"
 
@@ -206,83 +181,83 @@ msgstr "Модулем для команди «%s» не зареєстрова�
 msgid "cd ok, cwd=%s\n"
 msgstr "cd виконано, cwd=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:721
+#: src/CmdExec.cc:405 src/MirrorJob.cc:720
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: отримано переспрямовування до «%s»\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1193
+#: src/CmdExec.cc:408 src/FileCopy.cc:1212
 msgid "Too many redirections"
 msgstr "Занадто багато переспрямувань"
 
-#: src/CmdExec.cc:516 src/CmdExec.cc:573
+#: src/CmdExec.cc:517 src/CmdExec.cc:574
 msgid "Interrupt"
 msgstr "Перервати"
 
-#: src/CmdExec.cc:638
+#: src/CmdExec.cc:639
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Попередження: відкидаємо неповну команду\n"
 
-#: src/CmdExec.cc:736
+#: src/CmdExec.cc:737
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tВиконуємо вбудоване «%s» [%s]\n"
 
-#: src/CmdExec.cc:741
+#: src/CmdExec.cc:742
 msgid "Queue is stopped."
 msgstr "Чергу виконання зупинено."
 
-#: src/CmdExec.cc:746
+#: src/CmdExec.cc:747
 msgid "Now executing:"
 msgstr "Зараз виконуємо:"
 
-#: src/CmdExec.cc:757
+#: src/CmdExec.cc:758
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tОчікуємо на переривання роботи над завданням [%d]\n"
 
-#: src/CmdExec.cc:760
+#: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "\tОчікуємо на переривання роботи над завданнями: "
 
-#: src/CmdExec.cc:769
+#: src/CmdExec.cc:770
 msgid "\tRunning\n"
 msgstr "\tВиконуємо\n"
 
-#: src/CmdExec.cc:771
+#: src/CmdExec.cc:772
 msgid "\tWaiting for command\n"
 msgstr "\tОчікуємо на команду\n"
 
-#: src/CmdExec.cc:1260
+#: src/CmdExec.cc:1261
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr "%s: команду «%s» не вбудовано до програми.\n"
 
-#: src/CmdExec.cc:1277
+#: src/CmdExec.cc:1278
 #, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "Користування: %s команда [аргументи...]\n"
 
-#: src/CmdExec.cc:1283
+#: src/CmdExec.cc:1284
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr "%s: не вдалося створити локальний сеанс\n"
 
-#: src/commands.cc:113
+#: src/commands.cc:114
 msgid "!<shell-command>"
 msgstr "!<команда оболонки>"
 
-#: src/commands.cc:114
+#: src/commands.cc:115
 msgid "Launch shell or shell command\n"
 msgstr "Запустити командну оболонку або команду у оболонці\n"
 
-#: src/commands.cc:115
+#: src/commands.cc:116
 msgid "(commands)"
 msgstr "(команди)"
 
-#: src/commands.cc:116
+#: src/commands.cc:117
 msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
@@ -290,11 +265,11 @@ msgstr ""
 "Групові команди можна виконувати разом як одну команду.\n"
 "Таку групу можна запускати у фоновому режимі.\n"
 
-#: src/commands.cc:119
+#: src/commands.cc:120
 msgid "alias [<name> [<value>]]"
 msgstr "alias [<назва> [<значення>]]"
 
-#: src/commands.cc:120
+#: src/commands.cc:121
 msgid ""
 "Define or undefine alias <name>. If <value> omitted,\n"
 "the alias is undefined, else is takes the value <value>.\n"
@@ -305,15 +280,15 @@ msgstr ""
 "інакше призначається значення <значення>.\n"
 "Без аргументів команда показує список поточних псевдонімів.\n"
 
-#: src/commands.cc:124
+#: src/commands.cc:125
 msgid "anon - login anonymously (by default)\n"
 msgstr "anon — увійти анонімно (типовий варіант)\n"
 
-#: src/commands.cc:126
+#: src/commands.cc:127
 msgid "bookmark [SUBCMD]"
 msgstr "bookmark [ПІДКОМАНДА]"
 
-#: src/commands.cc:127
+#: src/commands.cc:128
 msgid ""
 "bookmark command controls bookmarks\n"
 "\n"
@@ -335,11 +310,11 @@ msgstr ""
 "  import <тип>           - імпортувати сторонні закладки\n"
 "  list                   - показати список закладок (типова команда)\n"
 
-#: src/commands.cc:136
+#: src/commands.cc:137
 msgid "cache [SUBCMD]"
 msgstr "cache [ПІДКОМАНДА]"
 
-#: src/commands.cc:137
+#: src/commands.cc:138
 msgid ""
 "cache command controls local memory cache\n"
 "\n"
@@ -361,11 +336,11 @@ msgstr ""
 "  expire <Nx> - встановити строк дії кешу у секундах (x=s),\n"
 "                хвилинах (x=m), годинах (x=h) або днях (x=d)\n"
 
-#: src/commands.cc:145
+#: src/commands.cc:146
 msgid "cat [-b] <files>"
 msgstr "cat [-b] <файли>"
 
-#: src/commands.cc:146
+#: src/commands.cc:147
 msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
@@ -373,11 +348,11 @@ msgstr ""
 "cat - вивести віддалені файли до stdout (можна переспрямовувати)\n"
 " -b  використовувати двійковий режим (типовим є ascii)\n"
 
-#: src/commands.cc:148
+#: src/commands.cc:149
 msgid "cd <rdir>"
 msgstr "cd <каталог>"
 
-#: src/commands.cc:149
+#: src/commands.cc:150
 msgid ""
 "Change current remote directory to <rdir>. The previous remote directory\n"
 "is stored as `-'. You can do `cd -' to change the directory back.\n"
@@ -392,11 +367,11 @@ msgstr ""
 "ви зможете\n"
 "віддати команду «open сайт; cd -» навіть після перезапуску lftp.\n"
 
-#: src/commands.cc:153
+#: src/commands.cc:154
 msgid "chmod [OPTS] mode file..."
 msgstr "chmod [ПАРАМЕТРИ] режим файл..."
 
-#: src/commands.cc:154
+#: src/commands.cc:155
 msgid ""
 "Change the mode of each FILE to MODE.\n"
 "\n"
@@ -419,7 +394,7 @@ msgstr ""
 "РЕЖИМ вказується у форматі вісімкового числа або символічного режиму (див. "
 "chmod(1))\n"
 
-#: src/commands.cc:163
+#: src/commands.cc:164
 msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
@@ -427,11 +402,11 @@ msgstr ""
 "Розірвати неактивні з’єднання. Типово, лише з поточним сервером.\n"
 " -a  розірвати неактивні з’єднання з усіма серверами\n"
 
-#: src/commands.cc:165
+#: src/commands.cc:166
 msgid "[re]cls [opts] [path/][pattern]"
 msgstr "[re]cls [параметри] [шлях/][взірець]"
 
-#: src/commands.cc:166
+#: src/commands.cc:167
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -516,11 +491,11 @@ msgstr ""
 "default,\n"
 "щоб зробити доповнення назв файлів незалежним від регістру символів.\n"
 
-#: src/commands.cc:216
+#: src/commands.cc:217
 msgid "debug [OPTS] [<level>|off]"
 msgstr "debug [ПАРАМЕТРИ] [<рівень>|off]"
 
-#: src/commands.cc:217
+#: src/commands.cc:218
 msgid ""
 "Set debug level to given value or turn debug off completely.\n"
 " -o <file>  redirect debug output to the file\n"
@@ -534,11 +509,11 @@ msgstr ""
 " -p  виводити PID\n"
 " -t  виводити дані щодо часових позначок\n"
 
-#: src/commands.cc:222
+#: src/commands.cc:223
 msgid "du [options] <dirs>"
 msgstr "du [параметри] <каталоги>"
 
-#: src/commands.cc:223
+#: src/commands.cc:224
 msgid ""
 "Summarize disk usage.\n"
 " -a, --all             write counts for all files, not just directories\n"
@@ -580,11 +555,11 @@ msgstr ""
 " -s, --summarize       показати лише загальні дані щодо усіх аргументів\n"
 "     --exclude=PAT     виключити усі файли, які відповідають взірцеві PAT\n"
 
-#: src/commands.cc:241
+#: src/commands.cc:242
 msgid "edit [OPTS] <file>"
 msgstr "edit [ПАРАМЕТРИ] <файл>"
 
-#: src/commands.cc:242
+#: src/commands.cc:243
 msgid ""
 "Retrieve remote file to a temporary location, run a local editor on it\n"
 "and upload the file back if changed.\n"
@@ -597,11 +572,11 @@ msgstr ""
 " -k  зберегти тимчасовий файл\n"
 " -o <каталог>  явним чином вказати місце тимчасового файла\n"
 
-#: src/commands.cc:247
+#: src/commands.cc:248
 msgid "exit [<code>|bg]"
 msgstr "exit [<код>|bg]"
 
-#: src/commands.cc:248
+#: src/commands.cc:249
 msgid ""
 "exit - exit from lftp or move to background if jobs are active\n"
 "\n"
@@ -616,7 +591,7 @@ msgstr ""
 "завершення останньої з команд. «bg» виконує примусове переведення у фоновий\n"
 "режим, якщо значенням cmd:move-background є false.\n"
 
-#: src/commands.cc:254
+#: src/commands.cc:255
 msgid ""
 "Usage: find [OPTS] [directory]\n"
 "Print contents of specified directory or current directory recursively.\n"
@@ -630,11 +605,11 @@ msgstr ""
 "Виведені дані можна переспрямовувати.\n"
 " -d, --maxdepth=РІВЕНЬ  спускатися лише до вказаного рівня вкладеності.\n"
 
-#: src/commands.cc:259
+#: src/commands.cc:260
 msgid "get [OPTS] <rfile> [-o <lfile>]"
 msgstr "get [ПАРАМЕТРИ] <віддалений файл> [-o <локальний файл>]"
 
-#: src/commands.cc:260
+#: src/commands.cc:261
 msgid ""
 "Retrieve remote file <rfile> and store it to local file <lfile>.\n"
 " -o <lfile> specifies local file name (default - basename of rfile)\n"
@@ -652,11 +627,11 @@ msgstr ""
 " -a  використовувати режим ascii (типовим є двійковий режим)\n"
 " -O <основа> визначає базовий каталог або адресу, куди слід зберігати файли\n"
 
-#: src/commands.cc:267
+#: src/commands.cc:268
 msgid "glob [OPTS] <cmd> <args>"
 msgstr "glob [ПАРАМЕТРИ] <команда> <аргументи>"
 
-#: src/commands.cc:269
+#: src/commands.cc:270
 #, fuzzy
 msgid ""
 "Expand wildcards and run specified command.\n"
@@ -680,15 +655,15 @@ msgstr ""
 " -d  каталоги\n"
 " -a  записи усіх типів\n"
 
-#: src/commands.cc:278
+#: src/commands.cc:279
 msgid "help [<cmd>]"
 msgstr "help [<команда>]"
 
-#: src/commands.cc:279
+#: src/commands.cc:280
 msgid "Print help for command <cmd>, or list of available commands\n"
 msgstr "Вивести довідку щодо команди <команда> або список доступних команд.\n"
 
-#: src/commands.cc:281
+#: src/commands.cc:282
 msgid ""
 "List running jobs. -v means verbose, several -v can be specified.\n"
 "If <job_no> is specified, only list a job with that number.\n"
@@ -698,20 +673,20 @@ msgstr ""
 "Якщо вказано <номер завдання>, вивести дані лише щодо завдання з вказаним "
 "номером.\n"
 
-#: src/commands.cc:283
+#: src/commands.cc:284
 msgid "kill all|<job_no>"
 msgstr "kill all|<номер завдання>"
 
-#: src/commands.cc:284
+#: src/commands.cc:285
 msgid "Delete specified job with <job_no> or all jobs\n"
 msgstr ""
 "Вилучити вказане завдання з номером <номер завдання> або усі завдання.\n"
 
-#: src/commands.cc:285
+#: src/commands.cc:286
 msgid "lcd <ldir>"
 msgstr "lcd <каталог>"
 
-#: src/commands.cc:286
+#: src/commands.cc:287
 msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
@@ -721,11 +696,11 @@ msgstr ""
 "каталог буде збережено як «-». Ви можете скористатися командою «lcd -»,\n"
 "щоб повернутися до нього.\n"
 
-#: src/commands.cc:288
+#: src/commands.cc:289
 msgid "lftp [OPTS] <site>"
 msgstr "lftp [ПАРАМЕТРИ] <сайт>"
 
-#: src/commands.cc:289
+#: src/commands.cc:290
 #, fuzzy
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
@@ -754,19 +729,19 @@ msgstr ""
 " -p <порт>           використати для встановлення з’єднання вказаний порт\n"
 " <сайт>              назва вузла, адреса бо закладка\n"
 
-#: src/commands.cc:302
+#: src/commands.cc:303
 msgid "ln [-s] <file1> <file2>"
 msgstr "ln [-s] <файл1> <файл2>"
 
-#: src/commands.cc:303
+#: src/commands.cc:304
 msgid "Link <file1> to <file2>\n"
 msgstr "Створити символічне посилання <файл1> та <файл2>\n"
 
-#: src/commands.cc:307
+#: src/commands.cc:308
 msgid "ls [<args>]"
 msgstr "ls [<аргументи>]"
 
-#: src/commands.cc:308
+#: src/commands.cc:309
 msgid ""
 "List remote files. You can redirect output of this command to file\n"
 "or via pipe to external command.\n"
@@ -780,11 +755,11 @@ msgstr ""
 "скористайтеся «rels» або «cache flush».\n"
 "Див. також «help cls».\n"
 
-#: src/commands.cc:313
+#: src/commands.cc:314
 msgid "mget [OPTS] <files>"
 msgstr "mget [ПАРАМЕТРИ] <файли>"
 
-#: src/commands.cc:314
+#: src/commands.cc:315
 msgid ""
 "Gets selected files with expanded wildcards\n"
 " -c  continue, resume transfer\n"
@@ -802,15 +777,15 @@ msgstr ""
 " -a  використовувати режим ascii (типовим є двійковий режим)\n"
 " -O <основа> визначає базовий каталог або адресу, куди слід зберігати файли\n"
 
-#: src/commands.cc:321
+#: src/commands.cc:322
 msgid "mirror [OPTS] [remote [local]]"
 msgstr "mirror [ПАРАМЕТРИ] [віддалена [локальна]]"
 
-#: src/commands.cc:322
+#: src/commands.cc:323
 msgid "mkdir [OPTS] <dirs>"
 msgstr "mkdir [ПАРАМЕТРИ] <каталоги>"
 
-#: src/commands.cc:323
+#: src/commands.cc:324
 msgid ""
 "Make remote directories\n"
 " -p  make all levels of path\n"
@@ -820,11 +795,11 @@ msgstr ""
 " -p  створити усі рівні вказаного шляху\n"
 " -f  не виводити повідомлень\n"
 
-#: src/commands.cc:326
+#: src/commands.cc:327
 msgid "module name [args]"
 msgstr "module назва [аргументи]"
 
-#: src/commands.cc:327
+#: src/commands.cc:328
 msgid ""
 "Load module (shared object). The module should contain function\n"
 "   void module_init(int argc,const char *const *argv)\n"
@@ -840,21 +815,21 @@ msgstr ""
 "визначених\n"
 "змінною module:path.\n"
 
-#: src/commands.cc:331
+#: src/commands.cc:332
 msgid "more <files>"
 msgstr "more <файли>"
 
-#: src/commands.cc:332
+#: src/commands.cc:333
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
 "Те саме, що і «cat <файли> | more». Якщо визначено змінну PAGER, відповідну "
 "програму буде використано як фільтр даних.\n"
 
-#: src/commands.cc:333
+#: src/commands.cc:334
 msgid "mput [OPTS] <files>"
 msgstr "mput [ПАРАМЕТРИ] <файли>"
 
-#: src/commands.cc:334
+#: src/commands.cc:335
 msgid ""
 "Upload files with wildcard expansion\n"
 " -c  continue, reput\n"
@@ -872,27 +847,38 @@ msgstr ""
 " -a  використовувати режим ascii (типовим є двійковий режим)\n"
 " -O <основа> визначає базовий каталог або адресу, куди слід зберігати файли\n"
 
-#: src/commands.cc:341
+#: src/commands.cc:342
 msgid "mrm <files>"
 msgstr "mrm <файли>"
 
-#: src/commands.cc:342
+#: src/commands.cc:343
 msgid "Removes specified files with wildcard expansion\n"
 msgstr "Вилучає вказані файли з розгортанням шаблонів заміни\n"
 
-#: src/commands.cc:343
+#: src/commands.cc:344
 msgid "mv <file1> <file2>"
 msgstr "mv <файл1> <файл2>"
 
-#: src/commands.cc:344
+#: src/commands.cc:345
 msgid "Rename <file1> to <file2>\n"
 msgstr "Перейменувати <файл1> на <файл2>\n"
 
-#: src/commands.cc:345
+#: src/commands.cc:346
+#, fuzzy
+msgid "mmv [OPTS] <files> <target-dir>"
+msgstr "mget [ПАРАМЕТРИ] <файли>"
+
+#: src/commands.cc:347
+msgid ""
+"Move <files> to <target-directory> with wildcard expansion\n"
+" -O <dir>  specifies the target directory (alternative way)\n"
+msgstr ""
+
+#: src/commands.cc:349
 msgid "[re]nlist [<args>]"
 msgstr "[re]nlist [<аргументи>]"
 
-#: src/commands.cc:346
+#: src/commands.cc:350
 msgid ""
 "List remote file names.\n"
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
@@ -902,11 +888,11 @@ msgstr ""
 "Типово, дані, виведені nlist, кешуються. Щоб переглянути оновлений список\n"
 "скористайтеся командою «renlist» або «cache flush».\n"
 
-#: src/commands.cc:349
+#: src/commands.cc:353
 msgid "open [OPTS] <site>"
 msgstr "open [ПАРАМЕТРИ] <сайт>"
 
-#: src/commands.cc:350
+#: src/commands.cc:354
 #, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
@@ -925,11 +911,11 @@ msgstr ""
 " -s <слот>           пов’язати з’єднанян з вказаним слотом\n"
 " <сайт>              назва вузла, адреса або назва закладки\n"
 
-#: src/commands.cc:357
+#: src/commands.cc:361
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
 msgstr "pget [ПАРАМЕТРИ] <віддалений файл> [-o <локальний файл>]"
 
-#: src/commands.cc:358
+#: src/commands.cc:362
 msgid ""
 "Gets the specified file using several connections. This can speed up "
 "transfer,\n"
@@ -957,11 +943,11 @@ msgstr ""
 "     параметром pget:default-n)\n"
 " -O <основа> визначає основний каталог, де слід зберігати файли\n"
 
-#: src/commands.cc:366
+#: src/commands.cc:370
 msgid "put [OPTS] <lfile> [-o <rfile>]"
 msgstr "put [ПАРАМЕТРИ] <локальний файл> [-o <віддалений файл>]"
 
-#: src/commands.cc:367
+#: src/commands.cc:371
 msgid ""
 "Upload <lfile> with remote name <rfile>.\n"
 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -980,7 +966,7 @@ msgstr ""
 " -a  використовувати режим ascii (типовим є двійковий режим)\n"
 " -O <основа> визначає базовий каталог або адресу, куди слід зберігати файли\n"
 
-#: src/commands.cc:375
+#: src/commands.cc:379
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
@@ -988,11 +974,11 @@ msgstr ""
 "Вивести поточну віддалену адресу.\n"
 " -p  показати пароль\n"
 
-#: src/commands.cc:377
+#: src/commands.cc:381
 msgid "queue [OPTS] [<cmd>]"
 msgstr "queue [ПАРАМЕТРИ] [<команда>]"
 
-#: src/commands.cc:378
+#: src/commands.cc:382
 msgid ""
 "\n"
 "       queue [-n num] <command>\n"
@@ -1045,11 +1031,11 @@ msgstr ""
 "                     для повторного позиціювання у черзі, корисно для --"
 "delete.\n"
 
-#: src/commands.cc:399
+#: src/commands.cc:403
 msgid "quote <cmd>"
 msgstr "quote <команда>"
 
-#: src/commands.cc:400
+#: src/commands.cc:404
 msgid ""
 "Send the command uninterpreted. Use with caution - it can lead to\n"
 "unknown remote state and thus will cause reconnect. You cannot\n"
@@ -1062,7 +1048,7 @@ msgstr ""
 "віддаленого вузла, оскільки повторне з’єднання може відновити\n"
 "початковий стан у будь-який момент часу.\n"
 
-#: src/commands.cc:405
+#: src/commands.cc:409
 msgid ""
 "recls [<args>]\n"
 "Same as `cls', but don't look in cache\n"
@@ -1070,7 +1056,7 @@ msgstr ""
 "recls [<аргументи>]\n"
 "Те саме, що і «cls», але без використання даних з кешу.\n"
 
-#: src/commands.cc:408
+#: src/commands.cc:412
 msgid ""
 "Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
 "Same as `get -c'\n"
@@ -1078,7 +1064,7 @@ msgstr ""
 "Користування: reget [ПАРАМЕТРИ] <віддалений файл> [-o <локальний файл>]\n"
 "Те саме, що і «get -c»\n"
 
-#: src/commands.cc:411
+#: src/commands.cc:415
 msgid ""
 "Usage: rels [<args>]\n"
 "Same as `ls', but don't look in cache\n"
@@ -1086,7 +1072,7 @@ msgstr ""
 "Користування: rels [<аргументи>]\n"
 "Те саме, що і ls, але без пошуку у кеші.\n"
 
-#: src/commands.cc:414
+#: src/commands.cc:418
 msgid ""
 "Usage: renlist [<args>]\n"
 "Same as `nlist', but don't look in cache\n"
@@ -1094,11 +1080,11 @@ msgstr ""
 "Користування: renlist [<аргументи>]\n"
 "Те саме, що і nlist, але без пошуку у кеші\n"
 
-#: src/commands.cc:416
+#: src/commands.cc:420
 msgid "repeat [OPTS] [delay] [command]"
 msgstr "repeat [ПАРАМЕТРИ] [затримка] [команда]"
 
-#: src/commands.cc:418
+#: src/commands.cc:422
 msgid ""
 "Usage: reput <lfile> [-o <rfile>]\n"
 "Same as `put -c'\n"
@@ -1106,11 +1092,11 @@ msgstr ""
 "Користування: reput <локальний_файл> [-o <віддалений_файл>]\n"
 "Те саме, що і «put -c»\n"
 
-#: src/commands.cc:420
+#: src/commands.cc:424
 msgid "rm [-r] [-f] <files>"
 msgstr "rm [-r] [-f] <файли>"
 
-#: src/commands.cc:421
+#: src/commands.cc:425
 msgid ""
 "Remove remote files\n"
 " -r  recursive directory removal, be careful\n"
@@ -1120,28 +1106,28 @@ msgstr ""
 " -r  рекурсивне вилучення каталогів, будьте обережні\n"
 " -f  обробка без виведення повідомлень\n"
 
-#: src/commands.cc:424
+#: src/commands.cc:428
 msgid "rmdir [-f] <dirs>"
 msgstr "rmdir [-f] <каталоги>"
 
-#: src/commands.cc:425
+#: src/commands.cc:429
 msgid "Remove remote directories\n"
 msgstr "Вилучити віддалені каталоги\n"
 
-#: src/commands.cc:426
+#: src/commands.cc:430
 msgid "scache [<session_no>]"
 msgstr "scache [<номер сеансу>]"
 
-#: src/commands.cc:427
+#: src/commands.cc:431
 msgid "List cached sessions or switch to specified session number\n"
 msgstr ""
 "Показати кешовані сеанси або перемкнутися на сеанс з вказаним номером\n"
 
-#: src/commands.cc:428
+#: src/commands.cc:432
 msgid "set [OPT] [<var> [<val>]]"
 msgstr "set [ПАРАМЕТР] [<змінна> [<значення>]]"
 
-#: src/commands.cc:429
+#: src/commands.cc:433
 msgid ""
 "Set variable to given value. If the value is omitted, unset the variable.\n"
 "Variable name has format ``name/closure'', where closure can specify\n"
@@ -1161,11 +1147,11 @@ msgstr ""
 " -a  показати список усіх параметрів, зокрема з типовими значеннями\n"
 " -d  показати лише типові значення, не обов’язково поточні\n"
 
-#: src/commands.cc:437
+#: src/commands.cc:441
 msgid "site <site-cmd>"
 msgstr "site <команда сайту>"
 
-#: src/commands.cc:438
+#: src/commands.cc:442
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
@@ -1173,7 +1159,7 @@ msgstr ""
 "Віддати команду сайту <команда сайту> і вивести результат.\n"
 "Виведені дані можна переспрямовувати.\n"
 
-#: src/commands.cc:442
+#: src/commands.cc:446
 msgid ""
 "Usage: slot [<label>]\n"
 "List assigned slots.\n"
@@ -1183,23 +1169,23 @@ msgstr ""
 "Показати список призначених слотів.\n"
 "Якщо вказано мітку <мітка>, перемкнутися на слот з назвою <мітка>.\n"
 
-#: src/commands.cc:445
+#: src/commands.cc:449
 msgid "source <file>"
 msgstr "source <файл>"
 
-#: src/commands.cc:446
+#: src/commands.cc:450
 msgid "Execute commands recorded in file <file>\n"
 msgstr "Виконати команди, записані до файла <файл>\n"
 
-#: src/commands.cc:448
+#: src/commands.cc:452
 msgid "torrent [OPTS] <file|URL>..."
 msgstr "torrent [ПАРАМЕТРИ] <файл|адреса>..."
 
-#: src/commands.cc:449
+#: src/commands.cc:453
 msgid "user <user|URL> [<pass>]"
 msgstr "user <користувач|адреса> [<пароль>]"
 
-#: src/commands.cc:450
+#: src/commands.cc:454
 msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
@@ -1208,15 +1194,15 @@ msgstr ""
 "адресу,\n"
 "пароль буде кешовано для наступних сеансів користування.\n"
 
-#: src/commands.cc:453
+#: src/commands.cc:457
 msgid "Shows lftp version\n"
 msgstr "Показати дані щодо версії lftp.\n"
 
-#: src/commands.cc:454
+#: src/commands.cc:458
 msgid "wait [<jobno>]"
 msgstr "wait [<номер завдання>]"
 
-#: src/commands.cc:455
+#: src/commands.cc:459
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
@@ -1224,59 +1210,59 @@ msgstr ""
 "Зачекати на завершення вказаного завдання. Якщо не вказано номер завдання,\n"
 "зачекати на завершення останнього завдання, що виконувалося у тлі.\n"
 
-#: src/commands.cc:457
+#: src/commands.cc:461
 msgid "zcat <files>"
 msgstr "zcat <файли>"
 
-#: src/commands.cc:458
+#: src/commands.cc:462
 msgid "Same as cat, but filter each file through zcat\n"
 msgstr "Те саме, що і cat, але з фільтруванням усіх файлів за допомогою zcat\n"
 
-#: src/commands.cc:459
+#: src/commands.cc:463
 msgid "zmore <files>"
 msgstr "zmore <файли>"
 
-#: src/commands.cc:460
+#: src/commands.cc:464
 msgid "Same as more, but filter each file through zcat\n"
 msgstr ""
 "Те саме, що і more, але з фільтруванням усіх файлів за допомогою zcat\n"
 
-#: src/commands.cc:462
+#: src/commands.cc:466
 msgid "Same as cat, but filter each file through bzcat\n"
 msgstr ""
 "Те саме, що і cat, але з фільтруванням усіх файлів за допомогою bzcat\n"
 
-#: src/commands.cc:464
+#: src/commands.cc:468
 msgid "Same as more, but filter each file through bzcat\n"
 msgstr ""
 "Те саме, що і more, але з фільтруванням усіх файлів за допомогою bzcat\n"
 
-#: src/commands.cc:520
+#: src/commands.cc:524
 #, c-format
 msgid "Usage: %s local-dir\n"
 msgstr "Користування: %s локальний_каталог\n"
 
-#: src/commands.cc:556
+#: src/commands.cc:560
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
 msgstr "lcd виконано, локальний робочий каталог=%s\n"
 
-#: src/commands.cc:572
+#: src/commands.cc:576
 #, c-format
 msgid "Usage: cd remote-dir\n"
 msgstr "Користування: cd віддалений_каталог\n"
 
-#: src/commands.cc:584
+#: src/commands.cc:588
 #, c-format
 msgid "%s: no old directory for this site\n"
 msgstr "%s: для цього сайта немає старого каталогу\n"
 
-#: src/commands.cc:673
+#: src/commands.cc:677
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
 msgstr "Користування: %s [<код виходу>]\n"
 
-#: src/commands.cc:682
+#: src/commands.cc:686
 msgid ""
 "There are running jobs and `cmd:move-background' is not set.\n"
 "Use `exit bg' to force moving to background or `kill all' to terminate "
@@ -1288,7 +1274,7 @@ msgstr ""
 "режим,\n"
 "або командою «kill all», щоб перервати виконання усіх завдань.\n"
 
-#: src/commands.cc:699
+#: src/commands.cc:703
 msgid ""
 "\n"
 "lftp now tricks the shell to move it to background process group.\n"
@@ -1305,205 +1291,210 @@ msgstr ""
 "Скористайтеся командою оболонки «fg» для повернення до lftp, доки програма "
 "працюватиме.\n"
 
-#: src/commands.cc:834 src/commands.cc:3512
+#: src/commands.cc:838 src/commands.cc:3603
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Щоб дізнатися більше, віддайте команду «%s --help»\n"
 
-#: src/commands.cc:853
+#: src/commands.cc:857
 #, c-format
 msgid "%s: -c, -f, -v, -h conflict with other `open' options and arguments\n"
 msgstr ""
 
-#: src/commands.cc:952
+#: src/commands.cc:956
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 "Користування: %s [-e команда] [-p порт] [-u користувач[,пароль]] <вузол|"
 "адреса>\n"
 
-#: src/commands.cc:1042 src/commands.cc:2237 src/DummyProto.cc:65
-#: src/MirrorJob.cc:2110 src/MirrorJob.cc:2132
+#: src/commands.cc:1046 src/commands.cc:2275 src/DummyProto.cc:65
+#: src/MirrorJob.cc:2146 src/MirrorJob.cc:2168
 msgid " - not supported protocol"
 msgstr " — немає серед підтримуваних протоколів"
 
-#: src/commands.cc:1074 src/commands.cc:2221
+#: src/commands.cc:1078 src/commands.cc:2259
 msgid "Password: "
 msgstr "Пароль: "
 
-#: src/commands.cc:1076
+#: src/commands.cc:1080
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: помилка GetPass() - припускаємо, що вхід є анонімним\n"
 
-#: src/commands.cc:1184 src/commands.cc:1274 src/commands.cc:1650
-#: src/commands.cc:1681 src/commands.cc:1788 src/commands.cc:1876
-#: src/commands.cc:2149 src/commands.cc:2342 src/commands.cc:2503
-#: src/commands.cc:2531 src/commands.cc:2538 src/commands.cc:2834
-#: src/commands.cc:2861 src/commands.cc:2868 src/commands.cc:3198
-#: src/lftp.cc:267 src/MirrorJob.cc:2074 src/SleepJob.cc:144
-#: src/SleepJob.cc:200 src/Torrent.cc:4194
+#: src/commands.cc:1191 src/commands.cc:1284 src/commands.cc:1660
+#: src/commands.cc:1691 src/commands.cc:1829 src/commands.cc:1914
+#: src/commands.cc:2187 src/commands.cc:2380 src/commands.cc:2542
+#: src/commands.cc:2587 src/commands.cc:2615 src/commands.cc:2622
+#: src/commands.cc:2918 src/commands.cc:2945 src/commands.cc:2952
+#: src/commands.cc:3280 src/lftp.cc:267 src/MirrorJob.cc:2110
+#: src/SleepJob.cc:144 src/SleepJob.cc:200 src/Torrent.cc:4194
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "Віддайте команду «help %s», щоб дізнатися більше.\n"
 
-#: src/commands.cc:1194
+#: src/commands.cc:1201
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "Користування: %s [ПАРАМЕТРИ] команда аргументи...\n"
 
-#: src/commands.cc:1244
+#: src/commands.cc:1254
 #, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s: -n: мало бути вказано додатне число. "
 
-#: src/commands.cc:1296
+#: src/commands.cc:1306
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr "Створено призупинену чергу.\n"
 
-#: src/commands.cc:1339 src/commands.cc:1367
+#: src/commands.cc:1349 src/commands.cc:1377
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: жодна з черг не є активною.\n"
 
-#: src/commands.cc:1359
+#: src/commands.cc:1369
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: другим аргументом мало бути число. "
 
-#: src/commands.cc:1411
+#: src/commands.cc:1421
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Користування: %s <команда>\n"
 
-#: src/commands.cc:1517
+#: src/commands.cc:1527
 msgid "invalid argument for `--sort'"
 msgstr "некоректний аргумент «--sort»"
 
-#: src/commands.cc:1547
+#: src/commands.cc:1557
 msgid "invalid block size"
 msgstr "некоректний розмір блоку"
 
-#: src/commands.cc:1690
+#: src/commands.cc:1700
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Користування: %s [ПАРАМЕТРИ] файли...\n"
 
-#: src/commands.cc:1763
-#, c-format
-msgid "%s: -n: Number expected. "
+#: src/commands.cc:1785 src/commands.cc:1814
+#, fuzzy, c-format
+msgid "%s: %s: Number expected. "
 msgstr "%s: -n: мало бути вказано число. "
 
-#: src/commands.cc:1799 src/commands.cc:1882
+#: src/commands.cc:1834
+#, fuzzy, c-format
+msgid "%s: --continue conflicts with --remove-target.\n"
+msgstr "%s: --share конфліктує з --only-new.\n"
+
+#: src/commands.cc:1844 src/commands.cc:1920
 #, c-format
 msgid "File name missed. "
 msgstr "Не вказано назви файла. "
 
-#: src/commands.cc:1951
+#: src/commands.cc:1989
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Користування: %s %s[-f] файли...\n"
 
-#: src/commands.cc:1994
+#: src/commands.cc:2032
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "Користування: %s [-e] <файл|команда>\n"
 
-#: src/commands.cc:2041
+#: src/commands.cc:2079
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Користування: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:2055 src/commands.cc:2308 src/commands.cc:2430
-#: src/commands.cc:2600 src/commands.cc:3004 src/commands.cc:3085
+#: src/commands.cc:2093 src/commands.cc:2346 src/commands.cc:2468
+#: src/commands.cc:2684 src/commands.cc:3088 src/commands.cc:3169
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - не є числом\n"
 
-#: src/commands.cc:2062 src/commands.cc:2287 src/commands.cc:2317
-#: src/commands.cc:2448
+#: src/commands.cc:2100 src/commands.cc:2325 src/commands.cc:2355
+#: src/commands.cc:2486
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - такого завдання немає\n"
 
-#: src/commands.cc:2097
+#: src/commands.cc:2135
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Користування: %s [-p]\n"
 
-#: src/commands.cc:2188
+#: src/commands.cc:2226
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "рівень діагностики - %d, виведені дані спрямовуються до %s\n"
 
-#: src/commands.cc:2191
+#: src/commands.cc:2229
 #, c-format
 msgid "debug is off\n"
 msgstr "діагностику вимкнено\n"
 
-#: src/commands.cc:2202
+#: src/commands.cc:2240
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "Користування: %s <користувач|адреса> [<пароль>]\n"
 
-#: src/commands.cc:2277 src/commands.cc:2440
+#: src/commands.cc:2315 src/commands.cc:2478
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: зараз завдань не виконується\n"
 
-#: src/commands.cc:2289
+#: src/commands.cc:2327
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Користування: %s <номер завдання> ... | all\n"
 
-#: src/commands.cc:2370
+#: src/commands.cc:2408
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Скористайтеся «set -a», щоб переглянути усі змінні.\n"
 
-#: src/commands.cc:2414
+#: src/commands.cc:2452
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Користування: %s [<номер завдання>]\n"
 
-#: src/commands.cc:2453
+#: src/commands.cc:2491
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: на виконання завдання %d очікує інше завдання\n"
 
-#: src/commands.cc:2458
+#: src/commands.cc:2496
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: виявлено цикл очікування\n"
 
-#: src/commands.cc:2482
-#, c-format
-msgid "Usage: mv <file1> <file2>\n"
-msgstr "Користування: mv <файл1> <файл2>\n"
+#: src/commands.cc:2552
+#, fuzzy, c-format
+msgid "Usage: %s [OPTS] <files> <target-dir>\n"
+msgstr "Користування: %s [параметри] файл\n"
 
-#: src/commands.cc:2530 src/commands.cc:2860
+#: src/commands.cc:2614 src/commands.cc:2944
 #, c-format
 msgid "Invalid command. "
 msgstr "Некоректна команда. "
 
-#: src/commands.cc:2537 src/commands.cc:2867
+#: src/commands.cc:2621 src/commands.cc:2951
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Неоднозначна команда. "
 
-#: src/commands.cc:2556
+#: src/commands.cc:2640
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: пропущено операнд розміру\n"
 
-#: src/commands.cc:2573
+#: src/commands.cc:2657
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Пропущено операнд «expire»\n"
 
-#: src/commands.cc:2606
+#: src/commands.cc:2690
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
@@ -1511,46 +1502,46 @@ msgstr ""
 "%s: %s - такого кешованого сеансу не виявлено. Скористайтеся командою "
 "«scache», щоб переглянути чинний список сеансів.\n"
 
-#: src/commands.cc:2630
+#: src/commands.cc:2714
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Вибачте, довідки щодо %s не передбачено\n"
 
-#: src/commands.cc:2635
+#: src/commands.cc:2719
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s є вбудованою альтернативою до %s\n"
 
-#: src/commands.cc:2640
+#: src/commands.cc:2724
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Користування: %s\n"
 
-#: src/commands.cc:2648
+#: src/commands.cc:2732
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s є альтернативою до «%s»\n"
 
-#: src/commands.cc:2652
+#: src/commands.cc:2736
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Команди «%s» не передбачено. Скористайтеся командою «help», щоб переглянути "
 "список передбачених команд.\n"
 
-#: src/commands.cc:2654
+#: src/commands.cc:2738
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 "Неоднозначна команда «%s». Скористайтеся командою «help», щоб переглянути "
 "список передбачених команд.\n"
 
-#: src/commands.cc:2720
+#: src/commands.cc:2804
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Версія %s | ©  Alexander V. Lukyanov, 1996-%d\n"
 
-#: src/commands.cc:2723
+#: src/commands.cc:2807
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -1579,93 +1570,93 @@ msgstr ""
 "Якщо ви її не отримали, зверніться за адресою <http://www.gnu.org/licenses/"
 ">, щоб дізнатися про подальші дії.\n"
 
-#: src/commands.cc:2737
+#: src/commands.cc:2821
 #, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr ""
 "Повідомлення щодо вад та питання надсилайте до списку листування <%s>.\n"
 
-#: src/commands.cc:2743
+#: src/commands.cc:2827
 msgid "Libraries used: "
 msgstr "Використані бібліотеки: "
 
-#: src/commands.cc:2883 src/commands.cc:2911
+#: src/commands.cc:2967 src/commands.cc:2995
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: слід вказати назву закладки\n"
 
-#: src/commands.cc:2900
+#: src/commands.cc:2984
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: не можна використовувати у назві закладки пробіли\n"
 
-#: src/commands.cc:2913
+#: src/commands.cc:2997
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: немає закладки з назвою «%s»\n"
 
-#: src/commands.cc:2935
+#: src/commands.cc:3019
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: слід вказати тип імпортованих даних (netscape,ncftp)\n"
 
-#: src/commands.cc:3013
+#: src/commands.cc:3097
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Користування: %s [-d #] каталог\n"
 
-#: src/commands.cc:3118
+#: src/commands.cc:3202
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: некоректний розмір блоку, «%s»\n"
 
-#: src/commands.cc:3127
+#: src/commands.cc:3213
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Користування: %s [параметри] <каталоги>\n"
 
-#: src/commands.cc:3133
+#: src/commands.cc:3219
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 "%s: попередження: підбиття підсумків це те ж саме, що й --max-depth=0\n"
 
-#: src/commands.cc:3137
+#: src/commands.cc:3223
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: підбиття підсумків конфліктує з --max-depth=%i\n"
 
-#: src/commands.cc:3185
+#: src/commands.cc:3267
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Користування: %s команда аргументи...\n"
 
-#: src/commands.cc:3197
+#: src/commands.cc:3279
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Користування: %s модуль [аргументи...]\n"
 
-#: src/commands.cc:3215 src/LocalAccess.cc:642
+#: src/commands.cc:3297 src/LocalAccess.cc:642
 msgid "cannot get current directory"
 msgstr "не вдається отримати поточний каталог"
 
-#: src/commands.cc:3279
+#: src/commands.cc:3361
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Користування: %s [параметри] режим файл...\n"
 
-#: src/commands.cc:3299
+#: src/commands.cc:3381
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "некоректний рядок режиму: %s\n"
 
-#: src/commands.cc:3360 src/commands.cc:3369
+#: src/commands.cc:3444 src/commands.cc:3453
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 "Некоректний діапазон часу. Діапазон слід вказувати у форматі мінімум-"
 "максимум. Приклад: 10-20."
 
-#: src/commands.cc:3378
+#: src/commands.cc:3465
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Користування: %s [параметри] файл\n"
@@ -1686,12 +1677,12 @@ msgstr ""
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "Передано %lld $#ll#байт|байти|байтів$"
 
-#: src/CopyJob.cc:271
+#: src/CopyJob.cc:282
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Не вдалося передати %d з %d $файла|файлів|файлів$\n"
 
-#: src/CopyJob.cc:277
+#: src/CopyJob.cc:288
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "Загалом перенесено %d $файл|файлів|файлів$\n"
@@ -1704,8 +1695,8 @@ msgstr "Спроба доступу зазнала невдачі: "
 msgid "File cannot be accessed"
 msgstr "Не вдалося отримати доступ до файла"
 
-#: src/FileAccess.cc:163 src/Fish.cc:984 src/ftpclass.cc:4524
-#: src/ftpclass.cc:4533 src/SFtp.cc:1318 src/Torrent.cc:3561
+#: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4535
+#: src/ftpclass.cc:4544 src/SFtp.cc:1316 src/Torrent.cc:3561
 msgid "Not connected"
 msgstr "Не з’єднано"
 
@@ -1773,16 +1764,16 @@ msgstr ""
 msgid "file size decreased during transfer"
 msgstr "під час передавання розмір файла зменшився"
 
-#: src/FileCopy.cc:1190
+#: src/FileCopy.cc:1209
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: отримано переспрямування на «%s»\n"
 
-#: src/FileCopy.cc:1379
+#: src/FileCopy.cc:1398
 msgid "file name missed in URL"
 msgstr "у адресі не вказано назви файла"
 
-#: src/FileCopy.cc:2061
+#: src/FileCopy.cc:2086
 msgid "Verify command failed without a message"
 msgstr ""
 "Не вдалося виконати команду перевірки. Додаткових повідомлень не виведено."
@@ -1807,7 +1798,7 @@ msgstr "**** FXP: здаємося, повертаємося до звичайн
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr "Встановлено ftp:fxp-force, але FXP недоступне"
 
-#: src/FileCopy.h:282
+#: src/FileCopy.h:284
 msgid "Verifying..."
 msgstr "Перевіряємо…"
 
@@ -1815,78 +1806,83 @@ msgstr "Перевіряємо…"
 msgid "non-option arguments found"
 msgstr "виявлено аргументи без параметрів"
 
-#: src/Filter.cc:165
+#: src/Filter.cc:166
 msgid "pipe() failed: "
 msgstr "помилка pipe(): "
 
-#: src/Filter.cc:199 src/PtyShell.cc:135
+#: src/Filter.cc:200 src/PtyShell.cc:135
 #, c-format
 msgid "chdir(%s) failed: %s\n"
 msgstr "не вдалося виконати chdir(%s): %s\n"
 
-#: src/Filter.cc:207
+#: src/Filter.cc:208
 #, c-format
 msgid "execvp(%s) failed: %s\n"
 msgstr "не вдалося виконати execvp(%s): %s\n"
 
-#: src/Filter.cc:212 src/PtyShell.cc:147
+#: src/Filter.cc:213 src/PtyShell.cc:147
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
 msgstr "Не вдалося виконати execl(/bin/sh): %s\n"
+
+#: src/Filter.cc:414
+#, fuzzy
+msgid "file already exists and xfer:clobber is unset"
+msgstr "%s: %s: файл вже існує, а xfer:clobber не встановлено\n"
 
 #: src/FindJobDu.cc:101
 msgid "total"
 msgstr "загалом"
 
-#: src/Fish.cc:75 src/ftpclass.cc:1255 src/Http.cc:1169 src/SFtp.cc:77
+#: src/Fish.cc:75 src/ftpclass.cc:1255 src/Http.cc:1207 src/SFtp.cc:77
 #, c-format
 msgid "Closing idle connection"
 msgstr "Закриваємо неактивне з’єднання"
 
-#: src/Fish.cc:164 src/SFtp.cc:179
+#: src/Fish.cc:162 src/SFtp.cc:177
 msgid "Running connect program"
 msgstr "Запускаємо програму для встановлення з’єднання"
 
-#: src/Fish.cc:590 src/ftpclass.cc:2836 src/ftpclass.cc:3056 src/Http.cc:1447
-#: src/SFtp.cc:743 src/SFtp.cc:1080 src/SFtp.cc:1081 src/SSH_Access.cc:134
+#: src/Fish.cc:588 src/ftpclass.cc:2837 src/ftpclass.cc:3057 src/Http.cc:1485
+#: src/SFtp.cc:741 src/SFtp.cc:1078 src/SFtp.cc:1079 src/SSH_Access.cc:134
 #, c-format
 msgid "Peer closed connection"
 msgstr "З’єднання перервано з ініціативи віддаленого комп’ютера"
 
-#: src/Fish.cc:636 src/ftpclass.cc:2986 src/ftpclass.cc:4147 src/SFtp.cc:1105
+#: src/Fish.cc:634 src/ftpclass.cc:2987 src/ftpclass.cc:4158 src/SFtp.cc:1103
 #, c-format
 msgid "extra server response"
 msgstr "зайва відповідь сервера"
 
-#: src/Fish.cc:989 src/ftpclass.cc:4536 src/Http.cc:2259 src/Http.cc:2266
-#: src/SFtp.cc:1324 src/Torrent.cc:3564 src/TorrentTracker.cc:624
+#: src/Fish.cc:987 src/ftpclass.cc:4547 src/Http.cc:2303 src/Http.cc:2310
+#: src/SFtp.cc:1322 src/Torrent.cc:3564 src/TorrentTracker.cc:624
 msgid "Connecting..."
 msgstr "Встановлюємо з’єднання…"
 
-#: src/Fish.cc:991 src/ftpclass.cc:4542 src/SFtp.cc:1326
+#: src/Fish.cc:989 src/ftpclass.cc:4553 src/SFtp.cc:1324
 msgid "Connected"
 msgstr "З'єднано"
 
-#: src/Fish.cc:993 src/ftpclass.cc:4519 src/ftpclass.cc:4547
-#: src/ftpclass.cc:4561 src/Http.cc:2268 src/SFtp.cc:1328
+#: src/Fish.cc:991 src/ftpclass.cc:4530 src/ftpclass.cc:4558
+#: src/ftpclass.cc:4572 src/Http.cc:2312 src/SFtp.cc:1326
 #: src/TorrentTracker.cc:626
 msgid "Waiting for response..."
 msgstr "Очікуємо на відповідь…"
 
-#: src/Fish.cc:995 src/ftpclass.cc:4581 src/Http.cc:2271 src/SFtp.cc:1330
+#: src/Fish.cc:993 src/ftpclass.cc:4592 src/Http.cc:2315 src/SFtp.cc:1328
 msgid "Receiving data"
 msgstr "Отримуємо дані…"
 
-#: src/Fish.cc:997 src/ftpclass.cc:4579 src/Http.cc:2264 src/SFtp.cc:1332
+#: src/Fish.cc:995 src/ftpclass.cc:4590 src/Http.cc:2308 src/SFtp.cc:1330
 msgid "Sending data"
 msgstr "Надсилаємо дані"
 
-#: src/Fish.cc:999 src/SFtp.cc:1334
+#: src/Fish.cc:997 src/SFtp.cc:1332
 msgid "Done"
 msgstr "Виконано"
 
-#: src/Fish.cc:1155 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2196
-#: src/SFtp.cc:2315
+#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2194
+#: src/SFtp.cc:2314
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Отримуємо список файлів (%lld) [%s]"
@@ -1946,169 +1942,164 @@ msgstr "Закриваємо контрольний сокет"
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD вимкнено параметром ftp:use-mlsd"
 
-#: src/ftpclass.cc:1373 src/Http.cc:1368 src/Torrent.cc:3232
+#: src/ftpclass.cc:1374 src/Http.cc:1406 src/Torrent.cc:3232
 #: src/Torrent.cc:3771 src/TorrentTracker.cc:393
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "не вдалося створити сокет сімейства адрес %d"
 
-#: src/ftpclass.cc:1404 src/Http.cc:1394
+#: src/ftpclass.cc:1405 src/Http.cc:1432
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr "Помилка сокета (%s) — встановлюємо з’єднання повторно"
 
-#: src/ftpclass.cc:1672
+#: src/ftpclass.cc:1673
 #, fuzzy
 msgid "MFF and SITE CHMOD are not supported by this site"
 msgstr "SITE CHMOD не підтримується цим сайтом"
 
-#: src/ftpclass.cc:1677
+#: src/ftpclass.cc:1678
 msgid "MLST and MLSD are not supported by this site"
 msgstr "MLST і MLSD не підтримуються цим сайтом"
 
-#: src/ftpclass.cc:1987
+#: src/ftpclass.cc:1988
 #, fuzzy
 msgid "SITE SYMLINK is not supported by the server"
 msgstr "MLST і MLSD не підтримуються цим сайтом"
 
-#: src/ftpclass.cc:2160
+#: src/ftpclass.cc:2161
 msgid "unsupported network protocol"
 msgstr "непідтримуваний протокол роботи у мережі"
 
-#: src/ftpclass.cc:2209 src/ftpclass.cc:2304
+#: src/ftpclass.cc:2210 src/ftpclass.cc:2305
 #, c-format
 msgid "Data socket error (%s) - reconnecting"
 msgstr "Помилка сокета даних (%s) — виконуємо спробу повторного з’єднання"
 
-#: src/ftpclass.cc:2237
+#: src/ftpclass.cc:2238
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr "Прийнято з’єднання з передавання даних з (%s), порт %u"
 
-#: src/ftpclass.cc:2279
+#: src/ftpclass.cc:2280
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr "З’єднуємо сокет даних з (%s), порт %u"
 
-#: src/ftpclass.cc:2285
+#: src/ftpclass.cc:2286
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr ""
 "Встановлюємо з’єднання сокета передавання даних з проксі-сервером %s (%s), "
 "порт %u"
 
-#: src/ftpclass.cc:2307 src/ftpclass.cc:4339
+#: src/ftpclass.cc:2308 src/ftpclass.cc:4350
 #, c-format
 msgid "Switching passive mode off"
 msgstr "Вимикаємо пасивний режим"
 
-#: src/ftpclass.cc:2315
+#: src/ftpclass.cc:2316
 #, c-format
 msgid "Data connection established"
 msgstr "Встановлено з’єднання для обміну даними"
 
-#: src/ftpclass.cc:2637 src/ftpclass.cc:4473
+#: src/ftpclass.cc:2638 src/ftpclass.cc:4484
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "Встановлено ftp:ssl-force, а на сервері не підтримується і не дозволяється "
 "SSL"
 
-#: src/ftpclass.cc:3002
+#: src/ftpclass.cc:3003
 #, c-format
 msgid "Persist and retry"
 msgstr "Продовжувати повторні спроби"
 
-#: src/ftpclass.cc:3268
+#: src/ftpclass.cc:3269
 #, c-format
 msgid "Closing data socket"
 msgstr "Закриваємо сокет передавання даних"
 
-#: src/ftpclass.cc:3290
+#: src/ftpclass.cc:3291
 #, c-format
 msgid "Closing aborted data socket"
 msgstr "Закриваємо перерваний сокет передавання даних"
 
-#: src/ftpclass.cc:4131
+#: src/ftpclass.cc:4132
 #, c-format
 msgid "saw file size in response"
 msgstr "розмір файла saw у відповіді"
 
-#: src/ftpclass.cc:4161 src/ftpclass.cc:4188
+#: src/ftpclass.cc:4172 src/ftpclass.cc:4199
 #, c-format
 msgid "Turning on sync-mode"
 msgstr "Вмикаємо режим синхронізації"
 
-#: src/ftpclass.cc:4359
+#: src/ftpclass.cc:4370
 #, c-format
 msgid "Switching passive mode on"
 msgstr "Вмикаємо пасивний режим"
 
-#: src/ftpclass.cc:4510
+#: src/ftpclass.cc:4521
 msgid "FEAT negotiation..."
 msgstr "Узгодження FEAT…"
 
-#: src/ftpclass.cc:4517
+#: src/ftpclass.cc:4528
 msgid "Sending commands..."
 msgstr "Надсилаємо команди…"
 
-#: src/ftpclass.cc:4521
+#: src/ftpclass.cc:4532
 msgid "Delaying before retry"
 msgstr "Затримка перед повторною спробою"
 
-#: src/ftpclass.cc:4522 src/Http.cc:2261
+#: src/ftpclass.cc:4533 src/Http.cc:2305
 msgid "Connection idle"
 msgstr "Неактивне з’єднання"
 
-#: src/ftpclass.cc:4529 src/Http.cc:2253 src/Resolver.cc:168
+#: src/ftpclass.cc:4540 src/Http.cc:2297 src/Resolver.cc:168
 #: src/Resolver.cc:213 src/TorrentTracker.cc:622
 #, c-format
 msgid "Resolving host address..."
 msgstr "Визначаємо адресу вузла…"
 
-#: src/ftpclass.cc:4540
+#: src/ftpclass.cc:4551
 msgid "TLS negotiation..."
 msgstr "Узгодуємо TLS…"
 
-#: src/ftpclass.cc:4544
+#: src/ftpclass.cc:4555
 msgid "Logging in..."
 msgstr "Вхід до системи…"
 
-#: src/ftpclass.cc:4548
+#: src/ftpclass.cc:4559
 msgid "Making data connection..."
 msgstr "Створюємо з’єднання для передавання даних…"
 
-#: src/ftpclass.cc:4551
+#: src/ftpclass.cc:4562
 msgid "Changing remote directory..."
 msgstr "Змінюємо віддалений каталог…"
 
-#: src/ftpclass.cc:4557
+#: src/ftpclass.cc:4568
 msgid "Waiting for other copy peer..."
 msgstr "Очікуємо на інший вузол копіювання…"
 
-#: src/ftpclass.cc:4559 src/ftpclass.cc:4583
+#: src/ftpclass.cc:4570 src/ftpclass.cc:4594
 msgid "Waiting for transfer to complete"
 msgstr "Очікуємо на завершення передавання даних"
 
-#: src/ftpclass.cc:4563
+#: src/ftpclass.cc:4574
 msgid "Waiting for TLS shutdown..."
 msgstr "Очікуємо на завершення роботи TLS…"
 
-#: src/ftpclass.cc:4565
+#: src/ftpclass.cc:4576
 msgid "Waiting for data connection..."
 msgstr "Очікуємо на з’єднання для обміну даними…"
 
-#: src/ftpclass.cc:4571
+#: src/ftpclass.cc:4582
 msgid "Sending data/TLS"
 msgstr "Надсилаємо дані/TLS"
 
-#: src/ftpclass.cc:4573
+#: src/ftpclass.cc:4584
 msgid "Receiving data/TLS"
 msgstr "Отримуємо дані/TLS"
-
-#: src/GetJob.cc:79
-#, c-format
-msgid "%s: %s: file already exists and xfer:clobber is unset\n"
-msgstr "%s: %s: файл вже існує, а xfer:clobber не встановлено\n"
 
 #: src/Http.cc:229
 #, c-format
@@ -2119,65 +2110,65 @@ msgstr "Розриваємо з’єднання HTTP"
 msgid "POST method failed"
 msgstr "Помилка методу POST"
 
-#: src/Http.cc:1318
+#: src/Http.cc:1356
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 "ftp крізь http не може працювати без проксі-сервера, встановлено hftp:proxy."
 
-#: src/Http.cc:1474
+#: src/Http.cc:1512
 #, c-format
 msgid "Sending request..."
 msgstr "Надсилаємо запит…"
 
-#: src/Http.cc:1512
+#: src/Http.cc:1550
 #, c-format
 msgid "Hit EOF while fetching headers"
 msgstr "Надіслано EOF під час отримання заголовків"
 
-#: src/Http.cc:1626
+#: src/Http.cc:1670
 #, c-format
 msgid "Could not parse HTTP status line"
 msgstr "Не вдалося обробити рядок стану HTTP"
 
-#: src/Http.cc:1657
+#: src/Http.cc:1701
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr "Об’єкт не кешовано, а http:cache-control містить only-if-cached"
 
-#: src/Http.cc:1822
+#: src/Http.cc:1866
 #, c-format
 msgid "Receiving body..."
 msgstr "Отримуємо вміст…"
 
-#: src/Http.cc:2022
+#: src/Http.cc:2066
 #, c-format
 msgid "Hit EOF"
 msgstr "Отримано EOF"
 
-#: src/Http.cc:2025
+#: src/Http.cc:2069
 #, c-format
 msgid "Received not enough data, retrying"
 msgstr "Отримано недостатньо даних, повторюємо спробу"
 
-#: src/Http.cc:2036
+#: src/Http.cc:2080
 #, c-format
 msgid "Received all"
 msgstr "Отримано все"
 
-#: src/Http.cc:2041
+#: src/Http.cc:2085
 #, c-format
 msgid "Received all (total)"
 msgstr "Отримано все (загалом)"
 
-#: src/Http.cc:2065 src/Http.cc:2089
+#: src/Http.cc:2109 src/Http.cc:2133
 msgid "chunked format violated"
 msgstr "порушено формат поділу на шматки"
 
-#: src/Http.cc:2075
+#: src/Http.cc:2119
 #, c-format
 msgid "Received last chunk"
 msgstr "Отримано останній шматок"
 
-#: src/Http.cc:2269
+#: src/Http.cc:2313
 msgid "Fetching headers..."
 msgstr "Отримуємо заголовки…"
 
@@ -2247,16 +2238,16 @@ msgid "Attach the terminal to specified backgrounded lftp process.\n"
 msgstr ""
 "Долучити термінал до вказаного переведеного у фоновий режим процесу lftp.\n"
 
-#: src/lftp_ssl.cc:1367
+#: src/lftp_ssl.cc:1395
 #, c-format
 msgid "No certificate presented by %s.\n"
 msgstr ""
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:659
+#: src/LocalAccess.cc:604 src/NetAccess.cc:663
 msgid "Getting directory contents"
 msgstr "Отримуємо дані щодо вмісту каталогу"
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:663
+#: src/LocalAccess.cc:606 src/NetAccess.cc:667
 msgid "Getting files information"
 msgstr "Отримуємо дані щодо файлів"
 
@@ -2274,7 +2265,7 @@ msgstr ", без обмеження розміру"
 msgid ", maximum size %ld\n"
 msgstr ", максимальний розмір — %ld\n"
 
-#: src/mgetJob.cc:118 src/mgetJob.cc:202
+#: src/mgetJob.cc:78
 #, c-format
 msgid "%s: %s: no files found\n"
 msgstr "%s: %s: не знайдено жодних файлів\n"
@@ -2317,125 +2308,125 @@ msgstr "%sвиявлено %d $помилку|помилки|помилок$\n"
 msgid "Finished %s"
 msgstr "Завершено %s"
 
-#: src/MirrorJob.cc:340 src/MirrorJob.cc:532 src/MirrorJob.cc:1200
+#: src/MirrorJob.cc:344 src/MirrorJob.cc:519 src/MirrorJob.cc:1201
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Вилучаємо застарілий файл «%s»"
 
-#: src/MirrorJob.cc:342
+#: src/MirrorJob.cc:346
 #, c-format
 msgid "Overwriting old file `%s'"
 msgstr "Перезаписуємо застарілий файл «%s»"
 
-#: src/MirrorJob.cc:351
+#: src/MirrorJob.cc:355
 #, c-format
 msgid "Skipping file `%s' (only-existing)"
 msgstr "Пропускаємо файл «%s» (only-existing)"
 
-#: src/MirrorJob.cc:357
+#: src/MirrorJob.cc:361
 #, c-format
 msgid "Transferring file `%s'"
 msgstr "Переносимо дані файла «%s»"
 
-#: src/MirrorJob.cc:428
+#: src/MirrorJob.cc:439
 #, c-format
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Пропускаємо каталог «%s» (only-existing)"
 
-#: src/MirrorJob.cc:450 src/MirrorJob.cc:563 src/MirrorJob.cc:884
+#: src/MirrorJob.cc:461 src/MirrorJob.cc:550 src/MirrorJob.cc:883
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Вилучаємо застарілий локальний файл «%s»"
 
-#: src/MirrorJob.cc:500
+#: src/MirrorJob.cc:487
 #, c-format
 msgid "Scanning directory `%s'"
 msgstr "Скануємо каталог «%s»"
 
-#: src/MirrorJob.cc:502
+#: src/MirrorJob.cc:489
 #, c-format
 msgid "Mirroring directory `%s'"
 msgstr "Створюємо дзеркальну копію каталогу «%s»"
 
-#: src/MirrorJob.cc:538 src/MirrorJob.cc:580
+#: src/MirrorJob.cc:525 src/MirrorJob.cc:567
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
 msgstr "Створюємо символічне посилання «%s» на «%s»"
 
-#: src/MirrorJob.cc:575
+#: src/MirrorJob.cc:562
 #, c-format
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Пропускаємо символічне посилання «%s» (only-existing)"
 
-#: src/MirrorJob.cc:792
+#: src/MirrorJob.cc:791
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr ""
 "mirror: протокол «%s» не може бути використано для дзеркального копіювання\n"
 
-#: src/MirrorJob.cc:905
+#: src/MirrorJob.cc:904
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Створюємо каталог «%s»"
 
-#: src/MirrorJob.cc:1157
+#: src/MirrorJob.cc:1158
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "Старий каталог «%s» не вилучено"
 
-#: src/MirrorJob.cc:1159
+#: src/MirrorJob.cc:1160
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "Старий файл «%s» не вилучено"
 
-#: src/MirrorJob.cc:1198
+#: src/MirrorJob.cc:1199
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Вилучаємо старий каталог «%s»"
 
-#: src/MirrorJob.cc:1316
+#: src/MirrorJob.cc:1321
 #, fuzzy, c-format
 msgid "Removing source directory `%s'"
 msgstr "Вилучаємо старий каталог «%s»"
 
-#: src/MirrorJob.cc:1382
+#: src/MirrorJob.cc:1387
 #, c-format
 msgid "Removing source file `%s'"
 msgstr "Вилучаємо файл джерела «%s»"
 
-#: src/MirrorJob.cc:1402
+#: src/MirrorJob.cc:1407
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Повторюємо спробу створення дзеркальної копії…\n"
 
-#: src/MirrorJob.cc:1727
+#: src/MirrorJob.cc:1758
 #, c-format
 msgid "%s must be one of: %s"
 msgstr "%s має бути одним з таких значень: %s"
 
-#: src/MirrorJob.cc:1963
+#: src/MirrorJob.cc:1996
 #, c-format
 msgid ""
 "%s: multiple --file or --directory options must have the same base "
 "directory\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2098
+#: src/MirrorJob.cc:2134
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначний початковий каталог («%s» чи «%s»?)\n"
 
-#: src/MirrorJob.cc:2120
+#: src/MirrorJob.cc:2156
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "%s: неоднозначний каталог призначення («%s» чи «%s»?)\n"
 
-#: src/MirrorJob.cc:2161
+#: src/MirrorJob.cc:2197
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr "%s: слід вказати каталог джерела (встановлено mirror:require-source)\n"
 
-#: src/MirrorJob.cc:2263
+#: src/MirrorJob.cc:2299
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -2481,25 +2472,25 @@ msgstr "у цій системі не передбачено підтримки 
 msgid "rename successful\n"
 msgstr "успішне перейменування\n"
 
-#: src/NetAccess.cc:148
+#: src/NetAccess.cc:150
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Встановлюємо з’єднання з %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:204 src/Torrent.cc:3354
+#: src/NetAccess.cc:206 src/Torrent.cc:3354
 #, c-format
 msgid "Timeout - reconnecting"
 msgstr "Перевищено час очікування. Повторна спроба встановлення з’єднання."
 
-#: src/NetAccess.cc:297
+#: src/NetAccess.cc:301
 msgid "Connection limit reached"
 msgstr "Перевищено обмеження на кількість спроб"
 
-#: src/NetAccess.cc:304
+#: src/NetAccess.cc:308
 msgid "Delaying before reconnect"
 msgstr "Виконуємо затримку перед повторним з’єднанням"
 
-#: src/NetAccess.cc:328 src/NetAccess.cc:330
+#: src/NetAccess.cc:332 src/NetAccess.cc:334
 msgid "max-retries exceeded"
 msgstr ""
 "Перевищено значення максимальної кількості повторних спроб (max-retries)"
@@ -2733,7 +2724,7 @@ msgstr "%s виконано, вилучено %d каталог$y|ів$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s виконано, вилучено %d файл$|ів$\n"
 
-#: src/SFtp.cc:1096 src/SFtp.cc:1097
+#: src/SFtp.cc:1094 src/SFtp.cc:1095
 #, c-format
 msgid "invalid server response format"
 msgstr "некоректний формат відповіді сервера"
@@ -3044,6 +3035,24 @@ msgstr "Отримано коректні дані щодо %d вузл$а|ів$
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr "Отримано коректні дані щодо %d вузл$а|ів$ IPv6"
+
+#~ msgid "%s: option '--%s' doesn't allow an argument\n"
+#~ msgstr "%s: додавання аргументів до параметра «--%s» не передбачено\n"
+
+#~ msgid "%s: unrecognized option '--%s'\n"
+#~ msgstr "%s: невідомий параметр «--%s»\n"
+
+#~ msgid "%s: option '-W %s' is ambiguous\n"
+#~ msgstr "%s: параметр «-W %s» не є однозначним\n"
+
+#~ msgid "%s: option '-W %s' doesn't allow an argument\n"
+#~ msgstr "%s: додавання аргументів до параметра «-W %s» не передбачено\n"
+
+#~ msgid "%s: option '-W %s' requires an argument\n"
+#~ msgstr "%s: до параметра «-W %s» слід додати аргумент\n"
+
+#~ msgid "Usage: mv <file1> <file2>\n"
+#~ msgstr "Користування: mv <файл1> <файл2>\n"
 
 #, fuzzy
 #~ msgid "number"
