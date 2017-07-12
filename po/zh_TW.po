@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lftp 4.6.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2017-07-10 15:39+0300\n"
-"PO-Revision-Date: 2017-01-03 07:39+0800\n"
+"PO-Revision-Date: 2017-07-12 11:26+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <chinese-l10n@googlegroups.com>\n"
 "Language: zh_TW\n"
@@ -37,29 +37,29 @@ msgid "Unknown system error"
 msgstr "不明的系統錯誤"
 
 #: lib/getopt.c:278
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' is ambiguous\n"
-msgstr "%s：選項 ‘%s’ 不明確\n"
+msgstr "%s：選項 '%s%s' 不明確\n"
 
 #: lib/getopt.c:284
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' is ambiguous; possibilities:"
-msgstr "%s：選項 ‘%s’ 不明確，可能是："
+msgstr "%s：選項 '%s%s' 不明確，可能是："
 
 #: lib/getopt.c:319
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%s%s'\n"
-msgstr "%s：‘%c%s’ 選項無法辨識\n"
+msgstr "%s：'%s%s' 選項無法辨識\n"
 
 #: lib/getopt.c:345
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' doesn't allow an argument\n"
-msgstr "%s：選項 ‘%c%s’ 不可配合參數使用\n"
+msgstr "%s：選項 '%s%s' 不可配合參數使用\n"
 
 #: lib/getopt.c:360
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' requires an argument\n"
-msgstr "%s：選項 ‘%s’ 需要參數\n"
+msgstr "%s：選項 '%s%s' 需要參數\n"
 
 #: lib/getopt.c:621
 #, c-format
@@ -825,15 +825,16 @@ msgid "Rename <file1> to <file2>\n"
 msgstr "將 <檔案1> 重新命名為 <檔案2>\n"
 
 #: src/commands.cc:346
-#, fuzzy
 msgid "mmv [OPTS] <files> <target-dir>"
-msgstr "mget [選項] <檔案>"
+msgstr "mmv [選項] <檔案> <目標目錄>"
 
 #: src/commands.cc:347
 msgid ""
 "Move <files> to <target-directory> with wildcard expansion\n"
 " -O <dir>  specifies the target directory (alternative way)\n"
 msgstr ""
+"以萬用字元擴充來移動 <檔案> 到 <目標目錄>\n"
+"-O <目錄> 指定目標目錄（替代方式）\n"
 
 #: src/commands.cc:349
 msgid "[re]nlist [<args>]"
@@ -1143,8 +1144,7 @@ msgstr "wait [<工作編號>]"
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
-msgstr ""
-"等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
+msgstr "等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
 
 #: src/commands.cc:461
 msgid "zcat <files>"
@@ -1303,14 +1303,14 @@ msgid "Usage: %s [OPTS] files...\n"
 msgstr "用法：%s [選項] 檔案……\n"
 
 #: src/commands.cc:1785 src/commands.cc:1814
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s: Number expected. "
-msgstr "%s：-n：應該使用數字。 "
+msgstr "%s：%s：應該使用數字。 "
 
 #: src/commands.cc:1834
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --continue conflicts with --remove-target.\n"
-msgstr "%s：--share 與 --only-new 衝突。\n"
+msgstr "%s：--continue 與 --remove-target 衝突。\n"
 
 #: src/commands.cc:1844 src/commands.cc:1920
 #, c-format
@@ -1396,9 +1396,9 @@ msgid "%s: wait loop detected\n"
 msgstr "%s：某項工作正在等待自己完成 (迴圈)\n"
 
 #: src/commands.cc:2552
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [OPTS] <files> <target-dir>\n"
-msgstr "用法：%s [選項] 檔案\n"
+msgstr "用法：%s [選項] <檔案> <目標目錄>\n"
 
 #: src/commands.cc:2614 src/commands.cc:2944
 #, c-format
@@ -1738,9 +1738,8 @@ msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) 失敗：%s\n"
 
 #: src/Filter.cc:414
-#, fuzzy
 msgid "file already exists and xfer:clobber is unset"
-msgstr "%s：%s：檔案早已存在，而且沒有設定 xfer:clobber 變數\n"
+msgstr "檔案早已存在，而且沒有設定 xfer:clobber 變數"
 
 #: src/FindJobDu.cc:101
 msgid "total"
@@ -2015,8 +2014,7 @@ msgstr "使用 POST 方法失敗"
 
 #: src/Http.cc:1356
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
+msgstr "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
 #: src/Http.cc:1512
 #, c-format
