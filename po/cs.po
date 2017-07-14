@@ -1,7 +1,7 @@
 # Czech translation of lftp.
 # Copyright (C) 2009 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is distributed under the same license as the lftp package.
-# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011, 2012, 2013, 2016.
+# Petr Pisar <petr.pisar@atlas.cz>, 2009, 2010, 2011, 2012, 2013, 2016, 2017.
 #
 # handshake → dojednání (spojení)
 # option → volba
@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.7.0\n"
+"Project-Id-Version: lftp 4.8.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2017-07-10 15:39+0300\n"
-"PO-Revision-Date: 2016-03-31 17:21+02:00\n"
+"PO-Revision-Date: 2017-07-10 21:40+02:00\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -42,29 +42,29 @@ msgid "Unknown system error"
 msgstr "Neznámá chyba systému"
 
 #: lib/getopt.c:278
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' is ambiguous\n"
-msgstr "%s: volba „%s“ není jednoznačná\n"
+msgstr "%s: volba „%s%s“ není jednoznačná\n"
 
 #: lib/getopt.c:284
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' is ambiguous; possibilities:"
-msgstr "%s: volba „%s“ není jednoznačná; možnosti:"
+msgstr "%s: volba „%s%s“ není jednoznačná; možnosti:"
 
 #: lib/getopt.c:319
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%s%s'\n"
-msgstr "%s: nerozpoznaná volba „%c%s“\n"
+msgstr "%s: nerozpoznaná volba „%s%s“\n"
 
 #: lib/getopt.c:345
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' doesn't allow an argument\n"
-msgstr "%s: volba „%c%s“ nedovoluje žádný argument\n"
+msgstr "%s: volba „%s%s“ nedovoluje žádný argument\n"
 
 #: lib/getopt.c:360
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' requires an argument\n"
-msgstr "%s: volba „--%s“ vyžaduje argument\n"
+msgstr "%s: volba „%s%s“ vyžaduje argument\n"
 
 #: lib/getopt.c:621
 #, c-format
@@ -110,24 +110,22 @@ msgid "memory exhausted"
 msgstr "paměť vyčerpána"
 
 #: src/ArgV.cc:107
-#, fuzzy
 msgid "option requires an argument"
-msgstr "%s: volba „--%s“ vyžaduje argument\n"
+msgstr "volba vyžaduje argument"
 
 #: src/ArgV.cc:109 src/ArgV.cc:118
-#, fuzzy
 msgid "invalid option"
-msgstr "%s: neplatná volba – „%c“\n"
+msgstr "neplatná volba"
 
 #: src/ArgV.cc:114
-#, fuzzy, c-format
+#, c-format
 msgid "option `%s' requires an argument"
-msgstr "%s: volba „--%s“ vyžaduje argument\n"
+msgstr "volba „%s“ vyžaduje argument"
 
 #: src/ArgV.cc:116
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized option `%s'"
-msgstr "%s: nerozpoznaná volba „%s“\n"
+msgstr "nerozpoznaná volba „%s“"
 
 #: src/attach.h:138
 #, c-format
@@ -625,7 +623,6 @@ msgid "glob [OPTS] <cmd> <args>"
 msgstr "glob [VOLBY] <příkaz> <argumenty>"
 
 #: src/commands.cc:270
-#, fuzzy
 msgid ""
 "Expand wildcards and run specified command.\n"
 "Options can be used to expand wildcards to list of files, directories,\n"
@@ -643,9 +640,12 @@ msgstr ""
 "Volby se mohou použít na expanzi žolíkových znaků na seznam souborů,\n"
 "adresářů, nebo obou druhů. Výběr druhu není příliš spolehlivý a závisí na\n"
 "serveru. Nebude-li možné druh záznamu určit, bude do seznamu zahrnut.\n"
-" -f  obyčejné soubory (implicitní)\n"
-" -d  adresáře\n"
-" -a  všechny druhy\n"
+" -f           obyčejné soubory (výchozí)\n"
+" -d           adresáře\n"
+" -a           všechny druhy\n"
+" --exist      vrátí nulový kód, když se vzory expandují na neprázdný\n"
+"              seznam\n"
+" --not-exist  vrátí nulový kód, když se vzory expandují na prázdný seznam\n"
 
 #: src/commands.cc:279
 msgid "help [<cmd>]"
@@ -851,15 +851,17 @@ msgid "Rename <file1> to <file2>\n"
 msgstr "Přejmenuje <soubor1> na <soubor2>\n"
 
 #: src/commands.cc:346
-#, fuzzy
 msgid "mmv [OPTS] <files> <target-dir>"
-msgstr "mget [VOLBY] <soubory>"
+msgstr "mmv [VOLBY] <soubory> <cílový_adresář>"
 
 #: src/commands.cc:347
 msgid ""
 "Move <files> to <target-directory> with wildcard expansion\n"
 " -O <dir>  specifies the target directory (alternative way)\n"
 msgstr ""
+"Přesune <soubory> vybrané podle expanze žolíkových znaků do\n"
+"<cílového_adresáře>\n"
+" -O <adresář>  určuje cílový adresář (jiný způsob)\n"
 
 #: src/commands.cc:349
 msgid "[re]nlist [<args>]"
@@ -1271,6 +1273,7 @@ msgstr "Podrobnosti získáte příkazem „%s --help“\n"
 #, c-format
 msgid "%s: -c, -f, -v, -h conflict with other `open' options and arguments\n"
 msgstr ""
+"%s: -c, -f, -v, -h je v rozporu s dalšími volbami a argumenty pro „open“\n"
 
 #: src/commands.cc:956
 #, c-format
@@ -1346,14 +1349,14 @@ msgid "Usage: %s [OPTS] files...\n"
 msgstr "Použití: %s [VOLBY] soubory…\n"
 
 #: src/commands.cc:1785 src/commands.cc:1814
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s: Number expected. "
-msgstr "%s: -n: Očekáváno číslo. "
+msgstr "%s: %s: Očekáváno číslo. "
 
 #: src/commands.cc:1834
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --continue conflicts with --remove-target.\n"
-msgstr "%s: --share je v rozporu s --only-new.\n"
+msgstr "%s: --continue je v rozporu s --remove-target.\n"
 
 #: src/commands.cc:1844 src/commands.cc:1920
 #, c-format
@@ -1439,9 +1442,9 @@ msgid "%s: wait loop detected\n"
 msgstr "%s: odhalena smyčka čekání\n"
 
 #: src/commands.cc:2552
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [OPTS] <files> <target-dir>\n"
-msgstr "Použití: %s [VOLBY] soubor\n"
+msgstr "Použití: %s [VOLBY] <soubory> <cílový_adresář>\n"
 
 #: src/commands.cc:2614 src/commands.cc:2944
 #, c-format
@@ -1704,7 +1707,7 @@ msgstr "pohyb v souboru je rozbitý"
 
 #: src/FileCopy.cc:207
 msgid "no progress timeout"
-msgstr ""
+msgstr "žádný časový limit na dokončení"
 
 #: src/FileCopy.cc:235
 msgid "cannot seek on data source"
@@ -1791,9 +1794,8 @@ msgid "execl(/bin/sh) failed: %s\n"
 msgstr "execl(/bin/sh) selhalo: %s\n"
 
 #: src/Filter.cc:414
-#, fuzzy
 msgid "file already exists and xfer:clobber is unset"
-msgstr "%s: %s: soubor již existuje a xfer:clobber není nastaveno\n"
+msgstr "soubor již existuje a xfer:clobber není nastaveno"
 
 #: src/FindJobDu.cc:101
 msgid "total"
@@ -1925,9 +1927,8 @@ msgid "MLST and MLSD are not supported by this site"
 msgstr "Tento server nepodporuje MLST a MLSD"
 
 #: src/ftpclass.cc:1988
-#, fuzzy
 msgid "SITE SYMLINK is not supported by the server"
-msgstr "Tento server nepodporuje MLST a MLSD"
+msgstr "Tento server nepodporuje SITE SYMLINK"
 
 #: src/ftpclass.cc:2161
 msgid "unsupported network protocol"
@@ -2197,7 +2198,7 @@ msgstr "Připojí terminál k určenému procesu lftp na pozadí.\n"
 #: src/lftp_ssl.cc:1395
 #, c-format
 msgid "No certificate presented by %s.\n"
-msgstr ""
+msgstr "%s nepředložil žádný certifikát.\n"
 
 #: src/LocalAccess.cc:604 src/NetAccess.cc:663
 msgid "Getting directory contents"
@@ -2365,6 +2366,8 @@ msgid ""
 "%s: multiple --file or --directory options must have the same base "
 "directory\n"
 msgstr ""
+"%s: opakující se volby --file a --directory musí mít stejný základní "
+"adresář\n"
 
 #: src/MirrorJob.cc:2134
 #, c-format
@@ -2398,6 +2401,19 @@ msgid ""
 "\n"
 "See the man page lftp(1) for a complete documentation.\n"
 msgstr ""
+"\n"
+"Zrcadlí zadaní vzdálený adresář do místního adresáře.\n"
+"\n"
+" -R, --reverse          opačný směr (nahrává soubory)\n"
+"Mnoho dalších voleb je dokumentováno v manuálové stránce lftp(1).\n"
+"\n"
+"S volbou -R je první adresář místní a druhý vzdálený.\n"
+"Je-li druhý adresář vynechán, použije se poslední složka prvního adresáře.\n"
+"used.\n"
+"Jsou-li oba adresáře vynechány, použije se současný místní a vzdálený "
+"adresář.\n"
+"\n"
+"Úplnou dokumentaci naleznete v manuálové stránce lftp(1).\n"
 
 #: src/mkdirJob.cc:128
 #, c-format
@@ -2465,9 +2481,9 @@ msgid "parse: missing redirection filename\n"
 msgstr "rozebírání: u přesměrování chybí název souboru\n"
 
 #: src/PatternSet.cc:110
-#, fuzzy, c-format
+#, c-format
 msgid "regular expression `%s': %s"
-msgstr "%s: regulární výraz „%s“: %s\n"
+msgstr "regulární výraz „%s“: %s"
 
 #: src/pgetJob.cc:127
 msgid "pget: falling back to plain get"
@@ -2484,7 +2500,7 @@ msgstr "velikost zdrojového souboru není známa"
 #: src/pgetJob.cc:173
 #, c-format
 msgid "pget: warning: space allocation for %s (%lld bytes) failed: %s\n"
-msgstr ""
+msgstr "pget: pozor: alokace místa pro %s (%'lld bajtů) selhala: %s\n"
 
 #: src/pgetJob.cc:234
 #, c-format
@@ -2592,9 +2608,8 @@ msgid "no closure defined for this setting"
 msgstr "toto nastavení nemá definován uzávěr"
 
 #: src/ResMgr.cc:899
-#, fuzzy
 msgid "a closure is required for this setting"
-msgstr "toto nastavení nemá definován uzávěr"
+msgstr "toto nastavení vyžaduje uzávěr"
 
 #: src/Resolver.cc:232
 msgid "host name resolve timeout"
@@ -2607,7 +2622,7 @@ msgstr "%d $adresa nalezena|adresy nalezeny|adres nalezeno$"
 
 #: src/Resolver.cc:323
 msgid "Link-local IPv6 address should have a scope"
-msgstr ""
+msgstr "Linková IPv6 adresa by měla mít identifikátor rozhraní (scope)"
 
 #: src/Resolver.cc:741
 msgid "DNS resolution not trusted."
@@ -2783,18 +2798,17 @@ msgid "eta:"
 msgstr "zbývá: "
 
 #: src/SSH_Access.cc:64
-#, fuzzy
 msgid "Password required"
-msgstr "Heslo: "
+msgstr "Vyžadováno heslo"
 
 #: src/SSH_Access.cc:69
 msgid "Login incorrect"
-msgstr ""
+msgstr "Nesprávné přihlášení"
 
 #: src/SSH_Access.cc:163
-#, fuzzy, c-format
+#, c-format
 msgid "Disconnecting"
-msgstr "Navazuje se spojení…"
+msgstr "Ukončuje se spojení"
 
 #: src/SysCmdJob.cc:73
 #, c-format
@@ -2803,19 +2817,19 @@ msgstr "execlp(%s) selhalo: %s\n"
 
 #: src/TimeDate.cc:156
 msgid "day"
-msgstr ""
+msgstr "den"
 
 #: src/TimeDate.cc:157
 msgid "hour"
-msgstr ""
+msgstr "hodina"
 
 #: src/TimeDate.cc:158
 msgid "minute"
-msgstr ""
+msgstr "minuta"
 
 #: src/TimeDate.cc:159
 msgid "second"
-msgstr ""
+msgstr "sekunda"
 
 #: src/Torrent.cc:613
 msgid "announced via "
@@ -3003,79 +3017,214 @@ msgstr ""
 #~ msgid "%s: option '-W %s' requires an argument\n"
 #~ msgstr "%s: volba „-W %s“ vyžaduje argument\n"
 
+#~ msgid "parsed %s part: "
+#~ msgstr "rozebraná část %s: "
+
+#~ msgid "%s (day ordinal=%ld number=%d)"
+#~ msgstr "%s (den pořadí=%ld počet=%d)"
+
+#~ msgid "is-dst=%d"
+#~ msgstr "letní_čas=%d"
+
+#~ msgid "TZ=%+03d:%02d"
+#~ msgstr "TZ=%+03d:%02d"
+
+#~ msgid "Local-TZ=%+03d:%02d"
+#~ msgstr "Místní_zóna=%+03d:%02d"
+
+#~ msgid "number of seconds: %ld"
+#~ msgstr "počet sekund: %ld"
+
+#~ msgid "today/this/now\n"
+#~ msgstr "dnes/tento/nyní\n"
+
+#~ msgid "number of seconds"
+#~ msgstr "počet sekund"
+
+#~ msgid "datetime"
+#~ msgstr "datum a čas"
+
+#~ msgid "time"
+#~ msgstr "čas"
+
+#~ msgid "local_zone"
+#~ msgstr "místní_zóna"
+
+#~ msgid "zone"
+#~ msgstr "zóna"
+
+#~ msgid "date"
+#~ msgstr "datum"
+
+#~ msgid "relative"
+#~ msgstr "relativní"
+
+#~ msgid "number"
+#~ msgstr "počet"
+
+#~ msgid "hybrid"
+#~ msgstr "křížený"
+
+#~ msgid "warning: value %ld has %<PRIuMAX> digits. Assuming YYYY/MM/DD\n"
+#~ msgstr ""
+#~ "pozor: hodnota %ld má %<PRIuMAX> číslic. Předpokládá se RRRR/MM/DD\n"
+
+#~ msgid "warning: value %ld has less than 4 digits. Assuming MM/DD/YY[YY]\n"
+#~ msgstr ""
+#~ "pozor: hodnota %ld má méně než 4 číslice. Předpokládá se MM/DD/RR[RR]\n"
+
+#~ msgid "warning: adjusting year value %ld to %ld\n"
+#~ msgstr "pozor: hodnota roku %ld se upraví na %ld\n"
+
+#~ msgid "error: unknown word '%s'\n"
+#~ msgstr "chyba: neznámé slovo „%s“\n"
+
+#~ msgid "error: invalid date/time value:\n"
+#~ msgstr "chyba: neplatná hodnota data/času:\n"
+
+#~ msgid "    user provided time: '%s'\n"
+#~ msgstr " čas zadaný uživatelem: „%s“\n"
+
+#~ msgid "       normalized time: '%s'\n"
+#~ msgstr "     normalizovaný čas: „%s“\n"
+
+#~ msgid "     possible reasons:\n"
+#~ msgstr "         možné důvody:\n"
+
+#~ msgid "       non-existing due to daylight-saving time;\n"
+#~ msgstr "       neexistuje kvůli letnímu času\n"
+
+#~ msgid "       invalid day/month combination;\n"
+#~ msgstr "       chybná kombinace dne a měsíce\n"
+
+#~ msgid "       numeric values overflow;\n"
+#~ msgstr "       číselné hodnoty přetékají\n"
+
+#~ msgid "incorrect timezone"
+#~ msgstr "chybná časová zóna"
+
+#~ msgid "missing timezone"
+#~ msgstr "časová zóna chybí"
+
+#~ msgid "error: parsing failed\n"
+#~ msgstr "chyba: rozbor selhal\n"
+
+#~ msgid "error: parsing failed, stopped at '%s'\n"
+#~ msgstr "chyba: rozbor selhal, zastaveno na „%s“\n"
+
+#~ msgid "'@timespec' - always UTC0"
+#~ msgstr "„@timespec“ – vždy UTC0"
+
+#~ msgid "parsed date/time string"
+#~ msgstr "rozebraný řetězec s datem/časem"
+
+#~ msgid "TZ=\"%s\" in date string"
+#~ msgstr "v řetězci s datem je TZ=\"%s\""
+
+#~ msgid "TZ=UTC0 environment value or -u"
+#~ msgstr "proměnná prostředí TZ=UTC0 nebo -u"
+
+#~ msgid "TZ=\"%s\" environment value"
+#~ msgstr "hodnota proměnné TZ=\"%s\""
+
+#~ msgid "system default"
+#~ msgstr "výchozí nastavení systému"
+
+#~ msgid "input timezone: %+03d:%02d (set from %s)\n"
+#~ msgstr "vstupní časová zóna: %+03d:%02d (nastaveno z %s)\n"
+
+#~ msgid "error: invalid hour %ld%s\n"
+#~ msgstr "chyba: neplatná hodina %ld%s\n"
+
+#~ msgid "using %s time as starting value: '%s'\n"
+#~ msgstr "jako počáteční hodnota se použije %s čas: „%s“\n"
+
+# using %s time
+#~ msgid "specified"
+#~ msgstr "zadaný"
+
+# using %s time
+#~ msgid "current"
+#~ msgstr "současný"
+
+#~ msgid "error: setenv('TZ','%s') failed\n"
+#~ msgstr "chyba: volání setenv(\"TZ\", \"%s\") selhalo\n"
+
+#~ msgid ""
+#~ "error: day '%s' (day ordinal=%ld number=%d) resulted in an invalid date: "
+#~ "'%s'\n"
+#~ msgstr ""
+#~ "chyba: den „%s“ (pořadí=%ld, počet=%d) vyústil v neplatné datum: „%s“\n"
+
+#~ msgid "new start date: '%s' is '%s'\n"
+#~ msgstr "nové počáteční datum: „%s“ je „%s“\n"
+
+#~ msgid "using current date as starting value: '%s'\n"
+#~ msgstr "jako počáteční hodnota se použije současné datum: „%s“\n"
+
+#~ msgid "warning: day (%s) ignored when explicit dates are given\n"
+#~ msgstr "pozor: den (%s) se ignoruje, když jsou zadána explicitní data\n"
+
+#~ msgid "starting date/time: '%s'\n"
+#~ msgstr "počáteční datum/čas: „%s“\n"
+
+#~ msgid ""
+#~ "warning: when adding relative months/years, it is recommended to specify "
+#~ "the 15th of the months\n"
+#~ msgstr ""
+#~ "pozor: když se přidává relativní měsíce/roky, je doporučeno zadat 15. den "
+#~ "měsíců\n"
+
+#~ msgid ""
+#~ "warning: when adding relative days, it is recommended to specify 12:00pm\n"
+#~ msgstr "pozor: když se přidávají relativní dny, je doporučeno zadat 24.00\n"
+
+#~ msgid "error: %s:%d\n"
+#~ msgstr "chyba: %s:%d\n"
+
+#~ msgid "error: adding relative date resulted in an invalid date: '%s'\n"
+#~ msgstr "chyba: přidání relativního data vyústilo v neplatné datum: „%s“\n"
+
+#~ msgid "after date adjustment (%+ld years, %+ld months, %+ld days),\n"
+#~ msgstr "po úpravě data (%+ld roků, %+ld měsíců, %+ld dnů),\n"
+
+#~ msgid "    new date/time = '%s'\n"
+#~ msgstr "    nové datum/čas = „%s“\n"
+
+#~ msgid "error: gmtime failed for t=%ld\n"
+#~ msgstr "chyba: funkce gmtime selhala pro t=%ld\n"
+
+#~ msgid "error: timezone %ld caused time_t overflow\n"
+#~ msgstr "chyba: časová zóna %ld způsobila přetečení time_t\n"
+
+#~ msgid "'%s' = %ld epoch-seconds\n"
+#~ msgstr "„%s“ = %ld sekund od začátku epochy\n"
+
+#~ msgid "error: adding relative time caused an overflow\n"
+#~ msgstr "chyba: přidání relativního času způsobilo přetečení\n"
+
+#~ msgid ""
+#~ "after time adjustment (%+ld hours, %+ld minutes, %+ld seconds, %+ld ns),\n"
+#~ msgstr ""
+#~ "po úpravě času (%+ld hodin, %+ld minut, %+ld sekund, %+ld nanosekund),\n"
+
+#~ msgid "    new time = %ld epoch-seconds\n"
+#~ msgstr "    nový čas = %ld sekund od počátku epochy\n"
+
+#~ msgid "output timezone: %+03d:%02d (set from %s)\n"
+#~ msgstr "výstupní časová zóna: %+03d:%02d (nastaveno z %s)\n"
+
+#~ msgid "final: %ld.%09ld (epoch-seconds)\n"
+#~ msgstr "konečný: %ld,%09ld (sekund od počátku epochy)\n"
+
+#~ msgid "final: %s (UTC0)\n"
+#~ msgstr "konečný: %s (UTC0)\n"
+
+#~ msgid "final: %s (output timezone TZ=%+03d:%02d)\n"
+#~ msgstr "konečný: %s (výstupní časová zóna TZ==%+03d:%02d)\n"
+
 #~ msgid "Usage: mv <file1> <file2>\n"
 #~ msgstr "Použití: mv <soubor1> <soubor2>\n"
-
-#, fuzzy
-#~ msgid "number"
-#~ msgstr "neplatné číslo"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "Mirror specified remote directory to local directory\n"
-#~ "\n"
-#~ " -c, --continue         continue a mirror job if possible\n"
-#~ " -e, --delete           delete files not present at remote site\n"
-#~ "     --delete-first     delete old files before transferring new ones\n"
-#~ " -s, --allow-suid       set suid/sgid bits according to remote site\n"
-#~ "     --allow-chown      try to set owner and group on files\n"
-#~ "     --ignore-time      ignore time when deciding whether to download\n"
-#~ " -n, --only-newer       download only newer files (-c won't work)\n"
-#~ " -r, --no-recursion     don't go to subdirectories\n"
-#~ " -p, --no-perms         don't set file permissions\n"
-#~ "     --no-umask         don't apply umask to file modes\n"
-#~ " -R, --reverse          reverse mirror (put files)\n"
-#~ " -L, --dereference      download symbolic links as files\n"
-#~ " -N, --newer-than=SPEC  download only files newer than specified time\n"
-#~ " -P, --parallel[=N]     download N files in parallel\n"
-#~ " -i RX, --include RX    include matching files\n"
-#~ " -x RX, --exclude RX    exclude matching files\n"
-#~ "                        RX is extended regular expression\n"
-#~ " -v, --verbose[=N]      verbose operation\n"
-#~ "     --log=FILE         write lftp commands being executed to FILE\n"
-#~ "     --script=FILE      write lftp commands to FILE, but don't execute "
-#~ "them\n"
-#~ "     --just-print, --dry-run    same as --script=-\n"
-#~ "\n"
-#~ "When using -R, the first directory is local and the second is remote.\n"
-#~ "If the second directory is omitted, basename of first directory is used.\n"
-#~ "If both directories are omitted, current local and remote directories are "
-#~ "used.\n"
-#~ "See lftp(1) for a complete list of options.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Zrcadlí zadaný vzdálený adresář do místního adresáře\n"
-#~ "\n"
-#~ " -c, --continue         pokračuje v úloze zrcadlení, je-li to možné\n"
-#~ " -e, --delete           smaže soubory, které na vzdáleném umístění "
-#~ "neexistují\n"
-#~ "     --delete-first     před přenosem nových souborů smaže staré\n"
-#~ " -s, --allow-suid       nastaví suid/sgid bity podle vzdáleného umístění\n"
-#~ "     --allow-chown      zkusí souborům nastavit vlastníka a skupinu\n"
-#~ "     --ignore-time      při rozhodování o stažení nebere v úvahu čas\n"
-#~ " -n, --only-newer       stáhne jen novější soubory (-c nebude fungovat)\n"
-#~ " -r, --no-recursion     nesestupuje do podadresářů\n"
-#~ " -p, --no-perms         souborům nenastaví práva\n"
-#~ "     --no-umask         na módy souborů neuplatní umask\n"
-#~ " -R, --reverse          opačné zrcadlení (soubory nahrává)\n"
-#~ " -L, --dereference      symbolické odkazy stáhne jako soubory\n"
-#~ " -N, --newer-than=ČAS   stáhne pouze soubory novější než zadaný ČAS\n"
-#~ " -P, --parallel[=N]     stahuje N souborů souběžně\n"
-#~ " -i RX, --include RX    zahrne odpovídající soubory\n"
-#~ " -x RX, --exclude RX    vyloučí odpovídající soubory\n"
-#~ "                        RX je rozšířený regulární výraz\n"
-#~ " -v, --verbose[=N]      upovídaný průběh\n"
-#~ "     --log=SOUBOR       vykonávané příkazy lftp budou zaznamenány do "
-#~ "SOUBORU\n"
-#~ "     --script=SOUBOR    příkazy lftp zapíše do SOUBORU, ale nevykoná je\n"
-#~ "     --just-print, --dry-run\n"
-#~ "                        stejné jako --script=-\n"
-#~ "\n"
-#~ "Je-li použito -R, první adresář bude místní a druhý vzdálený.\n"
-#~ "Je-li druhý adresář vynechán, použije se základ názvu prvního adresáře.\n"
-#~ "Jsou-li vynechány oba adresáře, použije se místní a vzdálený pracovní "
-#~ "adresář.\n"
 
 #~ msgid "SITE CHMOD is disabled by ftp:use-site-chmod"
 #~ msgstr "SITE CHMOD je dle ftp:use-site-chmod zakázán"
