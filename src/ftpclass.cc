@@ -2565,7 +2565,7 @@ int   Ftp::Do()
       if(copy_mode!=COPY_NONE)
 	 goto notimeout_return;
 
-      if(expect->IsEmpty() && !eof)
+      if(expect->IsEmpty() && !eof && !conn->data_iobuf)
       {
 	 eof=true;
 	 m=MOVED;
@@ -5029,7 +5029,7 @@ void TelnetEncode::PutTranslated(Buffer *target,const char *put_buf,int size)
    const char *iac;
    while(put_size>0)
    {
-      iac=(const char*)memchr(put_buf,TELNET_IAC,put_size);
+      iac=(const char*)memchr(put_buf,(unsigned char)TELNET_IAC,put_size);
       if(!iac)
       {
 	 target->Put(put_buf,put_size);
@@ -5055,7 +5055,7 @@ void TelnetDecode::PutTranslated(Buffer *target,const char *put_buf,int size)
    const char *iac;
    while(put_size>0)
    {
-      iac=(const char*)memchr(put_buf,TELNET_IAC,put_size);
+      iac=(const char*)memchr(put_buf,(unsigned char)TELNET_IAC,put_size);
       if(!iac)
 	 break;
       target->Put(put_buf,iac-put_buf);
