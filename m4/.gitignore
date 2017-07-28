@@ -251,3 +251,5 @@
 /getlogin.m4
 /minmax.m4
 /pthread_rwlock_rdlock.m4
+/localtime-buffer.m4
+/tzset.m4
