@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 1.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2017-03-07 15:03+0300\n"
+"POT-Creation-Date: 2017-08-02 12:55+0300\n"
 "PO-Revision-Date: 1999-07-12 00:00+0400\n"
 "Last-Translator: Arnaldo Carvalho de Melo <acme@conectiva.com.br>\n"
 "Language-Team: pt_BR <pt@li.org>\n"
@@ -28,68 +28,43 @@ msgstr ""
 msgid "Valid arguments are:"
 msgstr ""
 
-#: lib/error.c:191
+#: lib/error.c:195
 msgid "Unknown system error"
 msgstr ""
 
-#: lib/getopt.c:575 lib/getopt.c:604
+#: lib/getopt.c:278
 #, c-format
-msgid "%s: option '%s' is ambiguous; possibilities:"
+msgid "%s: option '%s%s' is ambiguous\n"
 msgstr ""
 
-#: lib/getopt.c:619
+#: lib/getopt.c:284
 #, c-format
-msgid "%s: option '%s' is ambiguous\n"
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
 msgstr ""
 
-#: lib/getopt.c:654 lib/getopt.c:658
-#, c-format
-msgid "%s: option '--%s' doesn't allow an argument\n"
-msgstr ""
-
-#: lib/getopt.c:667 lib/getopt.c:672
-#, c-format
-msgid "%s: option '%c%s' doesn't allow an argument\n"
-msgstr ""
-
-#: lib/getopt.c:715 lib/getopt.c:734
-#, c-format
-msgid "%s: option '--%s' requires an argument\n"
-msgstr ""
-
-#: lib/getopt.c:772 lib/getopt.c:775
+#: lib/getopt.c:319
 #, fuzzy, c-format
-msgid "%s: unrecognized option '--%s'\n"
+msgid "%s: unrecognized option '%s%s'\n"
 msgstr "número inválido"
 
-#: lib/getopt.c:783 lib/getopt.c:786
-#, fuzzy, c-format
-msgid "%s: unrecognized option '%c%s'\n"
-msgstr "número inválido"
+#: lib/getopt.c:345
+#, c-format
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr ""
 
-#: lib/getopt.c:835 lib/getopt.c:838
+#: lib/getopt.c:360
+#, c-format
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr ""
+
+#: lib/getopt.c:621
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "número inválido"
 
-#: lib/getopt.c:891 lib/getopt.c:908 lib/getopt.c:1118 lib/getopt.c:1136
+#: lib/getopt.c:636 lib/getopt.c:682
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
-msgstr ""
-
-#: lib/getopt.c:964 lib/getopt.c:980
-#, c-format
-msgid "%s: option '-W %s' is ambiguous\n"
-msgstr ""
-
-#: lib/getopt.c:1004 lib/getopt.c:1022
-#, c-format
-msgid "%s: option '-W %s' doesn't allow an argument\n"
-msgstr ""
-
-#: lib/getopt.c:1043 lib/getopt.c:1061
-#, c-format
-msgid "%s: option '-W %s' requires an argument\n"
 msgstr ""
 
 #. TRANSLATORS:
@@ -113,11 +88,11 @@ msgstr ""
 #. If you don't know what to put here, please see
 #. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:354
+#: lib/quotearg.c:362
 msgid "`"
 msgstr ""
 
-#: lib/quotearg.c:355
+#: lib/quotearg.c:363
 msgid "'"
 msgstr ""
 
@@ -208,58 +183,58 @@ msgstr ""
 msgid "Too many redirections"
 msgstr ""
 
-#: src/CmdExec.cc:516 src/CmdExec.cc:573
+#: src/CmdExec.cc:517 src/CmdExec.cc:574
 msgid "Interrupt"
 msgstr "Interrupção"
 
-#: src/CmdExec.cc:638
+#: src/CmdExec.cc:639
 #, c-format
 msgid "Warning: discarding incomplete command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:736
+#: src/CmdExec.cc:737
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
 msgstr "\tExecutando comando embutido `%s' [%s]\n"
 
-#: src/CmdExec.cc:741
+#: src/CmdExec.cc:742
 msgid "Queue is stopped."
 msgstr ""
 
-#: src/CmdExec.cc:746
+#: src/CmdExec.cc:747
 msgid "Now executing:"
 msgstr ""
 
-#: src/CmdExec.cc:757
+#: src/CmdExec.cc:758
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
 msgstr "\tEsperanto término do serviço [%d]\n"
 
-#: src/CmdExec.cc:760
+#: src/CmdExec.cc:761
 #, fuzzy, c-format
 msgid "\tWaiting for termination of jobs: "
 msgstr "Esperando término da filtragem"
 
-#: src/CmdExec.cc:769
+#: src/CmdExec.cc:770
 msgid "\tRunning\n"
 msgstr "\tExecutando\n"
 
-#: src/CmdExec.cc:771
+#: src/CmdExec.cc:772
 #, fuzzy
 msgid "\tWaiting for command\n"
 msgstr "Atenção: descartando comando incompleto\n"
 
-#: src/CmdExec.cc:1260
+#: src/CmdExec.cc:1261
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
 msgstr ""
 
-#: src/CmdExec.cc:1277
+#: src/CmdExec.cc:1278
 #, fuzzy, c-format
 msgid "Usage: %s cmd [args...]\n"
 msgstr "mget [-c] [-d] [-e] <arquivos>"
 
-#: src/CmdExec.cc:1283
+#: src/CmdExec.cc:1284
 #, c-format
 msgid "%s: cannot create local session\n"
 msgstr ""
@@ -1099,7 +1074,7 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:834 src/commands.cc:3512
+#: src/commands.cc:834 src/commands.cc:3515
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr ""
@@ -1114,13 +1089,13 @@ msgstr ""
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 
-#: src/commands.cc:1042 src/commands.cc:2237 src/DummyProto.cc:65
+#: src/commands.cc:1042 src/commands.cc:2238 src/DummyProto.cc:65
 #: src/MirrorJob.cc:2110 src/MirrorJob.cc:2132
 #, fuzzy
 msgid " - not supported protocol"
 msgstr "%s: %s - protocolo não suportado\n"
 
-#: src/commands.cc:1074 src/commands.cc:2221
+#: src/commands.cc:1074 src/commands.cc:2222
 msgid "Password: "
 msgstr ""
 
@@ -1129,11 +1104,11 @@ msgstr ""
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr ""
 
-#: src/commands.cc:1184 src/commands.cc:1274 src/commands.cc:1650
-#: src/commands.cc:1681 src/commands.cc:1788 src/commands.cc:1876
-#: src/commands.cc:2149 src/commands.cc:2342 src/commands.cc:2503
-#: src/commands.cc:2531 src/commands.cc:2538 src/commands.cc:2834
-#: src/commands.cc:2861 src/commands.cc:2868 src/commands.cc:3198
+#: src/commands.cc:1184 src/commands.cc:1275 src/commands.cc:1651
+#: src/commands.cc:1682 src/commands.cc:1789 src/commands.cc:1877
+#: src/commands.cc:2150 src/commands.cc:2343 src/commands.cc:2504
+#: src/commands.cc:2532 src/commands.cc:2539 src/commands.cc:2835
+#: src/commands.cc:2862 src/commands.cc:2869 src/commands.cc:3199
 #: src/lftp.cc:267 src/MirrorJob.cc:2074 src/SleepJob.cc:144
 #: src/SleepJob.cc:200 src/Torrent.cc:4194
 #, c-format
@@ -1145,200 +1120,200 @@ msgstr ""
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr ""
 
-#: src/commands.cc:1244
+#: src/commands.cc:1245
 #, c-format
 msgid "%s: -n: positive number expected. "
 msgstr ""
 
-#: src/commands.cc:1296
+#: src/commands.cc:1297
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr ""
 
-#: src/commands.cc:1339 src/commands.cc:1367
+#: src/commands.cc:1340 src/commands.cc:1368
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr ""
 
-#: src/commands.cc:1359
+#: src/commands.cc:1360
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr ""
 
-#: src/commands.cc:1411
+#: src/commands.cc:1412
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr ""
 
-#: src/commands.cc:1517
+#: src/commands.cc:1518
 msgid "invalid argument for `--sort'"
 msgstr ""
 
-#: src/commands.cc:1547
+#: src/commands.cc:1548
 #, fuzzy
 msgid "invalid block size"
 msgstr "número inválido"
 
-#: src/commands.cc:1690
+#: src/commands.cc:1691
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr ""
 
-#: src/commands.cc:1763
+#: src/commands.cc:1764
 #, c-format
 msgid "%s: -n: Number expected. "
 msgstr ""
 
-#: src/commands.cc:1799 src/commands.cc:1882
+#: src/commands.cc:1800 src/commands.cc:1883
 #, c-format
 msgid "File name missed. "
 msgstr ""
 
-#: src/commands.cc:1951
+#: src/commands.cc:1952
 #, fuzzy, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "mget [-c] [-d] [-e] <arquivos>"
 
-#: src/commands.cc:1994
+#: src/commands.cc:1995
 #, fuzzy, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "mget [-c] [-d] [-e] <arquivos>"
 
-#: src/commands.cc:2041
+#: src/commands.cc:2042
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr ""
 
-#: src/commands.cc:2055 src/commands.cc:2308 src/commands.cc:2430
-#: src/commands.cc:2600 src/commands.cc:3004 src/commands.cc:3085
+#: src/commands.cc:2056 src/commands.cc:2309 src/commands.cc:2431
+#: src/commands.cc:2601 src/commands.cc:3005 src/commands.cc:3086
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr ""
 
-#: src/commands.cc:2062 src/commands.cc:2287 src/commands.cc:2317
-#: src/commands.cc:2448
+#: src/commands.cc:2063 src/commands.cc:2288 src/commands.cc:2318
+#: src/commands.cc:2449
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr ""
 
-#: src/commands.cc:2097
+#: src/commands.cc:2098
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr ""
 
-#: src/commands.cc:2188
+#: src/commands.cc:2189
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr ""
 
-#: src/commands.cc:2191
+#: src/commands.cc:2192
 #, c-format
 msgid "debug is off\n"
 msgstr ""
 
-#: src/commands.cc:2202
+#: src/commands.cc:2203
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr ""
 
-#: src/commands.cc:2277 src/commands.cc:2440
+#: src/commands.cc:2278 src/commands.cc:2441
 #, c-format
 msgid "%s: no current job\n"
 msgstr ""
 
-#: src/commands.cc:2289
+#: src/commands.cc:2290
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr ""
 
-#: src/commands.cc:2370
+#: src/commands.cc:2371
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr ""
 
-#: src/commands.cc:2414
+#: src/commands.cc:2415
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr ""
 
-#: src/commands.cc:2453
+#: src/commands.cc:2454
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr ""
 
-#: src/commands.cc:2458
+#: src/commands.cc:2459
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr ""
 
-#: src/commands.cc:2482
+#: src/commands.cc:2483
 #, c-format
 msgid "Usage: mv <file1> <file2>\n"
 msgstr ""
 
-#: src/commands.cc:2530 src/commands.cc:2860
+#: src/commands.cc:2531 src/commands.cc:2861
 #, c-format
 msgid "Invalid command. "
 msgstr ""
 
-#: src/commands.cc:2537 src/commands.cc:2867
+#: src/commands.cc:2538 src/commands.cc:2868
 #, c-format
 msgid "Ambiguous command. "
 msgstr ""
 
-#: src/commands.cc:2556
+#: src/commands.cc:2557
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr ""
 
-#: src/commands.cc:2573
+#: src/commands.cc:2574
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr ""
 
-#: src/commands.cc:2606
+#: src/commands.cc:2607
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 
-#: src/commands.cc:2630
+#: src/commands.cc:2631
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr ""
 
-#: src/commands.cc:2635
+#: src/commands.cc:2636
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr ""
 
-#: src/commands.cc:2640
+#: src/commands.cc:2641
 #, c-format
 msgid "Usage: %s\n"
 msgstr ""
 
-#: src/commands.cc:2648
+#: src/commands.cc:2649
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr ""
 
-#: src/commands.cc:2652
+#: src/commands.cc:2653
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 
-#: src/commands.cc:2654
+#: src/commands.cc:2655
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 
-#: src/commands.cc:2720
+#: src/commands.cc:2721
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr ""
 
-#: src/commands.cc:2723
+#: src/commands.cc:2724
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -1355,90 +1330,90 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2737
+#: src/commands.cc:2738
 #, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr ""
 
-#: src/commands.cc:2743
+#: src/commands.cc:2744
 msgid "Libraries used: "
 msgstr ""
 
-#: src/commands.cc:2883 src/commands.cc:2911
+#: src/commands.cc:2884 src/commands.cc:2912
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr ""
 
-#: src/commands.cc:2900
+#: src/commands.cc:2901
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr ""
 
-#: src/commands.cc:2913
+#: src/commands.cc:2914
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr ""
 
-#: src/commands.cc:2935
+#: src/commands.cc:2936
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr ""
 
-#: src/commands.cc:3013
+#: src/commands.cc:3014
 #, fuzzy, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "mget [-c] [-d] [-e] <arquivos>"
 
-#: src/commands.cc:3118
+#: src/commands.cc:3119
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "número inválido"
 
-#: src/commands.cc:3127
+#: src/commands.cc:3128
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "mget [-c] [-d] [-e] <arquivos>"
 
-#: src/commands.cc:3133
+#: src/commands.cc:3134
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:3137
+#: src/commands.cc:3138
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:3185
+#: src/commands.cc:3186
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr ""
 
-#: src/commands.cc:3197
+#: src/commands.cc:3198
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr ""
 
-#: src/commands.cc:3215 src/LocalAccess.cc:642
+#: src/commands.cc:3216 src/LocalAccess.cc:642
 #, fuzzy
 msgid "cannot get current directory"
 msgstr "Criando diretório remoto `%s'"
 
-#: src/commands.cc:3279
+#: src/commands.cc:3280
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "mget [-c] [-d] [-e] <arquivos>"
 
-#: src/commands.cc:3299
+#: src/commands.cc:3300
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
 msgstr "número inválido"
 
-#: src/commands.cc:3360 src/commands.cc:3369
+#: src/commands.cc:3361 src/commands.cc:3370
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/commands.cc:3378
+#: src/commands.cc:3379
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr ""
@@ -2762,6 +2737,10 @@ msgstr ""
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr ""
+
+#, fuzzy
+#~ msgid "%s: unrecognized option '--%s'\n"
+#~ msgstr "número inválido"
 
 #, fuzzy
 #~ msgid "number"
