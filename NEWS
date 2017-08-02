@@ -1,3 +1,10 @@
+Version 4.7.8 - 2017-08-02
+
+* ftp: fixed quote command and ftp:use-stat-for-list setting.
+* ftp: fixed core dump on LINK/SYMLINK when the command is not supported.
+* get1: fixed -o option.
+* fixed "local glob".
+
 Version 4.7.7 - 2017-03-07
 
 * mirror: fixed coredump when source directory does not exist.
