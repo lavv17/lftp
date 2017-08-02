@@ -159,7 +159,6 @@
 /strcase.m4
 /strdup.m4
 /strerror.m4
-/strftime.m4
 /string_h.m4
 /strings_h.m4
 /strptime.m4
@@ -253,3 +252,4 @@
 /pthread_rwlock_rdlock.m4
 /localtime-buffer.m4
 /tzset.m4
+/nstrftime.m4
