@@ -218,7 +218,7 @@ static ResType lftp_vars[] = {
    {"ftp:passive-mode",		 "on",    ResMgr::BoolValidate,0},
    {"ftp:port-range",		 "full",  ResMgr::RangeValidate,0},
    {"ftp:port-ipv4",		 "",	  ResMgr::IPv4AddrValidate,0},
-   {"ftp:prefer-epsv",		 "yes",	  ResMgr::BoolValidate,0},
+   {"ftp:prefer-epsv",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:proxy",		 "",	  FtpProxyValidate,0},
    {"ftp:proxy-auth-type",	 "user",  FtpProxyAuthTypeValidate,0},
    {"ftp:rest-list",		 "no",	  ResMgr::BoolValidate,0},

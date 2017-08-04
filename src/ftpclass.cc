@@ -4333,9 +4333,9 @@ void Ftp::CheckResp(int act)
       {
 	 ResMgr::Set("ftp:prefer-epsv",hostname,"no");
 	 Disconnect("EPSV failed, will try PASV");
+	 DontSleep(); // retry immediately
 	 break;
       }
-
       if(copy_mode!=COPY_NONE)
       {
 	 copy_passive=!copy_passive;
