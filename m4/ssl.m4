@@ -21,8 +21,7 @@ AC_CACHE_VAL(lftp_cv_openssl,
 		if test $found_loc != "none"; then
 			lftp_cv_openssl="OPENSSL_LIBS=\"-lssl -lcrypto\""
 			if test $found_loc != default; then
-				r=""
-				test "$enable_rpath" = yes && r=" -R$found_loc/lib"
+				r=""; test "$enable_rpath" = yes -a "$found_loc" != /usr && r=" -R$found_loc/lib"
 				lftp_cv_openssl="$lftp_cv_openssl OPENSSL_LDFLAGS=\"-L$found_loc/lib$r\""
 				lftp_cv_openssl="$lftp_cv_openssl OPENSSL_CPPFLAGS=-I$found_loc/include"
 			fi

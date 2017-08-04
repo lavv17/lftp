@@ -306,8 +306,7 @@ fi
 
 AX_CHECK_ZLIB([
    AC_SUBST([ZLIB],[-lz])
-   r=""
-   test "$enable_rpath" = yes && r=" -R${ZLIB_HOME}/lib"
+   r=""; test "$enable_rpath" = yes -a "$ZLIB_HOME" != /usr && r=" -R${ZLIB_HOME}/lib"
    AC_SUBST([ZLIB_LDFLAGS],["-L${ZLIB_HOME}/lib$r"])
    AC_SUBST([ZLIB_CPPFLAGS],["-I${ZLIB_HOME}/include"])
 ],[

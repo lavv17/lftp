@@ -183,7 +183,7 @@ rl_completion_matches(0,0);
                 [
                 READLINE_LIBS="$readline_lib_flags"
 		READLINE_LDFLAGS="$readline_ld_flags"
-		test "$enable_rpath" = yes && \
+		test "$enable_rpath" = yes -a "$readline_prefix" != /usr && \
 		    READLINE_LDFLAGS="$READLINE_LDFLAGS -R$readline_prefix/lib"
                 readline_lib_found="yes"
                 AC_MSG_RESULT([found])

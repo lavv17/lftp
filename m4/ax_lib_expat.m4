@@ -181,7 +181,7 @@ p = NULL;
                 [
                 EXPAT_LIBS="$expat_lib_flags"
 		EXPAT_LDFLAGS="$expat_ld_flags"
-		test "$enable_rpath" = yes && \
+		test "$enable_rpath" = yes -a "$expat_prefix" != /usr && \
 		    EXPAT_LDFLAGS="$EXPAT_LDFLAGS -R$expat_prefix/lib"
                 expat_lib_found="yes"
                 AC_MSG_RESULT([found])
