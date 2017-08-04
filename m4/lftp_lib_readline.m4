@@ -182,7 +182,9 @@ rl_completion_matches(0,0);
                 )],
                 [
                 READLINE_LIBS="$readline_lib_flags"
-                READLINE_LDFLAGS="$readline_ld_flags -R$readline_prefix/lib"
+		READLINE_LDFLAGS="$readline_ld_flags"
+		test "$enable_rpath" = yes && \
+		    READLINE_LDFLAGS="$READLINE_LDFLAGS -R$readline_prefix/lib"
                 readline_lib_found="yes"
                 AC_MSG_RESULT([found])
                 ],

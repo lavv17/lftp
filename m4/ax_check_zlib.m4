@@ -119,7 +119,8 @@ then
     # If both library and header were found, action-if-found
     #
     m4_ifblank([$1],[
-		LDFLAGS="$LDFLAGS -R${ZLIB_HOME}/lib"
+		test "$enable_rpath" = yes && \
+		    LDFLAGS="$LDFLAGS -R${ZLIB_HOME}/lib"
                 LIBS="-lz $LIBS"
                 AC_DEFINE([HAVE_LIBZ], [1],
                           [Define to 1 if you have `z' library (-lz)])
