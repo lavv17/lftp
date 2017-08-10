@@ -43,9 +43,8 @@
 # include <sys/time.h>
 #endif
 
-#if LIBIDN
-# include <idna.h>
-# include <tld.h>
+#if LIBIDN2
+# include <idn2.h>
 #endif
 
 CDECL_BEGIN
@@ -1013,26 +1012,26 @@ const char *xhuman(long long n)
    return human_readable(n, buf, human_autoscale|human_SI, 1, 1);
 }
 
+static const int lftp_idn2_flags=IDN2_NONTRANSITIONAL|IDN2_NFC_INPUT;
 const char *xidna_to_ascii(const char *name)
 {
-#if LIBIDN
+#if LIBIDN2
    if(!name)
       return 0;
    char *name_ace_tmp=0;
-   if(idna_to_ascii_lz(name,&name_ace_tmp,0)==IDNA_SUCCESS)
+   if(idn2_to_ascii_lz(name,&name_ace_tmp,lftp_idn2_flags)==IDN2_OK)
       return xstring::get_tmp().set_allocated(name_ace_tmp);
-#endif//LIBIDN
+#endif//LIBIDN2
    return name;
 }
 bool xtld_name_ok(const char *name)
 {
-#if LIBIDN
+#if LIBIDN2
    if(mbswidth(name,MBSW_REJECT_INVALID|MBSW_REJECT_UNPRINTABLE)<=0)
       return false;
-   size_t err_pos;
-   if(tld_check_lz(name,&err_pos,NULL)==TLD_SUCCESS)
+   if(idn2_lookup_ul(name,NULL,0)==IDN2_OK)
       return true;
-#endif//LIBIDN
+#endif//LIBIDN2
    return false;
 }
 

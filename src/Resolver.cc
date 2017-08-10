@@ -42,6 +42,10 @@
 # include <resolv.h>
 #endif
 
+#if LIBIDN2
+# include <idn2.h>
+#endif
+
 #ifdef DNSSEC_LOCAL_VALIDATION
 # include "validator/validator.h"
 #endif
@@ -686,8 +690,15 @@ void Resolver::LookupOne(const char *name)
       name=proto_delim+1;
    }
 
-   name=xidna_to_ascii(name);
-   name=alloca_strdup(name);
+#if LIBIDN2
+   xstring_c ascii_name;
+   int rc=idn2_lookup_ul(name,ascii_name.buf_ptr(),0);
+   if(rc!=IDN2_OK) {
+      error=idn2_strerror(rc);
+      return;
+   }
+   name=ascii_name;
+#endif//LIBIDN2
 
    ParseOrder(order,af_order);
 

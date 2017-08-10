@@ -314,24 +314,24 @@ AC_DEFUN([LFTP_CXX_STDC_LIMIT_MACROS],[
    fi
 ])
 
-AC_DEFUN([LFTP_LIBIDN_CHECK],[
-     AC_ARG_WITH(libidn, AS_HELP_STRING([--with-libidn@<:@=DIR@:>@],[Support IDN (needs GNU Libidn)]),
-       libidn=$withval, libidn=yes)
-     if test "$libidn" != "no"; then
-       if test "$libidn" != "yes"; then
-         LDFLAGS="${LDFLAGS} -L$libidn/lib"
-         CPPFLAGS="${CPPFLAGS} -I$libidn/include"
+AC_DEFUN([LFTP_LIBIDN2_CHECK],[
+     AC_ARG_WITH(libidn2, AS_HELP_STRING([--with-libidn2@<:@=DIR@:>@],[Support IDN2 (needs GNU Libidn2)]),
+       libidn2=$withval, libidn2=yes)
+     if test "$libidn2" != "no"; then
+       if test "$libidn2" != "yes"; then
+         LDFLAGS="${LDFLAGS} -L$libidn2/lib"
+         CPPFLAGS="${CPPFLAGS} -I$libidn2/include"
        fi
-       AC_CHECK_HEADER(idna.h,
-         AC_CHECK_LIB(idn, stringprep_check_version,
-           [libidn=yes LIBS="${LIBS} -lidn"], libidn=no),
-         libidn=no)
+       AC_CHECK_HEADER(idn2.h,
+         AC_CHECK_LIB(idn2, idn2_check_version,
+           [libidn2=yes LIBS="${LIBS} -lidn2"], libidn2=no),
+         libidn2=no)
      fi
-     if test "$libidn" != "no" ; then
-       AC_DEFINE(LIBIDN, 1, [Define to 1 if you want IDN support.])
+     if test "$libidn2" != "no" ; then
+       AC_DEFINE(LIBIDN2, 1, [Define to 1 if you want IDN2 support.])
      else
-       AC_MSG_WARN([Libidn not found])
+       AC_MSG_WARN([Libidn2 not found])
      fi
-     AC_MSG_CHECKING([if Libidn should be used])
-     AC_MSG_RESULT($libidn)
+     AC_MSG_CHECKING([if Libidn2 should be used])
+     AC_MSG_RESULT($libidn2)
 ])
