@@ -2128,6 +2128,9 @@ two numbers separated by colon to limit download and upload rate separately.
 Note that sockets have receive buffers on them, this can lead to network
 link load higher than this rate limit just after transfer beginning. You
 can try to set net:socket-buffer to relatively small value to avoid this.
+.PP
+If you specify a closure, then rate limitation will be applied to sum of
+connections to a single matching host.
 .TP
 .BR net:limit-total-max \ (bytes)
 limit accumulating of unused limit-total-rate. 0 means twice of limit-total-rate.

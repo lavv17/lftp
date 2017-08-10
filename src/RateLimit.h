@@ -41,14 +41,20 @@ public:
    };
 
 private:
-   static int total_xfer_number;
-   static bool total_reconfig_needed;
-   static void ReconfigTotal();
-   static BytesPool total[2];
-   BytesPool one[2];
+   static xmap_p<RateLimit> total;
+
+   enum level_e { PER_CONN, PER_HOST, TOTAL } level;
+   RateLimit *parent;
+   int xfer_number;
+   BytesPool pool[2];
+
+   void init(level_e lvl,const char *closure);
+   RateLimit(level_e lvl,const char *closure) { init(lvl,closure); }
+
+   void AddXfer(int add);
 
 public:
-   RateLimit(const char *closure);
+   RateLimit(const char *closure) { init(PER_CONN,closure); }
    ~RateLimit();
 
    enum dir_t { GET=0, PUT=1 };
@@ -60,6 +66,7 @@ public:
    void BytesGot(int b) { BytesUsed(b,GET); }
    void BytesPut(int b) { BytesUsed(b,PUT); }
    bool Relaxed(dir_t dir);
+   void Reset();
 
    void Reconfig(const char *name,const char *c);
 

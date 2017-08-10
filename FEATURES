@@ -24,7 +24,8 @@ LFTP includes the following features (some may be missed in this list):
 * Modification time preservation (if server can report it).
 * `reget' and `reput' support.
 * Built-in mirror and reverse mirror (mirror -R).
-* Transfer rate throttling for each connection and for all connections in sum.
+* Transfer rate throttling for each connection, for each host and for all
+  connections in total.
 * Limit for number of connections to the same site. Interruption of background
   transfer to do a foreground operation when the limit is reached.
 * Socket options tuning: buffer size and maximum segment size.
