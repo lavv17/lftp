@@ -1875,8 +1875,8 @@ CMD(mirror)
    bool  remove_source_files=false;
    bool  remove_source_dirs=false;
    bool	 skip_noaccess=ResMgr::QueryBool("mirror:skip-noaccess",0);
-   int	 parallel=ResMgr::Query("mirror:parallel-transfer-count",0);
-   int	 use_pget=ResMgr::Query("mirror:use-pget-n",0);
+   int	 parallel=-1;
+   int	 use_pget=-1;
    bool	 reverse=false;
    bool	 script_only=false;
    bool	 no_empty_dirs=ResMgr::QueryBool("mirror:no-empty-dirs",0);
@@ -2225,6 +2225,23 @@ CMD(mirror)
       eprintf("%s: --recursion-mode=%s conflicts with other specified options\n",
 	 args->a0(),recursion_mode);
       return 0;
+   }
+
+   if(parallel<0) {
+      int parallel1=ResMgr::Query("mirror:parallel-transfer-count",source_session->GetHostName());
+      int parallel2=ResMgr::Query("mirror:parallel-transfer-count",target_session->GetHostName());
+      if(parallel1>0)
+	 parallel=parallel1;
+      if(parallel2>0 && (parallel<0 || parallel>parallel2))
+	 parallel=parallel2;
+   }
+   if(use_pget<0) {
+      int use_pget1=ResMgr::Query("mirror:use-pget-n",source_session->GetHostName());
+      int use_pget2=ResMgr::Query("mirror:use-pget-n",target_session->GetHostName());
+      if(use_pget1>0)
+	 use_pget=use_pget1;
+      if(use_pget2>0 && (use_pget<0 || use_pget>use_pget2))
+	 use_pget=use_pget2;
    }
 
    JobRef<MirrorJob> j(new MirrorJob(0,source_session.borrow(),target_session.borrow(),source_dir,target_dir));

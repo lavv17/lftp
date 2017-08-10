@@ -39,7 +39,7 @@
 .fi
 .in
 ..
-.TH lftp 1 "18 Apr 2017"
+.TH lftp 1 "10 Aug 2017"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -56,7 +56,7 @@ lftp \- Sophisticated file transfer program
 .B lftp \-\-help
 
 .SH VERSION
-This man page documents lftp version 4.8.0.
+This man page documents lftp version 4.8.1.
 
 .SH "DESCRIPTION"
 \fBlftp\fR is a file transfer program that allows sophisticated FTP, HTTP
@@ -2073,8 +2073,10 @@ when it is in parallel mode. Otherwise, it will transfer files from a single
 directory before moving to other directories.
 .TP
 .BR mirror:parallel-transfer-count " (number)"
-specifies number of parallel transfers mirror is allowed to start. Default is 1.
+specifies number of parallel transfers mirror is allowed to start.
 You can override it with \-\-parallel option.
+A closure can be matched against source or target host names, the minimum
+number greater than 0 is used.
 .TP
 .BR mirror:require-source \ (boolean)
 When true, mirror requires a source directory to be specified explicitly,
@@ -2090,7 +2092,10 @@ inaccessible by the permission mask. Default is false.
 .TP
 .BR mirror:use-pget-n " (number)"
 specifies \-n option for pget command used to transfer every single file under
-mirror. Default is 1 which disables pget.
+mirror.
+A closure can be matched against source or target host names, the minimum
+number greater than 0 is used.
+When the value is less than 2, pget is not used.
 .TP
 .BR module:path \ (string)
 colon separated list of directories to look for modules. Can be initialized by
