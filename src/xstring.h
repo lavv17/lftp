@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ public:
    const char *set(const char *s) { return xstrset(buf,s); }
    const char *nset(const char *s,int n) { return xstrset(buf,s,n); }
    const char *set_allocated(char *s) { xfree(buf); return buf=s; }
-   const char *move_here(xstring_c& s) { return set_allocated(s.borrow()); }
+   template<class STR> const char *move_here(STR& s) { return set_allocated(s.borrow()); }
    const char *vset(...) ATTRIBUTE_SENTINEL;
    void truncate(size_t n=0) { if(buf) buf[n]=0; }
    char *borrow() { return replace_value(buf,(char*)0); }
@@ -202,6 +202,7 @@ public:
    xstring& nset(const char *s,int len);
    xstring& set_allocated(char *s);
    xstring& move_here(xstring&);
+   xstring& move_here(xstring_c& s) { return set_allocated(s.borrow()); }
    void swap(xstring& o);
 
    xstring& set_substr(int start,size_t sublen,const char *,size_t);
@@ -209,6 +210,7 @@ public:
    xstring& set_substr(int start,size_t sublen,const xstring &s) { return set_substr(start,sublen,s.get(),s.length()); }
    xstring& prepend(const char *s,size_t len) { return set_substr(0,0,s,len); }
    xstring& prepend(const xstring &s) { return prepend(s.get(),s.length()); }
+   xstring& prepend(char c) { return prepend(&c,1); }
 
    xstring& append(const char *s);
    xstring& append(char c);

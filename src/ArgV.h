@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,25 @@ public:
    ArgV& Append(int a) { char buf[32]; sprintf(buf,"%d",a); return Append(buf); }
    ArgV& Add(const char *a) { return Append(a); } // alias
 
-   char *Combine(int start_index=0,int end_index=0) const;
+   xstring& CombineTo(xstring& res,int start_index=0,int end_index=0) const;
+   const char *CombineTo(xstring_c& res,int start_index=0,int end_index=0) const {
+      xstring tmp; tmp.move_here(res);
+      return res.move_here(CombineTo(tmp,start_index,end_index));
+   }
+   char *Combine(int start_index=0,int end_index=0) const { return CombineTo(xstring::get_tmp(),start_index,end_index).borrow(); }
 
    // for the UNIX shell
-   char *CombineShellQuoted(int start) const;
+   xstring& CombineShellQuotedTo(xstring& res,int start) const;
+   char *CombineShellQuoted(int start) const { return CombineShellQuotedTo(xstring::get_tmp(),start).borrow(); }
    // for lftp's CmdExec
-   char *CombineQuoted(int start_index=0) const;
-   char *CombineCmd(int i=0) const;
+   xstring& CombineQuotedTo(xstring& res,int start_index=0) const;
+   const char *CombineQuotedTo(xstring_c& res,int start_index=0) const {
+      xstring tmp; tmp.move_here(res);
+      return res.move_here(CombineQuotedTo(tmp,start_index));
+   }
+   char *CombineQuoted(int start_index=0) const { return CombineQuotedTo(xstring::get_tmp(),start_index).borrow(); }
+   xstring& CombineCmdTo(xstring& res,int i=0) const;
+   char *CombineCmd(int i=0) const { return CombineCmdTo(xstring::get_tmp(),i).borrow(); }
 
    int getopt_long(const char *opts,const struct option *lopts,int *lind=0);
    int getopt(const char *opts)

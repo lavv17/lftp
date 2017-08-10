@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,7 @@ bool in_foreground_pgrp();
 // returns malloc'ed cwd no matter how long it is
 // returns 0 on error.
 char *xgetcwd();
+template<class STR> void xgetcwd_to(STR& s) { s.set_allocated(xgetcwd()); }
 
 int percent(off_t offset,off_t size);
 
@@ -91,7 +92,7 @@ struct subst_t {
 
 /* Subst changes escape sequences to given strings, also substitutes \nnn
  * with corresponding character. Returns allocated buffer to be free'd */
-char *Subst(const char *txt, const subst_t *s);
+xstring& SubstTo(xstring& buf,const char *txt,const subst_t *s);
 
 /* uses gettimeofday if available */
 void xgettimeofday(time_t *sec, int *usec);

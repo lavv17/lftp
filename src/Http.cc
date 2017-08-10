@@ -1974,7 +1974,8 @@ void Http::HandleRedirection()
       && user && !url.user) {
 	 // use the same user name after redirect to the same site.
 	 url.user.set(user);
-	 location.set_allocated(url.Combine());
+	 location.truncate();
+	 url.CombineTo(location);
       }
    }
 }

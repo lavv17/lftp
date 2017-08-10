@@ -758,7 +758,7 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
 	    ArgV *a=new ArgV("mkdir");
 	    a->Append(target_dir);
 	    mkdirJob *mkj=new mkdirJob(target_session->Clone(),a);
-	    mkj->cmdline.set_allocated(a->Combine());
+	    a->CombineTo(mkj->cmdline);
 	    JobStarted(mkj);
 	 }
       }
@@ -1062,7 +1062,7 @@ int   MirrorJob::Do()
 	    ArgV *a=new ArgV("mkdir");
 	    a->Append(file->name);
 	    mkdirJob *mkj=new mkdirJob(target_session->Clone(),a);
-	    mkj->cmdline.set_allocated(a->Combine());
+	    a->CombineTo(mkj->cmdline);
 	    JobStarted(mkj);
 	    m=MOVED;
 	 }
@@ -1181,7 +1181,7 @@ int   MirrorJob::Do()
 	    args->Append(file->name);
 	    args->seek(1);
 	    rmJob *j=new rmJob(target_session->Clone(),args);
-	    j->cmdline.set_allocated(args->Combine());
+	    args->CombineTo(j->cmdline);
 	    JobStarted(j);
 	    if(file->TypeIs(file->DIRECTORY))
 	    {
@@ -1259,7 +1259,7 @@ int   MirrorJob::Do()
 	    a->seek(1);
 	    ChmodJob *cj=new ChmodJob(target_session->Clone(),
 				 file->mode&~mode_mask,a);
-	    cj->cmdline.set_allocated(a->Combine());
+	    a->CombineTo(cj->cmdline);
 	    if(!verbose_report)
 	       cj->BeQuiet(); // chmod is not supported on all servers; be quiet.
 	    JobStarted(cj);
@@ -1313,7 +1313,7 @@ int   MirrorJob::Do()
 	    args->Append(source_dir);
 	    args->seek(1);
 	    rmJob *j=new rmJob(source_session->Clone(),args);
-	    j->cmdline.set_allocated(args->Combine());
+	    args->CombineTo(j->cmdline);
 	    j->Rmdir();
 	    JobStarted(j);
 	 }
@@ -1380,7 +1380,7 @@ int   MirrorJob::Do()
 	    args->Append(file->name);
 	    args->seek(1);
 	    rmJob *j=new rmJob(source_session->Clone(),args);
-	    j->cmdline.set_allocated(args->Combine());
+	    args->CombineTo(j->cmdline);
 	    JobStarted(j);
 	 }
 	 const char *source_name_rel=dir_file(source_relative_dir,file->name);

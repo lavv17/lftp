@@ -797,8 +797,7 @@ Job *CmdExec::builtin_lftp()
 	 cmd.append(';');
 	 break;
       case('c'):
-	 cmd.set_allocated(args->CombineCmd(args->getindex()-1));
-	 cmd.append("\n\n");
+	 args->CombineCmdTo(cmd,args->getindex()-1).append("\n\n");
 	 args->seek(args->count());
 	 break;
       case('d'):
@@ -3039,7 +3038,7 @@ CMD(bookmark)
 CMD(echo)
 {
    xstring s;
-   s.set_allocated(args->Combine(1));
+   args->CombineTo(s,1);
    if(args->count()>1 && !strcmp(args->getarg(1),"-n"))
    {
       if(s.length()<=3)
@@ -3607,7 +3606,7 @@ CMD(eval)
    int base=optind;
    xstring cmd;
    if(!fmt)
-      cmd.set_allocated(args->Combine(optind));
+      args->CombineTo(cmd,optind);
    else
    {
       while(*fmt)

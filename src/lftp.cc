@@ -107,7 +107,7 @@ public:
       add_newline=false;
       eof_count=0;
       if(args && args->count()>1)
-	 for_history.set_allocated(args->CombineQuoted());
+	 args->CombineQuotedTo(for_history);
    }
    virtual ~ReadlineFeeder()
    {
@@ -178,7 +178,7 @@ public:
 		     return "";
 		  }
 
-		  cmd_buf.set_allocated(history_value.borrow());
+		  cmd_buf.move_here(history_value);
 	       }
 	    }
 	    lftp_add_history_nodups(cmd_buf);

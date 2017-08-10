@@ -52,7 +52,8 @@ static const char *FtpProxyValidate(xstring_c *p)
    if(url.user && !url.pass)
    {
       url.pass.set(GetPass(_("ftp:proxy password: ")));
-      p->set_allocated(url.Combine());
+      p->truncate();
+      url.CombineTo(*p);
    }
    return 0;
 }

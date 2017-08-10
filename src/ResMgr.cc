@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -824,7 +824,7 @@ const char *ResMgr::FileAccessible(xstring_c *value,int mode,bool want_dir)
    const char *error=0;
    if(f[0]!='/')
    {
-      cwd.set_allocated(xgetcwd());
+      xgetcwd_to(cwd);
       if(cwd)
 	 f=dir_file(cwd,f);
    }
@@ -861,7 +861,7 @@ const char *ResMgr::FileCreatable(xstring_c *value)
    const char *bn=basename_ptr(*value);
    xstring_c dir(dirname(*value));
    if(!*dir)
-      dir.set_allocated(xgetcwd());
+      xgetcwd_to(dir);
    error=FileAccessible(&dir,X_OK|W_OK,true);
    if(!error)  // dir may be expanded, combine it with base file name.
       value->set(dir_file(dir,bn));

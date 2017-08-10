@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ void StatusLine::WriteTitle(const char *s, int fd) const
    xstring &disp=xstring::get_tmp();
 
    if(status_format && *status_format)
-      disp.set_allocated(Subst(status_format, subst));
+      SubstTo(disp, status_format, subst);
    else if(to_status_line && from_status_line)
       /* If we have no format, and we have both tsl and fsl, use them: */
       disp.vset(to_status_line, s, from_status_line, NULL);

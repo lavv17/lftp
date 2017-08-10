@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,27 +56,27 @@ void ArgV::back()
       ind--;
 }
 
-char *ArgV::Combine(int start,int end) const
+xstring& ArgV::CombineTo(xstring& res,int start,int end) const
 {
-   xstring res("");
+   res.nset("",0);
    if(!end)
       end=Count();
    if(start>=end)
-      return res.borrow();
+      return res;
    for(;;)
    {
       res.append(getarg(start++));
       if(start>=end)
-	 return(res.borrow());
+	 return(res);
       res.append(' ');
    }
 }
 
-char *ArgV::CombineShellQuoted(int start) const
+xstring& ArgV::CombineShellQuotedTo(xstring& res,int start) const
 {
-   xstring res("");
+   res.nset("",0);
    if(start>=Count())
-      return res.borrow();
+      return res;
    for(;;)
    {
       for(const char *arg=String(start++); *arg; arg++)
@@ -86,7 +86,7 @@ char *ArgV::CombineShellQuoted(int start) const
 	 res.append(*arg);
       }
       if(start>=Count())
-	 return(res.borrow());
+	 return(res);
       res.append(' ');
    }
 }

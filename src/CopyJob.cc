@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +195,7 @@ CopyJobEnv::CopyJobEnv(FileAccess *s,ArgV *a,bool cont1)
    no_status=false;
    cont=cont1;
    ascii=false;
-   cwd.set_allocated(xgetcwd());
+   xgetcwd_to(cwd);
 }
 CopyJobEnv::~CopyJobEnv()
 {

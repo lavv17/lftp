@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,12 +246,12 @@ void OutputFilter::Init()
 {
    w=0;
    second_fd=-1;
-   cwd.set_allocated(xgetcwd());
+   xgetcwd_to(cwd);
    pg=0;
    stderr_to_stdout=false;
    stdout_to_null=false;
    if(a)
-      name.set_allocated(a->Combine());
+      a->CombineTo(name);
 }
 
 OutputFilter::OutputFilter(const char *filter,int new_second_fd)
@@ -360,7 +360,7 @@ FileStream::FileStream(const char *fname,int new_mode)
       full_name.set(name);
    else
    {
-      cwd.set_allocated(xgetcwd());
+      xgetcwd_to(cwd);
       full_name.set(dir_file(cwd,name));
    }
 }

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,7 +248,7 @@ restart:
       RevertToSavedSession();
       if(new_job) {
 	 if(!new_job->cmdline)
-	    new_job->cmdline.set_allocated(cmdline.borrow());
+	    new_job->cmdline.move_here(cmdline);
 	 AddNewJob(new_job);
       }
    }
@@ -909,8 +909,8 @@ const char *CmdExec::FormatPrompt(const char *scan)
       { ']', EndIgn },
       { 0, "" }
    };
-   static xstring_c prompt;
-   prompt.set_allocated(Subst(scan, subst));
+   static xstring prompt;
+   SubstTo(prompt, scan, subst);
 
    return(prompt);
 }
@@ -1088,23 +1088,23 @@ void CmdExec::FeedQuoted(const char *c)
 }
 
 // implementation is here because it depends on CmdExec.
-char *ArgV::CombineQuoted(int start) const
+xstring& ArgV::CombineQuotedTo(xstring& res,int start) const
 {
-   xstring res("");
+   res.nset("",0);
    if(start>=Count())
-      return res.borrow();
+      return res;
    for(;;)
    {
       const char *arg=String(start++);
       res.append_quoted(arg);
       if(start>=Count())
-	 return(res.borrow());
+	 return(res);
       res.append(' ');
    }
 }
-char *ArgV::CombineCmd(int i) const
+xstring& ArgV::CombineCmdTo(xstring& res,int i) const
 {
-   return i>=count()-1 ? Combine(i) : CombineQuoted(i);
+   return i>=count()-1 ? CombineTo(res,i) : CombineQuotedTo(res,i);
 }
 
 const char *CmdExec::GetFullCommandName(const char *cmd)
@@ -1293,13 +1293,8 @@ Job *CmdExec::builtin_local()
 
 void CmdExec::FeedArgV(const ArgV *args,int start)
 {
-   xstring_c cmd;
-
-   if(start+1==args->count())
-      cmd.set_allocated(args->Combine(start));
-   else
-      cmd.set_allocated(args->CombineQuoted(start));
-
+   xstring cmd;
+   args->CombineCmdTo(cmd,start);
    FeedCmd(cmd);
    FeedCmd("\n");
 }

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,7 +352,7 @@ int clsJob::Do()
       }
 
       /* one just finished */
-      fso->pat.set_allocated(mask.borrow());
+      fso->pat.move_here(mask);
       FileSet *res = list_info->GetResult();
 
       if(res)

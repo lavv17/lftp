@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,8 +101,8 @@ const char *url_file(const char *url,const char *file)
       u.path.set(file);
    else
       u.path.set(dir_file(u.path,file));
-   buf.set_allocated(u.Combine());
-   return buf;
+   buf.truncate();
+   return u.CombineTo(buf);
 }
 
 const char *output_file_name(const char *src,const char *dst,bool dst_local,
@@ -559,9 +559,9 @@ bool re_match(const char *line,const char *a,int flags)
    return res;
 }
 
-char *Subst(const char *txt, const subst_t *s)
+xstring& SubstTo(xstring& buf,const char *txt, const subst_t *s)
 {
-   xstring buf("");
+   buf.nset("",0);
 
    char str[3];
    bool last_subst_empty=true;
@@ -621,7 +621,7 @@ char *Subst(const char *txt, const subst_t *s)
 
       buf.append(to_add);
    }
-   return(buf.borrow());
+   return(buf);
 }
 
 void xgettimeofday(time_t *sec, int *usec)
@@ -1012,15 +1012,17 @@ const char *xhuman(long long n)
    return human_readable(n, buf, human_autoscale|human_SI, 1, 1);
 }
 
-static const int lftp_idn2_flags=IDN2_NONTRANSITIONAL|IDN2_NFC_INPUT;
 const char *xidna_to_ascii(const char *name)
 {
 #if LIBIDN2
    if(!name)
       return 0;
-   char *name_ace_tmp=0;
-   if(idn2_to_ascii_lz(name,&name_ace_tmp,lftp_idn2_flags)==IDN2_OK)
-      return xstring::get_tmp().set_allocated(name_ace_tmp);
+   static xstring_c name_ace_tmp;
+   name_ace_tmp.unset();
+   if(idn2_to_ascii_lz(name,name_ace_tmp.buf_ptr(),0)==IDN2_OK) {
+      xmalloc_register_block((void*)name_ace_tmp.get());
+      return name_ace_tmp;
+   }
 #endif//LIBIDN2
    return name;
 }

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,11 @@ public:
    void parse(const char *url,bool proto_required=false,bool use_rfc1738=true);
    ~ParsedURL();
 
-   xstring& CombineTo(xstring &buf,const char *home=0,bool use_rfc1738=true);
+   xstring& CombineTo(xstring &buf,const char *home=0,bool use_rfc1738=true) const;
+   const char *CombineTo(xstring_c &buf,const char *home=0,bool use_rfc1738=true) const {
+      xstring tmp; tmp.move_here(buf);
+      return buf.move_here(CombineTo(tmp,home,use_rfc1738));
+   }
    // returns allocated memory
    char *Combine(const char *home=0,bool use_rfc1738=true);
 };

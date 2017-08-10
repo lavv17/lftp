@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +193,7 @@ out:
 
 void PtyShell::Init()
 {
-   oldcwd.set_allocated(xgetcwd());
+   xgetcwd_to(oldcwd);
    pg=0;
    closed=false;
    use_pipes=false;
@@ -216,7 +216,7 @@ PtyShell::PtyShell(ArgV *a1)
    : FDStream(-1,0), a(a1)
 {
    Init();
-   name.set_allocated(a->Combine());
+   a->CombineTo(name);
 }
 
 PtyShell::~PtyShell()

@@ -296,7 +296,7 @@ char *ParsedURL::Combine(const char *home,bool use_rfc1738)
    xstring buf("");
    return CombineTo(buf,home,use_rfc1738).borrow();
 }
-xstring& ParsedURL::CombineTo(xstring& u,const char *home,bool use_rfc1738)
+xstring& ParsedURL::CombineTo(xstring& u,const char *home,bool use_rfc1738) const
 {
    bool is_file=!xstrcmp(proto,"file");
    bool is_ftp=(!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"));
