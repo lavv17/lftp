@@ -149,6 +149,7 @@ public:
 
    void unset() { xfree(buf); buf=0; }
    void _set(const char *s) { buf=xstrdup(s); }
+   char **buf_ptr() { unset(); return &buf; }
 
    xstring_c& url_decode(int flags=0);
 
