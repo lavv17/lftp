@@ -2835,7 +2835,7 @@ CMD(ver)
       const char *symbol;
       enum type_t { STRING_PTR, FUNC0, INT8_8 } type;
       const char *skip_prefix;
-      typedef const char *(*func0)(int);
+      typedef const char *(*func0)(void *);
       const char *query() const
 	 {
 	    int v;
@@ -2849,7 +2849,7 @@ CMD(ver)
 	       str=*(const char**)sym_ptr;
 	       break;
 	    case FUNC0:
-	       str=((func0)sym_ptr)(0);
+	       str=((func0)sym_ptr)(NULL);
 	       break;
 	    case INT8_8:
 	       v=*(int*)sym_ptr;
@@ -2864,11 +2864,12 @@ CMD(ver)
    }
    static const libs[]=
    {
-      {"Readline",   "rl_library_version",   VersionInfo::STRING_PTR,0},
       {"Expat",	     "XML_ExpatVersion",     VersionInfo::FUNC0,     "expat_"},
-      {"OpenSSL",    "SSL_version_str",	     VersionInfo::STRING_PTR,"OpenSSL "},
       {"GnuTLS",     "gnutls_check_version", VersionInfo::FUNC0,     0},
+      {"idn2",	     "idn2_check_version",   VersionInfo::FUNC0,     0},
       {"libiconv",   "_libiconv_version",    VersionInfo::INT8_8,    0},
+      {"OpenSSL",    "SSL_version_str",	     VersionInfo::STRING_PTR,"OpenSSL "},
+      {"Readline",   "rl_library_version",   VersionInfo::STRING_PTR,0},
       {"zlib",	     "zlibVersion",	     VersionInfo::FUNC0,     0},
       {0}
    };
@@ -2883,11 +2884,10 @@ CMD(ver)
       snprintf(buf,sizeof(buf),", %s %s",scan->lib_name,v);
       int skip=need_comma?0:2;
       int w=mbswidth(buf+skip,mbflags);
-      if(col+w>=width)
+      if(col+w>=width && need_comma)
       {
 	 buf[1]='\n';
-	 col=w-2+skip;
-	 skip/=2;
+	 col=w-2;
       }
       else
 	 col+=w;
