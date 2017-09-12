@@ -275,17 +275,37 @@ int fd_width(int fd)
 
 char *xgetcwd()
 {
+   char *cwd=getcwd(0,0); // glibc extension
+   if(cwd) {
+      xmalloc_register_block(cwd);
+      return cwd;
+   }
+
    int size=256;
+   cwd=(char*)xmalloc(size);
    for(;;)
    {
-      char *cwd=getcwd(0,size);
-      if(cwd)
-      {
-	 xmalloc_register_block(cwd);
+      if(getcwd(cwd,size))
 	 return cwd;
-      }
       if(errno!=ERANGE)
-	 return xstrdup(".");
+	 return strcpy(cwd,".");
+      cwd=(char*)xrealloc(cwd,size*=2);
+   }
+}
+
+void xgetcwd_to(xstring& s)
+{
+   int size=256;
+   for(;;) {
+      s.get_space(size);
+      if(getcwd(s.get_non_const(),size)) {
+	 s.set_length(strlen(s.get()));
+	 return;
+      }
+      if(errno!=ERANGE) {
+	 s.set(".");
+	 return;
+      }
       size*=2;
    }
 }

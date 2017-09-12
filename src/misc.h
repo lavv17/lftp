@@ -66,7 +66,9 @@ bool in_foreground_pgrp();
 // returns malloc'ed cwd no matter how long it is
 // returns 0 on error.
 char *xgetcwd();
-template<class STR> void xgetcwd_to(STR& s) { s.set_allocated(xgetcwd()); }
+// store cwd to specified string
+void xgetcwd_to(xstring& s);
+static inline void xgetcwd_to(xstring_c& s) { s.set_allocated(xgetcwd()); }
 
 int percent(off_t offset,off_t size);
 
