@@ -1046,7 +1046,12 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       return;
    }
    case_hh("Location",'L')
-      location.set(value);
+      if(value[0]=='/' && value[1]=='/')
+	 location.vset(GetProto(),":",value,NULL);
+      else if(value[0]=='/')
+	 location.vset(GetConnectURL().get(),value,NULL);
+      else
+	 location.set(value);
       return;
 
    case_hh("Retry-After",'R')
