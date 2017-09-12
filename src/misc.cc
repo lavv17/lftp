@@ -285,7 +285,7 @@ char *xgetcwd()
 	 return cwd;
       }
       if(errno!=ERANGE)
-	 return 0;
+	 return xstrdup(".");
       size*=2;
    }
 }
