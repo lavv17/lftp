@@ -1,3 +1,13 @@
+Version 4.8.1 - 2017-09-12
+
+* improved rate limiting to allow per-host limits.
+* ftp: make prefer-epsv default "no".
+* ftp: fixed quote command and ftp:use-stat-for-list setting.
+* switched to libidn2.
+* fixed build with LibreSSL.
+* fixed configure --disable-rpath.
+* fixed coredump when a parent directory was deleted.
+
 Version 4.8.0 - 2017-07-10
 
 * mirror: improved performance of --scan-all-first for big trees.
