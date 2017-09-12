@@ -377,8 +377,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    if(remove_source_files)
 	       args.Append("-E");
 	    args.Append("-O");
-	    args.Append(target_is_local?target_dir
-			:target_session->GetConnectURL());
+	    args.Append(target_is_local?target_dir.get()
+			:target_session->GetConnectURL().get());
 	    args.Append(source_session->GetFileURL(file->name));
 	    xstring_ca cmd(args.CombineQuoted());
 	    fprintf(script,"%s\n",cmd.get());
