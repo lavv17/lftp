@@ -205,7 +205,6 @@
 /strerror.c
 /strerror-override.c
 /strerror-override.h
-/strftime.c
 /strftime.h
 /string.h
 /string.in.h
@@ -325,3 +324,10 @@ limits.h
 /stat-w32.c
 /stat-w32.h
 /tzset.c
+/cdefs.h
+/glob_internal.h
+/glob_pattern_p.c
+/globfree.c
+/libc-config.h
+/nstrftime.c
+/scratch_buffer.h
