@@ -30,7 +30,7 @@ static inline bool operator<(const timeval& a,const timeval& b)
 
 void PollVec::AddTimeoutU(unsigned t)
 {
-   struct timeval new_timeout={t/1000000,t%1000000};
+   struct timeval new_timeout={static_cast<time_t>(t/1000000),static_cast<suseconds_t>(t%1000000)};
    if(tv_timeout.tv_sec<0 || new_timeout<tv_timeout)
       SetTimeout(new_timeout);
 }
