@@ -2662,23 +2662,6 @@ void HFtp::Reconfig(const char *name)
    use_head=QueryBool("use-head");
 }
 
-void Http::Cleanup()
-{
-   if(hostname==0)
-      return;
-
-   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
-      fo->CleanupThis();
-
-   CleanupThis();
-}
-void Http::CleanupThis()
-{
-   if(mode!=CLOSED)
-      return;
-   Disconnect();
-}
-
 void Http::LogErrorText()
 {
    if(!conn || !conn->recv_buf)

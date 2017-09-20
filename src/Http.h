@@ -242,9 +242,6 @@ public:
    void SuspendInternal();
    void ResumeInternal();
 
-   void Cleanup();
-   void CleanupThis();
-
    static const time_t ATOTM_ERROR = -1;
    static time_t atotm (const char *time_string);
 };

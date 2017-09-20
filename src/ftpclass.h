@@ -510,8 +510,6 @@ public:
    };
 
    void Reconfig(const char *name=0);
-   void Cleanup();
-   void CleanupThis();
 
    ListInfo *MakeListInfo(const char *path);
    Glob *MakeGlob(const char *pattern);

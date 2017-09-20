@@ -1355,23 +1355,6 @@ bool SFtp::SameLocationAs(const FileAccess *fa) const
    return true;
 }
 
-void SFtp::Cleanup()
-{
-   if(hostname==0)
-      return;
-
-   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
-      fo->CleanupThis();
-
-   CleanupThis();
-}
-void SFtp::CleanupThis()
-{
-   if(mode!=CLOSED)
-      return;
-   Disconnect();
-}
-
 void SFtp::Reconfig(const char *name)
 {
    super::Reconfig(name);

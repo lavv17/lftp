@@ -81,6 +81,24 @@ NetAccess::~NetAccess()
    ClearPeer();
 }
 
+void NetAccess::Cleanup()
+{
+   if(hostname==0)
+      return;
+
+   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
+      fo->CleanupThis();
+
+   CleanupThis();
+}
+
+void NetAccess::CleanupThis()
+{
+   if(!IsConnected() || mode!=CLOSED)
+      return;
+   Disconnect();
+}
+
 void NetAccess::Reconfig(const char *name)
 {
    super::Reconfig(name);

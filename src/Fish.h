@@ -138,9 +138,6 @@ public:
 
    void SuspendInternal();
    void ResumeInternal();
-
-   void Cleanup();
-   void CleanupThis();
 };
 
 class FishDirList : public DirList

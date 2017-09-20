@@ -4815,23 +4815,6 @@ void Ftp::Reconfig(const char *name)
       rate_limit->SetBufferSize(conn->data_iobuf,max_buf);
 }
 
-void Ftp::Cleanup()
-{
-   if(hostname==0)
-      return;
-
-   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
-      fo->CleanupThis();
-
-   CleanupThis();
-}
-void Ftp::CleanupThis()
-{
-   if(!conn || mode!=CLOSED)
-      return;
-   Disconnect();
-}
-
 void Ftp::SetError(int ec,const char *e)
 {
    // join multiline error message into single line, removing `550-' prefix.

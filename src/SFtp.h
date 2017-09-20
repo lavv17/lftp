@@ -356,7 +356,7 @@ private:
 	    res=PacketUINT32::Unpack(b);
 	    if(res!=UNPACK_SUCCESS)
 	       return res;
-   	    // FIXME: unpack extensions.
+	    // FIXME: unpack extensions.
 	    return res;
 	 }
       unsigned GetVersion() { return data; }
@@ -795,9 +795,6 @@ public:
 
    void SuspendInternal();
    void ResumeInternal();
-
-   void Cleanup();
-   void CleanupThis();
 
    FileSet *GetFileSet();
 };

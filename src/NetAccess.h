@@ -154,6 +154,9 @@ public:
 
    void Close();
 
+   void Cleanup() override;
+   void CleanupThis() override;
+
    int CountConnections();
 
    static void ClassInit();

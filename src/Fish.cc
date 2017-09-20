@@ -1018,23 +1018,6 @@ bool Fish::SameLocationAs(const FileAccess *fa)	const
    return true;
 }
 
-void Fish::Cleanup()
-{
-   if(hostname==0)
-      return;
-
-   for(FA *fo=FirstSameSite(); fo!=0; fo=NextSameSite(fo))
-      fo->CleanupThis();
-
-   CleanupThis();
-}
-void Fish::CleanupThis()
-{
-   if(mode!=CLOSED)
-      return;
-   Disconnect();
-}
-
 void Fish::Reconfig(const char *name)
 {
    super::Reconfig(name);
