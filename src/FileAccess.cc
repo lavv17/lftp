@@ -805,7 +805,7 @@ FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
 }
 
 // FileAccess::Protocol implementation
-xmap<FileAccess::Protocol*> FileAccess::Protocol::proto_by_name;
+xmap_p<FileAccess::Protocol> FileAccess::Protocol::proto_by_name;
 
 FileAccess::Protocol::Protocol(const char *proto, SessionCreator *creator)
 {
@@ -1070,6 +1070,8 @@ void FileAccess::ClassInit()
 }
 void FileAccess::ClassCleanup()
 {
+   Protocol::ClassCleanup();
+   call_dynamic_hook("lftp_RateLimit_cleanup");
    DirColors::DeleteInstance();
    delete cache;
    cache=0;

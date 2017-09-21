@@ -22,7 +22,7 @@
 #include "ResMgr.h"
 #include "SMTask.h"
 
-xmap_p<RateLimit> RateLimit::total;
+xmap_p<RateLimit> *RateLimit::total;
 
 void RateLimit::AddXfer(int add)
 {
@@ -47,19 +47,21 @@ void RateLimit::init(level_e lvl,const char *c)
       c=""; // no closure on top level
    xstring parent_key(c);
 
-   if(total.exists(parent_key)) {
-      parent=total.lookup(parent_key);
+   if(!total)
+      total=new xmap_p<RateLimit>();
+   if(total->exists(parent_key)) {
+      parent=total->lookup(parent_key);
       if(parent->xfer_number==0)
 	 parent->Reconfig(0,c); // it was not used for a white, refresh config
    } else {
       parent=new RateLimit(parent_level,c);
-      total.add(parent_key,parent);
+      total->add(parent_key,parent);
    }
    parent->AddXfer(xfer_number);
 }
 RateLimit::~RateLimit()
 {
-   if(parent)
+   if(parent && xfer_number)
       parent->AddXfer(-xfer_number);
 }
 
@@ -185,3 +187,14 @@ void RateLimit::SetBufferSize(IOBuffer *buf,int size) const
    dir_t d = (buf->GetDirection()==buf->GET ? GET : PUT);
    buf->SetMaxBuffered(LimitBufferSize(size,d));
 }
+
+void RateLimit::ClassCleanup()
+{
+   if(!total)
+      return;
+   for(RateLimit *t=total->each_begin(); t; t=total->each_next())
+      t->parent=nullptr;
+   delete total; total=0;
+}
+
+CDECL void lftp_RateLimit_cleanup() { RateLimit::ClassCleanup(); }

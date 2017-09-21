@@ -323,7 +323,7 @@ public:
    typedef FileAccess *SessionCreator();
    class Protocol
    {
-      static xmap<Protocol*> proto_by_name;
+      static xmap_p<Protocol> proto_by_name;
       const char *proto;
       SessionCreator *New;
 
@@ -331,6 +331,7 @@ public:
    public:
       static FileAccess *NewSession(const char *proto);
       Protocol(const char *proto,SessionCreator *creator);
+      static void ClassCleanup() { proto_by_name.empty(); }
    };
 
    static void Register(const char *proto,SessionCreator *creator)

@@ -146,4 +146,6 @@ bool is_ipv6_address(const char *);
 
 int lftp_fallocate(int fd,off_t sz);
 
+void call_dynamic_hook(const char *name);
+
 #endif // MISC_H

@@ -633,7 +633,8 @@ void ResType::Register()
 }
 void ResType::Unregister()
 {
-   types_by_name->remove(name);
+   if(types_by_name)
+      types_by_name->remove(name);
    if(type_value_list) {
       // remove all resources of this type
       xlist_for_each_safe(Resource,*type_value_list,node,scan,next)
@@ -969,4 +970,15 @@ bool ResMgr::QueryTriBool(const char *name,const char *closure,bool a)
 bool ResClient::QueryTriBool(const char *name,const char *closure,bool a) const
 {
    return Query(name,closure).to_tri_bool(a);
+}
+
+void ResType::ClassCleanup()
+{
+   xlist_for_each_safe(Resource,Resource::all_list,node,scan,next)
+      delete scan;
+   if(types_by_name) {
+      for(ResType *t=types_by_name->each_begin(); t; t=types_by_name->each_next())
+	 t->Unregister();
+      delete types_by_name; types_by_name=0;
+   }
 }

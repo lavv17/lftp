@@ -216,7 +216,7 @@ public:
    time_t start_time;
 
    static CmdExec *cwd_owner;
-   LocalDirectory *cwd;
+   Ref<LocalDirectory> cwd;
    void	 SaveCWD();
    int	 RestoreCWD();
 

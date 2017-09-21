@@ -66,6 +66,7 @@ struct ResType
    static char **Generator(void);
 
    static void ClassInit();
+   static void ClassCleanup();
 
    enum CmpRes {
       EXACT_PREFIX=0x00,SUBSTR_PREFIX=0x01,

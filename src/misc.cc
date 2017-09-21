@@ -47,6 +47,10 @@
 # include <idn2.h>
 #endif
 
+#ifdef HAVE_DLFCN_H
+# include <dlfcn.h>
+#endif
+
 CDECL_BEGIN
 #include "regex.h"
 #include "human.h"
@@ -1081,5 +1085,13 @@ int lftp_fallocate(int fd,off_t sz)
 #else
    errno=ENOSYS;
    return -1;
+#endif
+}
+
+void call_dynamic_hook(const char *name) {
+#if defined(HAVE_DLOPEN) && defined(RTLD_DEFAULT)
+   typedef void (*func)();
+   func f=(func)dlsym(RTLD_DEFAULT,name);
+   if(f) f();
 #endif
 }

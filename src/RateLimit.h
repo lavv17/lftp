@@ -41,7 +41,7 @@ public:
    };
 
 private:
-   static xmap_p<RateLimit> total;
+   static xmap_p<RateLimit> *total;
 
    enum level_e { PER_CONN, PER_HOST, TOTAL } level;
    RateLimit *parent;
@@ -73,6 +73,8 @@ public:
    int LimitBufferSize(int size,dir_t d) const;
    void SetBufferSize(IOBuffer *buf,int size) const;
    void SetBufferSize(SMTaskRef<IOBuffer>& buf,int size) const { SetBufferSize(buf.get_non_const(),size); }
+
+   static void ClassCleanup();
 };
 
 #endif // RATELIMIT_H
