@@ -1,3 +1,9 @@
+Version 4.8.2 - 2017-09-25
+
+* fixed compilation on FreeBSD and OS X.
+* fixed a memory leak.
+* fixed a core dump on exit.
+
 Version 4.8.1 - 2017-09-12
 
 * improved rate limiting to allow per-host limits.
