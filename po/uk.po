@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.8\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2017-09-12 21:27+0300\n"
+"POT-Creation-Date: 2017-09-25 14:15+0300\n"
 "PO-Revision-Date: 2015-08-18 12:36+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
@@ -91,7 +91,7 @@ msgstr "%s: до параметра слід додати аргумент — �
 #. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
 #: lib/quotearg.c:362
 msgid "`"
@@ -1881,8 +1881,8 @@ msgstr "Надсилаємо дані"
 msgid "Done"
 msgstr "Виконано"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2194
-#: src/SFtp.cc:2314
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2177
+#: src/SFtp.cc:2297
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Отримуємо список файлів (%lld) [%s]"
@@ -2243,11 +2243,11 @@ msgstr ""
 msgid "No certificate presented by %s.\n"
 msgstr ""
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:663
+#: src/LocalAccess.cc:604 src/NetAccess.cc:681
 msgid "Getting directory contents"
 msgstr "Отримуємо дані щодо вмісту каталогу"
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:667
+#: src/LocalAccess.cc:606 src/NetAccess.cc:685
 msgid "Getting files information"
 msgstr "Отримуємо дані щодо файлів"
 
@@ -2472,25 +2472,25 @@ msgstr "у цій системі не передбачено підтримки 
 msgid "rename successful\n"
 msgstr "успішне перейменування\n"
 
-#: src/NetAccess.cc:150
+#: src/NetAccess.cc:168
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Встановлюємо з’єднання з %s%s (%s), порт %u"
 
-#: src/NetAccess.cc:206 src/Torrent.cc:3354
+#: src/NetAccess.cc:224 src/Torrent.cc:3354
 #, c-format
 msgid "Timeout - reconnecting"
 msgstr "Перевищено час очікування. Повторна спроба встановлення з’єднання."
 
-#: src/NetAccess.cc:301
+#: src/NetAccess.cc:319
 msgid "Connection limit reached"
 msgstr "Перевищено обмеження на кількість спроб"
 
-#: src/NetAccess.cc:308
+#: src/NetAccess.cc:326
 msgid "Delaying before reconnect"
 msgstr "Виконуємо затримку перед повторним з’єднанням"
 
-#: src/NetAccess.cc:332 src/NetAccess.cc:334
+#: src/NetAccess.cc:350 src/NetAccess.cc:352
 msgid "max-retries exceeded"
 msgstr ""
 "Перевищено значення максимальної кількості повторних спроб (max-retries)"
@@ -2595,7 +2595,7 @@ msgstr "некоректне булеве значення"
 msgid "invalid boolean/auto value"
 msgstr "некоректне булеве або автоматичне значення"
 
-#: src/ResMgr.cc:402 src/ResMgr.cc:712
+#: src/ResMgr.cc:402 src/ResMgr.cc:713
 msgid "invalid number"
 msgstr "некоректне число"
 
@@ -2607,39 +2607,39 @@ msgstr "некоректне число з рухомою крапкою"
 msgid "invalid unsigned number"
 msgstr "некоректне додатне число"
 
-#: src/ResMgr.cc:677
+#: src/ResMgr.cc:678
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr ""
 "Некоректна літера одиниці часу, можна використовувати лише літери з набору "
 "[smhd]."
 
-#: src/ResMgr.cc:685
+#: src/ResMgr.cc:686
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 "Некоректний формат часу. Час має бути вказано так: <час><одиниця>. Приклад: "
 "2h30m."
 
-#: src/ResMgr.cc:717
+#: src/ResMgr.cc:718
 msgid "integer overflow"
 msgstr "переповнення типу цілого значення"
 
-#: src/ResMgr.cc:803
+#: src/ResMgr.cc:804
 msgid "Invalid IPv4 numeric address"
 msgstr "Некоректна числова адреса IPv4"
 
-#: src/ResMgr.cc:813
+#: src/ResMgr.cc:814
 msgid "Invalid IPv6 numeric address"
 msgstr "Некоректна числова адреса IPv6"
 
-#: src/ResMgr.cc:883 src/ResMgr.cc:887
+#: src/ResMgr.cc:884 src/ResMgr.cc:888
 msgid "this encoding is not supported"
 msgstr "підтримки цього кодування не передбачено"
 
-#: src/ResMgr.cc:893
+#: src/ResMgr.cc:894
 msgid "no closure defined for this setting"
 msgstr "не визначено замикання для цього параметра"
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:900
 #, fuzzy
 msgid "a closure is required for this setting"
 msgstr "не визначено замикання для цього параметра"

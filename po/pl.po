@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.7.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2017-09-12 21:27+0300\n"
+"POT-Creation-Date: 2017-09-25 14:15+0300\n"
 "PO-Revision-Date: 2016-05-20 15:00+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -90,7 +90,7 @@ msgstr "%s: opcja musi mieć argument -- '%c'\n"
 #. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
 #: lib/quotearg.c:362
 msgid "`"
@@ -1846,8 +1846,8 @@ msgstr "Wysyłam dane"
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2194
-#: src/SFtp.cc:2314
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2177
+#: src/SFtp.cc:2297
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Pobieranie listy plików (%lld) [%s]"
@@ -2199,11 +2199,11 @@ msgstr "Dołączenie terminala do podanego procesu lftp działającego w tle.\n"
 msgid "No certificate presented by %s.\n"
 msgstr ""
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:663
+#: src/LocalAccess.cc:604 src/NetAccess.cc:681
 msgid "Getting directory contents"
 msgstr "Pobieranie zawartości katalogu"
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:667
+#: src/LocalAccess.cc:606 src/NetAccess.cc:685
 msgid "Getting files information"
 msgstr "Pobieranie informacji o plikach"
 
@@ -2428,25 +2428,25 @@ msgstr "moduły nie są wspierane na tym systemie"
 msgid "rename successful\n"
 msgstr "zmiana nazwy powiodła się\n"
 
-#: src/NetAccess.cc:150
+#: src/NetAccess.cc:168
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Łączenie się z %s%s (%s) port %u"
 
-#: src/NetAccess.cc:206 src/Torrent.cc:3354
+#: src/NetAccess.cc:224 src/Torrent.cc:3354
 #, c-format
 msgid "Timeout - reconnecting"
 msgstr "Przekroczony limit czasu - łączę się ponownie"
 
-#: src/NetAccess.cc:301
+#: src/NetAccess.cc:319
 msgid "Connection limit reached"
 msgstr "Osiągnięto limit połączeń"
 
-#: src/NetAccess.cc:308
+#: src/NetAccess.cc:326
 msgid "Delaying before reconnect"
 msgstr "Przerwa przed ponownym połączeniem"
 
-#: src/NetAccess.cc:332 src/NetAccess.cc:334
+#: src/NetAccess.cc:350 src/NetAccess.cc:352
 msgid "max-retries exceeded"
 msgstr "przekroczona maksymalna liczba prób"
 
@@ -2552,7 +2552,7 @@ msgstr "nieprawidłowa wartość zmiennej logicznej (bool)"
 msgid "invalid boolean/auto value"
 msgstr "nieprawidłowa wartość zmiennej bool/auto"
 
-#: src/ResMgr.cc:402 src/ResMgr.cc:712
+#: src/ResMgr.cc:402 src/ResMgr.cc:713
 msgid "invalid number"
 msgstr "nieprawidłowy numer"
 
@@ -2564,35 +2564,35 @@ msgstr "nieprawidłowa liczba zmiennoprzecinkowa"
 msgid "invalid unsigned number"
 msgstr "nieprawidłowa liczba bez znaku"
 
-#: src/ResMgr.cc:677
+#: src/ResMgr.cc:678
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Nieprawidłowa litera-jednostka czasu, wyłącznie [shmd] są dozwolone."
 
-#: src/ResMgr.cc:685
+#: src/ResMgr.cc:686
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "Nieprawidłowy format czasu. Format to <czas><jednostka>, np. 2h30m."
 
-#: src/ResMgr.cc:717
+#: src/ResMgr.cc:718
 msgid "integer overflow"
 msgstr "przepełnienie liczby całkowitej"
 
-#: src/ResMgr.cc:803
+#: src/ResMgr.cc:804
 msgid "Invalid IPv4 numeric address"
 msgstr "Nieprawidłowy numeryczny adres IPv4"
 
-#: src/ResMgr.cc:813
+#: src/ResMgr.cc:814
 msgid "Invalid IPv6 numeric address"
 msgstr "Nieprawidłowy numeryczny adres IPv6"
 
-#: src/ResMgr.cc:883 src/ResMgr.cc:887
+#: src/ResMgr.cc:884 src/ResMgr.cc:888
 msgid "this encoding is not supported"
 msgstr "to kodowanie nie jest wspierane"
 
-#: src/ResMgr.cc:893
+#: src/ResMgr.cc:894
 msgid "no closure defined for this setting"
 msgstr "nie zdefiniowano zamknięcia dla tego ustawienia"
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:900
 #, fuzzy
 msgid "a closure is required for this setting"
 msgstr "nie zdefiniowano zamknięcia dla tego ustawienia"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp-2.0.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2017-09-12 21:27+0300\n"
+"POT-Creation-Date: 2017-09-25 14:15+0300\n"
 "PO-Revision-Date: 1999-09-10 00:50+0800\n"
 "Last-Translator: Wang Jian <lark@linux.net.cn>\n"
 "Language-Team: zh <zh@li.org>\n"
@@ -88,7 +88,7 @@ msgstr ""
 #. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
 #: lib/quotearg.c:362
 msgid "`"
@@ -1698,8 +1698,8 @@ msgstr "正发送数据"
 msgid "Done"
 msgstr "\t完成\n"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2194
-#: src/SFtp.cc:2314
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2177
+#: src/SFtp.cc:2297
 #, fuzzy, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "正在获取文件列表 (%ld) [%s]"
@@ -2048,12 +2048,12 @@ msgstr ""
 msgid "No certificate presented by %s.\n"
 msgstr ""
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:663
+#: src/LocalAccess.cc:604 src/NetAccess.cc:681
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "正在读取目录内容 (%ld)"
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:667
+#: src/LocalAccess.cc:606 src/NetAccess.cc:685
 #, fuzzy
 msgid "Getting files information"
 msgstr "正在读取文件信息 (%d%%)"
@@ -2270,26 +2270,26 @@ msgstr ""
 msgid "rename successful\n"
 msgstr "重命名成功\n"
 
-#: src/NetAccess.cc:150
+#: src/NetAccess.cc:168
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "正在连接到 %s%s (%s) 端口 %u"
 
-#: src/NetAccess.cc:206 src/Torrent.cc:3354
+#: src/NetAccess.cc:224 src/Torrent.cc:3354
 #, c-format
 msgid "Timeout - reconnecting"
 msgstr "超时 - 重新连接"
 
-#: src/NetAccess.cc:301
+#: src/NetAccess.cc:319
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "连接空闲"
 
-#: src/NetAccess.cc:308
+#: src/NetAccess.cc:326
 msgid "Delaying before reconnect"
 msgstr "重新连接前延时"
 
-#: src/NetAccess.cc:332 src/NetAccess.cc:334
+#: src/NetAccess.cc:350 src/NetAccess.cc:352
 msgid "max-retries exceeded"
 msgstr "达到最大重试次数"
 
@@ -2395,7 +2395,7 @@ msgstr "无效的布尔值"
 msgid "invalid boolean/auto value"
 msgstr "无效的布尔值"
 
-#: src/ResMgr.cc:402 src/ResMgr.cc:712
+#: src/ResMgr.cc:402 src/ResMgr.cc:713
 msgid "invalid number"
 msgstr "无效的数字"
 
@@ -2409,36 +2409,36 @@ msgstr "无效的数字"
 msgid "invalid unsigned number"
 msgstr "无效的数字"
 
-#: src/ResMgr.cc:677
+#: src/ResMgr.cc:678
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr ""
 
-#: src/ResMgr.cc:685
+#: src/ResMgr.cc:686
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 
-#: src/ResMgr.cc:717
+#: src/ResMgr.cc:718
 msgid "integer overflow"
 msgstr ""
 
-#: src/ResMgr.cc:803
+#: src/ResMgr.cc:804
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:813
+#: src/ResMgr.cc:814
 msgid "Invalid IPv6 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:883 src/ResMgr.cc:887
+#: src/ResMgr.cc:884 src/ResMgr.cc:888
 #, fuzzy
 msgid "this encoding is not supported"
 msgstr "不支持的操作"
 
-#: src/ResMgr.cc:893
+#: src/ResMgr.cc:894
 msgid "no closure defined for this setting"
 msgstr ""
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:900
 msgid "a closure is required for this setting"
 msgstr ""
 

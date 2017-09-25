@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2017-09-12 21:27+0300\n"
+"POT-Creation-Date: 2017-09-25 14:15+0300\n"
 "PO-Revision-Date: 2008-04-12 12:40+0200\n"
 "Last-Translator: Alain PORTAL <aportal@univ-montp2.fr>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -90,7 +90,7 @@ msgstr "%s: l'option nécessite un argument -- %c\n"
 #. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
 #: lib/quotearg.c:362
 msgid "`"
@@ -1847,8 +1847,8 @@ msgstr "Émission des données"
 msgid "Done"
 msgstr "Terminé"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2194
-#: src/SFtp.cc:2314
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2177
+#: src/SFtp.cc:2297
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Récupération de la liste des fichiers (%lld) [%s]"
@@ -2203,11 +2203,11 @@ msgstr ""
 msgid "No certificate presented by %s.\n"
 msgstr ""
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:663
+#: src/LocalAccess.cc:604 src/NetAccess.cc:681
 msgid "Getting directory contents"
 msgstr "Récupération du contenu du répertoire"
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:667
+#: src/LocalAccess.cc:606 src/NetAccess.cc:685
 msgid "Getting files information"
 msgstr "Lecture des informations de fichiers"
 
@@ -2427,25 +2427,25 @@ msgstr "les modules ne sont pas pris en charge sur ce système"
 msgid "rename successful\n"
 msgstr "renommage réussi\n"
 
-#: src/NetAccess.cc:150
+#: src/NetAccess.cc:168
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "Connexion à %s%s (%s) port %u"
 
-#: src/NetAccess.cc:206 src/Torrent.cc:3354
+#: src/NetAccess.cc:224 src/Torrent.cc:3354
 #, c-format
 msgid "Timeout - reconnecting"
 msgstr "Temps écoulé - reconnexion"
 
-#: src/NetAccess.cc:301
+#: src/NetAccess.cc:319
 msgid "Connection limit reached"
 msgstr "Limite de connexions atteinte"
 
-#: src/NetAccess.cc:308
+#: src/NetAccess.cc:326
 msgid "Delaying before reconnect"
 msgstr "Attente avant reconnexion"
 
-#: src/NetAccess.cc:332 src/NetAccess.cc:334
+#: src/NetAccess.cc:350 src/NetAccess.cc:352
 msgid "max-retries exceeded"
 msgstr "le nombre maximum de tentatives (max-retries) a été atteint"
 
@@ -2549,7 +2549,7 @@ msgstr "valeur booléenne invalide"
 msgid "invalid boolean/auto value"
 msgstr "valeur booléenne/automatique invalide"
 
-#: src/ResMgr.cc:402 src/ResMgr.cc:712
+#: src/ResMgr.cc:402 src/ResMgr.cc:713
 msgid "invalid number"
 msgstr "nombre invalide"
 
@@ -2562,37 +2562,37 @@ msgstr "nombre en virgule flottante invalide"
 msgid "invalid unsigned number"
 msgstr "nombre invalide"
 
-#: src/ResMgr.cc:677
+#: src/ResMgr.cc:678
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "Unité de temps invalide, seules [smhd] sont permises."
 
-#: src/ResMgr.cc:685
+#: src/ResMgr.cc:686
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr ""
 "Format de temps invalide. Le format est <temps><unité>, par ex. : 2h30m."
 
-#: src/ResMgr.cc:717
+#: src/ResMgr.cc:718
 #, fuzzy
 msgid "integer overflow"
 msgstr "Débordement de nombre entier"
 
-#: src/ResMgr.cc:803
+#: src/ResMgr.cc:804
 msgid "Invalid IPv4 numeric address"
 msgstr "Adresse numérique IPv4 invalide"
 
-#: src/ResMgr.cc:813
+#: src/ResMgr.cc:814
 msgid "Invalid IPv6 numeric address"
 msgstr "Adresse numérique IPv6 invalide"
 
-#: src/ResMgr.cc:883 src/ResMgr.cc:887
+#: src/ResMgr.cc:884 src/ResMgr.cc:888
 msgid "this encoding is not supported"
 msgstr "cet encodage n'est pas pris en charge"
 
-#: src/ResMgr.cc:893
+#: src/ResMgr.cc:894
 msgid "no closure defined for this setting"
 msgstr "aucune restriction pour ce paramètre"
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:900
 #, fuzzy
 msgid "a closure is required for this setting"
 msgstr "aucune restriction pour ce paramètre"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.1.1\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2017-09-12 21:27+0300\n"
+"POT-Creation-Date: 2017-09-25 14:15+0300\n"
 "PO-Revision-Date: 2001-05-27 KST\n"
 "Last-Translator: Dojip Kim <greendrm@greendrm.com>\n"
 "Language-Team: \n"
@@ -87,7 +87,7 @@ msgstr ""
 #. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
 #: lib/quotearg.c:362
 msgid "`"
@@ -1704,8 +1704,8 @@ msgstr "자료 보내는 중"
 msgid "Done"
 msgstr "\t완료\n"
 
-#: src/Fish.cc:1153 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2194
-#: src/SFtp.cc:2314
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2177
+#: src/SFtp.cc:2297
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "파일 목록을 가져옵니다 (%lld) [%s]"
@@ -2059,12 +2059,12 @@ msgstr ""
 msgid "No certificate presented by %s.\n"
 msgstr ""
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:663
+#: src/LocalAccess.cc:604 src/NetAccess.cc:681
 #, fuzzy
 msgid "Getting directory contents"
 msgstr "디렉토리 정보를 가져오는 중 (%lld)"
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:667
+#: src/LocalAccess.cc:606 src/NetAccess.cc:685
 #, fuzzy
 msgid "Getting files information"
 msgstr "파일 정보를 가져오는 중 (%d%%)"
@@ -2281,26 +2281,26 @@ msgstr "모듈은 이 시스템에서 지원되지 않음"
 msgid "rename successful\n"
 msgstr "이름변경 성공\n"
 
-#: src/NetAccess.cc:150
+#: src/NetAccess.cc:168
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
 msgstr "%s%s (%s) 포트 %u에 연결 중"
 
-#: src/NetAccess.cc:206 src/Torrent.cc:3354
+#: src/NetAccess.cc:224 src/Torrent.cc:3354
 #, c-format
 msgid "Timeout - reconnecting"
 msgstr "시간초과 - 재접속"
 
-#: src/NetAccess.cc:301
+#: src/NetAccess.cc:319
 #, fuzzy
 msgid "Connection limit reached"
 msgstr "접속 제한까지 갔습니다"
 
-#: src/NetAccess.cc:308
+#: src/NetAccess.cc:326
 msgid "Delaying before reconnect"
 msgstr "재접속하기 위하여 기다립니다"
 
-#: src/NetAccess.cc:332 src/NetAccess.cc:334
+#: src/NetAccess.cc:350 src/NetAccess.cc:352
 msgid "max-retries exceeded"
 msgstr "최대-재시도를 초과했습니다"
 
@@ -2407,7 +2407,7 @@ msgstr "잘못된 boolean 변수입니다"
 msgid "invalid boolean/auto value"
 msgstr "잘못된 boolean 변수입니다"
 
-#: src/ResMgr.cc:402 src/ResMgr.cc:712
+#: src/ResMgr.cc:402 src/ResMgr.cc:713
 msgid "invalid number"
 msgstr "잘못된 수입니다"
 
@@ -2420,36 +2420,36 @@ msgstr "잘못된 부동소수 점 수입니다"
 msgid "invalid unsigned number"
 msgstr "잘못된 수입니다"
 
-#: src/ResMgr.cc:677
+#: src/ResMgr.cc:678
 msgid "Invalid time unit letter, only [smhd] are allowed."
 msgstr "잘못된 시간 단위입니다, [smhd] 만 허용합니다."
 
-#: src/ResMgr.cc:685
+#: src/ResMgr.cc:686
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
 msgstr "잘못된 시간 양식입니다. 양식은 <time><unit> 입니다, 예. 2h30m."
 
-#: src/ResMgr.cc:717
+#: src/ResMgr.cc:718
 msgid "integer overflow"
 msgstr ""
 
-#: src/ResMgr.cc:803
+#: src/ResMgr.cc:804
 msgid "Invalid IPv4 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:813
+#: src/ResMgr.cc:814
 msgid "Invalid IPv6 numeric address"
 msgstr ""
 
-#: src/ResMgr.cc:883 src/ResMgr.cc:887
+#: src/ResMgr.cc:884 src/ResMgr.cc:888
 #, fuzzy
 msgid "this encoding is not supported"
 msgstr "지원되지 않는 오퍼레이션입니다"
 
-#: src/ResMgr.cc:893
+#: src/ResMgr.cc:894
 msgid "no closure defined for this setting"
 msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
 
-#: src/ResMgr.cc:899
+#: src/ResMgr.cc:900
 #, fuzzy
 msgid "a closure is required for this setting"
 msgstr "이 설정에 대한 종결이 정의되어 있지 않습니다"
