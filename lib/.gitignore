@@ -331,3 +331,4 @@ limits.h
 /libc-config.h
 /nstrftime.c
 /scratch_buffer.h
+/malloc/
