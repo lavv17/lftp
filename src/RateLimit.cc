@@ -193,7 +193,7 @@ void RateLimit::ClassCleanup()
    if(!total)
       return;
    for(RateLimit *t=total->each_begin(); t; t=total->each_next())
-      t->parent=nullptr;
+      t->parent=0;
    delete total; total=0;
 }
 
