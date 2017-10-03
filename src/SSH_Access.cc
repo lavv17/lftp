@@ -161,6 +161,7 @@ void SSH_Access::DisconnectLL()
 {
    if(send_buf)
       LogNote(9,_("Disconnecting"));
+   rate_limit=0;
    send_buf=0;
    recv_buf=0;
    pty_send_buf=0;
