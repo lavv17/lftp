@@ -256,3 +256,4 @@
 /nstrftime.m4
 /open-cloexec.m4
 /std-gnu11.m4
+/host-cpu-c-abi.m4
