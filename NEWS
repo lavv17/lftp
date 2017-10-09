@@ -1,3 +1,8 @@
+Version 4.8.3 - 2017-10-09
+
+* fixed compilation with older C++ compilers.
+* fixed 2 other core dumps on exit (incorrect order of deallocation).
+
 Version 4.8.2 - 2017-09-25
 
 * fixed compilation on FreeBSD and OS X.
