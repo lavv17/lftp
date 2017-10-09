@@ -1071,7 +1071,7 @@ void FileAccess::ClassInit()
 void FileAccess::ClassCleanup()
 {
    Protocol::ClassCleanup();
-   call_dynamic_hook("lftp_RateLimit_cleanup");
+   call_dynamic_hook("lftp_network_cleanup");
    DirColors::DeleteInstance();
    delete cache;
    cache=0;

@@ -687,3 +687,9 @@ const char *GenericParseListInfo::Status()
 		     session->CurrentStatus());
    return "";
 }
+
+CDECL void lftp_network_cleanup()
+{
+   NetAccess::ClassCleanup();
+   RateLimit::ClassCleanup();
+}

@@ -196,5 +196,3 @@ void RateLimit::ClassCleanup()
       t->parent=0;
    delete total; total=0;
 }
-
-CDECL void lftp_RateLimit_cleanup() { RateLimit::ClassCleanup(); }

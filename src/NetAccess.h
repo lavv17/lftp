@@ -160,6 +160,9 @@ public:
    int CountConnections();
 
    static void ClassInit();
+   static void ClassCleanup() {
+      site_data.empty();
+   }
 };
 
 class GenericParseListInfo : public ListInfo
