@@ -513,6 +513,7 @@ off_t FileCopy::GetPos() const
       // sometimes Buffered overestimates the amount of buffered data
       if(pos<0)
 	 pos=0;
+      return pos;
    }
    if(get)
       return get->GetRealPos();
