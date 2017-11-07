@@ -804,6 +804,17 @@ FileAccess *FileAccess::New(const ParsedURL *u,bool dummy)
    return s;
 }
 
+FileAccess *FileAccess::GetNewLocationFA() const
+{
+   if(!location)
+      return 0;
+   ParsedURL url(location,true);
+   if(!url.proto)
+      return 0;
+   return FileAccess::New(&url,true);
+}
+
+
 // FileAccess::Protocol implementation
 xmap_p<FileAccess::Protocol> FileAccess::Protocol::proto_by_name;
 

@@ -3217,6 +3217,8 @@ void  Ftp::DisconnectNow()
    {
       if(mode==STORE && GetFlag(IO_FLAG))
 	 SetError(STORE_FAILED,0);
+      else if(fragile && GetFlag(IO_FLAG))
+	 SetError(FRAGILE_FAILED,0);
    }
    copy_addr_valid=false;
 }
@@ -4860,6 +4862,7 @@ void Ftp::SetError(int ec,const char *e)
    case(STORE_FAILED):
    case(DO_AGAIN):
    case(NOT_SUPP):
+   case(FRAGILE_FAILED):
       break;
    }
 }

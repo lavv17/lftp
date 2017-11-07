@@ -1144,6 +1144,8 @@ void FileCopyPeerFA::OpenSession()
 	 session->SetSize(size);
    }
    session->RereadManual();
+   if(base)
+      session->SetFragile(); // fallback to base on error
    if(ascii)
       session->AsciiTransfer();
    if(want_size && size==NO_SIZE_YET)
@@ -1198,6 +1200,10 @@ int FileCopyPeerFA::Get_LL(int len)
    {
       if(res==FA::DO_AGAIN)
 	 return 0;
+      if(res==FA::FRAGILE_FAILED && base) {
+	 base.revert(this);
+	 return 0;
+      }
       if(res==FA::FILE_MOVED)
       {
 	 // handle redirection.
@@ -1212,54 +1218,18 @@ int FileCopyPeerFA::Get_LL(int len)
 	       SetError(_("Too many redirections"));
 	       return -1;
 	    }
-	    if(FAmode==FA::QUOTE_CMD)
-	       FAmode=FA::RETRIEVE;
 
-	    xstring loc(loc_c);
-	    session->Close(); // loc_c is no longer valid.
-	    loc_c=0;
+	    if(!session->IsNewLocationPermanent() && !base)
+	       base.save(this);
 
-	    ParsedURL u(loc,true);
-
-	    if(u.proto)
-	    {
-	       my_session=FileAccess::New(&u);
+	    orig_url.set(loc_c);
+	    file.set(session->GetNewLocationFile());
+	    FAmode=session->GetNewLocationMode();
+	    FileAccess *new_session=session->GetNewLocationFA();
+	    session->Close();
+	    if(new_session) {
+	       my_session=new_session;
 	       session=my_session;
-
-	       file.set(u.path?u.path.get():"");
-	       orig_url.set(loc);
-	    }
-	    else // !proto
-	    {
-	       if(orig_url)
-	       {
-		  int p_ind=url::path_index(orig_url);
-		  const char *s=strrchr(orig_url,'/');
-		  int s_ind=s?s-orig_url:-1;
-		  if(p_ind==-1 || s_ind==-1 || s_ind<p_ind)
-		     s_ind=p_ind=strlen(orig_url);
-		  if(loc[0]=='/')
-		  {
-		     orig_url.truncate(p_ind);
-		     orig_url.append(loc);
-		  }
-		  else
-		  {
-		     orig_url.truncate(s_ind);
-		     orig_url.append('/');
-		     orig_url.append(loc);
-		  }
-	       }
-
-	       loc.url_decode();
-	       const char *slash=strrchr(file,'/');
-	       if(loc[0]!='/' && slash)
-	       {
-		  file.truncate(slash-file);
-		  file.set(dir_file(file,loc));
-	       }
-	       else
-		  file.set(loc);
 	    }
 
 	    if(want_size || size!=NO_SIZE)

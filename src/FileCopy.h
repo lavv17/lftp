@@ -292,6 +292,42 @@ class FileCopyPeerFA : public FileCopyPeer
    FileAccessRefC session;
    int FAmode;
 
+   // support the temporary redirects, this info is needed for a fallback
+   struct RedirBase {
+      FileAccessRef session;
+      xstring_c file;
+      xstring_c url;
+      int FAmode;
+      int redirections;
+      off_t pos;
+
+      RedirBase() : FAmode(FA::CLOSED), redirections(0), pos(0) {}
+      operator bool() const { return session!=0; }
+      void unset() {
+	 session=0;
+	 file.unset();
+	 url.unset();
+	 FAmode=FA::CLOSED;
+      }
+      void save(FileCopyPeerFA *c) {
+	 session=c->session->Clone();
+	 file.set(c->file);
+	 url.set(c->orig_url);
+	 FAmode=c->FAmode;
+	 pos=c->pos;
+	 redirections=c->redirections;
+      }
+      void revert(FileCopyPeerFA *c) {
+	 c->my_session=session.borrow();
+	 c->session=c->my_session;
+	 c->file.move_here(file);
+	 c->orig_url.move_here(url);
+	 // if there was a progress, reset redirections count.
+	 c->redirections=(c->pos > pos ? 0 : redirections);
+      }
+   } base;
+   friend struct RedirBase;
+
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
    int PutEOF_LL();
