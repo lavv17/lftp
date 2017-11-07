@@ -71,6 +71,7 @@ enum {
    H_Not_Modified=304,
    H_Use_Proxy=305,
    H_Temporary_Redirect=307,
+   H_Permanent_Redirect=308,
    H_Bad_Request=400,
    H_Unauthorized=401,
    H_Payment_Required=402,
@@ -106,7 +107,7 @@ enum {
 #define H_2XX(x)        (((x) >= 200) && ((x) <= 299))
 #define H_5XX(x)        (((x) >= 500) && ((x) <= 599))
 #define H_PARTIAL(x)    ((x) == H_Partial_Content)
-#define H_REDIRECTED(x) (((x) == H_Moved_Permanently) || ((x) == H_Found) || ((x) == H_See_Other) || ((x) == H_Temporary_Redirect))
+#define H_REDIRECTED(x) (((x) == H_Moved_Permanently) || ((x) == H_Found) || ((x) == H_See_Other) || ((x) == H_Temporary_Redirect) || ((x) == H_Permanent_Redirect))
 #define H_EMPTY(x)	(((x) == H_No_Content) || ((x) == H_Reset_Content))
 #define H_CONTINUE(x)	((x) == H_Continue || (x) == H_Processing)
 #define H_REQUESTED_RANGE_NOT_SATISFIABLE(x) ((x) == H_Requested_Range_Not_Satisfiable)
@@ -239,6 +240,8 @@ void Http::DisconnectLL()
 	 SetError(FATAL,_("POST method failed"));
       else if(ModeIs(STORE))
 	 SetError(STORE_FAILED,0);
+      else if(fragile)
+	 SetError(FRAGILE_FAILED,0);
    }
    if(ModeIs(STORE) && H_AUTH_REQ(status_code))
       pos=real_pos=request_pos; // resend all the data again
@@ -1052,6 +1055,23 @@ void Http::HandleHeaderLine(const char *name,const char *value)
 	 location.vset(GetConnectURL().get(),value,NULL);
       else
 	 location.set(value);
+
+      location_permanent = (status_code==H_Moved_Permanently
+			 || status_code==H_Permanent_Redirect);
+      location_mode=OpenMode();
+      if(status_code==H_See_Other)
+	 location_mode=RETRIEVE;
+
+      if(location_mode!=QUOTE_CMD) {
+	 ParsedURL url(location,true);
+	 location_file.set(url.path);
+      } else {
+	 xstring &tmp=xstring::get_tmp(file,file.instr(' ')+1);
+	 tmp.append(location+url::path_index(location));
+	 if(special_data)
+	    tmp.append(' ').append(special_data);
+	 location_file.set(tmp);
+      }
       return;
 
    case_hh("Retry-After",'R')

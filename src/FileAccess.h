@@ -159,6 +159,7 @@ protected:
    int chmod_mode;
    bool ascii;
    bool norest_manual;
+   bool fragile;
 
    int	priority;   // higher priority can take over other session.
    int	last_priority;
@@ -169,7 +170,12 @@ protected:
    void Fatal(const char *mess);
    xstring error;
    int error_code;
+
    xstring_c location;
+   xstring_c location_file;
+   int location_mode;
+   bool location_permanent;
+
    xstring_c suggested_filename;
    void SetSuggestedFileName(const char *fn);
 
@@ -253,6 +259,7 @@ public:
    off_t GetRealPos() const { return real_pos<0?pos:real_pos; }
    void SeekReal() { pos=GetRealPos(); }
    void RereadManual() { norest_manual=true; }
+   void SetFragile() { fragile=true; }
 
    const Path& GetCwd() const { return cwd; }
    const Path& GetNewCwd() const { return *new_cwd; }
@@ -297,7 +304,8 @@ public:
       STORE_FAILED,
       LOGIN_FAILED,
       DO_AGAIN,
-      NOT_SUPP
+      NOT_SUPP,
+      FRAGILE_FAILED,
    };
 
    virtual const char *StrError(int err);
@@ -312,7 +320,12 @@ public:
 
    static bool NotSerious(int err) { return temporary_network_error(err); }
 
-   const char *GetNewLocation() { return location; }
+   const char *GetNewLocation() const { return location; }
+   const char *GetNewLocationFile() const { return location_file; }
+   int GetNewLocationMode() const { return location_mode; }
+   bool IsNewLocationPermanent() const { return location_permanent; }
+   virtual FileAccess *GetNewLocationFA() const;
+
    const char *GetSuggestedFileName() { return suggested_filename; }
    const char *GetEntityContentType() { return entity_content_type; }
    const char *GetEntityCharset() { return entity_charset; }
