@@ -578,20 +578,23 @@ skip:
    return;
 }
 
-void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
+void  MirrorJob::InitSets()
 {
-   if(FlagSet(TARGET_FLAT) && !parent_mirror && dest)
-      source->Sort(FileSet::BYNAME_FLAT);
+   if(FlagSet(TARGET_FLAT) && !parent_mirror && target_set)
+      source_set->Sort(FileSet::BYNAME_FLAT);
 
-   source->Count(NULL,&stats.tot_files,&stats.tot_symlinks,&stats.tot_files);
+   source_set->Count(NULL,&stats.tot_files,&stats.tot_symlinks,&stats.tot_files);
 
-   to_rm=new FileSet(dest);
-   to_rm->SubtractAny(source);
+   to_rm=new FileSet(target_set);
+   to_rm->SubtractAny(source_set);
 
-   to_transfer=new FileSet(source);
+   if(FlagSet(DELETE_EXCLUDED) && target_set_excluded)
+      to_rm->Merge(target_set_excluded);
+
+   to_transfer=new FileSet(source_set);
 
    if(!FlagSet(TRANSFER_ALL)) {
-      same=new FileSet(source);
+      same=new FileSet(source_set);
 
       int ignore=0;
       if(FlagSet(ONLY_NEWER))
@@ -602,7 +605,7 @@ void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
 	 ignore|=FileInfo::DATE;
       if(FlagSet(IGNORE_SIZE))
 	 ignore|=FileInfo::SIZE;
-      to_transfer->SubtractSame(dest,ignore);
+      to_transfer->SubtractSame(target_set,ignore);
 
       same->SubtractAny(to_transfer);
    }
@@ -617,7 +620,7 @@ void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
    if(FlagSet(SCAN_ALL_FIRST)) {
       to_mkdir=new FileSet(to_transfer);
       to_mkdir->SubtractNotDirs();
-      to_mkdir->SubtractAny(dest);
+      to_mkdir->SubtractAny(target_set);
    }
 
    switch(recursion_mode) {
@@ -625,10 +628,10 @@ void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
       to_transfer->SubtractDirs();
       break;
    case RECURSION_MISSING:
-      to_transfer->SubtractDirs(dest);
+      to_transfer->SubtractDirs(target_set);
       break;
    case RECURSION_NEWER:
-      to_transfer->SubtractNotOlderDirs(dest);
+      to_transfer->SubtractNotOlderDirs(target_set);
       break;
    case RECURSION_ALWAYS:
       break;
@@ -638,8 +641,8 @@ void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
       to_transfer->ExcludeUnaccessible(source_session->GetUser());
 
    new_files_set=new FileSet(to_transfer);
-   new_files_set->SubtractAny(dest);
-   old_files_set=new FileSet(dest);
+   new_files_set->SubtractAny(target_set);
+   old_files_set=new FileSet(target_set);
    old_files_set->SubtractNotIn(to_transfer);
 
    to_rm_mismatched=new FileSet(old_files_set);
@@ -649,8 +652,8 @@ void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
    if(!FlagSet(DELETE))
       to_transfer->SubtractAny(to_rm_mismatched);
 
-   if(FlagSet(TARGET_FLAT) && !parent_mirror && dest) {
-      source->Unsort();
+   if(FlagSet(TARGET_FLAT) && !parent_mirror && target_set) {
+      source_set->Unsort();
       to_transfer->UnsortFlat();
       to_transfer->SubtractDirs();
       same->UnsortFlat();
@@ -971,7 +974,7 @@ int   MirrorJob::Do()
       if(FlagSet(DEPTH_FIRST) && source_set && !target_set)
       {
 	 // transfer directories first
-	 InitSets(source_set,NULL);
+	 InitSets();
 	 to_transfer->Unsort();
 	 to_transfer->SubtractNotDirs();
 	 goto pre_WAITING_FOR_TRANSFER;
@@ -1015,7 +1018,7 @@ int   MirrorJob::Do()
 	 target_set->Merge(target_set_recursive);
 	 target_set_recursive=0;
       }
-      InitSets(source_set,target_set);
+      InitSets();
 
       to_transfer->CountBytes(&bytes_to_transfer);
       if(parent_mirror)
@@ -1795,6 +1798,7 @@ CMD(mirror)
       OPT_UPLOAD_OLDER,
       OPT_TRANSFER_ALL,
       OPT_TARGET_FLAT,
+      OPT_DELETE_EXCLUDED,
    };
    static const struct option mirror_opts[]=
    {
@@ -1856,6 +1860,7 @@ CMD(mirror)
       {"upload-older",no_argument,0,OPT_UPLOAD_OLDER},
       {"transfer-all",no_argument,0,OPT_TRANSFER_ALL},
       {"flat",no_argument,0,OPT_TARGET_FLAT},
+      {"delete-excluded",no_argument,0,OPT_DELETE_EXCLUDED},
       {0}
    };
 
@@ -2105,6 +2110,9 @@ CMD(mirror)
 	 break;
       case(OPT_TARGET_FLAT):
 	 flags|=MirrorJob::TARGET_FLAT|MirrorJob::SCAN_ALL_FIRST|MirrorJob::DEPTH_FIRST;
+	 break;
+      case(OPT_DELETE_EXCLUDED):
+	 flags|=MirrorJob::DELETE_EXCLUDED;
 	 break;
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());

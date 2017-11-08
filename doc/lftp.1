@@ -558,9 +558,17 @@ T}
 .RI [ OPTS "] [" source
 .RI "[" target "]]"
 .PP
-Mirror specified source directory to local target directory. If the target
-directory ends with a slash (except the root), the source base name is appended to target
-directory name. Source and/or target can be URLs pointing to directories.
+Mirror specified source directory to the target directory.
+.PP
+By default the source is remote and the target is a local directory.
+When using \-R, the source directory is local and the target is remote.
+If the target directory is omitted, base name of the source directory is used.
+If both directories are omitted, current local and remote directories are used.
+.PP
+The source and/or the target may be URLs pointing to directories.
+.PP
+If the target directory ends with a slash (except the root directory) then base
+name of the source directory is appended.
 .PP
 .Sp
 .in +0.5i
@@ -570,7 +578,10 @@ l1	l	lx	.
 continue a mirror job if possible
 T}
 \-e,	\-\-delete	T{
-delete files not present at remote site
+delete files not present at the source
+T}
+	\-\-delete-excluded	T{
+delete files excluded at the target
 T}
 	\-\-delete\-first	T{
 delete old files before transferring new ones
@@ -582,7 +593,7 @@ T}
 scan all directories recursively before transferring files
 T}
 \-s,	\-\-allow\-suid	T{
-set suid/sgid bits according to remote site
+set suid/sgid bits according to the source
 T}
 	\-\-allow\-chown	T{
 try to set owner and group on files
@@ -606,7 +617,7 @@ T}
 download only newer files (\-c won't work)
 T}
 	\-\-upload\-older	T{
-upload even files older than remote ones
+upload even files older than the target ones
 T}
 	\-\-transfer\-all	T{
 transfer all files, even seemingly the same at the target site
@@ -728,12 +739,6 @@ same as \-\-allow-chown \-\-allow-suid \-\-no-umask
 T}
 .TE
 .in
-When using \-R, the source directory is local and the target is remote.
-If the target directory is omitted, base name of the source directory is used.
-If both directories are omitted, current local and remote directories are used.
-If the target directory ends with a slash (except the root directory) then base
-name of the source directory is appended.
-.PP
 \fIRX\fP is an extended regular expression, just like in \fBegrep\fR(1).
 .PP
 \fIGP\fP is a glob pattern, e.g. `*.zip'.

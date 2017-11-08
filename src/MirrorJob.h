@@ -63,11 +63,13 @@ private:
 
    long long bytes_transferred;
    long long bytes_to_transfer;
+
    Ref<FileSet> target_set;
    Ref<FileSet> target_set_excluded;
    Ref<FileSet> source_set;
    Ref<FileSet> target_set_recursive;
    Ref<FileSet> source_set_recursive;
+
    Ref<FileSet> to_transfer;
    Ref<FileSet> to_mkdir;
    Ref<FileSet> same;
@@ -76,8 +78,8 @@ private:
    Ref<FileSet> old_files_set;
    Ref<FileSet> new_files_set;
    Ref<FileSet> to_rm_src;
-   void	 InitSets(Ref<FileSet>& src,const FileSet *dst);
-   bool only_dirs;
+   void InitSets(); // deduce above sets from source_set and target_set
+   bool only_dirs;  // to_transfer (or to_mkdir) contains directories only
 
    void RemoveSourceLater(const FileInfo *fi) {
       if(!remove_source_files)
@@ -217,6 +219,7 @@ public:
       UPLOAD_OLDER=1<<21,
       TRANSFER_ALL=1<<22,
       TARGET_FLAT=1<<23,
+      DELETE_EXCLUDED=1<<24,
    };
    void SetFlags(unsigned f,bool v)
    {
