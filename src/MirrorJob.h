@@ -123,7 +123,7 @@ private:
       Statistics();
       void Reset();
       void Add(const Statistics &);
-      bool HaveSomethingDone(int);
+      bool HaveSomethingDone(unsigned mirror_flags);
    };
    Statistics stats;
 
@@ -134,7 +134,7 @@ private:
     * and weight of a non-root mirror in global transfer_count otherwise. */
    int	 root_transfer_count;
 
-   int	 flags;
+   unsigned flags;
    recursion_mode_t recursion_mode;
    int	 max_error_count;
 
@@ -218,16 +218,16 @@ public:
       TRANSFER_ALL=1<<22,
       TARGET_FLAT=1<<23,
    };
-   void SetFlags(int f,bool v)
+   void SetFlags(unsigned f,bool v)
    {
       if(v)
 	 flags|=f;
       else
 	 flags&=~f;
    }
-   bool FlagsSet(int f)	   { return (flags&f)==f; }
-   bool FlagSet(int f)	   { return (flags&f); }
-   bool AnyFlagSet(int f)  { return (flags&f); }
+   bool FlagsSet(unsigned f)   const { return (flags&f)==f; }
+   bool FlagSet(unsigned f)    const { return (flags&f); }
+   bool AnyFlagSet(unsigned f) const { return (flags&f); }
 
    MirrorJob(MirrorJob *parent,FileAccess *f,FileAccess *target,
       const char *new_source_dir,const char *new_target_dir);

@@ -111,7 +111,7 @@ final:
    if(stats.bytes)
       s.appendf("%s%s\n",tab,CopyJob::FormatBytesTimeRate(stats.bytes,transfer_time_elapsed));
    if(stats.del_dirs || stats.del_files || stats.del_symlinks)
-      s.appendf(plural(flags&DELETE ?
+      s.appendf(plural(FlagSet(DELETE) ?
 	       "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 	      :"%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n",
 	      stats.del_dirs,stats.del_files,stats.del_symlinks),
@@ -326,9 +326,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 FileInfo *old=target_set->FindByName(FileCopy::TempFileName(file->name));
 	 if(old)
 	 {
-	    if((flags&CONTINUE)
+	    if(FlagSet(CONTINUE)
 	    && old->Has(file->TYPE) && old->filetype==old->NORMAL
-	    && (flags&IGNORE_TIME ||
+	    && (FlagSet(IGNORE_TIME) ||
 		(file->Has(file->DATE) && old->Has(old->DATE)
 		&& file->date + file->date.ts_prec < old->date - old->date.ts_prec))
 	    && file->Has(file->SIZE) && old->Has(old->SIZE)
@@ -350,7 +350,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    else
 	       stats.new_files++;
 	 }
-	 else if(flags&ONLY_EXISTING)
+	 else if(FlagSet(ONLY_EXISTING))
 	 {
 	    Report(_("Skipping file `%s' (only-existing)"),source_name_rel);
 	    goto skip;
@@ -434,7 +434,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    old=target_set->FindByName(file->name);
 	 if(!old)
 	 {
-	    if(flags&ONLY_EXISTING)
+	    if(FlagSet(ONLY_EXISTING))
 	    {
 	       Report(_("Skipping directory `%s' (only-existing)"),target_name_rel);
 	       goto skip;
@@ -446,7 +446,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 }
 	 if(target_is_local && !script_only)
 	 {
-	    if((flags&RETR_SYMLINKS?stat:lstat)(target_name,&st)!=-1)
+	    if((FlagSet(RETR_SYMLINKS)?stat:lstat)(target_name,&st)!=-1)
 	    {
 	       if(S_ISDIR(st.st_mode))
 	       {
@@ -493,7 +493,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
       }
       case(FileInfo::SYMLINK):
       {
-	 if(flags&NO_SYMLINKS)
+	 if(FlagSet(NO_SYMLINKS))
 	    goto skip;
 
 	 if(!file->symlink)
@@ -557,7 +557,7 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 }
 	 else
 	 {
-	    if(flags&ONLY_EXISTING)
+	    if(FlagSet(ONLY_EXISTING))
 	    {
 	       Report(_("Skipping symlink `%s' (only-existing)"),target_name_rel);
 	       goto skip;
@@ -594,13 +594,13 @@ void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
       same=new FileSet(source);
 
       int ignore=0;
-      if(flags&ONLY_NEWER)
+      if(FlagSet(ONLY_NEWER))
 	 ignore|=FileInfo::IGNORE_SIZE_IF_OLDER|FileInfo::IGNORE_DATE_IF_OLDER;
       if(!FlagSet(UPLOAD_OLDER) && strcmp(target_session->GetProto(),"file"))
 	 ignore|=FileInfo::IGNORE_DATE_IF_OLDER;
-      if(flags&IGNORE_TIME)
+      if(FlagSet(IGNORE_TIME))
 	 ignore|=FileInfo::DATE;
-      if(flags&IGNORE_SIZE)
+      if(FlagSet(IGNORE_SIZE))
 	 ignore|=FileInfo::SIZE;
       to_transfer->SubtractSame(dest,ignore);
 
@@ -646,7 +646,7 @@ void  MirrorJob::InitSets(Ref<FileSet>& source,const FileSet *dest)
    to_rm_mismatched->SubtractSameType(to_transfer);
    to_rm_mismatched->SubtractNotDirs();
 
-   if(!(flags&DELETE))
+   if(!FlagSet(DELETE))
       to_transfer->SubtractAny(to_rm_mismatched);
 
    if(FlagSet(TARGET_FLAT) && !parent_mirror && dest) {
@@ -796,12 +796,12 @@ void MirrorJob::HandleListInfoCreation(const FileAccessRef& session,SMTaskRef<Li
    }
    list_info->UseCache(use_cache);
    int need=FileInfo::ALL_INFO;
-   if(flags&IGNORE_TIME)
+   if(FlagSet(IGNORE_TIME))
       need&=~FileInfo::DATE;
-   if(flags&IGNORE_SIZE)
+   if(FlagSet(IGNORE_SIZE))
       need&=~FileInfo::SIZE;
    list_info->Need(need);
-   if(flags&RETR_SYMLINKS)
+   if(FlagSet(RETR_SYMLINKS))
       list_info->FollowSymlinks();
 
    list_info->SetExclude(relative_dir,top_exclude?top_exclude:exclude);
@@ -867,7 +867,7 @@ int   MirrorJob::Do()
       if(target_is_local)
       {
 	 struct stat st;
-	 if((flags&RETR_SYMLINKS?stat:lstat)(target_dir,&st)!=-1)
+	 if((FlagSet(RETR_SYMLINKS)?stat:lstat)(target_dir,&st)!=-1)
 	 {
 	    if(S_ISDIR(st.st_mode))
 	    {
@@ -1113,7 +1113,7 @@ int   MirrorJob::Do()
       break;
 
    pre_TARGET_REMOVE_OLD:
-      if(flags&REMOVE_FIRST)
+      if(FlagSet(REMOVE_FIRST))
 	 goto pre_TARGET_CHMOD;
       set_state(TARGET_REMOVE_OLD);
       m=MOVED;
@@ -1136,7 +1136,7 @@ int   MirrorJob::Do()
 	    file=to_rm_mismatched->curr();
 	    to_rm_mismatched->next();
 	 }
-	 if(!file && (state==TARGET_REMOVE_OLD || (flags&REMOVE_FIRST)))
+	 if(!file && (state==TARGET_REMOVE_OLD || FlagSet(REMOVE_FIRST)))
 	 {
 	    file=to_rm->curr();
 	    to_rm->next();
@@ -1149,9 +1149,9 @@ int   MirrorJob::Do()
 	       goto pre_TARGET_CHMOD;
 	    goto pre_TARGET_MKDIR;
 	 }
-	 if(!(flags&DELETE))
+	 if(!FlagSet(DELETE))
 	 {
-	    if(flags&REPORT_NOT_DELETED)
+	    if(FlagSet(REPORT_NOT_DELETED))
 	    {
 	       const char *target_name_rel=dir_file(target_relative_dir,file->name);
 	       if(file->TypeIs(file->DIRECTORY))
@@ -1203,7 +1203,7 @@ int   MirrorJob::Do()
       break;
 
    pre_TARGET_CHMOD:
-      if(flags&NO_PERMS)
+      if(FlagSet(NO_PERMS))
 	 goto pre_FINISHING_FIX_LOCAL;
 
       to_transfer->rewind();
@@ -1274,7 +1274,7 @@ int   MirrorJob::Do()
 	 const bool flat=FlagSet(TARGET_FLAT);
 	 to_transfer->Sort(FileSet::BYNAME_FLAT);
 	 to_transfer->LocalUtime(target_dir,/*only_dirs=*/true,flat);
-	 if(flags&ALLOW_CHOWN)
+	 if(FlagSet(ALLOW_CHOWN))
 	    to_transfer->LocalChown(target_dir,flat);
 	 if(!FlagSet(NO_PERMS) && same)
 	    same->LocalChmod(target_dir,get_mode_mask(),flat);
@@ -1401,7 +1401,7 @@ int   MirrorJob::Do()
       set_state(DONE);
       m=MOVED;
       bytes_transferred=0;
-      if(!parent_mirror && (flags&LOOP) && stats.HaveSomethingDone(flags) && !stats.error_count)
+      if(!parent_mirror && FlagSet(LOOP) && stats.HaveSomethingDone(flags) && !stats.error_count)
       {
 	 PrintStatus(0,"");
 	 printf(_("Retrying mirror...\n"));
@@ -1582,9 +1582,9 @@ void MirrorJob::SetOlderThan(const char *f)
 mode_t MirrorJob::get_mode_mask()
 {
    mode_t mode_mask=0;
-   if(!(flags&ALLOW_SUID))
+   if(!FlagSet(ALLOW_SUID))
       mode_mask|=S_ISUID|S_ISGID;
-   if(!(flags&NO_UMASK))
+   if(!FlagSet(NO_UMASK))
    {
       if(target_is_local)
       {
@@ -1640,7 +1640,7 @@ void MirrorJob::Statistics::Add(const Statistics &s)
    bytes       +=s.bytes;
    time	       +=s.time;
 }
-bool MirrorJob::Statistics::HaveSomethingDone(int flags)
+bool MirrorJob::Statistics::HaveSomethingDone(unsigned flags)
 {
    bool del=(flags&MirrorJob::DELETE);
    return new_files|mod_files|(del_files*del)|new_symlinks|mod_symlinks|(del_symlinks*del)|(del_dirs*del);
@@ -1860,7 +1860,7 @@ CMD(mirror)
    };
 
    int opt;
-   int flags=0;
+   unsigned flags=0;
    int max_error_count=0;
 
    bool use_cache=false;
