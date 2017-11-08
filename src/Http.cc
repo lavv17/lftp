@@ -1735,11 +1735,11 @@ int Http::Do()
 	       char *colon=strchr(line.get_non_const(),':');
 	       if(colon)
 	       {
-		  *colon=0;
-		  colon++;
-		  while(*colon && *colon==' ')
-		     colon++;
-		  HandleHeaderLine(line,colon);
+		  *colon=0; // terminate the header tag
+		  const char *value=colon+1;
+		  while(*value==' ')
+		     value++;
+		  HandleHeaderLine(line,value);
 	       }
 	    }
 	 }
