@@ -1606,8 +1606,13 @@ int   Ftp::Do()
 	 conn->SendCmd("FEAT");
 	 expect->Push(Expect::FEAT);
       }
-      else if(conn->tune_after_login)
-	 TuneConnectionAfterFEAT();
+      else
+      {
+	 if(conn->tune_after_login)
+	    TuneConnectionAfterFEAT();
+	 if(conn->mlst_attr_supported)
+	    SendOPTS_MLST();
+      }
       SendSiteGroup();
       SendSiteIdle();
       SendSiteCommands();
@@ -3977,7 +3982,7 @@ void Ftp::TuneConnectionAfterFEAT()
       conn->SendCmd2("HOST",hostname);
       expect->Push(Expect::IGNORE);
    }
-   if(conn->mlst_attr_supported)
+   if(conn->try_feat_after_login && conn->mlst_attr_supported)
       SendOPTS_MLST();
    if(proxy)
       conn->epsv_supported=false;
