@@ -354,6 +354,7 @@ void FileStream::setmtime(const FileTimestamp &ts)
 FileStream::FileStream(const char *fname,int new_mode)
    : FDStream(-1,fname), mode(new_mode), create_mode(0664),
      do_lock(ResMgr::QueryBool("file:use-lock",0)),
+     no_keep_backup(false),
      old_file_mode(NO_MODE)
 {
    if(name[0]=='/')
@@ -390,7 +391,7 @@ void FileStream::revert_backup()
 }
 void FileStream::remove_backup()
 {
-   if(backup_file && !ResMgr::QueryBool("xfer:keep-backup",0)) {
+   if(backup_file && (no_keep_backup || !ResMgr::QueryBool("xfer:keep-backup",0))) {
       ::remove(backup_file);
       backup_file.unset();
    }

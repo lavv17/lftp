@@ -141,6 +141,7 @@ class FileStream : public FDStream
    int mode;
    mode_t create_mode;
    bool do_lock;
+   bool no_keep_backup;
 
    xstring_c backup_file;
    mode_t old_file_mode;
@@ -159,6 +160,7 @@ public:
    void set_create_mode(mode_t m) { create_mode=m; }
    void revert_backup();
    void remove_backup();
+   void dont_keep_backup() { no_keep_backup=true; }
 };
 
 #endif /* FILTER_H */

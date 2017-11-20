@@ -1210,6 +1210,7 @@ void DHT::Save()
    FileStream *f=new FileStream(state_file,O_WRONLY|O_TRUNC|O_CREAT);
    f->set_lock();
    f->set_create_mode(0600);
+   f->dont_keep_backup();
    state_io=new IOBufferFDStream(f,IOBuffer::PUT);
    Save(state_io);
    state_io->PutEOF();
