@@ -875,8 +875,12 @@ int FileCopyPeerFA::Do()
       // do mkdir just once
       do_mkdir=false;
       assert(!session->IsOpen());
-      session->Mkdir(dirname(file),true);
-      return MOVED;
+      const xstring& dir=dirname(file);
+      if(dir.length()>0 && dir.ne("/") && dir.ne(".") && dir.ne("..")) {
+	 // FIXME: .././.. should be also excluded
+	 session->Mkdir(dirname(file),true);
+	 return MOVED;
+      }
    }
 
    if(removing)
@@ -1298,6 +1302,9 @@ int FileCopyPeerFA::Get_LL(int len)
 
 int FileCopyPeerFA::Put_LL(const char *buf,int len)
 {
+   if(do_mkdir)
+      return 0;	  // can't write yet
+
    if(session->IsClosed())
       OpenSession();
 
