@@ -28,6 +28,7 @@
 #include "alias.h"
 #include "History.h"
 #include "bookmark.h"
+#include "sitemgr.h"
 #include "FileGlob.h"
 
 class QueueFeeder;
@@ -272,6 +273,7 @@ public:
 };
 
 extern const char * const bookmark_subcmd[];
+extern const char * const sitemgr_subcmd[];
 extern const char * const cache_subcmd[];
 
 #endif//CMDEXEC_H

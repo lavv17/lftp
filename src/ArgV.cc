@@ -91,6 +91,11 @@ xstring& ArgV::CombineShellQuotedTo(xstring& res,int start) const
    }
 }
 
+char *ArgV::CombineRemaining() const
+{
+   return Combine(ind+1, 0);
+}
+
 int ArgV::getopt_long(const char *opts,const struct option *lopts,int *lind)
 {
    optind=ind;

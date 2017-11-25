@@ -160,6 +160,77 @@ static char *bookmark_generator(const char *text,int s)
    }
 }
 
+static char *sitemgr_generator(const char *text, int state)
+{
+    int site_hit_count=0;
+
+    if(state>lftp_sitemgr.SiteCount())
+    {
+        return NULL;
+    }
+
+    Sitemgr::Site *site = NULL;
+
+    // iterate over all sites and search for the n-th (n=state+1) matching site.
+    for(int i=0; i < lftp_sitemgr.SiteCount(); i++)
+    {
+        site = lftp_sitemgr.SiteAt(i);
+        // no site found. -> abort.
+        if(site == NULL)
+            return 0;
+
+        if(strncmp(site->sitename, text, len)==0)
+        {
+            // Increment hit counter for sites.
+            site_hit_count++;
+        }
+
+        // check if this site is a "new" one.
+        if(site_hit_count > state)
+        {
+            // new site found -> Stop searching.
+            break;
+        }
+
+        // Reset site (Site was skipped.))
+        site = NULL;
+    }
+    if(site == NULL)
+    {
+        return 0;
+    }
+    return xstrdup(site->sitename);
+}
+
+static char *open_generator(const char *text, int s)
+{
+    static int bookmark_state_count;
+    static bool bookmark_done;
+
+    char *return_open;
+    if(!s)
+    {
+        bookmark_state_count=0;
+        bookmark_done=false;
+    }
+
+    if(!bookmark_done)
+    {
+        return_open = bookmark_generator(text, s);
+        if(!return_open)
+        {
+            bookmark_done=true;
+        }
+        else
+        {
+            bookmark_state_count++;
+            return return_open;
+        }
+    }
+    return_open = sitemgr_generator(text, s - bookmark_state_count);
+    return return_open;
+}
+
 static char *array_generator(const char *text,int state)
 {
    const char *name;
@@ -310,7 +381,7 @@ static const char *skip_word(const char *p)
 enum completion_type
 {
    LOCAL, LOCAL_DIR, REMOTE_FILE, REMOTE_DIR, BOOKMARK, COMMAND,
-   STRING_ARRAY, VARIABLE, NO_COMPLETION
+   STRING_ARRAY, VARIABLE, NO_COMPLETION, OPEN, SITEMGR
 };
 
 // cmd: ptr to command line being completed
@@ -415,7 +486,7 @@ static completion_type cmd_completion_type(const char *cmd,int start)
 
    if(!strcmp(buf,"open")
    || !strcmp(buf,"lftp"))
-      return BOOKMARK;
+      return OPEN;
 
    if(!strcmp(buf,"help"))
       return COMMAND;
@@ -520,6 +591,16 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       }
       else
 	 return BOOKMARK;
+   }
+   if(!strcmp(buf,"sitemgr"))
+   {
+      if(second)
+      {
+         array=sitemgr_subcmd;
+         return STRING_ARRAY;
+      }
+      else
+         return SITEMGR;
    }
    if(!strcmp(buf,"chmod"))
    {
@@ -646,6 +727,14 @@ static char **lftp_completion (const char *text,int start,int end)
    case BOOKMARK:
       bookmark_prepend_bm=false;
       generator = bookmark_generator;
+      break;
+   case OPEN:
+       bookmark_prepend_bm=false;
+       generator = open_generator;
+       break;
+   case SITEMGR:
+      bookmark_prepend_bm=false;
+      generator = sitemgr_generator;
       break;
    case STRING_ARRAY:
       generator = array_generator;

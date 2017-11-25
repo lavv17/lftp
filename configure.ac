@@ -612,6 +612,8 @@ CDECL int SOCKSinit(const char *);
 #endif /* CONFIG_H */
 ])
 
+PKG_CHECK_MODULES([json_c], [json-c])
+
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([lib/Makefile])
