@@ -135,7 +135,17 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "  import <type>      - import foreign bookmarks\n"
 	 "  list               - list bookmarks (default)\n")},
    {"sitemgr",cmd_sitemgr,N_("sitemgr [SUBCMD]"),
-	 N_("no help yet\n")},   
+	 N_("sitemgr allows you to manage sites\n\n"
+    "The following subcommands are available:\n"
+    "  add <name>              - adds a new site to the site manager\n"
+    "  conf <name>             - prints the configuration for the given site\n"
+    "  conf <name> set <field> - sets a field for the site\n"
+    "                            Valid fields are:\n"
+    "                             - User, Password, Address, Port, Ssl\n"
+    "                             - Notes, LocalPath, RemotePath\n"
+    "  delete <name>           - deletes a site\n"
+    "  refresh                 - refreshes sites from file\n"
+    "  save                    - saves sites to file\n")},   
    {"bye", ALIAS_FOR(exit)},
    {"cache",   cmd_cache,  N_("cache [SUBCMD]"),
 	 N_("cache command controls local memory cache\n\n"
