@@ -2,22 +2,22 @@
 # Copyright (C) 2013 Alexander V. Lukyanov <lav@yars.free.net>
 # This file is distributed under the same license as the lftp package.
 #
-# Yuri Chornoivan <yurchor@ukr.net>, 2013, 2014, 2015.
+# Yuri Chornoivan <yurchor@ukr.net>, 2013, 2014, 2015, 2018.
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.4.8\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2017-10-09 14:02+0300\n"
-"PO-Revision-Date: 2015-08-18 12:36+0300\n"
+"PO-Revision-Date: 2018-01-03 13:01+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 1.5\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: lib/argmatch.c:134
 #, c-format
@@ -38,29 +38,29 @@ msgid "Unknown system error"
 msgstr "Невідома системна помилка"
 
 #: lib/getopt.c:278
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' is ambiguous\n"
-msgstr "%s: параметр «%s» не є однозначним\n"
+msgstr "%s: параметр «%s%s» не є однозначним\n"
 
 #: lib/getopt.c:284
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' is ambiguous; possibilities:"
-msgstr "%s: параметр «%s» не є однозначним. Можливі варіанти:"
+msgstr "%s: неоднозначний параметр «%s%s»; можливі варіанти:"
 
 #: lib/getopt.c:319
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized option '%s%s'\n"
-msgstr "%s: невідомий параметр «%c%s»\n"
+msgstr "%s: невідомий параметр «%s%s»\n"
 
 #: lib/getopt.c:345
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' doesn't allow an argument\n"
-msgstr "%s: додавання аргументів до параметра «%c%s» не передбачено\n"
+msgstr "%s: додавання аргументів до параметра «%s%s» не передбачено\n"
 
 #: lib/getopt.c:360
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s%s' requires an argument\n"
-msgstr "%s: до параметра «--%s» слід додати аргумент\n"
+msgstr "%s: до параметра «%s%s» слід додати аргумент\n"
 
 #: lib/getopt.c:621
 #, c-format
@@ -106,24 +106,22 @@ msgid "memory exhausted"
 msgstr "пам'ять вичерпано"
 
 #: src/ArgV.cc:107
-#, fuzzy
 msgid "option requires an argument"
-msgstr "%s: до параметра «--%s» слід додати аргумент\n"
+msgstr "параметр потребує вказування аргументу"
 
 #: src/ArgV.cc:109 src/ArgV.cc:118
-#, fuzzy
 msgid "invalid option"
-msgstr "%s: некоректний параметр — «%c»\n"
+msgstr "некоректний параметр"
 
 #: src/ArgV.cc:114
-#, fuzzy, c-format
+#, c-format
 msgid "option `%s' requires an argument"
-msgstr "%s: до параметра «--%s» слід додати аргумент\n"
+msgstr "разом з параметром «%s» має бути вказано аргумент"
 
 #: src/ArgV.cc:116
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized option `%s'"
-msgstr "%s: невідомий параметр «%c%s»\n"
+msgstr "невідомий параметр «%s»"
 
 #: src/attach.h:138
 #, c-format
@@ -632,7 +630,6 @@ msgid "glob [OPTS] <cmd> <args>"
 msgstr "glob [ПАРАМЕТРИ] <команда> <аргументи>"
 
 #: src/commands.cc:270
-#, fuzzy
 msgid ""
 "Expand wildcards and run specified command.\n"
 "Options can be used to expand wildcards to list of files, directories,\n"
@@ -654,6 +651,10 @@ msgstr ""
 " -f  звичайні файли (типова поведінка)\n"
 " -d  каталоги\n"
 " -a  записи усіх типів\n"
+" --exist      повернути нульовий код виходу, якщо взірці розгортаються у"
+" непорожній список\n"
+" --not-exist  повернути нульовий код виходу, якщо взірці розгортаються у"
+" порожній список\n"
 
 #: src/commands.cc:279
 msgid "help [<cmd>]"
@@ -701,7 +702,6 @@ msgid "lftp [OPTS] <site>"
 msgstr "lftp [ПАРАМЕТРИ] <сайт>"
 
 #: src/commands.cc:290
-#, fuzzy
 msgid ""
 "`lftp' is the first command executed by lftp after rc files\n"
 " -f <file>           execute commands from the file and exit\n"
@@ -720,6 +720,7 @@ msgstr ""
 "«lftp» є першою командою, яку буде виконано після файлів ресурсів.\n"
 " -f <файл>           виконати команди з вказаного файла і завершити роботу\n"
 " -c <команда>        виконати команди і завершити роботу\n"
+" --norc              не виконувати файли rc з домашнього каталогу\n"
 " --help              вивести це довідкове повідомлення і завершити роботу\n"
 " --version           вивести дані щодо версії lftp і завершити роботу\n"
 "Інші параметри є тими самими, що і у команди «open»\n"
@@ -727,6 +728,8 @@ msgstr ""
 " -u <користувач>[,<пароль>] використати для розпізнавання вказану "
 "комбінацію\n"
 " -p <порт>           використати для встановлення з’єднання вказаний порт\n"
+" -s <слот>           пов'язати з'єднання із вказаним слотом\n"
+" -d                  перемкнутися на діагностичний режим\n"
 " <сайт>              назва вузла, адреса бо закладка\n"
 
 #: src/commands.cc:303
@@ -864,15 +867,17 @@ msgid "Rename <file1> to <file2>\n"
 msgstr "Перейменувати <файл1> на <файл2>\n"
 
 #: src/commands.cc:346
-#, fuzzy
 msgid "mmv [OPTS] <files> <target-dir>"
-msgstr "mget [ПАРАМЕТРИ] <файли>"
+msgstr "mmv [ПАРАМЕТРИ] <файли> <каталог_призначення>"
 
 #: src/commands.cc:347
 msgid ""
 "Move <files> to <target-directory> with wildcard expansion\n"
 " -O <dir>  specifies the target directory (alternative way)\n"
 msgstr ""
+"Пересунути <файли> до каталогу <каталог_призначення> із розгортанням"
+" замінників\n"
+" -O <каталог>  визначає каталог призначення (альтернативний спосіб)\n"
 
 #: src/commands.cc:349
 msgid "[re]nlist [<args>]"
@@ -893,7 +898,6 @@ msgid "open [OPTS] <site>"
 msgstr "open [ПАРАМЕТРИ] <сайт>"
 
 #: src/commands.cc:354
-#, fuzzy
 msgid ""
 "Select a server, URL or bookmark\n"
 " -e <cmd>            execute the command just after selecting\n"
@@ -908,7 +912,8 @@ msgstr ""
 " -u <користувач>[,<пароль>] скористатися для розпізнавання вказаними "
 "значеннями\n"
 " -p <порт>           використовувати для з’єднання вказаний порт\n"
-" -s <слот>           пов’язати з’єднанян з вказаним слотом\n"
+" -s <слот>           пов’язати з’єднання з вказаним слотом\n"
+" -d                  увімкнути режим діагностики\n"
 " <сайт>              назва вузла, адреса або назва закладки\n"
 
 #: src/commands.cc:361
@@ -1300,6 +1305,7 @@ msgstr "Щоб дізнатися більше, віддайте команду 
 #, c-format
 msgid "%s: -c, -f, -v, -h conflict with other `open' options and arguments\n"
 msgstr ""
+"%s: -c, -f, -v, -h конфліктують із іншими параметрами і аргументами «open»\n"
 
 #: src/commands.cc:955
 #, c-format
@@ -1377,14 +1383,14 @@ msgid "Usage: %s [OPTS] files...\n"
 msgstr "Користування: %s [ПАРАМЕТРИ] файли...\n"
 
 #: src/commands.cc:1784 src/commands.cc:1813
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s: Number expected. "
-msgstr "%s: -n: мало бути вказано число. "
+msgstr "%s: %s: мало бути вказано число. "
 
 #: src/commands.cc:1833
-#, fuzzy, c-format
+#, c-format
 msgid "%s: --continue conflicts with --remove-target.\n"
-msgstr "%s: --share конфліктує з --only-new.\n"
+msgstr "%s: --continue конфліктує з --remove-target.\n"
 
 #: src/commands.cc:1843 src/commands.cc:1919
 #, c-format
@@ -1470,9 +1476,9 @@ msgid "%s: wait loop detected\n"
 msgstr "%s: виявлено цикл очікування\n"
 
 #: src/commands.cc:2551
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [OPTS] <files> <target-dir>\n"
-msgstr "Користування: %s [параметри] файл\n"
+msgstr "Користування: %s [ПАРАМЕТРИ] <файли> <каталог_призначення>\n"
 
 #: src/commands.cc:2613 src/commands.cc:2943
 #, c-format
@@ -1738,7 +1744,7 @@ msgstr "помилка позиціювання"
 
 #: src/FileCopy.cc:207
 msgid "no progress timeout"
-msgstr ""
+msgstr "час очікування на поступ"
 
 #: src/FileCopy.cc:235
 msgid "cannot seek on data source"
@@ -1826,9 +1832,8 @@ msgid "execl(/bin/sh) failed: %s\n"
 msgstr "Не вдалося виконати execl(/bin/sh): %s\n"
 
 #: src/Filter.cc:414
-#, fuzzy
 msgid "file already exists and xfer:clobber is unset"
-msgstr "%s: %s: файл вже існує, а xfer:clobber не встановлено\n"
+msgstr "файл вже існує, а xfer:clobber не встановлено"
 
 #: src/FindJobDu.cc:101
 msgid "total"
@@ -1954,18 +1959,16 @@ msgid "Socket error (%s) - reconnecting"
 msgstr "Помилка сокета (%s) — встановлюємо з’єднання повторно"
 
 #: src/ftpclass.cc:1673
-#, fuzzy
 msgid "MFF and SITE CHMOD are not supported by this site"
-msgstr "SITE CHMOD не підтримується цим сайтом"
+msgstr "На цьому сайті не передбачено підтримки MFF і SITE CHMOD"
 
 #: src/ftpclass.cc:1678
 msgid "MLST and MLSD are not supported by this site"
 msgstr "MLST і MLSD не підтримуються цим сайтом"
 
 #: src/ftpclass.cc:1988
-#, fuzzy
 msgid "SITE SYMLINK is not supported by the server"
-msgstr "MLST і MLSD не підтримуються цим сайтом"
+msgstr "Підтримки SITE SYMLINK на цьому сервері не передбачено"
 
 #: src/ftpclass.cc:2161
 msgid "unsupported network protocol"
@@ -2241,7 +2244,7 @@ msgstr ""
 #: src/lftp_ssl.cc:1395
 #, c-format
 msgid "No certificate presented by %s.\n"
-msgstr ""
+msgstr "%s не надано жодних сертифікатів.\n"
 
 #: src/LocalAccess.cc:604 src/NetAccess.cc:681
 msgid "Getting directory contents"
@@ -2385,9 +2388,9 @@ msgid "Removing old directory `%s'"
 msgstr "Вилучаємо старий каталог «%s»"
 
 #: src/MirrorJob.cc:1321
-#, fuzzy, c-format
+#, c-format
 msgid "Removing source directory `%s'"
-msgstr "Вилучаємо старий каталог «%s»"
+msgstr "Вилучаємо початковий каталог «%s»"
 
 #: src/MirrorJob.cc:1387
 #, c-format
@@ -2410,6 +2413,8 @@ msgid ""
 "%s: multiple --file or --directory options must have the same base "
 "directory\n"
 msgstr ""
+"%s: якщо вказано декілька параметрів --file або --directory, усі вони повинні"
+" мати однаковий базовий каталог\n"
 
 #: src/MirrorJob.cc:2134
 #, c-format
@@ -2442,6 +2447,21 @@ msgid ""
 "\n"
 "See the man page lftp(1) for a complete documentation.\n"
 msgstr ""
+"\n"
+"Дзеркало, яке визначає віддалений каталог для локального каталогу\n"
+"\n"
+" -R, --reverse          зворотне дзеркало (запис файлів)\n"
+"Документацію з інших параметрів можна знайти на сторінці підручника з"
+" lftp(1).\n"
+"\n"
+"Якщо використовується -R, першим каталогом є локальний каталог, а другом —"
+" віддалений.\n"
+"Якщо другий каталог не вказано, використовується базова назва першого"
+" каталогу.\n"
+"Якщо не вказано обидва каталоги, використовуватимуться поточні локальний і"
+" віддалений каталоги.\n"
+"\n"
+"Із повною документацією можна ознайомитися на сторінці підручника з lftp(1).\n"
 
 #: src/mkdirJob.cc:128
 #, c-format
@@ -2509,9 +2529,9 @@ msgid "parse: missing redirection filename\n"
 msgstr "parse: не вказано назви файла переспрямування\n"
 
 #: src/PatternSet.cc:110
-#, fuzzy, c-format
+#, c-format
 msgid "regular expression `%s': %s"
-msgstr "%s: формальний вираз «%s»: %s\n"
+msgstr "формальний вираз «%s»: %s"
 
 #: src/pgetJob.cc:127
 msgid "pget: falling back to plain get"
@@ -2529,6 +2549,8 @@ msgstr "розмір початкового файла є невідомим"
 #, c-format
 msgid "pget: warning: space allocation for %s (%lld bytes) failed: %s\n"
 msgstr ""
+"pget: попередження: спроба отримання об'єму пам'яті для %s (%lld байтів)"
+" завершилася невдало: %s\n"
 
 #: src/pgetJob.cc:234
 #, c-format
@@ -2640,9 +2662,8 @@ msgid "no closure defined for this setting"
 msgstr "не визначено замикання для цього параметра"
 
 #: src/ResMgr.cc:900
-#, fuzzy
 msgid "a closure is required for this setting"
-msgstr "не визначено замикання для цього параметра"
+msgstr "має бути визначено замикання для цього параметра"
 
 #: src/Resolver.cc:236
 msgid "host name resolve timeout"
@@ -2655,7 +2676,7 @@ msgstr "виявлено %d адрес$у|и|$"
 
 #: src/Resolver.cc:327
 msgid "Link-local IPv6 address should have a scope"
-msgstr ""
+msgstr "Локальна адреса посилання IPv6 має містити область"
 
 #: src/Resolver.cc:752
 msgid "DNS resolution not trusted."
@@ -2824,18 +2845,17 @@ msgid "eta:"
 msgstr "оцінка часу завершення:"
 
 #: src/SSH_Access.cc:64
-#, fuzzy
 msgid "Password required"
-msgstr "Пароль: "
+msgstr "Потрібен пароль"
 
 #: src/SSH_Access.cc:69
 msgid "Login incorrect"
-msgstr ""
+msgstr "Помилкове ім’я користувача"
 
 #: src/SSH_Access.cc:163
-#, fuzzy, c-format
+#, c-format
 msgid "Disconnecting"
-msgstr "Встановлюємо з’єднання…"
+msgstr "Від'єднуємося"
 
 #: src/SysCmdJob.cc:73
 #, c-format
@@ -2844,19 +2864,19 @@ msgstr "Помилка execlp(%s): %s\n"
 
 #: src/TimeDate.cc:156
 msgid "day"
-msgstr ""
+msgstr "день"
 
 #: src/TimeDate.cc:157
 msgid "hour"
-msgstr ""
+msgstr "година"
 
 #: src/TimeDate.cc:158
 msgid "minute"
-msgstr ""
+msgstr "хвилина"
 
 #: src/TimeDate.cc:159
 msgid "second"
-msgstr ""
+msgstr "секунда"
 
 #: src/Torrent.cc:613
 msgid "announced via "
