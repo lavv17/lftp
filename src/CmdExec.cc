@@ -1234,6 +1234,38 @@ void CmdExec::ChangeSession(FileAccess *new_session)
       ConnectionSlot::Set(slot,session);
 }
 
+void CmdExec::RegisterCompatCommand(const char *name,cmd_creator_t creator,const char *short_desc,const char *long_desc)
+{
+   if(dyn_cmd_table==0)
+   {
+      int count=0;
+      for(const cmd_rec *c=static_cmd_table; c->name; c++)
+        count++;
+      dyn_cmd_table.nset(static_cmd_table,count);
+   }
+   for(int i=0; i<dyn_cmd_table.count(); i++)
+   {
+      cmd_rec *const c=&dyn_cmd_table[i];
+      if(!strcmp(c->name,name))
+      {
+          char *lftp_name=(char*)malloc(5+strlen(name)+1);
+          char *short_d = NULL;
+
+          if (c->short_desc) {
+              short_d = (char*)malloc(5+strlen(c->short_desc)+1);
+              sprintf(short_d, "lftp-%s", c->short_desc);
+              c->short_desc = short_d;
+          }
+
+          sprintf(lftp_name, "lftp-%s", name);
+          c->name = lftp_name;
+            break;
+       }
+   }
+   cmd_rec new_entry={name,creator,short_desc,long_desc};
+   dyn_cmd_table.append(new_entry);
+}
+
 const char *CmdExec::CmdByIndex(int i)
 {
    if(dyn_cmd_table)
