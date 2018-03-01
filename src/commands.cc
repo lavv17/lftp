@@ -2205,7 +2205,8 @@ CMD(debug)
    }
 
    if(debug_file_name && trunc)
-      truncate(debug_file_name,0);
+      if(truncate(debug_file_name,0) < 0)
+         fprintf(stderr, "truncate failed: %s\n", strerror(errno));
 
    const char *c="debug";
    ResMgr::Set("log:file",c,debug_file_name?debug_file_name:"");
