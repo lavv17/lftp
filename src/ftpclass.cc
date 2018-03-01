@@ -1867,7 +1867,8 @@ int   Ftp::Do()
 	 }
 
 	 if(!GetFlag(PASSIVE_MODE))
-	    listen(conn->data_sock,1);
+	    if (listen(conn->data_sock,1) < 0)
+		LogError(0,"listen failed: %s", strerror(errno));
 
 	 // get the allocated port
 	 addr_len=sizeof(conn->data_sa);
