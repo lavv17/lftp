@@ -89,7 +89,11 @@ int EditJob::Do()
       struct stat st;
       int res=stat(temp_file,&st);
       mtime=(res>=0?st.st_mtime:NO_DATE);
-      xstring cmd("${EDITOR:-vi} ");
+      const char *bin=getenv("EDITOR");
+      if (bin==NULL)
+         bin="vi";
+      xstring cmd(bin);
+      cmd.append(" ");
       cmd.append(shell_encode(temp_file));
       editor=new SysCmdJob(cmd);
       AddWaiting(editor);
