@@ -3830,7 +3830,8 @@ int TorrentListener::Do()
       }
    bound:
       if(type==SOCK_STREAM)
-	 listen(sock,5);
+	 if(listen(sock,5) < 0)
+             LogError(0,"listen failed: %s", strerror(errno));
 
       // get the allocated port
       socklen_t addr_len=sizeof(addr);
