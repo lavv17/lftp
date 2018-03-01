@@ -3004,12 +3004,13 @@ CMD(bookmark)
    {
       lftp_bookmarks.Remove(""); // force bookmark file creation
 
-      xstring cmd0("exec ${EDITOR:-vi} ");
-      cmd0.append(shell_encode(lftp_bookmarks.GetFilePath()));
-      xstring cmd1("/bin/sh -c ");
-      cmd1.append(shell_encode(cmd0));
-
-      parent->PrependCmd(xstring::get_tmp("shell ").append_quoted(cmd1));
+      const char *bin=getenv("EDITOR");
+      if (bin==NULL)
+         bin="vi";
+      xstring cmd(bin);
+      cmd.append(" ");
+      cmd.append(shell_encode(lftp_bookmarks.GetFilePath()));
+      parent->PrependCmd(xstring::get_tmp("shell ").append_quoted(cmd));
    }
    else if(!strcasecmp(op,"import"))
    {
