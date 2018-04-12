@@ -1107,7 +1107,7 @@ bool Ftp::AbsolutePath(const char *s) const
    int dev_len=device_prefix_len(s);
    return(s[0]=='/'
       || (s[0]=='~' && s[1]!=0 && s[1]!='/')
-      || (((conn->dos_path && dev_len==3) || (conn->vms_path && dev_len>2))
+      || (conn && ((conn->dos_path && dev_len==3) || (conn->vms_path && dev_len>2))
 	  && s[dev_len-1]=='/'));
 }
 
