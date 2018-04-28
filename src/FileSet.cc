@@ -363,10 +363,19 @@ void FileSet::SubtractAny(const FileSet *set)
 {
    if(!set)
       return;
-   for(int i=0; i<fnum; i++)
-      if(set->FindByName(files[i]->name))
-	 Sub(i--);
+   int si = 0;
+   for(int i=0; i<fnum; i++) {
+      if(sorted)
+         si=sorted[i];
+      else si = i; 
+
+      if(set->FindByName((*this)[i]->name)) {
+	 Sub(si);
+	 i--;
+      }	
+   }
 }
+
 
 void FileSet::SubtractNotIn(const FileSet *set)
 {
@@ -608,7 +617,7 @@ int FileSet::FindGEIndByName(const char *name) const
    int l = 0, u = fnum - 1;
 
    /* no files or name is greater than the max file: */
-   if(!fnum || strcmp(files[u]->name, name) < 0)
+   if(!fnum || strcmp((*this)[u]->name, name) < 0)
       return fnum;
 
    /* we have files, and u >= name (meaning l <= name <= u); loop while
@@ -616,8 +625,7 @@ int FileSet::FindGEIndByName(const char *name) const
    while(l < u) {
       /* find the midpoint: */
       int m = (l + u) / 2;
-      int cmp = strcmp(files[m]->name, name);
-
+      int cmp = strcmp((*this)[m]->name, name);
       /* if files[m]->name > name, update the upper bound: */
       if (cmp > 0)
 	 u = m;
@@ -631,15 +639,16 @@ int FileSet::FindGEIndByName(const char *name) const
    return u;
 }
 
+
 FileInfo *FileSet::FindByName(const char *name) const
 {
    int n = FindGEIndByName(name);
 
-   if(n < fnum && !strcmp(files[n]->name,name))
-      return files[n].get_non_const();
-
+   if(n < fnum && !strcmp((*this)[n]->name,name))
+      return (*this)[n];
    return 0;
 }
+
 
 static bool do_exclude_match(const char *prefix,const FileInfo *fi,const PatternSet *x)
 {
@@ -674,8 +683,9 @@ void  FileSet::Exclude(const char *prefix,const PatternSet *x,FileSet *fsx)
 void FileSet::Dump(const char *tag) const
 {
    printf("%s:",tag);
-   for(int i=0; i<fnum; i++)
-      printf(" %s",files[i]->name.get());
+   for(int i=0; i<fnum; i++) {
+      printf(" %s",(*this)[i]->name.get());
+   }
    printf("\n");
 }
 #endif
