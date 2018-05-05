@@ -34,13 +34,25 @@ int IOBufferSSL::Do()
    if(Done() || Error())
       return m;
 
-   if(mode==PUT && Size()==0 && ssl->handshake_done && !eof)
-      return m;
-
-   // cannot use want_mask before trying to read/write, since ssl can be shared
-   if(!ssl->handshake_done || eof || Ready(ssl->fd,dir_mask()))
-      m|=super::Do();
-
+   if(mode==PUT && Size()==0)
+   {
+      // nothing to write, but may need to do handshake
+      if(!ssl->handshake_done)
+      {
+	 if(Put_LL("",0)<0)
+	    return MOVED;
+	 if(ssl->handshake_done && eof)
+	    ssl->shutdown();
+      }
+      if(ssl->handshake_done && !eof)
+	 return m;
+   }
+   else
+   {
+      // cannot use want_mask before trying to read/write, since ssl can be shared
+      if(!ssl->handshake_done || eof || Ready(ssl->fd,dir_mask()))
+	 m|=super::Do();
+   }
    Block(ssl->fd,block_mask());
    return m;
 }
