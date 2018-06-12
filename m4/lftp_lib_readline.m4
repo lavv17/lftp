@@ -70,7 +70,7 @@ AC_DEFUN([lftp_LIB_READLINE],
         dnl Default behavior is implicit yes
         if test -f /usr/local/include/readline.h -o -f /usr/local/include/readline/readline.h; then
             readline_prefix=/usr/local
-        elif test -f /usr/include/readline.h -o /usr/include/readline/readline.h; then
+        elif test -f /usr/include/readline.h -o -f /usr/include/readline/readline.h; then
             readline_prefix=/usr
         else
             readline_prefix=""
