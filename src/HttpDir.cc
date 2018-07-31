@@ -721,6 +721,7 @@ static int parse_html(const char *buf,int buf_len,bool eof,const Ref<Buffer>& li
 	 { "overlay", "src" },
 	 { "applet", "code" },
 	 { "script", "src" },
+	 { "source", "src" },
 	 { "embed", "src" },
 	 { "bgsound", "src" },
 	 { "area", "href" },

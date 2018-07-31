@@ -67,12 +67,12 @@ const char *dir_file(const char *dir,const char *file)
 {
    if(dir==0 || dir[0]==0)
       return file?file:dir;
-   if(file && file[0]=='.' && file[1]=='/')
-      file+=2;
    if(file==0 || file[0]==0)
       return dir;
    if(file[0]=='/')
       return file;
+   if(file[0]=='.' && file[1]=='/')
+      file+=2;
 
    xstring& buf=xstring::get_tmp();
    size_t len=strlen(dir);

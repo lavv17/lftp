@@ -223,6 +223,11 @@ FileSet::FileSet(FileSet const *set)
       files.append(new FileInfo(*(set->files[i])));
 }
 
+static int files_sort_name(const Ref<FileInfo> *s1, const Ref<FileInfo> *s2)
+{
+   return strcmp((*s1)->name, (*s2)->name);
+}
+
 static int (*compare)(const char *s1, const char *s2);
 static int rev_cmp;
 static RefArray<FileInfo> *files_cmp;
@@ -283,13 +288,24 @@ void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
    rev_cmp=(reverse?-1:1);
    files_cmp=&files;
 
+   if(newsort==BYNAME_FLAT && sort_mode!=BYNAME_FLAT)
+   {
+      // save original paths to longname, store basename to name,
+      // sort files array according to short names
+      for(int i=0; i<fnum; i++)
+      {
+	 Ref<FileInfo> const& fi=files[i];
+	 fi->longname.move_here(fi->name);
+	 fi->name.set(basename_ptr(fi->longname));
+      }
+      files.qsort(files_sort_name);
+   }
+
    xmap<bool> dup;
    sorted.truncate();
    for(int i=0; i<fnum; i++) {
       if(newsort==BYNAME_FLAT && sort_mode!=BYNAME_FLAT) {
-	 Ref<FileInfo>& fi=files[i];
-	 fi->longname.set(fi->name);
-	 fi->name.set(basename_ptr(fi->name));
+	 Ref<FileInfo> const& fi=files[i];
 	 if(dup.exists(fi->name))
 	    continue;
 	 dup.add(fi->name,true);
@@ -338,6 +354,7 @@ void FileSet::UnsortFlat()
       assert(files[i]->longname!=0);
       files[i]->name.move_here(files[i]->longname);
    }
+   files.qsort(files_sort_name);
 }
 
 void FileSet::Empty()

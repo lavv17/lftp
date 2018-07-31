@@ -18,7 +18,6 @@
 /cloexec.h
 /close-hook.c
 /close-hook.h
-/config.charset
 /config.h
 /config.h.in
 /configmake.h
@@ -114,7 +113,6 @@
 /Makefile.am
 /malloca.c
 /malloca.h
-/malloca.valgrind
 /malloc.c
 /math.h
 /math.in.h
@@ -166,9 +164,7 @@
 /quote.h
 /readlink.c
 /ref-add.sed
-/ref-add.sin
 /ref-del.sed
-/ref-del.sin
 /regcomp.c
 /regex.c
 /regexec.c
@@ -332,3 +328,19 @@ limits.h
 /nstrftime.c
 /scratch_buffer.h
 /malloc/
+/af_alg.c
+/af_alg.h
+/byteswap.in.h
+/fflush.c
+/fpurge.c
+/freading.c
+/freading.h
+/fseek.c
+/fseeko.c
+/ftell.c
+/ftello.c
+/lseek.c
+/stat-time.c
+/stat-time.h
+/stdio-impl.h
+/sys-limits.h

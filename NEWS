@@ -1,3 +1,14 @@
+Version 4.8.4 - 2018-08-01
+
+* fixed a security vulnerability with "file:" file names.
+* fixed mirror --flat.
+* http: extract links from <source> tags.
+* fixed upload of zero-length files over ftps.
+* fixed assert on "mput -d".
+* fixed a core dump.
+* avoid multiple backup files of DHT cache.
+* translations updated (uk, zh_CN).
+
 Version 4.8.3 - 2017-10-09
 
 * fixed compilation with older C++ compilers.

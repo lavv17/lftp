@@ -241,7 +241,6 @@
 /time_rz.m4
 /timegm.m4
 /memcasecmp.m4
-/hard-locale.m4
 /dirname.m4
 /double-slash-root.m4
 /getprogname.m4
@@ -257,3 +256,13 @@
 /open-cloexec.m4
 /std-gnu11.m4
 /host-cpu-c-abi.m4
+/af_alg.m4
+/byteswap.m4
+/fflush.m4
+/fpurge.m4
+/freading.m4
+/fseek.m4
+/fseeko.m4
+/ftell.m4
+/ftello.m4
+/lseek.m4
