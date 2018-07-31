@@ -121,3 +121,5 @@ if WITH_MODULES
 	-rmdir "$(DESTDIR)$(pkgverlibdir)" 2>/dev/null || :
 	-rmdir "$(DESTDIR)$(pkglibdir)" 2>/dev/null || :
 endif
+
+commands.lo lftp.o module.lo resource.lo: $(top_builddir)/lib/configmake.h
