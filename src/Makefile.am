@@ -123,3 +123,5 @@ if WITH_MODULES
 endif
 
 commands.lo lftp.o module.lo resource.lo: $(top_builddir)/lib/configmake.h
+$(top_builddir)/lib/configmake.h:
+	$(MAKE) -C $(top_builddir)/lib configmake.h
