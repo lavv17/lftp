@@ -62,6 +62,7 @@
 #  memmem \
 #  mktime \
 #  modechange \
+#  nstrftime \
 #  parse-datetime \
 #  passfd \
 #  poll \
@@ -70,7 +71,6 @@
 #  sockets \
 #  socklen \
 #  strdup-posix \
-#  strftime \
 #  strptime \
 #  strstr \
 #  strtok_r \
@@ -107,6 +107,7 @@ gl_MODULES([
   memmem
   mktime
   modechange
+  nstrftime
   parse-datetime
   passfd
   poll
@@ -115,7 +116,6 @@ gl_MODULES([
   sockets
   socklen
   strdup-posix
-  strftime
   strptime
   strstr
   strtok_r

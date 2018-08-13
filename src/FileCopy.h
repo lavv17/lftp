@@ -137,7 +137,6 @@ public:
    void DontStartTransferYet() { start_transfer=false; }
    void StartTransfer() { start_transfer=true; }
 
-   const char *GetDescriptionForLog() { return 0; }
    virtual const char *GetURL() { return 0; }
    virtual FileCopyPeer *Clone() { return 0; }
    virtual const Ref<FDStream>& GetLocal() const { return Ref<FDStream>::null; }
@@ -292,6 +291,37 @@ class FileCopyPeerFA : public FileCopyPeer
    FileAccessRefC session;
    int FAmode;
 
+   // support the temporary redirects, this info is needed for a fallback
+   struct RedirBase {
+      FileAccessRef session;
+      xstring_c file;
+      xstring_c url;
+      int FAmode;
+      int redirections;
+      off_t pos;
+
+      RedirBase() : FAmode(FA::CLOSED), redirections(0), pos(0) {}
+      operator bool() const { return session!=0; }
+      void save(FileCopyPeerFA *c) {
+	 session=c->session->Clone();
+	 file.set(c->file);
+	 url.set(c->orig_url);
+	 FAmode=c->FAmode;
+	 pos=c->pos;
+	 redirections=c->redirections;
+      }
+      void revert(FileCopyPeerFA *c) {
+	 c->my_session=session.borrow();
+	 c->session=c->my_session;
+	 c->file.move_here(file);
+	 c->orig_url.move_here(url);
+	 FAmode=FA::CLOSED;
+	 // if there was a progress, reset the redirection count.
+	 c->redirections=(c->pos > pos ? 0 : redirections);
+      }
+   } base;
+   friend struct RedirBase;
+
    int Get_LL(int size);
    int Put_LL(const char *buf,int size);
    int PutEOF_LL();
@@ -344,11 +374,9 @@ public:
    void Bg() { session->SetPriority(0); }
    void SetFXP(bool on) { fxp=on; }
 
-   const char *GetDescriptionForLog()
-      {
-	 return orig_url ? orig_url : session->GetFileURL(file);
-      }
-   const char *GetURL() { return GetDescriptionForLog(); }
+   const char *GetURL() {
+      return orig_url ? orig_url : session->GetFileURL(file);
+   }
    FileCopyPeer *Clone();
 };
 
@@ -394,10 +422,6 @@ public:
    static FileCopyPeerFDStream *NewPut(const char *file,bool cont=false);
    static FileCopyPeerFDStream *NewGet(const char *file);
 
-   const char *GetDescriptionForLog()
-      {
-	 return stream->name;
-      }
    const char *GetURL()
       {
 	 return stream->full_name;
