@@ -120,6 +120,7 @@ public:
    static const char *ERegExpValidate(xstring_c *value);
    static const char *IPv4AddrValidate(xstring_c *value);
    static const char *IPv6AddrValidate(xstring_c *value);
+   static const char *IPAddrValidate(xstring_c *value);
    static const char *UNumberPairValidate(xstring_c *value);
    static const char *FileAccessible(xstring_c *value,int mode,bool want_dir=false);
    static const char *FileReadable(xstring_c *value);

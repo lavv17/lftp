@@ -816,6 +816,20 @@ const char *ResMgr::IPv6AddrValidate(xstring_c *value)
 }
 #endif
 
+const char *ResMgr::IPAddrValidate(xstring_c *value)
+{
+    if(!**value)
+      return 0;
+#if INET6
+    if(!is_ipv4_address(*value) && !is_ipv6_address(*value))
+      return _("Invalid IP numeric address");
+#else
+    if(!is_ipv4_address(*value))
+      return _("Invalid IPv4 numeric address");
+#endif
+    return 0;
+}
+
 const char *ResMgr::FileAccessible(xstring_c *value,int mode,bool want_dir)
 {
    if(!**value)

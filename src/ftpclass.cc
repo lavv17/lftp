@@ -813,8 +813,32 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
       Disconnect(_("cannot parse EPSV response"));
       return PASV_NO_ADDRESS_YET;
    }
-
+   
    conn->data_sa=conn->peer_sa;
+      
+   // Check if a epsv addr is beeing forced.
+   // If yes, use this addr.
+   const char *epsvAddr = Query("ftp:force-espv-addr");
+   if (epsvAddr && epsvAddr[0])
+   {
+       if(is_ipv4_address(*epsvAddr))
+       {
+           inet_pton(AF_INET, epsvAddr, &conn->data_sa.in.sin_addr);
+           conn->data_sa.in.sin_port=htons(port);
+           return PASV_HAVE_ADDRESS;
+       }
+#if INET6
+       if(is_ipv6_address(*epsvAddr))
+       {
+           inet_pton(AF_INET6, epsvAddr, &conn->data_sa.in6.sin6_addr);
+           conn->data_sa.in6.sin6_port=htons(port);
+           return PASV_HAVE_ADDRESS;
+       }
+       Disconnect("unsupported address family");
+       return PASV_NO_ADDRESS_YET;
+#endif
+   }
+   
    if(conn->data_sa.sa.sa_family==AF_INET)
       conn->data_sa.in.sin_port=htons(port);
 #if INET6
