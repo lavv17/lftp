@@ -834,9 +834,9 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
            conn->data_sa.in6.sin6_port=htons(port);
            return PASV_HAVE_ADDRESS;
        }
+#endif
        Disconnect("unsupported address family");
        return PASV_NO_ADDRESS_YET;
-#endif
    }
    
    if(conn->data_sa.sa.sa_family==AF_INET)
