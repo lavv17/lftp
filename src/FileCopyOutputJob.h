@@ -33,11 +33,6 @@ public:
    int Do();
    void Fg();
    void Bg();
-
-   const char *GetDescriptionForLog()
-      {
-	 return "[pipe to other job]";
-      }
 };
 
 #endif
