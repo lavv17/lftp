@@ -19,6 +19,7 @@ addons:
     - autoconf
     - autopoint
     - gperf
+    - libtool
 
 script:
     - ./autogen.sh
