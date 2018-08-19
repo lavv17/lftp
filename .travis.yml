@@ -20,6 +20,7 @@ addons:
     - autopoint
     - gperf
     - libtool
+    - gnulib
 
 script:
     - ./autogen.sh
