@@ -19,10 +19,8 @@ addons:
     - autoconf
     - autopoint
     - gperf
-    - libtool
-    - gnulib
 
 script:
-    - ./autogen.sh
+    - ./bootstrap
     - ./configure
     - make release-check
