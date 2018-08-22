@@ -818,20 +818,22 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
       
    // Check if a epsv addr is beeing forced.
    // If yes, use this addr.
-   const char *epsvAddr = Query("ftp:force-espv-addr");
+   const char *epsvAddr = Query("ftp:force-epsv-addr");
    if (epsvAddr && epsvAddr[0])
    {
-       if(is_ipv4_address(*epsvAddr))
+       if(is_ipv4_address(epsvAddr))
        {
            inet_pton(AF_INET, epsvAddr, &conn->data_sa.in.sin_addr);
            conn->data_sa.in.sin_port=htons(port);
+           conn->data_sa.sa.sa_family=AF_INET;
            return PASV_HAVE_ADDRESS;
        }
 #if INET6
-       if(is_ipv6_address(*epsvAddr))
+       if(is_ipv6_address(epsvAddr))
        {
            inet_pton(AF_INET6, epsvAddr, &conn->data_sa.in6.sin6_addr);
            conn->data_sa.in6.sin6_port=htons(port);
+           conn->data_sa.sa.sa_family=AF_INET6;
            return PASV_HAVE_ADDRESS;
        }
 #endif
@@ -2294,7 +2296,7 @@ int   Ftp::Do()
 	 {
 	    Disconnect("invalid data connection address");
 	    return MOVED;
-	 }
+        }
 
 	 pasv_state=PASV_DATASOCKET_CONNECTING;
 	 if(copy_mode!=COPY_NONE)
