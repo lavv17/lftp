@@ -1021,7 +1021,7 @@ parse_url_again:
       str_with_tags=string_malloc(eol-more1);
       memcpy(str_with_tags,more1+1,eol-more1-1);
       str_with_tags[eol-more1-1]=0;
-      _remove_tags(str);
+      remove_tags(str);
 
       if(try_apache_listing(info,str)		&& info.validate()) goto got_info;
       if(try_apache_listing_iso(info,str)	&& info.validate()) goto got_info;
