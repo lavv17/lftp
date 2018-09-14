@@ -960,10 +960,12 @@ parse_url_again:
       show_in_list=false;  // makes apache listings look better.
 
    skip_len=tag_len;
+
+   char *str = NULL,*str_with_tags = NULL;
    // try to find file info
    {
       const char *more1;
-      char *str,*str_with_tags, *str2;
+      char  *str2;
       xstring line_add;
       xstring info_string;
       int type;
@@ -1012,11 +1014,14 @@ parse_url_again:
 	 more1+=2;
 
       // the buffer is not null-terminated, so we need this
-      str=string_alloca(eol-more1);
+      str=string_malloc(eol-more1);
       memcpy(str,more1+1,eol-more1-1);
       str[eol-more1-1]=0;
-      str_with_tags=alloca_strdup(str);
-      remove_tags(str);
+      // str_with_tags=alloca_strdup(str);
+      str_with_tags=string_malloc(eol-more1);
+      memcpy(str_with_tags,more1+1,eol-more1-1);
+      str_with_tags[eol-more1-1]=0;
+      _remove_tags(str);
 
       if(try_apache_listing(info,str)		&& info.validate()) goto got_info;
       if(try_apache_listing_iso(info,str)	&& info.validate()) goto got_info;
@@ -1212,7 +1217,8 @@ info_done:
 
       set->Add(fi);
    }
-
+    free(str);
+    free(str_with_tags);
    return skip_len;
 }
 
@@ -1433,7 +1439,9 @@ FileSet *Http::ParseLongList(const char *b,int len,int *err) const
    xstring_c base_href;
    for(;;)
    {
-      int n=parse_html(b,len,true,Ref<Buffer>::null,set,0,&prefix,&base_href);
+       int clen = len;
+       if(clen > 1000)clen = 1000;
+      int n=parse_html(b,clen,true,Ref<Buffer>::null,set,0,&prefix,&base_href);
       if(n==0)
 	 break;
       b+=n;
