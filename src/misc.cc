@@ -961,26 +961,37 @@ const xstring& shell_encode(const char *string,int len)
 void remove_tags(char *buf)
 {
    int len=strlen(buf);
-   for(;;)
+   int less = -1;
+   for(int i = 0; i < len;i++)
    {
-      char *less=strchr(buf,'<');
-      char *amp=strstr(buf,"&nbsp;");
-      if(!less && !amp)
-	 break;
-      if(amp && (!less || amp<less))
-      {
-	 amp[0]=' ';
-	 memmove(amp+1,amp+6,len-(amp+6-buf)+1);
-	 len-=amp+6-buf;
-	 buf=amp+1;
-	 continue;
+      if(strcmp(buf + i, "&nbsp;") == 0){
+        for(int j = 0; j < 6; j++)buf[i + j] = 0;
+        buf[i] = ' ';
+        i += 6;
+        i--;
+        continue;
       }
-      char *more=strchr(less+1,'>');
-      if(!more)
-	 break;
-      memmove(less,more+1,len-(more+1-buf)+1);
-      len-=more+1-buf;
-      buf=less;
+      if(buf[i] == '<'){
+        less = i;
+        continue;
+
+      }
+      if(buf[i] == '>'){
+        if(less != -1){
+          for(int j = less; j <= i; j++)buf[j] = 0;
+          less = -1;
+        }
+
+      }
+   }
+   int zero = 0;
+   for(int i = 0; i < len;i++)
+   {
+     while(zero < i && buf[zero] != 0)zero++;
+     if(buf[i] != 0 and zero != i){
+      buf[zero] = buf[i];
+      buf[i] = 0;
+     }
    }
 }
 void rtrim(char *s)
