@@ -167,8 +167,6 @@ bool Ftp::Connection::data_address_ok(const sockaddr_u *dp,bool verify_address,b
    }
 #endif
 
-   if(d.sa.sa_family!=c.sa.sa_family)
-      return false;
    if(d.sa.sa_family==AF_INET)
    {
       if(memcmp(&d.in.sin_addr,&c.in.sin_addr,sizeof(d.in.sin_addr)))
@@ -826,6 +824,45 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
       Disconnect("unsupported address family");
       return PASV_NO_ADDRESS_YET;
    }
+   return PASV_HAVE_ADDRESS;
+}
+
+Ftp::pasv_state_t Ftp::Handle_EPSV_CEPR()
+{
+   char *format=alloca_strdup("(|%u|%[^'|']|%u|)");
+   unsigned port, proto;
+   char pasv_addr[40];
+
+   const char *c_start=strchr(line,'(');
+   if(sscanf(c_start,format,&proto, &pasv_addr, &port)!=3)
+   {
+      LogError(0,_("cannot parse custom EPSV response"));
+      Disconnect(_("cannot parse custom EPSV response"));
+      return PASV_NO_ADDRESS_YET;
+   }
+
+   conn->data_sa=conn->peer_sa;
+   // V4 / AF_INET
+   if (proto == 1)
+   {
+      inet_pton(AF_INET, pasv_addr, &conn->data_sa.in.sin_addr);
+      // conn->data_sa.
+      conn->data_sa.in.sin_port=htons(port);
+      conn->data_sa.sa.sa_family=AF_INET;
+   }
+   // V6 / AF_INET6
+   else if (proto == 2)
+   {
+      inet_pton(AF_INET6, pasv_addr, &conn->data_sa.in6.sin6_addr);
+      conn->data_sa.in6.sin6_port=htons(port);
+      conn->data_sa.sa.sa_family=AF_INET6;
+   }
+   else
+   {
+      Disconnect("unsupported address family");
+      return PASV_NO_ADDRESS_YET;
+   }
+
    return PASV_HAVE_ADDRESS;
 }
 
@@ -2271,7 +2308,6 @@ int   Ftp::Do()
 	    Disconnect("invalid data connection address");
 	    return MOVED;
 	 }
-
 	 pasv_state=PASV_DATASOCKET_CONNECTING;
 	 if(copy_mode!=COPY_NONE)
 	 {
@@ -2279,6 +2315,14 @@ int   Ftp::Do()
 	    copy_addr_valid=true;
 	    goto pre_WAITING_STATE;
 	 }
+
+         // Clean up old data socket, as it might be from the wrong 
+         // address family.
+         if(conn->data_sock)
+             close(conn->data_sock);
+
+         // Create new data socket with appropriate address family.
+         conn->data_sock = SocketCreateTCP(conn->data_sa.sa.sa_family);
 
 	 if(!conn->proxy_is_http)
 	 {
@@ -2295,6 +2339,7 @@ int   Ftp::Do()
 	 if(res==-1 && errno!=EINPROGRESS)
 	 {
 	    saved_errno=errno;
+            LogError(0,"connect: numeric error code: %u",saved_errno);
 	    LogError(0,"connect: %s",strerror(saved_errno));
 	    Disconnect(strerror(saved_errno));
 	    if(NotSerious(saved_errno))
@@ -3984,9 +4029,15 @@ void Ftp::TuneConnectionAfterFEAT()
       conn->SendCmd2("HOST",hostname);
       expect->Push(Expect::IGNORE);
    }
+   if(conn->cepr_supported)
+   {
+       conn->SendCmd("CEPR on");
+       expect->Push(Expect::IGNORE);
+   }
+
    if(conn->try_feat_after_login && conn->mlst_attr_supported)
       SendOPTS_MLST();
-   if(proxy)
+   if(proxy && !conn->cepr_supported) // proxies with cepr can do epsv.
       conn->epsv_supported=false;
 }
 
@@ -4081,6 +4132,8 @@ void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
 	 cpsv_supported=true;
       else if(!strcasecmp(f,"SSCN"))
 	 sscn_supported=true;
+      else if(!strcasecmp(f,"CEPR"))
+	 cepr_supported=true;
 #endif // USE_SSL
    }
    if(!trust) {
@@ -4325,7 +4378,10 @@ void Ftp::CheckResp(int act)
 	 if(cc==Expect::PASV)
 	    pasv_state=Handle_PASV();
 	 else // cc==Expect::EPSV
-	    pasv_state=Handle_EPSV();
+             if(conn->cepr_supported)
+                pasv_state=Handle_EPSV_CEPR();
+             else
+                pasv_state=Handle_EPSV();
 
 	 if(pasv_state==PASV_NO_ADDRESS_YET)
 	    goto passive_off;

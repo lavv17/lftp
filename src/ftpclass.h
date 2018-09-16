@@ -120,6 +120,7 @@ class Ftp : public NetAccess
       bool epsv_supported;
       bool tvfs_supported;
       bool mode_z_supported;
+      bool cepr_supported;
 
       bool ssl_after_proxy;
 
@@ -312,6 +313,7 @@ class Ftp : public NetAccess
 
    pasv_state_t Handle_PASV();
    pasv_state_t Handle_EPSV();
+   pasv_state_t Handle_EPSV_CEPR();
 
    bool ServerSaid(const char *) const;
    bool NonError5XX(int act) const;
