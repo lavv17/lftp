@@ -55,7 +55,8 @@ int SSH_Access::HandleSSHMessage()
    {
       if(s>0 && b[s-1]==' ')
 	 s--;
-      if(ends_with(b,b+s,"password:")
+      if(ends_with(b,b+s,"'s password")
+      || ends_with(b,b+s,"password:")
       || (ends_with(b,b+s,"':") && s>10)
       || (begins_with(b,b+s,"password for ") && b[s-1]==':'))
       {
