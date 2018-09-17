@@ -206,6 +206,7 @@ static ResType lftp_vars[] = {
    {"ftp:fix-pasv-address",	 "yes",   ResMgr::BoolValidate,0},
    {"ftp:ignore-pasv-address",	 "no",	  ResMgr::BoolValidate,0},
    {"ftp:fxp-force",		 "no",	  ResMgr::BoolValidate,0},
+   {"ftp:sitemgr-autosave",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:fxp-passive-source",	 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"ftp:fxp-passive-sscn",	 "yes",   ResMgr::BoolValidate,ResMgr::NoClosure},
    {"ftp:home",			 "",	  0,0},

@@ -138,8 +138,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 N_("sitemgr allows you to manage sites\n\n"
     "The following subcommands are available:\n"
     "  add <name>              - adds a new site to the site manager\n"
-    "  conf <name>             - prints the configuration for the given site\n"
-    "  conf <name> set <field> - sets a field for the site\n"
+    "  show <name>             - prints the configuration for the given site\n"
+    "  set <name> <field>      - sets a field for the site\n"
     "                            Valid fields are:\n"
     "                             - User, Password, Address, Port, Ssl\n"
     "                             - Notes, LocalPath, RemotePath\n"
@@ -1044,6 +1044,11 @@ Job *CmdExec::builtin_open()
 	 cmd.append(" &\n");
       else
 	 cmd.append(";\n"); 
+      
+      if(strcasecmp(site->proxy, "") != 0)
+          ResMgr::Set("ftp:proxy", host, site->proxy);
+      if(strcasecmp(site->proxy, "") != 0)
+          ResMgr::Set("ftp:proxy-auth-type", host, site->proxy_auth_type);
       
      PrependCmd(cmd);
      
@@ -2987,7 +2992,7 @@ CMD(close)
 }
 
 const char * const sitemgr_subcmd[]=
-   {"add","delete","list","save","conf","refresh",0};
+   {"add","delete","list","show", "save","set","refresh",0};
 const char * const bookmark_subcmd[]=
    {"add","delete","list","list-p","edit","import",0};
 static ResDecl res_save_passwords
@@ -3037,11 +3042,11 @@ CMD(sitemgr)
     {
        const char *key=args->getnext();
        if(key==0 || key[0]==0)
-      eprintf(_("%s: Site name required\n"),args->a0());
+            eprintf(_("%s: Site name required\n"),args->a0());
        else
        {
-      lftp_sitemgr.Remove(key);
-      exit_code=0;
+            lftp_sitemgr.Remove(key);
+            exit_code=0;
        }
     }
     else if(!strcasecmp(op,"save"))
@@ -3050,7 +3055,7 @@ CMD(sitemgr)
       exit_code=0;
     }
  
-    else if(!strcasecmp(op,"conf"))
+    else if(!strcasecmp(op,"set"))
     {
           const char *site=args->getnext();
           if(site==0 || site[0]==0)
@@ -3059,25 +3064,34 @@ CMD(sitemgr)
           }
           else
           {
-             const char *subop=args->getnext();
-             if(subop==0 || subop[0]==0)
-             {
-                 xstring_ca list(lftp_sitemgr.Conf(site));
-                 OutputJob *out=new OutputJob(output.borrow(), args->a0());
-                 Job *j=new echoJob(list,out);
-                 return j;
-             }
-             else if(!strcasecmp(subop, "set"))
-             {
-                 const char *attribute=args->getnext();
-                 const char *value=args->CombineRemaining();
+            const char *attribute=args->getnext();
+            const char *value=args->CombineRemaining();
      
-                 if(attribute && value){
-                     lftp_sitemgr.ConfSet(site, attribute, value);
-                 }
-             }
+            if(attribute && value)
+            {
+                lftp_sitemgr.ConfSet(site, attribute, value);
+            }
+            else
+            {
+                eprintf(_("%s: Field required\n"),args->a0());
+            }
           }
       exit_code=0;
+    }
+    else if(!strcasecmp(op,"show"))
+    {
+        const char *key=args->getnext();
+        xstring list;
+        if(key==0 || key[0]==0)
+            list.set(lftp_sitemgr.List());
+        else
+        {
+            list.set(lftp_sitemgr.Conf(key));
+        }
+        OutputJob *out=new OutputJob(output.borrow(), args->a0());
+        Job *j=new echoJob(list,out);
+        return j;
+        exit_code=0;
     }
     else if(!strcasecmp(op,"refresh"))
     {

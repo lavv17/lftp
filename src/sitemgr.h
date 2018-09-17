@@ -33,9 +33,6 @@ class Sitemgr {
 
 
     void Load();
-
-    void PreModify();
-    void PostModify();
     void Clear();
 
 
@@ -51,17 +48,24 @@ public:
 
     typedef struct Site {
         char *sitename;
+        
         //
         char *address;
         char *port;
         bool ssl;
+        
         //
         char *username;
         char *password;
+        
         //
         char *notes;
         char *localPath;
         char *remotePath;
+        
+        // Proxy stuff
+        char *proxy;
+        char *proxy_auth_type;
 
         Site *next, *prev;
     } Site;
@@ -106,6 +110,7 @@ private:
     Site *JsonObj2Site(json_object *json_site);
     void AppendSite(Site *site);
     void FreeSite(Site *site);
+    void AutoSave();
 
 
 };

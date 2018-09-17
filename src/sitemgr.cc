@@ -27,6 +27,7 @@
 #include "ResMgr.h"
 #include "misc.h"
 #include "url.h"
+#include "ResMgr.h"
 
 #include <json-c/json.h>
 
@@ -99,12 +100,9 @@ void Sitemgr::AppendSite(Site *site) {
     }
 }
 
-void Sitemgr::PreModify() {
-
-}
-
-void Sitemgr::PostModify() {
-
+void Sitemgr::AutoSave() {
+    if (ResMgr::QueryBool("ftp:sitemgr-autosave", 0))
+        Sitemgr::Save();
 }
 
 void Sitemgr::Add(const char *sitename) {
@@ -118,6 +116,7 @@ void Sitemgr::Add(const char *sitename) {
     new_site->sitename = strdup(sitename);
     InitializeSite(new_site);
     AppendSite(new_site);
+    AutoSave();
 }
 
 void Sitemgr::Remove(const char *sitename) {
@@ -151,6 +150,7 @@ void Sitemgr::Remove(const char *sitename) {
         current_site = current_site->next;
     }
     sites.size--;
+    AutoSave();
 }
 
 void Sitemgr::FreeSite(Site *site) {
@@ -247,6 +247,12 @@ Sitemgr::Site *Sitemgr::JsonObj2Site(json_object *site_obj) {
     json_object_object_get_ex(site_obj, "SSL", &temp_value);
     new_site->ssl = json_object_get_boolean(temp_value);
 
+    json_object_object_get_ex(site_obj, "Proxy", &temp_value);
+    new_site->proxy = strdup(json_object_get_string(temp_value));
+
+    json_object_object_get_ex(site_obj, "Proxy-Auth-Type", &temp_value);
+    new_site->proxy_auth_type = strdup(json_object_get_string(temp_value));
+
     return new_site;
 }
 
@@ -292,8 +298,13 @@ json_object *Sitemgr::Site2JsonObj(const char *sitename) {
     // SSL
     json_tmp = json_object_new_boolean(site->ssl);
     json_object_object_add(json_site, "SSL", json_tmp);
-    // const char* jsonString = json_object_get_string(jsite);
-    // fprintf(stdout, "Return string.\n");
+
+    // Proxy
+    json_tmp = json_object_new_string(site->proxy);
+    json_object_object_add(json_site, "Proxy", json_tmp);
+
+    json_tmp = json_object_new_string(site->proxy_auth_type);
+    json_object_object_add(json_site, "Proxy-Auth-Type", json_tmp);
     return json_site;
 }
 
@@ -341,24 +352,26 @@ char *Sitemgr::Conf(const char* sitename) {
         return NULL;
     }
     xstring buf("");
-    // dump whole structure.
-    // buf.appendf("%s\n", json_object_to_json_string_ext(Site2JsonObj(sitename), JSON_C_TO_STRING_PRETTY));
+
     Site* site = GetSite(sitename);
-    buf.appendf("  Configuration for - [ %s ] -\n", site->sitename );
-    buf.append ("---------------------------------------\n");
-    buf.appendf("  User         - %s\n", site->username );
-    buf.appendf("  Password     - %s\n", site->password );
-    buf.appendf("  Address      - %s\n", site->address );
-    buf.appendf("  Port         - %s\n", site->port );
+    buf.appendf("  Configuration for - [ %s ] -\n", site->sitename);
+    buf.append("---------------------------------------\n");
+    buf.appendf("  User         - %s\n", site->username);
+    buf.appendf("  Password     - %s\n", site->password);
+    buf.appendf("  Address      - %s\n", site->address);
+    buf.appendf("  Port         - %s\n", site->port);
     if (site->ssl)
-        buf.appendf("  SSL          - %s\n", "Yes" );
+        buf.appendf("  SSL          - %s\n", "Yes");
     else
-        buf.appendf("  SSL          - %s\n", "No" );
-    buf.append ("----------------------------------------\n");
-    buf.appendf("  Notes        - %s\n", site->notes );
-    buf.appendf("  Local Path   - %s\n", site->localPath );
-    buf.appendf("  Remote Path  - %s\n", site->remotePath );
-    buf.append ("----------------------------------------\n");    
+        buf.appendf("  SSL          - %s\n", "No");
+    buf.append("----------------------------------------\n");
+    buf.appendf("  Notes        - %s\n", site->notes);
+    buf.appendf("  Local Path   - %s\n", site->localPath);
+    buf.appendf("  Remote Path  - %s\n", site->remotePath);
+    buf.append("----------------------------------------\n");
+    buf.appendf("  Proxy        - %s\n", site->proxy);
+    buf.appendf("  Proxy Type   - %s\n", site->proxy_auth_type);
+    buf.append("----------------------------------------\n");
     return buf.borrow();
 }
 
@@ -369,23 +382,33 @@ void Sitemgr::ConfSet(const char* sitename, const char* field, const char *value
         return;
     }
 
+    bool valid_field = false;
+    
     Site* site = GetSite(sitename);
     if (strcasecmp(field, "sitename") == 0) {
         site->sitename = strdup(value);
+        valid_field = true;
     } else if (strcasecmp(field, "address") == 0) {
         site->address = strdup(value);
+        valid_field = true;
     } else if (strcasecmp(field, "port") == 0) {
         site->port = strdup(value);
+        valid_field = true;
     } else if (strcasecmp(field, "notes") == 0) {
         site->notes = strdup(value);
+        valid_field = true;
     } else if ((strcasecmp(field, "user") == 0) || (strcasecmp(field, "username") == 0)) {
         site->username = strdup(value);
+        valid_field = true;
     } else if ((strcasecmp(field, "pass") == 0) || (strcasecmp(field, "password") == 0)) {
         site->password = strdup(value);
+        valid_field = true;
     } else if (strcasecmp(field, "localPath") == 0) {
         site->localPath = strdup(value);
+        valid_field = true;
     } else if (strcasecmp(field, "remotePath") == 0) {
         site->remotePath = strdup(value);
+        valid_field = true;
     } else if (strcasecmp(field, "ssl") == 0) {
         if (strcasecmp(value, "true") == 0 || strcasecmp(value, "yes") == 0 || strcasecmp(value, "1") == 0) {
             site->ssl = true;
@@ -393,7 +416,17 @@ void Sitemgr::ConfSet(const char* sitename, const char* field, const char *value
         if (strcasecmp(value, "false") == 0 || strcasecmp(value, "no") == 0 || strcasecmp(value, "0") == 0) {
             site->ssl = false;
         }
+        valid_field = true;
+    } else if (strcasecmp(field, "proxy") == 0) {
+        site->proxy = strdup(value);
+        valid_field = true;
+    } else if (strcasecmp(field, "proxy-auth-type") == 0) {
+        site->proxy_auth_type = strdup(value);
+        valid_field = true;
     }
+    if(!valid_field)
+        fprintf(stderr, "Invalid field given: %s", field);
+    AutoSave();
 }
 
 void Sitemgr::InitializeSite(Site* site) {
@@ -406,6 +439,8 @@ void Sitemgr::InitializeSite(Site* site) {
     site->notes = strdup("");
     site->localPath = strdup("");
     site->remotePath = strdup("/");
+    site->proxy = strdup("");
+    site->proxy_auth_type = strdup("");
     site->ssl = true;
 }
 
