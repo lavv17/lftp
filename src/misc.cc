@@ -958,7 +958,7 @@ const xstring& shell_encode(const char *string,int len)
    return (result);
 }
 
-void remove_tags(char *buf)
+int remove_tags(char *buf)
 {
    int len=strlen(buf);
    int less = -1;
@@ -993,7 +993,9 @@ void remove_tags(char *buf)
       buf[i] = 0;
      }
    }
+   return ++zero;
 }
+
 void rtrim(char *s)
 {
    int len=strlen(s);

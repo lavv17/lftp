@@ -49,7 +49,6 @@
 #include <unistd.h>
 
 #define string_alloca(len)      ((char*)alloca((len)))
-#define string_malloc(len)      ((char*)malloc((len)))
 
 #if !HAVE_DECL_STRCASECMP
 CDECL int strcasecmp(const char *s1,const char *s2);

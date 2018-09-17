@@ -130,7 +130,7 @@ bool is_shell_special(char c);
 const xstring& shell_encode(const char *s,int len);
 static inline const xstring& shell_encode(const char *s) { return shell_encode(s,strlen(s)); }
 static inline const xstring& shell_encode(const xstring& s) { return shell_encode(s.get(),s.length()); }
-void remove_tags(char *buf);
+int remove_tags(char *buf);
 void rtrim(char *s);
 
 void random_init();

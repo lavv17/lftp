@@ -961,10 +961,10 @@ parse_url_again:
 
    skip_len=tag_len;
 
-   char *str = NULL,*str_with_tags = NULL;
    // try to find file info
    {
       const char *more1;
+      xstring str, str_with_tags;
       char  *str2;
       xstring line_add;
       xstring info_string;
@@ -1014,14 +1014,9 @@ parse_url_again:
 	 more1+=2;
 
       // the buffer is not null-terminated, so we need this
-      str=string_malloc(eol-more1);
-      memcpy(str,more1+1,eol-more1-1);
-      str[eol-more1-1]=0;
-      // str_with_tags=alloca_strdup(str);
-      str_with_tags=string_malloc(eol-more1);
-      memcpy(str_with_tags,more1+1,eol-more1-1);
-      str_with_tags[eol-more1-1]=0;
-      remove_tags(str);
+      str.nset(more1 + 1, eol - more1 - 1);
+      str_with_tags.nset(more1 + 1, eol - more1 - 1);
+      str.set_length(remove_tags(str.get_non_const()));
 
       if(try_apache_listing(info,str)		&& info.validate()) goto got_info;
       if(try_apache_listing_iso(info,str)	&& info.validate()) goto got_info;
@@ -1033,14 +1028,14 @@ parse_url_again:
 	 skip_len=eol-buf+eol_len;
 	 goto got_info;
       }
-      if(try_lighttpd_listing(info,str_with_tags) && info.validate())
+      if(try_lighttpd_listing(info,str_with_tags.get_non_const()) && info.validate())
 	 goto got_info;
       if(try_mini_proxy(info,str)		&& info.validate()) goto got_info;
       if(try_apache_unixlike(info,str,more,more1,info_string)
       && info.validate())
 	 goto got_info;
       if(try_roxen(info,str)			&& info.validate()) goto got_info;
-      if(try_squid_ftp(info,str,str_with_tags) && info.validate())
+      if(try_squid_ftp(info,str,str_with_tags.get_non_const()) && info.validate())
       {
 	 // skip rest of line, because there may be href to link target.
 	 skip_len=eol-buf+eol_len;
@@ -1217,8 +1212,6 @@ info_done:
 
       set->Add(fi);
    }
-    free(str);
-    free(str_with_tags);
    return skip_len;
 }
 
