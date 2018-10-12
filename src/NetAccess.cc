@@ -541,19 +541,20 @@ do_again:
 got_fileset:
       if(set)
       {
-	 bool need_resort=false;
 	 set->rewind();
 	 for(file=set->curr(); file!=0; file=set->next())
 	 {
 	    // tilde is special.
 	    if(file->name[0]=='~')
 	    {
+	       // can't just update the name - it will break sorting
+	       file=set->borrow_curr();
 	       file->name.set_substr(0,0,"./");
-	       need_resort=true;
+	       if(!result)
+		  result=new FileSet();
+	       result->Add(file);
 	    }
 	 }
-	 if(need_resort && !result)
-	    result=new FileSet; // Merge will sort the names
 	 if(result)
 	 {
 	    result->Merge(set);

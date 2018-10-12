@@ -204,6 +204,7 @@ public:
    void	 rewind() { ind=0; }
    FileInfo *curr();
    FileInfo *next();
+   FileInfo *borrow_curr() { return Borrow(ind--); }
 
    void	 LocalRemove(const char *dir);
    void	 LocalUtime(const char *dir,bool only_dirs=false,bool flat=false);
