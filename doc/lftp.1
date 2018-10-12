@@ -29,15 +29,15 @@
 .\"-------
 .de Ds
 .Sp
-.in +0.5i
+.RS
 .nf
 ..
 .\"-------
 .\" De  end a display (no trailing vertical spacing)
 .\"-------
 .de De
+.RE
 .fi
-.in
 ..
 .TH lftp 1 "10 Aug 2017"
 .SH NAME
@@ -163,7 +163,7 @@ The bookmark command controls bookmarks.
 Site names can be used in the \fIopen\fP command directly as-is or in
 any command that accepts input URLs using the \fIbm:site/path\fP format.
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 add <name> [<loc>]	T{
@@ -174,7 +174,7 @@ edit	start editor on bookmarks file
 import <type>	import foreign bookmarks
 list	list bookmarks (default)
 .TE
-.in
+.RE
 .P
 .B cache
 .RI " [" subcommand ]
@@ -182,7 +182,7 @@ list	list bookmarks (default)
 The cache command controls local memory cache.
 The following subcommands are recognized:
 .Sp
-.in +0.5i
+.RE
 .TS
 l	lx	.
 stat	print cache status (default)
@@ -193,7 +193,7 @@ expire \fINx\fP	T{
 set cache expiration time to \fIN\fP seconds (\fIx\fP=s) minutes (\fIx\fP=m) hours (\fIx\fP=h) or days (\fIx\fP=d)
 T}
 .TE
-.in
+.RE
 .P
 .BR cat " \fIfiles\fP"
 .PP
@@ -212,7 +212,7 @@ so you can do `open site; cd \-' even after lftp restart.
 Change permission mask on remote files. The mode can be an octal number or a symbolic mode (see chmod(1)).
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l1	l	lx	.
 -c,	--changes	like verbose but report only when a change is made
@@ -220,7 +220,7 @@ l1	l	lx	.
 -v,	--verbose	output a diagnostic for every file processed
 -R,	--recursive	change files and directories recursively
 .TE
-.in
+.RE
 .P
 .BR close " [" \-a "]"
 .PP
@@ -235,7 +235,7 @@ and outputs the information according to format options. The difference between
 `cls' formats it itself, after retrieving all the needed information.
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l1	l	lx	.
 \-1		single-column output
@@ -285,7 +285,7 @@ T}
 use specified time format
 T}
 .TE
-.in
+.RE
 .P
 .BR command " \fIcmd args...\fP
 .PP
@@ -295,7 +295,7 @@ execute given command ignoring aliases.
 .PP
 Switch debugging to \fIlevel\fP or turn it off. Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l1	l	lx	.
 \-T	truncate output file
@@ -304,7 +304,7 @@ l1	l	lx	.
 \-p	show PID
 \-t	show timestamps
 .TE
-.in
+.RE
 .P
 .BR echo " [" \-n "] \fIstring\fR"
 .PP
@@ -315,13 +315,13 @@ Prints (echos) the given string to the display.
 Retrieve remote file to a temporary location, run a local editor on it
 and upload the file back if changed. Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l1	l	lx	.
 \-k	keep the temporary file
 \-o <temp>	explicit temporary file location
 .TE
-.in
+.RE
 .P
 .BR eval " [" -f " \fIformat\fR ] " \fIargs...\fR
 .PP
@@ -356,13 +356,13 @@ List files in the directory (current directory by default) recursively.
 This can help with servers lacking ls \-R support. You can redirect output
 of this command. Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l1	l	lx	.
 \-d \fIMD\fP,	\-\-max\-depth=\fIMD\fP	specify maximum scan depth
 \-l,	\-\-ls 	use long listing format
 .TE
-.in
+.RE
 .P
 .BR ftpcopy
 .PP
@@ -390,7 +390,7 @@ base name of \fIrfile\fP. You can get multiple files by specifying multiple
 instances of \fIrfile\fP (and \-o \fIlfile\fP). Does not expand wildcards, use
 \fBmget\fR for that.
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-c	continue, reget
@@ -402,7 +402,7 @@ l	lx	.
 specifies base directory or URL where files should be placed
 T}
 .TE
-.in
+.RE
 .PP
 Examples:
 .Ds
@@ -419,7 +419,7 @@ get README \-o ftp://some.host.org/debian-dir/ \ \ \fB(end slash is important)\f
 .PP
 Transfer a single file. Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-o <lfile>	T{
@@ -438,7 +438,7 @@ T}
 position in target file to write data at
 T}
 .TE
-.in
+.RE
 .P
 .B glob
 .RI " [" OPTS "] "
@@ -446,7 +446,7 @@ T}
 .PP
 Glob given patterns containing metacharacters and pass result to given command or return appropriate exit code.
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-f	plain files (default)
@@ -455,7 +455,7 @@ l	lx	.
 \-\-exist	return zero exit code when the patterns expand to non-empty list
 \-\-not\-exist	return zero exit code when the patterns expand to an empty list
 .TE
-.in
+.RE
 .PP
 Examples:
 .Ds
@@ -476,13 +476,13 @@ available commands.
 List running jobs. If \fIjob_no\fP is specified, only list a job with that number.
 Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-v	verbose, several \-v increase verbosity
 \-r	list just one specified job without recursion
 .TE
-.in
+.RE
 .P
 .B kill
 all|\fIjob_no\fP
@@ -537,7 +537,7 @@ or
 Gets selected files with expanded wildcards.
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-c	continue, reget.
@@ -552,7 +552,7 @@ T}
 specifies base directory or URL where files should be placed
 T}
 .TE
-.in
+.RE
 .P
 .B mirror
 .RI [ OPTS "] [" source
@@ -571,7 +571,7 @@ If the target directory ends with a slash (except the root directory) then base
 name of the source directory is appended.
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l1	l	lx	.
 \-c,	\-\-continue	T{
@@ -738,7 +738,7 @@ T}
 same as \-\-allow-chown \-\-allow-suid \-\-no-umask
 T}
 .TE
-.in
+.RE
 \fIRX\fP is an extended regular expression, just like in \fBegrep\fR(1).
 .PP
 \fIGP\fP is a glob pattern, e.g. `*.zip'.
@@ -822,7 +822,7 @@ Same as `cat \fIfiles\fP | more'. if \fBPAGER\fP is set, it is used as filter.
 Upload files with wildcard expansion. By default it uses the base name of
 local name as remote one. This can be changed by `\-d' option.
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-c	continue, reput
@@ -839,7 +839,7 @@ T}
 specifies base directory or URL where files should be placed
 T}
 .TE
-.in
+.RE
 .P
 .B mrm
 \fIfile(s)\fP
@@ -854,14 +854,14 @@ Move specified files to a target directory. The target directory can be
 specified after \-O option or as the last argument.
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-O <dir>	T{
 specifies the target directory where files should be placed
 T}
 .TE
-.in
+.RE
 .P
 .B mv
 .RB "\fIfile1\fP \fIfile2\fP"
@@ -884,7 +884,7 @@ given, automatically change the current working directory to the directory
 of the URL.
 Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-e \fIcmd\fP	execute the command just after selecting the server
@@ -898,7 +898,7 @@ l	lx	.
 \-\-env\-password	take password from \fBLFTP_PASSWORD\fP environment variable
 \fIsite\fP	host name, URL or bookmark name
 .TE
-.in
+.RE
 .P
 .B pget
 .RI [ OPTS ]
@@ -910,7 +910,7 @@ transfer, but loads the net and server heavily impacting other users. Use only i
 you really have to transfer the file ASAP.
 Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-c	T{
@@ -920,7 +920,7 @@ T}
 set maximum number of connections (default is taken from \fBpget:default-n\fP setting)
 T}
 .TE
-.in
+.RE
 .P
 .B put
 .RB [ \-E ]
@@ -935,7 +935,7 @@ T}
 Upload \fIlfile\fP with remote name \fIrfile\fP. If \-o omitted, the base name
 of \fIlfile\fP is used as remote name. Does not expand wildcards, use \fBmput\fR for that.
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-o <rfile>	T{
@@ -954,7 +954,7 @@ T}
 specifies base directory or URL where files should be placed
 T}
 .TE
-.in
+.RE
 .P
 .B pwd
 .RB [ \-p ]
@@ -993,7 +993,7 @@ Move the given items before the given queue index, or to the end if no
 destination is given.
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-q	Be quiet.
@@ -1002,7 +1002,7 @@ l	lx	.
 Output in a format that can be used to re-queue. Useful with \-\-delete.
 T}
 .TE
-.in
+.RE
 .PP
 Examples:
 .Ds
@@ -1015,7 +1015,7 @@ Examples:
 .De
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 queue \-d 3	Delete the third item in the queue.
@@ -1029,7 +1029,7 @@ queue \-d "get*zip"	T{
 Delete all commands matching "get*zip".
 T}
 .TE
-.in
+.RE
 .P
 .B quote
 \fIcmd\fP
@@ -1079,7 +1079,7 @@ Repeat specified command with a delay between iterations.
 Default delay is one second, default command is empty.
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-c <count>	maximum number of iterations
@@ -1088,7 +1088,7 @@ l	lx	.
 \-\-until\-ok	stop when command exits with zero code
 \-\-weak     	stop when lftp moves to background.
 .TE
-.in
+.RE
 .PP
 Examples:
 .Ds
@@ -1127,13 +1127,13 @@ If set is called with no variable then only altered settings are listed.
 It can be changed by options:
 .PP
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-a	list all settings, including default values
 \-d	list only default values, not necessary current ones
 .TE
-.in
+.RE
 .P
 .B site
 \fIsite_cmd\fP
@@ -1187,7 +1187,7 @@ runs out.
 .PP
 Options:
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \-O <directory>	T{
@@ -1214,7 +1214,7 @@ share specified file or directory using BitTorrent protocol. Magnet link
 is printed when it's ready.
 T}
 .TE
-.in
+.RE
 .P
 .B user
 \fIuser\fP [\fIpass\fP]
@@ -1465,7 +1465,7 @@ setting is the terminal type from TERM environment variable. Default uses
 
 The following escapes are supported:
 .Sp
-.in +0.5i
+.RS
 .TS
 l	lx	.
 \\a	bell
@@ -1475,6 +1475,7 @@ l	lx	.
 \\v	lftp version
 \\T	the status string
 .TE
+.RE
 .TP
 .BR cmd:time-style \ (string)
 This setting is the default value for cls \-\-time\-style option.
