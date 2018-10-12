@@ -50,9 +50,9 @@ AC_DEFUN([lftp_LIB_READLINE],
         ),
         [
         if test "$withval" = "yes"; then
-            if test -f /usr/local/include/readline.h -o -f /usr/local/include/readline/readline.h; then
+            if test -f /usr/local/include/readline/readline.h; then
                 readline_prefix=/usr/local
-            elif test -f /usr/include/readline.h -o -f /usr/include/readline/readline.h; then
+            elif test -f /usr/include/readline/readline.h; then
                 readline_prefix=/usr
             else
                 readline_prefix=""
@@ -68,9 +68,9 @@ AC_DEFUN([lftp_LIB_READLINE],
         ],
         [
         dnl Default behavior is implicit yes
-        if test -f /usr/local/include/readline.h -o -f /usr/local/include/readline/readline.h; then
+        if test -f /usr/local/include/readline/readline.h; then
             readline_prefix=/usr/local
-        elif test -f /usr/include/readline.h -o -f /usr/include/readline/readline.h; then
+        elif test -f /usr/include/readline/readline.h; then
             readline_prefix=/usr
         else
             readline_prefix=""
@@ -145,7 +145,7 @@ AC_DEFUN([lftp_LIB_READLINE],
             AC_LANG_PROGRAM(
                 [[
 @%:@include <stdio.h>
-@%:@include <readline.h>
+@%:@include <readline/readline.h>
                 ]],
                 [[]]
             )],
@@ -173,7 +173,7 @@ AC_DEFUN([lftp_LIB_READLINE],
                 AC_LANG_PROGRAM(
                     [[
 @%:@include <stdio.h>
-@%:@include <readline.h>
+@%:@include <readline/readline.h>
                     ]],
                     [[
 rl_getc_function=0;
