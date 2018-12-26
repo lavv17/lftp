@@ -507,12 +507,14 @@ static inline T replace_value(T &var,T new_value)
 # endif
 #endif
 
-#define INET6 (!defined(DISABLE_IPV6) \
-		&& defined(HAVE_IPV6) \
-		&& defined(HAVE_GETNAMEINFO) \
-		&& defined(HAVE_GETADDRINFO))
+#if !defined(DISABLE_IPV6) && defined(HAVE_IPV6) \
+    && defined(HAVE_GETNAMEINFO) && defined(HAVE_GETADDRINFO)
+# define INET6 1
+#endif
 
-#define USE_EXPAT (defined(HAVE_EXPAT_H) && defined(HAVE_LIBEXPAT))
+#if (defined(HAVE_EXPAT_H) && defined(HAVE_LIBEXPAT))
+# define USE_EXPAT 1
+#endif
 
 #if defined(SOCKS4) || defined(SOCKS5) || defined(SOCKS_DANTE)
 # define SOCKS 1
@@ -607,7 +609,9 @@ CDECL int SOCKSinit(const char *);
 # include "trio.h"
 #endif
 
-#define USE_SSL (defined(USE_GNUTLS) || defined(USE_OPENSSL))
+#if defined(USE_GNUTLS) || defined(USE_OPENSSL)
+# define USE_SSL 1
+#endif
 
 #endif /* CONFIG_H */
 ])
