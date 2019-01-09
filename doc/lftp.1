@@ -306,6 +306,37 @@ l1	l	lx	.
 .TE
 .RE
 .P
+.BR du " [" OPTS "] " \fIpath...\fP
+.PP
+Summarize disk usage. Options:
+.Sp
+.RS
+.TS
+l1	l	lx	.
+\-a,	\-\-all	T{
+write counts for all files, not just directories
+T}
+	\-\-block\-size=SIZ	use SIZ-byte blocks
+\-b,	\-\-bytes	print size in bytes
+\-c,	\-\-total	produce a grand total
+\-d,	\-\-max\-depth=N	T{
+print the total for a directory (or file, with \-\-all) only if it is N or
+fewer levels below the command line argument;  \-\-max\-depth=0 is the same as
+\-\-summarize
+T}
+\-F,	\-\-files	print number of files instead of sizes
+\-h,	\-\-human\-readable	T{
+print sizes in human readable format (e.g., 1K 234M 2G)
+T}
+\-H,	\-\-si	likewise, but use powers of 1000 not 1024
+\-k,	\-\-kilobytes	like \-\-block\-size=1024
+\-m,	\-\-megabytes	like \-\-block\-size=1048576
+\-S,	\-\-separate\-dirs	do not include size of subdirectories
+\-s,	\-\-summarize	display only a total for each argument
+	\-\-exclude=PAT	exclude files that match PAT
+.TE
+.RE
+.P
 .BR echo " [" \-n "] \fIstring\fR"
 .PP
 Prints (echos) the given string to the display.
@@ -468,7 +499,22 @@ glob --exist *.csv && echo "There are *.csv files"
 .PP
 Print help for \fIcmd\fP or if no \fIcmd\fP was specified print a list of
 available commands.
-
+.P
+.BR history " [" OPTS "] [" \fIcnt\fP "]"
+.PP
+View or manipulate the command history.  Optional argument \fIcnt\fP specifies
+the number of history lines to list, or "all" to list all entries.  Options:
+.Sp
+.RS
+.TS
+l1	l	lx	.
+\-w <file>	Write history to file.
+\-r <file>	Read history from file; appends to current history.
+\-c	Clear the history.
+\-l	List the history (default).
+.TE
+.RE
+.P
 .B jobs
 .RI [ OPTS ]
 .RI [ job_no... ]
