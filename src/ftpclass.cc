@@ -829,12 +829,11 @@ Ftp::pasv_state_t Ftp::Handle_EPSV()
 
 Ftp::pasv_state_t Ftp::Handle_EPSV_CEPR()
 {
-   char *format=alloca_strdup("(|%u|%[^'|']|%u|)");
    unsigned port, proto;
    char pasv_addr[40];
 
    const char *c_start=strchr(line,'(');
-   if(sscanf(c_start,format,&proto, &pasv_addr, &port)!=3)
+   if(sscanf(c_start, "(|%u|%39[^'|']|%u|)", &proto, pasv_addr, &port)!=3)
    {
       LogError(0,_("cannot parse custom EPSV response"));
       Disconnect(_("cannot parse custom EPSV response"));
@@ -2318,7 +2317,7 @@ int   Ftp::Do()
 
          // Clean up old data socket, as it might be from the wrong 
          // address family.
-         if(conn->data_sock)
+         if(conn->data_sock!=-1)
              close(conn->data_sock);
 
          // Create new data socket with appropriate address family.
@@ -2339,8 +2338,7 @@ int   Ftp::Do()
 	 if(res==-1 && errno!=EINPROGRESS)
 	 {
 	    saved_errno=errno;
-            LogError(0,"connect: numeric error code: %u",saved_errno);
-	    LogError(0,"connect: %s",strerror(saved_errno));
+        LogError(0,"connect: %s (%d)",strerror(saved_errno),saved_errno);
 	    Disconnect(strerror(saved_errno));
 	    if(NotSerious(saved_errno))
 	       return MOVED;
