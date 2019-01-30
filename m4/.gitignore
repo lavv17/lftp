@@ -266,3 +266,6 @@
 /ftell.m4
 /ftello.m4
 /lseek.m4
+/fnmatch_h.m4
+/glob_h.m4
+/intl-thread-locale.m4
