@@ -12,13 +12,13 @@ int main(int argc,char **argv)
 {
    program_name=argv[0];
 
-   FileAccess *f=FileAccess::New("ftp","ftp.redhat.com");
+   FileAccess *f=FileAccess::New("ftp","mirror.yandex.ru");
    if(!f)
    {
       fprintf(stderr,"ftp: unknown protocol, cannot create ftp session\n");
       return 1;
    }
-   f->Open("/redhat",f->LONG_LIST);
+   f->Open("/",f->LONG_LIST);
    Buffer buf;
    for(;;)
    {
