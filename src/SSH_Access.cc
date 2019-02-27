@@ -20,6 +20,9 @@
 #include <config.h>
 #include "SSH_Access.h"
 #include "misc.h"
+#include <algorithm>
+#include <cctype>
+#include <string>
 
 void SSH_Access::MakePtyBuffers()
 {
@@ -44,6 +47,18 @@ static bool begins_with(const char *b,const char *e,const char *suffix)
    return (e-b>=len && !strncasecmp(b,suffix,len));
 }
 
+static bool contains(char const * begin, char const * end, std::string const & needle)
+{
+   struct nocase_eq
+   {
+      inline bool operator() (char lhs, char rhs) const
+      {
+         return std::tolower(lhs) == std::tolower(rhs);
+      };
+   };
+   return std::search(begin, end, needle.begin(), needle.end(), nocase_eq()) != end;
+}
+
 int SSH_Access::HandleSSHMessage()
 {
    int m=STALL;
@@ -56,9 +71,7 @@ int SSH_Access::HandleSSHMessage()
       if(s>0 && b[s-1]==' ')
 	 s--;
       if(ends_with(b,b+s,"'s password")
-      || ends_with(b,b+s,"password:")
-      || (ends_with(b,b+s,"':") && s>10)
-      || (begins_with(b,b+s,"password for ") && b[s-1]==':'))
+      || (contains(b,b+s,"password") && b[s-1]==':'))
       {
 	 if(!pass)
 	 {
