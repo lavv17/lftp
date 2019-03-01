@@ -3905,6 +3905,8 @@ bool TorrentListener::MaySendUDP()
       last_sent_udp_count=0;
       last_sent_udp=now;
    }
+   if (sock==-1)
+      return false;
    // check if output buffer is available
    struct pollfd pfd;
    pfd.fd=sock;
