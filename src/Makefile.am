@@ -40,6 +40,8 @@ if NEED_TRIO
 endif
 GNULIB = $(top_builddir)/lib/libgnu.la
 
+JSON_C_DIR=/usr/
+
 proto_ftp_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 proto_http_la_CPPFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
 proto_http_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
@@ -70,7 +72,7 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  buffer.cc buffer.h url.cc url.h StatusLine.cc StatusLine.h plural.c plural.h\
  misc.h misc.cc fg.cc fg.h module.cc module.h modconfig.h\
  resource.cc DummyProto.cc DummyProto.h Error.cc Error.h\
- ArgV.cc ArgV.h ascii_ctype.h keyvalue.cc keyvalue.h bookmark.cc bookmark.h\
+ ArgV.cc ArgV.h ascii_ctype.h keyvalue.cc keyvalue.h bookmark.cc bookmark.h sitemgr.cc sitemgr.h \
  Speedometer.cc FileGlob.cc FileGlob.h xlist.h xheap.h\
  Speedometer.h netrc.cc netrc.h lftp_tinfo.cc lftp_tinfo.h\
  TimeDate.cc TimeDate.h Timer.cc Timer.h GetFileInfo.cc GetFileInfo.h\
@@ -78,7 +80,8 @@ liblftp_tasks_la_SOURCES = PollVec.cc PollVec.h SMTask.cc SMTask.h ProcWait.cc\
  IdNameCache.h PatternSet.cc PatternSet.h LocalDir.cc LocalDir.h
 liblftp_tasks_la_LIBADD = $(TASK_MODULES_STATIC) $(TRIO) $(GNULIB)\
  $(LIB_CRYPTO) $(INET_PTON_LIB) $(LIB_CLOCK_GETTIME) $(SOCKSLIBS)\
- $(LIBSOCKET) $(LIB_POLL) $(LIB_SELECT) $(LTLIBINTL) $(LTLIBICONV)
+ $(LIBSOCKET) $(LIB_POLL) $(LIB_SELECT) $(LTLIBINTL) $(LTLIBICONV)\
+ $(JSON_C_DIR)/lib -ljson-c
 
 liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  commands.cc mgetJob.h mgetJob.cc SysCmdJob.cc SysCmdJob.h rmJob.cc rmJob.h\
@@ -93,7 +96,7 @@ liblftp_jobs_la_SOURCES = Job.cc Job.h CmdExec.cc CmdExec.h\
  buffer_std.cc buffer_std.h
 liblftp_jobs_la_LIBADD = $(JOB_MODULES_STATIC) liblftp-tasks.la
 
-lftp_CPPFLAGS = $(AM_CPPFLAGS) $(READLINE_CFLAGS)
+lftp_CPPFLAGS = $(AM_CPPFLAGS) $(READLINE_CFLAGS) $(JSON_C_DIR)/include/json-c
 lftp_LDFLAGS = -export-dynamic
 lftp_LDADD = liblftp-jobs.la liblftp-tasks.la $(READLINE_LDFLAGS) $(READLINE_LIBS)
 lftp_DEPENDENCIES = liblftp-jobs.la

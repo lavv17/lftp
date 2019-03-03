@@ -47,6 +47,7 @@ public:
       return res.move_here(CombineTo(tmp,start_index,end_index));
    }
    char *Combine(int start_index=0,int end_index=0) const { return CombineTo(xstring::get_tmp(),start_index,end_index).borrow(); }
+   char *CombineRemaining() const;
 
    // for the UNIX shell
    xstring& CombineShellQuotedTo(xstring& res,int start) const;

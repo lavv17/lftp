@@ -27,6 +27,8 @@ if test x$ac_cv_lib_fl_yywrap = xno; then
    AC_DEFINE(NEED_YYWRAP, 1, [need yywrap]) dnl ?
 fi
 
+PKG_CHECK_MODULES([json_c], [json-c])
+
 dnl POSIXCHECK is worthwhile for maintainers, but adds several seconds
 dnl (more than 10% execution time) to ./configure, with no benefit for
 dnl most users.  Using it to look for bugs requires:
@@ -615,6 +617,7 @@ CDECL int SOCKSinit(const char *);
 
 #endif /* CONFIG_H */
 ])
+
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])

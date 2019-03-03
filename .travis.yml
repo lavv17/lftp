@@ -18,6 +18,7 @@ addons:
     - autoconf
     - autopoint
     - gperf
+    - libjson-c-dev
 
 script:
     - ./bootstrap

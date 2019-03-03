@@ -33,6 +33,7 @@
 #include "xlist.h"
 #include "xmap.h"
 #include "Timer.h"
+#include "sitemgr.h"
 
 #define FILE_END     ((off_t)-1L)
 #define UNKNOWN_POS  ((off_t)-1L)

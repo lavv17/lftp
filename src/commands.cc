@@ -65,6 +65,7 @@
 #include "SignalHook.h"
 #include "FileFeeder.h"
 #include "bookmark.h"
+#include "sitemgr.h"
 #include "log.h"
 #include "module.h"
 #include "FileCopy.h"
@@ -80,8 +81,8 @@
 
 History	 cwd_history;
 
-CMD(alias); CMD(anon); CMD(at); CMD(bookmark); CMD(cache); CMD(cat);
-CMD(cd); CMD(chmod); CMD(close); CMD(cls); CMD(command); CMD(debug);
+CMD(alias); CMD(anon); CMD(at); CMD(bookmark); CMD(sitemgr); CMD(cache); 
+CMD(cat); CMD(cd); CMD(chmod); CMD(close); CMD(cls); CMD(command); CMD(debug);
 CMD(du); CMD(echo); CMD(edit); CMD(eval); CMD(exit); CMD(find); CMD(get);
 CMD(get1); CMD(glob); CMD(help); CMD(jobs); CMD(kill); CMD(lcd); CMD(lftp);
 CMD(ln); CMD(local); CMD(lpwd); CMD(ls); CMD(mirror); CMD(mkdir);
@@ -133,6 +134,18 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 "  edit               - start editor on bookmarks file\n"
 	 "  import <type>      - import foreign bookmarks\n"
 	 "  list               - list bookmarks (default)\n")},
+   {"sitemgr",cmd_sitemgr,N_("sitemgr [SUBCMD]"),
+	 N_("sitemgr allows you to manage sites\n\n"
+    "The following subcommands are available:\n"
+    "  add <name>              - adds a new site to the site manager\n"
+    "  show <name>             - prints the configuration for the given site\n"
+    "  set <name> <field>      - sets a field for the site\n"
+    "                            Valid fields are:\n"
+    "                             - User, Password, Address, Port, Ssl\n"
+    "                             - Notes, LocalPath, RemotePath\n"
+    "  delete <name>           - deletes a site\n"
+    "  refresh                 - refreshes sites from file\n"
+    "  save                    - saves sites to file\n")},   
    {"bye", ALIAS_FOR(exit)},
    {"cache",   cmd_cache,  N_("cache [SUBCMD]"),
 	 N_("cache command controls local memory cache\n\n"
@@ -992,6 +1005,58 @@ Job *CmdExec::builtin_open()
 	 cmd.append(";\n");
 
       PrependCmd(cmd);
+   }
+   else if (!no_bm && host && lftp_sitemgr.SiteExists(host)){
+       
+      xstring& cmd=xstring::get_tmp("open -B ");
+      Sitemgr::Site *site = lftp_sitemgr.GetSite(host);
+              
+      if(strcasecmp(site->username, "") != 0){
+        cmd.append("--user ").append_quoted(site->username);
+        cmd.append(' ');
+      }
+      
+      if(strcasecmp(site->password, "") != 0){
+        cmd.append(" --password ").append_quoted(site->password);
+        cmd.append(' ');
+      }
+      
+      if(strcasecmp(site->port, "") != 0){
+        cmd.append(" -p ").append_quoted(site->port);
+        cmd.append(' ');
+      } 
+       
+      if(site->ssl)
+      {
+          cmd.append("ftps://");
+      }
+      else 
+      {
+          cmd.append("ftp://");
+      }
+      
+      cmd.append(site->address);
+      if(strcasecmp(site->remotePath, "") != 0){
+        cmd.append(site->remotePath);
+      }
+      
+      if(background)
+	 cmd.append(" &\n");
+      else
+	 cmd.append(";\n"); 
+      
+      if(strcasecmp(site->proxy, "") != 0)
+          ResMgr::Set("ftp:proxy", host, site->proxy);
+      if(strcasecmp(site->proxy, "") != 0)
+          ResMgr::Set("ftp:proxy-auth-type", host, site->proxy_auth_type);
+      
+     PrependCmd(cmd);
+     
+     xstring& local_cwd=xstring::get_tmp("");
+     if(strcasecmp(site->localPath, "") != 0){
+        local_cwd.append("lcd ").append_quoted(site->localPath);
+     }
+     PrependCmd(local_cwd);
    }
    else
    {
@@ -2927,10 +2992,116 @@ CMD(close)
    return 0;
 }
 
+const char * const sitemgr_subcmd[]=
+   {"add","delete","list","show", "save","set","refresh",0};
 const char * const bookmark_subcmd[]=
    {"add","delete","list","list-p","edit","import",0};
 static ResDecl res_save_passwords
    ("bmk:save-passwords","no",ResMgr::BoolValidate,0);
+
+CMD(sitemgr)
+ {
+    const char *op=args->getnext();
+ 
+    if(!op)
+       op="list";
+    else if(!find_command(op,sitemgr_subcmd,&op))
+    {
+       // xgettext:c-format
+       eprintf(_("Invalid command. "));
+       eprintf(_("Try `help %s' for more information.\n"),args->a0());
+       return 0;
+    }
+    if(!op)
+    {
+       // xgettext:c-format
+       eprintf(_("Ambiguous command. "));
+       eprintf(_("Try `help %s' for more information.\n"),args->a0());
+       return 0;
+    }
+ 
+    if(!strcasecmp(op,"list"))
+    {
+        xstring_ca list(lftp_sitemgr.List());
+        OutputJob *out=new OutputJob(output.borrow(), args->a0());
+        Job *j=new echoJob(list,out);
+        return j;
+    }
+    else if(!strcasecmp(op,"add"))
+    {
+       const char *key=args->getnext();
+       if(key==0 || key[0]==0)
+      eprintf(_("%s: Site name required\n"),args->a0());
+       else
+       {
+      lftp_sitemgr.Add(key);
+      exit_code=0;
+       }
+    }
+ 
+    else if(!strcasecmp(op,"delete"))
+    {
+       const char *key=args->getnext();
+       if(key==0 || key[0]==0)
+            eprintf(_("%s: Site name required\n"),args->a0());
+       else
+       {
+            lftp_sitemgr.Remove(key);
+            exit_code=0;
+       }
+    }
+    else if(!strcasecmp(op,"save"))
+    {
+      lftp_sitemgr.Save();
+      exit_code=0;
+    }
+ 
+    else if(!strcasecmp(op,"set"))
+    {
+          const char *site=args->getnext();
+          if(site==0 || site[0]==0)
+          {
+             eprintf(_("%s: Site name required\n"),args->a0());
+          }
+          else
+          {
+            const char *attribute=args->getnext();
+            const char *value=args->CombineRemaining();
+     
+            if(attribute && value)
+            {
+                lftp_sitemgr.ConfSet(site, attribute, value);
+            }
+            else
+            {
+                eprintf(_("%s: Field required\n"),args->a0());
+            }
+          }
+      exit_code=0;
+    }
+    else if(!strcasecmp(op,"show"))
+    {
+        const char *key=args->getnext();
+        xstring list;
+        if(key==0 || key[0]==0)
+            list.set(lftp_sitemgr.List());
+        else
+        {
+            list.set(lftp_sitemgr.Conf(key));
+        }
+        OutputJob *out=new OutputJob(output.borrow(), args->a0());
+        Job *j=new echoJob(list,out);
+        return j;
+        exit_code=0;
+    }
+    else if(!strcasecmp(op,"refresh"))
+    {
+      lftp_sitemgr.Refresh();
+      exit_code=0;
+    }
+    return 0;
+ }
+
 
 CMD(bookmark)
 {
