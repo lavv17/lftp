@@ -232,8 +232,8 @@ static ResType lftp_vars[] = {
 #if USE_SSL
    {"ftp:ssl-allow",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:ssl-force",		 "no",	  ResMgr::BoolValidate,0},
-   {"ftp:ssl-protect-data",	 "no",	  ResMgr::BoolValidate,0},
-   {"ftp:ssl-protect-fxp",	 "no",    ResMgr::BoolValidate,0},
+   {"ftp:ssl-protect-data",	 "yes",	  ResMgr::BoolValidate,0},
+   {"ftp:ssl-protect-fxp",	 "yes",    ResMgr::BoolValidate,0},
    {"ftp:ssl-protect-list",	 "yes",   ResMgr::BoolValidate,0},
    {"ftp:ssl-auth",		 "TLS",   AuthArgValidate,0},
    {"ftp:ssl-allow-anonymous",	 "no",	  ResMgr::BoolValidate,0},

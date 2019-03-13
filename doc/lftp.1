@@ -1792,14 +1792,14 @@ if true, refuse to send password in clear when server does not support SSL.
 Default is false.
 .TP
 .BR ftp:ssl-protect-data \ (boolean)
-if true, request SSL connection for data transfers. This is cpu-intensive
-but provides privacy. Default is false.
+if true, request SSL connection for data transfers. This provides privacy and
+transmission error correction. Was cpu-intensive on old CPUs. Default is true.
 .TP
 .BR ftp:ssl-protect-fxp \ (boolean)
 if true, request SSL connection for data transfer between two FTP servers
 in FXP mode. CPSV or SSCN command will be used in that case. If SSL connection
 fails for some reason, lftp would try unprotected FXP transfer unless
-ftp:ssl-force is set for any of the two servers. Default is false.
+ftp:ssl-force is set for any of the two servers. Default is true.
 .TP
 .BR ftp:ssl-protect-list \ (boolean)
 if true, request SSL connection for file list transfers. Default is true.
