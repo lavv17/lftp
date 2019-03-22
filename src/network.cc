@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2019 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -426,4 +426,62 @@ int Networker::SocketBuffered(int sock)
 #else
    return 0;
 #endif
+}
+
+#ifdef HAVE_IFADDRS_H
+#include <ifaddrs.h>
+#endif
+const char *Networker::FindGlobalIPv6Address()
+{
+#if INET6 && defined(HAVE_IFADDRS_H)
+   struct ifaddrs *ifaddrs=0;
+   getifaddrs(&ifaddrs);
+   for(struct ifaddrs *ifa=ifaddrs; ifa; ifa=ifa->ifa_next) {
+      if(ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET6) {
+	 struct in6_addr *addr=&((struct sockaddr_in6*)ifa->ifa_addr)->sin6_addr;
+	 if(!IN6_IS_ADDR_UNSPECIFIED(addr) && !IN6_IS_ADDR_LOOPBACK(addr)
+	 && !IN6_IS_ADDR_LINKLOCAL(addr) && !IN6_IS_ADDR_SITELOCAL(addr)
+	 && !IN6_IS_ADDR_MULTICAST(addr)) {
+	    char *buf=xstring::tmp_buf(INET6_ADDRSTRLEN);
+	    inet_ntop(AF_INET6, addr, buf, INET6_ADDRSTRLEN);
+	    freeifaddrs(ifaddrs);
+	    return buf;
+	 }
+      }
+   }
+   freeifaddrs(ifaddrs);
+#endif
+   return 0;
+}
+
+static bool CanCreateIpv6Socket()
+{
+#if INET6
+   bool can=true;
+   int s=socket(AF_INET6,SOCK_STREAM,IPPROTO_TCP);
+   if(s==-1 && (errno==EINVAL
+#ifdef EAFNOSUPPORT
+      || errno==EAFNOSUPPORT
+#endif
+   ))
+      can=false;
+   if(s!=-1)
+      close(s);
+   return can;
+#else
+   return false;
+#endif
+}
+
+static struct NetworkInit : private Networker {
+   NetworkInit();
+} NETWORK_INIT;
+
+NetworkInit::NetworkInit()
+{
+#if INET6
+   // check if ipv6 is really supported
+   if(!Networker::FindGlobalIPv6Address() || !CanCreateIpv6Socket())
+      ResMgr::Set("dns:order",0,"inet");
+#endif // INET6
 }

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2019 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,6 +139,7 @@ protected:
    static int SocketCreateUnbound(int af,int type,int proto,const char *hostname);
    static int SocketCreateUnboundTCP(int af,const char *hostname);
    static void SocketSinglePF(int sock,int pf);
+   static const char *FindGlobalIPv6Address();
 };
 
 #endif //NETWORK_H

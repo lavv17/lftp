@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2019 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,34 +61,6 @@ static ResType torrent_vars[] = {
 };
 static ResDecls torrent_vars_register(torrent_vars);
 
-#if INET6
-#ifdef HAVE_IFADDRS_H
-#include <ifaddrs.h>
-#endif
-static const char *FindGlobalIPv6Address()
-{
-#ifdef HAVE_IFADDRS_H
-   struct ifaddrs *ifaddrs=0;
-   getifaddrs(&ifaddrs);
-   for(struct ifaddrs *ifa=ifaddrs; ifa; ifa=ifa->ifa_next) {
-      if(ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET6) {
-	 struct in6_addr *addr=&((struct sockaddr_in6*)ifa->ifa_addr)->sin6_addr;
-	 if(!IN6_IS_ADDR_UNSPECIFIED(addr) && !IN6_IS_ADDR_LOOPBACK(addr)
-	 && !IN6_IS_ADDR_LINKLOCAL(addr) && !IN6_IS_ADDR_SITELOCAL(addr)
-	 && !IN6_IS_ADDR_MULTICAST(addr)) {
-	    char *buf=xstring::tmp_buf(INET6_ADDRSTRLEN);
-	    inet_ntop(AF_INET6, addr, buf, INET6_ADDRSTRLEN);
-	    freeifaddrs(ifaddrs);
-	    return buf;
-	 }
-      }
-   }
-   freeifaddrs(ifaddrs);
-#endif
-   return 0;
-}
-#endif
-
 void Torrent::ClassInit()
 {
    static bool inited;
@@ -100,7 +72,7 @@ void Torrent::ClassInit()
    const char *ipv6=ResMgr::Query("torrent:ipv6",0);
    if(!*ipv6)
    {
-      ipv6=FindGlobalIPv6Address();
+      ipv6=Networker::FindGlobalIPv6Address();
       if(ipv6) {
 	 ProtoLog::LogNote(9,"found IPv6 address: %s",ipv6);
 	 ResMgr::Set("torrent:ipv6",0,ipv6);

@@ -1,7 +1,7 @@
 /*
  * lftp - file transfer program
  *
- * Copyright (c) 1996-2017 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1996-2019 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -473,21 +473,6 @@ void ResType::ClassInit()
    const char *no_proxy=getenv("no_proxy");
    if(no_proxy)
       Set("net:no-proxy",0,no_proxy);
-
-#if INET6
-   // check if ipv6 is really supported
-   int s=socket(AF_INET6,SOCK_STREAM,IPPROTO_TCP);
-   if(s==-1 && (errno==EINVAL
-#ifdef EAFNOSUPPORT
-      || errno==EAFNOSUPPORT
-#endif
-   ))
-   {
-      Set("dns:order",0,"inet");
-   }
-   if(s!=-1)
-      close(s);
-#endif // INET6
 
    const char *module_path=getenv("LFTP_MODULE_PATH");
    if(module_path)
