@@ -222,7 +222,7 @@ public:
 
 class TorrentTracker;
 
-class Torrent : public SMTask, protected ProtoLog, public ResClient
+class Torrent : public SMTask, protected ProtoLog, public ResClient, protected Networker
 {
    friend class TorrentPeer;
    friend class TorrentDispatcher;

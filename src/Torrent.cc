@@ -72,7 +72,7 @@ void Torrent::ClassInit()
    const char *ipv6=ResMgr::Query("torrent:ipv6",0);
    if(!*ipv6)
    {
-      ipv6=Networker::FindGlobalIPv6Address();
+      ipv6=FindGlobalIPv6Address();
       if(ipv6) {
 	 ProtoLog::LogNote(9,"found IPv6 address: %s",ipv6);
 	 ResMgr::Set("torrent:ipv6",0,ipv6);
