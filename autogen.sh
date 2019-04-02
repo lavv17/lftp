@@ -6,6 +6,12 @@ test -z "$srcdir" && srcdir=.
 
 PKG_NAME="lftp"
 
+# on Mac libtoolize is called glibtoolize
+LIBTOOLIZE=libtoolize
+if [ "`uname`" = "Darwin" ]; then
+  LIBTOOLIZE=glibtoolize
+fi
+
 (test -f $srcdir/configure.ac \
   && test -d $srcdir/src) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
@@ -25,7 +31,7 @@ DIE=0
 }
 
 (egrep "^AM_PROG_LIBTOOL|^LT_INIT" $srcdir/configure.ac >/dev/null) && {
-  (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+  ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed to compile $PKG_NAME."
     echo "Get ftp://ftp.gnu.org/pub/gnu/libtool/libtool-1.6.tar.gz"
@@ -145,7 +151,7 @@ do
       fi
       if egrep "^AM_PROG_LIBTOOL|^LT_INIT" configure.ac >/dev/null; then
 	echo "Running libtoolize..."
-	libtoolize --force --copy
+	$LIBTOOLIZE --force --copy
 	mv Makefile.am~ Makefile.am
       fi
       gnulib-tool --update
