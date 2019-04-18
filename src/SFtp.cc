@@ -876,7 +876,7 @@ void SFtp::HandleExpect(Expect *e)
 	    d->GetData(&b,&s);
 	    LogNote(9,"data packet: pos=%lld, size=%d",(long long)r->pos,s);
 	    file_buf->Put(b,s);
-	    if(d->Eof())
+	    if(d->Eof() || eof)
 	       goto eof;
 	    if(r->len > unsigned(s))   // received less than requested?
 	    {
@@ -938,7 +938,7 @@ void SFtp::HandleExpect(Expect *e)
 	       file_set->Add(info);
 	    }
 	 }
-	 if(r->Eof())
+	 if(r->Eof() || eof)
 	    goto eof;
       }
       else
@@ -952,7 +952,7 @@ void SFtp::HandleExpect(Expect *e)
 		  LogNote(9,"eof");
 	       eof=true;
 	       state=DONE;
-	       if(file_buf && ooo_chain.count()==0)
+	       if(file_buf && ooo_chain.count()==0 && expect_queue.count()==0)
 		  file_buf->PutEOF();
 	       break;
 	    }
