@@ -2316,7 +2316,7 @@ int   Ftp::Do()
 	    goto pre_WAITING_STATE;
 	 }
 
-         // Clean up old data socket, as it might be from the wrong 
+         // Clean up old data socket, as it might be from the wrong
          // address family.
          if(conn->data_sock!=-1)
              close(conn->data_sock);
@@ -3988,8 +3988,6 @@ void Ftp::SendOPTS_MLST()
       }
       differs|=(was_enabled^want_enable);
    }
-   if(store>facts && store[-1]==';')
-      --store;
    if(!differs || store==facts)
       return;
    *store=0;
