@@ -248,7 +248,11 @@ void NetAccess::NextPeer()
    if(peer_curr>=peer.count())
       peer_curr=0;
    else
+   {
+      if(retries>0)
+	 retries--;
       DontSleep(); // try next address immediately
+   }
 }
 
 void NetAccess::ResetLocationData()
