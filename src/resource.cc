@@ -248,7 +248,7 @@ static ResType lftp_vars[] = {
    {"ftp:sync-mode",		 "on",    ResMgr::BoolValidate,0},
    {"ftp:trust-feat",		 "no",	  ResMgr::BoolValidate,0},
    {"ftp:use-abor",		 "yes",   ResMgr::BoolValidate,0},
-   {"ftp:use-allo",		 "yes",   ResMgr::BoolValidate,0},
+   {"ftp:use-allo",		 "no",    ResMgr::BoolValidate,0},
    {"ftp:use-feat",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-fxp",		 "yes",   ResMgr::BoolValidate,0},
    {"ftp:use-hftp",		 "yes",   ResMgr::BoolValidate,0},
