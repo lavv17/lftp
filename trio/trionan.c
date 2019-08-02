@@ -43,7 +43,7 @@
 #include "triodef.h"
 #include "trionan.h"
 
-#include <math.h>
+#include <cmath>
 #include <string.h>
 #include <limits.h>
 #include <float.h>

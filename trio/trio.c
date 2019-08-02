@@ -76,7 +76,7 @@
 #if !defined(TRIO_COMPILER_SUPPORTS_C99)
 # define isblank(x) (((x)==32) || ((x)==9))
 #endif
-#include <math.h>
+#include <cmath>
 #include <limits.h>
 #include <float.h>
 #if defined(TRIO_COMPILER_ANCIENT)

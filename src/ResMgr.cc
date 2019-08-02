@@ -23,7 +23,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>

@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <math.h>
+#include <cmath>
 #include "triodef.h"
 #include "triostr.h"
 
