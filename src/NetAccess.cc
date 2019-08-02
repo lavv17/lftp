@@ -21,7 +21,7 @@
 
 #include <errno.h>
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <sys/types.h>
 
 #include "NetAccess.h"

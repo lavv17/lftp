@@ -36,7 +36,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <math.h>
+#include <cmath>
 #include <stddef.h>
 #include "FileCopy.h"
 #include "url.h"
