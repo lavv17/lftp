@@ -61,7 +61,6 @@ CDECL_END
 #include "url.h"
 #include "ResMgr.h"
 #include <mbswidth.h>
-#include "strftime.h"
 
 const char *dir_file(const char *dir,const char *file)
 {

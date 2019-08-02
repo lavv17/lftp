@@ -42,7 +42,6 @@
 
 #include "ascii_ctype.h"
 #include "misc.h"
-#include "strftime.h"
 
 #define TELNET_IAC	'\377'	 //255	/* interpret as command: */
 #define TELNET_IP	'\364'	 //244	/* interrupt process--permanently */
