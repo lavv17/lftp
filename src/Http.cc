@@ -1052,7 +1052,7 @@ void Http::HandleHeaderLine(const char *name,const char *value)
       if(value[0]=='/' && value[1]=='/')
 	 location.vset(GetProto(),":",value,NULL);
       else if(value[0]=='/')
-	 location.vset(GetConnectURL().get(),value,NULL);
+	 location.vset(GetConnectURL(NO_PATH).get(),value,NULL);
       else
 	 location.set(value);
 
