@@ -114,7 +114,7 @@ void ParsedURL::parse(const char *url,bool proto_required,bool use_rfc1738)
 	 path.set(scan+1);
       else
       {
-	 if((!xstrcmp(proto,"ftp") || !xstrcmp(proto,"hftp"))
+	 if((!xstrcmp(proto,"ftp") || !xstrcmp(proto,"ftps") || !xstrcmp(proto,"hftp"))
 	 && use_rfc1738)
 	 {
 	    // special handling for ftp protocol.
