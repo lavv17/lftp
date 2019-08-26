@@ -5,12 +5,20 @@
 #include <config.h>
 #include <unistd.h>
 #include "FileAccess.h"
+#include "log.h"
 
 char *program_name;
 
 int main(int argc,char **argv)
 {
    program_name=argv[0];
+
+   Log::global=new Log("debug");
+   ResMgr::Set("log:level",0,"5");
+   ResMgr::Set("log:enabled",0,"true");
+
+   ResMgr::Set("ftp:use-stat-for-list",0,"true");
+   ResMgr::Set("ftp:sync-mode",0,"false");
 
    FileAccess *f=FileAccess::New("ftp","mirror.yandex.ru");
    if(!f)
