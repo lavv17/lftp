@@ -238,6 +238,9 @@ public:
    static void RegisterCommand(const char *name,cmd_creator_t creator,
       const char *short_name=0,const char *long_name=0);
 
+   static void RegisterCompatCommand(const char *name,cmd_creator_t creator,
+      const char *short_name=0,const char *long_name=0);
+
    Job *builtin_lcd();
    Job *builtin_cd();
    Job *builtin_open();

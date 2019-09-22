@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#include <unistd.h>
 #include "CopyJob.h"
 #include "ArgV.h"
 #include "plural.h"
@@ -270,7 +271,7 @@ void CopyJobEnv::SetCopier(FileCopy *c,const char *n)
 
 xstring& CopyJobEnv::FormatFinalWithPrefix(xstring& s,const char *p)
 {
-   if(no_status)
+   if(no_status || !isatty(1))
       return s;
    if(count==errors)
       return s;
