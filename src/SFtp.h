@@ -719,12 +719,11 @@ private:
    int HandlePty();
    void HandleExpect(Expect *);
    void CloseExpectQueue();
-   int GetExpectCount(Expect::expect_t tag);
+   bool HasExpect(Expect::expect_t tag);
    void CloseHandle(Expect::expect_t e);
    int ReplyLogPriority(int);
 
    xmap_p<Expect> expect_queue;
-   const xstring& expect_key(unsigned id);
 
    Expect *FindExpectExclusive(Packet *reply);
    xarray_p<Expect> ooo_chain; 	// out of order replies buffered

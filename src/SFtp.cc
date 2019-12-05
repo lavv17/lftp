@@ -824,7 +824,7 @@ void SFtp::HandleExpect(Expect *e)
 	    SetError(NO_FILE,strerror(ENOTDIR));
 	    break;
 	 }
-	 if(mode==CHANGE_DIR && GetExpectCount(Expect::CWD)==0)
+	 if(mode==CHANGE_DIR && !HasExpect(Expect::CWD))
 	 {
 	    cwd.Set(file);
 	    eof=true;
@@ -1062,7 +1062,7 @@ int SFtp::HandleReplies()
       }
    }
 
-   if(ooo_chain.count()==0 && eof && file_buf && !file_buf->Eof())
+   if(ooo_chain.count()==0 && eof && file_buf && !file_buf->Eof() && !HasExpect(Expect::DATA))
       file_buf->PutEOF();
 
    if(recv_buf->Size()<4)
@@ -1118,6 +1118,7 @@ SFtp::Expect *SFtp::FindExpectExclusive(Packet *p)
       e->reply=p;
    return e;
 }
+
 void SFtp::CloseExpectQueue()
 {
    for(Expect *e=expect_queue.each_begin(); e; e=expect_queue.each_next())
@@ -1144,12 +1145,12 @@ void SFtp::CloseExpectQueue()
    }
 }
 
-int SFtp::GetExpectCount(Expect::expect_t tag)
+bool SFtp::HasExpect(Expect::expect_t tag)
 {
-   int count=0;
    for(Expect *e=expect_queue.each_begin(); e; e=expect_queue.each_next())
-      count+=(e->tag==tag);
-   return count;
+      if(e->tag==tag)
+	 return true;
+   return false;
 }
 
 Glob *SFtp::MakeGlob(const char *pat)
