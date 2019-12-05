@@ -70,6 +70,13 @@ static bool IsPasswordPrompt(const char *b,const char *e)
    return false;
 }
 
+static bool IsConfirmPrompt(const char *b,const char *e)
+{
+   if(b==e)
+      return false;
+   return e[-1]=='?' && contains(b,e,"yes/no");
+}
+
 int SSH_Access::HandleSSHMessage()
 {
    int m=STALL;
@@ -99,7 +106,7 @@ int SSH_Access::HandleSSHMessage()
 	 password_sent++;
 	 return m;
       }
-      if(ends_with(b,b+s,"(yes/no)?"))
+      if(IsConfirmPrompt(b,b+s))
       {
 	 const char *answer=QueryBool("auto-confirm",hostname)?"yes\n":"no\n";
 	 pty_recv_buf->Put(answer);
