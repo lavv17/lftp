@@ -59,6 +59,17 @@ static bool contains(char const * begin, char const * end, std::string const & n
    return std::search(begin, end, needle.begin(), needle.end(), nocase_eq()) != end;
 }
 
+static bool IsPasswordPrompt(const char *b,const char *e)
+{
+   if(b==e)
+      return false;
+   if(ends_with(b,e,"'s password"))
+      return true;
+   if(e[-1]==':')
+      return contains(b,e,"password") || contains(b,e,"passphrase");
+   return false;
+}
+
 int SSH_Access::HandleSSHMessage()
 {
    int m=STALL;
@@ -70,8 +81,7 @@ int SSH_Access::HandleSSHMessage()
    {
       if(s>0 && b[s-1]==' ')
 	 s--;
-      if(ends_with(b,b+s,"'s password")
-      || (contains(b,b+s,"password") && b[s-1]==':'))
+      if(IsPasswordPrompt(b,b+s))
       {
 	 if(!pass)
 	 {
