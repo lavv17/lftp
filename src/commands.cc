@@ -2834,7 +2834,7 @@ CMD(ver)
    {
       const char *lib_name;
       const char *symbol;
-      enum type_t { STRING_PTR, FUNC0, INT8_8 } type;
+      enum type_t { STRING_OR_PTR, STRING_PTR, FUNC0, INT8_8 } type;
       const char *skip_prefix;
       typedef const char *(*func0)(void *);
       const char *query() const
@@ -2846,6 +2846,11 @@ CMD(ver)
 	    const char *str=0;
 	    switch(type)
 	    {
+	    case STRING_OR_PTR:
+	       str=(const char*)sym_ptr;
+	       if(skip_prefix && !strncmp(str,skip_prefix,sizeof(char*)))
+		  break;
+	       // FALLTHROUGH
 	    case STRING_PTR:
 	       str=*(const char**)sym_ptr;
 	       break;
@@ -2869,7 +2874,7 @@ CMD(ver)
       {"GnuTLS",     "gnutls_check_version", VersionInfo::FUNC0,     0},
       {"idn2",	     "idn2_check_version",   VersionInfo::FUNC0,     0},
       {"libiconv",   "_libiconv_version",    VersionInfo::INT8_8,    0},
-      {"OpenSSL",    "SSL_version_str",	     VersionInfo::STRING_PTR,"OpenSSL "},
+      {"OpenSSL",    "SSL_version_str",      VersionInfo::STRING_OR_PTR,"OpenSSL "},
       {"Readline",   "rl_library_version",   VersionInfo::STRING_PTR,0},
       {"zlib",	     "zlibVersion",	     VersionInfo::FUNC0,     0},
       {0}
