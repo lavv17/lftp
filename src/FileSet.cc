@@ -823,6 +823,15 @@ void FileSet::SubtractCurr()
    Sub(ind--);
 }
 
+bool FileSet::SubtractByName(const char *name)
+{
+   int pos = FindGEIndByName(name);
+   if(pos >= fnum || strcmp(files[pos]->name,name))
+      return false;
+   Sub(pos);
+   return true;
+}
+
 void FileInfo::Init()
 {
    filetype=UNKNOWN;

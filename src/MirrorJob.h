@@ -79,6 +79,7 @@ private:
    Ref<FileSet> new_files_set;
    Ref<FileSet> to_rm_src;
    void InitSets(); // deduce above sets from source_set and target_set
+   void ExcludeEmptyDir(const char *target_rel_dir);
    bool only_dirs;  // to_transfer (or to_mkdir) contains directories only
 
    void RemoveSourceLater(const FileInfo *fi) {

@@ -682,6 +682,11 @@ void  MirrorJob::InitSets()
    }
 }
 
+void MirrorJob::ExcludeEmptyDir(const char *target_rel_dir)
+{
+   source_set->SubtractByName(basename_ptr(target_rel_dir));
+}
+
 /* root_transfer_count of child mirrors contains the value to add or
    subtract from transfer_count when doing "cd", "mkdir", "ls" on the source
    or target directories. This would prevent other mirrors (siblings, etc)
@@ -1102,7 +1107,11 @@ int   MirrorJob::Do()
 	       // if we have not created any subdirs and there are only subdirs,
 	       // then the directory would be empty - skip it.
 	       if(FlagSet(NO_EMPTY_DIRS) && stats.dirs==0 && only_dirs)
+	       {
+		  if(parent_mirror)
+		     parent_mirror->ExcludeEmptyDir(target_relative_dir);
 		  goto pre_FINISHING_FIX_LOCAL;
+	       }
 
 	       MirrorStarted();
 	       goto pre_MAKE_TARGET_DIR;
