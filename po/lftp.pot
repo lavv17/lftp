@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: lftp 4.8.3.23-de677-dirty\n"
+"Project-Id-Version: lftp 4.9.0-dirty\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2018-07-31 16:21+0300\n"
+"POT-Creation-Date: 2019-12-21 12:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,17 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/argmatch.c:134
+#: lib/argmatch.c:132
 #, c-format
 msgid "invalid argument %s for %s"
 msgstr ""
 
-#: lib/argmatch.c:135
+#: lib/argmatch.c:133
 #, c-format
 msgid "ambiguous argument %s for %s"
 msgstr ""
 
-#: lib/argmatch.c:154
+#: lib/argmatch.c:152
 msgid "Valid arguments are:"
 msgstr ""
 
@@ -131,7 +131,7 @@ msgstr ""
 msgid "[%u] Attached to terminal.\n"
 msgstr ""
 
-#: src/buffer.cc:253 src/FileAccess.cc:855
+#: src/buffer.cc:253 src/FileAccess.cc:866
 msgid " [cached]"
 msgstr ""
 
@@ -175,12 +175,12 @@ msgstr ""
 msgid "cd ok, cwd=%s\n"
 msgstr ""
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:723
+#: src/CmdExec.cc:405 src/MirrorJob.cc:728
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr ""
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1217
+#: src/CmdExec.cc:408 src/FileCopy.cc:1223
 msgid "Too many redirections"
 msgstr ""
 
@@ -968,7 +968,7 @@ msgid ""
 "Use `fg' shell command to return to lftp if it is still running.\n"
 msgstr ""
 
-#: src/commands.cc:837 src/commands.cc:3602
+#: src/commands.cc:837 src/commands.cc:3609
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr ""
@@ -983,12 +983,12 @@ msgstr ""
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 
-#: src/commands.cc:1045 src/commands.cc:2274 src/DummyProto.cc:65
-#: src/MirrorJob.cc:2148 src/MirrorJob.cc:2170
+#: src/commands.cc:1045 src/commands.cc:2275 src/DummyProto.cc:65
+#: src/MirrorJob.cc:2157 src/MirrorJob.cc:2179
 msgid " - not supported protocol"
 msgstr ""
 
-#: src/commands.cc:1077 src/commands.cc:2258
+#: src/commands.cc:1077 src/commands.cc:2259
 msgid "Password: "
 msgstr ""
 
@@ -999,11 +999,11 @@ msgstr ""
 
 #: src/commands.cc:1190 src/commands.cc:1283 src/commands.cc:1659
 #: src/commands.cc:1690 src/commands.cc:1828 src/commands.cc:1913
-#: src/commands.cc:2186 src/commands.cc:2379 src/commands.cc:2541
-#: src/commands.cc:2586 src/commands.cc:2614 src/commands.cc:2621
-#: src/commands.cc:2917 src/commands.cc:2944 src/commands.cc:2951
-#: src/commands.cc:3279 src/lftp.cc:267 src/MirrorJob.cc:2112
-#: src/SleepJob.cc:144 src/SleepJob.cc:200 src/Torrent.cc:4194
+#: src/commands.cc:2186 src/commands.cc:2380 src/commands.cc:2542
+#: src/commands.cc:2587 src/commands.cc:2615 src/commands.cc:2622
+#: src/commands.cc:2923 src/commands.cc:2950 src/commands.cc:2957
+#: src/commands.cc:3286 src/lftp.cc:267 src/MirrorJob.cc:2121
+#: src/SleepJob.cc:144 src/SleepJob.cc:200 src/Torrent.cc:4169
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr ""
@@ -1081,15 +1081,15 @@ msgstr ""
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr ""
 
-#: src/commands.cc:2092 src/commands.cc:2345 src/commands.cc:2467
-#: src/commands.cc:2683 src/commands.cc:3087 src/commands.cc:3168
+#: src/commands.cc:2092 src/commands.cc:2346 src/commands.cc:2468
+#: src/commands.cc:2684 src/commands.cc:3094 src/commands.cc:3175
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr ""
 
-#: src/commands.cc:2099 src/commands.cc:2324 src/commands.cc:2354
-#: src/commands.cc:2485
+#: src/commands.cc:2099 src/commands.cc:2325 src/commands.cc:2355
+#: src/commands.cc:2486
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr ""
@@ -1099,118 +1099,118 @@ msgstr ""
 msgid "Usage: %s [-p]\n"
 msgstr ""
 
-#: src/commands.cc:2225
+#: src/commands.cc:2226
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr ""
 
-#: src/commands.cc:2228
+#: src/commands.cc:2229
 #, c-format
 msgid "debug is off\n"
 msgstr ""
 
-#: src/commands.cc:2239
+#: src/commands.cc:2240
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr ""
 
-#: src/commands.cc:2314 src/commands.cc:2477
+#: src/commands.cc:2315 src/commands.cc:2478
 #, c-format
 msgid "%s: no current job\n"
 msgstr ""
 
-#: src/commands.cc:2326
+#: src/commands.cc:2327
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr ""
 
-#: src/commands.cc:2407
+#: src/commands.cc:2408
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr ""
 
-#: src/commands.cc:2451
+#: src/commands.cc:2452
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr ""
 
-#: src/commands.cc:2490
+#: src/commands.cc:2491
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr ""
 
-#: src/commands.cc:2495
+#: src/commands.cc:2496
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr ""
 
-#: src/commands.cc:2551
+#: src/commands.cc:2552
 #, c-format
 msgid "Usage: %s [OPTS] <files> <target-dir>\n"
 msgstr ""
 
-#: src/commands.cc:2613 src/commands.cc:2943
+#: src/commands.cc:2614 src/commands.cc:2949
 #, c-format
 msgid "Invalid command. "
 msgstr ""
 
-#: src/commands.cc:2620 src/commands.cc:2950
+#: src/commands.cc:2621 src/commands.cc:2956
 #, c-format
 msgid "Ambiguous command. "
 msgstr ""
 
-#: src/commands.cc:2639
+#: src/commands.cc:2640
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr ""
 
-#: src/commands.cc:2656
+#: src/commands.cc:2657
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr ""
 
-#: src/commands.cc:2689
+#: src/commands.cc:2690
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 
-#: src/commands.cc:2713
+#: src/commands.cc:2714
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr ""
 
-#: src/commands.cc:2718
+#: src/commands.cc:2719
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr ""
 
-#: src/commands.cc:2723
+#: src/commands.cc:2724
 #, c-format
 msgid "Usage: %s\n"
 msgstr ""
 
-#: src/commands.cc:2731
+#: src/commands.cc:2732
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr ""
 
-#: src/commands.cc:2735
+#: src/commands.cc:2736
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 
-#: src/commands.cc:2737
+#: src/commands.cc:2738
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
 
-#: src/commands.cc:2803
+#: src/commands.cc:2804
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr ""
 
-#: src/commands.cc:2806
+#: src/commands.cc:2807
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -1227,89 +1227,89 @@ msgid ""
 "along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
 msgstr ""
 
-#: src/commands.cc:2820
+#: src/commands.cc:2821
 #, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr ""
 
-#: src/commands.cc:2826
+#: src/commands.cc:2827
 msgid "Libraries used: "
 msgstr ""
 
-#: src/commands.cc:2966 src/commands.cc:2994
+#: src/commands.cc:2972 src/commands.cc:3000
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr ""
 
-#: src/commands.cc:2983
+#: src/commands.cc:2989
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr ""
 
-#: src/commands.cc:2996
+#: src/commands.cc:3002
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr ""
 
-#: src/commands.cc:3018
+#: src/commands.cc:3025
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr ""
 
-#: src/commands.cc:3096
+#: src/commands.cc:3103
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr ""
 
-#: src/commands.cc:3201
+#: src/commands.cc:3208
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr ""
 
-#: src/commands.cc:3212
+#: src/commands.cc:3219
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr ""
 
-#: src/commands.cc:3218
+#: src/commands.cc:3225
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr ""
 
-#: src/commands.cc:3222
+#: src/commands.cc:3229
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr ""
 
-#: src/commands.cc:3266
+#: src/commands.cc:3273
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr ""
 
-#: src/commands.cc:3278
+#: src/commands.cc:3285
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr ""
 
-#: src/commands.cc:3296 src/LocalAccess.cc:642
+#: src/commands.cc:3303 src/LocalAccess.cc:642
 msgid "cannot get current directory"
 msgstr ""
 
-#: src/commands.cc:3360
+#: src/commands.cc:3367
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr ""
 
-#: src/commands.cc:3380
+#: src/commands.cc:3387
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr ""
 
-#: src/commands.cc:3443 src/commands.cc:3452
+#: src/commands.cc:3450 src/commands.cc:3459
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr ""
 
-#: src/commands.cc:3464
+#: src/commands.cc:3471
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr ""
@@ -1347,8 +1347,8 @@ msgstr ""
 msgid "File cannot be accessed"
 msgstr ""
 
-#: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4540
-#: src/ftpclass.cc:4549 src/SFtp.cc:1316 src/Torrent.cc:3561
+#: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4594
+#: src/ftpclass.cc:4603 src/SFtp.cc:1317 src/Torrent.cc:3533
 msgid "Not connected"
 msgstr ""
 
@@ -1414,16 +1414,16 @@ msgstr ""
 msgid "file size decreased during transfer"
 msgstr ""
 
-#: src/FileCopy.cc:1214
+#: src/FileCopy.cc:1220
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr ""
 
-#: src/FileCopy.cc:1406
+#: src/FileCopy.cc:1376
 msgid "file name missed in URL"
 msgstr ""
 
-#: src/FileCopy.cc:2094
+#: src/FileCopy.cc:2064
 msgid "Verify command failed without a message"
 msgstr ""
 
@@ -1447,7 +1447,7 @@ msgstr ""
 msgid "ftp:fxp-force is set but FXP is not available"
 msgstr ""
 
-#: src/FileCopy.h:284
+#: src/FileCopy.h:283
 msgid "Verifying..."
 msgstr ""
 
@@ -1482,7 +1482,7 @@ msgstr ""
 msgid "total"
 msgstr ""
 
-#: src/Fish.cc:75 src/ftpclass.cc:1255 src/Http.cc:1212 src/SFtp.cc:77
+#: src/Fish.cc:75 src/ftpclass.cc:1290 src/Http.cc:1232 src/SFtp.cc:77
 #, c-format
 msgid "Closing idle connection"
 msgstr ""
@@ -1491,322 +1491,327 @@ msgstr ""
 msgid "Running connect program"
 msgstr ""
 
-#: src/Fish.cc:588 src/ftpclass.cc:2842 src/ftpclass.cc:3062 src/Http.cc:1490
-#: src/SFtp.cc:741 src/SFtp.cc:1078 src/SFtp.cc:1079 src/SSH_Access.cc:134
+#: src/Fish.cc:588 src/ftpclass.cc:2885 src/ftpclass.cc:3105 src/Http.cc:1510
+#: src/SFtp.cc:741 src/SFtp.cc:1078 src/SFtp.cc:1079 src/SSH_Access.cc:165
 #, c-format
 msgid "Peer closed connection"
 msgstr ""
 
-#: src/Fish.cc:634 src/ftpclass.cc:2992 src/ftpclass.cc:4163 src/SFtp.cc:1103
+#: src/Fish.cc:634 src/ftpclass.cc:3035 src/ftpclass.cc:4214 src/SFtp.cc:1103
 #, c-format
 msgid "extra server response"
 msgstr ""
 
-#: src/Fish.cc:987 src/ftpclass.cc:4552 src/Http.cc:2309 src/Http.cc:2316
-#: src/SFtp.cc:1322 src/Torrent.cc:3564 src/TorrentTracker.cc:624
+#: src/Fish.cc:987 src/ftpclass.cc:4606 src/Http.cc:2329 src/Http.cc:2336
+#: src/SFtp.cc:1323 src/Torrent.cc:3536 src/TorrentTracker.cc:624
 msgid "Connecting..."
 msgstr ""
 
-#: src/Fish.cc:989 src/ftpclass.cc:4558 src/SFtp.cc:1324
+#: src/Fish.cc:989 src/ftpclass.cc:4612 src/SFtp.cc:1325
 msgid "Connected"
 msgstr ""
 
-#: src/Fish.cc:991 src/ftpclass.cc:4535 src/ftpclass.cc:4563
-#: src/ftpclass.cc:4577 src/Http.cc:2318 src/SFtp.cc:1326
+#: src/Fish.cc:991 src/ftpclass.cc:4589 src/ftpclass.cc:4617
+#: src/ftpclass.cc:4631 src/Http.cc:2338 src/SFtp.cc:1327
 #: src/TorrentTracker.cc:626
 msgid "Waiting for response..."
 msgstr ""
 
-#: src/Fish.cc:993 src/ftpclass.cc:4597 src/Http.cc:2321 src/SFtp.cc:1328
+#: src/Fish.cc:993 src/ftpclass.cc:4651 src/Http.cc:2341 src/SFtp.cc:1329
 msgid "Receiving data"
 msgstr ""
 
-#: src/Fish.cc:995 src/ftpclass.cc:4595 src/Http.cc:2314 src/SFtp.cc:1330
+#: src/Fish.cc:995 src/ftpclass.cc:4649 src/Http.cc:2334 src/SFtp.cc:1331
 msgid "Sending data"
 msgstr ""
 
-#: src/Fish.cc:997 src/SFtp.cc:1332
+#: src/Fish.cc:997 src/SFtp.cc:1333
 msgid "Done"
 msgstr ""
 
-#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1385 src/SFtp.cc:2177
-#: src/SFtp.cc:2297
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2178
+#: src/SFtp.cc:2298
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr ""
 
-#: src/ftpclass.cc:200
+#: src/ftpclass.cc:197
 #, c-format
 msgid "Data connection peer has wrong port number"
 msgstr ""
 
-#: src/ftpclass.cc:206
+#: src/ftpclass.cc:203
 #, c-format
 msgid "Data connection peer has mismatching address"
 msgstr ""
 
-#: src/ftpclass.cc:228 src/ftpclass.cc:253
+#: src/ftpclass.cc:225 src/ftpclass.cc:250
 #, c-format
 msgid "Switching to NOREST mode"
 msgstr ""
 
-#: src/ftpclass.cc:428
+#: src/ftpclass.cc:425
 #, c-format
 msgid "Server reply matched ftp:retry-530, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:436
+#: src/ftpclass.cc:433
 #, c-format
 msgid "Server reply matched ftp:retry-530-anonymous, retrying"
 msgstr ""
 
-#: src/ftpclass.cc:469
+#: src/ftpclass.cc:466
 msgid "Account is required, set ftp:acct variable"
 msgstr ""
 
-#: src/ftpclass.cc:486
+#: src/ftpclass.cc:483
 msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
 msgstr ""
 
-#: src/ftpclass.cc:504
+#: src/ftpclass.cc:501
 #, c-format
 msgid "assuming failed host name lookup"
 msgstr ""
 
-#: src/ftpclass.cc:812 src/ftpclass.cc:813
+#: src/ftpclass.cc:809 src/ftpclass.cc:810
 #, c-format
 msgid "cannot parse EPSV response"
 msgstr ""
 
-#: src/ftpclass.cc:1085
+#: src/ftpclass.cc:837 src/ftpclass.cc:838
+#, c-format
+msgid "cannot parse custom EPSV response"
+msgstr ""
+
+#: src/ftpclass.cc:1120
 #, c-format
 msgid "Closing control socket"
 msgstr ""
 
-#: src/ftpclass.cc:1304
+#: src/ftpclass.cc:1339
 msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr ""
 
-#: src/ftpclass.cc:1374 src/Http.cc:1411 src/Torrent.cc:3232
-#: src/Torrent.cc:3771 src/TorrentTracker.cc:393
+#: src/ftpclass.cc:1409 src/Http.cc:1431 src/Torrent.cc:3204
+#: src/Torrent.cc:3743 src/TorrentTracker.cc:393
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr ""
 
-#: src/ftpclass.cc:1405 src/Http.cc:1437
+#: src/ftpclass.cc:1440 src/Http.cc:1457
 #, c-format
 msgid "Socket error (%s) - reconnecting"
 msgstr ""
 
-#: src/ftpclass.cc:1678
+#: src/ftpclass.cc:1713
 msgid "MFF and SITE CHMOD are not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1683
+#: src/ftpclass.cc:1718
 msgid "MLST and MLSD are not supported by this site"
 msgstr ""
 
-#: src/ftpclass.cc:1993
+#: src/ftpclass.cc:2029
 msgid "SITE SYMLINK is not supported by the server"
 msgstr ""
 
-#: src/ftpclass.cc:2166
+#: src/ftpclass.cc:2202
 msgid "unsupported network protocol"
 msgstr ""
 
-#: src/ftpclass.cc:2215 src/ftpclass.cc:2310
+#: src/ftpclass.cc:2251 src/ftpclass.cc:2353
 #, c-format
 msgid "Data socket error (%s) - reconnecting"
 msgstr ""
 
-#: src/ftpclass.cc:2243
+#: src/ftpclass.cc:2279
 #, c-format
 msgid "Accepted data connection from (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2285
+#: src/ftpclass.cc:2328
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2291
+#: src/ftpclass.cc:2334
 #, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr ""
 
-#: src/ftpclass.cc:2313 src/ftpclass.cc:4355
+#: src/ftpclass.cc:2356 src/ftpclass.cc:4409
 #, c-format
 msgid "Switching passive mode off"
 msgstr ""
 
-#: src/ftpclass.cc:2321
+#: src/ftpclass.cc:2364
 #, c-format
 msgid "Data connection established"
 msgstr ""
 
-#: src/ftpclass.cc:2643 src/ftpclass.cc:4489
+#: src/ftpclass.cc:2686 src/ftpclass.cc:4543
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 
-#: src/ftpclass.cc:3008
+#: src/ftpclass.cc:3051
 #, c-format
 msgid "Persist and retry"
 msgstr ""
 
-#: src/ftpclass.cc:3274
+#: src/ftpclass.cc:3319
 #, c-format
 msgid "Closing data socket"
 msgstr ""
 
-#: src/ftpclass.cc:3296
+#: src/ftpclass.cc:3341
 #, c-format
 msgid "Closing aborted data socket"
 msgstr ""
 
-#: src/ftpclass.cc:4137
+#: src/ftpclass.cc:4188
 #, c-format
 msgid "saw file size in response"
 msgstr ""
 
-#: src/ftpclass.cc:4177 src/ftpclass.cc:4204
+#: src/ftpclass.cc:4228 src/ftpclass.cc:4255
 #, c-format
 msgid "Turning on sync-mode"
 msgstr ""
 
-#: src/ftpclass.cc:4375
+#: src/ftpclass.cc:4429
 #, c-format
 msgid "Switching passive mode on"
 msgstr ""
 
-#: src/ftpclass.cc:4526
+#: src/ftpclass.cc:4580
 msgid "FEAT negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4533
+#: src/ftpclass.cc:4587
 msgid "Sending commands..."
 msgstr ""
 
-#: src/ftpclass.cc:4537
+#: src/ftpclass.cc:4591
 msgid "Delaying before retry"
 msgstr ""
 
-#: src/ftpclass.cc:4538 src/Http.cc:2311
+#: src/ftpclass.cc:4592 src/Http.cc:2331
 msgid "Connection idle"
 msgstr ""
 
-#: src/ftpclass.cc:4545 src/Http.cc:2303 src/Resolver.cc:172
+#: src/ftpclass.cc:4599 src/Http.cc:2323 src/Resolver.cc:172
 #: src/Resolver.cc:217 src/TorrentTracker.cc:622
 #, c-format
 msgid "Resolving host address..."
 msgstr ""
 
-#: src/ftpclass.cc:4556
+#: src/ftpclass.cc:4610
 msgid "TLS negotiation..."
 msgstr ""
 
-#: src/ftpclass.cc:4560
+#: src/ftpclass.cc:4614
 msgid "Logging in..."
 msgstr ""
 
-#: src/ftpclass.cc:4564
+#: src/ftpclass.cc:4618
 msgid "Making data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:4567
+#: src/ftpclass.cc:4621
 msgid "Changing remote directory..."
 msgstr ""
 
-#: src/ftpclass.cc:4573
+#: src/ftpclass.cc:4627
 msgid "Waiting for other copy peer..."
 msgstr ""
 
-#: src/ftpclass.cc:4575 src/ftpclass.cc:4599
+#: src/ftpclass.cc:4629 src/ftpclass.cc:4653
 msgid "Waiting for transfer to complete"
 msgstr ""
 
-#: src/ftpclass.cc:4579
+#: src/ftpclass.cc:4633
 msgid "Waiting for TLS shutdown..."
 msgstr ""
 
-#: src/ftpclass.cc:4581
+#: src/ftpclass.cc:4635
 msgid "Waiting for data connection..."
 msgstr ""
 
-#: src/ftpclass.cc:4587
+#: src/ftpclass.cc:4641
 msgid "Sending data/TLS"
 msgstr ""
 
-#: src/ftpclass.cc:4589
+#: src/ftpclass.cc:4643
 msgid "Receiving data/TLS"
 msgstr ""
 
-#: src/Http.cc:229
+#: src/Http.cc:230
 #, c-format
 msgid "Closing HTTP connection"
 msgstr ""
 
-#: src/Http.cc:239
+#: src/Http.cc:240
 msgid "POST method failed"
 msgstr ""
 
-#: src/Http.cc:1361
+#: src/Http.cc:1381
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
 
-#: src/Http.cc:1517
+#: src/Http.cc:1537
 #, c-format
 msgid "Sending request..."
 msgstr ""
 
-#: src/Http.cc:1555
+#: src/Http.cc:1575
 #, c-format
 msgid "Hit EOF while fetching headers"
 msgstr ""
 
-#: src/Http.cc:1675
+#: src/Http.cc:1695
 #, c-format
 msgid "Could not parse HTTP status line"
 msgstr ""
 
-#: src/Http.cc:1706
+#: src/Http.cc:1726
 msgid "Object is not cached and http:cache-control has only-if-cached"
 msgstr ""
 
-#: src/Http.cc:1871
+#: src/Http.cc:1891
 #, c-format
 msgid "Receiving body..."
 msgstr ""
 
-#: src/Http.cc:2072
+#: src/Http.cc:2092
 #, c-format
 msgid "Hit EOF"
 msgstr ""
 
-#: src/Http.cc:2075
+#: src/Http.cc:2095
 #, c-format
 msgid "Received not enough data, retrying"
 msgstr ""
 
-#: src/Http.cc:2086
+#: src/Http.cc:2106
 #, c-format
 msgid "Received all"
 msgstr ""
 
-#: src/Http.cc:2091
+#: src/Http.cc:2111
 #, c-format
 msgid "Received all (total)"
 msgstr ""
 
-#: src/Http.cc:2115 src/Http.cc:2139
+#: src/Http.cc:2135 src/Http.cc:2159
 msgid "chunked format violated"
 msgstr ""
 
-#: src/Http.cc:2125
+#: src/Http.cc:2145
 #, c-format
 msgid "Received last chunk"
 msgstr ""
 
-#: src/Http.cc:2319
+#: src/Http.cc:2339
 msgid "Fetching headers..."
 msgstr ""
 
@@ -1873,11 +1878,11 @@ msgstr ""
 msgid "No certificate presented by %s.\n"
 msgstr ""
 
-#: src/LocalAccess.cc:604 src/NetAccess.cc:681
+#: src/LocalAccess.cc:604 src/NetAccess.cc:686
 msgid "Getting directory contents"
 msgstr ""
 
-#: src/LocalAccess.cc:606 src/NetAccess.cc:685
+#: src/LocalAccess.cc:606 src/NetAccess.cc:690
 msgid "Getting files information"
 msgstr ""
 
@@ -1930,7 +1935,7 @@ msgstr ""
 msgid "Finished %s"
 msgstr ""
 
-#: src/MirrorJob.cc:344 src/MirrorJob.cc:519 src/MirrorJob.cc:1198
+#: src/MirrorJob.cc:344 src/MirrorJob.cc:519 src/MirrorJob.cc:1207
 #, c-format
 msgid "Removing old file `%s'"
 msgstr ""
@@ -1955,7 +1960,7 @@ msgstr ""
 msgid "Skipping directory `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:461 src/MirrorJob.cc:550 src/MirrorJob.cc:886
+#: src/MirrorJob.cc:461 src/MirrorJob.cc:550 src/MirrorJob.cc:891
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr ""
@@ -1980,74 +1985,74 @@ msgstr ""
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr ""
 
-#: src/MirrorJob.cc:794
+#: src/MirrorJob.cc:799
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr ""
 
-#: src/MirrorJob.cc:907
+#: src/MirrorJob.cc:912
 #, c-format
 msgid "Making directory `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:1161
+#: src/MirrorJob.cc:1170
 #, c-format
 msgid "Old directory `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:1163
+#: src/MirrorJob.cc:1172
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr ""
 
-#: src/MirrorJob.cc:1196
+#: src/MirrorJob.cc:1205
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:1318
+#: src/MirrorJob.cc:1327
 #, c-format
 msgid "Removing source directory `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:1384
+#: src/MirrorJob.cc:1393
 #, c-format
 msgid "Removing source file `%s'"
 msgstr ""
 
-#: src/MirrorJob.cc:1404
+#: src/MirrorJob.cc:1413
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr ""
 
-#: src/MirrorJob.cc:1755
+#: src/MirrorJob.cc:1764
 #, c-format
 msgid "%s must be one of: %s"
 msgstr ""
 
-#: src/MirrorJob.cc:1995
+#: src/MirrorJob.cc:2004
 #, c-format
 msgid ""
 "%s: multiple --file or --directory options must have the same base "
 "directory\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2136
+#: src/MirrorJob.cc:2145
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2158
+#: src/MirrorJob.cc:2167
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2199
+#: src/MirrorJob.cc:2208
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2318
+#: src/MirrorJob.cc:2327
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -2098,20 +2103,20 @@ msgstr ""
 msgid "Connecting to %s%s (%s) port %u"
 msgstr ""
 
-#: src/NetAccess.cc:224 src/Torrent.cc:3354
+#: src/NetAccess.cc:224 src/Torrent.cc:3326
 #, c-format
 msgid "Timeout - reconnecting"
 msgstr ""
 
-#: src/NetAccess.cc:319
+#: src/NetAccess.cc:323
 msgid "Connection limit reached"
 msgstr ""
 
-#: src/NetAccess.cc:326
+#: src/NetAccess.cc:330
 msgid "Delaying before reconnect"
 msgstr ""
 
-#: src/NetAccess.cc:350 src/NetAccess.cc:352
+#: src/NetAccess.cc:354 src/NetAccess.cc:356
 msgid "max-retries exceeded"
 msgstr ""
 
@@ -2425,15 +2430,15 @@ msgstr ""
 msgid "eta:"
 msgstr ""
 
-#: src/SSH_Access.cc:64
+#: src/SSH_Access.cc:95
 msgid "Password required"
 msgstr ""
 
-#: src/SSH_Access.cc:69
+#: src/SSH_Access.cc:100
 msgid "Login incorrect"
 msgstr ""
 
-#: src/SSH_Access.cc:163
+#: src/SSH_Access.cc:194
 #, c-format
 msgid "Disconnecting"
 msgstr ""
@@ -2443,152 +2448,152 @@ msgstr ""
 msgid "execlp(%s) failed: %s\n"
 msgstr ""
 
-#: src/TimeDate.cc:156
+#: src/TimeDate.cc:155
 msgid "day"
 msgstr ""
 
-#: src/TimeDate.cc:157
+#: src/TimeDate.cc:156
 msgid "hour"
 msgstr ""
 
-#: src/TimeDate.cc:158
+#: src/TimeDate.cc:157
 msgid "minute"
 msgstr ""
 
-#: src/TimeDate.cc:159
+#: src/TimeDate.cc:158
 msgid "second"
 msgstr ""
 
-#: src/Torrent.cc:613
+#: src/Torrent.cc:585
 msgid "announced via "
 msgstr ""
 
-#: src/Torrent.cc:627
+#: src/Torrent.cc:599
 #, c-format
 msgid "next announce in %s"
 msgstr ""
 
-#: src/Torrent.cc:1170
+#: src/Torrent.cc:1142
 #, c-format
 msgid "%d file$|s$ found, now scanning %s"
 msgstr ""
 
-#: src/Torrent.cc:1171
+#: src/Torrent.cc:1143
 #, c-format
 msgid "%d file$|s$ found"
 msgstr ""
 
-#: src/Torrent.cc:2103 src/Torrent.cc:2113
+#: src/Torrent.cc:2075 src/Torrent.cc:2085
 #, c-format
 msgid "Getting meta-data: %s"
 msgstr ""
 
-#: src/Torrent.cc:2105
+#: src/Torrent.cc:2077
 #, c-format
 msgid "Validation: %u/%u (%u%%) %s%s"
 msgstr ""
 
-#: src/Torrent.cc:2116
+#: src/Torrent.cc:2088
 msgid "Waiting for meta-data..."
 msgstr ""
 
-#: src/Torrent.cc:2124
+#: src/Torrent.cc:2096
 msgid "Shutting down: "
 msgstr ""
 
-#: src/Torrent.cc:3235
+#: src/Torrent.cc:3207
 #, c-format
 msgid "Connecting to peer %s port %u"
 msgstr ""
 
-#: src/Torrent.cc:3286 src/Torrent.cc:3403
+#: src/Torrent.cc:3258 src/Torrent.cc:3375
 #, c-format
 msgid "peer unexpectedly closed connection after %s"
 msgstr ""
 
-#: src/Torrent.cc:3287 src/Torrent.cc:3404
+#: src/Torrent.cc:3259 src/Torrent.cc:3376
 msgid "peer unexpectedly closed connection"
 msgstr ""
 
-#: src/Torrent.cc:3289 src/Torrent.cc:3290
+#: src/Torrent.cc:3261 src/Torrent.cc:3262
 #, c-format
 msgid "peer closed connection (before handshake)"
 msgstr ""
 
-#: src/Torrent.cc:3293 src/Torrent.cc:3406 src/Torrent.cc:3407
+#: src/Torrent.cc:3265 src/Torrent.cc:3378 src/Torrent.cc:3379
 #, c-format
 msgid "invalid peer response format"
 msgstr ""
 
-#: src/Torrent.cc:3388 src/Torrent.cc:3389
+#: src/Torrent.cc:3360 src/Torrent.cc:3361
 #, c-format
 msgid "peer closed connection"
 msgstr ""
 
-#: src/Torrent.cc:3566
+#: src/Torrent.cc:3538
 msgid "Handshaking..."
 msgstr ""
 
-#: src/Torrent.cc:3826
+#: src/Torrent.cc:3798
 msgid "Cannot bind a socket for torrent:port-range"
 msgstr ""
 
-#: src/Torrent.cc:3885
+#: src/Torrent.cc:3858
 #, c-format
 msgid "Accepted connection from [%s]:%d"
 msgstr ""
 
-#: src/Torrent.cc:3949
+#: src/Torrent.cc:3924
 #, c-format
 msgid "peer sent unknown info_hash=%s in handshake"
 msgstr ""
 
-#: src/Torrent.cc:3973
+#: src/Torrent.cc:3948
 #, c-format
 msgid "peer handshake timeout"
 msgstr ""
 
-#: src/Torrent.cc:3985
+#: src/Torrent.cc:3960
 #, c-format
 msgid "peer short handshake"
 msgstr ""
 
-#: src/Torrent.cc:3987
+#: src/Torrent.cc:3962
 #, c-format
 msgid "peer closed just accepted connection"
 msgstr ""
 
-#: src/Torrent.cc:4038
+#: src/Torrent.cc:4013
 #, c-format
 msgid "Seeding in background...\n"
 msgstr ""
 
-#: src/Torrent.cc:4201
+#: src/Torrent.cc:4176
 #, c-format
 msgid "%s: --share conflicts with --output-directory.\n"
 msgstr ""
 
-#: src/Torrent.cc:4205
+#: src/Torrent.cc:4180
 #, c-format
 msgid "%s: --share conflicts with --only-new.\n"
 msgstr ""
 
-#: src/Torrent.cc:4209
+#: src/Torrent.cc:4184
 #, c-format
 msgid "%s: --share conflicts with --only-incomplete.\n"
 msgstr ""
 
-#: src/Torrent.cc:4251
+#: src/Torrent.cc:4226
 #, c-format
 msgid "%s: Please specify a file or directory to share.\n"
 msgstr ""
 
-#: src/Torrent.cc:4253
+#: src/Torrent.cc:4228
 #, c-format
 msgid "%s: Please specify meta-info file or URL.\n"
 msgstr ""
 
-#: src/Torrent.cc:4283
+#: src/Torrent.cc:4258
 msgid ""
 "Start BitTorrent job for the given torrent-files, which can be a local "
 "file,\n"
