@@ -1,3 +1,23 @@
+Version 4.9.0 - 2019-12-21
+
+* ftp: add support for CEPR command.
+* ftp: enabled TLS by default.
+* ftp: fixed OPTS MLST format.
+* ftps: apply rfc1738 rules.
+* ftp: stop sending ALLO commands by default.
+* http: fixed redirection to absolute path.
+* http: improved index parsing performance.
+* http: revert to original URL when temporary redirects led to an error.
+* mirror --no-empty-dirs: exclude empty dirs so that chmod is not done on them.
+* net: disable inet6 if there is no public ipv6 address.
+* net: lowered reconnect intervals.
+* sftp, fish: fixed yes/no/[fingerprint] and passphrase recognition.
+* sftp: fixed a bug with truncated files when packets are reordered.
+* torrent: fixed a coredump when all dht ports are busy.
+* fixed file list sorting when some file names start with tilde.
+* fixed retry counting when a site has multiple addresses.
+* fixed "version" command for certain openssl versions.
+
 Version 4.8.4 - 2018-08-01
 
 * fixed a security vulnerability with "file:" file names.
