@@ -2,7 +2,6 @@
 /alloca.m4
 /argmatch.m4
 /arpa_inet_h.m4
-/asm-underscore.m4
 /bison.m4
 /btowc.m4
 /chown.m4
@@ -45,7 +44,6 @@
 /gettime.m4
 /gettimeofday.m4
 /glibc21.m4
-/glibc2.m4
 /glob.m4
 /gnulib-common.m4
 /gnulib-comp.m4
@@ -58,11 +56,7 @@
 /inet_ntop.m4
 /inet_pton.m4
 /inline.m4
-/intdiv0.m4
-/intldir.m4
-/intl.m4
 /intlmacosx.m4
-/intmax.m4
 /intmax_t.m4
 /inttypes_h.m4
 /inttypes-h.m4
@@ -75,7 +69,6 @@
 /langinfo_h.m4
 /largefile.m4
 /lchown.m4
-/lcmessage.m4
 /ldexpl.m4
 /lib-ld.m4
 /lib-link.m4
@@ -129,7 +122,6 @@
 /printf-frexpl.m4
 /printf-frexp.m4
 /printf.m4
-/printf-posix.m4
 /progtest.m4
 /quotearg.m4
 /quote.m4
@@ -181,11 +173,9 @@
 /time_r.m4
 /timespec.m4
 /tm_gmtoff.m4
-/uintmax_t.m4
 /ulonglong.m4
 /unistd_h.m4
 /vasnprintf.m4
-/visibility.m4
 /vsnprintf.m4
 /vsnprintf-posix.m4
 /warn-on-use.m4
@@ -269,3 +259,5 @@
 /fnmatch_h.m4
 /glob_h.m4
 /intl-thread-locale.m4
+/open-slash.m4
+/setlocale_null.m4

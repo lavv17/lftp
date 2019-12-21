@@ -260,7 +260,6 @@
 /xmalloc.c
 /xsize.h
 /xstrtol.c
-/xstrtol-error.c
 /xstrtol.h
 /xstrtoul.c
 /xstrtoumax.c
@@ -344,3 +343,14 @@ limits.h
 /stat-time.h
 /stdio-impl.h
 /sys-limits.h
+/setlocale-lock.c
+/setlocale_null.c
+/windows-initguard.h
+/windows-mutex.c
+/windows-mutex.h
+/windows-once.c
+/windows-once.h
+/windows-recmutex.c
+/windows-recmutex.h
+/windows-rwlock.c
+/windows-rwlock.h
