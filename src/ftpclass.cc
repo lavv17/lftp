@@ -706,10 +706,10 @@ int Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
 	 }
 	 strcpy(path2+path2_len,dir);
 	 path2_len+=strlen(dir);
-	 conn->SendCmd2("CWD",dir);
-	 expect->Push(new Expect(Expect::CWD_CURR,path2));
-	 cwd_count++;
       }
+      cwd_count++;
+      conn->SendCmd2("CWD",path2);
+      expect->Push(new Expect(Expect::CWD_CURR,path2));
    }
    Expect *last_cwd=expect->FindLastCWD();
    if(last_cwd)
