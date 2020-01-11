@@ -47,7 +47,7 @@ static bool begins_with(const char *b,const char *e,const char *suffix)
    return (e-b>=len && !strncasecmp(b,suffix,len));
 }
 
-static bool contains(char const * begin, char const * end, std::string const & needle)
+static bool contains(char const *begin, char const *end, char const *needle)
 {
    struct nocase_eq
    {
@@ -56,7 +56,7 @@ static bool contains(char const * begin, char const * end, std::string const & n
          return std::tolower(lhs) == std::tolower(rhs);
       };
    };
-   return std::search(begin, end, needle.begin(), needle.end(), nocase_eq()) != end;
+   return std::search(begin, end, needle, needle+strlen(needle), nocase_eq()) != end;
 }
 
 static bool IsPasswordPrompt(const char *b,const char *e)
