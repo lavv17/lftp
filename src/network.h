@@ -140,6 +140,7 @@ protected:
    static int SocketCreateUnboundTCP(int af,const char *hostname);
    static void SocketSinglePF(int sock,int pf);
    static const char *FindGlobalIPv6Address();
+   static bool CanCreateIpv6Socket();
 };
 
 #endif //NETWORK_H

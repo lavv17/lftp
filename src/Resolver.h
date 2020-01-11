@@ -26,7 +26,7 @@
 #include "Cache.h"
 #include "network.h"
 
-class Resolver : public SMTask, protected ProtoLog
+class Resolver : public SMTask, protected ProtoLog, protected Networker
 {
    xstring hostname;
    xstring portname;
@@ -53,6 +53,7 @@ class Resolver : public SMTask, protected ProtoLog
    void	 DoGethostbyname();
 
    static int FindAddressFamily(const char *name);
+   static bool IsAddressFamilySupporded(int af);
    static void ParseOrder(const char *s,int *o);
 
    void LookupOne(const char *name);

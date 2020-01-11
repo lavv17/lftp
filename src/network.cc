@@ -454,7 +454,7 @@ const char *Networker::FindGlobalIPv6Address()
    return 0;
 }
 
-static bool CanCreateIpv6Socket()
+bool Networker::CanCreateIpv6Socket()
 {
 #if INET6
    bool can=true;
@@ -471,17 +471,4 @@ static bool CanCreateIpv6Socket()
 #else
    return false;
 #endif
-}
-
-static struct NetworkInit : private Networker {
-   NetworkInit();
-} NETWORK_INIT;
-
-NetworkInit::NetworkInit()
-{
-#if INET6
-   // check if ipv6 is really supported
-   if(!Networker::FindGlobalIPv6Address() || !CanCreateIpv6Socket())
-      ResMgr::Set("dns:order",0,"inet");
-#endif // INET6
 }

@@ -355,6 +355,19 @@ int Resolver::FindAddressFamily(const char *name)
    return -1;
 }
 
+bool Resolver::IsAddressFamilySupporded(int af)
+{
+#if INET6
+   // check if ipv6 is really supported
+   if(af==AF_INET6 && (!FindGlobalIPv6Address() || !CanCreateIpv6Socket()))
+   {
+      LogNote(4, "IPv6 is not supported or configured");
+      return false;
+   }
+#endif // INET6
+   return true;
+}
+
 void Resolver::ParseOrder(const char *s,int *o)
 {
    const char * const delim="\t ";
@@ -364,7 +377,7 @@ void Resolver::ParseOrder(const char *s,int *o)
    for(s1=strtok(s1,delim); s1; s1=strtok(0,delim))
    {
       int af=FindAddressFamily(s1);
-      if(af!=-1 && idx<15)
+      if(af!=-1 && idx<15 && IsAddressFamilySupporded(af))
       {
 	 if(o) o[idx]=af;
 	 idx++;
