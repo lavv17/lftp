@@ -365,7 +365,8 @@ int FileCopy::Do()
 	 return MOVED;
       }
    pre_CONFIRM_WAIT:
-      put->SetSuggestedFileName(get->GetSuggestedFileName());
+      if(put->IsAutoRename())
+	 put->SetSuggestedFileName(get->GetSuggestedFileName());
       put->SetDate(get->GetDate());
       if(get->GetSize()!=NO_SIZE && get->GetSize()!=NO_SIZE_YET)
 	 put->SetEntitySize(get->GetSize());
@@ -808,6 +809,11 @@ const char *FileCopyPeer::UseTempFile(const char *file)
    return temp;
 }
 
+bool FileCopyPeer::ShouldRename() const
+{
+   return (auto_rename || temp_file) && suggested_filename;
+}
+
 FileCopyPeer::FileCopyPeer(dir_t m) : IOBuffer(m)
 {
    want_size=false;
@@ -909,7 +915,7 @@ int FileCopyPeerFA::Do()
       }
       else if(verify->Done())
       {
-	 if(suggested_filename && auto_rename)
+	 if(ShouldRename())
 	 {
 	    const char *new_name=dir_file(dirname(file),suggested_filename);
 	    bool clobber=temp_file;
@@ -1537,7 +1543,7 @@ int FileCopyPeerFDStream::Do()
       }
       else if(verify->Done())
       {
-	 if(suggested_filename && stream && stream->full_name && auto_rename)
+	 if(ShouldRename() && stream && stream->full_name)
 	 {
 	    const char *new_name=dir_file(dirname(stream->full_name),suggested_filename);
 	    struct stat st;
