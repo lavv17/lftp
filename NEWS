@@ -1,3 +1,11 @@
+Version 4.9.1 - 2020-01-15
+
+* get1: fixed creating the target directory.
+* get1: fixed renaming the temp file.
+* fixed a coredump on startup when IPv6 is not supported or configured.
+* fixed build with --disable-ipv6.
+* fixed build with Sun Studio.
+
 Version 4.9.0 - 2019-12-21
 
 * ftp: add support for CEPR command.
