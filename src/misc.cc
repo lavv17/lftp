@@ -60,6 +60,7 @@ CDECL_END
 #include "SignalHook.h"
 #include "url.h"
 #include "ResMgr.h"
+#include "log.h"
 #include <mbswidth.h>
 
 const char *dir_file(const char *dir,const char *file)
@@ -227,6 +228,8 @@ int   create_directories(char *path)
 	       return(-1);
 	    }
 	 }
+	 else
+	    debug((9,"mkdir(%s): ok\n",path));
       }
       if(sl)
 	 *sl++='/';

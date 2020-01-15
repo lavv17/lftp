@@ -1498,7 +1498,7 @@ void FileCopyPeerFDStream::Seek_LL()
 
 int FileCopyPeerFDStream::getfd()
 {
-   if(!stream)
+   if(do_mkdir || !stream)
       return -1;
    if(stream->fd!=-1)
       return stream->fd;
