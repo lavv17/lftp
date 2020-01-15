@@ -354,3 +354,11 @@ limits.h
 /windows-recmutex.h
 /windows-rwlock.c
 /windows-rwlock.h
+/iconv_open-zos.gperf
+/lc-charset-dispatch.c
+/lc-charset-dispatch.h
+/mbrtowc-impl-utf8.h
+/mbrtowc-impl.h
+/mbtowc-lock.c
+/mbtowc-lock.h
+/setlocale_null.h

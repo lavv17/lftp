@@ -261,3 +261,4 @@
 /intl-thread-locale.m4
 /open-slash.m4
 /setlocale_null.m4
+/visibility.m4
