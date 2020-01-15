@@ -33,7 +33,8 @@ REL_DIR=$(HOME)/www-lftp/ftp
 release-check:
 	for opt in "--with-modules" "--without-gnutls" "--without-openssl" \
 			"--without-gnutls --without-openssl" \
-			"--with-modules --without-gnutls --without-openssl" ""; \
+			"--with-modules --without-gnutls --without-openssl" \
+			"--disable-ipv6" ""; \
 	 do \
 		echo "Testing $$opt ..."; \
 		$(MAKE) distclean >/dev/null && $(srcdir)/configure -q $$opt || exit 1; \
