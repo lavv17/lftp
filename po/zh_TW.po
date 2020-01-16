@@ -2,13 +2,13 @@
 # Copyright (C) 2001, 02, 05, 07 Alexander V. Lukyanov <lav@yars.free.net>
 #
 # Abel Cheung <abelcheung@gmail.com>, 2001, 02, 05, 07.
-# Jeff Huang <s8321414@gmail.com>, 2015, 2016, 2017.
+# Jeff Huang <s8321414@gmail.com>, 2015, 2016, 2017, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.6.4\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
 "POT-Creation-Date: 2020-01-15 22:27+0300\n"
-"PO-Revision-Date: 2017-07-12 11:26+0800\n"
+"PO-Revision-Date: 2020-01-16 11:56+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <chinese-l10n@googlegroups.com>\n"
 "Language: zh_TW\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 2.0\n"
+"X-Generator: Lokalize 19.08.3\n"
 
 #: lib/argmatch.c:132
 #, c-format
@@ -1144,8 +1144,7 @@ msgstr "wait [<工作編號>]"
 msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
-msgstr ""
-"等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
+msgstr "等待指定的工作終止。如果沒有指定 <工作編號>，則等待最後一個背景工作完成。\n"
 
 #: src/commands.cc:461
 msgid "zcat <files>"
@@ -1843,10 +1842,10 @@ msgid "cannot parse EPSV response"
 msgstr "無法分析 EPSV 回應內容"
 
 #: src/ftpclass.cc:837 src/ftpclass.cc:838
-#, fuzzy, c-format
+#, c-format
 #| msgid "cannot parse EPSV response"
 msgid "cannot parse custom EPSV response"
-msgstr "無法分析 EPSV 回應內容"
+msgstr "無法解析自訂的 EPSV 回應內容"
 
 #: src/ftpclass.cc:1122
 #, c-format
@@ -2021,8 +2020,7 @@ msgstr "使用 POST 方法失敗"
 
 #: src/Http.cc:1381
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
-msgstr ""
-"若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
+msgstr "若沒有代理伺服器，是不可能在 http 連線上使用 ftp 的，請設定 hftp:proxy。"
 
 #: src/Http.cc:1537
 #, c-format
