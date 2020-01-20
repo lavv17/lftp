@@ -1035,6 +1035,7 @@ Ftp::Connection::Connection(const char *c)
    epsv_supported=false;
    tvfs_supported=false;
    mode_z_supported=false;
+   cepr_supported=false;
 
    proxy_is_http=false;
    may_show_password=false;
@@ -4057,6 +4058,9 @@ void Ftp::Connection::CheckFEAT(char *reply,const char *line,bool trust)
 #endif
    pret_supported=false;
    epsv_supported=false;
+   tvfs_supported=false;
+   mode_z_supported=false;
+   cepr_supported=false;
 
    char *scan=strchr(reply,'\n');
    if(scan)
