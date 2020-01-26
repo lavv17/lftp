@@ -28,6 +28,7 @@
 #  include <openssl/err.h>
 #  include <openssl/rand.h>
 #  include <openssl/x509v3.h>
+#  include <openssl/x509_vfy.h>
 # endif
 
 #include "Ref.h"
