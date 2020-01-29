@@ -720,6 +720,7 @@ private:
    void HandleExpect(Expect *);
    void CloseExpectQueue();
    bool HasExpect(Expect::expect_t tag);
+   bool HasExpectBefore(unsigned id,Expect::expect_t tag);
    void CloseHandle(Expect::expect_t e);
    int ReplyLogPriority(int);
 

@@ -948,12 +948,13 @@ void SFtp::HandleExpect(Expect *e)
 	    if(((Reply_STATUS*)reply)->GetCode()==SSH_FX_EOF)
 	    {
 	    eof:
-	       if(!eof)
-		  LogNote(9,"eof");
 	       eof=true;
 	       state=DONE;
-	       if(file_buf && ooo_chain.count()==0 && expect_queue.count()==0)
+	       if(file_buf && ooo_chain.count()==0 && !HasExpectBefore(reply->GetID(),Expect::DATA))
+	       {
+		  LogNote(9,"eof");
 		  file_buf->PutEOF();
+	       }
 	       break;
 	    }
 	 }
@@ -1062,8 +1063,11 @@ int SFtp::HandleReplies()
       }
    }
 
-   if(ooo_chain.count()==0 && eof && file_buf && !file_buf->Eof() && !HasExpect(Expect::DATA))
+   if(eof && file_buf && !file_buf->Eof() && ooo_chain.count()==0 && !HasExpect(Expect::DATA))
+   {
+      LogNote(9,"eof");
       file_buf->PutEOF();
+   }
 
    if(recv_buf->Size()<4)
    {
@@ -1153,6 +1157,20 @@ bool SFtp::HasExpect(Expect::expect_t tag)
    return false;
 }
 
+static bool IsBefore(unsigned id1,unsigned id2)
+{
+   // order with wrap-around
+   return id2 - id1 < id1 - id2;
+}
+
+bool SFtp::HasExpectBefore(unsigned id,Expect::expect_t tag)
+{
+   for(Expect *e=expect_queue.each_begin(); e; e=expect_queue.each_next())
+      if(e->tag==tag && IsBefore(e->request->GetID(),id))
+	 return true;
+   return false;
+}
+
 Glob *SFtp::MakeGlob(const char *pat)
 {
    return new GenericGlob(this,pat);
@@ -1168,7 +1186,7 @@ int SFtp::Read(Buffer *buf,int size)
       return error_code;
    if(mode==CLOSED)
       return 0;
-   if(state==DONE && !(file_buf && file_buf->Size()>0))
+   if(state==DONE && (!file_buf || (file_buf->Size()==0 && file_buf->Eof())))
       return 0;	  // eof
    if(state==FILE_RECV)
    {
