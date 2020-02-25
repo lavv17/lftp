@@ -12,13 +12,13 @@ msgstr ""
 "Language-Team: \n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-KR\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
 #: lib/argmatch.c:132
 #, fuzzy, c-format
 msgid "invalid argument %s for %s"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: lib/argmatch.c:133
 #, c-format
@@ -46,7 +46,7 @@ msgstr ""
 #: lib/getopt.c:319
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%s%s'\n"
-msgstr "%s: `%s'À¸·Î ¸®´ÙÀÌ·º¼ÇÀ» ¹ŞÀ½\n"
+msgstr "%s: `%s'ìœ¼ë¡œ ë¦¬ë‹¤ì´ë ‰ì…˜ì„ ë°›ìŒ\n"
 
 #: lib/getopt.c:345
 #, c-format
@@ -61,7 +61,7 @@ msgstr ""
 #: lib/getopt.c:621
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: lib/getopt.c:636 lib/getopt.c:682
 #, c-format
@@ -108,7 +108,7 @@ msgstr ""
 #: src/ArgV.cc:109 src/ArgV.cc:118
 #, fuzzy
 msgid "invalid option"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/ArgV.cc:114
 #, c-format
@@ -118,12 +118,12 @@ msgstr ""
 #: src/ArgV.cc:116
 #, fuzzy, c-format
 msgid "unrecognized option `%s'"
-msgstr "%s: `%s'À¸·Î ¸®´ÙÀÌ·º¼ÇÀ» ¹ŞÀ½\n"
+msgstr "%s: `%s'ìœ¼ë¡œ ë¦¬ë‹¤ì´ë ‰ì…˜ì„ ë°›ìŒ\n"
 
 #: src/attach.h:138
 #, fuzzy, c-format
 msgid "[%u] Attached to terminal %s. %s\n"
-msgstr "[%lu] ½Ã±×³Î %d ·Î Á¾·áµÇ¾ú½À´Ï´Ù. %s"
+msgstr "[%lu] ì‹œê·¸ë„ %d ë¡œ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤. %s"
 
 #: src/attach.h:150
 #, c-format
@@ -152,50 +152,50 @@ msgstr ""
 #: src/CmdExec.cc:105
 #, c-format
 msgid "Warning: chdir(%s) failed: %s\n"
-msgstr "°æ°í: chdir(%s) ½ÇÆĞ: %s\n"
+msgstr "ê²½ê³ : chdir(%s) ì‹¤íŒ¨: %s\n"
 
 #: src/CmdExec.cc:207
 #, c-format
 msgid "Unknown command `%s'.\n"
-msgstr "`%s' ¾Ë¼ö ¾ø´Â ¸í·É¾î.\n"
+msgstr "`%s' ì•Œìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´.\n"
 
 #: src/CmdExec.cc:209
 #, c-format
 msgid "Ambiguous command `%s'.\n"
-msgstr "`%s' ¸ğÈ£ÇÑ ¸í·É¾î.\n"
+msgstr "`%s' ëª¨í˜¸í•œ ëª…ë ¹ì–´.\n"
 
 #: src/CmdExec.cc:228
 #, c-format
 msgid "Module for command `%s' did not register the command.\n"
-msgstr "`%s'¸í·É¿¡ ´ëÇÑ ¸ğµâÀÌ µî·ÏµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù.\n"
+msgstr "`%s'ëª…ë ¹ì— ëŒ€í•œ ëª¨ë“ˆì´ ë“±ë¡ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤.\n"
 
 #: src/CmdExec.cc:384
 #, c-format
 msgid "cd ok, cwd=%s\n"
-msgstr "cd ¼º°ø, cwd=%s\n"
+msgstr "cd ì„±ê³µ, cwd=%s\n"
 
 #: src/CmdExec.cc:405 src/MirrorJob.cc:728
 #, c-format
 msgid "%s: received redirection to `%s'\n"
-msgstr "%s: `%s'À¸·Î ¸®´ÙÀÌ·º¼ÇÀ» ¹ŞÀ½\n"
+msgstr "%s: `%s'ìœ¼ë¡œ ë¦¬ë‹¤ì´ë ‰ì…˜ì„ ë°›ìŒ\n"
 
 #: src/CmdExec.cc:408 src/FileCopy.cc:1229
 msgid "Too many redirections"
-msgstr "¸®´ÙÀÌ·º¼ÇÀÌ ³Ê¹« ¸¹½À´Ï´Ù"
+msgstr "ë¦¬ë‹¤ì´ë ‰ì…˜ì´ ë„ˆë¬´ ë§ìŠµë‹ˆë‹¤"
 
 #: src/CmdExec.cc:517 src/CmdExec.cc:574
 msgid "Interrupt"
-msgstr "ÀÎÅÍ·´Æ®"
+msgstr "ì¸í„°ëŸ½íŠ¸"
 
 #: src/CmdExec.cc:639
 #, c-format
 msgid "Warning: discarding incomplete command\n"
-msgstr "°æ°í: ºÒ¿ÏÀüÇÑ ¸í·É¾î ¹«½Ã\n"
+msgstr "ê²½ê³ : ë¶ˆì™„ì „í•œ ëª…ë ¹ì–´ ë¬´ì‹œ\n"
 
 #: src/CmdExec.cc:737
 #, c-format
 msgid "\tExecuting builtin `%s' [%s]\n"
-msgstr "\t³»Àå ½ÇÇà `%s' [%s]\n"
+msgstr "\të‚´ì¥ ì‹¤í–‰ `%s' [%s]\n"
 
 #: src/CmdExec.cc:742
 msgid "Queue is stopped."
@@ -203,35 +203,35 @@ msgstr ""
 
 #: src/CmdExec.cc:747
 msgid "Now executing:"
-msgstr "ÇöÀç ½ÇÇàÁß:"
+msgstr "í˜„ì¬ ì‹¤í–‰ì¤‘:"
 
 #: src/CmdExec.cc:758
 #, c-format
 msgid "\tWaiting for job [%d] to terminate\n"
-msgstr "\tÀÛ¾÷ [%d]ÀÇ Á¾·á¸¦ ±â´Ù¸®´Â Áß\n"
+msgstr "\tì‘ì—… [%d]ì˜ ì¢…ë£Œë¥¼ ê¸°ë‹¤ë¦¬ëŠ” ì¤‘\n"
 
 #: src/CmdExec.cc:761
 #, c-format
 msgid "\tWaiting for termination of jobs: "
-msgstr "\tÀÛ¾÷ Á¾·á¸¦ À§ÇÏ¿© ±â´Ù¸®´Â Áß: "
+msgstr "\tì‘ì—… ì¢…ë£Œë¥¼ ìœ„í•˜ì—¬ ê¸°ë‹¤ë¦¬ëŠ” ì¤‘: "
 
 #: src/CmdExec.cc:770
 msgid "\tRunning\n"
-msgstr "\t½ÇÇàÁß\n"
+msgstr "\tì‹¤í–‰ì¤‘\n"
 
 #: src/CmdExec.cc:772
 msgid "\tWaiting for command\n"
-msgstr "\t¸í·ÉÀ» ±â´Ù¸®´Â Áß\n"
+msgstr "\tëª…ë ¹ì„ ê¸°ë‹¤ë¦¬ëŠ” ì¤‘\n"
 
 #: src/CmdExec.cc:1261
 #, c-format
 msgid "%s: command `%s' is not compiled in.\n"
-msgstr "%s: `%s'¸í·ÉÀº ÄÄÆÄÀÏµÇÁö ¾Ê¾Ò½À´Ï´Ù.\n"
+msgstr "%s: `%s'ëª…ë ¹ì€ ì»´íŒŒì¼ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.\n"
 
 #: src/CmdExec.cc:1278
 #, fuzzy, c-format
 msgid "Usage: %s cmd [args...]\n"
-msgstr "»ç¿ë¹ı: %s module [args...]\n"
+msgstr "ì‚¬ìš©ë²•: %s module [args...]\n"
 
 #: src/CmdExec.cc:1284
 #, c-format
@@ -244,7 +244,7 @@ msgstr ""
 
 #: src/commands.cc:115
 msgid "Launch shell or shell command\n"
-msgstr "½© ³ªµéÀÌ ¶Ç´Â ½© ¸í·É¾î\n"
+msgstr "ì‰˜ ë‚˜ë“¤ì´ ë˜ëŠ” ì‰˜ ëª…ë ¹ì–´\n"
 
 #: src/commands.cc:116
 msgid "(commands)"
@@ -255,8 +255,8 @@ msgid ""
 "Group commands together to be executed as one command\n"
 "You can launch such a group in background\n"
 msgstr ""
-"ÇÏ³ªÀÇ ¸í·É¾î·Î½á ½ÇÇàÇÒ ¼ö ÀÖµµ·Ï ¸í·É¾î¸¦ ±×·ìÀ¸·Î ÁöÁ¤\n"
-"¹é±×¶ó¿îµå¿¡¼­ ÇÏ³ªÀÇ ±×·ì°ú °°ÀÌ ½ÇÇàÇÒ ¼ö ÀÖ½À´Ï´Ù\n"
+"í•˜ë‚˜ì˜ ëª…ë ¹ì–´ë¡œì¨ ì‹¤í–‰í•  ìˆ˜ ìˆë„ë¡ ëª…ë ¹ì–´ë¥¼ ê·¸ë£¹ìœ¼ë¡œ ì§€ì •\n"
+"ë°±ê·¸ë¼ìš´ë“œì—ì„œ í•˜ë‚˜ì˜ ê·¸ë£¹ê³¼ ê°™ì´ ì‹¤í–‰í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:120
 msgid "alias [<name> [<value>]]"
@@ -268,13 +268,13 @@ msgid ""
 "the alias is undefined, else is takes the value <value>.\n"
 "If no argument is given the current aliases are listed.\n"
 msgstr ""
-"alias <name> ¸¦ Á¤ÀÇ ¶Ç´Â ÇØÁ¦. <value>¸¦ »ı·«Çß´Ù¸é,\n"
-"alias´Â ÇØÁ¦µÇ¸ç, ¹İ´ëÀÎ °æ¿ì´Â <value> °ªÀ» °®½À´Ï´Ù.\n"
-"¾î¶² ÀÎ¼öµµ ÁÖÁö ¾ÊÀ¸¸é ÇöÀç aliaseµéÀ» º¸¿©Áİ´Ï´Ù.\n"
+"alias <name> ë¥¼ ì •ì˜ ë˜ëŠ” í•´ì œ. <value>ë¥¼ ìƒëµí–ˆë‹¤ë©´,\n"
+"aliasëŠ” í•´ì œë˜ë©°, ë°˜ëŒ€ì¸ ê²½ìš°ëŠ” <value> ê°’ì„ ê°–ìŠµë‹ˆë‹¤.\n"
+"ì–´ë–¤ ì¸ìˆ˜ë„ ì£¼ì§€ ì•Šìœ¼ë©´ í˜„ì¬ aliaseë“¤ì„ ë³´ì—¬ì¤ë‹ˆë‹¤.\n"
 
 #: src/commands.cc:125
 msgid "anon - login anonymously (by default)\n"
-msgstr "anon - ÀÍ¸íÀ¸·Î ·Î±×ÀÎ (±âº»)\n"
+msgstr "anon - ìµëª…ìœ¼ë¡œ ë¡œê·¸ì¸ (ê¸°ë³¸)\n"
 
 #: src/commands.cc:127
 msgid "bookmark [SUBCMD]"
@@ -292,15 +292,15 @@ msgid ""
 "  import <type>      - import foreign bookmarks\n"
 "  list               - list bookmarks (default)\n"
 msgstr ""
-"bookmark ¸í·É¾î´Â bookmark¸¦ Á¦¾îÇÕ´Ï´Ù\n"
+"bookmark ëª…ë ¹ì–´ëŠ” bookmarkë¥¼ ì œì–´í•©ë‹ˆë‹¤\n"
 "\n"
-"¼­ºê¸í·É¾î´Â ´ÙÀ½°ú °°½À´Ï´Ù:\n"
-"  add <name> [<loc>] - ÇöÀç À§Ä¡ÇÏ´Â °÷ ¶Ç´Â ºÏ¸¶Å©(bookmark)¿¡ ÁÖ¾îÁø\n"
-"                       °÷À» Ãß°¡ÇÕ´Ï´Ù. ±×¸®°í ÁÖ¾îÁø ÀÌ¸§À¸·Î Ç¥½ÃÇÕ´Ï´Ù\n"
-"  del <name>         - ÀÌ¸§À» °¡Áö´Â ºÏ¸¶Å©¸¦ Áö¿ó´Ï´Ù\n"
-"  edit               - ºÏ¸¶Å© ÆÄÀÏÀ» ÆíÁıÇÕ´Ï´Ù\n"
-"  import <type>      - ¿ÜºÎ ºÏ¸¶Å©¸¦ °¡Á®¿É´Ï´Ù\n"
-"  list               - ºÏ¸¶Å©ÀÇ ¸ñ·ÏÀ» º¸¿©Áİ´Ï´Ù(±âº»)\n"
+"ì„œë¸Œëª…ë ¹ì–´ëŠ” ë‹¤ìŒê³¼ ê°™ìŠµë‹ˆë‹¤:\n"
+"  add <name> [<loc>] - í˜„ì¬ ìœ„ì¹˜í•˜ëŠ” ê³³ ë˜ëŠ” ë¶ë§ˆí¬(bookmark)ì— ì£¼ì–´ì§„\n"
+"                       ê³³ì„ ì¶”ê°€í•©ë‹ˆë‹¤. ê·¸ë¦¬ê³  ì£¼ì–´ì§„ ì´ë¦„ìœ¼ë¡œ í‘œì‹œí•©ë‹ˆë‹¤\n"
+"  del <name>         - ì´ë¦„ì„ ê°€ì§€ëŠ” ë¶ë§ˆí¬ë¥¼ ì§€ì›ë‹ˆë‹¤\n"
+"  edit               - ë¶ë§ˆí¬ íŒŒì¼ì„ í¸ì§‘í•©ë‹ˆë‹¤\n"
+"  import <type>      - ì™¸ë¶€ ë¶ë§ˆí¬ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤\n"
+"  list               - ë¶ë§ˆí¬ì˜ ëª©ë¡ì„ ë³´ì—¬ì¤ë‹ˆë‹¤(ê¸°ë³¸)\n"
 
 #: src/commands.cc:137
 msgid "cache [SUBCMD]"
@@ -319,15 +319,15 @@ msgid ""
 "  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
 "                minutes (x=m) hours (x=h) or days (x=d)\n"
 msgstr ""
-"cache ¸í·É¾î´Â Áö¿ª ¸Ş¸ğ¸® Ä³½Ã¸¦ Á¦¾îÇÕ´Ï´Ù\n"
+"cache ëª…ë ¹ì–´ëŠ” ì§€ì—­ ë©”ëª¨ë¦¬ ìºì‹œë¥¼ ì œì–´í•©ë‹ˆë‹¤\n"
 "\n"
-"¼­ºê ¸í·É¾î´Â ´ÙÀ½°ú °°½À´Ï´Ù:\n"
-"  stat        - Ä³½Ã »óÅÂ¸¦ º¸¿©Áİ´Ï´Ù(±âº»)\n"
-"  on|off      - Ä³½Ã ²¸°í/²ü´Ï´Ù\n"
-"  flush       - Ä³½Ã¸¦ ºñ¿ó´Ï´Ù\n"
-"  size <lim>  - ¸Ş¸ğ¸® ÇÑ°è¸¦ ¼³Á¤ÇÕ´Ï´Ù, -1Àº ¹«Á¦ÇÑ\n"
-"  expire <Nx> - Ä³½ÃÀÇ ¸¸±â¸¦ NÃÊ(x=s)/ºĞ(x=m)/½Ã(x=h)\n"
-"                ¶Ç´Â ³¯(x=d)·Î ¼³Á¤ÇÕ´Ï´Ù\n"
+"ì„œë¸Œ ëª…ë ¹ì–´ëŠ” ë‹¤ìŒê³¼ ê°™ìŠµë‹ˆë‹¤:\n"
+"  stat        - ìºì‹œ ìƒíƒœë¥¼ ë³´ì—¬ì¤ë‹ˆë‹¤(ê¸°ë³¸)\n"
+"  on|off      - ìºì‹œ ê»´ê³ /ë•ë‹ˆë‹¤\n"
+"  flush       - ìºì‹œë¥¼ ë¹„ì›ë‹ˆë‹¤\n"
+"  size <lim>  - ë©”ëª¨ë¦¬ í•œê³„ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤, -1ì€ ë¬´ì œí•œ\n"
+"  expire <Nx> - ìºì‹œì˜ ë§Œê¸°ë¥¼ Nì´ˆ(x=s)/ë¶„(x=m)/ì‹œ(x=h)\n"
+"                ë˜ëŠ” ë‚ (x=d)ë¡œ ì„¤ì •í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:146
 msgid "cat [-b] <files>"
@@ -338,8 +338,8 @@ msgid ""
 "cat - output remote files to stdout (can be redirected)\n"
 " -b  use binary mode (ascii is the default)\n"
 msgstr ""
-"cat - ¿ø°Å¸® ÆÄÀÏÀ» Ç¥ÁØÃâ·Â(¶Ç´Â ¸®´ÙÀÌ·º¼Ç)À¸·Î º¸³À´Ï´Ù\n"
-" -b   ÀÌÁø ¸ğµå »ç¿ë (±âº»¼³Á¤Àº ¾Æ½ºÅ°)\n"
+"cat - ì›ê±°ë¦¬ íŒŒì¼ì„ í‘œì¤€ì¶œë ¥(ë˜ëŠ” ë¦¬ë‹¤ì´ë ‰ì…˜)ìœ¼ë¡œ ë³´ëƒ…ë‹ˆë‹¤\n"
+" -b   ì´ì§„ ëª¨ë“œ ì‚¬ìš© (ê¸°ë³¸ì„¤ì •ì€ ì•„ìŠ¤í‚¤)\n"
 
 #: src/commands.cc:149
 msgid "cd <rdir>"
@@ -352,12 +352,12 @@ msgid ""
 "The previous directory for each site is also stored on disk, so you can\n"
 "do `open site; cd -' even after lftp restart.\n"
 msgstr ""
-"<rdir>·Î ÇöÀç ¿ø°Å¸® µğ·ºÅä¸®¸¦ ¹Ù²ß´Ï´Ù. ÀÌÀü ¿ø°Å¸® µğ·ºÅä¸®´Â -·Î ÀúÀåµË´Ï"
-"´Ù.\n"
-"'cd -'·Î ¿ø·¡ÀÇ µğ·ºÅä¸®·Î µ¹¾Æ°¥ ¼ö ÀÖ½À´Ï´Ù. °¢ »çÀÌÆ®º°·Î ÀÌÀü µğ·ºÅä¸®"
-"°¡ \n"
-"µğ½ºÅ©¿¡ ÀúÀåµË´Ï´Ù. Áï, lftp¸¦ Àç½ÃÀÛ ÈÄ¿¡ 'open site; cd -'¸¦ ÀÌ¿ëÇÒ ¼ö ÀÖ"
-"½À´Ï´Ù.\n"
+"<rdir>ë¡œ í˜„ì¬ ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ë¥¼ ë°”ê¿‰ë‹ˆë‹¤. ì´ì „ ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ëŠ” -ë¡œ ì €ì¥ë©ë‹ˆ"
+"ë‹¤.\n"
+"'cd -'ë¡œ ì›ë˜ì˜ ë””ë ‰í† ë¦¬ë¡œ ëŒì•„ê°ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤. ê° ì‚¬ì´íŠ¸ë³„ë¡œ ì´ì „ ë””ë ‰í† ë¦¬"
+"ê°€ \n"
+"ë””ìŠ¤í¬ì— ì €ì¥ë©ë‹ˆë‹¤. ì¦‰, lftpë¥¼ ì¬ì‹œì‘ í›„ì— 'open site; cd -'ë¥¼ ì´ìš©í•  ìˆ˜ ìˆ"
+"ìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:154
 msgid "chmod [OPTS] mode file..."
@@ -380,8 +380,8 @@ msgid ""
 "Close idle connections. By default only with current server.\n"
 " -a  close idle connections with all servers\n"
 msgstr ""
-"³î°í Á¢¼ÓÀ» ´İ´Â´Ù. ±âº»ÀûÀ¸·Î ÇöÀç ¼­¹ö¿¡ Àû¿ëµË´Ï´Ù.\n"
-" -a  ¸ğµç ¼­¹öÀÇ ³î°í ÀÖ´Â Á¢¼ÓÀ» ´İ½À´Ï´Ù\n"
+"ë†€ê³  ì ‘ì†ì„ ë‹«ëŠ”ë‹¤. ê¸°ë³¸ì ìœ¼ë¡œ í˜„ì¬ ì„œë²„ì— ì ìš©ë©ë‹ˆë‹¤.\n"
+" -a  ëª¨ë“  ì„œë²„ì˜ ë†€ê³  ìˆëŠ” ì ‘ì†ì„ ë‹«ìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:166
 msgid "[re]cls [opts] [path/][pattern]"
@@ -441,8 +441,8 @@ msgid ""
 " -p  show PID\n"
 " -t  show timestamps\n"
 msgstr ""
-"ÁÖ¾îÁø °ªÀ¸·Î µğ¹ö±× ·¹º§À» ¼³Á¤ÇÏ°Å³ª µğ¹ö±× ±â´ÉÀ» ²ü´Ï´Ù.\n"
-" -o <file>  µğ¹ö±× Ãâ·ÂÀ» ÆÄÀÏ·Î ÀúÀåÇÕ´Ï´Ù.\n"
+"ì£¼ì–´ì§„ ê°’ìœ¼ë¡œ ë””ë²„ê·¸ ë ˆë²¨ì„ ì„¤ì •í•˜ê±°ë‚˜ ë””ë²„ê·¸ ê¸°ëŠ¥ì„ ë•ë‹ˆë‹¤.\n"
+" -o <file>  ë””ë²„ê·¸ ì¶œë ¥ì„ íŒŒì¼ë¡œ ì €ì¥í•©ë‹ˆë‹¤.\n"
 
 #: src/commands.cc:223
 msgid "du [options] <dirs>"
@@ -474,7 +474,7 @@ msgstr ""
 #: src/commands.cc:242
 #, fuzzy
 msgid "edit [OPTS] <file>"
-msgstr "»ç¿ë¹ı: %s [OPTS] file\n"
+msgstr "ì‚¬ìš©ë²•: %s [OPTS] file\n"
 
 #: src/commands.cc:243
 msgid ""
@@ -496,11 +496,11 @@ msgid ""
 "termination status. If omitted, exit code of last command is used.\n"
 "`bg' forces moving to background if cmd:move-background is false.\n"
 msgstr ""
-"exit - lftp¸¦ ºüÁ®³ª°¡°Å³ª Áöµ¢µÈ ÀÛ¾÷À» ¹é±×¶ó¿îµå·Î µ¹¸³´Ï´Ù\n"
+"exit - lftpë¥¼ ë¹ ì ¸ë‚˜ê°€ê±°ë‚˜ ì§€ë©ëœ ì‘ì—…ì„ ë°±ê·¸ë¼ìš´ë“œë¡œ ëŒë¦½ë‹ˆë‹¤\n"
 "\n"
-"ÁöÁ¤µÈ ÀÛ¾÷ÀÌ ¾ø´Ù¸é, ÄÚµå´Â lftp¸¦ Á¾·áÇÔÀ»  OS ¾Ë¸³´Ï´Ù.\n"
-"»ı·«Çß´Ù¸é, ¸¶Áö¸· ¸í·É¾î°¡ Á¾·á µË´Ï´Ù. ¸¸¾à cmd:move-backgrond°¡\n"
-"½ÇÆĞÇÑ´Ù¸é `bg'¸¦ ÅëÇØ °­Á¦·Î ¹é±×¶ó¿îµå·Î µ¹¸± ¼ö ÀÖ½À´Ï´Ù.\n"
+"ì§€ì •ëœ ì‘ì—…ì´ ì—†ë‹¤ë©´, ì½”ë“œëŠ” lftpë¥¼ ì¢…ë£Œí•¨ì„  OS ì•Œë¦½ë‹ˆë‹¤.\n"
+"ìƒëµí–ˆë‹¤ë©´, ë§ˆì§€ë§‰ ëª…ë ¹ì–´ê°€ ì¢…ë£Œ ë©ë‹ˆë‹¤. ë§Œì•½ cmd:move-backgrondê°€\n"
+"ì‹¤íŒ¨í•œë‹¤ë©´ `bg'ë¥¼ í†µí•´ ê°•ì œë¡œ ë°±ê·¸ë¼ìš´ë“œë¡œ ëŒë¦´ ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:255
 msgid ""
@@ -525,12 +525,12 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"¿ø°Å¸® ÆÄÀÏ <rfile>À» ¹Ş¾Æ Áö¿ª ÆÄÀÏ <lfile>·Î ÀúÀå.\n"
-" -o <lfile> Áö¿ª ÆÄÀÏ¸í ÁöÁ¤ (±âº» - rfileÀÇ ÀÌ¸§)\n"
-" -c  ÀÌ¾î¹Ş±â, reget\n"
-" -E  ¼º°øÀûÀ¸·Î ¹ŞÀº ÈÄ ¿ø°Å¸® ÆÄÀÏ »èÁ¦\n"
-" -a  ¾Æ½ºÅ° ¸ğµå »ç¿ë (±âº» - ¹ÙÀÌ³Ê¸®) -O <base> ÆÄÀÏÀÌ À§Ä¡ÇÒ ±âº» µğ·ºÅä"
-"¸® ¶Ç´Â URLÀ» ÁöÁ¤\n"
+"ì›ê±°ë¦¬ íŒŒì¼ <rfile>ì„ ë°›ì•„ ì§€ì—­ íŒŒì¼ <lfile>ë¡œ ì €ì¥.\n"
+" -o <lfile> ì§€ì—­ íŒŒì¼ëª… ì§€ì • (ê¸°ë³¸ - rfileì˜ ì´ë¦„)\n"
+" -c  ì´ì–´ë°›ê¸°, reget\n"
+" -E  ì„±ê³µì ìœ¼ë¡œ ë°›ì€ í›„ ì›ê±°ë¦¬ íŒŒì¼ ì‚­ì œ\n"
+" -a  ì•„ìŠ¤í‚¤ ëª¨ë“œ ì‚¬ìš© (ê¸°ë³¸ - ë°”ì´ë„ˆë¦¬) -O <base> íŒŒì¼ì´ ìœ„ì¹˜í•  ê¸°ë³¸ ë””ë ‰í† "
+"ë¦¬ ë˜ëŠ” URLì„ ì§€ì •\n"
 
 #: src/commands.cc:268
 msgid "glob [OPTS] <cmd> <args>"
@@ -551,15 +551,15 @@ msgid ""
 " --not-exist  return zero exit code when the patterns expand to an empty "
 "list\n"
 msgstr ""
-"»ç¿ë¹ı: glob [OPTS] command args...\n"
-"¿ÍÀÏµåÄ«µå¸¦ È®ÀåÇÏ°í ÁöÁ¤ÇÑ ¸í·ÉÀ» ½ÇÇà.\n"
-"¿É¼ÇÀº ÆÄÀÏÀÌ³ª  µğ·ºÅä¸®ÀÇ ¸ñ·ÏÀ¸·Î ¿ÍÀÏµåÄ«µå·Î È®ÀåÇÏ´Âµ¥\n"
-"»ç¿ëµÉ ¼ö ÀÖ°Å³ª, µ¿½Ã¿¡ »ç¿ëµÉ ¼ö ÀÖÀ½. Å¸ÀÔÀÇ ¼±ÅÃÀº È®½ÇÈ÷ ½Å·ÚÇÒ \n"
-"¼ö´Â ¾øÁö¸¸ ¼­¹ö¿¡ µû¶ó °áÁ¤µË´Ï´Ù. ¸¸¾à Å¸ÀÔÀ» °áÁ¤ÇÒ ¼ö ¾ø´Ù¸é, ¸ñ·Ï¿¡\n"
-"Æ÷ÇÔ µÉ °Ì´Ï´Ù.\n"
-" -f  ÀÏ¹İ ÆÄÀÏ (±âº»)\n"
-" -d  µğ·ºÅä¸®\n"
-" -a  ¸ğµç Å¸ÀÔ\n"
+"ì‚¬ìš©ë²•: glob [OPTS] command args...\n"
+"ì™€ì¼ë“œì¹´ë“œë¥¼ í™•ì¥í•˜ê³  ì§€ì •í•œ ëª…ë ¹ì„ ì‹¤í–‰.\n"
+"ì˜µì…˜ì€ íŒŒì¼ì´ë‚˜  ë””ë ‰í† ë¦¬ì˜ ëª©ë¡ìœ¼ë¡œ ì™€ì¼ë“œì¹´ë“œë¡œ í™•ì¥í•˜ëŠ”ë°\n"
+"ì‚¬ìš©ë  ìˆ˜ ìˆê±°ë‚˜, ë™ì‹œì— ì‚¬ìš©ë  ìˆ˜ ìˆìŒ. íƒ€ì…ì˜ ì„ íƒì€ í™•ì‹¤íˆ ì‹ ë¢°í•  \n"
+"ìˆ˜ëŠ” ì—†ì§€ë§Œ ì„œë²„ì— ë”°ë¼ ê²°ì •ë©ë‹ˆë‹¤. ë§Œì•½ íƒ€ì…ì„ ê²°ì •í•  ìˆ˜ ì—†ë‹¤ë©´, ëª©ë¡ì—\n"
+"í¬í•¨ ë  ê²ë‹ˆë‹¤.\n"
+" -f  ì¼ë°˜ íŒŒì¼ (ê¸°ë³¸)\n"
+" -d  ë””ë ‰í† ë¦¬\n"
+" -a  ëª¨ë“  íƒ€ì…\n"
 
 #: src/commands.cc:279
 msgid "help [<cmd>]"
@@ -567,7 +567,7 @@ msgstr ""
 
 #: src/commands.cc:280
 msgid "Print help for command <cmd>, or list of available commands\n"
-msgstr "¸í·É¾î <cmd> ÀÇ µµ¿ò¸», ¶Ç´Â ÀÌ¿ë °¡´ÉÇÑ ¸í·É¾îÀÇ ¸ñ·ÏÀ» º¸¿©Áİ´Ï´Ù\n"
+msgstr "ëª…ë ¹ì–´ <cmd> ì˜ ë„ì›€ë§, ë˜ëŠ” ì´ìš© ê°€ëŠ¥í•œ ëª…ë ¹ì–´ì˜ ëª©ë¡ì„ ë³´ì—¬ì¤ë‹ˆë‹¤\n"
 
 #: src/commands.cc:282
 #, fuzzy
@@ -575,8 +575,8 @@ msgid ""
 "List running jobs. -v means verbose, several -v can be specified.\n"
 "If <job_no> is specified, only list a job with that number.\n"
 msgstr ""
-"¼öÇàÁßÀÎ ÀÛ¾÷ÀÇ ¸ñ·Ï¸¦ º¸¿©Áİ´Ï´Ù. -v´Â ÀÚ¼¼È÷, ÀÏºÎ -v´Â Á¶°ÇÀ¸·Î ÁöÁ¤µÉ ¼ö "
-"ÀÖ½À´Ï´Ù.\n"
+"ìˆ˜í–‰ì¤‘ì¸ ì‘ì—…ì˜ ëª©ë¡ë¥¼ ë³´ì—¬ì¤ë‹ˆë‹¤. -vëŠ” ìì„¸íˆ, ì¼ë¶€ -vëŠ” ì¡°ê±´ìœ¼ë¡œ ì§€ì •ë  ìˆ˜ "
+"ìˆìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:284
 msgid "kill all|<job_no>"
@@ -584,7 +584,7 @@ msgstr ""
 
 #: src/commands.cc:285
 msgid "Delete specified job with <job_no> or all jobs\n"
-msgstr "<job_no>¸¦ °¡Áø Æ¯Á¤ ÀÛ¾÷ ¶Ç´Â ¸ğµç ÀÛ¾÷À» Áö¿ó´Ï´Ù\n"
+msgstr "<job_no>ë¥¼ ê°€ì§„ íŠ¹ì • ì‘ì—… ë˜ëŠ” ëª¨ë“  ì‘ì—…ì„ ì§€ì›ë‹ˆë‹¤\n"
 
 #: src/commands.cc:286
 msgid "lcd <ldir>"
@@ -595,8 +595,8 @@ msgid ""
 "Change current local directory to <ldir>. The previous local directory\n"
 "is stored as `-'. You can do `lcd -' to change the directory back.\n"
 msgstr ""
-"ÇöÀç Áö¿ª µğ·ºÅä¸®¸¦ <ldir>·Î ¹Ù²ß´Ï´Ù. ÀÌÀü Áö¿ª µğ·ºÅä¸®´Â `-'·Î½á\n"
-"ÀúÀåµË´Ï´Ù. `lcd -'À¸·Î ÀÌÀü µğ·ºÅä¸®·Î µÇµ¹¾Æ°¥ ¼ö ÀÖ½À´Ï´Ù.\n"
+"í˜„ì¬ ì§€ì—­ ë””ë ‰í† ë¦¬ë¥¼ <ldir>ë¡œ ë°”ê¿‰ë‹ˆë‹¤. ì´ì „ ì§€ì—­ ë””ë ‰í† ë¦¬ëŠ” `-'ë¡œì¨\n"
+"ì €ì¥ë©ë‹ˆë‹¤. `lcd -'ìœ¼ë¡œ ì´ì „ ë””ë ‰í† ë¦¬ë¡œ ë˜ëŒì•„ê°ˆ ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:289
 msgid "lftp [OPTS] <site>"
@@ -619,26 +619,26 @@ msgid ""
 " -d                  switch on debugging mode\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"`lftp'´Â rc ÆÄÀÏ ÀÌÈÄ lftp¿¡ ÀÇÇØ ½ÇÇàµÇ´Â Ã¹¹øÂ° ¸í·É¾îÀÔ´Ï´Ù\n"
-" -f <file>           ÆÄÀÏ·ÎºÎÅÍ ¸í·É¾î¸¦ ½ÇÇàÇÏ°í ºüÁ®³ª°©´Ï´Ù\n"
-" -c <cmd>            ¸í·É¾î¸¦ ½ÇÇàÇÏ°í ºüÁ®³ª°©´Ï´Ù\n"
-" --help              ÀÌ µµ¿ò¸»À» Ãâ·ÂÇÏ°í ºüÁ®³ª°©´Ï´Ù\n"
-" --version           lftpÀÇ ¹öÀüÀ» Ãâ·ÂÇÏ°í ºüÁ®³ª°©´Ï´Ù\n"
-"´Ù¸¥ ¿É¼ÇµéÀº `open' ¸í·É¾î¿¡ ÀÖ´Â °Í°ú °°½À´Ï´Ù\n"
-" -e <cmd>            ÁöÁ¤µÈ ¸í·É¾î¸¸ ½ÇÇàÇÕ´Ï´Ù\n"
-" -u <user>[, <pass>] user/password·Î ÀÎÁõ¹Ş½À´Ï´Ù\n"
-" -p <port>           Æ÷Æ®·Î Á¢¼ÓÇÕ´Ï´Ù\n"
-" <site>              È£½ºÆ® ÀÌ¸§, URL ¶Ç´Â ºÏ¸¶Å© ÀÌ¸§\n"
+"`lftp'ëŠ” rc íŒŒì¼ ì´í›„ lftpì— ì˜í•´ ì‹¤í–‰ë˜ëŠ” ì²«ë²ˆì§¸ ëª…ë ¹ì–´ì…ë‹ˆë‹¤\n"
+" -f <file>           íŒŒì¼ë¡œë¶€í„° ëª…ë ¹ì–´ë¥¼ ì‹¤í–‰í•˜ê³  ë¹ ì ¸ë‚˜ê°‘ë‹ˆë‹¤\n"
+" -c <cmd>            ëª…ë ¹ì–´ë¥¼ ì‹¤í–‰í•˜ê³  ë¹ ì ¸ë‚˜ê°‘ë‹ˆë‹¤\n"
+" --help              ì´ ë„ì›€ë§ì„ ì¶œë ¥í•˜ê³  ë¹ ì ¸ë‚˜ê°‘ë‹ˆë‹¤\n"
+" --version           lftpì˜ ë²„ì „ì„ ì¶œë ¥í•˜ê³  ë¹ ì ¸ë‚˜ê°‘ë‹ˆë‹¤\n"
+"ë‹¤ë¥¸ ì˜µì…˜ë“¤ì€ `open' ëª…ë ¹ì–´ì— ìˆëŠ” ê²ƒê³¼ ê°™ìŠµë‹ˆë‹¤\n"
+" -e <cmd>            ì§€ì •ëœ ëª…ë ¹ì–´ë§Œ ì‹¤í–‰í•©ë‹ˆë‹¤\n"
+" -u <user>[, <pass>] user/passwordë¡œ ì¸ì¦ë°›ìŠµë‹ˆë‹¤\n"
+" -p <port>           í¬íŠ¸ë¡œ ì ‘ì†í•©ë‹ˆë‹¤\n"
+" <site>              í˜¸ìŠ¤íŠ¸ ì´ë¦„, URL ë˜ëŠ” ë¶ë§ˆí¬ ì´ë¦„\n"
 
 #: src/commands.cc:303
 #, fuzzy
 msgid "ln [-s] <file1> <file2>"
-msgstr "»ç¿ë¹ı: mv <file1> <file2>\n"
+msgstr "ì‚¬ìš©ë²•: mv <file1> <file2>\n"
 
 #: src/commands.cc:304
 #, fuzzy
 msgid "Link <file1> to <file2>\n"
-msgstr "<file1>¸¦ <file2>·Î ÀÌ¸§À» º¯°æÇÕ´Ï´Ù\n"
+msgstr "<file1>ë¥¼ <file2>ë¡œ ì´ë¦„ì„ ë³€ê²½í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:308
 msgid "ls [<args>]"
@@ -653,10 +653,10 @@ msgid ""
 "`cache flush'.\n"
 "See also `help cls'.\n"
 msgstr ""
-"¿ø°Å¸® ÆÄÀÏ ¸ñ·ÏÀÔ´Ï´Ù, ÆÄÀÏ ¶Ç´Â ´Ù¸¥ ¸í·É¾î¿¡ ÆÄÀÌÇÁ¸¦ ÅëÇÏ¿© Ãâ·Â\n"
-"À» ÀçÁöÁ¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.\n"
-"±âº»°ªÀ¸·Î, ls Ãâ·ÂÀº Ä³½ÃµÇ¸ç, `rels' ¶Ç´Â `cache flush'·Î »õ ¸ñ·ÏÀ»\n"
-"º¼ ¼ö ÀÖ½À´Ï´Ù.\n"
+"ì›ê±°ë¦¬ íŒŒì¼ ëª©ë¡ì…ë‹ˆë‹¤, íŒŒì¼ ë˜ëŠ” ë‹¤ë¥¸ ëª…ë ¹ì–´ì— íŒŒì´í”„ë¥¼ í†µí•˜ì—¬ ì¶œë ¥\n"
+"ì„ ì¬ì§€ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n"
+"ê¸°ë³¸ê°’ìœ¼ë¡œ, ls ì¶œë ¥ì€ ìºì‹œë˜ë©°, `rels' ë˜ëŠ” `cache flush'ë¡œ ìƒˆ ëª©ë¡ì„\n"
+"ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:314
 msgid "mget [OPTS] <files>"
@@ -673,13 +673,13 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"È®ÀåµÈ ¿ÍÀÏµåÄ«µå¸¦ °¡Áö°í ÁöÁ¤ÇÑ ÆÄÀÏ ¹ŞÀ½\n"
-" -c  ÀÌ¾î¹Ş±â, reget\n"
-" -d  ÇöÀçÀÇ µğ·ºÅä¸® ´ë½Å¿¡ ¹Ş´Â ÆÄÀÏ¸í°ú °°Àº ÀÌ¸§ÀÇ µğ·ºÅä¸®¸¦\n"
-"     ¸¸µé¾î ±×°÷¿¡ ÆÄÀÏÀ» ÀúÀå\n"
-" -E  ÆÄÀÏÀ» ¼º°øÀûÀ¸·Î Àü¼ÛÇÑ ÈÄ ¿ø°Å¸® ÆÄÀÏÀ» »èÁ¦\n"
-" -a  ¾Æ½ºÅ° ¸ğµå »ç¿ë (±âº» - ¹ÙÀÌ³Ê¸®)\n"
-" -O <base> ÆÄÀÏÀÌ À§Ä¡ÇÒ ±âº» µğ·ºÅä¸® ¶Ç´Â URLÀ» ÁöÁ¤\n"
+"í™•ì¥ëœ ì™€ì¼ë“œì¹´ë“œë¥¼ ê°€ì§€ê³  ì§€ì •í•œ íŒŒì¼ ë°›ìŒ\n"
+" -c  ì´ì–´ë°›ê¸°, reget\n"
+" -d  í˜„ì¬ì˜ ë””ë ‰í† ë¦¬ ëŒ€ì‹ ì— ë°›ëŠ” íŒŒì¼ëª…ê³¼ ê°™ì€ ì´ë¦„ì˜ ë””ë ‰í† ë¦¬ë¥¼\n"
+"     ë§Œë“¤ì–´ ê·¸ê³³ì— íŒŒì¼ì„ ì €ì¥\n"
+" -E  íŒŒì¼ì„ ì„±ê³µì ìœ¼ë¡œ ì „ì†¡í•œ í›„ ì›ê±°ë¦¬ íŒŒì¼ì„ ì‚­ì œ\n"
+" -a  ì•„ìŠ¤í‚¤ ëª¨ë“œ ì‚¬ìš© (ê¸°ë³¸ - ë°”ì´ë„ˆë¦¬)\n"
+" -O <base> íŒŒì¼ì´ ìœ„ì¹˜í•  ê¸°ë³¸ ë””ë ‰í† ë¦¬ ë˜ëŠ” URLì„ ì§€ì •\n"
 
 #: src/commands.cc:322
 msgid "mirror [OPTS] [remote [local]]"
@@ -696,8 +696,8 @@ msgid ""
 " -p  make all levels of path\n"
 " -f  be quiet, suppress messages\n"
 msgstr ""
-"¿ø°Å¸® µğ·ºÅä¸®¸¦ ¸¸µì´Ï´Ù\n"
-" -p  ¸ğµç ·¹º§ÀÇ ÆĞ½º¸¦ ÇÑ¹ø¿¡ ¸¸µì´Ï´Ù\n"
+"ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ë¥¼ ë§Œë“­ë‹ˆë‹¤\n"
+" -p  ëª¨ë“  ë ˆë²¨ì˜ íŒ¨ìŠ¤ë¥¼ í•œë²ˆì— ë§Œë“­ë‹ˆë‹¤\n"
 
 #: src/commands.cc:327
 msgid "module name [args]"
@@ -710,11 +710,11 @@ msgid ""
 "If name contains a slash, then the module is searched in current\n"
 "directory, otherwise in directories specified by setting module:path.\n"
 msgstr ""
-"¸ğµâ(shared object)À» ¿Ã¸³´Ï´Ù. ¸ğµâÀº ÇÔ¼ö\n"
+"ëª¨ë“ˆ(shared object)ì„ ì˜¬ë¦½ë‹ˆë‹¤. ëª¨ë“ˆì€ í•¨ìˆ˜\n"
 "   void module_init(int argc,const char *const *argv)\n"
-"¸¦ Æ÷ÇÔÇØ¾ß ÇÕ´Ï´Ù. ¸¸¾à ÀÌ¸§¿¡ ½½·¡½Ã°¡ Æ÷ÇÔµÈ´Ù¸é\n"
-"±× ¸ğµâÀ» ÇöÀç µğ·ºÅä¸®¿¡¼­ Ã£½À´Ï´Ù\n"
-"±×·¸Áö ¾Ê´Ù¸é module:path¿¡ ÀÇÇØ ÁöÁ¤µÈ µğ·ºÅä¸®¿¡¼­ Ã£½À´Ï´Ù.\n"
+"ë¥¼ í¬í•¨í•´ì•¼ í•©ë‹ˆë‹¤. ë§Œì•½ ì´ë¦„ì— ìŠ¬ë˜ì‹œê°€ í¬í•¨ëœë‹¤ë©´\n"
+"ê·¸ ëª¨ë“ˆì„ í˜„ì¬ ë””ë ‰í† ë¦¬ì—ì„œ ì°¾ìŠµë‹ˆë‹¤\n"
+"ê·¸ë ‡ì§€ ì•Šë‹¤ë©´ module:pathì— ì˜í•´ ì§€ì •ëœ ë””ë ‰í† ë¦¬ì—ì„œ ì°¾ìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:332
 msgid "more <files>"
@@ -723,8 +723,8 @@ msgstr ""
 #: src/commands.cc:333
 msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
 msgstr ""
-"`cat <files> | more'°ú °°½À´Ï´Ù. ¸¸¾à PAGER°¡ ÁöÁ¤µÇ¾î ÀÖ´Ù¸é, ÇÊÅÍ·Î¼­\n"
-"»ç¿ëµË´Ï´Ù\n"
+"`cat <files> | more'ê³¼ ê°™ìŠµë‹ˆë‹¤. ë§Œì•½ PAGERê°€ ì§€ì •ë˜ì–´ ìˆë‹¤ë©´, í•„í„°ë¡œì„œ\n"
+"ì‚¬ìš©ë©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:334
 msgid "mput [OPTS] <files>"
@@ -740,13 +740,13 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"¿ÍÀÏµåÄ«µå È®ÀåÀ¸·Î ÇØ´çµÇ´Â ÆÄÀÏÀ» ¾÷·Îµå\n"
-" -c  ÀÌ¾î¼­ ¾÷·Îµå, reput\n"
-" -d  ÇöÀçÀÇ µğ·ºÅä¸® ´ë½Å¿¡ ¹Ş´Â ÆÄÀÏ¸í°ú °°Àº ÀÌ¸§ÀÇ µğ·ºÅä¸®¸¦\n"
-"     ¸¸µé¾î ±×°÷¿¡ ÆÄÀÏÀ» ÀúÀå\n"
-" -E  ÆÄÀÏÀ» ¼º°øÀûÀ¸·Î Àü¼ÛÇÑ ÈÄ ¿ø°Å¸® ÆÄÀÏÀ» »èÁ¦(ÁÖÀÇ)\n"
-" -a  ¾Æ½ºÅ° ¸ğµå »ç¿ë (±âº» - ¹ÙÀÌ³Ê¸®)\n"
-" -O <base> ÆÄÀÏÀÌ À§Ä¡ÇÒ ±âº» µğ·ºÅä¸® ¶Ç´Â URLÀ» ÁöÁ¤\n"
+"ì™€ì¼ë“œì¹´ë“œ í™•ì¥ìœ¼ë¡œ í•´ë‹¹ë˜ëŠ” íŒŒì¼ì„ ì—…ë¡œë“œ\n"
+" -c  ì´ì–´ì„œ ì—…ë¡œë“œ, reput\n"
+" -d  í˜„ì¬ì˜ ë””ë ‰í† ë¦¬ ëŒ€ì‹ ì— ë°›ëŠ” íŒŒì¼ëª…ê³¼ ê°™ì€ ì´ë¦„ì˜ ë””ë ‰í† ë¦¬ë¥¼\n"
+"     ë§Œë“¤ì–´ ê·¸ê³³ì— íŒŒì¼ì„ ì €ì¥\n"
+" -E  íŒŒì¼ì„ ì„±ê³µì ìœ¼ë¡œ ì „ì†¡í•œ í›„ ì›ê±°ë¦¬ íŒŒì¼ì„ ì‚­ì œ(ì£¼ì˜)\n"
+" -a  ì•„ìŠ¤í‚¤ ëª¨ë“œ ì‚¬ìš© (ê¸°ë³¸ - ë°”ì´ë„ˆë¦¬)\n"
+" -O <base> íŒŒì¼ì´ ìœ„ì¹˜í•  ê¸°ë³¸ ë””ë ‰í† ë¦¬ ë˜ëŠ” URLì„ ì§€ì •\n"
 
 #: src/commands.cc:342
 msgid "mrm <files>"
@@ -754,7 +754,7 @@ msgstr ""
 
 #: src/commands.cc:343
 msgid "Removes specified files with wildcard expansion\n"
-msgstr "¿ÍÀÏµåÄ«µå ½ÄÀ¸·Î Æ¯Á¤ ÆÄÀÏµéÀ» Áö¿ó´Ï´Ù\n"
+msgstr "ì™€ì¼ë“œì¹´ë“œ ì‹ìœ¼ë¡œ íŠ¹ì • íŒŒì¼ë“¤ì„ ì§€ì›ë‹ˆë‹¤\n"
 
 #: src/commands.cc:344
 msgid "mv <file1> <file2>"
@@ -762,7 +762,7 @@ msgstr ""
 
 #: src/commands.cc:345
 msgid "Rename <file1> to <file2>\n"
-msgstr "<file1>¸¦ <file2>·Î ÀÌ¸§À» º¯°æÇÕ´Ï´Ù\n"
+msgstr "<file1>ë¥¼ <file2>ë¡œ ì´ë¦„ì„ ë³€ê²½í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:346
 msgid "mmv [OPTS] <files> <target-dir>"
@@ -785,10 +785,10 @@ msgid ""
 "By default, nlist output is cached, to see new listing use `renlist' or\n"
 "`cache flush'.\n"
 msgstr ""
-"¿ø°Å¸® ÆÄÀÏ ¸ñ·ÏÀÔ´Ï´Ù, ÆÄÀÏ ¶Ç´Â ´Ù¸¥ ¸í·É¾î¿¡ ÆÄÀÌÇÁ¸¦ ÅëÇÏ¿© Ãâ·Â\n"
-"À» ÀçÁöÁ¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.\n"
-"±âº»°ªÀ¸·Î, ls Ãâ·ÂÀº Ä³½ÃµÇ¸ç, `rels' ¶Ç´Â `cache flush'·Î »õ ¸ñ·ÏÀ»\n"
-"º¼ ¼ö ÀÖ½À´Ï´Ù.\n"
+"ì›ê±°ë¦¬ íŒŒì¼ ëª©ë¡ì…ë‹ˆë‹¤, íŒŒì¼ ë˜ëŠ” ë‹¤ë¥¸ ëª…ë ¹ì–´ì— íŒŒì´í”„ë¥¼ í†µí•˜ì—¬ ì¶œë ¥\n"
+"ì„ ì¬ì§€ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n"
+"ê¸°ë³¸ê°’ìœ¼ë¡œ, ls ì¶œë ¥ì€ ìºì‹œë˜ë©°, `rels' ë˜ëŠ” `cache flush'ë¡œ ìƒˆ ëª©ë¡ì„\n"
+"ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:353
 msgid "open [OPTS] <site>"
@@ -805,11 +805,11 @@ msgid ""
 " -d                  switch on debugging mode\n"
 " <site>              host name, URL or bookmark name\n"
 msgstr ""
-"¼­¹öÀÇ URL ¶Ç´Â ºÏ¸¶Å©¸¦ ÁöÁ¤ÇÕ´Ï´Ù\n"
-" -e <cmd>            ¸í·É¾î(cmd)¸¸ ½ÇÇà\n"
-" -u <user>[,<pass>]  ÀÎÁõÀ» À§ÇÏ¿© »ç¿ëÀÚ/ºñ¹Ğ¹øÈ£ ÁöÁ¤\n"
-" -p <port>           Á¢¼Ó Æ÷Æ®¸¦ ÁöÁ¤\n"
-"<site>               È£½ºÆ® ÀÌ¸§, URL ¶Ç´Â ºÏ¸¶Å© ÀÌ¸§\n"
+"ì„œë²„ì˜ URL ë˜ëŠ” ë¶ë§ˆí¬ë¥¼ ì§€ì •í•©ë‹ˆë‹¤\n"
+" -e <cmd>            ëª…ë ¹ì–´(cmd)ë§Œ ì‹¤í–‰\n"
+" -u <user>[,<pass>]  ì¸ì¦ì„ ìœ„í•˜ì—¬ ì‚¬ìš©ì/ë¹„ë°€ë²ˆí˜¸ ì§€ì •\n"
+" -p <port>           ì ‘ì† í¬íŠ¸ë¥¼ ì§€ì •\n"
+"<site>               í˜¸ìŠ¤íŠ¸ ì´ë¦„, URL ë˜ëŠ” ë¶ë§ˆí¬ ì´ë¦„\n"
 
 #: src/commands.cc:361
 msgid "pget [OPTS] <rfile> [-o <lfile>]"
@@ -829,13 +829,13 @@ msgid ""
 "     pget:default-n setting)\n"
 " -O <base> specifies base directory where files should be placed\n"
 msgstr ""
-"¿©·¯°³ÀÇ Á¢¼ÓÀ» ÀÌ¿ëÇÏ¿© ÁöÁ¤µÈ ÆÄÀÏÀ» ¹Ş½À´Ï´Ù. ÀÌ´Â Àü¼Û¸¦ ºü¸£°Ô\n"
-"ÇÒ ¼ö ÀÖ½À´Ï´Ù, ±×·¯³ª ³×Æ®¿öÅ© ºÎÇÏ¸¦ ¸¹ÀÌ ÁÖ¾î ´Ù¸¥ »ç¿ëÀÚ¿¡°Ô\n"
-"ÇÇÇØ¸¦ ÁÙ ¼ö ÀÖ½À´Ï´Ù. Á¤¸»·Î ÃÖ´ëÇÑ »¡¸® Àü¼ÛÇØ¾ßÇÒ ÆÄÀÏÀÏ ¶§¸¸\n"
-"»ç¿ëÇÏ½Ê½Ã¿À, ±×·¸Áö ¾ÊÀ¸¸é ´Ù¸¥ »ç¿ëÀÚ¸¦ ¹ÌÄ¡°Ô ¸¸µé°Ì´Ï´Ù. :)\n"
+"ì—¬ëŸ¬ê°œì˜ ì ‘ì†ì„ ì´ìš©í•˜ì—¬ ì§€ì •ëœ íŒŒì¼ì„ ë°›ìŠµë‹ˆë‹¤. ì´ëŠ” ì „ì†¡ë¥¼ ë¹ ë¥´ê²Œ\n"
+"í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤, ê·¸ëŸ¬ë‚˜ ë„¤íŠ¸ì›Œí¬ ë¶€í•˜ë¥¼ ë§ì´ ì£¼ì–´ ë‹¤ë¥¸ ì‚¬ìš©ìì—ê²Œ\n"
+"í”¼í•´ë¥¼ ì¤„ ìˆ˜ ìˆìŠµë‹ˆë‹¤. ì •ë§ë¡œ ìµœëŒ€í•œ ë¹¨ë¦¬ ì „ì†¡í•´ì•¼í•  íŒŒì¼ì¼ ë•Œë§Œ\n"
+"ì‚¬ìš©í•˜ì‹­ì‹œì˜¤, ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ ë‹¤ë¥¸ ì‚¬ìš©ìë¥¼ ë¯¸ì¹˜ê²Œ ë§Œë“¤ê²ë‹ˆë‹¤. :)\n"
 "\n"
-"¿É¼Ç:\n"
-" -n <maxconn>  ÃÖ´ë Á¢¼Ó¼ö¸¦ ¼³Á¤ (±âº»¼³Á¤ 5)\n"
+"ì˜µì…˜:\n"
+" -n <maxconn>  ìµœëŒ€ ì ‘ì†ìˆ˜ë¥¼ ì„¤ì • (ê¸°ë³¸ì„¤ì • 5)\n"
 
 #: src/commands.cc:370
 msgid "put [OPTS] <lfile> [-o <rfile>]"
@@ -851,20 +851,20 @@ msgid ""
 " -a  use ascii mode (binary is the default)\n"
 " -O <base> specifies base directory or URL where files should be placed\n"
 msgstr ""
-"<lfile>¸¦ ¿ø°Å¸® ÆÄÀÏ¸í <rfile>·Î ¾÷·Îµå.\n"
-" -o  <rfile> Áö¿ª ÆÄÀÏ ÀÌ¸§À» ÁöÁ¤ (±âº» - lfileÀÇ ÀÌ¸§)\n"
-" -c  ÀÌ¾î¿Ã¸®±â, reput\n"
-" -E  ÆÄÀÏÀ» ¼º°øÀûÀ¸·Î Àü¼ÛÇÑ ÈÄ ¿ø°Å¸® ÆÄÀÏÀ» »èÁ¦(ÁÖÀÇ)\n"
-" -a  ¾Æ½ºÅ° ¸ğµå »ç¿ë (±âº» - ¹ÙÀÌ³Ê¸®)\n"
-" -O <base> ÆÄÀÏÀÌ À§Ä¡ÇÒ ±âº» µğ·ºÅä¸® ¶Ç´Â URLÀ» ÁöÁ¤\n"
+"<lfile>ë¥¼ ì›ê±°ë¦¬ íŒŒì¼ëª… <rfile>ë¡œ ì—…ë¡œë“œ.\n"
+" -o  <rfile> ì§€ì—­ íŒŒì¼ ì´ë¦„ì„ ì§€ì • (ê¸°ë³¸ - lfileì˜ ì´ë¦„)\n"
+" -c  ì´ì–´ì˜¬ë¦¬ê¸°, reput\n"
+" -E  íŒŒì¼ì„ ì„±ê³µì ìœ¼ë¡œ ì „ì†¡í•œ í›„ ì›ê±°ë¦¬ íŒŒì¼ì„ ì‚­ì œ(ì£¼ì˜)\n"
+" -a  ì•„ìŠ¤í‚¤ ëª¨ë“œ ì‚¬ìš© (ê¸°ë³¸ - ë°”ì´ë„ˆë¦¬)\n"
+" -O <base> íŒŒì¼ì´ ìœ„ì¹˜í•  ê¸°ë³¸ ë””ë ‰í† ë¦¬ ë˜ëŠ” URLì„ ì§€ì •\n"
 
 #: src/commands.cc:379
 msgid ""
 "Print current remote URL.\n"
 " -p  show password\n"
 msgstr ""
-"ÇöÀçÀÇ ¿ø°Å¸® URLÀ» Ãâ·Â.\n"
-" -p  ºñ¹Ğ¹øÈ£¸¦ Ç¥½Ã\n"
+"í˜„ì¬ì˜ ì›ê±°ë¦¬ URLì„ ì¶œë ¥.\n"
+" -p  ë¹„ë°€ë²ˆí˜¸ë¥¼ í‘œì‹œ\n"
 
 #: src/commands.cc:381
 msgid "queue [OPTS] [<cmd>]"
@@ -907,17 +907,17 @@ msgid ""
 "be sure that any change of remote state because of quoted command\n"
 "is solid - it can be reset by reconnect at any time.\n"
 msgstr ""
-"ºñ½ÇÇà ¸í·É¾î¸¦ º¸³À´Ï´Ù. ÁÖÀÇÇØ¼­ »ç¿ëÇÏ½Ê½Ã¿À - Àß¸øµÈ ¿¬°á »óÅÂ·Î\n"
-"°£ÁÖµÉ ¼ö ÀÖ¾î ÀçÁ¢¼ÓÀ» ¾ß±â½ÃÅ³ ¼öµµ ÀÖ½À´Ï´Ù. ÀÎ¿ëÇÑ ¸í·É¾î¶ó°í ÇØ¼­\n"
-"Á¢¼ÓÀÌ °è¼Ó À¯ÁöµÈ´Ù°í´Â È®½ÅÇÒ ¼ö ¾ø½À´Ï´Ù - ¾î¶² °æ¿ì¿£ ÀçÁ¢¼ÓÀ¸·Î\n"
-"Àç¼³Á¤µÇ´Â °æ¿ìµµ ÀÖ½À´Ï´Ù.\n"
+"ë¹„ì‹¤í–‰ ëª…ë ¹ì–´ë¥¼ ë³´ëƒ…ë‹ˆë‹¤. ì£¼ì˜í•´ì„œ ì‚¬ìš©í•˜ì‹­ì‹œì˜¤ - ì˜ëª»ëœ ì—°ê²° ìƒíƒœë¡œ\n"
+"ê°„ì£¼ë  ìˆ˜ ìˆì–´ ì¬ì ‘ì†ì„ ì•¼ê¸°ì‹œí‚¬ ìˆ˜ë„ ìˆìŠµë‹ˆë‹¤. ì¸ìš©í•œ ëª…ë ¹ì–´ë¼ê³  í•´ì„œ\n"
+"ì ‘ì†ì´ ê³„ì† ìœ ì§€ëœë‹¤ê³ ëŠ” í™•ì‹ í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤ - ì–´ë–¤ ê²½ìš°ì—” ì¬ì ‘ì†ìœ¼ë¡œ\n"
+"ì¬ì„¤ì •ë˜ëŠ” ê²½ìš°ë„ ìˆìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:409
 #, fuzzy
 msgid ""
 "recls [<args>]\n"
 "Same as `cls', but don't look in cache\n"
-msgstr "`ls' ¿Í °°Áö¸¸ Ä³½Ã¸¦ ÀÌ¿ëÇÏÁö ¾Ê½À´Ï´Ù\n"
+msgstr "`ls' ì™€ ê°™ì§€ë§Œ ìºì‹œë¥¼ ì´ìš©í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:412
 msgid ""
@@ -930,14 +930,14 @@ msgstr ""
 msgid ""
 "Usage: rels [<args>]\n"
 "Same as `ls', but don't look in cache\n"
-msgstr "`ls' ¿Í °°Áö¸¸ Ä³½Ã¸¦ ÀÌ¿ëÇÏÁö ¾Ê½À´Ï´Ù\n"
+msgstr "`ls' ì™€ ê°™ì§€ë§Œ ìºì‹œë¥¼ ì´ìš©í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:418
 #, fuzzy
 msgid ""
 "Usage: renlist [<args>]\n"
 "Same as `nlist', but don't look in cache\n"
-msgstr "`nlist' ¿Í °°Áö¸¸ Ä³½Ã¸¦ ÀÌ¿ëÇÏÁö ¾Ê½À´Ï´Ù\n"
+msgstr "`nlist' ì™€ ê°™ì§€ë§Œ ìºì‹œë¥¼ ì´ìš©í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:420
 msgid "repeat [OPTS] [delay] [command]"
@@ -959,9 +959,9 @@ msgid ""
 " -r  recursive directory removal, be careful\n"
 " -f  work quietly\n"
 msgstr ""
-"¿ø°Å¸® ÆÄÀÏ »èÁ¦\n"
-" -r  ¼­ºêµğ·ºÅä¸®¸¦ Æ÷ÇÔÇÏ¿© Áö¿ó´Ï´Ù, ÁÖÀÇÇÏ½Ê½Ã¿À\n"
-" -f  Á¶¿ëÈ÷ ½ÇÇà\n"
+"ì›ê±°ë¦¬ íŒŒì¼ ì‚­ì œ\n"
+" -r  ì„œë¸Œë””ë ‰í† ë¦¬ë¥¼ í¬í•¨í•˜ì—¬ ì§€ì›ë‹ˆë‹¤, ì£¼ì˜í•˜ì‹­ì‹œì˜¤\n"
+" -f  ì¡°ìš©íˆ ì‹¤í–‰\n"
 
 #: src/commands.cc:428
 msgid "rmdir [-f] <dirs>"
@@ -969,7 +969,7 @@ msgstr ""
 
 #: src/commands.cc:429
 msgid "Remove remote directories\n"
-msgstr "¿ø°Å¸® µğ·ºÅä¸®¸¦ Áö¿ó´Ï´Ù\n"
+msgstr "ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ë¥¼ ì§€ì›ë‹ˆë‹¤\n"
 
 #: src/commands.cc:430
 msgid "scache [<session_no>]"
@@ -977,7 +977,7 @@ msgstr ""
 
 #: src/commands.cc:431
 msgid "List cached sessions or switch to specified session number\n"
-msgstr "Ä³½ÃµÈ ¼¼¼Ç ¸ñ·ÏÀ» º¸¿©ÁÖ°Å³ª ÁöÁ¤µÈ ¼¼¼ÇÀ¸·Î ÀüÈ¯ÇÕ´Ï´Ù\n"
+msgstr "ìºì‹œëœ ì„¸ì…˜ ëª©ë¡ì„ ë³´ì—¬ì£¼ê±°ë‚˜ ì§€ì •ëœ ì„¸ì…˜ìœ¼ë¡œ ì „í™˜í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:432
 msgid "set [OPT] [<var> [<val>]]"
@@ -993,27 +993,27 @@ msgid ""
 " -a  list all settings, including default values\n"
 " -d  list only default values, not necessary current ones\n"
 msgstr ""
-"º¯¼ö(var)¸¦ ÁÖ¾îÁø °ª(val)À¸·Î ¼³Á¤ÇÕ´Ï´Ù. ¸¸¾à °ªÀ» »ı·«ÇÏ¸é,\n"
-"º¯¼ö¸¦ ÇØÁ¦ÇÕ´Ï´Ù. º¯¼ö¸íÀº ``name/closure'' ÀÇ Çü½ÄÀ» °®À¸¸ç,\n"
-"closure´Â Á¤È®ÇÑ ¾ÖÇÃ¸®ÄÉÀÌ¼Ç(application)À¸·Î\n"
-"ÁöÁ¤ÇÒ ¼ö ÀÖ½À´Ï´Ù. ÀÚ¼¼ÇÑ °ÍÀº lftp(1)¸¦ º¸½Ê½Ã¿À.\n"
-"¸¸¾à º¯¼ö ¾øÀÌ set¸¦ ÀÌ¿ëÇÏ¸é º¯°æµÈ ¼³Á¤°ªÀ» Ç¥½ÃÇÕ´Ï´Ù.\n"
-"ÀÌ´Â ´ÙÀ½ ¿É¼ÇÀ¸·Î ¹Ù²Ü ¼ö ÀÖ½À´Ï´Ù:\n"
-" -a  ±âº»°ªÀ» Æ÷ÇÔÇÑ ¸ğµç ¼³Á¤°ªÀ» Ç¥½ÃÇÕ´Ï´Ù.\n"
-" -d  ÇöÀç ÀÌ¿ëÇÏ´Â °ÍµéÀ» Á¦¿ÜÇÑ ±âº»°ª¸¸À» Ç¥½ÃÇÕ´Ï´Ù.\n"
+"ë³€ìˆ˜(var)ë¥¼ ì£¼ì–´ì§„ ê°’(val)ìœ¼ë¡œ ì„¤ì •í•©ë‹ˆë‹¤. ë§Œì•½ ê°’ì„ ìƒëµí•˜ë©´,\n"
+"ë³€ìˆ˜ë¥¼ í•´ì œí•©ë‹ˆë‹¤. ë³€ìˆ˜ëª…ì€ ``name/closure'' ì˜ í˜•ì‹ì„ ê°–ìœ¼ë©°,\n"
+"closureëŠ” ì •í™•í•œ ì• í”Œë¦¬ì¼€ì´ì…˜(application)ìœ¼ë¡œ\n"
+"ì§€ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤. ìì„¸í•œ ê²ƒì€ lftp(1)ë¥¼ ë³´ì‹­ì‹œì˜¤.\n"
+"ë§Œì•½ ë³€ìˆ˜ ì—†ì´ setë¥¼ ì´ìš©í•˜ë©´ ë³€ê²½ëœ ì„¤ì •ê°’ì„ í‘œì‹œí•©ë‹ˆë‹¤.\n"
+"ì´ëŠ” ë‹¤ìŒ ì˜µì…˜ìœ¼ë¡œ ë°”ê¿€ ìˆ˜ ìˆìŠµë‹ˆë‹¤:\n"
+" -a  ê¸°ë³¸ê°’ì„ í¬í•¨í•œ ëª¨ë“  ì„¤ì •ê°’ì„ í‘œì‹œí•©ë‹ˆë‹¤.\n"
+" -d  í˜„ì¬ ì´ìš©í•˜ëŠ” ê²ƒë“¤ì„ ì œì™¸í•œ ê¸°ë³¸ê°’ë§Œì„ í‘œì‹œí•©ë‹ˆë‹¤.\n"
 
 #: src/commands.cc:441
 #, fuzzy
 msgid "site <site-cmd>"
-msgstr "»ç¿ë¹ı: site <site_cmd>\n"
+msgstr "ì‚¬ìš©ë²•: site <site_cmd>\n"
 
 #: src/commands.cc:442
 msgid ""
 "Execute site command <site_cmd> and output the result\n"
 "You can redirect its output\n"
 msgstr ""
-"<site_cmd> ¸í·ÉÀ» ½ÇÇàÇÏ°í ±× °á°ú¸¦ Ãâ·ÂÇÕ´Ï´Ù.\n"
-"±× °á°ú¸¦ ÀçÁöÁ¤(redirect)ÇÒ ¼ö ÀÖ½À´Ï´Ù\n"
+"<site_cmd> ëª…ë ¹ì„ ì‹¤í–‰í•˜ê³  ê·¸ ê²°ê³¼ë¥¼ ì¶œë ¥í•©ë‹ˆë‹¤.\n"
+"ê·¸ ê²°ê³¼ë¥¼ ì¬ì§€ì •(redirect)í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:446
 msgid ""
@@ -1028,12 +1028,12 @@ msgstr ""
 
 #: src/commands.cc:450
 msgid "Execute commands recorded in file <file>\n"
-msgstr "ÆÄÀÏ <file> ¿¡ ±â·ÏµÈ ¸í·É¾îµéÀ» ½ÇÇàÇÕ´Ï´Ù\n"
+msgstr "íŒŒì¼ <file> ì— ê¸°ë¡ëœ ëª…ë ¹ì–´ë“¤ì„ ì‹¤í–‰í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:452
 #, fuzzy
 msgid "torrent [OPTS] <file|URL>..."
-msgstr "»ç¿ë¹ı: %s [OPTS] file\n"
+msgstr "ì‚¬ìš©ë²•: %s [OPTS] file\n"
 
 #: src/commands.cc:453
 msgid "user <user|URL> [<pass>]"
@@ -1044,12 +1044,12 @@ msgid ""
 "Use specified info for remote login. If you specify URL, the password\n"
 "will be cached for future usage.\n"
 msgstr ""
-"¿ø°Å¸® ·Î±äÀ» À§ÇÏ¿© »ç¿ë. ¸¸¾à URLÀ» ÁöÁ¤ÇÏ¸é, ºñ¹Ğ¹øÈ£´Â\n"
-"¾ÕÀ¸·ÎÀÇ »ç¿ëÀ» À§ÇÏ¿© ÀúÀåµÉ °Ì´Ï´Ù.\n"
+"ì›ê±°ë¦¬ ë¡œê¸´ì„ ìœ„í•˜ì—¬ ì‚¬ìš©. ë§Œì•½ URLì„ ì§€ì •í•˜ë©´, ë¹„ë°€ë²ˆí˜¸ëŠ”\n"
+"ì•ìœ¼ë¡œì˜ ì‚¬ìš©ì„ ìœ„í•˜ì—¬ ì €ì¥ë  ê²ë‹ˆë‹¤.\n"
 
 #: src/commands.cc:457
 msgid "Shows lftp version\n"
-msgstr "lftp ¹öÀüÀ» º¸¿©Áİ´Ï´Ù\n"
+msgstr "lftp ë²„ì „ì„ ë³´ì—¬ì¤ë‹ˆë‹¤\n"
 
 #: src/commands.cc:458
 msgid "wait [<jobno>]"
@@ -1060,8 +1060,8 @@ msgid ""
 "Wait for specified job to terminate. If jobno is omitted, wait\n"
 "for last backgrounded job.\n"
 msgstr ""
-"ÁöÁ¤ÇÑ ÀÛ¾÷À» Á¾·áÇÏ±â À§ÇÏ¿© ´ë±â. ÀÛ¾÷ ¹øÈ£¸¦ »ı·«ÇÏ¸é,\n"
-"¸¶Áö¸· ¹é±×¶ó¿îµå·Î ÀüÈ¯µÈ ÀÛ¾÷¿¡ ´ëÇØ ´ë±âÇÕ´Ï´Ù.\n"
+"ì§€ì •í•œ ì‘ì—…ì„ ì¢…ë£Œí•˜ê¸° ìœ„í•˜ì—¬ ëŒ€ê¸°. ì‘ì—… ë²ˆí˜¸ë¥¼ ìƒëµí•˜ë©´,\n"
+"ë§ˆì§€ë§‰ ë°±ê·¸ë¼ìš´ë“œë¡œ ì „í™˜ëœ ì‘ì—…ì— ëŒ€í•´ ëŒ€ê¸°í•©ë‹ˆë‹¤.\n"
 
 #: src/commands.cc:461
 msgid "zcat <files>"
@@ -1069,7 +1069,7 @@ msgstr ""
 
 #: src/commands.cc:462
 msgid "Same as cat, but filter each file through zcat\n"
-msgstr "cat°ú °°À¸³ª, zcatÀ¸·Î °¢ ÆÄÀÏÀ» ÇÊÅÍ¸µÇÕ´Ï´Ù\n"
+msgstr "catê³¼ ê°™ìœ¼ë‚˜, zcatìœ¼ë¡œ ê° íŒŒì¼ì„ í•„í„°ë§í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:463
 msgid "zmore <files>"
@@ -1077,40 +1077,40 @@ msgstr ""
 
 #: src/commands.cc:464
 msgid "Same as more, but filter each file through zcat\n"
-msgstr "more°ú °°À¸³ª, zcatÀ¸·Î °¢ ÆÄÀÏÀ» ÇÊÅÍ¸µÇÕ´Ï´Ù\n"
+msgstr "moreê³¼ ê°™ìœ¼ë‚˜, zcatìœ¼ë¡œ ê° íŒŒì¼ì„ í•„í„°ë§í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:466
 msgid "Same as cat, but filter each file through bzcat\n"
-msgstr "cat°ú °°À¸³ª, bzcatÀ¸·Î °¢ ÆÄÀÏÀ» ÇÊÅÍ¸µÇÕ´Ï´Ù\n"
+msgstr "catê³¼ ê°™ìœ¼ë‚˜, bzcatìœ¼ë¡œ ê° íŒŒì¼ì„ í•„í„°ë§í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:468
 msgid "Same as more, but filter each file through bzcat\n"
-msgstr "more°ú °°À¸³ª, bzcatÀ¸·Î °¢ ÆÄÀÏÀ» ÇÊÅÍ¸µÇÕ´Ï´Ù\n"
+msgstr "moreê³¼ ê°™ìœ¼ë‚˜, bzcatìœ¼ë¡œ ê° íŒŒì¼ì„ í•„í„°ë§í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:524
 #, c-format
 msgid "Usage: %s local-dir\n"
-msgstr "»ç¿ë¹ı: %s local-dir\n"
+msgstr "ì‚¬ìš©ë²•: %s local-dir\n"
 
 #: src/commands.cc:560
 #, c-format
 msgid "lcd ok, local cwd=%s\n"
-msgstr "lcd ¼º°ø, Áö¿ª cwd=%s\n"
+msgstr "lcd ì„±ê³µ, ì§€ì—­ cwd=%s\n"
 
 #: src/commands.cc:576
 #, c-format
 msgid "Usage: cd remote-dir\n"
-msgstr "»ç¿ë¹ı: cd remote-dir\n"
+msgstr "ì‚¬ìš©ë²•: cd remote-dir\n"
 
 #: src/commands.cc:588
 #, c-format
 msgid "%s: no old directory for this site\n"
-msgstr "%s: ÀÌ »çÀÌÆ®¿£ ¿¾ µğ·ºÅä¸®°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù\n"
+msgstr "%s: ì´ ì‚¬ì´íŠ¸ì—” ì˜› ë””ë ‰í† ë¦¬ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:677
 #, c-format
 msgid "Usage: %s [<exit_code>]\n"
-msgstr "»ç¿ë¹ı: %s [<exit_code>]\n"
+msgstr "ì‚¬ìš©ë²•: %s [<exit_code>]\n"
 
 #: src/commands.cc:686
 msgid ""
@@ -1118,9 +1118,9 @@ msgid ""
 "Use `exit bg' to force moving to background or `kill all' to terminate "
 "jobs.\n"
 msgstr ""
-"½ÇÇàÁßÀÎ ÀÛ¾÷µéÀÌ ÀÖ°í 'cmd:move-background'´Â ¼³Á¤ÇÏÁö ¾ÊÀ½.\n"
-"`exit bg'´Â °­Á¦·Î ¹é±×¶ó¿îµå·Î °¡±â À§ÇØ »ç¿ëµÇ°Å³ª `kill all'´Â \n"
-"ÀÛ¾÷µéÀ» Á¾·áÇÏ±â À§ÇÏ¿© »ç¿ëÇÑ´Ù.\n"
+"ì‹¤í–‰ì¤‘ì¸ ì‘ì—…ë“¤ì´ ìˆê³  'cmd:move-background'ëŠ” ì„¤ì •í•˜ì§€ ì•ŠìŒ.\n"
+"`exit bg'ëŠ” ê°•ì œë¡œ ë°±ê·¸ë¼ìš´ë“œë¡œ ê°€ê¸° ìœ„í•´ ì‚¬ìš©ë˜ê±°ë‚˜ `kill all'ëŠ” \n"
+"ì‘ì—…ë“¤ì„ ì¢…ë£Œí•˜ê¸° ìœ„í•˜ì—¬ ì‚¬ìš©í•œë‹¤.\n"
 
 #: src/commands.cc:703
 msgid ""
@@ -1134,7 +1134,7 @@ msgstr ""
 #: src/commands.cc:837 src/commands.cc:3609
 #, c-format
 msgid "Try `%s --help' for more information\n"
-msgstr "`%s --help'·Î ´õ ¸¹Àº Á¤º¸¸¦ º¸½Ê½Ã¿À\n"
+msgstr "`%s --help'ë¡œ ë” ë§ì€ ì •ë³´ë¥¼ ë³´ì‹­ì‹œì˜¤\n"
 
 #: src/commands.cc:856
 #, c-format
@@ -1144,21 +1144,21 @@ msgstr ""
 #: src/commands.cc:955
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
-msgstr "»ç¿ë¹ı: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
+msgstr "ì‚¬ìš©ë²•: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 
 #: src/commands.cc:1045 src/commands.cc:2275 src/DummyProto.cc:65
 #: src/MirrorJob.cc:2157 src/MirrorJob.cc:2179
 msgid " - not supported protocol"
-msgstr " - Áö¿øÇÏÁö ¾Ê´Â ÇÁ·ÎÅäÄİÀÔ´Ï´Ù"
+msgstr " - ì§€ì›í•˜ì§€ ì•ŠëŠ” í”„ë¡œí† ì½œì…ë‹ˆë‹¤"
 
 #: src/commands.cc:1077 src/commands.cc:2259
 msgid "Password: "
-msgstr "ºñ¹Ğ¹øÈ£: "
+msgstr "ë¹„ë°€ë²ˆí˜¸: "
 
 #: src/commands.cc:1079
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
-msgstr "%s: GetPass() ½ÇÆĞ -- ÀÍ¸íÀÇ ·Î±×ÀÎÀ¸·Î °£ÁÖÇÕ´Ï´Ù\n"
+msgstr "%s: GetPass() ì‹¤íŒ¨ -- ìµëª…ì˜ ë¡œê·¸ì¸ìœ¼ë¡œ ê°„ì£¼í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:1190 src/commands.cc:1283 src/commands.cc:1659
 #: src/commands.cc:1690 src/commands.cc:1828 src/commands.cc:1913
@@ -1169,17 +1169,17 @@ msgstr "%s: GetPass() ½ÇÆĞ -- ÀÍ¸íÀÇ ·Î±×ÀÎÀ¸·Î °£ÁÖÇÕ´Ï´Ù\n"
 #: src/SleepJob.cc:144 src/SleepJob.cc:200 src/Torrent.cc:4169
 #, c-format
 msgid "Try `help %s' for more information.\n"
-msgstr "»ó¼¼ÇÑ °ÍÀº `help %s'¸¦ ÀÌ¿ëÇÏ½Ê½Ã¿À\n"
+msgstr "ìƒì„¸í•œ ê²ƒì€ `help %s'ë¥¼ ì´ìš©í•˜ì‹­ì‹œì˜¤\n"
 
 #: src/commands.cc:1200
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
-msgstr "»ç¿ë¹ı: %s [OPTS] command args...\n"
+msgstr "ì‚¬ìš©ë²•: %s [OPTS] command args...\n"
 
 #: src/commands.cc:1253
 #, fuzzy, c-format
 msgid "%s: -n: positive number expected. "
-msgstr "%s: -n: ¼ıÀÚ°¡ ¿ä±¸µË´Ï´Ù  "
+msgstr "%s: -n: ìˆ«ìê°€ ìš”êµ¬ë©ë‹ˆë‹¤  "
 
 #: src/commands.cc:1305
 #, c-format
@@ -1194,12 +1194,12 @@ msgstr ""
 #: src/commands.cc:1368
 #, fuzzy, c-format
 msgid "%s: -m: Number expected as second argument. "
-msgstr "%s: -n: ¼ıÀÚ°¡ ¿ä±¸µË´Ï´Ù  "
+msgstr "%s: -n: ìˆ«ìê°€ ìš”êµ¬ë©ë‹ˆë‹¤  "
 
 #: src/commands.cc:1420
 #, c-format
 msgid "Usage: %s <cmd>\n"
-msgstr "»ç¿ë¹ı: %s <cmd>\n"
+msgstr "ì‚¬ìš©ë²•: %s <cmd>\n"
 
 #: src/commands.cc:1526
 msgid "invalid argument for `--sort'"
@@ -1208,17 +1208,17 @@ msgstr ""
 #: src/commands.cc:1556
 #, fuzzy
 msgid "invalid block size"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/commands.cc:1699
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
-msgstr "»ç¿ë¹ı: %s [OPTS] files...\n"
+msgstr "ì‚¬ìš©ë²•: %s [OPTS] files...\n"
 
 #: src/commands.cc:1784 src/commands.cc:1813
 #, fuzzy, c-format
 msgid "%s: %s: Number expected. "
-msgstr "%s: -n: ¼ıÀÚ°¡ ¿ä±¸µË´Ï´Ù  "
+msgstr "%s: -n: ìˆ«ìê°€ ìš”êµ¬ë©ë‹ˆë‹¤  "
 
 #: src/commands.cc:1833
 #, c-format
@@ -1228,153 +1228,153 @@ msgstr ""
 #: src/commands.cc:1843 src/commands.cc:1919
 #, c-format
 msgid "File name missed. "
-msgstr "ÆÄÀÏ¸íÀÌ ¾ø½À´Ï´Ù. "
+msgstr "íŒŒì¼ëª…ì´ ì—†ìŠµë‹ˆë‹¤. "
 
 #: src/commands.cc:1988
 #, fuzzy, c-format
 msgid "Usage: %s %s[-f] files...\n"
-msgstr "»ç¿ë¹ı: %s [-r] [-f] files...\n"
+msgstr "ì‚¬ìš©ë²•: %s [-r] [-f] files...\n"
 
 #: src/commands.cc:2031
 #, fuzzy, c-format
 msgid "Usage: %s [-e] <file|command>\n"
-msgstr "»ç¿ë¹ı: %s <file>\n"
+msgstr "ì‚¬ìš©ë²•: %s <file>\n"
 
 #: src/commands.cc:2078
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
-msgstr "»ç¿ë¹ı: %s [-v] [-v] ...\n"
+msgstr "ì‚¬ìš©ë²•: %s [-v] [-v] ...\n"
 
 #: src/commands.cc:2092 src/commands.cc:2346 src/commands.cc:2468
 #: src/commands.cc:2684 src/commands.cc:3094 src/commands.cc:3175
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
-msgstr "%s %s - ¼ıÀÚ°¡ ¾Æ´Õ´Ï´Ù\n"
+msgstr "%s %s - ìˆ«ìê°€ ì•„ë‹™ë‹ˆë‹¤\n"
 
 #: src/commands.cc:2099 src/commands.cc:2325 src/commands.cc:2355
 #: src/commands.cc:2486
 #, c-format
 msgid "%s: %d - no such job\n"
-msgstr "%s: %d - ÀÛ¾÷ ¾øÀ½\n"
+msgstr "%s: %d - ì‘ì—… ì—†ìŒ\n"
 
 #: src/commands.cc:2134
 #, c-format
 msgid "Usage: %s [-p]\n"
-msgstr "»ç¿ë¹ı: %s [-p]\n"
+msgstr "ì‚¬ìš©ë²•: %s [-p]\n"
 
 #: src/commands.cc:2226
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
-msgstr "µğ¹ö±× ·¹º§Àº %dÀÌ°í, Ãâ·ÂÀº %s·Î µË´Ï´Ù\n"
+msgstr "ë””ë²„ê·¸ ë ˆë²¨ì€ %dì´ê³ , ì¶œë ¥ì€ %së¡œ ë©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:2229
 #, c-format
 msgid "debug is off\n"
-msgstr "µğ¹ö±× ²û\n"
+msgstr "ë””ë²„ê·¸ ë”\n"
 
 #: src/commands.cc:2240
 #, fuzzy, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
-msgstr "»ç¿ë¹ı: %s userid [pass]\n"
+msgstr "ì‚¬ìš©ë²•: %s userid [pass]\n"
 
 #: src/commands.cc:2315 src/commands.cc:2478
 #, c-format
 msgid "%s: no current job\n"
-msgstr "%s: ÇöÀç ÀÛ¾÷ ¾øÀ½\n"
+msgstr "%s: í˜„ì¬ ì‘ì—… ì—†ìŒ\n"
 
 #: src/commands.cc:2327
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
-msgstr "»ç¿ë¹ı: %s <jobno> ... | all\n"
+msgstr "ì‚¬ìš©ë²•: %s <jobno> ... | all\n"
 
 #: src/commands.cc:2408
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
-msgstr "%s: %s. `set -a'¸¦ »ç¿ëÇÏ¿© ¸ğµç °ªµéÀ» º¾´Ï´Ù.\n"
+msgstr "%s: %s. `set -a'ë¥¼ ì‚¬ìš©í•˜ì—¬ ëª¨ë“  ê°’ë“¤ì„ ë´…ë‹ˆë‹¤.\n"
 
 #: src/commands.cc:2452
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
-msgstr "»ç¿ë¹ı: %s [<jobno>]\n"
+msgstr "ì‚¬ìš©ë²•: %s [<jobno>]\n"
 
 #: src/commands.cc:2491
 #, c-format
 msgid "%s: some other job waits for job %d\n"
-msgstr "%s: ÀÏºÎ ´Ù¸¥ ÀÛ¾÷ÀÌ ÀÛ¾÷ %d¸¦ ±â´Ù¸³´Ï´Ù\n"
+msgstr "%s: ì¼ë¶€ ë‹¤ë¥¸ ì‘ì—…ì´ ì‘ì—… %dë¥¼ ê¸°ë‹¤ë¦½ë‹ˆë‹¤\n"
 
 #: src/commands.cc:2496
 #, fuzzy, c-format
 msgid "%s: wait loop detected\n"
-msgstr "%s: ¹ö±× - µ¥µå¶ô ¹ß°ß\n"
+msgstr "%s: ë²„ê·¸ - ë°ë“œë½ ë°œê²¬\n"
 
 #: src/commands.cc:2552
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] <files> <target-dir>\n"
-msgstr "»ç¿ë¹ı: %s [OPTS] file\n"
+msgstr "ì‚¬ìš©ë²•: %s [OPTS] file\n"
 
 #: src/commands.cc:2614 src/commands.cc:2949
 #, c-format
 msgid "Invalid command. "
-msgstr "Àß¸øµÈ ¸í·É¾î. "
+msgstr "ì˜ëª»ëœ ëª…ë ¹ì–´. "
 
 #: src/commands.cc:2621 src/commands.cc:2956
 #, c-format
 msgid "Ambiguous command. "
-msgstr "¸ğÈ£ÇÑ ¸í·É¾î. "
+msgstr "ëª¨í˜¸í•œ ëª…ë ¹ì–´. "
 
 #: src/commands.cc:2640
 #, c-format
 msgid "%s: Operand missed for size\n"
-msgstr "%s: Å©±âÀÇ ¿ÀÆÛ·£µå°¡ ºüÁ³½À´Ï´Ù.\n"
+msgstr "%s: í¬ê¸°ì˜ ì˜¤í¼ëœë“œê°€ ë¹ ì¡ŒìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:2657
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
-msgstr "%s: `expire'ÀÇ ¿ÀÆÛ·£µå°¡ ºüÁ³½À´Ï´Ù.\n"
+msgstr "%s: `expire'ì˜ ì˜¤í¼ëœë“œê°€ ë¹ ì¡ŒìŠµë‹ˆë‹¤.\n"
 
 #: src/commands.cc:2690
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
-msgstr "%s: %s - Ä³½Ã ¼¼¼ÇÀÌ ¾ø½À´Ï´Ù. `scache'·Î ¼¼¼Ç ¸ñ·Ï¿¡¼­ Ã£À¸½Ê½Ã¿À.\n"
+msgstr "%s: %s - ìºì‹œ ì„¸ì…˜ì´ ì—†ìŠµë‹ˆë‹¤. `scache'ë¡œ ì„¸ì…˜ ëª©ë¡ì—ì„œ ì°¾ìœ¼ì‹­ì‹œì˜¤.\n"
 
 #: src/commands.cc:2714
 #, c-format
 msgid "Sorry, no help for %s\n"
-msgstr "ÁË¼ÛÇÕ´Ï´Ù, %s ¿¡ ´ëÇÑ µµ¿ò¸»Àº ¾ø½À´Ï´Ù\n"
+msgstr "ì£„ì†¡í•©ë‹ˆë‹¤, %s ì— ëŒ€í•œ ë„ì›€ë§ì€ ì—†ìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:2719
 #, c-format
 msgid "%s is a built-in alias for %s\n"
-msgstr "%s ´Â %sÀ» ±âº» º°¸íÀÔ´Ï´Ù\n"
+msgstr "%s ëŠ” %sì„ ê¸°ë³¸ ë³„ëª…ì…ë‹ˆë‹¤\n"
 
 #: src/commands.cc:2724
 #, c-format
 msgid "Usage: %s\n"
-msgstr "»ç¿ë¹ı: %s\n"
+msgstr "ì‚¬ìš©ë²•: %s\n"
 
 #: src/commands.cc:2732
 #, c-format
 msgid "%s is an alias to `%s'\n"
-msgstr "%s´Â `%s'ÀÎ º°¸íÀ» °®½À´Ï´Ù\n"
+msgstr "%sëŠ” `%s'ì¸ ë³„ëª…ì„ ê°–ìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:2736
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr ""
-"¸í·É¾î `%s'´Â ¾ø½À´Ï´Ù. `help'¸¦ »ç¿ëÇÏ¿© ÀÌ¿ë°¡´ÉÇÑ ¸í·É¾î¸¦ È®ÀÎÇÏ½Ê½Ã¿À.\n"
+"ëª…ë ¹ì–´ `%s'ëŠ” ì—†ìŠµë‹ˆë‹¤. `help'ë¥¼ ì‚¬ìš©í•˜ì—¬ ì´ìš©ê°€ëŠ¥í•œ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì‹­ì‹œì˜¤.\n"
 
 #: src/commands.cc:2738
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr ""
-"¸ğÈ£ÇÑ ¸í·É¾î `%s'. `help'¸¦ »ç¿ëÇÏ¿© ÀÌ¿ë°¡´ÉÇÑ ¸í·É¾î¸¦ È®ÀÎÇÏ½Ê½Ã¿À.\n"
+"ëª¨í˜¸í•œ ëª…ë ¹ì–´ `%s'. `help'ë¥¼ ì‚¬ìš©í•˜ì—¬ ì´ìš©ê°€ëŠ¥í•œ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì‹­ì‹œì˜¤.\n"
 
 #: src/commands.cc:2804
 #, fuzzy, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
-msgstr "Lftp | ¹öÀü %s | ÀúÀÛ±Ç (C) 1996-2001 Alexander V. Lukyanov\n"
+msgstr "Lftp | ë²„ì „ %s | ì €ì‘ê¶Œ (C) 1996-2001 Alexander V. Lukyanov\n"
 
 #: src/commands.cc:2807
 #, c-format
@@ -1396,7 +1396,7 @@ msgstr ""
 #: src/commands.cc:2821
 #, fuzzy, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
-msgstr "<%s> ¿¡°Ô ¹ö±× º¸°í¼­³ª Áú¹®À» º¸³»½Ê½Ã¿À.\n"
+msgstr "<%s> ì—ê²Œ ë²„ê·¸ ë³´ê³ ì„œë‚˜ ì§ˆë¬¸ì„ ë³´ë‚´ì‹­ì‹œì˜¤.\n"
 
 #: src/commands.cc:2827
 msgid "Libraries used: "
@@ -1405,37 +1405,37 @@ msgstr ""
 #: src/commands.cc:2972 src/commands.cc:3000
 #, c-format
 msgid "%s: bookmark name required\n"
-msgstr "%s: ºÏ¸¶Å© ÀÌ¸§ÀÌ ÇÊ¿äÇÕ´Ï´Ù\n"
+msgstr "%s: ë¶ë§ˆí¬ ì´ë¦„ì´ í•„ìš”í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:2989
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
-msgstr "%s: ºÏ¸¶Å© ÀÌ¸§¿¡ °ø¹é¹®ÀÚ¸¦ »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù\n"
+msgstr "%s: ë¶ë§ˆí¬ ì´ë¦„ì— ê³µë°±ë¬¸ìë¥¼ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤\n"
 
 #: src/commands.cc:3002
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
-msgstr "%s: ±×¿Í °°Àº ºÏ¸¶Å© `%s'\n"
+msgstr "%s: ê·¸ì™€ ê°™ì€ ë¶ë§ˆí¬ `%s'\n"
 
 #: src/commands.cc:3025
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
-msgstr "%s: (netscape,ncftp)¿¡¼­ °¡Á®¿Â ¾ç½ÄÀÌ ÇÊ¿äÇÕ´Ï´Ù\n"
+msgstr "%s: (netscape,ncftp)ì—ì„œ ê°€ì ¸ì˜¨ ì–‘ì‹ì´ í•„ìš”í•©ë‹ˆë‹¤\n"
 
 #: src/commands.cc:3103
 #, fuzzy, c-format
 msgid "Usage: %s [-d #] dir\n"
-msgstr "»ç¿ë¹ı: %s [-p]\n"
+msgstr "ì‚¬ìš©ë²•: %s [-p]\n"
 
 #: src/commands.cc:3208
 #, fuzzy, c-format
 msgid "%s: invalid block size `%s'\n"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/commands.cc:3219
 #, fuzzy, c-format
 msgid "Usage: %s [options] <dirs>\n"
-msgstr "»ç¿ë¹ı: %s [-p]\n"
+msgstr "ì‚¬ìš©ë²•: %s [-p]\n"
 
 #: src/commands.cc:3225
 #, c-format
@@ -1450,35 +1450,35 @@ msgstr ""
 #: src/commands.cc:3273
 #, c-format
 msgid "Usage: %s command args...\n"
-msgstr "»ç¿ë¹ı: %s command args...\n"
+msgstr "ì‚¬ìš©ë²•: %s command args...\n"
 
 #: src/commands.cc:3285
 #, c-format
 msgid "Usage: %s module [args...]\n"
-msgstr "»ç¿ë¹ı: %s module [args...]\n"
+msgstr "ì‚¬ìš©ë²•: %s module [args...]\n"
 
 #: src/commands.cc:3303 src/LocalAccess.cc:642
 msgid "cannot get current directory"
-msgstr "ÇöÀç µğ·ºÅä¸®¿¡ Á¢±ÙÇÒ ¼ö ¾ø½À´Ï´Ù"
+msgstr "í˜„ì¬ ë””ë ‰í† ë¦¬ì— ì ‘ê·¼í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤"
 
 #: src/commands.cc:3367
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
-msgstr "»ç¿ë¹ı: %s [OPTS] files...\n"
+msgstr "ì‚¬ìš©ë²•: %s [OPTS] files...\n"
 
 #: src/commands.cc:3387
 #, fuzzy, c-format
 msgid "invalid mode string: %s\n"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/commands.cc:3450 src/commands.cc:3459
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
-msgstr "¹üÀ§¸¦ ¹ş¾î³­ ¾ç½Ä. ¾ç½ÄÀº ÃÖ¼Ò-ÃÖ´ë ÀÔ´Ï´Ù, ¿¹. 10-20."
+msgstr "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì–‘ì‹. ì–‘ì‹ì€ ìµœì†Œ-ìµœëŒ€ ì…ë‹ˆë‹¤, ì˜ˆ. 10-20."
 
 #: src/commands.cc:3471
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
-msgstr "»ç¿ë¹ı: %s [OPTS] file\n"
+msgstr "ì‚¬ìš©ë²•: %s [OPTS] file\n"
 
 #: src/CopyJob.cc:82
 #, c-format
@@ -1488,62 +1488,62 @@ msgstr ""
 #: src/CopyJob.cc:159
 #, c-format
 msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
-msgstr "%lld $#l#byte|bytes$ Àü¼Û in %ld $#l#second|seconds$"
+msgstr "%lld $#l#byte|bytes$ ì „ì†¡ in %ld $#l#second|seconds$"
 
 #: src/CopyJob.cc:167
 #, fuzzy, c-format
 msgid "%lld $#ll#byte|bytes$ transferred"
-msgstr "%lld $#ll#byte|bytes$ Àü¼Û\n"
+msgstr "%lld $#ll#byte|bytes$ ì „ì†¡\n"
 
 #: src/CopyJob.cc:282
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
-msgstr "%d of %d $file|files$ Àü¼Û ½ÇÆĞ\n"
+msgstr "%d of %d $file|files$ ì „ì†¡ ì‹¤íŒ¨\n"
 
 #: src/CopyJob.cc:288
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
-msgstr "ÃÑ %d $file|files$ Àü¼Û\n"
+msgstr "ì´ %d $file|files$ ì „ì†¡\n"
 
 #: src/FileAccess.cc:160
 #, fuzzy
 msgid "Access failed: "
-msgstr "Á¢¼Ó ½ÇÆĞ: %s"
+msgstr "ì ‘ì† ì‹¤íŒ¨: %s"
 
 #: src/FileAccess.cc:161
 msgid "File cannot be accessed"
-msgstr "ÆÄÀÏÀ» ÀĞÀ» ¼ö ¾ø½À´Ï´Ù"
+msgstr "íŒŒì¼ì„ ì½ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤"
 
 #: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4596
 #: src/ftpclass.cc:4605 src/SFtp.cc:1317 src/Torrent.cc:3533
 msgid "Not connected"
-msgstr "Á¢¼ÓµÇÁö ¾Ê¾Ò½À´Ï´Ù"
+msgstr "ì ‘ì†ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤"
 
 #: src/FileAccess.cc:166 src/FileAccess.cc:167
 msgid "Fatal error"
-msgstr "Ä¡¸íÀû ¿À·ù"
+msgstr "ì¹˜ëª…ì  ì˜¤ë¥˜"
 
 #: src/FileAccess.cc:169
 msgid "Store failed - you have to reput"
-msgstr "ÀúÀå ½ÇÆĞ - ´Ù½Ã ÀÔ·ÂÇÏ½Ê½Ã¿À"
+msgstr "ì €ì¥ ì‹¤íŒ¨ - ë‹¤ì‹œ ì…ë ¥í•˜ì‹­ì‹œì˜¤"
 
 #: src/FileAccess.cc:172 src/FileAccess.cc:173
 msgid "Login failed"
-msgstr "·Î±×ÀÎ ½ÇÆĞ"
+msgstr "ë¡œê·¸ì¸ ì‹¤íŒ¨"
 
 #: src/FileAccess.cc:176 src/FileAccess.cc:177
 msgid "Operation not supported"
-msgstr "Áö¿øµÇÁö ¾Ê´Â ¿ÀÆÛ·¹ÀÌ¼ÇÀÔ´Ï´Ù"
+msgstr "ì§€ì›ë˜ì§€ ì•ŠëŠ” ì˜¤í¼ë ˆì´ì…˜ì…ë‹ˆë‹¤"
 
 #: src/FileAccess.cc:180
 #, fuzzy
 msgid "File moved"
-msgstr "ÆÄÀÏ ÀÌµ¿: %s"
+msgstr "íŒŒì¼ ì´ë™: %s"
 
 #: src/FileAccess.cc:182
 #, fuzzy
 msgid "File moved to `"
-msgstr "`%s'·Î ÆÄÀÏ ÀÌµ¿"
+msgstr "`%s'ë¡œ íŒŒì¼ ì´ë™"
 
 #: src/FileCopy.cc:141
 msgid "copy: destination file is already complete\n"
@@ -1551,12 +1551,12 @@ msgstr ""
 
 #: src/FileCopy.cc:182
 msgid "copy: put is broken\n"
-msgstr "copy: putÀº ±úÁü\n"
+msgstr "copy: putì€ ê¹¨ì§\n"
 
 #: src/FileCopy.cc:201
 #, fuzzy
 msgid "seek failed"
-msgstr "·Î±×ÀÎ ½ÇÆĞ"
+msgstr "ë¡œê·¸ì¸ ì‹¤íŒ¨"
 
 #: src/FileCopy.cc:207
 msgid "no progress timeout"
@@ -1564,7 +1564,7 @@ msgstr ""
 
 #: src/FileCopy.cc:235
 msgid "cannot seek on data source"
-msgstr "¼Ò½º ÀÚ·á¿¡¼­ Ã£À» ¼ö ¾øÀ½"
+msgstr "ì†ŒìŠ¤ ìë£Œì—ì„œ ì°¾ì„ ìˆ˜ ì—†ìŒ"
 
 #: src/FileCopy.cc:238
 #, c-format
@@ -1587,11 +1587,11 @@ msgstr ""
 #: src/FileCopy.cc:1226
 #, c-format
 msgid "copy: received redirection to `%s'\n"
-msgstr "copy: `%s'·Î ÀçÁöÁ¤ÇÏ¿© ¹ŞÀ½\n"
+msgstr "copy: `%s'ë¡œ ì¬ì§€ì •í•˜ì—¬ ë°›ìŒ\n"
 
 #: src/FileCopy.cc:1382
 msgid "file name missed in URL"
-msgstr "URL¿¡ ÆÄÀÏ¸íÀÌ ºüÁ³½À´Ï´Ù"
+msgstr "URLì— íŒŒì¼ëª…ì´ ë¹ ì¡ŒìŠµë‹ˆë‹¤"
 
 #: src/FileCopy.cc:2070
 msgid "Verify command failed without a message"
@@ -1599,21 +1599,21 @@ msgstr ""
 
 #: src/FileCopyFtp.cc:95
 msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
-msgstr "**** FXP: ¿ª ftp:fxp-passive-source ½Ãµµ\n"
+msgstr "**** FXP: ì—­ ftp:fxp-passive-source ì‹œë„\n"
 
 #: src/FileCopyFtp.cc:102
 #, fuzzy
 msgid "**** FXP: trying to reverse ftp:fxp-passive-sscn\n"
-msgstr "**** FXP: ¿ª ftp:fxp-passive-source ½Ãµµ\n"
+msgstr "**** FXP: ì—­ ftp:fxp-passive-source ì‹œë„\n"
 
 #: src/FileCopyFtp.cc:110
 #, fuzzy
 msgid "**** FXP: trying to reverse ftp:ssl-protect-fxp\n"
-msgstr "**** FXP: ¿ª ftp:fxp-passive-source ½Ãµµ\n"
+msgstr "**** FXP: ì—­ ftp:fxp-passive-source ì‹œë„\n"
 
 #: src/FileCopyFtp.cc:116
 msgid "**** FXP: giving up, reverting to plain copy\n"
-msgstr "**** FXP: Æ÷±âÇÏ°í ÀÏ¹İÀûÀÎ º¹»ç·Î ¹Ù²Ş\n"
+msgstr "**** FXP: í¬ê¸°í•˜ê³  ì¼ë°˜ì ì¸ ë³µì‚¬ë¡œ ë°”ê¿ˆ\n"
 
 #: src/FileCopyFtp.cc:125
 msgid "ftp:fxp-force is set but FXP is not available"
@@ -1630,27 +1630,27 @@ msgstr ""
 #: src/Filter.cc:166
 #, fuzzy
 msgid "pipe() failed: "
-msgstr "pipe() ½ÇÆĞ: %s"
+msgstr "pipe() ì‹¤íŒ¨: %s"
 
 #: src/Filter.cc:200 src/PtyShell.cc:135
 #, c-format
 msgid "chdir(%s) failed: %s\n"
-msgstr "chdir(%s) ½ÇÆĞ: %s\n"
+msgstr "chdir(%s) ì‹¤íŒ¨: %s\n"
 
 #: src/Filter.cc:208
 #, fuzzy, c-format
 msgid "execvp(%s) failed: %s\n"
-msgstr "execlp(%s) ½ÇÆĞ: %s\n"
+msgstr "execlp(%s) ì‹¤íŒ¨: %s\n"
 
 #: src/Filter.cc:213 src/PtyShell.cc:147
 #, c-format
 msgid "execl(/bin/sh) failed: %s\n"
-msgstr "execl(/bin/sh) ½ÇÆĞ: %s\n"
+msgstr "execl(/bin/sh) ì‹¤íŒ¨: %s\n"
 
 #: src/Filter.cc:415
 #, fuzzy
 msgid "file already exists and xfer:clobber is unset"
-msgstr "%s: %s: ÆÄÀÏÀÌ ÀÌ¹Ì Á¸ÀçÇÏ¸ç xfer:clobber°¡ ¼³Á¤µÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù\n"
+msgstr "%s: %s: íŒŒì¼ì´ ì´ë¯¸ ì¡´ì¬í•˜ë©° xfer:clobberê°€ ì„¤ì •ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤\n"
 
 #: src/FindJobDu.cc:101
 msgid "total"
@@ -1659,7 +1659,7 @@ msgstr ""
 #: src/Fish.cc:75 src/ftpclass.cc:1292 src/Http.cc:1232 src/SFtp.cc:77
 #, c-format
 msgid "Closing idle connection"
-msgstr "»ç¿ëÇÏÁö ¾Ê´Â Á¢¼ÓÀ» ²÷½À´Ï´Ù"
+msgstr "ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ì ‘ì†ì„ ëŠìŠµë‹ˆë‹¤"
 
 #: src/Fish.cc:162 src/SFtp.cc:177
 msgid "Running connect program"
@@ -1669,61 +1669,61 @@ msgstr ""
 #: src/SFtp.cc:741 src/SFtp.cc:1078 src/SFtp.cc:1079 src/SSH_Access.cc:165
 #, c-format
 msgid "Peer closed connection"
-msgstr "Á¢¼ÓÀÌ ²÷°å½À´Ï´Ù"
+msgstr "ì ‘ì†ì´ ëŠê²¼ìŠµë‹ˆë‹¤"
 
 #: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4216 src/SFtp.cc:1103
 #, c-format
 msgid "extra server response"
-msgstr "ÀÓ½Ã ¼­¹ö ÀÀ´ä"
+msgstr "ì„ì‹œ ì„œë²„ ì‘ë‹µ"
 
 #: src/Fish.cc:987 src/ftpclass.cc:4608 src/Http.cc:2329 src/Http.cc:2336
 #: src/SFtp.cc:1323 src/Torrent.cc:3536 src/TorrentTracker.cc:624
 msgid "Connecting..."
-msgstr "Á¢¼ÓÁß..."
+msgstr "ì ‘ì†ì¤‘..."
 
 #: src/Fish.cc:989 src/ftpclass.cc:4614 src/SFtp.cc:1325
 msgid "Connected"
-msgstr "Á¢¼ÓµÇ¾úÀ½"
+msgstr "ì ‘ì†ë˜ì—ˆìŒ"
 
 #: src/Fish.cc:991 src/ftpclass.cc:4591 src/ftpclass.cc:4619
 #: src/ftpclass.cc:4633 src/Http.cc:2338 src/SFtp.cc:1327
 #: src/TorrentTracker.cc:626
 msgid "Waiting for response..."
-msgstr "ÀÀ´äÀ» ±â´Ù¸³´Ï´Ù..."
+msgstr "ì‘ë‹µì„ ê¸°ë‹¤ë¦½ë‹ˆë‹¤..."
 
 #: src/Fish.cc:993 src/ftpclass.cc:4653 src/Http.cc:2341 src/SFtp.cc:1329
 msgid "Receiving data"
-msgstr "ÀÚ·á ¹Ş´Â Áß"
+msgstr "ìë£Œ ë°›ëŠ” ì¤‘"
 
 #: src/Fish.cc:995 src/ftpclass.cc:4651 src/Http.cc:2334 src/SFtp.cc:1331
 msgid "Sending data"
-msgstr "ÀÚ·á º¸³»´Â Áß"
+msgstr "ìë£Œ ë³´ë‚´ëŠ” ì¤‘"
 
 #: src/Fish.cc:997 src/SFtp.cc:1333
 #, fuzzy
 msgid "Done"
-msgstr "\t¿Ï·á\n"
+msgstr "\tì™„ë£Œ\n"
 
 #: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2178
 #: src/SFtp.cc:2298
 #, c-format
 msgid "Getting file list (%lld) [%s]"
-msgstr "ÆÄÀÏ ¸ñ·ÏÀ» °¡Á®¿É´Ï´Ù (%lld) [%s]"
+msgstr "íŒŒì¼ ëª©ë¡ì„ ê°€ì ¸ì˜µë‹ˆë‹¤ (%lld) [%s]"
 
 #: src/ftpclass.cc:197
 #, c-format
 msgid "Data connection peer has wrong port number"
-msgstr "Á¢¼ÓÀÌ Àß¸øµÈ Æ÷Æ®·Î µÈ µí ÇÕ´Ï´Ù"
+msgstr "ì ‘ì†ì´ ì˜ëª»ëœ í¬íŠ¸ë¡œ ëœ ë“¯ í•©ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:203
 #, c-format
 msgid "Data connection peer has mismatching address"
-msgstr "Á¢¼ÓÀÌ Àß¸øµÈ ÁÖ¼Ò·Î µÈ µí ÇÕ´Ï´Ù"
+msgstr "ì ‘ì†ì´ ì˜ëª»ëœ ì£¼ì†Œë¡œ ëœ ë“¯ í•©ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:225 src/ftpclass.cc:250
 #, c-format
 msgid "Switching to NOREST mode"
-msgstr "NOREST ¸ğµå·Î ÀüÈ¯"
+msgstr "NOREST ëª¨ë“œë¡œ ì „í™˜"
 
 #: src/ftpclass.cc:425
 #, c-format
@@ -1746,7 +1746,7 @@ msgstr ""
 #: src/ftpclass.cc:501
 #, c-format
 msgid "assuming failed host name lookup"
-msgstr "È£½ºÆ® ÀÌ¸§À» Ã£´Âµ¥ ½ÇÆĞÇÑ µí ÇÕ´Ï´Ù"
+msgstr "í˜¸ìŠ¤íŠ¸ ì´ë¦„ì„ ì°¾ëŠ”ë° ì‹¤íŒ¨í•œ ë“¯ í•©ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:809 src/ftpclass.cc:810
 #, c-format
@@ -1761,7 +1761,7 @@ msgstr ""
 #: src/ftpclass.cc:1122
 #, c-format
 msgid "Closing control socket"
-msgstr "Á¦¾î ¼ÒÄÏ ´İÀ½"
+msgstr "ì œì–´ ì†Œì¼“ ë‹«ìŒ"
 
 #: src/ftpclass.cc:1341
 msgid "MLSD is disabled by ftp:use-mlsd"
@@ -1771,193 +1771,193 @@ msgstr ""
 #: src/Torrent.cc:3743 src/TorrentTracker.cc:393
 #, c-format
 msgid "cannot create socket of address family %d"
-msgstr "ÁÖ¼Ò %dÀÇ ¼ÒÄÏÀ» ¸¸µé ¼ö ¾ø½À´Ï´Ù"
+msgstr "ì£¼ì†Œ %dì˜ ì†Œì¼“ì„ ë§Œë“¤ ìˆ˜ ì—†ìŠµë‹ˆë‹¤"
 
 #: src/ftpclass.cc:1442 src/Http.cc:1457
 #, c-format
 msgid "Socket error (%s) - reconnecting"
-msgstr "(%s) ¼ÒÄÏ ¿À·ù - ÀçÁ¢¼ÓÁß"
+msgstr "(%s) ì†Œì¼“ ì˜¤ë¥˜ - ì¬ì ‘ì†ì¤‘"
 
 #: src/ftpclass.cc:1715
 #, fuzzy
 msgid "MFF and SITE CHMOD are not supported by this site"
-msgstr "¸ğµâÀº ÀÌ ½Ã½ºÅÛ¿¡¼­ Áö¿øµÇÁö ¾ÊÀ½"
+msgstr "ëª¨ë“ˆì€ ì´ ì‹œìŠ¤í…œì—ì„œ ì§€ì›ë˜ì§€ ì•ŠìŒ"
 
 #: src/ftpclass.cc:1720
 #, fuzzy
 msgid "MLST and MLSD are not supported by this site"
-msgstr "¸ğµâÀº ÀÌ ½Ã½ºÅÛ¿¡¼­ Áö¿øµÇÁö ¾ÊÀ½"
+msgstr "ëª¨ë“ˆì€ ì´ ì‹œìŠ¤í…œì—ì„œ ì§€ì›ë˜ì§€ ì•ŠìŒ"
 
 #: src/ftpclass.cc:2031
 #, fuzzy
 msgid "SITE SYMLINK is not supported by the server"
-msgstr "¸ğµâÀº ÀÌ ½Ã½ºÅÛ¿¡¼­ Áö¿øµÇÁö ¾ÊÀ½"
+msgstr "ëª¨ë“ˆì€ ì´ ì‹œìŠ¤í…œì—ì„œ ì§€ì›ë˜ì§€ ì•ŠìŒ"
 
 #: src/ftpclass.cc:2204
 msgid "unsupported network protocol"
-msgstr "Áö¿øÇÏÁö ¾Ê´Â ³×Æ®¿öÅ© ÇÁ·ÎÅäÄİÀÔ´Ï´Ù"
+msgstr "ì§€ì›í•˜ì§€ ì•ŠëŠ” ë„¤íŠ¸ì›Œí¬ í”„ë¡œí† ì½œì…ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:2253 src/ftpclass.cc:2355
 #, fuzzy, c-format
 msgid "Data socket error (%s) - reconnecting"
-msgstr "(%s) ¼ÒÄÏ ¿À·ù - ÀçÁ¢¼ÓÁß"
+msgstr "(%s) ì†Œì¼“ ì˜¤ë¥˜ - ì¬ì ‘ì†ì¤‘"
 
 #: src/ftpclass.cc:2281
 #, fuzzy, c-format
 msgid "Accepted data connection from (%s) port %u"
-msgstr "(%s) Æ÷Æ® %u¿¡ ÀÚ·á ¼ÒÄÏÀ» ¿¬°áÇÕ´Ï´Ù"
+msgstr "(%s) í¬íŠ¸ %uì— ìë£Œ ì†Œì¼“ì„ ì—°ê²°í•©ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:2330
 #, c-format
 msgid "Connecting data socket to (%s) port %u"
-msgstr "(%s) Æ÷Æ® %u¿¡ ÀÚ·á ¼ÒÄÏÀ» ¿¬°áÇÕ´Ï´Ù"
+msgstr "(%s) í¬íŠ¸ %uì— ìë£Œ ì†Œì¼“ì„ ì—°ê²°í•©ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:2336
 #, fuzzy, c-format
 msgid "Connecting data socket to proxy %s (%s) port %u"
-msgstr "(%s) Æ÷Æ® %u¿¡ ÀÚ·á ¼ÒÄÏÀ» ¿¬°áÇÕ´Ï´Ù"
+msgstr "(%s) í¬íŠ¸ %uì— ìë£Œ ì†Œì¼“ì„ ì—°ê²°í•©ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:2358 src/ftpclass.cc:4411
 #, c-format
 msgid "Switching passive mode off"
-msgstr "ÆĞ½Ãºê(passive) ¸ğµå ²û"
+msgstr "íŒ¨ì‹œë¸Œ(passive) ëª¨ë“œ ë”"
 
 #: src/ftpclass.cc:2366
 #, fuzzy, c-format
 msgid "Data connection established"
-msgstr "Á¢¼ÓÀÌ Àß¸øµÈ ÁÖ¼Ò·Î µÈ µí ÇÕ´Ï´Ù"
+msgstr "ì ‘ì†ì´ ì˜ëª»ëœ ì£¼ì†Œë¡œ ëœ ë“¯ í•©ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:2688 src/ftpclass.cc:4545
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
-"ftp:ssl-force°¡ ¼³Á¤µÇ¾îÀÖÁö¸¸ ¼­¹ö°¡ Áö¿øÇÏÁö ¾Ê°Å³ª SSLÀ» Çã¿ëÇÏÁö ¾ÊÀ½"
+"ftp:ssl-forceê°€ ì„¤ì •ë˜ì–´ìˆì§€ë§Œ ì„œë²„ê°€ ì§€ì›í•˜ì§€ ì•Šê±°ë‚˜ SSLì„ í—ˆìš©í•˜ì§€ ì•ŠìŒ"
 
 #: src/ftpclass.cc:3053
 #, c-format
 msgid "Persist and retry"
-msgstr "°è¼Ó Àç½ÃµµÇÔ"
+msgstr "ê³„ì† ì¬ì‹œë„í•¨"
 
 #: src/ftpclass.cc:3321
 #, c-format
 msgid "Closing data socket"
-msgstr "µ¥ÀÌÅÍ ¼ÒÄÏ ´İÀ½"
+msgstr "ë°ì´í„° ì†Œì¼“ ë‹«ìŒ"
 
 #: src/ftpclass.cc:3343
 #, fuzzy, c-format
 msgid "Closing aborted data socket"
-msgstr "µ¥ÀÌÅÍ ¼ÒÄÏ ´İÀ½"
+msgstr "ë°ì´í„° ì†Œì¼“ ë‹«ìŒ"
 
 #: src/ftpclass.cc:4190
 #, c-format
 msgid "saw file size in response"
-msgstr "ÀÀ´ä¿¡¼­ ÆÄÀÏ Å©±â¸¦ º¾´Ï´Ù"
+msgstr "ì‘ë‹µì—ì„œ íŒŒì¼ í¬ê¸°ë¥¼ ë´…ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:4230 src/ftpclass.cc:4257
 #, c-format
 msgid "Turning on sync-mode"
-msgstr "µ¿±â ¸ğµå·Î ÀüÈ¯"
+msgstr "ë™ê¸° ëª¨ë“œë¡œ ì „í™˜"
 
 #: src/ftpclass.cc:4431
 #, c-format
 msgid "Switching passive mode on"
-msgstr "ÆĞ½Ãºê(passive) ¸ğµå·Î ÀüÈ¯"
+msgstr "íŒ¨ì‹œë¸Œ(passive) ëª¨ë“œë¡œ ì „í™˜"
 
 #: src/ftpclass.cc:4582
 #, fuzzy
 msgid "FEAT negotiation..."
-msgstr "TLS Çù»óÁß..."
+msgstr "TLS í˜‘ìƒì¤‘..."
 
 #: src/ftpclass.cc:4589
 msgid "Sending commands..."
-msgstr "¸í·É¾î Àü¼ÛÁß..."
+msgstr "ëª…ë ¹ì–´ ì „ì†¡ì¤‘..."
 
 #: src/ftpclass.cc:4593
 #, fuzzy
 msgid "Delaying before retry"
-msgstr "ÀçÁ¢¼ÓÇÏ±â À§ÇÏ¿© ±â´Ù¸³´Ï´Ù"
+msgstr "ì¬ì ‘ì†í•˜ê¸° ìœ„í•˜ì—¬ ê¸°ë‹¤ë¦½ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:4594 src/Http.cc:2331
 msgid "Connection idle"
-msgstr "»ç¿ëÇÏÁö ¾Ê´Â Á¢¼Ó"
+msgstr "ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ì ‘ì†"
 
 #: src/ftpclass.cc:4601 src/Http.cc:2323 src/Resolver.cc:172
 #: src/Resolver.cc:217 src/TorrentTracker.cc:622
 #, c-format
 msgid "Resolving host address..."
-msgstr "È£½ºÆ® ÁÖ¼Ò¸¦ Ã£½À´Ï´Ù..."
+msgstr "í˜¸ìŠ¤íŠ¸ ì£¼ì†Œë¥¼ ì°¾ìŠµë‹ˆë‹¤..."
 
 #: src/ftpclass.cc:4612
 msgid "TLS negotiation..."
-msgstr "TLS Çù»óÁß..."
+msgstr "TLS í˜‘ìƒì¤‘..."
 
 #: src/ftpclass.cc:4616
 msgid "Logging in..."
-msgstr "·Î±×ÀÎ Áß..."
+msgstr "ë¡œê·¸ì¸ ì¤‘..."
 
 #: src/ftpclass.cc:4620
 msgid "Making data connection..."
-msgstr "Á¢¼Ó ÇÏ´Â Áß..."
+msgstr "ì ‘ì† í•˜ëŠ” ì¤‘..."
 
 #: src/ftpclass.cc:4623
 msgid "Changing remote directory..."
-msgstr "¿ø°Å¸® µğ·ºÅä¸® º¯°æÁß..."
+msgstr "ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ ë³€ê²½ì¤‘..."
 
 #: src/ftpclass.cc:4629
 #, fuzzy
 msgid "Waiting for other copy peer..."
-msgstr "ÀÀ´äÀ» ±â´Ù¸³´Ï´Ù..."
+msgstr "ì‘ë‹µì„ ê¸°ë‹¤ë¦½ë‹ˆë‹¤..."
 
 #: src/ftpclass.cc:4631 src/ftpclass.cc:4655
 msgid "Waiting for transfer to complete"
-msgstr "Àü¼Û ¿Ï·á¸¦ ±â´Ù¸³´Ï´Ù"
+msgstr "ì „ì†¡ ì™„ë£Œë¥¼ ê¸°ë‹¤ë¦½ë‹ˆë‹¤"
 
 #: src/ftpclass.cc:4635
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
-msgstr "ÀÀ´äÀ» ±â´Ù¸³´Ï´Ù..."
+msgstr "ì‘ë‹µì„ ê¸°ë‹¤ë¦½ë‹ˆë‹¤..."
 
 #: src/ftpclass.cc:4637
 msgid "Waiting for data connection..."
-msgstr "Á¢¼ÓÀ» ±â´Ù¸®´Â Áß..."
+msgstr "ì ‘ì†ì„ ê¸°ë‹¤ë¦¬ëŠ” ì¤‘..."
 
 #: src/ftpclass.cc:4643
 #, fuzzy
 msgid "Sending data/TLS"
-msgstr "ÀÚ·á º¸³»´Â Áß"
+msgstr "ìë£Œ ë³´ë‚´ëŠ” ì¤‘"
 
 #: src/ftpclass.cc:4645
 #, fuzzy
 msgid "Receiving data/TLS"
-msgstr "ÀÚ·á ¹Ş´Â Áß"
+msgstr "ìë£Œ ë°›ëŠ” ì¤‘"
 
 #: src/Http.cc:230
 #, c-format
 msgid "Closing HTTP connection"
-msgstr "HTTP ¿¬°áÀ» ´İ½À´Ï´Ù"
+msgstr "HTTP ì—°ê²°ì„ ë‹«ìŠµë‹ˆë‹¤"
 
 #: src/Http.cc:240
 msgid "POST method failed"
-msgstr "POST ¸Ş¼Òµå ½ÇÆĞ"
+msgstr "POST ë©”ì†Œë“œ ì‹¤íŒ¨"
 
 #: src/Http.cc:1381
 msgid "ftp over http cannot work without proxy, set hftp:proxy."
 msgstr ""
-"http»óÀÇ ftp´Â ÇÁ¶ô½Ã ¾øÀÌ´Â µ¿ÀÛÇÒ ¼ö ¾ø½À´Ï´Ù, http:proxy¸¦ ¼³Á¤ÇÏ¼¼¿ä"
+"httpìƒì˜ ftpëŠ” í”„ë½ì‹œ ì—†ì´ëŠ” ë™ì‘í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤, http:proxyë¥¼ ì„¤ì •í•˜ì„¸ìš”"
 
 #: src/Http.cc:1537
 #, c-format
 msgid "Sending request..."
-msgstr "request º¸³»´Â Áß..."
+msgstr "request ë³´ë‚´ëŠ” ì¤‘..."
 
 #: src/Http.cc:1575
 #, c-format
 msgid "Hit EOF while fetching headers"
-msgstr "Çì´õ¸¦ ÀĞ¾î ¿À´Â µ¿¾È EOF¸¦ ÀÔ·Â"
+msgstr "í—¤ë”ë¥¼ ì½ì–´ ì˜¤ëŠ” ë™ì•ˆ EOFë¥¼ ì…ë ¥"
 
 #: src/Http.cc:1695
 #, c-format
 msgid "Could not parse HTTP status line"
-msgstr "HTTP »óÅÂ¸¦ ÆÄ½ÌÇÒ ¼ö ¾øÀ½"
+msgstr "HTTP ìƒíƒœë¥¼ íŒŒì‹±í•  ìˆ˜ ì—†ìŒ"
 
 #: src/Http.cc:1726
 msgid "Object is not cached and http:cache-control has only-if-cached"
@@ -1966,7 +1966,7 @@ msgstr ""
 #: src/Http.cc:1891
 #, c-format
 msgid "Receiving body..."
-msgstr "body¸¦ ¹ŞÀº Áß..."
+msgstr "bodyë¥¼ ë°›ì€ ì¤‘..."
 
 #: src/Http.cc:2092
 #, c-format
@@ -1976,50 +1976,50 @@ msgstr ""
 #: src/Http.cc:2095
 #, c-format
 msgid "Received not enough data, retrying"
-msgstr "ÃæºĞÇÑ ÀÚ·á¸¦ ¹ŞÁö ¸øÇØ ´Ù½Ã ½ÃµµÁß"
+msgstr "ì¶©ë¶„í•œ ìë£Œë¥¼ ë°›ì§€ ëª»í•´ ë‹¤ì‹œ ì‹œë„ì¤‘"
 
 #: src/Http.cc:2106
 #, c-format
 msgid "Received all"
-msgstr "¸ğµÎ ¹Ş¾ÒÀ½"
+msgstr "ëª¨ë‘ ë°›ì•˜ìŒ"
 
 #: src/Http.cc:2111
 #, c-format
 msgid "Received all (total)"
-msgstr "¸ğµÎ(ÀüÃ¼) ¹ŞÀ½"
+msgstr "ëª¨ë‘(ì „ì²´) ë°›ìŒ"
 
 #: src/Http.cc:2135 src/Http.cc:2159
 msgid "chunked format violated"
-msgstr "¾²Áö ¾Ê´Â ¾ç½ÄÀÌ ¹®Á¦°¡ µË´Ï´Ù"
+msgstr "ì“°ì§€ ì•ŠëŠ” ì–‘ì‹ì´ ë¬¸ì œê°€ ë©ë‹ˆë‹¤"
 
 #: src/Http.cc:2145
 #, fuzzy, c-format
 msgid "Received last chunk"
-msgstr "¸ğµÎ ¹Ş¾ÒÀ½"
+msgstr "ëª¨ë‘ ë°›ì•˜ìŒ"
 
 #: src/Http.cc:2339
 msgid "Fetching headers..."
-msgstr "Çì´õ¸¦ ÀĞ°í ÀÖ´ÂÁß.."
+msgstr "í—¤ë”ë¥¼ ì½ê³  ìˆëŠ”ì¤‘.."
 
 #: src/Job.cc:293
 #, c-format
 msgid "[%d] Done (%s)"
-msgstr "[%d] ¿Ï·á (%s)"
+msgstr "[%d] ì™„ë£Œ (%s)"
 
 #: src/lftp.cc:370
 #, fuzzy, c-format
 msgid "[%u] Terminated by signal %d. %s\n"
-msgstr "[%lu] ½Ã±×³Î %d ·Î Á¾·áµÇ¾ú½À´Ï´Ù. %s"
+msgstr "[%lu] ì‹œê·¸ë„ %d ë¡œ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤. %s"
 
 #: src/lftp.cc:445
 #, fuzzy, c-format
 msgid "[%u] Started.  %s\n"
-msgstr "[%lu] ½ÃÀÛ. %s"
+msgstr "[%lu] ì‹œì‘. %s"
 
 #: src/lftp.cc:463
 #, fuzzy, c-format
 msgid "[%u] Detaching from the terminal to complete transfers...\n"
-msgstr "[%lu] Àü¼ÛÀ» ¿Ï·áÇÏµµ·Ï ¹é±×¶ó¿îµå·Î ¿Å±â´Â Áß...\n"
+msgstr "[%lu] ì „ì†¡ì„ ì™„ë£Œí•˜ë„ë¡ ë°±ê·¸ë¼ìš´ë“œë¡œ ì˜®ê¸°ëŠ” ì¤‘...\n"
 
 #: src/lftp.cc:465
 #, c-format
@@ -2034,12 +2034,12 @@ msgstr ""
 #: src/lftp.cc:480
 #, fuzzy, c-format
 msgid "[%u] Finished. %s\n"
-msgstr "[%lu] Á¾·á. %s"
+msgstr "[%lu] ì¢…ë£Œ. %s"
 
 #: src/lftp.cc:484
 #, fuzzy, c-format
 msgid "[%u] Moving to background to complete transfers...\n"
-msgstr "[%lu] Àü¼ÛÀ» ¿Ï·áÇÏµµ·Ï ¹é±×¶ó¿îµå·Î ¿Å±â´Â Áß...\n"
+msgstr "[%lu] ì „ì†¡ì„ ì™„ë£Œí•˜ë„ë¡ ë°±ê·¸ë¼ìš´ë“œë¡œ ì˜®ê¸°ëŠ” ì¤‘...\n"
 
 #: src/lftp.cc:553
 msgid "history -w file|-r file|-c|-l [cnt]"
@@ -2067,71 +2067,71 @@ msgstr ""
 #: src/LocalAccess.cc:604 src/NetAccess.cc:686
 #, fuzzy
 msgid "Getting directory contents"
-msgstr "µğ·ºÅä¸® Á¤º¸¸¦ °¡Á®¿À´Â Áß (%lld)"
+msgstr "ë””ë ‰í† ë¦¬ ì •ë³´ë¥¼ ê°€ì ¸ì˜¤ëŠ” ì¤‘ (%lld)"
 
 #: src/LocalAccess.cc:606 src/NetAccess.cc:690
 #, fuzzy
 msgid "Getting files information"
-msgstr "ÆÄÀÏ Á¤º¸¸¦ °¡Á®¿À´Â Áß (%d%%)"
+msgstr "íŒŒì¼ ì •ë³´ë¥¼ ê°€ì ¸ì˜¤ëŠ” ì¤‘ (%d%%)"
 
 #: src/LsCache.cc:190
 #, c-format
 msgid "%ld $#l#byte|bytes$ cached"
-msgstr "%ld $#l#byte|bytes$ Ä³½Ã"
+msgstr "%ld $#l#byte|bytes$ ìºì‹œ"
 
 #: src/LsCache.cc:194
 msgid ", no size limit"
-msgstr ", Å©±â Á¦ÇÑ ¾øÀ½"
+msgstr ", í¬ê¸° ì œí•œ ì—†ìŒ"
 
 #: src/LsCache.cc:196
 #, c-format
 msgid ", maximum size %ld\n"
-msgstr ", ÃÖ´ë Å©±â %ld\n"
+msgstr ", ìµœëŒ€ í¬ê¸° %ld\n"
 
 #: src/mgetJob.cc:78
 #, fuzzy, c-format
 msgid "%s: %s: no files found\n"
-msgstr "%s: ÆÄÀÏ¼ö Ã£À» ¼ö ¾ø½À´Ï´Ù\n"
+msgstr "%s: íŒŒì¼ìˆ˜ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤\n"
 
 #: src/MirrorJob.cc:100
 #, c-format
 msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%sÀüÃ¼: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
+msgstr "%sì „ì²´: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
 #: src/MirrorJob.cc:104
 #, c-format
 msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
-msgstr "%s»ı¼º: %d file$|s$, %d symlink$|s$\n"
+msgstr "%sìƒì„±: %d file$|s$, %d symlink$|s$\n"
 
 #: src/MirrorJob.cc:108
 #, c-format
 msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
-msgstr "%s¼öÁ¤: %d file$|s$, %d symlink$|s$\n"
+msgstr "%sìˆ˜ì •: %d file$|s$, %d symlink$|s$\n"
 
 #: src/MirrorJob.cc:115
 #, c-format
 msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-msgstr "%s»èÁ¦: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
+msgstr "%sì‚­ì œ: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
 #: src/MirrorJob.cc:120
 #, fuzzy, c-format
 msgid "%s%d error$|s$ detected\n"
-msgstr "%s ¼º°ø, %d director$y|ies$ »ı¼º\n"
+msgstr "%s ì„±ê³µ, %d director$y|ies$ ìƒì„±\n"
 
 #: src/MirrorJob.cc:231
 #, fuzzy, c-format
 msgid "Finished %s"
-msgstr "[%lu] Á¾·á. %s"
+msgstr "[%lu] ì¢…ë£Œ. %s"
 
 #: src/MirrorJob.cc:344 src/MirrorJob.cc:519 src/MirrorJob.cc:1207
 #, fuzzy, c-format
 msgid "Removing old file `%s'"
-msgstr "¿¾ Áö¿ª ÆÄÀÏ `%s' Áö¿ò"
+msgstr "ì˜› ì§€ì—­ íŒŒì¼ `%s' ì§€ì›€"
 
 #: src/MirrorJob.cc:346
 #, fuzzy, c-format
 msgid "Overwriting old file `%s'"
-msgstr "¿¾ Áö¿ª ÆÄÀÏ `%s' Áö¿ò"
+msgstr "ì˜› ì§€ì—­ íŒŒì¼ `%s' ì§€ì›€"
 
 #: src/MirrorJob.cc:355
 #, c-format
@@ -2141,32 +2141,32 @@ msgstr ""
 #: src/MirrorJob.cc:361
 #, fuzzy, c-format
 msgid "Transferring file `%s'"
-msgstr "Áö¿ª ÆÄÀÏ `%s'À» Àü¼Û"
+msgstr "ì§€ì—­ íŒŒì¼ `%s'ì„ ì „ì†¡"
 
 #: src/MirrorJob.cc:439
 #, fuzzy, c-format
 msgid "Skipping directory `%s' (only-existing)"
-msgstr "¿ø°Å¸® µğ·ºÅä¸® `%s' »ı¼º"
+msgstr "ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ `%s' ìƒì„±"
 
 #: src/MirrorJob.cc:461 src/MirrorJob.cc:550 src/MirrorJob.cc:891
 #, c-format
 msgid "Removing old local file `%s'"
-msgstr "¿¾ Áö¿ª ÆÄÀÏ `%s' Áö¿ò"
+msgstr "ì˜› ì§€ì—­ íŒŒì¼ `%s' ì§€ì›€"
 
 #: src/MirrorJob.cc:487
 #, fuzzy, c-format
 msgid "Scanning directory `%s'"
-msgstr "¿ø°Å¸® µğ·ºÅä¸® `%s' »ı¼º"
+msgstr "ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ `%s' ìƒì„±"
 
 #: src/MirrorJob.cc:489
 #, c-format
 msgid "Mirroring directory `%s'"
-msgstr "µğ·ºÅä¸® `%s' ¹Ì·¯¸µ"
+msgstr "ë””ë ‰í† ë¦¬ `%s' ë¯¸ëŸ¬ë§"
 
 #: src/MirrorJob.cc:525 src/MirrorJob.cc:567
 #, c-format
 msgid "Making symbolic link `%s' to `%s'"
-msgstr "`%s'¸¦ `%s'·Î ½Éº¼ ¸µÅ©ÇÔ"
+msgstr "`%s'ë¥¼ `%s'ë¡œ ì‹¬ë³¼ ë§í¬í•¨"
 
 #: src/MirrorJob.cc:562
 #, c-format
@@ -2176,37 +2176,37 @@ msgstr ""
 #: src/MirrorJob.cc:799
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
-msgstr "¹Ì·¯: ÇÁ·ÎÅäÄİ '%s'Àº mirror¿¡ ÀûÇÕÇÏÁö ¾Ê½À´Ï´Ù\n"
+msgstr "ë¯¸ëŸ¬: í”„ë¡œí† ì½œ '%s'ì€ mirrorì— ì í•©í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤\n"
 
 #: src/MirrorJob.cc:912
 #, fuzzy, c-format
 msgid "Making directory `%s'"
-msgstr "¿ø°Å¸® µğ·ºÅä¸® `%s' »ı¼º"
+msgstr "ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ `%s' ìƒì„±"
 
 #: src/MirrorJob.cc:1170
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
-msgstr "¿¾ Áö¿ª ÆÄÀÏ `%s'ÀÌ »èÁ¦µÇÁö ¾Ê¾Ò½À´Ï´Ù"
+msgstr "ì˜› ì§€ì—­ íŒŒì¼ `%s'ì´ ì‚­ì œë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤"
 
 #: src/MirrorJob.cc:1172
 #, fuzzy, c-format
 msgid "Old file `%s' is not removed"
-msgstr "¿¾ Áö¿ª ÆÄÀÏ `%s'ÀÌ »èÁ¦µÇÁö ¾Ê¾Ò½À´Ï´Ù"
+msgstr "ì˜› ì§€ì—­ íŒŒì¼ `%s'ì´ ì‚­ì œë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤"
 
 #: src/MirrorJob.cc:1205
 #, fuzzy, c-format
 msgid "Removing old directory `%s'"
-msgstr "¿¾ ¿ø°Å¸® µğ·ºÅä¸® `%s' »èÁ¦"
+msgstr "ì˜› ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ `%s' ì‚­ì œ"
 
 #: src/MirrorJob.cc:1327
 #, fuzzy, c-format
 msgid "Removing source directory `%s'"
-msgstr "¿¾ ¿ø°Å¸® µğ·ºÅä¸® `%s' »èÁ¦"
+msgstr "ì˜› ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ `%s' ì‚­ì œ"
 
 #: src/MirrorJob.cc:1393
 #, fuzzy, c-format
 msgid "Removing source file `%s'"
-msgstr "¿¾ Áö¿ª ÆÄÀÏ `%s' Áö¿ò"
+msgstr "ì˜› ì§€ì—­ íŒŒì¼ `%s' ì§€ì›€"
 
 #: src/MirrorJob.cc:1413
 #, c-format
@@ -2260,54 +2260,54 @@ msgstr ""
 #: src/mkdirJob.cc:128
 #, c-format
 msgid "%s ok, `%s' created\n"
-msgstr "%s ¼º°ø, `%s' ¸¸µé¾ú½À´Ï´Ù\n"
+msgstr "%s ì„±ê³µ, `%s' ë§Œë“¤ì—ˆìŠµë‹ˆë‹¤\n"
 
 #: src/mkdirJob.cc:130 src/rmJob.cc:51
 #, c-format
 msgid "%s failed for %d of %d director$y|ies$\n"
-msgstr "%s ½ÇÆĞ for %d of %d director$y|ies$\n"
+msgstr "%s ì‹¤íŒ¨ for %d of %d director$y|ies$\n"
 
 #: src/mkdirJob.cc:133
 #, c-format
 msgid "%s ok, %d director$y|ies$ created\n"
-msgstr "%s ¼º°ø, %d director$y|ies$ »ı¼º\n"
+msgstr "%s ì„±ê³µ, %d director$y|ies$ ìƒì„±\n"
 
 #: src/module.cc:190
 #, c-format
 msgid "depend module `%s': %s\n"
-msgstr "`%s'¸ğµâ¿¡ ÀÇÁ¸ÇÔ: %s\n"
+msgstr "`%s'ëª¨ë“ˆì— ì˜ì¡´í•¨: %s\n"
 
 #: src/module.cc:210
 msgid "modules are not supported on this system"
-msgstr "¸ğµâÀº ÀÌ ½Ã½ºÅÛ¿¡¼­ Áö¿øµÇÁö ¾ÊÀ½"
+msgstr "ëª¨ë“ˆì€ ì´ ì‹œìŠ¤í…œì—ì„œ ì§€ì›ë˜ì§€ ì•ŠìŒ"
 
 #: src/mvJob.cc:92
 #, c-format
 msgid "rename successful\n"
-msgstr "ÀÌ¸§º¯°æ ¼º°ø\n"
+msgstr "ì´ë¦„ë³€ê²½ ì„±ê³µ\n"
 
 #: src/NetAccess.cc:168
 #, c-format
 msgid "Connecting to %s%s (%s) port %u"
-msgstr "%s%s (%s) Æ÷Æ® %u¿¡ ¿¬°á Áß"
+msgstr "%s%s (%s) í¬íŠ¸ %uì— ì—°ê²° ì¤‘"
 
 #: src/NetAccess.cc:224 src/Torrent.cc:3326
 #, c-format
 msgid "Timeout - reconnecting"
-msgstr "½Ã°£ÃÊ°ú - ÀçÁ¢¼Ó"
+msgstr "ì‹œê°„ì´ˆê³¼ - ì¬ì ‘ì†"
 
 #: src/NetAccess.cc:323
 #, fuzzy
 msgid "Connection limit reached"
-msgstr "Á¢¼Ó Á¦ÇÑ±îÁö °¬½À´Ï´Ù"
+msgstr "ì ‘ì† ì œí•œê¹Œì§€ ê°”ìŠµë‹ˆë‹¤"
 
 #: src/NetAccess.cc:330
 msgid "Delaying before reconnect"
-msgstr "ÀçÁ¢¼ÓÇÏ±â À§ÇÏ¿© ±â´Ù¸³´Ï´Ù"
+msgstr "ì¬ì ‘ì†í•˜ê¸° ìœ„í•˜ì—¬ ê¸°ë‹¤ë¦½ë‹ˆë‹¤"
 
 #: src/NetAccess.cc:354 src/NetAccess.cc:356
 msgid "max-retries exceeded"
-msgstr "ÃÖ´ë-Àç½Ãµµ¸¦ ÃÊ°úÇß½À´Ï´Ù"
+msgstr "ìµœëŒ€-ì¬ì‹œë„ë¥¼ ì´ˆê³¼í–ˆìŠµë‹ˆë‹¤"
 
 #: src/OutputJob.cc:145
 #, c-format
@@ -2316,11 +2316,11 @@ msgstr ""
 
 #: src/parsecmd.cc:290
 msgid "parse: missing filter command\n"
-msgstr "parse: ÇÊÅÍ ¸í·É¾î°¡ ºüÁ³½À´Ï´Ù\n"
+msgstr "parse: í•„í„° ëª…ë ¹ì–´ê°€ ë¹ ì¡ŒìŠµë‹ˆë‹¤\n"
 
 #: src/parsecmd.cc:292
 msgid "parse: missing redirection filename\n"
-msgstr "parse: ÀçÁöÁ¤ ÆÄÀÏ¸íÀÌ ºüÁ³½À´Ï´Ù\n"
+msgstr "parse: ì¬ì§€ì • íŒŒì¼ëª…ì´ ë¹ ì¡ŒìŠµë‹ˆë‹¤\n"
 
 #: src/PatternSet.cc:110
 #, c-format
@@ -2334,7 +2334,7 @@ msgstr ""
 #: src/pgetJob.cc:131
 #, fuzzy
 msgid "the target file is remote"
-msgstr "¿¾ ¿ø°Å¸® ÆÄÀÏ `%s'ÀÌ »èÁ¦µÇÁö ¾Ê¾Ò½À´Ï´Ù"
+msgstr "ì˜› ì›ê±°ë¦¬ íŒŒì¼ `%s'ì´ ì‚­ì œë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤"
 
 #: src/pgetJob.cc:136
 msgid "the source file size is unknown"
@@ -2357,7 +2357,7 @@ msgstr ""
 #: src/PollVec.cc:69
 #, c-format
 msgid "%s: BUG - deadlock detected\n"
-msgstr "%s: ¹ö±× - µ¥µå¶ô ¹ß°ß\n"
+msgstr "%s: ë²„ê·¸ - ë°ë“œë½ ë°œê²¬\n"
 
 #: src/PtyShell.cc:68
 msgid "pseudo-tty allocation failed: "
@@ -2393,45 +2393,45 @@ msgstr ""
 #: src/QueueFeeder.cc:354
 #, fuzzy
 msgid "Commands queued:"
-msgstr "\t¸í·É¾î ´ë±â:\n"
+msgstr "\tëª…ë ¹ì–´ ëŒ€ê¸°:\n"
 
 #: src/ResMgr.cc:123
 msgid "no such variable"
-msgstr "±×·¯ÇÑ º¯¼ö´Â ¾ø½À´Ï´Ù"
+msgstr "ê·¸ëŸ¬í•œ ë³€ìˆ˜ëŠ” ì—†ìŠµë‹ˆë‹¤"
 
 #: src/ResMgr.cc:127
 msgid "ambiguous variable name"
-msgstr "¸ğÈ£ÇÑ º¯¼ö¸íÀÔ´Ï´Ù"
+msgstr "ëª¨í˜¸í•œ ë³€ìˆ˜ëª…ì…ë‹ˆë‹¤"
 
 #: src/ResMgr.cc:335
 msgid "invalid boolean value"
-msgstr "Àß¸øµÈ boolean º¯¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ boolean ë³€ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/ResMgr.cc:357
 #, fuzzy
 msgid "invalid boolean/auto value"
-msgstr "Àß¸øµÈ boolean º¯¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ boolean ë³€ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/ResMgr.cc:402 src/ResMgr.cc:713
 msgid "invalid number"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/ResMgr.cc:415
 msgid "invalid floating point number"
-msgstr "Àß¸øµÈ ºÎµ¿¼Ò¼ö Á¡ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ë¶€ë™ì†Œìˆ˜ ì  ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/ResMgr.cc:429
 #, fuzzy
 msgid "invalid unsigned number"
-msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #: src/ResMgr.cc:678
 msgid "Invalid time unit letter, only [smhd] are allowed."
-msgstr "Àß¸øµÈ ½Ã°£ ´ÜÀ§ÀÔ´Ï´Ù, [smhd] ¸¸ Çã¿ëÇÕ´Ï´Ù."
+msgstr "ì˜ëª»ëœ ì‹œê°„ ë‹¨ìœ„ì…ë‹ˆë‹¤, [smhd] ë§Œ í—ˆìš©í•©ë‹ˆë‹¤."
 
 #: src/ResMgr.cc:686
 msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
-msgstr "Àß¸øµÈ ½Ã°£ ¾ç½ÄÀÔ´Ï´Ù. ¾ç½ÄÀº <time><unit> ÀÔ´Ï´Ù, ¿¹. 2h30m."
+msgstr "ì˜ëª»ëœ ì‹œê°„ ì–‘ì‹ì…ë‹ˆë‹¤. ì–‘ì‹ì€ <time><unit> ì…ë‹ˆë‹¤, ì˜ˆ. 2h30m."
 
 #: src/ResMgr.cc:718
 msgid "integer overflow"
@@ -2448,25 +2448,25 @@ msgstr ""
 #: src/ResMgr.cc:884 src/ResMgr.cc:888
 #, fuzzy
 msgid "this encoding is not supported"
-msgstr "Áö¿øµÇÁö ¾Ê´Â ¿ÀÆÛ·¹ÀÌ¼ÇÀÔ´Ï´Ù"
+msgstr "ì§€ì›ë˜ì§€ ì•ŠëŠ” ì˜¤í¼ë ˆì´ì…˜ì…ë‹ˆë‹¤"
 
 #: src/ResMgr.cc:894
 msgid "no closure defined for this setting"
-msgstr "ÀÌ ¼³Á¤¿¡ ´ëÇÑ Á¾°áÀÌ Á¤ÀÇµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù"
+msgstr "ì´ ì„¤ì •ì— ëŒ€í•œ ì¢…ê²°ì´ ì •ì˜ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤"
 
 #: src/ResMgr.cc:900
 #, fuzzy
 msgid "a closure is required for this setting"
-msgstr "ÀÌ ¼³Á¤¿¡ ´ëÇÑ Á¾°áÀÌ Á¤ÀÇµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù"
+msgstr "ì´ ì„¤ì •ì— ëŒ€í•œ ì¢…ê²°ì´ ì •ì˜ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤"
 
 #: src/Resolver.cc:236
 msgid "host name resolve timeout"
-msgstr "È£½ºÆ® ÁÖ¼Ò¸¦ Ã£´Âµ¥ ½Ã°£ÀÌ ÃÊ°úµÇ¾ú½À´Ï´Ù"
+msgstr "í˜¸ìŠ¤íŠ¸ ì£¼ì†Œë¥¼ ì°¾ëŠ”ë° ì‹œê°„ì´ ì´ˆê³¼ë˜ì—ˆìŠµë‹ˆë‹¤"
 
 #: src/Resolver.cc:282
 #, fuzzy, c-format
 msgid "%d address$|es$ found"
-msgstr "ÁÖ¼Ò¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù"
+msgstr "ì£¼ì†Œë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤"
 
 #: src/Resolver.cc:327
 msgid "Link-local IPv6 address should have a scope"
@@ -2478,24 +2478,24 @@ msgstr ""
 
 #: src/Resolver.cc:871
 msgid "Host name lookup failure"
-msgstr "È£½ºÆ®¸í Ã£±â ½ÇÆĞ"
+msgstr "í˜¸ìŠ¤íŠ¸ëª… ì°¾ê¸° ì‹¤íŒ¨"
 
 #: src/Resolver.cc:903
 #, c-format
 msgid "no such %s service"
-msgstr "±×·¯ÇÑ %s´Â  ¾ø½À´Ï´Ù"
+msgstr "ê·¸ëŸ¬í•œ %sëŠ”  ì—†ìŠµë‹ˆë‹¤"
 
 #: src/Resolver.cc:930
 msgid "No address found"
-msgstr "ÁÖ¼Ò¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù"
+msgstr "ì£¼ì†Œë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤"
 
 #: src/resource.cc:50 src/resource.cc:108
 msgid "Proxy protocol unsupported"
-msgstr "ÇÁ¶ô½Ã ÇÁ·ÎÅäÄİÀ» Áö¿øÇÏÁö ¾Ê½À´Ï´Ù"
+msgstr "í”„ë½ì‹œ í”„ë¡œí† ì½œì„ ì§€ì›í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤"
 
 #: src/resource.cc:54
 msgid "ftp:proxy password: "
-msgstr "ftp:proxy ºñ¹Ğ¹øÈ£: "
+msgstr "ftp:proxy ë¹„ë°€ë²ˆí˜¸: "
 
 #: src/resource.cc:70
 #, c-format
@@ -2512,37 +2512,37 @@ msgstr ""
 
 #: src/resource.cc:116
 msgid "only PUT and POST values allowed"
-msgstr "PUT°ú POST °ª¸¸ Çã¿ë"
+msgstr "PUTê³¼ POST ê°’ë§Œ í—ˆìš©"
 
 #: src/resource.cc:148
 #, c-format
 msgid "unknown address family `%s'"
-msgstr "`%s'´Â ¾Ë¼ö ¾ø´Â ÁÖ¼ÒÀÔ´Ï´Ù"
+msgstr "`%s'ëŠ” ì•Œìˆ˜ ì—†ëŠ” ì£¼ì†Œì…ë‹ˆë‹¤"
 
 #: src/rmJob.cc:47
 #, c-format
 msgid "%s ok, `%s' removed\n"
-msgstr "%s ¼º°ø, `%s' »èÁ¦Çß½À´Ï´Ù\n"
+msgstr "%s ì„±ê³µ, `%s' ì‚­ì œí–ˆìŠµë‹ˆë‹¤\n"
 
 #: src/rmJob.cc:54
 #, c-format
 msgid "%s failed for %d of %d file$|s$\n"
-msgstr "%s ½ÇÆĞ for %d of %d file$|s$\n"
+msgstr "%s ì‹¤íŒ¨ for %d of %d file$|s$\n"
 
 #: src/rmJob.cc:60
 #, c-format
 msgid "%s ok, %d director$y|ies$ removed\n"
-msgstr "%s ¼º°ø, %d director$y|ies$ »èÁ¦Çß½À´Ï´Ù\n"
+msgstr "%s ì„±ê³µ, %d director$y|ies$ ì‚­ì œí–ˆìŠµë‹ˆë‹¤\n"
 
 #: src/rmJob.cc:63
 #, c-format
 msgid "%s ok, %d file$|s$ removed\n"
-msgstr "%s ¼º°ø, %d file$|s$ »èÁ¦Çß½À´Ï´Ù\n"
+msgstr "%s ì„±ê³µ, %d file$|s$ ì‚­ì œí–ˆìŠµë‹ˆë‹¤\n"
 
 #: src/SFtp.cc:1094 src/SFtp.cc:1095
 #, fuzzy, c-format
 msgid "invalid server response format"
-msgstr "ÀÓ½Ã ¼­¹ö ÀÀ´ä"
+msgstr "ì„ì‹œ ì„œë²„ ì‘ë‹µ"
 
 #: src/SleepJob.cc:99
 msgid "Sleeping forever"
@@ -2555,12 +2555,12 @@ msgstr ""
 #: src/SleepJob.cc:108
 #, c-format
 msgid "\tRepeat count: %d\n"
-msgstr "\t¹İº¹ È½¼ö: %d\n"
+msgstr "\të°˜ë³µ íšŸìˆ˜: %d\n"
 
 #: src/SleepJob.cc:142
 #, c-format
 msgid "%s: argument required. "
-msgstr "%s: ÀÎÀÚ°¡ ÇÊ¿äÇÕ´Ï´Ù. "
+msgstr "%s: ì¸ìê°€ í•„ìš”í•©ë‹ˆë‹¤. "
 
 #: src/SleepJob.cc:262
 #, c-format
@@ -2579,10 +2579,10 @@ msgid ""
 "followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
 "By default time is assumed to be seconds.\n"
 msgstr ""
-"»ç¿ë¹ı: sleep <time>[unit]\n"
-"ÁöÁ¤µÈ ½Ã°£µ¿¾È µ¿ÀÛÇÏÁö ¾Ê½À´Ï´Ù. ¿É¼ÇÀ¸·Î ½Ã°£À» ´ÙÀ½ ±¸ºĞÀÚ·Î\n"
-"Ç¥ÇöÇÒ ¼ö ÀÖ½À´Ï´Ù: d - ÀÏ, h - ½Ã, m - ºĞ, s - ÃÊ.\n"
-"±âº»´ÜÀ§´Â ÃÊ·Î °£ÁÖÇÕ´Ï´Ù.\n"
+"ì‚¬ìš©ë²•: sleep <time>[unit]\n"
+"ì§€ì •ëœ ì‹œê°„ë™ì•ˆ ë™ì‘í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ì˜µì…˜ìœ¼ë¡œ ì‹œê°„ì„ ë‹¤ìŒ êµ¬ë¶„ìë¡œ\n"
+"í‘œí˜„í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤: d - ì¼, h - ì‹œ, m - ë¶„, s - ì´ˆ.\n"
+"ê¸°ë³¸ë‹¨ìœ„ëŠ” ì´ˆë¡œ ê°„ì£¼í•©ë‹ˆë‹¤.\n"
 
 #: src/SleepJob.cc:310
 #, fuzzy
@@ -2595,48 +2595,48 @@ msgid ""
 " --until-ok  stop when command exits with zero code\n"
 " --weak      stop when lftp moves to background.\n"
 msgstr ""
-"»ç¿ë¹ı: repeat [delay] [command]\n"
-"Áö¿¬À» µÎ¾î ¹İº¹ÀûÀ¸·Î ¸í·ÉÀ» ½ÇÇàÇÔ.\n"
-"±âº» Áö¿¬Àº 1ÃÊ, ±âº» ¸í·ÉÀº ¾øÀ½.\n"
+"ì‚¬ìš©ë²•: repeat [delay] [command]\n"
+"ì§€ì—°ì„ ë‘ì–´ ë°˜ë³µì ìœ¼ë¡œ ëª…ë ¹ì„ ì‹¤í–‰í•¨.\n"
+"ê¸°ë³¸ ì§€ì—°ì€ 1ì´ˆ, ê¸°ë³¸ ëª…ë ¹ì€ ì—†ìŒ.\n"
 
 #: src/Speedometer.cc:90
 #, c-format
 msgid "%.0fb/s"
-msgstr "%.0fb/ÃÊ"
+msgstr "%.0fb/ì´ˆ"
 
 #: src/Speedometer.cc:93
 #, c-format
 msgid "%.1fK/s"
-msgstr "%.1fK/ÃÊ"
+msgstr "%.1fK/ì´ˆ"
 
 #: src/Speedometer.cc:96
 #, c-format
 msgid "%.2fM/s"
-msgstr "%.2fM/ÃÊ"
+msgstr "%.2fM/ì´ˆ"
 
 #: src/Speedometer.cc:103
 #, fuzzy, c-format
 msgid "%.0f B/s"
-msgstr "%.0fb/ÃÊ"
+msgstr "%.0fb/ì´ˆ"
 
 #: src/Speedometer.cc:105
 #, fuzzy, c-format
 msgid "%.1f KiB/s"
-msgstr "%.1fK/ÃÊ"
+msgstr "%.1fK/ì´ˆ"
 
 #: src/Speedometer.cc:107
 #, fuzzy, c-format
 msgid "%.2f MiB/s"
-msgstr "%.2fM/ÃÊ"
+msgstr "%.2fM/ì´ˆ"
 
 #: src/Speedometer.cc:129
 msgid "eta:"
-msgstr "³²Àº½Ã°£:"
+msgstr "ë‚¨ì€ì‹œê°„:"
 
 #: src/SSH_Access.cc:95
 #, fuzzy
 msgid "Password required"
-msgstr "ºñ¹Ğ¹øÈ£: "
+msgstr "ë¹„ë°€ë²ˆí˜¸: "
 
 #: src/SSH_Access.cc:100
 msgid "Login incorrect"
@@ -2645,12 +2645,12 @@ msgstr ""
 #: src/SSH_Access.cc:194
 #, fuzzy, c-format
 msgid "Disconnecting"
-msgstr "Á¢¼ÓÁß..."
+msgstr "ì ‘ì†ì¤‘..."
 
 #: src/SysCmdJob.cc:73
 #, c-format
 msgid "execlp(%s) failed: %s\n"
-msgstr "execlp(%s) ½ÇÆĞ: %s\n"
+msgstr "execlp(%s) ì‹¤íŒ¨: %s\n"
 
 #: src/TimeDate.cc:155
 msgid "day"
@@ -2685,7 +2685,7 @@ msgstr ""
 #: src/Torrent.cc:1143
 #, fuzzy, c-format
 msgid "%d file$|s$ found"
-msgstr "ÁÖ¼Ò¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù"
+msgstr "ì£¼ì†Œë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤"
 
 #: src/Torrent.cc:2075 src/Torrent.cc:2085
 #, c-format
@@ -2700,7 +2700,7 @@ msgstr ""
 #: src/Torrent.cc:2088
 #, fuzzy
 msgid "Waiting for meta-data..."
-msgstr "\t¸í·ÉÀ» ±â´Ù¸®´Â Áß\n"
+msgstr "\tëª…ë ¹ì„ ê¸°ë‹¤ë¦¬ëŠ” ì¤‘\n"
 
 #: src/Torrent.cc:2096
 msgid "Shutting down: "
@@ -2709,32 +2709,32 @@ msgstr ""
 #: src/Torrent.cc:3207
 #, fuzzy, c-format
 msgid "Connecting to peer %s port %u"
-msgstr "%s%s (%s) Æ÷Æ® %u¿¡ ¿¬°á Áß"
+msgstr "%s%s (%s) í¬íŠ¸ %uì— ì—°ê²° ì¤‘"
 
 #: src/Torrent.cc:3258 src/Torrent.cc:3375
 #, fuzzy, c-format
 msgid "peer unexpectedly closed connection after %s"
-msgstr "¿ø°Å¸® ³¡ÀÌ Á¢¼ÓÀ» ²÷½À´Ï´Ù"
+msgstr "ì›ê±°ë¦¬ ëì´ ì ‘ì†ì„ ëŠìŠµë‹ˆë‹¤"
 
 #: src/Torrent.cc:3259 src/Torrent.cc:3376
 #, fuzzy
 msgid "peer unexpectedly closed connection"
-msgstr "¿ø°Å¸® ³¡ÀÌ Á¢¼ÓÀ» ²÷½À´Ï´Ù"
+msgstr "ì›ê±°ë¦¬ ëì´ ì ‘ì†ì„ ëŠìŠµë‹ˆë‹¤"
 
 #: src/Torrent.cc:3261 src/Torrent.cc:3262
 #, fuzzy, c-format
 msgid "peer closed connection (before handshake)"
-msgstr "Á¢¼ÓÀÌ ²÷°å½À´Ï´Ù"
+msgstr "ì ‘ì†ì´ ëŠê²¼ìŠµë‹ˆë‹¤"
 
 #: src/Torrent.cc:3265 src/Torrent.cc:3378 src/Torrent.cc:3379
 #, fuzzy, c-format
 msgid "invalid peer response format"
-msgstr "ÀÓ½Ã ¼­¹ö ÀÀ´ä"
+msgstr "ì„ì‹œ ì„œë²„ ì‘ë‹µ"
 
 #: src/Torrent.cc:3360 src/Torrent.cc:3361
 #, fuzzy, c-format
 msgid "peer closed connection"
-msgstr "Á¢¼ÓÀÌ ²÷°å½À´Ï´Ù"
+msgstr "ì ‘ì†ì´ ëŠê²¼ìŠµë‹ˆë‹¤"
 
 #: src/Torrent.cc:3538
 msgid "Handshaking..."
@@ -2747,7 +2747,7 @@ msgstr ""
 #: src/Torrent.cc:3858
 #, fuzzy, c-format
 msgid "Accepted connection from [%s]:%d"
-msgstr "(%s) Æ÷Æ® %u¿¡ ÀÚ·á ¼ÒÄÏÀ» ¿¬°áÇÕ´Ï´Ù"
+msgstr "(%s) í¬íŠ¸ %uì— ìë£Œ ì†Œì¼“ì„ ì—°ê²°í•©ë‹ˆë‹¤"
 
 #: src/Torrent.cc:3924
 #, c-format
@@ -2767,12 +2767,12 @@ msgstr ""
 #: src/Torrent.cc:3962
 #, fuzzy, c-format
 msgid "peer closed just accepted connection"
-msgstr "Á¢¼ÓÀÌ ²÷°å½À´Ï´Ù"
+msgstr "ì ‘ì†ì´ ëŠê²¼ìŠµë‹ˆë‹¤"
 
 #: src/Torrent.cc:4013
 #, fuzzy, c-format
 msgid "Seeding in background...\n"
-msgstr "¸í·É¾î Àü¼ÛÁß..."
+msgstr "ëª…ë ¹ì–´ ì „ì†¡ì¤‘..."
 
 #: src/Torrent.cc:4176
 #, c-format
@@ -2833,18 +2833,18 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "%s: unrecognized option '--%s'\n"
-#~ msgstr "%s: `%s'À¸·Î ¸®´ÙÀÌ·º¼ÇÀ» ¹ŞÀ½\n"
+#~ msgstr "%s: `%s'ìœ¼ë¡œ ë¦¬ë‹¤ì´ë ‰ì…˜ì„ ë°›ìŒ\n"
 
 #~ msgid "Usage: mv <file1> <file2>\n"
-#~ msgstr "»ç¿ë¹ı: mv <file1> <file2>\n"
+#~ msgstr "ì‚¬ìš©ë²•: mv <file1> <file2>\n"
 
 #, fuzzy
 #~ msgid "number"
-#~ msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+#~ msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #, fuzzy
 #~ msgid "error: %s:%d\n"
-#~ msgstr "Ä¡¸íÀû ¿À·ù: %s"
+#~ msgstr "ì¹˜ëª…ì  ì˜¤ë¥˜: %s"
 
 #, fuzzy
 #~ msgid ""
@@ -2881,143 +2881,143 @@ msgstr ""
 #~ "See lftp(1) for a complete list of options.\n"
 #~ msgstr ""
 #~ "\n"
-#~ "ÁöÁ¤µÈ ¿ø°Å¸® µğ·ºÅä¸®¸¦ Áö¿ª µğ·ºÅä¸®·Î ¹Ì·¯\n"
+#~ "ì§€ì •ëœ ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ë¥¼ ì§€ì—­ ë””ë ‰í† ë¦¬ë¡œ ë¯¸ëŸ¬\n"
 #~ "\n"
-#~ " -c, --continue         °¡´ÉÇÏ´Ù¸é ¹Ì·¯ ÀÛ¾÷À» ÀÌ¾î¼­ ÇÔ\n"
-#~ " -e, --delete           ¿ø°Å¸® »çÀÌÆ®¿¡ Á¸ÀçÇÏÁö ¾Ê´Â ÆÄÀÏÀ» »èÁ¦\n"
-#~ " -s, --allow-suid       ¿ø°Å¸® »çÀÌÆ®¿¡ µû¶ó suid/sgid ºñÆ®¸¦ ¼³Á¤\n"
-#~ " -n, --only-newer       »õ·Î °»½ÅµÈ ÆÄÀÏ¸¸ ¹ŞÀ½(-c¿É¼Ç »ç¿ë ºÒ°¡)\n"
-#~ " -r, --no-recursion     ¼­ºêµğ·ºÅä¸®ÀÇ ³»¿ëÀº ¹Ì·¯¸µ ÇÏÁö ¾ÊÀ½\n"
-#~ " -p, --no-perms         ÆÄÀÏ ÆÛ¹Ì¼Ç ¹«½Ã\n"
-#~ "     --no-umask         ÆÄÀÏ ¸ğµå¿¡ umask¸¦ Àû¿ëÇÏÁö ¾ÊÀ½\n"
-#~ " -R, --reverse          ¿ª ¹Ì·¯ (ÆÄÀÏµéÀ» ¾÷·ÎµåÇÔ)\n"
-#~ " -L, --dereference      ½Éº¼¸¯ ¸µÅ©¸¦ ÆÄÀÏ·Î½á ¹ŞÀ½\n"
-#~ " -N, --newer-than FILE  ÁöÁ¤µÈ ÆÄÀÏ ÀÌÈÄ¿¡ °»½ÅµÈ °Í¸¸ ¹ŞÀ½\n"
-#~ " -P, --parallel[=N]     µ¿½Ã¿¡ N°³ÀÇ ÆÄÀÏµéÀ» ¹ŞÀ½\n"
-#~ " -i RX, --include RX    ÀÏÄ¡ÇÏ´Â ÆÄÀÏ¸¸ Æ÷ÇÔ\n"
-#~ " -x RX, --exclude RX    ÀÏÄ¡ÇÏ´Â ÆÄÀÏ¸¸ Á¦¿Ü\n"
-#~ "                        RX´Â È®ÀåµÈ Á¤±Ô Ç¥Çö½Ä\n"
-#~ " -t Nx, --time-prec Nx  ½Ã°£ Á¤¹Ğµµ ¼³Á¤ \n"
-#~ "                        ÃÊ(x=s), ºĞ(x=m), ½Ã°£(x=h), ÀÏ(x=d)\n"
-#~ "                        ±âº» - mirror:time-precision ¼³Á¤µÊ\n"
-#~ " -T Nx, --loose-time-prec  ´À½¼ÇÑ ½Ã°£À¸·Î ½Ã°£ ¼³Á¤\n"
-#~ "                        ±âº» - mirror:loose-time-precision\n"
-#~ " -v, --verbose          verbose µ¿ÀÛ\n"
-#~ "     --use-cache        Ä³½ÃµÈ µğ·ºÅä¸® ¸ñ·ÏÀ» »ç¿ë\n"
+#~ " -c, --continue         ê°€ëŠ¥í•˜ë‹¤ë©´ ë¯¸ëŸ¬ ì‘ì—…ì„ ì´ì–´ì„œ í•¨\n"
+#~ " -e, --delete           ì›ê±°ë¦¬ ì‚¬ì´íŠ¸ì— ì¡´ì¬í•˜ì§€ ì•ŠëŠ” íŒŒì¼ì„ ì‚­ì œ\n"
+#~ " -s, --allow-suid       ì›ê±°ë¦¬ ì‚¬ì´íŠ¸ì— ë”°ë¼ suid/sgid ë¹„íŠ¸ë¥¼ ì„¤ì •\n"
+#~ " -n, --only-newer       ìƒˆë¡œ ê°±ì‹ ëœ íŒŒì¼ë§Œ ë°›ìŒ(-cì˜µì…˜ ì‚¬ìš© ë¶ˆê°€)\n"
+#~ " -r, --no-recursion     ì„œë¸Œë””ë ‰í† ë¦¬ì˜ ë‚´ìš©ì€ ë¯¸ëŸ¬ë§ í•˜ì§€ ì•ŠìŒ\n"
+#~ " -p, --no-perms         íŒŒì¼ í¼ë¯¸ì…˜ ë¬´ì‹œ\n"
+#~ "     --no-umask         íŒŒì¼ ëª¨ë“œì— umaskë¥¼ ì ìš©í•˜ì§€ ì•ŠìŒ\n"
+#~ " -R, --reverse          ì—­ ë¯¸ëŸ¬ (íŒŒì¼ë“¤ì„ ì—…ë¡œë“œí•¨)\n"
+#~ " -L, --dereference      ì‹¬ë³¼ë¦­ ë§í¬ë¥¼ íŒŒì¼ë¡œì¨ ë°›ìŒ\n"
+#~ " -N, --newer-than FILE  ì§€ì •ëœ íŒŒì¼ ì´í›„ì— ê°±ì‹ ëœ ê²ƒë§Œ ë°›ìŒ\n"
+#~ " -P, --parallel[=N]     ë™ì‹œì— Nê°œì˜ íŒŒì¼ë“¤ì„ ë°›ìŒ\n"
+#~ " -i RX, --include RX    ì¼ì¹˜í•˜ëŠ” íŒŒì¼ë§Œ í¬í•¨\n"
+#~ " -x RX, --exclude RX    ì¼ì¹˜í•˜ëŠ” íŒŒì¼ë§Œ ì œì™¸\n"
+#~ "                        RXëŠ” í™•ì¥ëœ ì •ê·œ í‘œí˜„ì‹\n"
+#~ " -t Nx, --time-prec Nx  ì‹œê°„ ì •ë°€ë„ ì„¤ì • \n"
+#~ "                        ì´ˆ(x=s), ë¶„(x=m), ì‹œê°„(x=h), ì¼(x=d)\n"
+#~ "                        ê¸°ë³¸ - mirror:time-precision ì„¤ì •ë¨\n"
+#~ " -T Nx, --loose-time-prec  ëŠìŠ¨í•œ ì‹œê°„ìœ¼ë¡œ ì‹œê°„ ì„¤ì •\n"
+#~ "                        ê¸°ë³¸ - mirror:loose-time-precision\n"
+#~ " -v, --verbose          verbose ë™ì‘\n"
+#~ "     --use-cache        ìºì‹œëœ ë””ë ‰í† ë¦¬ ëª©ë¡ì„ ì‚¬ìš©\n"
 #~ "\n"
-#~ "-RÀ» »ç¿ëÇÒ ¶§, Ã¹¹øÂ° µğ·ºÅä¸®°¡ Áö¿ªÀÌ°í µÎ¹øÂ°°¡ ¿ø°Å¸®ÀÔ´Ï´Ù.\n"
-#~ "¸¸¾à µÎ¹øÂ° µğ·ºÅä¸®¸¦ »ı·«ÇÏ¸é, Ã¹¹øÂ° µğ·ºÅä¸®¸íÀ» »ç¿ëÇÕ´Ï´Ù.\n"
-#~ "µÎ µğ·ºÅä¸® ´Ù »ı·«ÇÏ¸é, ÇöÀç Áö¿ª°ú ¿ø°Å¸® µğ·ºÅä¸®¸¦ »ç¿ëÇÕ´Ï´Ù.\n"
+#~ "-Rì„ ì‚¬ìš©í•  ë•Œ, ì²«ë²ˆì§¸ ë””ë ‰í† ë¦¬ê°€ ì§€ì—­ì´ê³  ë‘ë²ˆì§¸ê°€ ì›ê±°ë¦¬ì…ë‹ˆë‹¤.\n"
+#~ "ë§Œì•½ ë‘ë²ˆì§¸ ë””ë ‰í† ë¦¬ë¥¼ ìƒëµí•˜ë©´, ì²«ë²ˆì§¸ ë””ë ‰í† ë¦¬ëª…ì„ ì‚¬ìš©í•©ë‹ˆë‹¤.\n"
+#~ "ë‘ ë””ë ‰í† ë¦¬ ë‹¤ ìƒëµí•˜ë©´, í˜„ì¬ ì§€ì—­ê³¼ ì›ê±°ë¦¬ ë””ë ‰í† ë¦¬ë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.\n"
 
 #, fuzzy
 #~ msgid "invalid pair of numbers"
-#~ msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+#~ msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #~ msgid "Saw `unknown', assume failed login"
-#~ msgstr "`¾Ë¼ö ¾ø´Â' º¸¸é, ·Î±×ÀÎ¿¡ ½ÇÆĞÇÑ µí ÇÕ´Ï´Ù"
+#~ msgstr "`ì•Œìˆ˜ ì—†ëŠ”' ë³´ë©´, ë¡œê·¸ì¸ì— ì‹¤íŒ¨í•œ ë“¯ í•©ë‹ˆë‹¤"
 
 #, fuzzy
 #~ msgid "block size"
-#~ msgstr "Àß¸øµÈ ¼öÀÔ´Ï´Ù"
+#~ msgstr "ì˜ëª»ëœ ìˆ˜ì…ë‹ˆë‹¤"
 
 #~ msgid "%sTo be removed: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
-#~ msgstr "%s»èÁ¦: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
+#~ msgstr "%sì‚­ì œ: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
 
 #~ msgid "Cache is on"
-#~ msgstr "Ä³½Ã µ¿ÀÛ"
+#~ msgstr "ìºì‹œ ë™ì‘"
 
 #~ msgid "Cache is off"
-#~ msgstr "Ä³½Ã µ¿ÀÛÇÏÁö ¾ÊÀ½"
+#~ msgstr "ìºì‹œ ë™ì‘í•˜ì§€ ì•ŠìŒ"
 
 #~ msgid "Cache entries do not expire"
-#~ msgstr "Ä³½Ã ³»¿ë ¸¸±âµÇÁö ¾Ê¾Ò½À´Ï´Ù"
+#~ msgstr "ìºì‹œ ë‚´ìš© ë§Œê¸°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤"
 
 #~ msgid "Cache entries expire in %ld $#l#second|seconds$\n"
-#~ msgstr "%ld $#l#second|seconds$ ÀÇ Ä³½Ã ³»¿ëÀÌ ¸¸±âµÇ¾ú½À´Ï´Ù\n"
+#~ msgstr "%ld $#l#second|seconds$ ì˜ ìºì‹œ ë‚´ìš©ì´ ë§Œê¸°ë˜ì—ˆìŠµë‹ˆë‹¤\n"
 
 #~ msgid "Cache entries expire in %ld $#l#minute|minutes$\n"
-#~ msgstr "%ld $#l#minute|minutes$ ÀÇ Ä³½Ã ³»¿ëÀÌ ¸¸±âµÇ¾ú½À´Ï´Ù\n"
+#~ msgstr "%ld $#l#minute|minutes$ ì˜ ìºì‹œ ë‚´ìš©ì´ ë§Œê¸°ë˜ì—ˆìŠµë‹ˆë‹¤\n"
 
 #~ msgid ""
 #~ "This is free software with ABSOLUTELY NO WARRANTY. See COPYING for "
 #~ "details.\n"
 #~ msgstr ""
-#~ "ÀÌ°ÍÀº ABSOLUTELY NO WARRANTY¸¦ °¡Áö´Â ÇÁ¸® ¼ÒÇÁÆ®¿ş¾îÀÔ´Ï´Ù. ÀÚ¼¼ÇÑ °ÍÀº "
-#~ "COPYINGÀ» º¸½Ê½Ã¿À.\n"
+#~ "ì´ê²ƒì€ ABSOLUTELY NO WARRANTYë¥¼ ê°€ì§€ëŠ” í”„ë¦¬ ì†Œí”„íŠ¸ì›¨ì–´ì…ë‹ˆë‹¤. ìì„¸í•œ ê²ƒì€ "
+#~ "COPYINGì„ ë³´ì‹­ì‹œì˜¤.\n"
 
 #~ msgid "Success, but did nothing??"
-#~ msgstr "¼º°øÇßÁö¸¸, ¾Æ¹« º¯È­µµ ¾ø´Ù??"
+#~ msgstr "ì„±ê³µí–ˆì§€ë§Œ, ì•„ë¬´ ë³€í™”ë„ ì—†ë‹¤??"
 
 #, fuzzy
 #~ msgid "%s: %s: %s\n"
-#~ msgstr "»ç¿ë¹ı: %s\n"
+#~ msgstr "ì‚¬ìš©ë²•: %s\n"
 
 #~ msgid "Query of variable `%s' failed: %s\n"
-#~ msgstr "`%s' °ªÀ» °¡Á®¿À´Âµ¥ ½ÇÆĞ: %s\n"
+#~ msgstr "`%s' ê°’ì„ ê°€ì ¸ì˜¤ëŠ”ë° ì‹¤íŒ¨: %s\n"
 
 #~ msgid ""
 #~ "Enter date, or blank line to exit.\n"
 #~ "\t> "
 #~ msgstr ""
-#~ "ÀÚ·á ÀÔ·Â, Á¾·áÇÏ±â À§ÇØ¼± °ø¹é¶óÀÎÀ» ÀÔ·Â.\n"
+#~ "ìë£Œ ì…ë ¥, ì¢…ë£Œí•˜ê¸° ìœ„í•´ì„  ê³µë°±ë¼ì¸ì„ ì…ë ¥.\n"
 #~ "\t> "
 
 #~ msgid "Bad format - couldn't convert.\n"
-#~ msgstr "Àß¸øµµ´Ï ¾ç½Ä - º¯È¯ÇÒ ¼ö ¾øÀ½.\n"
+#~ msgstr "ì˜ëª»ë„ë‹ˆ ì–‘ì‹ - ë³€í™˜í•  ìˆ˜ ì—†ìŒ.\n"
 
 #~ msgid "%s: Invalid number for size\n"
-#~ msgstr "%s: Å©±â·Î »ç¿ëÇÒ ¼ö ¾ø´Â ¼öÀÔ´Ï´Ù\n"
+#~ msgstr "%s: í¬ê¸°ë¡œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ìˆ˜ì…ë‹ˆë‹¤\n"
 
 #~ msgid "Warning: getcwd() failed: %s\n"
-#~ msgstr "°æ°í: getcwd() ½ÇÆĞ: %s\n"
+#~ msgstr "ê²½ê³ : getcwd() ì‹¤íŒ¨: %s\n"
 
 #~ msgid "No directory to execute commands in - terminating\n"
-#~ msgstr "µğ·ºÅä¸®°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù - Á¾·áÇÕ´Ï´Ù\n"
+#~ msgstr "ë””ë ‰í† ë¦¬ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤ - ì¢…ë£Œí•©ë‹ˆë‹¤\n"
 
 #~ msgid "chain output error"
-#~ msgstr "Ã¼ÀÎ Ãâ·Â ¿¡·¯"
+#~ msgstr "ì²´ì¸ ì¶œë ¥ ì—ëŸ¬"
 
 #~ msgid "Usage: %s mode file...\n"
-#~ msgstr "»ç¿ë¹ı: %s mode file...\n"
+#~ msgstr "ì‚¬ìš©ë²•: %s mode file...\n"
 
 #~ msgid "%s: %s - not an octal number\n"
-#~ msgstr "%s: %s - 8Áø¼ö°¡ ¾Æ´Õ´Ï´Ù\n"
+#~ msgstr "%s: %s - 8ì§„ìˆ˜ê°€ ì•„ë‹™ë‹ˆë‹¤\n"
 
 #~ msgid "Removing old remote file `%s'"
-#~ msgstr "¿¾ ¿ø°Å¸® ÆÄÀÏ `%s' Áö¿ò"
+#~ msgstr "ì˜› ì›ê±°ë¦¬ íŒŒì¼ `%s' ì§€ì›€"
 
 #~ msgid "Retrieving remote file `%s'"
-#~ msgstr "¿ø°Å¸® ÆÄÀÏ `%s' ´Ù½Ã ¹ŞÀ½"
+#~ msgstr "ì›ê±°ë¦¬ íŒŒì¼ `%s' ë‹¤ì‹œ ë°›ìŒ"
 
 #~ msgid "mirror: cannot create `file:' access object, installation error?\n"
-#~ msgstr "¹Ì·¯: `file:' Á¢±Ù °´Ã¼¸¦ ¸¸µé ¼ö ¾ø½À´Ï´Ù, ¼³Ä¡ ¿¡·¯?\n"
+#~ msgstr "ë¯¸ëŸ¬: `file:' ì ‘ê·¼ ê°ì²´ë¥¼ ë§Œë“¤ ìˆ˜ ì—†ìŠµë‹ˆë‹¤, ì„¤ì¹˜ ì—ëŸ¬?\n"
 
 #~ msgid "copy: get position was %lld\n"
-#~ msgstr "copy: get À§Ä¡´Â %lldÀÓ\n"
+#~ msgstr "copy: get ìœ„ì¹˜ëŠ” %lldì„\n"
 
 #~ msgid "copy: get hit eof\n"
-#~ msgstr "copy: eof ¹ŞÀ½\n"
+#~ msgstr "copy: eof ë°›ìŒ\n"
 
 #~ msgid "copy: get reached range limit\n"
-#~ msgstr "copy: ¹üÀ§ Á¦ÇÑ¿¡ µµ´ŞÇÔ\n"
+#~ msgstr "copy: ë²”ìœ„ ì œí•œì— ë„ë‹¬í•¨\n"
 
 #~ msgid "copy: get is finished - all done\n"
-#~ msgstr "copy: ¹Ş±â ³¡³² - ¸ğµÎ ¿Ï·á\n"
+#~ msgstr "copy: ë°›ê¸° ëë‚¨ - ëª¨ë‘ ì™„ë£Œ\n"
 
 #~ msgid "List remote file names\n"
-#~ msgstr "¿ø°Å¸® ÆÄÀÏ ÀÌ¸§ÀÇ ¸ñ·ÏÀÔ´Ï´Ù\n"
+#~ msgstr "ì›ê±°ë¦¬ íŒŒì¼ ì´ë¦„ì˜ ëª©ë¡ì…ë‹ˆë‹¤\n"
 
 #~ msgid "Same as `get -c'\n"
-#~ msgstr "`get -c'¿Í °°½À´Ï´Ù\n"
+#~ msgstr "`get -c'ì™€ ê°™ìŠµë‹ˆë‹¤\n"
 
 #~ msgid "Same as `put -c'\n"
-#~ msgstr "`put -c' ¿Í °°½À´Ï´Ù\n"
+#~ msgstr "`put -c' ì™€ ê°™ìŠµë‹ˆë‹¤\n"
 
 #~ msgid "dns cache hit\n"
-#~ msgstr "dns Ä³½Ã ÀÏÄ¡\n"
+#~ msgstr "dns ìºì‹œ ì¼ì¹˜\n"
 
 #~ msgid "child returned invalid data"
-#~ msgstr "Àß¸øµÈ Á¤º¸¸¦ ¹İÈ¯Çß½À´Ï´Ù"
+#~ msgstr "ì˜ëª»ëœ ì •ë³´ë¥¼ ë°˜í™˜í–ˆìŠµë‹ˆë‹¤"
 
 #, fuzzy
 #~ msgid ""
@@ -3029,50 +3029,50 @@ msgstr ""
 #~ "own command queue. It is possible to queue up a running job by using\n"
 #~ "command `queue wait <jobno>'.\n"
 #~ msgstr ""
-#~ "»ç¿ë¹ı: queue <command>\n"
-#~ "ÇöÀç »çÀÌÆ®¿¡ ´ëÇÑ  Å¥¿¡ ¸í·É¾î¸¦ Ãß°¡ÇÔ. °¢ »çÀÌÆ®´Â ±× ÀÚ½ÅÀÇ\n"
-#~ "¸í·É¾î Å¥¸¦ °¡Áö°í ÀÖ½À´Ï´Ù. `queue wait <jobno>' ¸í·ÉÀ» »ç¿ëÇÏ¿©\n"
-#~ "½ÇÇàÁßÀÎ ÀÛ¾÷À» Å¥¿¡ Ãß°¡ÇÒ ¼ö ÀÖ½À´Ï´Ù.\n"
+#~ "ì‚¬ìš©ë²•: queue <command>\n"
+#~ "í˜„ì¬ ì‚¬ì´íŠ¸ì— ëŒ€í•œ  íì— ëª…ë ¹ì–´ë¥¼ ì¶”ê°€í•¨. ê° ì‚¬ì´íŠ¸ëŠ” ê·¸ ìì‹ ì˜\n"
+#~ "ëª…ë ¹ì–´ íë¥¼ ê°€ì§€ê³  ìˆìŠµë‹ˆë‹¤. `queue wait <jobno>' ëª…ë ¹ì„ ì‚¬ìš©í•˜ì—¬\n"
+#~ "ì‹¤í–‰ì¤‘ì¸ ì‘ì—…ì„ íì— ì¶”ê°€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.\n"
 
 #, fuzzy
 #~ msgid "Usage: %s -e|-s|command args...\n"
-#~ msgstr "»ç¿ë¹ı: %s command args...\n"
+#~ msgstr "ì‚¬ìš©ë²•: %s command args...\n"
 
 #~ msgid "apache listing matched"
-#~ msgstr "¾ÆÆÄÄ¡ ¸®½ºÆÃ ÀÏÄ¡"
+#~ msgstr "ì•„íŒŒì¹˜ ë¦¬ìŠ¤íŒ… ì¼ì¹˜"
 
 #~ msgid "unusual apache listing matched"
-#~ msgstr "ÀÌ»óÇÑ ¾ÆÆÄÄ¡ ¸®½ºÆÃ ÀÏÄ¡"
+#~ msgstr "ì´ìƒí•œ ì•„íŒŒì¹˜ ë¦¬ìŠ¤íŒ… ì¼ì¹˜"
 
 #~ msgid "squid EPLF listing matched"
-#~ msgstr "squid EPLF ¸®½ºÆÃ ÀÏÄ¡"
+#~ msgstr "squid EPLF ë¦¬ìŠ¤íŒ… ì¼ì¹˜"
 
 #~ msgid "Saw `Login incorrect', assume failed login"
-#~ msgstr "`Æ²¸° ·Î±×ÀÎ' º¸¸é, ·Î±×ÀÎ¿¡ ½ÇÇØÇÑ µí ÇÕ´Ï´Ù"
+#~ msgstr "`í‹€ë¦° ë¡œê·¸ì¸' ë³´ë©´, ë¡œê·¸ì¸ì— ì‹¤í•´í•œ ë“¯ í•©ë‹ˆë‹¤"
 
 #~ msgid "%s: cannot add empty bookmark\n"
-#~ msgstr "%s: ºó ºÏ¸¶Å©¸¦ Ãß°¡ÇÒ ¼ö ¾ø½À´Ï´Ù\n"
+#~ msgstr "%s: ë¹ˆ ë¶ë§ˆí¬ë¥¼ ì¶”ê°€í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤\n"
 
 #~ msgid "%s: cannot get current directory\n"
-#~ msgstr "%s: ÇöÀç µğ·ºÅä¸®¿¡ Á¢±ÙÇÒ ¼ö ¾ø½À´Ï´Ù\n"
+#~ msgstr "%s: í˜„ì¬ ë””ë ‰í† ë¦¬ì— ì ‘ê·¼í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤\n"
 
 #~ msgid "Fatal protocol error occured"
-#~ msgstr "Ä¡¸íÀûÀÎ ÇÁ·ÎÅäÄİ ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù"
+#~ msgstr "ì¹˜ëª…ì ì¸ í”„ë¡œí† ì½œ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤"
 
 #~ msgid "Usage: %s files...\n"
-#~ msgstr "»ç¿ë¹ı: %s files...\n"
+#~ msgstr "ì‚¬ìš©ë²•: %s files...\n"
 
 #~ msgid "remote rm(%s) - %s\n"
-#~ msgstr "¿ø°Å¸® rm(%s) -%s\n"
+#~ msgstr "ì›ê±°ë¦¬ rm(%s) -%s\n"
 
 #~ msgid "\tNo files transferred successfully :(\n"
-#~ msgstr "\tÆÄÀÏ Àü¼Û ½ÇÆĞ :(\n"
+#~ msgstr "\tíŒŒì¼ ì „ì†¡ ì‹¤íŒ¨ :(\n"
 
 #~ msgid "Average transfer rate %g bytes/s\n"
-#~ msgstr "Æò±Õ Àü¼Û·üÀº %g ¹ÙÀÌÆ®/ÃÊ ÀÔ´Ï´Ù\n"
+#~ msgstr "í‰ê·  ì „ì†¡ë¥ ì€ %g ë°”ì´íŠ¸/ì´ˆ ì…ë‹ˆë‹¤\n"
 
 #~ msgid "%s: cannot write -- disk full?\n"
-#~ msgstr "%s: ÀúÀåÇÒ ¼ö ¾ø½À´Ï´Ù -- µğ½ºÅ©°¡ ²Ë Âù µí?\n"
+#~ msgstr "%s: ì €ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤ -- ë””ìŠ¤í¬ê°€ ê½‰ ì°¬ ë“¯?\n"
 
 #~ msgid ""
 #~ "Upload files with wildcard expansion\n"
@@ -3080,20 +3080,20 @@ msgstr ""
 #~ " -d  create directories the same as in file names and put the\n"
 #~ "     files into them instead of current directory\n"
 #~ msgstr ""
-#~ "¿ÍÀÏµåÄ«µå(wildcard) Ç¥ÇöÀ» ÀÌ¿ëÇÏ¿© ÆÄÀÏµéÀ» ¿Ã¸³´Ï´Ù\n"
-#~ " -c  °è¼Ó, ÀÌ¾î¹Ş±â\n"
-#~ " -d  ÆÄÀÏ¸í°ú µ¿ÀÏÇÑ µğ·ºÅä¸®¸¦ ¸¸µé¾î ÇöÀç µğ·ºÅä¸®°¡ ¾Æ´Ñ\n"
-#~ "     ±× µğ·ºÅä¸®¿¡ ÆÄÀÏÀ» ¿Ã¸³´Ï´Ù\n"
+#~ "ì™€ì¼ë“œì¹´ë“œ(wildcard) í‘œí˜„ì„ ì´ìš©í•˜ì—¬ íŒŒì¼ë“¤ì„ ì˜¬ë¦½ë‹ˆë‹¤\n"
+#~ " -c  ê³„ì†, ì´ì–´ë°›ê¸°\n"
+#~ " -d  íŒŒì¼ëª…ê³¼ ë™ì¼í•œ ë””ë ‰í† ë¦¬ë¥¼ ë§Œë“¤ì–´ í˜„ì¬ ë””ë ‰í† ë¦¬ê°€ ì•„ë‹Œ\n"
+#~ "     ê·¸ ë””ë ‰í† ë¦¬ì— íŒŒì¼ì„ ì˜¬ë¦½ë‹ˆë‹¤\n"
 
 #~ msgid "Use specified info for remote login\n"
-#~ msgstr "¿ø°Å¸® ·Î±×ÀÎÀ» À§ÇÏ¿© ÁöÁ¤µÈ Á¤º¸¸¦ »ç¿ëÇÕ´Ï´Ù\n"
+#~ msgstr "ì›ê±°ë¦¬ ë¡œê·¸ì¸ì„ ìœ„í•˜ì—¬ ì§€ì •ëœ ì •ë³´ë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤\n"
 
 #~ msgid "Wait for specified job to terminate.\n"
-#~ msgstr "ÁöÁ¤µÈ ÀÛ¾÷ÀÌ Á¾·áµÇ±â¸¦ ±â´Ù¸³´Ï´Ù.\n"
+#~ msgstr "ì§€ì •ëœ ì‘ì—…ì´ ì¢…ë£Œë˜ê¸°ë¥¼ ê¸°ë‹¤ë¦½ë‹ˆë‹¤.\n"
 
 #~ msgid ""
 #~ "FtpGet | Version %s | Copyright (C) 1996-1999 Alexander V. Lukyanov\n"
-#~ msgstr "FtpGet | ¹öÀü %s | ÀúÀÛ±Ç(C) 1996-1999 Alexander V. Lukyanov\n"
+#~ msgstr "FtpGet | ë²„ì „ %s | ì €ì‘ê¶Œ(C) 1996-1999 Alexander V. Lukyanov\n"
 
 #~ msgid ""
 #~ "Usage: ftpget [OPTIONS] host filename [-o local] [filename...]\n"
@@ -3109,30 +3109,30 @@ msgstr ""
 #~ "\n"
 #~ "-o  output to local file `local' (default - base name of filename)\n"
 #~ msgstr ""
-#~ "»ç¿ë¹ı: ftpget [OPTIONS] host filename [-o local] [filename...]\n"
+#~ "ì‚¬ìš©ë²•: ftpget [OPTIONS] host filename [-o local] [filename...]\n"
 #~ "\n"
-#~ "-p  --port         Æ÷Æ® ¹øÈ£ ¼³Á¤\n"
-#~ "-u  --user         ·Î±ä¸í°ú ºñ¹Ğ¹øÈ£ ÁöÁ¤\n"
-#~ "-l  --list         ÁöÁ¤µÈ µğ·ºÅä¸®ÀÇ ¸ñ·ÏÀ» °¡Á®¿È\n"
-#~ "-c  --contiue      ÀÌ¾î¹Ş±â\n"
-#~ "-q  --quiet        Ãâ·Â ¾øÀ½\n"
-#~ "-v  --verbose      ÀÚ¼¼ÇÑ Ãâ·Â\n"
-#~ "    --async-mode   ºñµ¿±â ¸ğµå »ç¿ë(ºü¸§)\n"
-#~ "    --sync-mode    µ¿±â ¸ğµå »ç¿ë(ºÒ¿ÏÀüÇÑ È£È¯¼º)\n"
+#~ "-p  --port         í¬íŠ¸ ë²ˆí˜¸ ì„¤ì •\n"
+#~ "-u  --user         ë¡œê¸´ëª…ê³¼ ë¹„ë°€ë²ˆí˜¸ ì§€ì •\n"
+#~ "-l  --list         ì§€ì •ëœ ë””ë ‰í† ë¦¬ì˜ ëª©ë¡ì„ ê°€ì ¸ì˜´\n"
+#~ "-c  --contiue      ì´ì–´ë°›ê¸°\n"
+#~ "-q  --quiet        ì¶œë ¥ ì—†ìŒ\n"
+#~ "-v  --verbose      ìì„¸í•œ ì¶œë ¥\n"
+#~ "    --async-mode   ë¹„ë™ê¸° ëª¨ë“œ ì‚¬ìš©(ë¹ ë¦„)\n"
+#~ "    --sync-mode    ë™ê¸° ëª¨ë“œ ì‚¬ìš©(ë¶ˆì™„ì „í•œ í˜¸í™˜ì„±)\n"
 #~ "\n"
-#~ "-o  Áö¿ªÆÄÀÏ `local'¿¡ ÀúÀå (±âº»°ª - ¿ø ÆÄÀÏ¸í)\n"
+#~ "-o  ì§€ì—­íŒŒì¼ `local'ì— ì €ì¥ (ê¸°ë³¸ê°’ - ì› íŒŒì¼ëª…)\n"
 
 #~ msgid "Usage: %s [-c] [-d] [-e] pattern ...\n"
-#~ msgstr "»ç¿ë¹ı: %s [-c] [-d] [-e] pattern ...\n"
+#~ msgstr "ì‚¬ìš©ë²•: %s [-c] [-d] [-e] pattern ...\n"
 
 #~ msgid "Sorry, %s can work with only ftp protocol\n"
-#~ msgstr "ÁË¼ÛÇÕ´Ï´Ù, %s ´Â ftp ÇÁ·ÎÅäÄİÀÌ¾î¾ß µ¿ÀÛÇÕ´Ï´Ù\n"
+#~ msgstr "ì£„ì†¡í•©ë‹ˆë‹¤, %s ëŠ” ftp í”„ë¡œí† ì½œì´ì–´ì•¼ ë™ì‘í•©ë‹ˆë‹¤\n"
 
 #~ msgid "Usage: %s [-c] [-p] <source> <dest>\n"
-#~ msgstr "»ç¿ë¹ı: %s [-c] [-p] <source> <dest>\n"
+#~ msgstr "ì‚¬ìš©ë²•: %s [-c] [-p] <source> <dest>\n"
 
 #~ msgid "Getting size of `%s' [%s]"
-#~ msgstr "'%s'ÀÇ Å©±â¸¦ °¡Á®¿À°í ÀÖ½À´Ï´Ù [%s]"
+#~ msgstr "'%s'ì˜ í¬ê¸°ë¥¼ ê°€ì ¸ì˜¤ê³  ìˆìŠµë‹ˆë‹¤ [%s]"
 
 #~ msgid "Copying of `%s' in progress (%c)"
-#~ msgstr "'%s'ÀÇ º¹»ç°¡ ÁøÇàÁßÀÔ´Ï´Ù (%c)"
+#~ msgstr "'%s'ì˜ ë³µì‚¬ê°€ ì§„í–‰ì¤‘ì…ë‹ˆë‹¤ (%c)"
