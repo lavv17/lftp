@@ -20,6 +20,7 @@
 #include <config.h>
 #include "SSH_Access.h"
 #include "misc.h"
+#include "ascii_ctype.h"
 #include <algorithm>
 #include <cctype>
 #include <string>
@@ -47,15 +48,16 @@ static bool begins_with(const char *b,const char *e,const char *suffix)
    return (e-b>=len && !strncasecmp(b,suffix,len));
 }
 
+struct nocase_eq
+{
+   inline bool operator() (char lhs, char rhs) const
+   {
+      return c_tolower(lhs) == c_tolower(rhs);
+   };
+};
+
 static bool contains(char const *begin, char const *end, char const *needle)
 {
-   struct nocase_eq
-   {
-      inline bool operator() (char lhs, char rhs) const
-      {
-         return std::tolower(lhs) == std::tolower(rhs);
-      };
-   };
    return std::search(begin, end, needle, needle+strlen(needle), nocase_eq()) != end;
 }
 
