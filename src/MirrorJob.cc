@@ -1338,7 +1338,7 @@ int   MirrorJob::Do()
       {
 	 if(stats.HaveSomethingDone(flags) && on_change)
 	 {
-	    CmdExec *exec=new CmdExec(source_session->Clone(),0);
+	    CmdExec *exec=new CmdExec(GetExecSession().Clone(),0);
 	    AddWaiting(exec);
 	    exec->FeedCmd(on_change);
 	    exec->FeedCmd("\n");
@@ -2226,6 +2226,7 @@ CMD(mirror)
 	 source_session=FileAccess::New("file");
       if(!target_session)
 	 target_session=parent->session->Clone();
+      flags|=MirrorJob::REVERSE;
    }
 
    if(no_empty_dirs)

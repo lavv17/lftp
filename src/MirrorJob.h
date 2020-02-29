@@ -221,6 +221,7 @@ public:
       TRANSFER_ALL=1<<22,
       TARGET_FLAT=1<<23,
       DELETE_EXCLUDED=1<<24,
+      REVERSE=1<<25,
    };
    void SetFlags(unsigned f,bool v)
    {
@@ -279,6 +280,11 @@ public:
    void SetOnChange(const char *oc);
    static const char *AddPattern(Ref<PatternSet>& exclude,char opt,const char *optarg);
    static const char *AddPatternsFrom(Ref<PatternSet>& exclude,char opt,const char *file);
+
+   FileAccess const& GetExecSession()
+   {
+      return FlagSet(REVERSE)?*target_session:*source_session;
+   }
 };
 
 #endif//MIRRORJOB_H
