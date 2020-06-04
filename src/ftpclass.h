@@ -423,7 +423,6 @@ private:
    bool use_stat_for_list;
    bool use_mdtm;
    bool use_size;
-   bool use_pret;
    bool use_feat;
    bool use_mlsd;
 

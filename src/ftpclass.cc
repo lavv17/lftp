@@ -1073,7 +1073,6 @@ void Ftp::InitFtp()
    use_mdtm=true;
    use_size=true;
    use_telnet_iac=true;
-   use_pret=true;
    use_mlsd=false;
 
    max_buf=0x10000;
@@ -2132,7 +2131,7 @@ int   Ftp::Do()
       if((copy_mode==COPY_NONE && GetFlag(PASSIVE_MODE))
       || (copy_mode!=COPY_NONE && copy_passive))
       {
-	 if(use_pret && conn->pret_supported)
+	 if(QueryTriBool("use-pret",0,conn->pret_supported))
 	 {
 	    conn->SendCmd(xstring::cat("PRET ",command," ",file_to_append,NULL));
 	    expect->Push(Expect::PRET);
@@ -4824,7 +4823,6 @@ void Ftp::Reconfig(const char *name)
    use_stat_for_list=QueryBool("use-stat-for-list") && !AnonymousQuietMode();
    use_mdtm = QueryBool("use-mdtm");
    use_size = QueryBool("use-size");
-   use_pret = QueryTriBool("use-pret",0,conn->pret_supported);
    use_feat = QueryBool("use-feat");
    use_mlsd = QueryBool("use-mlsd");
 
