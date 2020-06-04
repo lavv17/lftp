@@ -38,7 +38,7 @@ class mkdirJob : public SessionJob
 public:
    int	 Do();
    int	 Done() { return curr==0; }
-   int	 ExitCode() { return failed!=0; }
+   int	 ExitCode() { return failed!=0 && !quiet; }
 
    xstring& FormatStatus(xstring&,int,const char *);
    void	 ShowRunStatus(const SMTaskRef<StatusLine>&);
