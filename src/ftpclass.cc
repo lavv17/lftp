@@ -4824,7 +4824,7 @@ void Ftp::Reconfig(const char *name)
    use_stat_for_list=QueryBool("use-stat-for-list") && !AnonymousQuietMode();
    use_mdtm = QueryBool("use-mdtm");
    use_size = QueryBool("use-size");
-   use_pret = QueryBool("use-pret");
+   use_pret = QueryTriBool("use-pret",0,conn->pret_supported);
    use_feat = QueryBool("use-feat");
    use_mlsd = QueryBool("use-mlsd");
 

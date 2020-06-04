@@ -1881,6 +1881,12 @@ when true, lftp will use MLSD command for directory listing if supported by the 
 when true, lftp will use "MODE Z" if supported by the server to perform
 compressed transfers.
 .TP
+.BR ftp:use-pret " (tri-boolean)"
+When set to auto, usage of PRET command depends on FEAT server reply. Otherwise
+this setting tells whether to use it or not. PRET command informs the server
+about the file to be transferred before PORT or PASV commands, so that the
+server can adjust the data connection parameters.
+.TP
 .BR ftp:use-site-idle \ (boolean)
 when true, lftp sends `SITE IDLE' command with net:idle argument. Default
 is false.
@@ -1915,7 +1921,7 @@ STAT commands with TELNET IP+SYNCH signal.
 .TP
 .BR ftp:use-tvfs " (tri-boolean)"
 When set to auto, usage of TVFS feature depends on FEAT server reply. Otherwise
-this setting tells whether use it or not. In short, if a server supports TVFS
+this setting tells whether to use it or not. In short, if a server supports TVFS
 feature then it uses unix-like paths.
 .TP
 .BR ftp:use-utf8 \ (boolean)
@@ -2627,6 +2633,8 @@ BEP0032 (DHT Extensions for IPv6).
 .na
 https://tools.ietf.org/html/draft-preston-ftpext-deflate-04
 (ftp deflate transmission mode),
+.br
+https://tools.ietf.org/html/draft-dd-pret-00 (PRET command),
 .br
 https://tools.ietf.org/html/draft-ietf-secsh-filexfer-13
 (sftp).
