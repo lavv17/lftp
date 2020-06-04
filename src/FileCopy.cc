@@ -1413,6 +1413,14 @@ FileCopyPeer *FileCopyPeerFA::Clone()
    return c;
 }
 
+const char *FileCopyPeerFA::UseTempFile(const char *file)
+{
+   const char *temp=FileCopyPeer::UseTempFile(file);
+   if(temp!=file && orig_url)
+      dirname_modify(orig_url).append('/').append_url_encoded(basename_ptr(temp),URL_PATH_UNSAFE);
+   return temp;
+}
+
 // FileCopyPeerFDStream
 #undef super
 #define super FileCopyPeer

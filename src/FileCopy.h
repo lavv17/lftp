@@ -145,7 +145,7 @@ public:
    void SetSuggestedFileName(const char *f) { if(f) suggested_filename.set(f); }
    void AutoRename(bool yes=true) { auto_rename=yes; }
    bool IsAutoRename() const { return auto_rename; }
-   const char *UseTempFile(const char *);
+   virtual const char *UseTempFile(const char *);
    bool ShouldRename() const;
 };
 
@@ -380,6 +380,7 @@ public:
       return orig_url ? orig_url : session->GetFileURL(file);
    }
    FileCopyPeer *Clone();
+   const char *UseTempFile(const char *) override;
 };
 
 class FileCopyPeerFDStream : public FileCopyPeer
