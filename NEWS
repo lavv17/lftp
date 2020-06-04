@@ -1,3 +1,7 @@
+* get/mget/put/mput: don't try next files after error if cmd:fail-exit is true.
+* mirror: fixed --on-change with --reverse.
+* sftp: fixed a bug with truncated files when packets are reordered (finally).
+
 Version 4.9.1 - 2020-01-15
 
 * get1: fixed creating the target directory.
