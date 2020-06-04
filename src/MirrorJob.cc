@@ -834,7 +834,10 @@ void MirrorJob::HandleListInfo(SMTaskRef<ListInfo>& list_info, Ref<FileSet>& set
    }
    set=list_info->GetResult();
    if(fsx)
+   {
       *fsx=list_info->GetExcluded();
+      (*fsx)->ExcludeDots();
+   }
    list_info=0;
    set->ExcludeDots(); // don't need .. and .
 }
@@ -1678,6 +1681,9 @@ void MirrorJob::SetOnChange(const char *oc)
 
 const char *MirrorJob::AddPattern(Ref<PatternSet>& exclude,char opt,const char *optarg)
 {
+   if(!optarg || !*optarg)
+      return _("pattern is empty");
+
    PatternSet::Type type=
       (opt=='x'||opt=='X'||opt=='\0'?PatternSet::EXCLUDE:PatternSet::INCLUDE);
    PatternSet::Pattern *pattern=0;
