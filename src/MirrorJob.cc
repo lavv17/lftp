@@ -716,6 +716,14 @@ void MirrorJob::HandleChdir(FileAccessRef& session, int &redirections)
    int res=session->Done();
    if(res<0)
    {
+      if(res==FA::NO_HOST)
+      {
+	 eprintf("mirror: %s\n",session->StrError(res));
+	 stats.error_count++;
+	 MirrorFinished();
+	 set_state(FINISHING);
+	 return;
+      }
       if(res==FA::FILE_MOVED)
       {
 	 // cd to another url.
@@ -1256,6 +1264,7 @@ int   MirrorJob::Do()
 	 if(script)
 	 {
 	    ArgV args("chmod");
+	    args.Append("-f");
 	    args.Append(xstring::format("%03lo",(unsigned long)(file->mode&~mode_mask)));
 	    args.Append(target_session->GetFileURL(file->name));
 	    xstring_ca cmd(args.CombineQuoted());
