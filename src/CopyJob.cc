@@ -208,7 +208,8 @@ int CopyJobEnv::Do()
       return m;
    if(waiting_num<parallel)
    {
-      NextFile();
+      if(!errors || !ResMgr::QueryBool("cmd:fail-exit",0))
+	 NextFile();
       if(waiting_num==0)
       {
 	 done=true;
