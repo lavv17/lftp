@@ -42,7 +42,7 @@ int IOBufferSSL::Do()
 	 if(Put_LL("",0)<0)
 	    return MOVED;
 	 if(ssl->handshake_done && eof)
-	    ssl->shutdown();
+	    PutEOF_LL();
       }
       if(ssl->handshake_done && !eof)
 	 return m;
@@ -103,9 +103,21 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 
 int IOBufferSSL::PutEOF_LL()
 {
+   int res=0;
+
    if(Size()==0)
-      ssl->shutdown();
-   return 0;
+      res=ssl->shutdown();
+   if (res<0)
+   {
+      if (res==ssl->RETRY) {
+	 SetNotReady(ssl->fd,want_mask());
+    return 0;
+      } else { // error    
+	 SetError(ssl->error,ssl->fatal);
+	 return -1;         
+      }      
+   }
+   return res;
 }
 
 IOBufferSSL::~IOBufferSSL()
