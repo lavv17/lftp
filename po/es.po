@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 2.6.0\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2020-01-15 22:27+0300\n"
+"POT-Creation-Date: 2020-08-13 22:44+0300\n"
 "PO-Revision-Date: 2002-08-08 19:01+0000\n"
 "Last-Translator: Nicolás Lichtmaier <nick@debian.org>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -90,11 +90,11 @@ msgstr "%s: requiere un argumento -- '%c'\n"
 #. If you don't know what to put here, please see
 #. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:362
+#: lib/quotearg.c:355
 msgid "`"
 msgstr ""
 
-#: lib/quotearg.c:363
+#: lib/quotearg.c:356
 msgid "'"
 msgstr ""
 
@@ -178,7 +178,7 @@ msgstr "El módulo para la orden `%s' no registro esa orden.\n"
 msgid "cd ok, cwd=%s\n"
 msgstr "cd ok, dir actual=%s\n"
 
-#: src/CmdExec.cc:405 src/MirrorJob.cc:728
+#: src/CmdExec.cc:405 src/MirrorJob.cc:736
 #, c-format
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: se recibió redirección a `%s'\n"
@@ -1205,7 +1205,7 @@ msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr "Uso: %s [-e cmd] [-p puerto] [-u usuario[,clave]] <servidor|url>\n"
 
 #: src/commands.cc:1045 src/commands.cc:2275 src/DummyProto.cc:65
-#: src/MirrorJob.cc:2157 src/MirrorJob.cc:2179
+#: src/MirrorJob.cc:2172 src/MirrorJob.cc:2194
 msgid " - not supported protocol"
 msgstr " - protocolo no soportado"
 
@@ -1223,7 +1223,7 @@ msgstr "%s: GetPass() falló -- asumiendo identificación anónima\n"
 #: src/commands.cc:2186 src/commands.cc:2380 src/commands.cc:2542
 #: src/commands.cc:2587 src/commands.cc:2615 src/commands.cc:2622
 #: src/commands.cc:2923 src/commands.cc:2950 src/commands.cc:2957
-#: src/commands.cc:3286 src/lftp.cc:267 src/MirrorJob.cc:2121
+#: src/commands.cc:3286 src/lftp.cc:267 src/MirrorJob.cc:2136
 #: src/SleepJob.cc:144 src/SleepJob.cc:200 src/Torrent.cc:4169
 #, c-format
 msgid "Try `help %s' for more information.\n"
@@ -1553,12 +1553,12 @@ msgstr "%lld byte$#ll#|s$ transferidos en %ld segundo$#l#|s$."
 msgid "%lld $#ll#byte|bytes$ transferred"
 msgstr "%lld byte$#l#|s$ transferidos.\n"
 
-#: src/CopyJob.cc:282
+#: src/CopyJob.cc:283
 #, c-format
 msgid "Transfer of %d of %d $file|files$ failed\n"
 msgstr "Falló la transferencia de %d de %d archivo$|s$.\n"
 
-#: src/CopyJob.cc:288
+#: src/CopyJob.cc:289
 #, c-format
 msgid "Total %d $file|files$ transferred\n"
 msgstr "%d archivo$|s$ transferido$|s$ en total.\n"
@@ -1572,8 +1572,8 @@ msgstr "Falló el acceso: %s"
 msgid "File cannot be accessed"
 msgstr "El archivo no puede ser accedido"
 
-#: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4596
-#: src/ftpclass.cc:4605 src/SFtp.cc:1317 src/Torrent.cc:3533
+#: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4599
+#: src/ftpclass.cc:4608 src/SFtp.cc:1335 src/Torrent.cc:3533
 msgid "Not connected"
 msgstr "No conectado"
 
@@ -1651,7 +1651,7 @@ msgstr "copy: se recibió redirección a `%s'\n"
 msgid "file name missed in URL"
 msgstr "nombre de archivo no encontrado em URL"
 
-#: src/FileCopy.cc:2070
+#: src/FileCopy.cc:2078
 msgid "Verify command failed without a message"
 msgstr "Comando Verify fallo sin mensaje"
 
@@ -1724,46 +1724,46 @@ msgid "Running connect program"
 msgstr "Ejecutando programa de conección"
 
 #: src/Fish.cc:588 src/ftpclass.cc:2887 src/ftpclass.cc:3107 src/Http.cc:1510
-#: src/SFtp.cc:741 src/SFtp.cc:1078 src/SFtp.cc:1079 src/SSH_Access.cc:165
+#: src/SFtp.cc:741 src/SFtp.cc:1082 src/SFtp.cc:1083 src/SSH_Access.cc:167
 #, c-format
 msgid "Peer closed connection"
 msgstr "El otro extremo cerró la conexión"
 
-#: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4216 src/SFtp.cc:1103
+#: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4219 src/SFtp.cc:1107
 #, c-format
 msgid "extra server response"
 msgstr "respuesta extra del servidor"
 
-#: src/Fish.cc:987 src/ftpclass.cc:4608 src/Http.cc:2329 src/Http.cc:2336
-#: src/SFtp.cc:1323 src/Torrent.cc:3536 src/TorrentTracker.cc:624
+#: src/Fish.cc:987 src/ftpclass.cc:4611 src/Http.cc:2329 src/Http.cc:2336
+#: src/SFtp.cc:1341 src/Torrent.cc:3536 src/TorrentTracker.cc:624
 msgid "Connecting..."
 msgstr "Conectándose..."
 
-#: src/Fish.cc:989 src/ftpclass.cc:4614 src/SFtp.cc:1325
+#: src/Fish.cc:989 src/ftpclass.cc:4617 src/SFtp.cc:1343
 msgid "Connected"
 msgstr "Conectado"
 
-#: src/Fish.cc:991 src/ftpclass.cc:4591 src/ftpclass.cc:4619
-#: src/ftpclass.cc:4633 src/Http.cc:2338 src/SFtp.cc:1327
+#: src/Fish.cc:991 src/ftpclass.cc:4594 src/ftpclass.cc:4622
+#: src/ftpclass.cc:4636 src/Http.cc:2338 src/SFtp.cc:1345
 #: src/TorrentTracker.cc:626
 msgid "Waiting for response..."
 msgstr "Esperando respuesta..."
 
-#: src/Fish.cc:993 src/ftpclass.cc:4653 src/Http.cc:2341 src/SFtp.cc:1329
+#: src/Fish.cc:993 src/ftpclass.cc:4656 src/Http.cc:2341 src/SFtp.cc:1347
 msgid "Receiving data"
 msgstr "Recibiendo datos"
 
-#: src/Fish.cc:995 src/ftpclass.cc:4651 src/Http.cc:2334 src/SFtp.cc:1331
+#: src/Fish.cc:995 src/ftpclass.cc:4654 src/Http.cc:2334 src/SFtp.cc:1349
 msgid "Sending data"
 msgstr "Enviando datos"
 
-#: src/Fish.cc:997 src/SFtp.cc:1333
+#: src/Fish.cc:997 src/SFtp.cc:1351
 #, fuzzy
 msgid "Done"
 msgstr "\tHecho\n"
 
-#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2178
-#: src/SFtp.cc:2298
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2196
+#: src/SFtp.cc:2316
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Obteniendo lista de archivos (%lld) [%s]"
@@ -1880,7 +1880,7 @@ msgstr "Conectando socket de datos a (%s) puerto %u"
 msgid "Connecting data socket to proxy %s (%s) port %u"
 msgstr "Conectando socket de datos a (%s) puerto %u"
 
-#: src/ftpclass.cc:2358 src/ftpclass.cc:4411
+#: src/ftpclass.cc:2358 src/ftpclass.cc:4414
 #, c-format
 msgid "Switching passive mode off"
 msgstr "Desconectando modo pasivo"
@@ -1890,7 +1890,7 @@ msgstr "Desconectando modo pasivo"
 msgid "Data connection established"
 msgstr "Conexión de datos abierta"
 
-#: src/ftpclass.cc:2688 src/ftpclass.cc:4545
+#: src/ftpclass.cc:2688 src/ftpclass.cc:4548
 msgid "ftp:ssl-force is set and server does not support or allow SSL"
 msgstr ""
 "Está asignado el parámetro ssl-force y el sistema no soporta o no permite SSL"
@@ -1910,83 +1910,83 @@ msgstr "Cerrando socket de datos"
 msgid "Closing aborted data socket"
 msgstr "Cerrando socket de datos"
 
-#: src/ftpclass.cc:4190
+#: src/ftpclass.cc:4193
 #, c-format
 msgid "saw file size in response"
 msgstr "vi tamaño del archivo en la respuesta"
 
-#: src/ftpclass.cc:4230 src/ftpclass.cc:4257
+#: src/ftpclass.cc:4233 src/ftpclass.cc:4260
 #, c-format
 msgid "Turning on sync-mode"
 msgstr "Activando sync-mode"
 
-#: src/ftpclass.cc:4431
+#: src/ftpclass.cc:4434
 #, c-format
 msgid "Switching passive mode on"
 msgstr "Conectando modo pasivo"
 
-#: src/ftpclass.cc:4582
+#: src/ftpclass.cc:4585
 #, fuzzy
 msgid "FEAT negotiation..."
 msgstr "Negociando TLS..."
 
-#: src/ftpclass.cc:4589
+#: src/ftpclass.cc:4592
 msgid "Sending commands..."
 msgstr "Enviando comandos..."
 
-#: src/ftpclass.cc:4593
+#: src/ftpclass.cc:4596
 #, fuzzy
 msgid "Delaying before retry"
 msgstr "Esperando antes de reintentar"
 
-#: src/ftpclass.cc:4594 src/Http.cc:2331
+#: src/ftpclass.cc:4597 src/Http.cc:2331
 msgid "Connection idle"
 msgstr "Conexión ociosa"
 
-#: src/ftpclass.cc:4601 src/Http.cc:2323 src/Resolver.cc:172
+#: src/ftpclass.cc:4604 src/Http.cc:2323 src/Resolver.cc:172
 #: src/Resolver.cc:217 src/TorrentTracker.cc:622
 #, c-format
 msgid "Resolving host address..."
 msgstr "Resolviendo dirección del servidor..."
 
-#: src/ftpclass.cc:4612
+#: src/ftpclass.cc:4615
 msgid "TLS negotiation..."
 msgstr "Negociando TLS..."
 
-#: src/ftpclass.cc:4616
+#: src/ftpclass.cc:4619
 msgid "Logging in..."
 msgstr "Identificándose..."
 
-#: src/ftpclass.cc:4620
+#: src/ftpclass.cc:4623
 msgid "Making data connection..."
 msgstr "Estableciendo la conexión de datos..."
 
-#: src/ftpclass.cc:4623
+#: src/ftpclass.cc:4626
 msgid "Changing remote directory..."
 msgstr "Cambiando el directorio remoto..."
 
-#: src/ftpclass.cc:4629
+#: src/ftpclass.cc:4632
 msgid "Waiting for other copy peer..."
 msgstr "Esperando al otro extremo para copiar..."
 
-#: src/ftpclass.cc:4631 src/ftpclass.cc:4655
+#: src/ftpclass.cc:4634 src/ftpclass.cc:4658
 msgid "Waiting for transfer to complete"
 msgstr "Esperando que finalice la transferencia"
 
-#: src/ftpclass.cc:4635
+#: src/ftpclass.cc:4638
 #, fuzzy
 msgid "Waiting for TLS shutdown..."
 msgstr "Esperando respuesta..."
 
-#: src/ftpclass.cc:4637
+#: src/ftpclass.cc:4640
 msgid "Waiting for data connection..."
 msgstr "Esperando la conexión de datos..."
 
-#: src/ftpclass.cc:4643
+#: src/ftpclass.cc:4646
 msgid "Sending data/TLS"
 msgstr "Enviando datos/TLS"
 
-#: src/ftpclass.cc:4645
+#: src/ftpclass.cc:4648
 msgid "Receiving data/TLS"
 msgstr "Recibiendo datos/TLS"
 
@@ -2118,7 +2118,7 @@ msgstr ""
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
 msgstr ""
 
-#: src/lftp_ssl.cc:1395
+#: src/lftp_ssl.cc:1402
 #, c-format
 msgid "No certificate presented by %s.\n"
 msgstr ""
@@ -2183,7 +2183,7 @@ msgstr "%s ok, %d directorio$|s$ creado$|s$\n"
 msgid "Finished %s"
 msgstr "[%lu] Finalizado. %s"
 
-#: src/MirrorJob.cc:344 src/MirrorJob.cc:519 src/MirrorJob.cc:1207
+#: src/MirrorJob.cc:344 src/MirrorJob.cc:519 src/MirrorJob.cc:1218
 #, c-format
 msgid "Removing old file `%s'"
 msgstr "Borrando archivo antiguo `%s'"
@@ -2208,7 +2208,7 @@ msgstr "Enviando archivo `%s'"
 msgid "Skipping directory `%s' (only-existing)"
 msgstr "Creando directorio `%s'"
 
-#: src/MirrorJob.cc:461 src/MirrorJob.cc:550 src/MirrorJob.cc:891
+#: src/MirrorJob.cc:461 src/MirrorJob.cc:550 src/MirrorJob.cc:902
 #, c-format
 msgid "Removing old local file `%s'"
 msgstr "Borrando archivo local antiguo `%s'"
@@ -2233,75 +2233,79 @@ msgstr "Creando enlace simbólico `%s' a `%s'"
 msgid "Skipping symlink `%s' (only-existing)"
 msgstr "Omitiendo enlace simbolico `%s'"
 
-#: src/MirrorJob.cc:799
+#: src/MirrorJob.cc:807
 #, c-format
 msgid "mirror: protocol `%s' is not suitable for mirror\n"
 msgstr "mirror: el protocolo `%s' no es adecuado para mirror\n"
 
-#: src/MirrorJob.cc:912
+#: src/MirrorJob.cc:923
 #, c-format
 msgid "Making directory `%s'"
 msgstr "Creando directorio `%s'"
 
-#: src/MirrorJob.cc:1170
+#: src/MirrorJob.cc:1181
 #, fuzzy, c-format
 msgid "Old directory `%s' is not removed"
 msgstr "No se borró el archivo `%s'"
 
-#: src/MirrorJob.cc:1172
+#: src/MirrorJob.cc:1183
 #, c-format
 msgid "Old file `%s' is not removed"
 msgstr "No se borró el archivo `%s'"
 
-#: src/MirrorJob.cc:1205
+#: src/MirrorJob.cc:1216
 #, c-format
 msgid "Removing old directory `%s'"
 msgstr "Borrando directorio antiguo `%s'"
 
-#: src/MirrorJob.cc:1327
+#: src/MirrorJob.cc:1339
 #, fuzzy, c-format
 msgid "Removing source directory `%s'"
 msgstr "Borrando directorio antiguo `%s'"
 
-#: src/MirrorJob.cc:1393
+#: src/MirrorJob.cc:1405
 #, fuzzy, c-format
 msgid "Removing source file `%s'"
 msgstr "Borrando archivo antiguo `%s'"
 
-#: src/MirrorJob.cc:1413
+#: src/MirrorJob.cc:1425
 #, c-format
 msgid "Retrying mirror...\n"
 msgstr "Recibiendo mirror...\n"
 
-#: src/MirrorJob.cc:1764
+#: src/MirrorJob.cc:1694
+msgid "pattern is empty"
+msgstr ""
+
+#: src/MirrorJob.cc:1779
 #, c-format
 msgid "%s must be one of: %s"
 msgstr "%s debe ser uno de: %s"
 
-#: src/MirrorJob.cc:2004
+#: src/MirrorJob.cc:2019
 #, c-format
 msgid ""
 "%s: multiple --file or --directory options must have the same base "
 "directory\n"
 msgstr ""
 
-#: src/MirrorJob.cc:2145
+#: src/MirrorJob.cc:2160
 #, c-format
 msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
 msgstr "%s: ambiguo directorio de origen (¿`%s' o `%s'?)\n"
 
-#: src/MirrorJob.cc:2167
+#: src/MirrorJob.cc:2182
 #, c-format
 msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
 msgstr "%s: ambiguo directorio de destino (¿`%s' o `%s'?)\n"
 
-#: src/MirrorJob.cc:2208
+#: src/MirrorJob.cc:2223
 #, c-format
 msgid "%s: source directory is required (mirror:require-source is set)\n"
 msgstr ""
 "%s: directorio origen es requerido (mirror:require-source está configurado)\n"
 
-#: src/MirrorJob.cc:2327
+#: src/MirrorJob.cc:2343
 msgid ""
 "\n"
 "Mirror specified remote directory to local directory\n"
@@ -2600,7 +2604,7 @@ msgstr "%s ok, %d directorio$|s$ borrado$|s$\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d archivo$|s$ borrado$|s$\n"
 
-#: src/SFtp.cc:1094 src/SFtp.cc:1095
+#: src/SFtp.cc:1098 src/SFtp.cc:1099
 #, fuzzy, c-format
 msgid "invalid server response format"
 msgstr "respuesta extra del servidor"
@@ -2694,16 +2698,16 @@ msgstr ""
 msgid "eta:"
 msgstr "falta:"
 
-#: src/SSH_Access.cc:95
+#: src/SSH_Access.cc:97
 #, fuzzy
 msgid "Password required"
 msgstr "Clave: "
 
-#: src/SSH_Access.cc:100
+#: src/SSH_Access.cc:102
 msgid "Login incorrect"
 msgstr ""
 
-#: src/SSH_Access.cc:194
+#: src/SSH_Access.cc:196
 #, fuzzy, c-format
 msgid "Disconnecting"
 msgstr "Conectándose..."

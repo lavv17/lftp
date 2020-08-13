@@ -1,3 +1,5 @@
+Version 4.9.2 - 2020-08-13
+
 * mkdir: fixed exit code with -f option.
 * ftp: made ftp:use-pret setting tri-boolean.
 * get/mget/put/mput: don't try next files after error if cmd:fail-exit is true.

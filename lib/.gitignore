@@ -28,7 +28,6 @@
 /dirent.in.h
 /dirfd.c
 /dirfd.h
-/dosname.h
 /dummy.c
 /dup2.c
 /errno.in.h
@@ -299,14 +298,11 @@ stddef.h
 /hard-locale.c
 /hard-locale.h
 /basename-lgpl.c
-/dirname-lgpl.c
-/dirname.h
 /flexmember.h
 /getprogname.c
 /getprogname.h
 /limits.in.h
 limits.h
-/stripslash.c
 /minmax.h
 /_Noreturn.h
 /getopt-cdefs.in.h
@@ -314,8 +310,6 @@ limits.h
 /getopt-ext.h
 /getopt-pfx-core.h
 /getopt-pfx-ext.h
-/localtime-buffer.c
-/localtime-buffer.h
 /stat-w32.c
 /stat-w32.h
 /tzset.c
@@ -362,3 +356,11 @@ limits.h
 /mbtowc-lock.c
 /mbtowc-lock.h
 /setlocale_null.h
+/attribute.h
+/basename-lgpl.h
+/ctype.in.h
+/isblank.c
+/strnlen.c
+/wmemchr-impl.h
+/wmemchr.c
+/wmempcpy.c

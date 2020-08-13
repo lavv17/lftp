@@ -61,7 +61,6 @@
 /inttypes_h.m4
 /inttypes-h.m4
 /inttypes.m4
-/inttypes-pri.m4
 /isc-posix.m4
 /isnand.m4
 /isnanf.m4
@@ -231,7 +230,6 @@
 /time_rz.m4
 /timegm.m4
 /memcasecmp.m4
-/dirname.m4
 /double-slash-root.m4
 /getprogname.m4
 /limits-h.m4
@@ -239,7 +237,6 @@
 /getlogin.m4
 /minmax.m4
 /pthread_rwlock_rdlock.m4
-/localtime-buffer.m4
 /tzset.m4
 /__inline.m4
 /nstrftime.m4
@@ -262,3 +259,9 @@
 /open-slash.m4
 /setlocale_null.m4
 /visibility.m4
+/ctype.m4
+/isblank.m4
+/strnlen.m4
+/wmemchr.m4
+/wmempcpy.m4
+/zzgnulib.m4
