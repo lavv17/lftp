@@ -121,7 +121,7 @@ bool TorrentTracker::AddPeer(const xstring& addr,int port) const
 int TorrentTracker::Do()
 {
    int m=STALL;
-   if(Failed())
+   if(Failed() || !backend)
       return m;
    if(backend && backend->IsActive()) {
       if(tracker_timeout_timer.Stopped()) {
@@ -165,6 +165,8 @@ void TorrentTracker::Start()
 }
 void TorrentTracker::SendTrackerRequest(const char *event)
 {
+   if(!backend)
+      return;
    backend->SendTrackerRequest(event);
    tracker_timeout_timer.Reset();
 }
