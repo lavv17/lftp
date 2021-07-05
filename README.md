@@ -12,3 +12,13 @@ Also for compiling lftp you will need these libraries:
 * expat-devel (optional)
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=lavv17&url=https://github.com/lavv17/lftp&title=LFTP+-+sophisticated+file+transfer+program&language=en_GB&tags=github&category=software)
+
+
+Docker
+======
+
+To build the docker image, use the DockerFile located at `build-docker` folder:
+
+```shell
+docker build -t lavv17/lftp -f build-docker/Dockerfile .
+```
