@@ -129,6 +129,7 @@ void SMTask::DeleteLater()
 {
    if(deleting)
       return;
+   DEBUG(("DeleteLater(%p) from %p\n",this,current));
    deleting=true;
    deleted_tasks.add_tail(deleted_tasks_node);
    PrepareToDie();

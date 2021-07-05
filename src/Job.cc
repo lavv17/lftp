@@ -365,12 +365,15 @@ xstring& Job::FormatJobs(xstring& s,int verbose,int indent)
 
 void  Job::BuryDoneJobs()
 {
-   xlist_for_each_safe(Job,all_jobs,node,scan,next)
+   xarray<Job*> to_bury;
+   xlist_for_each(Job,all_jobs,node,scan)
    {
       if((scan->parent==this || scan->parent==0) && scan->jobno>=0
 		  && scan->Done())
-	 scan->DeleteLater();
+	 to_bury.append(scan);
    }
+   for(int i=0; i<to_bury.count(); i++)
+      to_bury[i]->DeleteLater();
    CollectGarbage();
 }
 
