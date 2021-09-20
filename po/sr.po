@@ -1,0 +1,2933 @@
+# Serbian translation for lftp
+# Copyright (C) 2021 Страхиња Радић <contact@strahinja.org>
+# You may modify and redistribute this file according to GNU GPL (see COPYING).
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: lftp 4.9.1.16-d4fe-dirty\n"
+"Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
+"POT-Creation-Date: 2020-08-13 22:44+0300\n"
+"PO-Revision-Date: 2021-09-26 19:15+0200\n"
+"Last-Translator: Страхиња Радић <contact@strahinja.org>\n"
+"Language-Team: Serbian <sr@li.org>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: poe v1.3.2\n"
+
+#: lib/argmatch.c:132
+#, c-format
+msgid "invalid argument %s for %s"
+msgstr "неисправан аргумент %s за %s"
+
+#: lib/argmatch.c:133
+#, c-format
+msgid "ambiguous argument %s for %s"
+msgstr "двосмислен аргумент %s за %s"
+
+#: lib/argmatch.c:152
+msgid "Valid arguments are:"
+msgstr "Исправни аргументи су:"
+
+#: lib/error.c:195
+msgid "Unknown system error"
+msgstr "Непозната системска грешка"
+
+#: lib/getopt.c:278
+#, c-format
+msgid "%s: option '%s%s' is ambiguous\n"
+msgstr "%s: опција „%s%s“ је двосмислена\n"
+
+#: lib/getopt.c:284
+#, c-format
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
+msgstr "%s: опција „%s%s“ је двосмислена; могућности:"
+
+#: lib/getopt.c:319
+#, c-format
+msgid "%s: unrecognized option '%s%s'\n"
+msgstr "%s: непозната опција „%s%s“\n"
+
+#: lib/getopt.c:345
+#, c-format
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr "%s: опција „%s%s“ не дозвољава аргумент\n"
+
+#: lib/getopt.c:360
+#, c-format
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr "%s: опција „%s%s“ захтева аргумент\n"
+
+#: lib/getopt.c:621
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: неисправна опција — „%c“\n"
+
+#: lib/getopt.c:636 lib/getopt.c:682
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: опција захтева аргумент — „%c“\n"
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:355
+msgid "`"
+msgstr "„"
+
+#: lib/quotearg.c:356
+msgid "'"
+msgstr "“"
+
+#: lib/xalloc-die.c:34
+msgid "memory exhausted"
+msgstr "меморија је исцрпљена"
+
+#: src/ArgV.cc:107
+msgid "option requires an argument"
+msgstr "опција захтева аргумент"
+
+#: src/ArgV.cc:109 src/ArgV.cc:118
+msgid "invalid option"
+msgstr "неисправна опција"
+
+#: src/ArgV.cc:114
+#, c-format
+msgid "option `%s' requires an argument"
+msgstr "опција „%s“ захтева аргумент"
+
+#: src/ArgV.cc:116
+#, c-format
+msgid "unrecognized option `%s'"
+msgstr "непозната опција „%s“"
+
+#: src/attach.h:138
+#, c-format
+msgid "[%u] Attached to terminal %s. %s\n"
+msgstr "[%u] Закачен на терминал %s. %s\n"
+
+#: src/attach.h:150
+#, c-format
+msgid "[%u] Attached to terminal.\n"
+msgstr "[%u] Закачен на терминал.\n"
+
+#: src/buffer.cc:253 src/FileAccess.cc:866
+msgid " [cached]"
+msgstr " [кеширано]"
+
+#: src/ChmodJob.cc:80
+#, c-format
+msgid "Failed to change mode of `%s' to %04o (%s).\n"
+msgstr "Неуспешна промена режима „%s“ на %04o (%s).\n"
+
+#: src/ChmodJob.cc:83
+#, c-format
+msgid "Mode of `%s' changed to %04o (%s).\n"
+msgstr "Режим „%s“ промењен на %04o (%s).\n"
+
+#: src/ChmodJob.cc:88
+#, c-format
+msgid "Failed to change mode of `%s' because no old mode is available.\n"
+msgstr "Неуспешна промена режима „%s“ зато што стари режим није доступан.\n"
+
+#: src/CmdExec.cc:105
+#, c-format
+msgid "Warning: chdir(%s) failed: %s\n"
+msgstr "Упозорење: chdir(%s) неуспешан: %s\n"
+
+#: src/CmdExec.cc:207
+#, c-format
+msgid "Unknown command `%s'.\n"
+msgstr "Непозната наредба „%s“.\n"
+
+#: src/CmdExec.cc:209
+#, c-format
+msgid "Ambiguous command `%s'.\n"
+msgstr "Двосмислена наредба „%s“.\n"
+
+#: src/CmdExec.cc:228
+#, c-format
+msgid "Module for command `%s' did not register the command.\n"
+msgstr "Модул наредбе „%s“ није регистровао наредбу.\n"
+
+#: src/CmdExec.cc:384
+#, c-format
+msgid "cd ok, cwd=%s\n"
+msgstr "cd у реду, cwd=%s\n"
+
+#: src/CmdExec.cc:405 src/MirrorJob.cc:736
+#, c-format
+msgid "%s: received redirection to `%s'\n"
+msgstr "%s: примљено преусмеравање на „%s“\n"
+
+#: src/CmdExec.cc:408 src/FileCopy.cc:1229
+msgid "Too many redirections"
+msgstr "Превише преусмеравања"
+
+#: src/CmdExec.cc:517 src/CmdExec.cc:574
+msgid "Interrupt"
+msgstr "Прекид"
+
+#: src/CmdExec.cc:639
+#, c-format
+msgid "Warning: discarding incomplete command\n"
+msgstr "Упозорење: непотпуна наредба се одбацује\n"
+
+#: src/CmdExec.cc:737
+#, c-format
+msgid "\tExecuting builtin `%s' [%s]\n"
+msgstr "\tИзвршавање угређене наредбе „%s“ [%s]\n"
+
+#: src/CmdExec.cc:742
+msgid "Queue is stopped."
+msgstr "Ред је заустављен."
+
+#: src/CmdExec.cc:747
+msgid "Now executing:"
+msgstr "Извршава се:"
+
+#: src/CmdExec.cc:758
+#, c-format
+msgid "\tWaiting for job [%d] to terminate\n"
+msgstr "\tЧека се завршетак посла [%d]\n"
+
+#: src/CmdExec.cc:761
+#, c-format
+msgid "\tWaiting for termination of jobs: "
+msgstr "\tЧека се завршетак послова: "
+
+#: src/CmdExec.cc:770
+msgid "\tRunning\n"
+msgstr "\tИзвршава се\n"
+
+#: src/CmdExec.cc:772
+msgid "\tWaiting for command\n"
+msgstr "\tЧекање на наредбу\n"
+
+#: src/CmdExec.cc:1261
+#, c-format
+msgid "%s: command `%s' is not compiled in.\n"
+msgstr "%s: наредба „%s“ није укомпајлирана.\n"
+
+#: src/CmdExec.cc:1278
+#, c-format
+msgid "Usage: %s cmd [args...]\n"
+msgstr "Употреба: %s нрдб [арг...]\n"
+
+#: src/CmdExec.cc:1284
+#, c-format
+msgid "%s: cannot create local session\n"
+msgstr "%s: не може се креирати локална сесија\n"
+
+#: src/commands.cc:114
+msgid "!<shell-command>"
+msgstr "!<наредба-љуске>"
+
+#: src/commands.cc:115
+msgid "Launch shell or shell command\n"
+msgstr "Покреће љуску или наредбу љуске\n"
+
+#: src/commands.cc:116
+msgid "(commands)"
+msgstr "(наредбе)"
+
+#: src/commands.cc:117
+msgid ""
+"Group commands together to be executed as one command\n"
+"You can launch such a group in background\n"
+msgstr ""
+"Групише више наредби за заједничко извршавање\n"
+"Можете покренути такву групу у позадини\n"
+
+#: src/commands.cc:120
+msgid "alias [<name> [<value>]]"
+msgstr "alias [<назив> [<вредност>]]"
+
+#: src/commands.cc:121
+msgid ""
+"Define or undefine alias <name>. If <value> omitted,\n"
+"the alias is undefined, else is takes the value <value>.\n"
+"If no argument is given the current aliases are listed.\n"
+msgstr ""
+"Дефинише или оддефинише алијас <назив>. Ако се изостави\n"
+"<вредност>, алијас је недефинисан, а иначе узима вредност\n"
+"<вредност>. Ако није задат ниједан аргумент, листа текуће\n"
+"алијасе.\n"
+
+#: src/commands.cc:125
+msgid "anon - login anonymously (by default)\n"
+msgstr "anon - анонимна пријава (подразумевано)\n"
+
+#: src/commands.cc:127
+msgid "bookmark [SUBCMD]"
+msgstr "bookmark [ПОДНРД]"
+
+#: src/commands.cc:128
+msgid ""
+"bookmark command controls bookmarks\n"
+"\n"
+"The following subcommands are recognized:\n"
+"  add <name> [<loc>] - add current place or given location to bookmarks\n"
+"                       and bind to given name\n"
+"  del <name>         - remove bookmark with the name\n"
+"  edit               - start editor on bookmarks file\n"
+"  import <type>      - import foreign bookmarks\n"
+"  list               - list bookmarks (default)\n"
+msgstr ""
+"Наредба bookmark управља обележивачима\n"
+"\n"
+"Следеће поднаредбе ће бити препознате:\n"
+"  add <назив> [<лок>] - додаје текуће место или локацију у обележиваче\n"
+"                        и додељује их датом називу\n"
+"  del <назив>         - уклања обележивач са тим називом\n"
+"  edit                - покреће уређивач над датотеком са обележивачима\n"
+"  import <врста>      - увози спољашње обележиваче\n"
+"  list                - листа обележиваче (подразумевано)\n"
+
+#: src/commands.cc:137
+msgid "cache [SUBCMD]"
+msgstr "cache [ПОДНРД]"
+
+#: src/commands.cc:138
+msgid ""
+"cache command controls local memory cache\n"
+"\n"
+"The following subcommands are recognized:\n"
+"  stat        - print cache status (default)\n"
+"  on|off      - turn on/off caching\n"
+"  flush       - flush cache\n"
+"  size <lim>  - set memory limit\n"
+"  expire <Nx> - set cache expiration time to N seconds (x=s)\n"
+"                minutes (x=m) hours (x=h) or days (x=d)\n"
+msgstr ""
+"Наредба cache управља локалним меморијским кешом\n"
+"\n"
+"Препознају се следеће поднаредбе:\n"
+"  stat        - штампа стање кеша (подразумевано)\n"
+"  on|off      - укључује/искључује кеширање\n"
+"  flush       - испира кеш\n"
+"  size <огр>  - поставља ограничење меморије\n"
+"  expire <Nx> - поставља време истека кеша на N секунди (x=s),\n"
+"                минута (x=m), сати (x=h) или дана (x=d)\n"
+
+#: src/commands.cc:146
+msgid "cat [-b] <files>"
+msgstr "cat [-b] <датотеке>"
+
+#: src/commands.cc:147
+msgid ""
+"cat - output remote files to stdout (can be redirected)\n"
+" -b  use binary mode (ascii is the default)\n"
+msgstr ""
+"cat - исписује удаљене датотеке на stdout (може се преусмерити)\n"
+" -b   користи бинарни режим (ascii је подразумеван)\n"
+
+#: src/commands.cc:149
+msgid "cd <rdir>"
+msgstr "cd <удир>"
+
+#: src/commands.cc:150
+msgid ""
+"Change current remote directory to <rdir>. The previous remote directory\n"
+"is stored as `-'. You can do `cd -' to change the directory back.\n"
+"The previous directory for each site is also stored on disk, so you can\n"
+"do `open site; cd -' even after lftp restart.\n"
+msgstr ""
+"Мења текући удаљени директоријум на <удир>. Претходни удаљени директоријум\n"
+"се чува као „-“. Можете извршити „cd -“ да се вратите на њега. Претходни\n"
+"директоријум се такође чува на диск за сваки сајт, па можете извршити\n"
+"„open site; cd -“ чак и после поновног покретања lftp-а.\n"
+
+#: src/commands.cc:154
+msgid "chmod [OPTS] mode file..."
+msgstr "chmod [ОПЦИЈЕ] режим датотека..."
+
+#: src/commands.cc:155
+msgid ""
+"Change the mode of each FILE to MODE.\n"
+"\n"
+" -c, --changes        - like verbose but report only when a change is made\n"
+" -f, --quiet          - suppress most error messages\n"
+" -v, --verbose        - output a diagnostic for every file processed\n"
+" -R, --recursive      - change files and directories recursively\n"
+"\n"
+"MODE can be an octal number or symbolic mode (see chmod(1))\n"
+msgstr ""
+"Мења режим сваке ДАТОТЕКЕ у РЕЖИМ.\n"
+"\n"
+" -c, --changes        - као verbose али јавља само кад се учини измена\n"
+" -f, --quiet          - спречава већину порука о грешкама\n"
+" -v, --verbose        - исписује дијагностику за сваку обрађену датотеку\n"
+" -R, --recursive      - рекурзивно мења датотеке и директоријуме\n"
+"\n"
+"РЕЖИМ може бити октални број или симболички режим (видети chmod(1))\n"
+
+#: src/commands.cc:164
+msgid ""
+"Close idle connections. By default only with current server.\n"
+" -a  close idle connections with all servers\n"
+msgstr ""
+"Затвара неактивна повезивања. Подразумевано само са текућим сервером.\n"
+" -a  затвара неактивна повезивања са свим серверима\n"
+
+#: src/commands.cc:166
+msgid "[re]cls [opts] [path/][pattern]"
+msgstr "[re]cls [опције] [путања/][шема]"
+
+#: src/commands.cc:167
+msgid ""
+"List remote files. You can redirect output of this command to file\n"
+"or via pipe to external command.\n"
+"\n"
+" -1                   - single-column output\n"
+" -a, --all            - show dot files\n"
+" -B, --basename       - show basename of files only\n"
+"     --block-size=SIZ - use SIZ-byte blocks\n"
+" -d, --directory      - list directory entries instead of contents\n"
+" -F, --classify       - append indicator (one of /@) to entries\n"
+" -h, --human-readable - print sizes in human readable format (e.g., 1K)\n"
+"     --si             - likewise, but use powers of 1000 not 1024\n"
+" -k, --kilobytes      - like --block-size=1024\n"
+" -l, --long           - use a long listing format\n"
+" -q, --quiet          - don't show status\n"
+" -s, --size           - print size of each file\n"
+"     --filesize       - if printing size, only print size for files\n"
+" -i, --nocase         - case-insensitive pattern matching\n"
+" -I, --sortnocase     - sort names case-insensitively\n"
+" -D, --dirsfirst      - list directories first\n"
+"     --sort=OPT       - \"name\", \"size\", \"date\"\n"
+" -S                   - sort by file size\n"
+" --user, --group, --perms, --date, --linkcount, --links\n"
+"                      - show individual fields\n"
+" --time-style=STYLE   - use specified time format\n"
+"\n"
+"By default, cls output is cached, to see new listing use `recls' or\n"
+"`cache flush'.\n"
+"\n"
+"The variables cls-default and cls-completion-default can be used to\n"
+"specify defaults for cls listings and completion listings, respectively.\n"
+"For example, to make completion listings show file sizes, set\n"
+"cls-completion-default to \"-s\".\n"
+"\n"
+"Tips: Use --filesize with -D to pack the listing better.  If you don't\n"
+"always want to see file sizes, --filesize in cls-default will affect the\n"
+"-s flag on the commandline as well.  Add `-i' to cls-completion-default\n"
+"to make filename completion case-insensitive.\n"
+msgstr ""
+"Листа удаљене датотеке. Можете преусмерити излаз ове наредбе у датотеку\n"
+"или преко pipe-а у спољашњу наредбу.\n"
+"\n"
+" -1                   - излаз у једној колони\n"
+" -a, --all            - приказује датотеке које почињу тачком\n"
+" -B, --basename       - приказује само основни назив датотеке\n"
+"     --block-size=ВЕЛ - користи блокове величине ВЕЛ бајтова\n"
+" -d, --directory      - листа ставке директоријума уместо садржаја\n"
+" -F, --classify       - додаје индикатор (један од /@) ставкама\n"
+" -h, --human-readable - штампа величине у формату читљивом људима (нпр. 1K)\n"
+"     --si             - такође, али користи степене 1000 уместо 1024\n"
+" -k, --kilobytes      - као --block-size=1024\n"
+" -l, --long           - користи дугачки формат листинга\n"
+" -q, --quiet          - не приказује статус\n"
+" -s, --size           - штампа величину сваке датотеке\n"
+"     --filesize       - ако се штампа величина, штампа само величину датотека\n"
+" -i, --nocase         - не прави разлику између великих и малих слова\n"
+" -I, --sortnocase     - сортира без разлике између великих и малих слова\n"
+" -D, --dirsfirst      - прво листа директоријуме\n"
+"     --sort=ОПЦ       - \"name\", \"size\", \"date\"\n"
+" -S                   - сортира по величини\n"
+" --user, --group, --perms, --date, --linkcount, --links\n"
+"                      - приказује појединачна поља\n"
+" --time-style=СТИЛ    - користи задати формат времена\n"
+"\n"
+"Подразумевано, излаз cls-а се кешира. Да бисте видели нов листинг користите\n"
+"„recls“ или „cache flush“.\n"
+"\n"
+"Променљиве cls-default и cls-completion-default се могу користити за\n"
+"задавање подразумеваних вредности у cls листинзима и листинзима допуна, тим\n"
+"редом. На пример, да би листинзи допуна приказивали величину датотека,\n"
+"поставите cls-completion-default на \"-s\".\n"
+"\n"
+"Савети: Користите --filesize уз -D да бисте боље спаковали листинг. Уколико\n"
+"не желите увек да видите величину датотека, --filesize у cls-default ће\n"
+"утицати и на заставицу -s у командној линији. Додајте „-i“ променљивој\n"
+"cls-completion-default да би допуна назива датотека разликовала велика од\n"
+"малих слова.\n"
+
+#: src/commands.cc:217
+msgid "debug [OPTS] [<level>|off]"
+msgstr "debug [ОПЦИЈЕ] [<ниво>|off]"
+
+#: src/commands.cc:218
+msgid ""
+"Set debug level to given value or turn debug off completely.\n"
+" -o <file>  redirect debug output to the file\n"
+" -c  show message context\n"
+" -p  show PID\n"
+" -t  show timestamps\n"
+msgstr ""
+"Поставља ниво дебаговања на дату вредност или потпуно искључује дебаговање\n"
+" -o <дато>  преусмерава излаз за дебаговање у датотеку\n"
+" -c  приказује контекст порука\n"
+" -p  приказује PID\n"
+" -t  приказује времена\n"
+
+#: src/commands.cc:223
+msgid "du [options] <dirs>"
+msgstr "du [опције] <дирови>"
+
+#: src/commands.cc:224
+msgid ""
+"Summarize disk usage.\n"
+" -a, --all             write counts for all files, not just directories\n"
+"     --block-size=SIZ  use SIZ-byte blocks\n"
+" -b, --bytes           print size in bytes\n"
+" -c, --total           produce a grand total\n"
+" -d, --max-depth=N     print the total for a directory (or file, with --all)\n"
+"                       only if it is N or fewer levels below the command\n"
+"                       line argument;  --max-depth=0 is the same as\n"
+"                       --summarize\n"
+" -F, --files           print number of files instead of sizes\n"
+" -h, --human-readable  print sizes in human readable format (e.g., 1K 234M 2G)\n"
+" -H, --si              likewise, but use powers of 1000 not 1024\n"
+" -k, --kilobytes       like --block-size=1024\n"
+" -m, --megabytes       like --block-size=1048576\n"
+" -S, --separate-dirs   do not include size of subdirectories\n"
+" -s, --summarize       display only a total for each argument\n"
+"     --exclude=PAT     exclude files that match PAT\n"
+msgstr ""
+"Сумира употребу диска.\n"
+" -a, --all             исписује бројеве за све датотеке, не само директоријуме\n"
+"     --block-size=ВЕЛ  користи блокове величине ВЕЛ бајтова\n"
+" -b, --bytes           штампа величину у бајтовима\n"
+" -c, --total           даје укупну величину\n"
+" -d, --max-depth=N     штампа укупну вредност за директоријум (или\n"
+"                       датотеку, са --all) само ако је N или мање нивоа\n"
+"                       испод аргумента; --max-depth=0 је исто као --summarize\n"
+" -F, --files           штампа број датотека уместо величина\n"
+" -h, --human-readable  штампа величине у формату читљивом људима\n"
+"                       (нпр.: 1K 234M 2G)\n"
+" -H, --si              исто то, али користи степене 1000, а не 1024\n"
+" -k, --kilobytes       као --block-size=1024\n"
+" -m, --megabytes       као --block-size=1048576\n"
+" -S, --separate-dirs   не укључује величину директоријума\n"
+" -s, --summarize       приказује само укупну вредност сваког аргумента\n"
+"     --exclude=ШЕМА    изоставља датотеке које одговарају шеми ШЕМА\n"
+
+#: src/commands.cc:242
+msgid "edit [OPTS] <file>"
+msgstr "edit [ОПЦИЈЕ] <дато>"
+
+#: src/commands.cc:243
+msgid ""
+"Retrieve remote file to a temporary location, run a local editor on it\n"
+"and upload the file back if changed.\n"
+" -k  keep the temporary file\n"
+" -o <temp>  explicit temporary file location\n"
+msgstr ""
+"Покреће удаљену датотеку на привремено место, покреће локални уређивач\n"
+"над њом и шаље је назад ако је измењена.\n"
+" -k  задржава привремену датотеку\n"
+" -o <привр>  експлицитно задавање привремене датотеке\n"
+
+#: src/commands.cc:248
+msgid "exit [<code>|bg]"
+msgstr "exit [<код>|bg]"
+
+#: src/commands.cc:249
+msgid ""
+"exit - exit from lftp or move to background if jobs are active\n"
+"\n"
+"If no jobs active, the code is passed to operating system as lftp\n"
+"termination status. If omitted, exit code of last command is used.\n"
+"`bg' forces moving to background if cmd:move-background is false.\n"
+msgstr ""
+"exit - излази из lftp-а или се пребацује у позадину ако има активних послова\n"
+"\n"
+"Ако нема активних послова, код се прослеђује оперативном систему као излазни\n"
+"статус lftp-а. Ако је изостављен, користи се излазни код последње наредбе.\n"
+"„bg“ присиљава померање у позадину ако је вредност cmd:move-background false.\n"
+
+#: src/commands.cc:255
+msgid ""
+"Usage: find [OPTS] [directory]\n"
+"Print contents of specified directory or current directory recursively.\n"
+"Directories in the list are marked with trailing slash.\n"
+"You can redirect output of this command.\n"
+" -d, --maxdepth=LEVELS  Descend at most LEVELS of directories.\n"
+msgstr ""
+"Употреба: find [ОПЦИЈЕ] [директоријум]\n"
+"Рекурзивно штампа садржај задатог директоријума или текућег директоријума.\n"
+"Директоријуми у листи су означени косом цртом која им следи.\n"
+"Можете преусмерити излаз ове наредбе.\n"
+" -d, --maxdepth=НИВОА  Највише зарања на дубину НИВОА директоријума.\n"
+
+#: src/commands.cc:260
+msgid "get [OPTS] <rfile> [-o <lfile>]"
+msgstr "get [ОПЦИЈЕ] <удато> [-o <лдато>]"
+
+#: src/commands.cc:261
+msgid ""
+"Retrieve remote file <rfile> and store it to local file <lfile>.\n"
+" -o <lfile> specifies local file name (default - basename of rfile)\n"
+" -c  continue, resume transfer\n"
+" -E  delete remote files after successful transfer\n"
+" -a  use ascii mode (binary is the default)\n"
+" -O <base> specifies base directory or URL where files should be placed\n"
+msgstr ""
+"Добавља удаљену датотеку <удато> и смешта је у локалну датотеку <лдато>.\n"
+" -o <лдато> задаје назив локалне датотеке (подр. - основни назив удато)\n"
+" -c  наставља пренос\n"
+" -E  брише удаљене датотеке по успешном преносу\n"
+" -a  користи ascii режим (бинарни се подразумева)\n"
+" -O <осн> задаје основни директоријум или УРЛ на који се шаљу датотеке\n"
+
+#: src/commands.cc:268
+msgid "glob [OPTS] <cmd> <args>"
+msgstr "glob [ОПЦИЈЕ] <нрдб> <аргови>"
+
+#: src/commands.cc:270
+msgid ""
+"Expand wildcards and run specified command.\n"
+"Options can be used to expand wildcards to list of files, directories,\n"
+"or both types. Type selection is not very reliable and depends on server.\n"
+"If entry type cannot be determined, it will be included in the list.\n"
+" -f  plain files (default)\n"
+" -d  directories\n"
+" -a  all types\n"
+" --exist      return zero exit code when the patterns expand to non-empty list\n"
+" --not-exist  return zero exit code when the patterns expand to an empty list\n"
+msgstr ""
+"Проширује џокерске знаке и покреће задату наредбу.\n"
+"Могу се користити опције за проширивање џокерских знакова на листу датотека,\n"
+"директоријума или и једних и других. Избор врсте није баш поуздан и зависи\n"
+"од сервера. Ако се врста ставке не може одредити, биће укључена у листу.\n"
+" -f  обичне датотеке (подразумевано)\n"
+" -d  директоријуми\n"
+" -a  све врсте\n"
+" --exist      враћа излазни код нула када се шеме шире у непразну листу\n"
+" --not-exist  враћа излазни код нула када се шеме шире у празну листу\n"
+
+#: src/commands.cc:279
+msgid "help [<cmd>]"
+msgstr "help [<нрдб>]"
+
+#: src/commands.cc:280
+msgid "Print help for command <cmd>, or list of available commands\n"
+msgstr "Штампа помоћ за наредбу <нрдб> или листа све наредбе\n"
+
+#: src/commands.cc:282
+msgid ""
+"List running jobs. -v means verbose, several -v can be specified.\n"
+"If <job_no> is specified, only list a job with that number.\n"
+msgstr ""
+"Листа покренуте послове. -v значи брбљиво, и може се задати неколико -v.\n"
+"Ако се зада <бр_посла> само листа послове са тим бројем.\n"
+
+#: src/commands.cc:284
+msgid "kill all|<job_no>"
+msgstr "kill all|<бр_посла>"
+
+#: src/commands.cc:285
+msgid "Delete specified job with <job_no> or all jobs\n"
+msgstr "Брише задати посао <бр_посла> или све послове\n"
+
+#: src/commands.cc:286
+msgid "lcd <ldir>"
+msgstr "lcd <лдир>"
+
+#: src/commands.cc:287
+msgid ""
+"Change current local directory to <ldir>. The previous local directory\n"
+"is stored as `-'. You can do `lcd -' to change the directory back.\n"
+msgstr ""
+"Мења текући локални директоријум на <лдир>. Претходни локални директоријум\n"
+"се чува као „-“. Можете покренути „lcd -“ за повратак.\n"
+
+#: src/commands.cc:289
+msgid "lftp [OPTS] <site>"
+msgstr "lftp [ОПЦИЈЕ] <сајт>"
+
+#: src/commands.cc:290
+msgid ""
+"`lftp' is the first command executed by lftp after rc files\n"
+" -f <file>           execute commands from the file and exit\n"
+" -c <cmd>            execute the commands and exit\n"
+" --norc              don't execute rc files from the home directory\n"
+" --help              print this help and exit\n"
+" --version           print lftp version and exit\n"
+"Other options are the same as in `open' command:\n"
+" -e <cmd>            execute the command just after selecting\n"
+" -u <user>[,<pass>]  use the user/password for authentication\n"
+" -p <port>           use the port for connection\n"
+" -s <slot>           assign the connection to this slot\n"
+" -d                  switch on debugging mode\n"
+" <site>              host name, URL or bookmark name\n"
+msgstr ""
+"„lftp“ је прва наредба коју покреће lftp после rc датотека\n"
+" -f <дато>           извршава наредбе из датотеке и излази\n"
+" -c <нрдб>           извршава наредбе и излази\n"
+" --norc              не извршава rc датотеке из почетног\n"
+"                     директоријума\n"
+" --help              штампа ову помоћ и излази\n"
+" --version           штампа верзију lftp-а и излази\n"
+"Остале опције су исте као у наредби „open“:\n"
+" -e <нрдб>           извршава наредбу одмах по избору\n"
+" -u <кор>[,<лоз>]    користи кор./лозинку за аутентификацију\n"
+" -p <порт>           користи порт за повезивање\n"
+" -s <слот>           додељује повезивање овом слоту\n"
+" -d                  укључује режим дебаговања\n"
+" <сајт>              назив хоста, УРЛ или назив обележивача\n"
+
+#: src/commands.cc:303
+msgid "ln [-s] <file1> <file2>"
+msgstr "ln [-s] <дато1> <дато2>"
+
+#: src/commands.cc:304
+msgid "Link <file1> to <file2>\n"
+msgstr "Везује <дато1> на <дато2>\n"
+
+#: src/commands.cc:308
+msgid "ls [<args>]"
+msgstr "ls [<аргови>]"
+
+#: src/commands.cc:309
+msgid ""
+"List remote files. You can redirect output of this command to file\n"
+"or via pipe to external command.\n"
+"By default, ls output is cached, to see new listing use `rels' or\n"
+"`cache flush'.\n"
+"See also `help cls'.\n"
+msgstr ""
+"Листа удаљене датотеке. Можете преусмерити излаз ове наредбе у датотеку\n"
+"или га проследити спољашњој наредби.\n"
+"Подразумевано, излаз се кешира. Да бисте видели нови листинг користите\n"
+"„rels“ или „cache flush“.\n"
+"Видите и „help cls“.\n"
+
+#: src/commands.cc:314
+msgid "mget [OPTS] <files>"
+msgstr "mget [ОПЦИЈЕ] <датотеке>"
+
+#: src/commands.cc:315
+msgid ""
+"Gets selected files with expanded wildcards\n"
+" -c  continue, resume transfer\n"
+" -d  create directories the same as in file names and get the\n"
+"     files into them instead of current directory\n"
+" -E  delete remote files after successful transfer\n"
+" -a  use ascii mode (binary is the default)\n"
+" -O <base> specifies base directory or URL where files should be placed\n"
+msgstr ""
+"Добавља одабране датотеке уз проширене џокерске знаке\n"
+" -c  наставља пренос\n"
+" -d  креира исте директоријуме као у називима датотека и добавља\n"
+"     датотеке у њих уместо у текући директоријум\n"
+" -E  брише удаљене датотеке после успешног преноса\n"
+" -a  користи ascii режим (бинарни се подразумева)\n"
+" -O <основа> задаје основни директоријум или УРЛ у који се смештају датотеке\n"
+
+#: src/commands.cc:322
+msgid "mirror [OPTS] [remote [local]]"
+msgstr "mirror [ОПЦИЈЕ] [удаљени [локални]]"
+
+#: src/commands.cc:323
+msgid "mkdir [OPTS] <dirs>"
+msgstr "mkdir [ОПЦИЈЕ] <дирови>"
+
+#: src/commands.cc:324
+msgid ""
+"Make remote directories\n"
+" -p  make all levels of path\n"
+" -f  be quiet, suppress messages\n"
+msgstr ""
+"Креира удаљене директоријуме\n"
+" -p  креира све нивое путање\n"
+" -f  тих режим, спречава исписивање порука\n"
+
+#: src/commands.cc:327
+msgid "module name [args]"
+msgstr "module назив [аргови]"
+
+#: src/commands.cc:328
+msgid ""
+"Load module (shared object). The module should contain function\n"
+"   void module_init(int argc,const char *const *argv)\n"
+"If name contains a slash, then the module is searched in current\n"
+"directory, otherwise in directories specified by setting module:path.\n"
+msgstr ""
+"Учитава модул (дељени објекат). Модул би требало да садржи функцију\n"
+"   void module_init(int argc,const char *const *argv)\n"
+"Ако назив садржи косу црту, модул се тражи у текућем директоријуму,\n"
+"а иначе у директоријумима задатим преко module:path.\n"
+
+#: src/commands.cc:332
+msgid "more <files>"
+msgstr "more <датотеке>"
+
+#: src/commands.cc:333
+msgid "Same as `cat <files> | more'. if PAGER is set, it is used as filter\n"
+msgstr "Исто као и „cat <датотеке> | more“. Ако је подешен PAGER, користиће се као филтар\n"
+
+#: src/commands.cc:334
+msgid "mput [OPTS] <files>"
+msgstr "mput [ОПЦИЈЕ] <датотеке>"
+
+#: src/commands.cc:335
+msgid ""
+"Upload files with wildcard expansion\n"
+" -c  continue, reput\n"
+" -d  create directories the same as in file names and put the\n"
+"     files into them instead of current directory\n"
+" -E  delete local files after successful transfer (dangerous)\n"
+" -a  use ascii mode (binary is the default)\n"
+" -O <base> specifies base directory or URL where files should be placed\n"
+msgstr ""
+"Шаље датотеке уз проширивање џокерских знакова\n"
+" -c  наставља слање\n"
+" -d  креира исте директоријуме као у називима датотека и смешта датотеке\n"
+"     у њих уместо у текући директоријум\n"
+" -E  брише локалне датотеке после успешног преноса (опасно)\n"
+" -a  користи ascii режим (бинарни се подразумева)\n"
+" -O <основа> задаје основни директоријум или УРЛ за смештање датотека\n"
+
+#: src/commands.cc:342
+msgid "mrm <files>"
+msgstr "mrm <датотеке>"
+
+#: src/commands.cc:343
+msgid "Removes specified files with wildcard expansion\n"
+msgstr "Уклања задате датотеке уз проширивање џокерских знакова\n"
+
+#: src/commands.cc:344
+msgid "mv <file1> <file2>"
+msgstr "mv <дато1> <дато2>"
+
+#: src/commands.cc:345
+msgid "Rename <file1> to <file2>\n"
+msgstr "Преименује <дато1> у <дато2>\n"
+
+#: src/commands.cc:346
+msgid "mmv [OPTS] <files> <target-dir>"
+msgstr "mmv [ОПЦИЈЕ] <датотеке> <одр-дир>"
+
+#: src/commands.cc:347
+msgid ""
+"Move <files> to <target-directory> with wildcard expansion\n"
+" -O <dir>  specifies the target directory (alternative way)\n"
+msgstr ""
+"Премешта <датотеке> у <одредишни-директоријум> уз проширење џокерских\n"
+"знакова\n"
+" -O <дир>  задаје одредишни директоријум (алтернативни начин)\n"
+
+#: src/commands.cc:349
+msgid "[re]nlist [<args>]"
+msgstr "[re]nlist [<аргови>]"
+
+#: src/commands.cc:350
+msgid ""
+"List remote file names.\n"
+"By default, nlist output is cached, to see new listing use `renlist' or\n"
+"`cache flush'.\n"
+msgstr ""
+"Листа удаљене називе датотека.\n"
+"Подразумевано се излаз nlist-а кешира. Да бисте видели нови листинг\n"
+"користите „renlist“ или „cache flush“.\n"
+
+#: src/commands.cc:353
+msgid "open [OPTS] <site>"
+msgstr "open [ОПЦИЈЕ] <сајт>"
+
+#: src/commands.cc:354
+msgid ""
+"Select a server, URL or bookmark\n"
+" -e <cmd>            execute the command just after selecting\n"
+" -u <user>[,<pass>]  use the user/password for authentication\n"
+" -p <port>           use the port for connection\n"
+" -s <slot>           assign the connection to this slot\n"
+" -d                  switch on debugging mode\n"
+" <site>              host name, URL or bookmark name\n"
+msgstr ""
+"Означава сервер, УРЛ или обележивач\n"
+" -e <нрдб>           извршава наредбу одмах после означавања\n"
+" -u <кор>[,<лоз>]    употребљава корисничко име/лозинку за аутентификацију\n"
+" -p <порт>           употребљава порт за повезивање\n"
+" -s <слот>           додељује повезивање овом слоту\n"
+" -d                  укључује режим дебаговања\n"
+" <сајт>              назив хоста, УРЛ или назив обележивача\n"
+
+#: src/commands.cc:361
+msgid "pget [OPTS] <rfile> [-o <lfile>]"
+msgstr "pget [ОПЦИЈЕ] <удато> [-o <лдато>]"
+
+#: src/commands.cc:362
+msgid ""
+"Gets the specified file using several connections. This can speed up transfer,\n"
+"but loads the net heavily impacting other users. Use only if you really\n"
+"have to transfer the file ASAP.\n"
+"\n"
+"Options:\n"
+" -c  continue transfer. Requires <lfile>.lftp-pget-status file.\n"
+" -n <maxconn>  set maximum number of connections (default is is taken from\n"
+"     pget:default-n setting)\n"
+" -O <base> specifies base directory where files should be placed\n"
+msgstr ""
+"Добавља задату датотеку користећи неколико повезивања. Ово може убрзати пренос,\n"
+"али оптерећује мрежу, значајно утичући на остале кориснике. Користите само ако\n"
+"баш морате хитно да пребаците датотеку.\n"
+"\n"
+"Опције:\n"
+" -c  наставља пренос. Захтева датотеку <лдато>.lftp-pget-status.\n"
+" -n <макспов>  поставља максимални број повезивања (подразумевана вредност се\n"
+"     узима из подешавања pget:default-n)\n"
+" -O <основа> задаје основни директоријум у који се смештају датотеке\n"
+
+#: src/commands.cc:370
+msgid "put [OPTS] <lfile> [-o <rfile>]"
+msgstr "put [ОПЦИЈЕ] <лдато> [-o <удато>]"
+
+#: src/commands.cc:371
+msgid ""
+"Upload <lfile> with remote name <rfile>.\n"
+" -o <rfile> specifies remote file name (default - basename of lfile)\n"
+" -c  continue, reput\n"
+"     it requires permission to overwrite remote files\n"
+" -E  delete local files after successful transfer (dangerous)\n"
+" -a  use ascii mode (binary is the default)\n"
+" -O <base> specifies base directory or URL where files should be placed\n"
+msgstr ""
+"Шаље <лдато> са удаљеним називом <удато>.\n"
+" -o <удато> задаје удаљени назив датотеке (подразумевано - назив лдато)\n"
+" -c  наставља, reput\n"
+"     захтева дозволу за преписивање преко удаљених датотека\n"
+" -E  брише локалне датотеке после успешног преноса (опасно)\n"
+" -a  користи ascii режим (бинарни се подразумева)\n"
+" -O <основа> задаје основни директоријум или УРЛ на који би датотеке\n"
+"     требало да буду послате\n"
+
+#: src/commands.cc:379
+msgid ""
+"Print current remote URL.\n"
+" -p  show password\n"
+msgstr ""
+"Штампа текући удаљени УРЛ.\n"
+" -p  приказује лозинку\n"
+
+#: src/commands.cc:381
+msgid "queue [OPTS] [<cmd>]"
+msgstr "queue [ОПЦИЈЕ] [<нрдб>]"
+
+#: src/commands.cc:382
+msgid ""
+"\n"
+"       queue [-n num] <command>\n"
+"\n"
+"Add the command to queue for current site. Each site has its own command\n"
+"queue. `-n' adds the command before the given item in the queue. It is\n"
+"possible to queue up a running job by using command `queue wait <jobno>'.\n"
+"\n"
+"       queue --delete|-d [index or wildcard expression]\n"
+"\n"
+"Delete one or more items from the queue. If no argument is given, the last\n"
+"entry in the queue is deleted.\n"
+"\n"
+"       queue --move|-m <index or wildcard expression> [index]\n"
+"\n"
+"Move the given items before the given queue index, or to the end if no\n"
+"destination is given.\n"
+"\n"
+"Options:\n"
+" -q                  Be quiet.\n"
+" -v                  Be verbose.\n"
+" -Q                  Output in a format that can be used to re-queue.\n"
+"                     Useful with --delete.\n"
+msgstr ""
+"\n"
+"       queue [-n број] <наредба>\n"
+"\n"
+"Додаје наредбу у ред за текући сајт. Сваки сајт има свој ред за чекање за\n"
+"наредбе. „-n“ додаје наредбу пре задате ставке у реду. Могуће је додати\n"
+"посао који је покренут употребом наредбе „queue wait <брпосла>“.\n"
+"\n"
+"       queue --delete|-d [индекс или израз са џокерским знацима]\n"
+"\n"
+"Брише једну или више ставки у реду. Ако није задат ниједан аргумент, биће\n"
+"обрисана последња ставка у реду.\n"
+"\n"
+"       queue --move|-m <индекс или израз са џокерским знацима> [индекс]\n"
+"\n"
+"Премешта задате ставке пре датог индекса у реду, или на крај реда ако није\n"
+"задато одредиште.\n"
+"\n"
+"Опције:\n"
+" -q                  Тих рад.\n"
+" -v                  Брбљив рад.\n"
+" -Q                  Излаз у формату који се може употребити за поновно\n"
+"                     додавање у ред. Корисно за --delete.\n"
+
+#: src/commands.cc:403
+msgid "quote <cmd>"
+msgstr "quote <нрдб>"
+
+#: src/commands.cc:404
+msgid ""
+"Send the command uninterpreted. Use with caution - it can lead to\n"
+"unknown remote state and thus will cause reconnect. You cannot\n"
+"be sure that any change of remote state because of quoted command\n"
+"is solid - it can be reset by reconnect at any time.\n"
+msgstr ""
+"Шаље наредбу без интерпретирања. Користите са опрезом - ово може довести\n"
+"до непознатог удаљеног стања и проузроковати поновно повезивање. Не може\n"
+"се осигурати да је било која измена удаљеног стања проузрокована наведеном\n"
+"наредбом солидна - она може бити прекинута поновним повезивањем у било ком\n"
+"тренутку.\n"
+
+#: src/commands.cc:409
+msgid ""
+"recls [<args>]\n"
+"Same as `cls', but don't look in cache\n"
+msgstr ""
+"recls [<аргови>]\n"
+"Исто као и „cls“, али не тражи у кешу\n"
+
+#: src/commands.cc:412
+msgid ""
+"Usage: reget [OPTS] <rfile> [-o <lfile>]\n"
+"Same as `get -c'\n"
+msgstr ""
+"Употреба: reget [ОПЦИЈЕ] <удато> [-o <лдато>]\n"
+"Исто као и „get -c“\n"
+
+#: src/commands.cc:415
+msgid ""
+"Usage: rels [<args>]\n"
+"Same as `ls', but don't look in cache\n"
+msgstr ""
+"Употреба: rels [<аргови>]\n"
+"Исто као и „ls“, али не тражи у кешу\n"
+
+#: src/commands.cc:418
+msgid ""
+"Usage: renlist [<args>]\n"
+"Same as `nlist', but don't look in cache\n"
+msgstr ""
+"Употреба: renlist [<аргови>]\n"
+"Исто као и „nlist“, али не тражи у кешу\n"
+
+#: src/commands.cc:420
+msgid "repeat [OPTS] [delay] [command]"
+msgstr "repeat [ОПЦИЈЕ] [пауза] [наредба]"
+
+#: src/commands.cc:422
+msgid ""
+"Usage: reput <lfile> [-o <rfile>]\n"
+"Same as `put -c'\n"
+msgstr ""
+"Употреба: reput <лдато> [-o <удато>]\n"
+"Исто као „put -c“\n"
+
+#: src/commands.cc:424
+msgid "rm [-r] [-f] <files>"
+msgstr "rm [-r] [-f] <датотеке>"
+
+#: src/commands.cc:425
+msgid ""
+"Remove remote files\n"
+" -r  recursive directory removal, be careful\n"
+" -f  work quietly\n"
+msgstr ""
+"Уклања удаљене датотеке\n"
+" -r  рекурзивно уклањање доректоријума, будите опрезни\n"
+" -f  тих рад\n"
+
+#: src/commands.cc:428
+msgid "rmdir [-f] <dirs>"
+msgstr "rmdir [-f] <дирови>"
+
+#: src/commands.cc:429
+msgid "Remove remote directories\n"
+msgstr "Уклања удаљене директоријуме\n"
+
+#: src/commands.cc:430
+msgid "scache [<session_no>]"
+msgstr "scache [<бр_сесије>]"
+
+#: src/commands.cc:431
+msgid "List cached sessions or switch to specified session number\n"
+msgstr "Листа кеширане сесије или се пребацује на задати број сесије\n"
+
+#: src/commands.cc:432
+msgid "set [OPT] [<var> [<val>]]"
+msgstr "set [ОПЦ] [<пром> [<вред>]]"
+
+#: src/commands.cc:433
+msgid ""
+"Set variable to given value. If the value is omitted, unset the variable.\n"
+"Variable name has format ``name/closure'', where closure can specify\n"
+"exact application of the setting. See lftp(1) for details.\n"
+"If set is called with no variable then only altered settings are listed.\n"
+"It can be changed by options:\n"
+" -a  list all settings, including default values\n"
+" -d  list only default values, not necessary current ones\n"
+msgstr ""
+"Поставља променљиву на дату вредност. Ако је вредност изостављена,\n"
+"одпоставља променљиву. Назив променљиве је облика „назив/наставак“, где\n"
+"наставак задаје конкретну примену подешавања. Видети lftp(1) за више детаља.\n"
+"Ако је set позвано без променљиве, само ће промењена подешавања бити\n"
+"излистана. Ово се може променити опцијама:\n"
+" -a  листа сва подешавања, укључујући подразумеване вредности\n"
+" -d  листа само подразумеване вредности, не нужно текуће\n"
+
+#: src/commands.cc:441
+msgid "site <site-cmd>"
+msgstr "site <нар_сајта>"
+
+#: src/commands.cc:442
+msgid ""
+"Execute site command <site_cmd> and output the result\n"
+"You can redirect its output\n"
+msgstr ""
+"Извршава наредбу сајта <нар_сајта> и исписује резултат\n"
+"Можете преусмерити њен излаз\n"
+
+#: src/commands.cc:446
+msgid ""
+"Usage: slot [<label>]\n"
+"List assigned slots.\n"
+"If <label> is specified, switch to the slot named <label>.\n"
+msgstr ""
+"Употреба: slot [<ознака>]\n"
+"Листа додељене слотове.\n"
+"Ако је задата <ознака>, прелази на слот <ознака>.\n"
+
+#: src/commands.cc:449
+msgid "source <file>"
+msgstr "source <дато>"
+
+#: src/commands.cc:450
+msgid "Execute commands recorded in file <file>\n"
+msgstr "Извршава наредбе снимљене у датотеку <дато>\n"
+
+#: src/commands.cc:452
+msgid "torrent [OPTS] <file|URL>..."
+msgstr "torrent [ОПЦИЈЕ] <дато|УРЛ>..."
+
+#: src/commands.cc:453
+msgid "user <user|URL> [<pass>]"
+msgstr "user <корисник|УРЛ> [<лоз>]"
+
+#: src/commands.cc:454
+msgid ""
+"Use specified info for remote login. If you specify URL, the password\n"
+"will be cached for future usage.\n"
+msgstr ""
+"Користи задате податке за удаљено пријављивање. Ако задате УРЛ,\n"
+"лозинка ће бити кеширана за будућу употребу.\n"
+
+#: src/commands.cc:457
+msgid "Shows lftp version\n"
+msgstr "Приказује верзију lftp-а\n"
+
+#: src/commands.cc:458
+msgid "wait [<jobno>]"
+msgstr "wait [<брпосла>]"
+
+#: src/commands.cc:459
+msgid ""
+"Wait for specified job to terminate. If jobno is omitted, wait\n"
+"for last backgrounded job.\n"
+msgstr ""
+"Чека да се задати посао заврши. Ако је брпосла изостављен, чека\n"
+"последњи посао послат у позадину.\n"
+
+#: src/commands.cc:461
+msgid "zcat <files>"
+msgstr "zcat <датотеке>"
+
+#: src/commands.cc:462
+msgid "Same as cat, but filter each file through zcat\n"
+msgstr "Исто као cat, али филтрира сваку датотеку кроз zcat\n"
+
+#: src/commands.cc:463
+msgid "zmore <files>"
+msgstr "zmore <датотеке>"
+
+#: src/commands.cc:464
+msgid "Same as more, but filter each file through zcat\n"
+msgstr "Исто као more, али филтрира сваку датотеку кроз zcat\n"
+
+#: src/commands.cc:466
+msgid "Same as cat, but filter each file through bzcat\n"
+msgstr "Исто као cat, али филтрира сваку датотеку кроз bzcat\n"
+
+#: src/commands.cc:468
+msgid "Same as more, but filter each file through bzcat\n"
+msgstr "Исто као more, али филтрира сваку датотеку кроз bzcat\n"
+
+#: src/commands.cc:524
+#, c-format
+msgid "Usage: %s local-dir\n"
+msgstr "Употреба: %s локални-дир\n"
+
+#: src/commands.cc:560
+#, c-format
+msgid "lcd ok, local cwd=%s\n"
+msgstr "lcd у реду, локални cwd=%s\n"
+
+#: src/commands.cc:576
+#, c-format
+msgid "Usage: cd remote-dir\n"
+msgstr "Употреба: cd удаљени-дир\n"
+
+#: src/commands.cc:588
+#, c-format
+msgid "%s: no old directory for this site\n"
+msgstr "%s: нема претходног директоријума за овај сајт\n"
+
+#: src/commands.cc:677
+#, c-format
+msgid "Usage: %s [<exit_code>]\n"
+msgstr "Употреба: %s [<излазни_код>]\n"
+
+#: src/commands.cc:686
+msgid ""
+"There are running jobs and `cmd:move-background' is not set.\n"
+"Use `exit bg' to force moving to background or `kill all' to terminate jobs.\n"
+msgstr ""
+"Има покренутих послова а „cmd:move-background“ није постављена.\n"
+"Користите „exit bg“ да бисте присилили померање у позадину или „kill all“ да бисте прекинули послове.\n"
+
+#: src/commands.cc:703
+msgid ""
+"\n"
+"lftp now tricks the shell to move it to background process group.\n"
+"lftp continues to run in the background despite the `Stopped' message.\n"
+"lftp will automatically terminate when all jobs are finished.\n"
+"Use `fg' shell command to return to lftp if it is still running.\n"
+msgstr ""
+"\n"
+"lftp сада вара љуску да га премести у групу позадинских процеса.\n"
+"lftp наставља са извршавањем у позадини и поред поруке „Stopped“.\n"
+"lftp ће се аутоматски завршити кад се заврше сви послови.\n"
+"Користите наредбу љуске „fg“ за повратак у lftp ако је и даље покренут.\n"
+
+#: src/commands.cc:837 src/commands.cc:3609
+#, c-format
+msgid "Try `%s --help' for more information\n"
+msgstr "Пробајте „%s --help“ за више информација\n"
+
+#: src/commands.cc:856
+#, c-format
+msgid "%s: -c, -f, -v, -h conflict with other `open' options and arguments\n"
+msgstr "%s: -c, -f, -v, -h су у сукобу са опцијама и аргументима „open“\n"
+
+#: src/commands.cc:955
+#, c-format
+msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
+msgstr "Употреба: %s [-e нрдб] [-p порт] [-u корисник[,лоз]] <хост|урл>\n"
+
+#: src/commands.cc:1045 src/commands.cc:2275 src/DummyProto.cc:65
+#: src/MirrorJob.cc:2172 src/MirrorJob.cc:2194
+msgid " - not supported protocol"
+msgstr " - неподржан протокол"
+
+#: src/commands.cc:1077 src/commands.cc:2259
+msgid "Password: "
+msgstr "Лозинка:"
+
+#: src/commands.cc:1079
+#, c-format
+msgid "%s: GetPass() failed -- assume anonymous login\n"
+msgstr "%s: GetPass() неуспешна — претпостављено анонимно пријављивање\n"
+
+#: src/commands.cc:1190 src/commands.cc:1283 src/commands.cc:1659
+#: src/commands.cc:1690 src/commands.cc:1828 src/commands.cc:1913
+#: src/commands.cc:2186 src/commands.cc:2380 src/commands.cc:2542
+#: src/commands.cc:2587 src/commands.cc:2615 src/commands.cc:2622
+#: src/commands.cc:2923 src/commands.cc:2950 src/commands.cc:2957
+#: src/commands.cc:3286 src/lftp.cc:267 src/MirrorJob.cc:2136
+#: src/SleepJob.cc:144 src/SleepJob.cc:200 src/Torrent.cc:4169
+#, c-format
+msgid "Try `help %s' for more information.\n"
+msgstr "Покушајте „help %s“ за више информација.\n"
+
+#: src/commands.cc:1200
+#, c-format
+msgid "Usage: %s [OPTS] command args...\n"
+msgstr "Употреба: %s [ОПЦИЈЕ] наредба аргументи...\n"
+
+#: src/commands.cc:1253
+#, c-format
+msgid "%s: -n: positive number expected. "
+msgstr "%s: -n: очекује се позитиван број. "
+
+#: src/commands.cc:1305
+#, c-format
+msgid "Created a stopped queue.\n"
+msgstr "Креиран је заустављени ред.\n"
+
+#: src/commands.cc:1348 src/commands.cc:1376
+#, c-format
+msgid "%s: No queue is active.\n"
+msgstr "%s: Ниједан ред није активан.\n"
+
+#: src/commands.cc:1368
+#, c-format
+msgid "%s: -m: Number expected as second argument. "
+msgstr "%s: -m: Очекује се број као други аргумент. "
+
+#: src/commands.cc:1420
+#, c-format
+msgid "Usage: %s <cmd>\n"
+msgstr "Употреба: %s <нрдб>\n"
+
+#: src/commands.cc:1526
+msgid "invalid argument for `--sort'"
+msgstr "погрешан аргумент за „--sort“"
+
+#: src/commands.cc:1556
+msgid "invalid block size"
+msgstr "неисправна величина блока"
+
+#: src/commands.cc:1699
+#, c-format
+msgid "Usage: %s [OPTS] files...\n"
+msgstr "Употреба: %s [ОПЦИЈЕ] датотеке...\n"
+
+#: src/commands.cc:1784 src/commands.cc:1813
+#, c-format
+msgid "%s: %s: Number expected. "
+msgstr "%s: %s: Очекује се број. "
+
+#: src/commands.cc:1833
+#, c-format
+msgid "%s: --continue conflicts with --remove-target.\n"
+msgstr "%s: --continue је у сукобу са --remove-target.\n"
+
+#: src/commands.cc:1843 src/commands.cc:1919
+#, c-format
+msgid "File name missed. "
+msgstr "Недостаје назив датотеке. "
+
+#: src/commands.cc:1988
+#, c-format
+msgid "Usage: %s %s[-f] files...\n"
+msgstr "Употреба: %s %s[-f] датотеке...\n"
+
+#: src/commands.cc:2031
+#, c-format
+msgid "Usage: %s [-e] <file|command>\n"
+msgstr "Употреба: %s [-e] <дато|наредба>\n"
+
+#: src/commands.cc:2078
+#, c-format
+msgid "Usage: %s [-v] [-v] ...\n"
+msgstr "Употреба: %s [-v] [-v] ...\n"
+
+#: src/commands.cc:2092 src/commands.cc:2346 src/commands.cc:2468
+#: src/commands.cc:2684 src/commands.cc:3094 src/commands.cc:3175
+#: src/lftp.cc:279
+#, c-format
+msgid "%s: %s - not a number\n"
+msgstr "%s: %s - није број\n"
+
+#: src/commands.cc:2099 src/commands.cc:2325 src/commands.cc:2355
+#: src/commands.cc:2486
+#, c-format
+msgid "%s: %d - no such job\n"
+msgstr "%s: %d - нема таквог посла\n"
+
+#: src/commands.cc:2134
+#, c-format
+msgid "Usage: %s [-p]\n"
+msgstr "Употреба: %s [-p]\n"
+
+#: src/commands.cc:2226
+#, c-format
+msgid "debug level is %d, output goes to %s\n"
+msgstr "ниво дебаговања је %d, излаз иде у %s\n"
+
+#: src/commands.cc:2229
+#, c-format
+msgid "debug is off\n"
+msgstr "дебаговање је искључено\n"
+
+#: src/commands.cc:2240
+#, c-format
+msgid "Usage: %s <user|URL> [<pass>]\n"
+msgstr "Употреба: %s <кор|УРЛ> [<лоз>]\n"
+
+#: src/commands.cc:2315 src/commands.cc:2478
+#, c-format
+msgid "%s: no current job\n"
+msgstr "%s: нема текућег посла\n"
+
+#: src/commands.cc:2327
+#, c-format
+msgid "Usage: %s <jobno> ... | all\n"
+msgstr "Употреба: %s <брпосла> ... | all\n"
+
+#: src/commands.cc:2408
+#, c-format
+msgid "%s: %s. Use `set -a' to look at all variables.\n"
+msgstr "%s: %s. Користите „set -a“ да бисте погледали све променљиве.\n"
+
+#: src/commands.cc:2452
+#, c-format
+msgid "Usage: %s [<jobno>]\n"
+msgstr "Употреба: %s [<брпосла>]\n"
+
+#: src/commands.cc:2491
+#, c-format
+msgid "%s: some other job waits for job %d\n"
+msgstr "%s: неки други посао чека на посао %d\n"
+
+#: src/commands.cc:2496
+#, c-format
+msgid "%s: wait loop detected\n"
+msgstr "%s: детектовано циркуларно чекање\n"
+
+#: src/commands.cc:2552
+#, c-format
+msgid "Usage: %s [OPTS] <files> <target-dir>\n"
+msgstr "Употреба: %s [ОПЦИЈЕ] <датотеке> <одредишни-дир>\n"
+
+#: src/commands.cc:2614 src/commands.cc:2949
+#, c-format
+msgid "Invalid command. "
+msgstr "Неисправна наредба. "
+
+#: src/commands.cc:2621 src/commands.cc:2956
+#, c-format
+msgid "Ambiguous command. "
+msgstr "Двосмислена наредба. "
+
+#: src/commands.cc:2640
+#, c-format
+msgid "%s: Operand missed for size\n"
+msgstr "%s: Недостаје операнд за величину\n"
+
+#: src/commands.cc:2657
+#, c-format
+msgid "%s: Operand missed for `expire'\n"
+msgstr "%s: Недостаје операнд за „expire“\n"
+
+#: src/commands.cc:2690
+#, c-format
+msgid "%s: %s - no such cached session. Use `scache' to look at session list.\n"
+msgstr "%s: %s - нема такве кеширане сесије. Користите „scache“ да бисте погледали листу сесија.\n"
+
+#: src/commands.cc:2714
+#, c-format
+msgid "Sorry, no help for %s\n"
+msgstr "Нажалост, не постоји помоћ за %s\n"
+
+#: src/commands.cc:2719
+#, c-format
+msgid "%s is a built-in alias for %s\n"
+msgstr "%s је уграђени алијас за %s\n"
+
+#: src/commands.cc:2724
+#, c-format
+msgid "Usage: %s\n"
+msgstr "Употреба: %s\n"
+
+#: src/commands.cc:2732
+#, c-format
+msgid "%s is an alias to `%s'\n"
+msgstr "%s је алијас за „%s“\n"
+
+#: src/commands.cc:2736
+#, c-format
+msgid "No such command `%s'. Use `help' to see available commands.\n"
+msgstr "Непостојећа наредба „%s“. Користите „help“ да бисте видели доступне наредбе.\n"
+
+#: src/commands.cc:2738
+#, c-format
+msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
+msgstr "Двосмислена наредба „%s“. Користите „help“ да бисте видели доступне наредбе.\n"
+
+#: src/commands.cc:2804
+#, c-format
+msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
+msgstr "LFTP | Верзија %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
+
+#: src/commands.cc:2807
+#, c-format
+msgid ""
+"LFTP is free software: you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation, either version 3 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n"
+msgstr ""
+"LFTP је слободни софтвер. Можете га расподелити и/или мењати под\n"
+"одредбама ГНУ-ове опште јавне лиценце коју је објавила Задужбина\n"
+"за слободни софтвер, и то или верзије 3 ове лиценце, или (по вашем\n"
+"избору) било које следеће верзије.\n"
+"\n"
+"Овај програм се расподељује у намери да буде користан, али БЕЗ\n"
+"ИКАКВЕ ГАРАНЦИЈЕ, чак и без имплицитне гаранције КОМЕРЦИЈАЛНЕ\n"
+"ВРЕДНОСТИ или ИСПУЊАВАЊА ОДРЕЂЕНЕ ПОТРЕБЕ. Погледајте ГНУ-ову\n"
+"општу јавну лиценцу за више детаља.\n"
+"\n"
+"Требало би да уз LFTP примите и примерак ГНУ-ове опште\n"
+"јавне лиценце. Ако то није случај, погледајте\n"
+"<http://www.gnu.org/licenses/>.\n"
+
+#: src/commands.cc:2821
+#, c-format
+msgid "Send bug reports and questions to the mailing list <%s>.\n"
+msgstr "Шаљите пријаве грешака и питања на мејлинг листу <%s>.\n"
+
+#: src/commands.cc:2827
+msgid "Libraries used: "
+msgstr "Коришћене библиотеке: "
+
+#: src/commands.cc:2972 src/commands.cc:3000
+#, c-format
+msgid "%s: bookmark name required\n"
+msgstr "%s: захтева се назив обележивача\n"
+
+#: src/commands.cc:2989
+#, c-format
+msgid "%s: spaces in bookmark name are not allowed\n"
+msgstr "%s: нису дозвољени размаци у називу обележивача\n"
+
+#: src/commands.cc:3002
+#, c-format
+msgid "%s: no such bookmark `%s'\n"
+msgstr "%s: нема обележивача „%s“\n"
+
+#: src/commands.cc:3025
+#, c-format
+msgid "%s: import type required (netscape,ncftp)\n"
+msgstr "%s: захтева се врста увоза (netscape,ncftp)\n"
+
+#: src/commands.cc:3103
+#, c-format
+msgid "Usage: %s [-d #] dir\n"
+msgstr "Употреба: %s [-d #] дир\n"
+
+#: src/commands.cc:3208
+#, c-format
+msgid "%s: invalid block size `%s'\n"
+msgstr "%s: неисправна величина блока „%s“\n"
+
+#: src/commands.cc:3219
+#, c-format
+msgid "Usage: %s [options] <dirs>\n"
+msgstr "Употреба: %s [опције] <дирови>\n"
+
+#: src/commands.cc:3225
+#, c-format
+msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
+msgstr "%s: упозорење: сумирање је исто што и --max-depth=0\n"
+
+#: src/commands.cc:3229
+#, c-format
+msgid "%s: summarizing conflicts with --max-depth=%i\n"
+msgstr "%s: сумирање је у сукобу са --max-depth=%i\n"
+
+#: src/commands.cc:3273
+#, c-format
+msgid "Usage: %s command args...\n"
+msgstr "Употреба: %s наредба аргови...\n"
+
+#: src/commands.cc:3285
+#, c-format
+msgid "Usage: %s module [args...]\n"
+msgstr "Употреба: %s модул [аргови...]\n"
+
+#: src/commands.cc:3303 src/LocalAccess.cc:642
+msgid "cannot get current directory"
+msgstr "не може се добавити текући директоријум"
+
+#: src/commands.cc:3367
+#, c-format
+msgid "Usage: %s [OPTS] mode file...\n"
+msgstr "Употреба: %s [ОПЦИЈЕ] режим датотека...\n"
+
+#: src/commands.cc:3387
+#, c-format
+msgid "invalid mode string: %s\n"
+msgstr "Неисправна ниска режима: %s\n"
+
+#: src/commands.cc:3450 src/commands.cc:3459
+msgid "Invalid range format. Format is min-max, e.g. 10-20."
+msgstr "Неисправан формат опсега. Формат је мин-макс, нпр. 10-20."
+
+#: src/commands.cc:3471
+#, c-format
+msgid "Usage: %s [OPTS] file\n"
+msgstr "Употреба: %s [ОПЦИЈЕ] датотека\n"
+
+#: src/CopyJob.cc:82
+#, c-format
+msgid "`%s' at %lld %s%s%s%s"
+msgstr "„%s“ до %lld %s%s%s%s"
+
+#: src/CopyJob.cc:159
+#, c-format
+msgid "%lld $#ll#byte|bytes$ transferred in %ld $#l#second|seconds$"
+msgstr "пренето %lld $#ll#бајт|бајта|бајтова$ за %ld $#ll#секунд|секунде|секунди$"
+
+#: src/CopyJob.cc:167
+#, c-format
+msgid "%lld $#ll#byte|bytes$ transferred"
+msgstr "пренето %lld $#ll#бајт|бајта|бајтова$"
+
+#: src/CopyJob.cc:283
+#, c-format
+msgid "Transfer of %d of %d $file|files$ failed\n"
+msgstr "Пренос %d од %d $фајла|фајла|фајлова$ није успео\n"
+
+#: src/CopyJob.cc:289
+#, c-format
+msgid "Total %d $file|files$ transferred\n"
+msgstr "Укупно %d $датотека пренесена|датотеке пренесене|датотека пренесено$\n"
+
+#: src/FileAccess.cc:160
+msgid "Access failed: "
+msgstr "Приступ није успео: "
+
+#: src/FileAccess.cc:161
+msgid "File cannot be accessed"
+msgstr "Датотеци се не може приступити"
+
+#: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4599
+#: src/ftpclass.cc:4608 src/SFtp.cc:1335 src/Torrent.cc:3533
+msgid "Not connected"
+msgstr "Нема повезивања"
+
+#: src/FileAccess.cc:166 src/FileAccess.cc:167
+msgid "Fatal error"
+msgstr "Фатална грешка"
+
+#: src/FileAccess.cc:169
+msgid "Store failed - you have to reput"
+msgstr "Смештање није успело - морате да извршите reput"
+
+#: src/FileAccess.cc:172 src/FileAccess.cc:173
+msgid "Login failed"
+msgstr "Пријављивање није успело"
+
+#: src/FileAccess.cc:176 src/FileAccess.cc:177
+msgid "Operation not supported"
+msgstr "Операција није подржана"
+
+#: src/FileAccess.cc:180
+msgid "File moved"
+msgstr "Датотека је премештена"
+
+#: src/FileAccess.cc:182
+msgid "File moved to `"
+msgstr "Датотека је премештена у „"
+
+#: src/FileCopy.cc:141
+msgid "copy: destination file is already complete\n"
+msgstr "copy: одредишна датотека је већ цела\n"
+
+#: src/FileCopy.cc:182
+msgid "copy: put is broken\n"
+msgstr "copy: put је неисправан\n"
+
+#: src/FileCopy.cc:201
+msgid "seek failed"
+msgstr "претраживање је неуспешно"
+
+#: src/FileCopy.cc:207
+msgid "no progress timeout"
+msgstr "тајмаут због застоја"
+
+#: src/FileCopy.cc:235
+msgid "cannot seek on data source"
+msgstr "не може се претраживати извор података"
+
+#: src/FileCopy.cc:238
+#, c-format
+msgid "copy: put rolled back to %lld, seeking get accordingly\n"
+msgstr "copy: put се вратио на %lld, get се претражује у складу са тим\n"
+
+#: src/FileCopy.cc:251
+msgid "copy: all data received, but get rolled back\n"
+msgstr "copy: сви подаци су примљени, али је get премотао уназад\n"
+
+#: src/FileCopy.cc:267
+#, c-format
+msgid "copy: get rolled back to %lld, seeking put accordingly\n"
+msgstr "copy: get је премотао уназад на %lld, put се претражује у складу са тим\n"
+
+#: src/FileCopy.cc:364
+msgid "file size decreased during transfer"
+msgstr "величина датотеке се смањила током преноса"
+
+#: src/FileCopy.cc:1226
+#, c-format
+msgid "copy: received redirection to `%s'\n"
+msgstr "copy: примљено преусмеравање на „%s“\n"
+
+#: src/FileCopy.cc:1382
+msgid "file name missed in URL"
+msgstr "назив датотеке недостаје у УРЛ-у"
+
+#: src/FileCopy.cc:2078
+msgid "Verify command failed without a message"
+msgstr "Наредба за верификацију није успешна не давши излаз"
+
+#: src/FileCopyFtp.cc:95
+msgid "**** FXP: trying to reverse ftp:fxp-passive-source\n"
+msgstr "**** FXP: покушај враћања уназад ftp:fxp-passive-source\n"
+
+#: src/FileCopyFtp.cc:102
+msgid "**** FXP: trying to reverse ftp:fxp-passive-sscn\n"
+msgstr "**** FXP: покушај враћања уназад ftp:fxp-passive-sscn\n"
+
+#: src/FileCopyFtp.cc:110
+msgid "**** FXP: trying to reverse ftp:ssl-protect-fxp\n"
+msgstr "**** FXP: покушај враћања уназад ftp:ssl-protect-fxp\n"
+
+#: src/FileCopyFtp.cc:116
+msgid "**** FXP: giving up, reverting to plain copy\n"
+msgstr "**** FXP: одустајем, повратак на обично копирање\n"
+
+#: src/FileCopyFtp.cc:125
+msgid "ftp:fxp-force is set but FXP is not available"
+msgstr "ftp:fxp-force је постављен, али FXP није доступан"
+
+#: src/FileCopy.h:285
+msgid "Verifying..."
+msgstr "Провера..."
+
+#: src/FileSetOutput.cc:230
+msgid "non-option arguments found"
+msgstr "пронађени су аргументи који нису опције"
+
+#: src/Filter.cc:166
+msgid "pipe() failed: "
+msgstr "pipe() није успео: "
+
+#: src/Filter.cc:200 src/PtyShell.cc:135
+#, c-format
+msgid "chdir(%s) failed: %s\n"
+msgstr "chdir(%s) није успео: %s\n"
+
+#: src/Filter.cc:208
+#, c-format
+msgid "execvp(%s) failed: %s\n"
+msgstr "execvp(%s) није успео: %s\n"
+
+#: src/Filter.cc:213 src/PtyShell.cc:147
+#, c-format
+msgid "execl(/bin/sh) failed: %s\n"
+msgstr "execl(/bin/sh) није успео: %s\n"
+
+#: src/Filter.cc:415
+msgid "file already exists and xfer:clobber is unset"
+msgstr "датотека већ постоји а xfer:clobber није постављен"
+
+#: src/FindJobDu.cc:101
+msgid "total"
+msgstr "укупно"
+
+#: src/Fish.cc:75 src/ftpclass.cc:1292 src/Http.cc:1232 src/SFtp.cc:77
+#, c-format
+msgid "Closing idle connection"
+msgstr "Затварање неактивних повезивања"
+
+#: src/Fish.cc:162 src/SFtp.cc:177
+msgid "Running connect program"
+msgstr "Покренут је програм за повезивање"
+
+#: src/Fish.cc:588 src/ftpclass.cc:2887 src/ftpclass.cc:3107 src/Http.cc:1510
+#: src/SFtp.cc:741 src/SFtp.cc:1082 src/SFtp.cc:1083 src/SSH_Access.cc:167
+#, c-format
+msgid "Peer closed connection"
+msgstr "Сусед је затворио повезивање"
+
+#: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4219 src/SFtp.cc:1107
+#, c-format
+msgid "extra server response"
+msgstr "сувишни одговор сервера"
+
+#: src/Fish.cc:987 src/ftpclass.cc:4611 src/Http.cc:2329 src/Http.cc:2336
+#: src/SFtp.cc:1341 src/Torrent.cc:3536 src/TorrentTracker.cc:624
+msgid "Connecting..."
+msgstr "Повезивање..."
+
+#: src/Fish.cc:989 src/ftpclass.cc:4617 src/SFtp.cc:1343
+msgid "Connected"
+msgstr "Повезан"
+
+#: src/Fish.cc:991 src/ftpclass.cc:4594 src/ftpclass.cc:4622
+#: src/ftpclass.cc:4636 src/Http.cc:2338 src/SFtp.cc:1345
+#: src/TorrentTracker.cc:626
+msgid "Waiting for response..."
+msgstr "Чекање на одговор..."
+
+#: src/Fish.cc:993 src/ftpclass.cc:4656 src/Http.cc:2341 src/SFtp.cc:1347
+msgid "Receiving data"
+msgstr "Примање података"
+
+#: src/Fish.cc:995 src/ftpclass.cc:4654 src/Http.cc:2334 src/SFtp.cc:1349
+msgid "Sending data"
+msgstr "Слање података"
+
+#: src/Fish.cc:997 src/SFtp.cc:1351
+msgid "Done"
+msgstr "Завршено"
+
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2196
+#: src/SFtp.cc:2316
+#, c-format
+msgid "Getting file list (%lld) [%s]"
+msgstr "Добављање листе датотека (%lld) [%s]"
+
+#: src/ftpclass.cc:197
+#, c-format
+msgid "Data connection peer has wrong port number"
+msgstr "Сусед повезивања има погрешан број порта"
+
+#: src/ftpclass.cc:203
+#, c-format
+msgid "Data connection peer has mismatching address"
+msgstr "Сусед повезивања има неодговарајућу адресу"
+
+#: src/ftpclass.cc:225 src/ftpclass.cc:250
+#, c-format
+msgid "Switching to NOREST mode"
+msgstr "Пребацивање на NOREST режим"
+
+#: src/ftpclass.cc:425
+#, c-format
+msgid "Server reply matched ftp:retry-530, retrying"
+msgstr "Одговор сервера се поклапа са ftp:retry-530, понављање"
+
+#: src/ftpclass.cc:433
+#, c-format
+msgid "Server reply matched ftp:retry-530-anonymous, retrying"
+msgstr "Одговор сервера се поклапа са ftp:retry-530-anonymous, понављање"
+
+#: src/ftpclass.cc:466
+msgid "Account is required, set ftp:acct variable"
+msgstr "Захтева се налог, поставите променљиву ftp:acct"
+
+#: src/ftpclass.cc:483
+msgid "ftp:skey-force is set and server does not support OPIE nor S/KEY"
+msgstr "ftp:skey-force је постављен, али сервер не подржава OPIE нити S/KEY"
+
+#: src/ftpclass.cc:501
+#, c-format
+msgid "assuming failed host name lookup"
+msgstr "претпоставља се неуспешна претрага назива хоста"
+
+#: src/ftpclass.cc:809 src/ftpclass.cc:810
+#, c-format
+msgid "cannot parse EPSV response"
+msgstr "не може се рашчланити EPSV одговор"
+
+#: src/ftpclass.cc:837 src/ftpclass.cc:838
+#, c-format
+msgid "cannot parse custom EPSV response"
+msgstr "не може се рашчланити прилагођени EPSV одговор"
+
+#: src/ftpclass.cc:1122
+#, c-format
+msgid "Closing control socket"
+msgstr "Затварање контролне утичнице"
+
+#: src/ftpclass.cc:1341
+msgid "MLSD is disabled by ftp:use-mlsd"
+msgstr "MLSD је онемогућен преко ftp:use-mlsd"
+
+#: src/ftpclass.cc:1411 src/Http.cc:1431 src/Torrent.cc:3204
+#: src/Torrent.cc:3743 src/TorrentTracker.cc:393
+#, c-format
+msgid "cannot create socket of address family %d"
+msgstr "не може се креирати утичница адресне фамилије %d"
+
+#: src/ftpclass.cc:1442 src/Http.cc:1457
+#, c-format
+msgid "Socket error (%s) - reconnecting"
+msgstr "Грешка утичнице (%s) - поновно повезивање"
+
+#: src/ftpclass.cc:1715
+msgid "MFF and SITE CHMOD are not supported by this site"
+msgstr "Овај сајт не подржава MFF и SITE CHMOD"
+
+#: src/ftpclass.cc:1720
+msgid "MLST and MLSD are not supported by this site"
+msgstr "Овај сајт не подржава MLST и MLSD"
+
+#: src/ftpclass.cc:2031
+msgid "SITE SYMLINK is not supported by the server"
+msgstr "Сервер не подржава SITE SYMLINK"
+
+#: src/ftpclass.cc:2204
+msgid "unsupported network protocol"
+msgstr "неподржани мрежни протокол"
+
+#: src/ftpclass.cc:2253 src/ftpclass.cc:2355
+#, c-format
+msgid "Data socket error (%s) - reconnecting"
+msgstr "Грешка утичнице (%s) - поновно повезивање"
+
+#: src/ftpclass.cc:2281
+#, c-format
+msgid "Accepted data connection from (%s) port %u"
+msgstr "Прихваћено повезивање од (%s) порт %u"
+
+#: src/ftpclass.cc:2330
+#, c-format
+msgid "Connecting data socket to (%s) port %u"
+msgstr "Повезивање утичнице са (%s) порт %u"
+
+#: src/ftpclass.cc:2336
+#, c-format
+msgid "Connecting data socket to proxy %s (%s) port %u"
+msgstr "Повезивање утичнице са посредником %s (%s) порт %u"
+
+#: src/ftpclass.cc:2358 src/ftpclass.cc:4414
+#, c-format
+msgid "Switching passive mode off"
+msgstr "Искључивање пасивног режима"
+
+#: src/ftpclass.cc:2366
+#, c-format
+msgid "Data connection established"
+msgstr "Успостављено повезивање"
+
+#: src/ftpclass.cc:2688 src/ftpclass.cc:4548
+msgid "ftp:ssl-force is set and server does not support or allow SSL"
+msgstr "Постављено је ftp:ssl-force а сервер не подржава или не дозвољава SSL"
+
+#: src/ftpclass.cc:3053
+#, c-format
+msgid "Persist and retry"
+msgstr "Истрајавање и понављање"
+
+#: src/ftpclass.cc:3321
+#, c-format
+msgid "Closing data socket"
+msgstr "Затварање утичнице"
+
+#: src/ftpclass.cc:3343
+#, c-format
+msgid "Closing aborted data socket"
+msgstr "Затварање прекинуте утичнице"
+
+#: src/ftpclass.cc:4193
+#, c-format
+msgid "saw file size in response"
+msgstr "величина датотеке примећена у одговору"
+
+#: src/ftpclass.cc:4233 src/ftpclass.cc:4260
+#, c-format
+msgid "Turning on sync-mode"
+msgstr "Укључивање режима синхронизације"
+
+#: src/ftpclass.cc:4434
+#, c-format
+msgid "Switching passive mode on"
+msgstr "Пребацивање пасивног режима на укључено"
+
+#: src/ftpclass.cc:4585
+msgid "FEAT negotiation..."
+msgstr "FEAT преговарање..."
+
+#: src/ftpclass.cc:4592
+msgid "Sending commands..."
+msgstr "Слање наредби..."
+
+#: src/ftpclass.cc:4596
+msgid "Delaying before retry"
+msgstr "Паузирање пре поновног покушаја"
+
+#: src/ftpclass.cc:4597 src/Http.cc:2331
+msgid "Connection idle"
+msgstr "Повезивање није активно"
+
+#: src/ftpclass.cc:4604 src/Http.cc:2323 src/Resolver.cc:172
+#: src/Resolver.cc:217 src/TorrentTracker.cc:622
+#, c-format
+msgid "Resolving host address..."
+msgstr "Разрешавање адресе хоста..."
+
+#: src/ftpclass.cc:4615
+msgid "TLS negotiation..."
+msgstr "TLS преговарање..."
+
+#: src/ftpclass.cc:4619
+msgid "Logging in..."
+msgstr "Пријављивање..."
+
+#: src/ftpclass.cc:4623
+msgid "Making data connection..."
+msgstr "Креирање повезивања..."
+
+#: src/ftpclass.cc:4626
+msgid "Changing remote directory..."
+msgstr "Промена удаљеног директоријума..."
+
+#: src/ftpclass.cc:4632
+msgid "Waiting for other copy peer..."
+msgstr "Чекање на другог суседа за копирање..."
+
+#: src/ftpclass.cc:4634 src/ftpclass.cc:4658
+msgid "Waiting for transfer to complete"
+msgstr "Чекање на завршетак преноса"
+
+#: src/ftpclass.cc:4638
+msgid "Waiting for TLS shutdown..."
+msgstr "Чекање на затварање TLS-а..."
+
+#: src/ftpclass.cc:4640
+msgid "Waiting for data connection..."
+msgstr "Чекање на повезивање..."
+
+#: src/ftpclass.cc:4646
+msgid "Sending data/TLS"
+msgstr "Слање података/TLS"
+
+#: src/ftpclass.cc:4648
+msgid "Receiving data/TLS"
+msgstr "Примање података/TLS"
+
+#: src/Http.cc:230
+#, c-format
+msgid "Closing HTTP connection"
+msgstr "Затварање HTTP повезивања"
+
+#: src/Http.cc:240
+msgid "POST method failed"
+msgstr "POST метод није успео"
+
+#: src/Http.cc:1381
+msgid "ftp over http cannot work without proxy, set hftp:proxy."
+msgstr "ftp преко http-а не може да функционише без посредника, подесите hftp:proxy."
+
+#: src/Http.cc:1537
+#, c-format
+msgid "Sending request..."
+msgstr "Слање захтева..."
+
+#: src/Http.cc:1575
+#, c-format
+msgid "Hit EOF while fetching headers"
+msgstr "Досегнут EOF приликом добављања заглавља"
+
+#: src/Http.cc:1695
+#, c-format
+msgid "Could not parse HTTP status line"
+msgstr "Неуспешно рашчлањивање HTTP статусног реда"
+
+#: src/Http.cc:1726
+msgid "Object is not cached and http:cache-control has only-if-cached"
+msgstr "Објекат није кеширан а http:cache-control има only-if-cached"
+
+#: src/Http.cc:1891
+#, c-format
+msgid "Receiving body..."
+msgstr "Преузимање тела..."
+
+#: src/Http.cc:2092
+#, c-format
+msgid "Hit EOF"
+msgstr "Досегнут EOF"
+
+#: src/Http.cc:2095
+#, c-format
+msgid "Received not enough data, retrying"
+msgstr "Примљено недовољно података, поновни покушај"
+
+#: src/Http.cc:2106
+#, c-format
+msgid "Received all"
+msgstr "Све је примљено"
+
+#: src/Http.cc:2111
+#, c-format
+msgid "Received all (total)"
+msgstr "Све је примљено (укупно)"
+
+#: src/Http.cc:2135 src/Http.cc:2159
+msgid "chunked format violated"
+msgstr "прекршен формат из парчића"
+
+#: src/Http.cc:2145
+#, c-format
+msgid "Received last chunk"
+msgstr "Примљено последње парче"
+
+#: src/Http.cc:2339
+msgid "Fetching headers..."
+msgstr "Добављање заглавља..."
+
+#: src/Job.cc:293
+#, c-format
+msgid "[%d] Done (%s)"
+msgstr "[%d] Завршено (%s)"
+
+#: src/lftp.cc:370
+#, c-format
+msgid "[%u] Terminated by signal %d. %s\n"
+msgstr "[%u] Прекинуто сигналом %d. %s\n"
+
+#: src/lftp.cc:445
+#, c-format
+msgid "[%u] Started.  %s\n"
+msgstr "[%u] Започето.  %s\n"
+
+#: src/lftp.cc:463
+#, c-format
+msgid "[%u] Detaching from the terminal to complete transfers...\n"
+msgstr "[%u] Откачињање од терминала ради завршетка преноса...\n"
+
+#: src/lftp.cc:465
+#, c-format
+msgid "[%u] Exiting and detaching from the terminal.\n"
+msgstr "[%u] Излазак и откачињање од терминала.\n"
+
+#: src/lftp.cc:470
+#, c-format
+msgid "[%u] Detached from terminal. %s\n"
+msgstr "[%u] Откачено од терминала. %s\n"
+
+#: src/lftp.cc:480
+#, c-format
+msgid "[%u] Finished. %s\n"
+msgstr "[%u] Завршено. %s\n"
+
+#: src/lftp.cc:484
+#, c-format
+msgid "[%u] Moving to background to complete transfers...\n"
+msgstr "[%u] Премештање у позадину ради завршетка преноса...\n"
+
+#: src/lftp.cc:553
+msgid "history -w file|-r file|-c|-l [cnt]"
+msgstr "history -w дато|-r дато|-c|-l [број]"
+
+#: src/lftp.cc:554
+msgid ""
+" -w <file> Write history to file.\n"
+" -r <file> Read history from file; appends to current history.\n"
+" -c  Clear the history.\n"
+" -l  List the history (default).\n"
+"Optional argument cnt specifies the number of history lines to list,\n"
+"or \"all\" to list all entries.\n"
+msgstr ""
+" -w <дато> Записује историју у датотеку.\n"
+" -r <дато> Чита историју из датотеке; надовезује на текућу.\n"
+" -c  Брише историју.\n"
+" -l  Листа историју (подразумевано).\n"
+"Опциони аргумент број задаје број редова историје који се листају, или\n"
+
+#: src/lftp.cc:561
+msgid "Attach the terminal to specified backgrounded lftp process.\n"
+msgstr "Качи терминал за задати позадински lftp процес.\n"
+
+#: src/lftp_ssl.cc:1402
+#, c-format
+msgid "No certificate presented by %s.\n"
+msgstr "%s није приказао ниједан сертификат.\n"
+
+#: src/LocalAccess.cc:604 src/NetAccess.cc:686
+msgid "Getting directory contents"
+msgstr "Добављање садржаја директоријума"
+
+#: src/LocalAccess.cc:606 src/NetAccess.cc:690
+msgid "Getting files information"
+msgstr "Добављање података о датотекама"
+
+#: src/LsCache.cc:190
+#, c-format
+msgid "%ld $#l#byte|bytes$ cached"
+msgstr "%ld $#l#бајт кеширан|бајта кеширана|бајтова кеширано$"
+
+#: src/LsCache.cc:194
+msgid ", no size limit"
+msgstr ", без ограничења величине"
+
+#: src/LsCache.cc:196
+#, c-format
+msgid ", maximum size %ld\n"
+msgstr ", максимална величина %ld\n"
+
+#: src/mgetJob.cc:78
+#, c-format
+msgid "%s: %s: no files found\n"
+msgstr "%s: %s: ниједна датотека није пронађена\n"
+
+#: src/MirrorJob.cc:100
+#, c-format
+msgid "%sTotal: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
+msgstr "%sУкупно: %d директоријум$|а|а$, %d датотек$а|е|а$, %d симвез$а|е|а$\n"
+
+#: src/MirrorJob.cc:104
+#, c-format
+msgid "%sNew: %d file$|s$, %d symlink$|s$\n"
+msgstr "%sНових: %d датотек$а|е|а$, %d симвез$а|е|а$\n"
+
+#: src/MirrorJob.cc:108
+#, c-format
+msgid "%sModified: %d file$|s$, %d symlink$|s$\n"
+msgstr "%sИзмењено: %d датотек$а|е|а$, %d симвез$а|е|а$\n"
+
+#: src/MirrorJob.cc:115
+#, c-format
+msgid "%sRemoved: %d director$y|ies$, %d file$|s$, %d symlink$|s$\n"
+msgstr "%sУклоњено: %d директоријум$|а|а$, %d датотек$а|е|а$, %d симвез$а|е|а$\n"
+
+#: src/MirrorJob.cc:120
+#, c-format
+msgid "%s%d error$|s$ detected\n"
+msgstr "%s%d греш$ка откривена|ке откривене|ака откривено$\n"
+
+#: src/MirrorJob.cc:231
+#, c-format
+msgid "Finished %s"
+msgstr "Завршено %s"
+
+#: src/MirrorJob.cc:344 src/MirrorJob.cc:519 src/MirrorJob.cc:1218
+#, c-format
+msgid "Removing old file `%s'"
+msgstr "Уклањање старе датотеке „%s“"
+
+#: src/MirrorJob.cc:346
+#, c-format
+msgid "Overwriting old file `%s'"
+msgstr "Преписивање преко старе датотеке „%s“"
+
+#: src/MirrorJob.cc:355
+#, c-format
+msgid "Skipping file `%s' (only-existing)"
+msgstr "Прескакање датотеке „%s“ (only-existing)"
+
+#: src/MirrorJob.cc:361
+#, c-format
+msgid "Transferring file `%s'"
+msgstr "Пренос датотеке „%s“"
+
+#: src/MirrorJob.cc:439
+#, c-format
+msgid "Skipping directory `%s' (only-existing)"
+msgstr "Прескакање директоријума „%s“ (only-existing)"
+
+#: src/MirrorJob.cc:461 src/MirrorJob.cc:550 src/MirrorJob.cc:902
+#, c-format
+msgid "Removing old local file `%s'"
+msgstr "Уклањање старе локалне датотеке „%s“"
+
+#: src/MirrorJob.cc:487
+#, c-format
+msgid "Scanning directory `%s'"
+msgstr "Скенирање директоријума „%s“"
+
+#: src/MirrorJob.cc:489
+#, c-format
+msgid "Mirroring directory `%s'"
+msgstr "Клонирање директоријума „%s“"
+
+#: src/MirrorJob.cc:525 src/MirrorJob.cc:567
+#, c-format
+msgid "Making symbolic link `%s' to `%s'"
+msgstr "Креирање симболичке везе „%s“ ка „%s“"
+
+#: src/MirrorJob.cc:562
+#, c-format
+msgid "Skipping symlink `%s' (only-existing)"
+msgstr "Прескакање симвезе „%s“ (only-existing)"
+
+#: src/MirrorJob.cc:807
+#, c-format
+msgid "mirror: protocol `%s' is not suitable for mirror\n"
+msgstr "mirror: протокол „%s“ није погодан за клонирање\n"
+
+#: src/MirrorJob.cc:923
+#, c-format
+msgid "Making directory `%s'"
+msgstr "Креирање директоријума „%s“"
+
+#: src/MirrorJob.cc:1181
+#, c-format
+msgid "Old directory `%s' is not removed"
+msgstr "Стари директоријум „%s“ није уклоњен"
+
+#: src/MirrorJob.cc:1183
+#, c-format
+msgid "Old file `%s' is not removed"
+msgstr "Стара датотека „%s“ није уклоњена"
+
+#: src/MirrorJob.cc:1216
+#, c-format
+msgid "Removing old directory `%s'"
+msgstr "Уклањање старог директоријума „%s“"
+
+#: src/MirrorJob.cc:1339
+#, c-format
+msgid "Removing source directory `%s'"
+msgstr "Уклањање изворног директоријума „%s“"
+
+#: src/MirrorJob.cc:1405
+#, c-format
+msgid "Removing source file `%s'"
+msgstr "Уклањање изворне датотеке „%s“"
+
+#: src/MirrorJob.cc:1425
+#, c-format
+msgid "Retrying mirror...\n"
+msgstr "Поновно покушавање клонирања...\n"
+
+#: src/MirrorJob.cc:1694
+msgid "pattern is empty"
+msgstr "шема је празна"
+
+#: src/MirrorJob.cc:1779
+#, c-format
+msgid "%s must be one of: %s"
+msgstr "%s мора бити једно од: %s"
+
+#: src/MirrorJob.cc:2019
+#, c-format
+msgid "%s: multiple --file or --directory options must have the same base directory\n"
+msgstr "%s: вишеструке опције --file или --directory морају имати исти основни директоријум\n"
+
+#: src/MirrorJob.cc:2160
+#, c-format
+msgid "%s: ambiguous source directory (`%s' or `%s'?)\n"
+msgstr "%s: двосмислен изворни директоријум („%s“ или „%s“?)\n"
+
+#: src/MirrorJob.cc:2182
+#, c-format
+msgid "%s: ambiguous target directory (`%s' or `%s'?)\n"
+msgstr "%s: двосмислен одредишни директоријум („%s“ или „%s“?)\n"
+
+#: src/MirrorJob.cc:2223
+#, c-format
+msgid "%s: source directory is required (mirror:require-source is set)\n"
+msgstr "%s: захтева се изворни директоријум (постављено је mirror:require-source)\n"
+
+#: src/MirrorJob.cc:2343
+msgid ""
+"\n"
+"Mirror specified remote directory to local directory\n"
+"\n"
+" -R, --reverse          reverse mirror (put files)\n"
+"Lots of other options are documented in the man page lftp(1).\n"
+"\n"
+"When using -R, the first directory is local and the second is remote.\n"
+"If the second directory is omitted, basename of the first directory is used.\n"
+"If both directories are omitted, current local and remote directories are used.\n"
+"\n"
+"See the man page lftp(1) for a complete documentation.\n"
+msgstr ""
+"\n"
+"Клонира задати удаљени директоријум у локални директоријум\n"
+"\n"
+" -R, --reverse          инверзно клонирање (шаље датотеке)\n"
+"Доста других опција је документовано у man страници lftp(1).\n"
+"\n"
+"Када се користи -R, први директоријум је локални а други је удаљен.\n"
+"Ако се изостави други директоријум, користи се основни назив првог.\n"
+"Ако се изоставе оба директоријума, користиће се текући локални и удаљени\n"
+"директоријум.\n"
+"\n"
+"Погледајте man страницу lftp(1) за потпуну документацију.\n"
+
+#: src/mkdirJob.cc:128
+#, c-format
+msgid "%s ok, `%s' created\n"
+msgstr "%s у реду, креиран „%s“\n"
+
+#: src/mkdirJob.cc:130 src/rmJob.cc:51
+#, c-format
+msgid "%s failed for %d of %d director$y|ies$\n"
+msgstr "%s неуспешно за %d од %d директоријум$|а|а$\n"
+
+#: src/mkdirJob.cc:133
+#, c-format
+msgid "%s ok, %d director$y|ies$ created\n"
+msgstr "%s у реду, креирано %d директоријум$|а|а$\n"
+
+#: src/module.cc:190
+#, c-format
+msgid "depend module `%s': %s\n"
+msgstr "зависни модул „%s“: %s\n"
+
+#: src/module.cc:210
+msgid "modules are not supported on this system"
+msgstr "овај систем не подржава модуле"
+
+#: src/mvJob.cc:92
+#, c-format
+msgid "rename successful\n"
+msgstr "преименовање је успешно\n"
+
+#: src/NetAccess.cc:168
+#, c-format
+msgid "Connecting to %s%s (%s) port %u"
+msgstr "Повезивање са %s%s (%s) порт %u"
+
+#: src/NetAccess.cc:224 src/Torrent.cc:3326
+#, c-format
+msgid "Timeout - reconnecting"
+msgstr "Тајмаут - поновно повезивање"
+
+#: src/NetAccess.cc:323
+msgid "Connection limit reached"
+msgstr "Достигнуто је ограничење повезивања"
+
+#: src/NetAccess.cc:330
+msgid "Delaying before reconnect"
+msgstr "Паузирање пре поновног повезивања"
+
+#: src/NetAccess.cc:354 src/NetAccess.cc:356
+msgid "max-retries exceeded"
+msgstr "прекорачено је max-retries"
+
+#: src/OutputJob.cc:145
+#, c-format
+msgid "%s (filter)"
+msgstr "%s (филтар)"
+
+#: src/parsecmd.cc:290
+msgid "parse: missing filter command\n"
+msgstr "parse: недостаје наредба филтера\n"
+
+#: src/parsecmd.cc:292
+msgid "parse: missing redirection filename\n"
+msgstr "parse: недостаје назив датотеке за преусмеравање\n"
+
+#: src/PatternSet.cc:110
+#, c-format
+msgid "regular expression `%s': %s"
+msgstr "Регуларни израз „%s“: %s"
+
+#: src/pgetJob.cc:127
+msgid "pget: falling back to plain get"
+msgstr "pget: прелазак на обичан get"
+
+#: src/pgetJob.cc:131
+msgid "the target file is remote"
+msgstr "одредишна датотека је удаљена"
+
+#: src/pgetJob.cc:136
+msgid "the source file size is unknown"
+msgstr "величина изворне датотеке је непозната"
+
+#: src/pgetJob.cc:173
+#, c-format
+msgid "pget: warning: space allocation for %s (%lld bytes) failed: %s\n"
+msgstr "pget: упозорење: алокација простора за %s (%lld бајтова) није успешна: %s\n"
+
+#: src/pgetJob.cc:234
+#, c-format
+msgid "`%s', got %lld of %lld (%d%%) %s%s"
+msgstr "„%s“, примљено %lld од %lld (%d%%) %s%s"
+
+#: src/plural.c:96
+msgid "=1 =0|>1"
+msgstr "%10=1%100!11 %10>1<5%100<10|%10>1<5%100>19"
+
+#: src/PollVec.cc:69
+#, c-format
+msgid "%s: BUG - deadlock detected\n"
+msgstr "%s: ГРЕШКА - детектована мртва петља\n"
+
+#: src/PtyShell.cc:68
+msgid "pseudo-tty allocation failed: "
+msgstr "неуспешна алокација псеудо-tty-а: "
+
+#: src/QueueFeeder.cc:68
+msgid "Added job$|s$"
+msgstr "Додат$ посао|и послови|и послови$"
+
+#: src/QueueFeeder.cc:164 src/QueueFeeder.cc:185
+#, c-format
+msgid "No queued jobs.\n"
+msgstr "Нема послова у реду.\n"
+
+#: src/QueueFeeder.cc:166
+#, c-format
+msgid "No queued job #%i.\n"
+msgstr "Нема посла #%i у реду.\n"
+
+#: src/QueueFeeder.cc:171 src/QueueFeeder.cc:192
+msgid "Deleted job$|s$"
+msgstr "Обрисан$ посао|и послови|и послови$"
+
+#: src/QueueFeeder.cc:187
+#, c-format
+msgid "No queued jobs match \"%s\".\n"
+msgstr "Ниједан посао у реду не одговара „%s“.\n"
+
+#: src/QueueFeeder.cc:212 src/QueueFeeder.cc:230
+msgid "Moved job$|s$"
+msgstr "Померен$ посао|и послови|и послови$"
+
+#: src/QueueFeeder.cc:354
+msgid "Commands queued:"
+msgstr "Наредбе стављене у ред:"
+
+#: src/ResMgr.cc:123
+msgid "no such variable"
+msgstr "нема такве променљиве"
+
+#: src/ResMgr.cc:127
+msgid "ambiguous variable name"
+msgstr "двосмислен назив променљиве"
+
+#: src/ResMgr.cc:335
+msgid "invalid boolean value"
+msgstr "неисправна логичка вредност"
+
+#: src/ResMgr.cc:357
+msgid "invalid boolean/auto value"
+msgstr "неисправна логичка/аутоматска вредност"
+
+#: src/ResMgr.cc:402 src/ResMgr.cc:713
+msgid "invalid number"
+msgstr "неисправан број"
+
+#: src/ResMgr.cc:415
+msgid "invalid floating point number"
+msgstr "неисправан број у покретном зарезу"
+
+#: src/ResMgr.cc:429
+msgid "invalid unsigned number"
+msgstr "неисправан неозначени број"
+
+#: src/ResMgr.cc:678
+msgid "Invalid time unit letter, only [smhd] are allowed."
+msgstr "Неисправно слово јединице за време, дозвољена су само [smhd]."
+
+#: src/ResMgr.cc:686
+msgid "Invalid time format. Format is <time><unit>, e.g. 2h30m."
+msgstr "Неисправан формат времена. Формат је <време><јединица>, нпр. 2h30m."
+
+#: src/ResMgr.cc:718
+msgid "integer overflow"
+msgstr "преливање целог броја"
+
+#: src/ResMgr.cc:804
+msgid "Invalid IPv4 numeric address"
+msgstr "Неисправна IPv4 нумеричка адреса"
+
+#: src/ResMgr.cc:814
+msgid "Invalid IPv6 numeric address"
+msgstr "Неисправна IPv6 нумеричка адреса"
+
+#: src/ResMgr.cc:884 src/ResMgr.cc:888
+msgid "this encoding is not supported"
+msgstr "ово кодирање није подржано"
+
+#: src/ResMgr.cc:894
+msgid "no closure defined for this setting"
+msgstr "ниједан наставак није задат за ово подешавање"
+
+#: src/ResMgr.cc:900
+msgid "a closure is required for this setting"
+msgstr "захтева се наставак за ово подешавање"
+
+#: src/Resolver.cc:236
+msgid "host name resolve timeout"
+msgstr "тајмаут одређивања назива хоста"
+
+#: src/Resolver.cc:282
+#, c-format
+msgid "%d address$|es$ found"
+msgstr "пронађено је %d адрес$а|е|а$"
+
+#: src/Resolver.cc:327
+msgid "Link-local IPv6 address should have a scope"
+msgstr "IPv6 адреса локална за линк би требало да има опсег"
+
+#: src/Resolver.cc:765
+msgid "DNS resolution not trusted."
+msgstr "Разрешење DNS-а је без поверења."
+
+#: src/Resolver.cc:871
+msgid "Host name lookup failure"
+msgstr "Неуспешно тражење назива хоста"
+
+#: src/Resolver.cc:903
+#, c-format
+msgid "no such %s service"
+msgstr "нема таквог %s сервиса"
+
+#: src/Resolver.cc:930
+msgid "No address found"
+msgstr "Ниједна адреса није пронађена"
+
+#: src/resource.cc:50 src/resource.cc:108
+msgid "Proxy protocol unsupported"
+msgstr "Посреднички протокол није подржан"
+
+#: src/resource.cc:54
+msgid "ftp:proxy password: "
+msgstr "ftp:proxy лозинка: "
+
+#: src/resource.cc:70
+#, c-format
+msgid "%s must be one of: "
+msgstr "%s мора бити једно од: "
+
+#: src/resource.cc:72
+msgid "must be one of: "
+msgstr "мора бити једно од: "
+
+#: src/resource.cc:84
+msgid ", or empty"
+msgstr ", или празно"
+
+#: src/resource.cc:116
+msgid "only PUT and POST values allowed"
+msgstr "дозвољене су само вредности PUT и POST"
+
+#: src/resource.cc:148
+#, c-format
+msgid "unknown address family `%s'"
+msgstr "непозната фамилија адреса „%s“"
+
+#: src/rmJob.cc:47
+#, c-format
+msgid "%s ok, `%s' removed\n"
+msgstr "%s у реду, „%s“ је уклоњено\n"
+
+#: src/rmJob.cc:54
+#, c-format
+msgid "%s failed for %d of %d file$|s$\n"
+msgstr "%s није успешно за %d од %d датотек$е|е|а$\n"
+
+#: src/rmJob.cc:60
+#, c-format
+msgid "%s ok, %d director$y|ies$ removed\n"
+msgstr "%s у реду, %d директоријум$ уклоњен|а уклоњена|а уклоњено$\n"
+
+#: src/rmJob.cc:63
+#, c-format
+msgid "%s ok, %d file$|s$ removed\n"
+msgstr "%s у реду, %d датотек$а уклоњена|е уклоњене|а уклоњено$\n"
+
+#: src/SFtp.cc:1098 src/SFtp.cc:1099
+#, c-format
+msgid "invalid server response format"
+msgstr "Неисправан формат одговора сервера"
+
+#: src/SleepJob.cc:99
+msgid "Sleeping forever"
+msgstr "Неограничено спавање"
+
+#: src/SleepJob.cc:100
+msgid "Sleep time left: "
+msgstr "Преостало време спавања: "
+
+#: src/SleepJob.cc:108
+#, c-format
+msgid "\tRepeat count: %d\n"
+msgstr "\tБрој понављања: %d\n"
+
+#: src/SleepJob.cc:142
+#, c-format
+msgid "%s: argument required. "
+msgstr "%s: захтева се аргумент. "
+
+#: src/SleepJob.cc:262
+#, c-format
+msgid "%s: date-time specification missed\n"
+msgstr "%s: изостављено задавање датума и времена\n"
+
+#: src/SleepJob.cc:269
+#, c-format
+msgid "%s: date-time parse error\n"
+msgstr "%s: грешка приликом рашчлањивања датума и времена\n"
+
+#: src/SleepJob.cc:303
+msgid ""
+"Usage: sleep <time>[unit]\n"
+"Sleep for given amount of time. The time argument can be optionally\n"
+"followed by unit specifier: d - days, h - hours, m - minutes, s - seconds.\n"
+"By default time is assumed to be seconds.\n"
+msgstr ""
+"Употреба: sleep <време>[јединица]\n"
+"Спава током задатог временског интервала. Аргументу време опционо може\n"
+"следити задавање јединице: d - дана, h - сати, m - минута, s - секунди.\n"
+"Подразумевано се претпоставља да је време у секундама.\n"
+
+#: src/SleepJob.cc:310
+msgid ""
+"Repeat specified command with a delay between iterations.\n"
+"Default delay is one second, default command is empty.\n"
+" -c <count>  maximum number of iterations\n"
+" -d <delay>  delay between iterations\n"
+" --while-ok  stop when command exits with non-zero code\n"
+" --until-ok  stop when command exits with zero code\n"
+" --weak      stop when lftp moves to background.\n"
+msgstr ""
+"Понавља задату наредбу уз паузу између итерација.\n"
+"Подразумевана пауза је једна секунда, а подразумевана наредба је празна.\n"
+" -c <број>   максимални број итерација\n"
+" -d <пауза>  пауза између итерација\n"
+" --while-ok  заустављање када наредба изађе са кодом различитим од нуле\n"
+" --until-ok  заустављање када наредба изађе са кодом нула\n"
+" --weak      заустављање када се lftp премести у позадину.\n"
+
+#: src/Speedometer.cc:90
+#, c-format
+msgid "%.0fb/s"
+msgstr "%.0fБ/с"
+
+#: src/Speedometer.cc:93
+#, c-format
+msgid "%.1fK/s"
+msgstr "%.1fК/с"
+
+#: src/Speedometer.cc:96
+#, c-format
+msgid "%.2fM/s"
+msgstr "%.2fМ/с"
+
+#: src/Speedometer.cc:103
+#, c-format
+msgid "%.0f B/s"
+msgstr "%.0f Б/с"
+
+#: src/Speedometer.cc:105
+#, c-format
+msgid "%.1f KiB/s"
+msgstr "%.1f КиБ/с"
+
+#: src/Speedometer.cc:107
+#, c-format
+msgid "%.2f MiB/s"
+msgstr "%.2f МиБ/с"
+
+#: src/Speedometer.cc:129
+msgid "eta:"
+msgstr "прибл:"
+
+#: src/SSH_Access.cc:97
+msgid "Password required"
+msgstr "Захтева се лозинка"
+
+#: src/SSH_Access.cc:102
+msgid "Login incorrect"
+msgstr "Пријављивање је неисправно"
+
+#: src/SSH_Access.cc:196
+#, c-format
+msgid "Disconnecting"
+msgstr "Прекидање повезивања"
+
+#: src/SysCmdJob.cc:73
+#, c-format
+msgid "execlp(%s) failed: %s\n"
+msgstr "execlp(%s) није успео: %s\n"
+
+#: src/TimeDate.cc:155
+msgid "day"
+msgstr "дан"
+
+#: src/TimeDate.cc:156
+msgid "hour"
+msgstr "сат"
+
+#: src/TimeDate.cc:157
+msgid "minute"
+msgstr "минут"
+
+#: src/TimeDate.cc:158
+msgid "second"
+msgstr "секунд"
+
+#: src/Torrent.cc:585
+msgid "announced via "
+msgstr "оглашено преко "
+
+#: src/Torrent.cc:599
+#, c-format
+msgid "next announce in %s"
+msgstr "следеће оглашавање за %s"
+
+#: src/Torrent.cc:1142
+#, c-format
+msgid "%d file$|s$ found, now scanning %s"
+msgstr "%d датотек$а пронађена|е пронађене|а пронађено$, сада се скенира %s"
+
+#: src/Torrent.cc:1143
+#, c-format
+msgid "%d file$|s$ found"
+msgstr "%d датотек$а пронађена|е пронеђене|а пронађено$"
+
+#: src/Torrent.cc:2075 src/Torrent.cc:2085
+#, c-format
+msgid "Getting meta-data: %s"
+msgstr "Добављање мета-података: %s"
+
+#: src/Torrent.cc:2077
+#, c-format
+msgid "Validation: %u/%u (%u%%) %s%s"
+msgstr "Провера: %u/%u (%u%%) %s%s"
+
+#: src/Torrent.cc:2088
+msgid "Waiting for meta-data..."
+msgstr "Чекање на мета-податке..."
+
+#: src/Torrent.cc:2096
+msgid "Shutting down: "
+msgstr "Затварам: "
+
+#: src/Torrent.cc:3207
+#, c-format
+msgid "Connecting to peer %s port %u"
+msgstr "Повезивање са суседом %s порт %u"
+
+#: src/Torrent.cc:3258 src/Torrent.cc:3375
+#, c-format
+msgid "peer unexpectedly closed connection after %s"
+msgstr "сусед је неочекивано затворио повезивање после %s"
+
+#: src/Torrent.cc:3259 src/Torrent.cc:3376
+msgid "peer unexpectedly closed connection"
+msgstr "сусед је неочекивано затворио повезивање"
+
+#: src/Torrent.cc:3261 src/Torrent.cc:3262
+#, c-format
+msgid "peer closed connection (before handshake)"
+msgstr "сусед је затворио повезивање (пре руковања)"
+
+#: src/Torrent.cc:3265 src/Torrent.cc:3378 src/Torrent.cc:3379
+#, c-format
+msgid "invalid peer response format"
+msgstr "Погрешан формат одговора суседа"
+
+#: src/Torrent.cc:3360 src/Torrent.cc:3361
+#, c-format
+msgid "peer closed connection"
+msgstr "сусед је затворио повезивање"
+
+#: src/Torrent.cc:3538
+msgid "Handshaking..."
+msgstr "Руковање..."
+
+#: src/Torrent.cc:3798
+msgid "Cannot bind a socket for torrent:port-range"
+msgstr "Не може се повезати утичница за torrent:port-range"
+
+#: src/Torrent.cc:3858
+#, c-format
+msgid "Accepted connection from [%s]:%d"
+msgstr "Прихваћено повезивање од [%s]:%d"
+
+#: src/Torrent.cc:3924
+#, c-format
+msgid "peer sent unknown info_hash=%s in handshake"
+msgstr "сусед је послао непознат info_hash=%s приликом руковања"
+
+#: src/Torrent.cc:3948
+#, c-format
+msgid "peer handshake timeout"
+msgstr "тајмаут руковања суседа"
+
+#: src/Torrent.cc:3960
+#, c-format
+msgid "peer short handshake"
+msgstr "кратко руковање суседа"
+
+#: src/Torrent.cc:3962
+#, c-format
+msgid "peer closed just accepted connection"
+msgstr "сусед је затворио управо прихваћено повезивање"
+
+#: src/Torrent.cc:4013
+#, c-format
+msgid "Seeding in background...\n"
+msgstr "Сидовање у позадини...\n"
+
+#: src/Torrent.cc:4176
+#, c-format
+msgid "%s: --share conflicts with --output-directory.\n"
+msgstr "%s: --share је у сукобу са --output-directory.\n"
+
+#: src/Torrent.cc:4180
+#, c-format
+msgid "%s: --share conflicts with --only-new.\n"
+msgstr "%s: --share је у сукобу са --only-new.\n"
+
+#: src/Torrent.cc:4184
+#, c-format
+msgid "%s: --share conflicts with --only-incomplete.\n"
+msgstr "%s: --share је у сукобу са --only-incomplete.\n"
+
+#: src/Torrent.cc:4226
+#, c-format
+msgid "%s: Please specify a file or directory to share.\n"
+msgstr "%s: Задајте датотеку или директоријум за дељење.\n"
+
+#: src/Torrent.cc:4228
+#, c-format
+msgid "%s: Please specify meta-info file or URL.\n"
+msgstr "%s: Задајте мета-инфо датотеку или УРЛ.\n"
+
+#: src/Torrent.cc:4258
+msgid ""
+"Start BitTorrent job for the given torrent-files, which can be a local file,\n"
+"URL, magnet link or plain info_hash written in hex or base32. Local wildcards\n"
+"are expanded. Options:\n"
+" -O <base>      specifies base directory where files should be placed\n"
+" --force-valid  skip file validation\n"
+" --dht-bootstrap=<node>  bootstrap DHT by sending a query to the node\n"
+" --share        share specified file or directory\n"
+msgstr ""
+"Покреће BitTorrent посао за задате торент-датотеке, које могу бити локалне\n"
+"датотеке, УРЛ-ови, magnet везе или обични info_hash-ови записани хексадекадно\n"
+"или у base32. Локални џокерски знаци ће бити проширени. Опције:\n"
+" -O <основа>     задаје основни директоријум за смештање датотека\n"
+" --force-valid   прескаче проверу датотека\n"
+" --dht-bootstrap=<чвор>  покреће DHT слањем упита чворишту\n"
+" --share         дели задату датотеку или директоријум\n"
+
+#: src/TorrentTracker.cc:176
+msgid "not started"
+msgstr "није покренут"
+
+#: src/TorrentTracker.cc:179
+#, c-format
+msgid "next request in %s"
+msgstr "следећи захтев за %s"
+
+#: src/TorrentTracker.cc:282 src/TorrentTracker.cc:501
+#, c-format
+msgid "Received valid info about %d peer$|s$"
+msgstr "Примљени исправни подаци о %d сусед$у|а|а$"
+
+#: src/TorrentTracker.cc:296
+#, c-format
+msgid "Received valid info about %d IPv6 peer$|s$"
+msgstr "Примљени исправни подаци о %d IPv6 сусед$у|а|а$"
+
