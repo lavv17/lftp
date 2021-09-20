@@ -136,7 +136,7 @@ esac
 dnl ** LFTP needs iconv, call the test explicitly (even if --disable-nls)
 AM_ICONV
 
-ALL_LINGUAS="de es fr it ja ko pl pt_BR ru uk zh_CN zh_TW zh_HK cs"
+ALL_LINGUAS="de es fr it ja ko pl pt_BR sr ru uk zh_CN zh_TW zh_HK cs"
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.15])
 test "$MSGFMT"  = "no" && MSGFMT  ="$missing_dir/missing msgfmt"
