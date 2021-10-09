@@ -92,8 +92,6 @@ class lftp_ssl_gnutls : public lftp_ssl_base
    gnutls_session_t session;
    gnutls_certificate_credentials_t cred;
    void verify_certificate_chain(const gnutls_datum_t *cert_chain,int cert_chain_length);
-   void verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issuer);
-   void verify_last_cert(gnutls_x509_crt_t crt);
    int do_handshake();
    bool check_fatal(int res);
    static const xstring& get_fp(gnutls_x509_crt_t crt);
