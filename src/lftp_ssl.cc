@@ -338,6 +338,16 @@ void lftp_ssl_gnutls::load_keys()
       if(res<0)
 	 Log::global->Format(0,"gnutls_certificate_set_x509_key_file(%s,%s): %s\n",cert_file,key_file,gnutls_strerror(res));
    }
+   res = gnutls_certificate_set_x509_trust(cred, instance->ca_list, instance->ca_list_size);
+   if(res < 0)
+      Log::global->Format(0, "gnutls_certificate_set_x509_trust: %s\n", gnutls_strerror(res));
+   else
+      Log::global->Format(9, "Loaded %d CAs\n", res);
+   res = gnutls_certificate_set_x509_crl(cred, instance->crl_list, instance->crl_list_size);
+   if(res < 0)
+      Log::global->Format(0, "gnutls_certificate_set_x509_crl: %s\n", gnutls_strerror(res));
+   else
+      Log::global->Format(9, "Loaded %d CRLs\n", res);
    gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
 }
 void lftp_ssl_gnutls::shutdown()
@@ -358,174 +368,53 @@ lftp_ssl_gnutls::~lftp_ssl_gnutls()
  */
 void lftp_ssl_gnutls::verify_certificate_chain(const gnutls_datum_t *cert_chain,int cert_chain_length)
 {
-   int i;
-   gnutls_x509_crt_t *cert=(gnutls_x509_crt_t*)alloca(cert_chain_length*sizeof(gnutls_x509_crt_t));
+   int err;
+   unsigned int status;
 
-   /* Import all the certificates in the chain to
-    * native certificate format.
-    */
-   for (i = 0; i < cert_chain_length; i++)
-   {
-      gnutls_x509_crt_init(&cert[i]);
-      gnutls_x509_crt_import(cert[i],&cert_chain[i],GNUTLS_X509_FMT_DER);
+   gnutls_x509_crt_t leaf_cert;
+   err = gnutls_x509_crt_init(&leaf_cert);
+   if(err < 0){
+     set_cert_error(xstring::format("GnuTLS Error: %s", gnutls_strerror(err)), NULL);
+     goto err_out;
+   }
+   gnutls_x509_crt_import(leaf_cert, &cert_chain[0], GNUTLS_X509_FMT_DER);
+   if(err < 0){
+     set_cert_error(xstring::format("GnuTLS Error: %s", gnutls_strerror(err)), NULL);
+     goto deinit_cert;
    }
 
-   /* Now verify the certificates against their issuers
-    * in the chain.
-    */
-   for (i = 1; i < cert_chain_length; i++)
-      verify_cert2(cert[i - 1], cert[i]);
+   err = gnutls_certificate_verify_peers2 (session, &status);
+   if(err < 0){
+     set_cert_error(xstring::format("Cerificate Verification Error: %s", gnutls_strerror(err)), get_fp(leaf_cert));
+     goto deinit_cert;
+   }
 
-    /* Here we must verify the last certificate in the chain against
-     * our trusted CA list.
-     */
-   verify_last_cert(cert[cert_chain_length - 1]);
+   if(status != 0){
+     gnutls_datum_t reason;
+     err = gnutls_certificate_verification_status_print(status, gnutls_certificate_type_get(session), &reason, 0);
+     if(err < 0){
+       set_cert_error(xstring::format("Cerificate Verification Error: %s", gnutls_strerror(err)), get_fp(leaf_cert));
+       goto deinit_cert;
+     }
+     set_cert_error((const char*)reason.data, get_fp(leaf_cert));
+     gnutls_free(reason.data);
+     goto deinit_cert;
+   }
 
-   /* Check if the name in the first certificate matches our destination!
-    */
-   bool check_hostname = ResMgr::QueryBool("ssl:check-hostname", hostname);
-   if(check_hostname) {
-      if(!gnutls_x509_crt_check_hostname(cert[0], hostname))
-	 set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)),get_fp(cert[0]));
+   if(ResMgr::QueryBool("ssl:check-hostname", hostname)) {
+      if(!gnutls_x509_crt_check_hostname(leaf_cert, hostname)){
+         set_cert_error(xstring::format("certificate common name doesn't match requested host name %s",quote(hostname)),get_fp(leaf_cert));
+         goto deinit_cert;
+      }
    } else {
       Log::global->Format(0, "WARNING: Certificate verification: hostname checking disabled\n");
    }
 
-   for (i = 0; i < cert_chain_length; i++)
-      gnutls_x509_crt_deinit(cert[i]);
-}
+   deinit_cert:
+   gnutls_x509_crt_deinit(leaf_cert);
 
-
-/* Verifies a certificate against an other certificate
- * which is supposed to be it's issuer. Also checks the
- * crl_list if the certificate is revoked.
- */
-void lftp_ssl_gnutls::verify_cert2(gnutls_x509_crt_t crt,gnutls_x509_crt_t issuer)
-{
-   int ret;
-   time_t now = SMTask::now;
-   size_t name_size;
-   char name[256];
-
-   /* Print information about the certificates to
-    * be checked.
-    */
-   name_size = sizeof(name);
-   gnutls_x509_crt_get_dn(crt, name, &name_size);
-
-   Log::global->Format(9, "Certificate: %s\n", name);
-
-   name_size = sizeof(name);
-   gnutls_x509_crt_get_issuer_dn(crt, name, &name_size);
-
-   Log::global->Format(9, " Issued by:        %s\n", name);
-
-   /* Get the DN of the issuer cert.
-    */
-   name_size = sizeof(name);
-   gnutls_x509_crt_get_dn(issuer, name, &name_size);
-
-   Log::global->Format(9, " Checking against: %s\n", name);
-
-   /* Do the actual verification.
-    */
-   unsigned crt_status=0;
-   unsigned issuer_status=0;
-   gnutls_x509_crt_verify(crt, &issuer, 1, 0, &crt_status);
-   if(crt_status&GNUTLS_CERT_SIGNER_NOT_CA)
-   {
-      // recheck the issuer certificate against CA
-      gnutls_x509_crt_verify(issuer, instance->ca_list, instance->ca_list_size, 0, &issuer_status);
-      if(issuer_status==0)
-	 crt_status&=~GNUTLS_CERT_SIGNER_NOT_CA;
-      if(crt_status==GNUTLS_CERT_INVALID)
-	 crt_status=0;
-   }
-   if (crt_status & GNUTLS_CERT_INVALID)
-   {
-      char msg[256];
-      strcpy(msg,"Not trusted");
-      if(crt_status & GNUTLS_CERT_SIGNER_NOT_FOUND)
-	 strcat(msg,": no issuer was found");
-      if(crt_status & GNUTLS_CERT_SIGNER_NOT_CA)
-	 strcat(msg,": issuer is not a CA");
-      set_cert_error(msg,get_fp(crt));
-   }
-   else
-      Log::global->Format(9, "  Trusted\n");
-
-
-    /* Now check the expiration dates.
-     */
-    if (gnutls_x509_crt_get_activation_time(crt) > now)
-	set_cert_error("Not yet activated",get_fp(crt));
-
-    if (gnutls_x509_crt_get_expiration_time(crt) < now)
-	set_cert_error("Expired",get_fp(crt));
-
-    /* Check if the certificate is revoked.
-     */
-    ret = gnutls_x509_crt_check_revocation(crt, instance->crl_list, instance->crl_list_size);
-    if (ret == 1) {		/* revoked */
-	set_cert_error("Revoked",get_fp(crt));
-    }
-}
-
-
-/* Verifies a certificate against the trusted CA list.
- * Also checks the crl_list if the certificate is revoked.
- */
-void lftp_ssl_gnutls::verify_last_cert(gnutls_x509_crt_t crt)
-{
-   unsigned int crt_status;
-   int ret;
-   time_t now = SMTask::now;
-   size_t name_size;
-   char name[256];
-
-   /* Print information about the certificates to
-    * be checked.
-    */
-   name_size = sizeof(name);
-   gnutls_x509_crt_get_dn(crt, name, &name_size);
-
-   Log::global->Format(9, "Certificate: %s\n", name);
-
-   name_size = sizeof(name);
-   gnutls_x509_crt_get_issuer_dn(crt, name, &name_size);
-
-   Log::global->Format(9, " Issued by: %s\n", name);
-
-   /* Do the actual verification.
-    */
-   gnutls_x509_crt_verify(crt, instance->ca_list, instance->ca_list_size, GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT, &crt_status);
-
-   if (crt_status & GNUTLS_CERT_INVALID)
-   {
-      char msg[256];
-      strcpy(msg,"Not trusted");
-      if (crt_status & GNUTLS_CERT_SIGNER_NOT_CA)
-	 strcat(msg,": Issuer is not a CA");
-      set_cert_error(msg,get_fp(crt));
-   }
-   else
-      Log::global->Format(9, "  Trusted\n");
-
-
-   /* Now check the expiration dates.
-    */
-   if(gnutls_x509_crt_get_activation_time(crt) > now)
-      set_cert_error("Not yet activated",get_fp(crt));
-
-   if(gnutls_x509_crt_get_expiration_time(crt) < now)
-      set_cert_error("Expired",get_fp(crt));
-
-   /* Check if the certificate is revoked.
-    */
-   ret = gnutls_x509_crt_check_revocation(crt, instance->crl_list, instance->crl_list_size);
-   if (ret == 1) {		/* revoked */
-      set_cert_error("Revoked",get_fp(crt));
-   }
+   err_out:
+   return;
 }
 
 bool lftp_ssl_gnutls::check_fatal(int res)
