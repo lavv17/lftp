@@ -335,6 +335,7 @@ class FileCopyPeerFA : public FileCopyPeer
    FileSet info;
 
    bool fxp;   // FXP (ftp<=>ftp copy) active
+   bool fileincreased;
 
    UploadState upload_state;
    int redirections;
