@@ -664,7 +664,7 @@ error:
 #elif USE_OPENSSL
 //static int lftp_ssl_passwd_callback(char *buf,int size,int rwflag,void *userdata);
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || (defined (LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x2070000L)
 // for compatibility with older versions
 X509_OBJECT *X509_OBJECT_new()
 {
