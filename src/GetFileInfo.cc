@@ -114,6 +114,22 @@ void GetFileInfo::PrepareToDie()
    }
 }
 
+void GetFileInfo::MakeVerifyFileName()
+{
+   /* Here we should have the home directory path. Find out
+    * the real name of the path.  (We may have something like "~/..".) */
+
+   FileAccess::Path pwd(session->GetCwd());
+
+   session->SetCwd(origdir);
+   session->Chdir(dir, false);
+
+   verify_fn.set(basename_ptr(session->GetCwd()));
+
+   /* go back */
+   session->SetCwd(pwd);
+}
+
 int GetFileInfo::Do()
 {
    int res;
@@ -241,6 +257,8 @@ int GetFileInfo::Do()
 	 if(!saved_error_text)
 	    saved_error_text.set(session->StrError(res));
 	 session->Close();
+         if(!verify_fn)
+            MakeVerifyFileName();
 	 if(res==FA::NO_FILE)
 	 {
 	    /* If this is a CWD to the parent, and it failed, we
@@ -262,17 +280,7 @@ int GetFileInfo::Do()
       /* Now that we've connected, we should have the home directory path. Find out
        * the real name of the path.  (We may have something like "~/..".) */
       if(!verify_fn)
-      {
-	 FileAccess::Path pwd(session->GetCwd());
-
-	 session->SetCwd(origdir);
-	 session->Chdir(dir, false);
-
-	 verify_fn.set(basename_ptr(session->GetCwd()));
-
-	 /* go back */
-	 session->SetCwd(pwd);
-      }
+         MakeVerifyFileName();
 
       /* Special case: looking up "/". Make a phony entry. */
       if(showdir && !strcmp(verify_fn, "/"))

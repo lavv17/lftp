@@ -66,6 +66,8 @@ class GetFileInfo : public ListInfo
 
    void PrepareToDie();
 
+   void MakeVerifyFileName();
+
 public:
    GetFileInfo(const FileAccessRef& a, const char *path, bool showdir);
    virtual ~GetFileInfo();
