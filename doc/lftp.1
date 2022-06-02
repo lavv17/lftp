@@ -699,10 +699,10 @@ T}
 remove and re-create plain files instead of overwriting
 T}
 \-N,	\-\-newer\-than=\fISPEC\fP	T{
-download only files newer than specified time
+download only files newer than specified time, or specified local file modification time.
 T}
 	\-\-older\-than=\fISPEC\fP	T{
-download only files older than specified time
+download only files older than specified time, or specified local file modification time.
 T}
 	\-\-size\-range=\fIRANGE\fP	T{
 download only files with size in specified range
@@ -799,7 +799,7 @@ because FTP protocol cannot do it. To upload files the links refer
 to, use `mirror \-RL' command (treat symbolic links as files).
 .PP
 For options \-\-newer\-than and \-\-older\-than you can either specify a
-file or time specification like that used by \fBat\fR(1) command, e.g.
+local file or time specification like that used by \fBat\fR(1) command, e.g.
 `now-7days' or `week ago'. If you specify a file, then modification time of
 that file will be used.
 .PP
