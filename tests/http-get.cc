@@ -13,7 +13,7 @@ int main(int argc,char **argv)
    ResMgr::Set("log:level",0,"5");
    ResMgr::Set("log:enabled",0,"true");
 
-   FileAccess *f=FileAccess::New("http","lftp.tech");
+   FileAccess *f=FileAccess::New("http","lftp.yar.ru");
    if(!f)
    {
       fprintf(stderr,"http: unknown protocol, cannot create http session\n");
