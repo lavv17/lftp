@@ -398,6 +398,10 @@ int GetFileInfo::Do()
 	  * also serves as a last attempt to see if the file exists--we
 	  * only get here if everything else thinks the path doesn't exist.
 	  */
+
+	 if(!verify_fn)
+		 MakeVerifyFileName();
+
 	 FileInfo *fi=new FileInfo(verify_fn);
 	 fi->need=need;
 	 /* We need to do at least one. */
