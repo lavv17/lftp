@@ -935,7 +935,9 @@ Options:
 .TS
 l	lx	.
 \-e \fIcmd\fP	execute the command just after selecting the server
-\-u \fIuser\fP[,\fIpass\fP]	use the user/password for authentication
+\-u \fIuser\fP[,\fIpass\fP]	T{
+use the user/password for authentication. A colon can also be used to separate user and password.
+T}
 \-p \fIport\fP	use the port for connection
 \-s \fIslot\fP	assign the connection to this slot
 \-d	enable debug
@@ -946,6 +948,8 @@ l	lx	.
 \fIsite\fP	host name, URL or bookmark name
 .TE
 .RE
+If the user name contains special characters (comma or colon) do not use \-u option,
+specify it with the \-\-user option or quote it in the URL using percent notation %AB.
 .P
 .B pget
 .RI [ OPTS ]
