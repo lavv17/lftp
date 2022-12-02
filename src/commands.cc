@@ -935,6 +935,7 @@ Job *CmdExec::builtin_open()
 	 break;
       case(OPT_PASSWORD):
 	 pass=optarg;
+	 insecure=true;
 	 break;
       case(OPT_ENV_PASSWORD):
 	 pass=getenv("LFTP_PASSWORD");
