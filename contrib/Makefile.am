@@ -1,12 +1,10 @@
 appdir = $(datadir)/applications
 icondir = $(datadir)/icons/hicolor/48x48/apps
+zshcompletiondir = $(datadir)/zsh/site-functions
 
 app_DATA = lftp.desktop
 icon_DATA = lftp-icon.png
+zshcompletion_DATA = _lftp
 noinst_SCRIPTS = get-all-torrents
 
-EXTRA_DIST = $(app_DATA) $(icon_DATA) $(noinst_SCRIPTS)
-
-.PHONY: install-zsh-completion
-install-zsh-completion:
-	install -Dm644 zsh-completion.zsh $(datadir)/zsh/site-functions/_lftp
+EXTRA_DIST = $(app_DATA) $(icon_DATA) $(zshcompletion_DATA) $(noinst_SCRIPTS)
