@@ -354,6 +354,7 @@ int lftp_ssl_gnutls::shutdown()
 	         set_error("gnutls_shutdown",gnutls_strerror(res));
 	         return ERROR;
          }
+    return res;
    }
    return res;
 }
