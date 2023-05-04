@@ -34,7 +34,7 @@
 #include "misc.h"
 #include "network.h"
 #include "buffer.h"
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || (defined (LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x3050000fL)
 #define X509_STORE_CTX_get_by_subject X509_STORE_get_by_subject
 #endif
 extern "C" {
@@ -729,7 +729,7 @@ lftp_ssl_openssl_instance::lftp_ssl_openssl_instance()
    ssl_ctx=SSL_CTX_new();
    X509_set_default_verify_paths(ssl_ctx->cert);
 #else
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || (defined (LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x3000000fL)
    SSLeay_add_ssl_algorithms();
 #endif
    ssl_ctx=SSL_CTX_new(SSLv23_client_method());
@@ -969,7 +969,7 @@ void lftp_ssl_openssl::copy_sid(const lftp_ssl_openssl *o)
 
 const char *lftp_ssl_openssl::strerror()
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || (defined (LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x3000000fL)
    SSL_load_error_strings();
 #endif
    int error=ERR_get_error();
