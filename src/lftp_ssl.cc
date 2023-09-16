@@ -350,10 +350,23 @@ void lftp_ssl_gnutls::load_keys()
       Log::global->Format(9, "Loaded %d CRLs\n", res);
    gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
 }
-void lftp_ssl_gnutls::shutdown()
+int lftp_ssl_gnutls::shutdown()
 {
    if(handshake_done)
-      gnutls_bye(session,GNUTLS_SHUT_RDWR);  // FIXME - E_AGAIN
+      int res=gnutls_bye(session,GNUTLS_SHUT_RDWR);
+      if(res<0)
+      {
+         if(res==GNUTLS_E_AGAIN || res==GNUTLS_E_INTERRUPTED)
+	         return RETRY;
+         else // error
+         {
+	         fatal=check_fatal(res);
+	         set_error("gnutls_shutdown",gnutls_strerror(res));
+	         return ERROR;
+         }
+    return res;
+   }
+   return res;
 }
 lftp_ssl_gnutls::~lftp_ssl_gnutls()
 {
