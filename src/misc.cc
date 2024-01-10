@@ -653,10 +653,10 @@ xstring& SubstTo(xstring& buf,const char *txt, const subst_t *s)
 void xgettimeofday(time_t *sec, int *usec)
 {
 #ifdef HAVE_GETTIMEOFDAY
-   struct timeval tv;
-   gettimeofday(&tv,0);
+   struct timespec tv;
+   clock_gettime(CLOCK_MONOTONIC_RAW, &tv);
    if(sec) *sec = tv.tv_sec;
-   if(usec) *usec = tv.tv_usec;
+   if(usec) *usec = tv.tv_nsec / 1000;
 #else
    if(sec) time(sec);
    if(usec) *usec = 0;
