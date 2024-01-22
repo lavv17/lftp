@@ -863,6 +863,7 @@ lftp_ssl_openssl::~lftp_ssl_openssl()
 {
    SSL_free(ssl);
    ssl=0;
+   global_deinit();
 }
 
 static lftp_ssl_openssl *verify_callback_ssl;
