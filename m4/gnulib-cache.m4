@@ -1,8 +1,8 @@
-# Copyright (C) 2002-2020 Free Software Foundation, Inc.
+# Copyright (C) 2002-2022 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # This file is distributed in the hope that it will be useful,
@@ -47,7 +47,7 @@
 #  fnmatch \
 #  fnmatch-gnu \
 #  getopt-gnu \
-#  gettext \
+#  gettext-h \
 #  gettimeofday \
 #  git-version-gen \
 #  glob \
@@ -55,7 +55,6 @@
 #  iconv_open \
 #  inet_pton \
 #  lchown \
-#  longlong \
 #  lstat \
 #  mbswidth \
 #  memcasecmp \
@@ -92,7 +91,7 @@ gl_MODULES([
   fnmatch
   fnmatch-gnu
   getopt-gnu
-  gettext
+  gettext-h
   gettimeofday
   git-version-gen
   glob
@@ -100,7 +99,6 @@ gl_MODULES([
   iconv_open
   inet_pton
   lchown
-  longlong
   lstat
   mbswidth
   memcasecmp

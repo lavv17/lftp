@@ -1137,6 +1137,7 @@ void FileCopyPeerFA::OpenSession()
 	 debug((10,"copy dst: seek past eof (seek_pos=%lld, size=%lld)\n",
 		  (long long)seek_pos,(long long)e_size));
 	 eof=true;
+	 fileincreased=true;
 	 if(date==NO_DATE || date==NO_DATE_YET)
 	    return;
       }
@@ -1284,6 +1285,12 @@ int FileCopyPeerFA::Put_LL(const char *buf,int len)
    if(session->IsClosed())
       OpenSession();
 
+   if(fileincreased)
+   {
+      SetError(_("file size increased during transfer"));
+      return -1;
+   }
+
    off_t io_at=pos; // GetRealPos can alter pos, save it.
    if(GetRealPos()!=io_at)
       return 0;
@@ -1352,6 +1359,7 @@ void FileCopyPeerFA::Init()
 {
    get_delay=0;
    fxp=false;
+   fileincreased=false;
    redirections=0;
    can_seek=true;
    can_seek0=true;

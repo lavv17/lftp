@@ -39,7 +39,7 @@
 .RE
 .fi
 ..
-.TH lftp 1 "10 Aug 2017"
+.TH lftp 1 "11 June 2022"
 .SH NAME
 lftp \- Sophisticated file transfer program
 .SH SYNTAX
@@ -935,7 +935,9 @@ Options:
 .TS
 l	lx	.
 \-e \fIcmd\fP	execute the command just after selecting the server
-\-u \fIuser\fP[,\fIpass\fP]	use the user/password for authentication
+\-u \fIuser\fP[,\fIpass\fP]	T{
+use the user/password for authentication. A colon can also be used to separate user and password.
+T}
 \-p \fIport\fP	use the port for connection
 \-s \fIslot\fP	assign the connection to this slot
 \-d	enable debug
@@ -946,6 +948,8 @@ l	lx	.
 \fIsite\fP	host name, URL or bookmark name
 .TE
 .RE
+If the user name contains special characters (comma or colon) do not use \-u option,
+specify it with the \-\-user option or quote it in the URL using percent notation %AB.
 .P
 .B pget
 .RI [ OPTS ]
@@ -2322,11 +2326,16 @@ Certificate Authority and not be on Certificate Revocation List. You can
 specify either host name or certificate fingerprint in the closure.
 .TP
 .BR ssl:priority " (string)"
-free form priority string for GnuTLS. If built with OpenSSL the understood
-values are \fI+\fP or \fI\-\fP followed by SSL3.0, TLS1.0, TLS1.1 or TLS1.2,
-separated by \fI:\fP. Example:
+free form priority string for GnuTLS. Example for TLS 1.2:
 .Ds
-set ssl:priority "NORMAL:\-SSL3.0:\-TLS1.0:\-TLS1.1:+TLS1.2"
+set ssl:priority "NORMAL:\-VERS\-SSL3.0:\-VERS\-TLS1.0:\-VERS\-TLS1.1:+VERS\-TLS1.2:\-VERS-TLS1.3"
+.De
+.RS
+If built with OpenSSL an emulated version is \fI\-\fP (\fI\+\fP has no effect) followed by SSL3.0, TLS1.0, TLS1.1, TLS1.2,
+separated by \fB:\fP. Example for TLS 1.3:
+.RE
+.Ds
+set ssl:priority "NORMAL:\-SSL3.0:\-TLS1.0:\-TLS1.1:-TLS1.2"
 .De
 .TP
 .BR torrent:ip " (ipv4 address)"

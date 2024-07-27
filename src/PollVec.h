@@ -59,8 +59,8 @@ public:
    void	 Block();
 
    enum {
-      IN=1,
-      OUT=4,
+      IN=POLLIN,
+      OUT=POLLOUT,
    };
 
    void SetTimeout(const timeval &t) { tv_timeout=t; }

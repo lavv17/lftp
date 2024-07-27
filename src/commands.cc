@@ -935,6 +935,7 @@ Job *CmdExec::builtin_open()
 	 break;
       case(OPT_PASSWORD):
 	 pass=optarg;
+	 insecure=true;
 	 break;
       case(OPT_ENV_PASSWORD):
 	 pass=getenv("LFTP_PASSWORD");
@@ -2834,9 +2835,11 @@ CMD(ver)
    {
       const char *lib_name;
       const char *symbol;
-      enum type_t { STRING_OR_PTR, STRING_PTR, FUNC0, INT8_8 } type;
+      enum type_t { STRING_OR_PTR, STRING_PTR, FUNC0, INT8_8, FUNC1 } type;
       const char *skip_prefix;
       typedef const char *(*func0)(void *);
+      typedef const char *(*func1)(int);
+      const int param;
       const char *query() const
 	 {
 	    int v;
@@ -2857,6 +2860,9 @@ CMD(ver)
 	    case FUNC0:
 	       str=((func0)sym_ptr)(NULL);
 	       break;
+	    case FUNC1: /* openssl v3 */
+	       str=((func1)sym_ptr)(param);
+	       break;
 	    case INT8_8:
 	       v=*(int*)sym_ptr;
 	       str=xstring::format("%d.%d",(v>>8)&255,v&255);
@@ -2870,13 +2876,14 @@ CMD(ver)
    }
    static const libs[]=
    {
-      {"Expat",	     "XML_ExpatVersion",     VersionInfo::FUNC0,     "expat_"},
-      {"GnuTLS",     "gnutls_check_version", VersionInfo::FUNC0,     0},
-      {"idn2",	     "idn2_check_version",   VersionInfo::FUNC0,     0},
-      {"libiconv",   "_libiconv_version",    VersionInfo::INT8_8,    0},
-      {"OpenSSL",    "SSL_version_str",      VersionInfo::STRING_OR_PTR,"OpenSSL "},
-      {"Readline",   "rl_library_version",   VersionInfo::STRING_PTR,0},
-      {"zlib",	     "zlibVersion",	     VersionInfo::FUNC0,     0},
+      {"Expat",	     "XML_ExpatVersion",     VersionInfo::FUNC0,     "expat_", 0},
+      {"GnuTLS",     "gnutls_check_version", VersionInfo::FUNC0,     0, 0},
+      {"idn2",	     "idn2_check_version",   VersionInfo::FUNC0,     0, 0},
+      {"libiconv",   "_libiconv_version",    VersionInfo::INT8_8,    0, 0},
+      {"OpenSSL",    "SSL_version_str",      VersionInfo::STRING_OR_PTR,"OpenSSL ", 0},
+      {"OpenSSL",    "OpenSSL_version",      VersionInfo::FUNC1,  0, 6},
+      {"Readline",   "rl_library_version",   VersionInfo::STRING_PTR,0, 0},
+      {"zlib",	     "zlibVersion",	     VersionInfo::FUNC0,     0, 0},
       {0}
    };
 
