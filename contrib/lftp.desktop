@@ -5,4 +5,4 @@ Icon=lftp-icon
 Type=Application
 Terminal=true
 Exec=lftp
-Categories=Network;
+Categories=Network;FileTransfer;
