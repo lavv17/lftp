@@ -108,7 +108,7 @@ public:
    bool want_out();
    void copy_sid(const lftp_ssl_gnutls *);
    void load_keys();
-   void shutdown();
+   int shutdown();
 };
 typedef lftp_ssl_gnutls lftp_ssl;
 #elif USE_OPENSSL
@@ -144,7 +144,7 @@ public:
    bool want_out();
    void copy_sid(const lftp_ssl_openssl *);
    void load_keys();
-   void shutdown();
+   int shutdown();
 };
 typedef lftp_ssl_openssl lftp_ssl;
 #endif
