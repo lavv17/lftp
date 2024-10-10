@@ -1137,7 +1137,8 @@ void FileCopyPeerFA::OpenSession()
 	 debug((10,"copy dst: seek past eof (seek_pos=%lld, size=%lld)\n",
 		  (long long)seek_pos,(long long)e_size));
 	 eof=true;
-	 fileincreased=true;
+	 if(seek_pos > e_size)
+	    fileincreased=true;
 	 if(date==NO_DATE || date==NO_DATE_YET)
 	    return;
       }
