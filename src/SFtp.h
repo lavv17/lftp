@@ -755,6 +755,7 @@ private:
    int size_read;
    int size_write;
    bool use_full_path;
+   int max_out_of_order;
 
 protected:
    void SetError(int code,const Packet *reply);
