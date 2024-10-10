@@ -565,7 +565,7 @@ public:
       retries=session->GetRetries();
       off_t pos=session->GetRealPos();
       int max_retries=session->GetMaxRetries();
-      if(max_retries>0 && retries>=max_retries)
+      if(max_retries>0 && retries>max_retries)
 	 pos=0;
       if(pos_watermark<pos) {
 	 pos_watermark=pos;
