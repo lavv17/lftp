@@ -755,6 +755,7 @@ private:
    int size_read;
    int size_write;
    bool use_full_path;
+   bool skip_fsetstat;
    int max_out_of_order;
 
 protected:
