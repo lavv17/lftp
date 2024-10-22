@@ -261,14 +261,17 @@ int SFtp::Do()
       if(s==0)
       {
 	 // no more data, set attributes and close the file.
-	 Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
-	 if(entity_date!=NO_DATE) {
-	    req->attrs.mtime=entity_date;
-	    req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
-	 }
-	 req->attrs.size=pos;
-	 req->attrs.flags|=SSH_FILEXFER_ATTR_SIZE;
-	 SendRequest(req,Expect::IGNORE);
+	 if (!skip_fsetstat)
+	 {
+            Request_FSETSTAT *req=new Request_FSETSTAT(handle,protocol_version);
+            if(entity_date!=NO_DATE) {
+               req->attrs.mtime=entity_date;
+               req->attrs.flags|=SSH_FILEXFER_ATTR_MODIFYTIME;
+            }
+            req->attrs.size=pos;
+            req->attrs.flags|=SSH_FILEXFER_ATTR_SIZE;
+            SendRequest(req,Expect::IGNORE);
+         }
 	 CloseHandle(Expect::DEFAULT);
 	 state=WAITING;
 	 m=MOVED;
@@ -343,6 +346,7 @@ void SFtp::Init()
    size_read=0x8000;
    size_write=0x8000;
    use_full_path=false;
+   skip_fsetstat=false;
    flush_timer.Set(0,500);
    max_out_of_order=64;
 }
@@ -1394,6 +1398,7 @@ void SFtp::Reconfig(const char *name)
    if(size_write<16)
       size_write=16;
    use_full_path=QueryBool("use-full-path",c);
+   skip_fsetstat=QueryBool("skip-fsetstat",c);
    if(!xstrcmp(name,"sftp:charset") && protocol_version && protocol_version<4)
    {
       if(!IsSuspended())

@@ -2293,6 +2293,10 @@ Block size for reading. Default is 0x8000.
 .BR sftp:size-write \ (number)
 Block size for writing. Default is 0x8000.
 .TP
+.BR sftp:skip-fsetstat \ (boolean)
+When true, lftp will NOT send FSETSTAT after finishing write of a file. Default is
+to send FSETSTAT after write and before close.
+.TP
 .BR ssl:ca-file " (path to file)"
 use specified file as Certificate Authority certificate.
 .TP
