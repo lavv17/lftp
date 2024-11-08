@@ -1,3 +1,12 @@
 /u8-mbtoucr.c
 /u8-uctomb-aux.c
 /u8-uctomb.c
+/u-cpy.h
+/u-pcpy.h
+/u-strcat.h
+/u-strlen.h
+/u32-chr.c
+/u32-cpy.c
+/u32-pcpy.c
+/u32-strcat.c
+/u32-strlen.c

@@ -1,3 +1,11 @@
+Version 4.9.3 - 2024-11-08
+
+* fixed sftp out-of-order problem.
+* fixed udp tracker looping.
+* fixed a few coredumps.
+* fixed compilation in some cases.
+* translations updated.
+
 Version 4.9.2 - 2020-08-13
 
 * mkdir: fixed exit code with -f option.
