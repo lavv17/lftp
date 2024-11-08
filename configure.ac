@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ([2.64])
-AC_INIT([lftp],m4_esyscmd([build-aux/git-version-gen .tarball-version]),[lftp-bugs@lftp.yar.ru])
+AC_PREREQ([2.71])
+AC_INIT([lftp],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[lftp-bugs@lftp.yar.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/ftpclass.cc])
-AM_CONFIG_HEADER([lib/config.h])
+AC_CONFIG_HEADERS([lib/config.h])
 AM_INIT_AUTOMAKE
 
 dnl This doesn't *require* GNU extensions; it merely enables them if
@@ -351,9 +351,7 @@ LFTP_LIBIDN2_CHECK
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
-AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
 AC_CHECK_HEADERS(libintl.h fcntl.h sys/time.h errno.h stdlib.h varargs.h dirent.h\
  termios.h termio.h sys/select.h sys/stropts.h string.h memory.h\
  strings.h sys/ioctl.h dlfcn.h arpa/inet.h arpa/nameser.h netinet/in.h netinet/tcp.h\
