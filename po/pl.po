@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.7.2\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2020-08-13 22:44+0300\n"
+"POT-Creation-Date: 2024-11-08 13:05+0300\n"
 "PO-Revision-Date: 2016-05-20 15:00+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -18,55 +18,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/argmatch.c:132
+#: lib/argmatch.c:145
 #, c-format
 msgid "invalid argument %s for %s"
 msgstr "błędny argument %s opcji %s"
 
-#: lib/argmatch.c:133
+#: lib/argmatch.c:146
 #, c-format
 msgid "ambiguous argument %s for %s"
 msgstr "niejednoznaczny argument %s opcji %s"
 
-#: lib/argmatch.c:152
+#: lib/argmatch.c:165
 msgid "Valid arguments are:"
 msgstr "Prawidłowe argumenty to:"
 
-#: lib/error.c:195
+#: lib/error.c:208
 msgid "Unknown system error"
 msgstr "Nieznany błąd systemowy"
 
-#: lib/getopt.c:278
+#: lib/getopt.c:282
 #, fuzzy, c-format
 msgid "%s: option '%s%s' is ambiguous\n"
 msgstr "%s: opcja '%s' jest niejednoznaczna\n"
 
-#: lib/getopt.c:284
+#: lib/getopt.c:288
 #, fuzzy, c-format
 msgid "%s: option '%s%s' is ambiguous; possibilities:"
 msgstr "%s: opcja '%s' jest niejednoznaczna; możliwości:"
 
-#: lib/getopt.c:319
+#: lib/getopt.c:322
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%s%s'\n"
 msgstr "%s: nieznana opcja '%c%s'\n"
 
-#: lib/getopt.c:345
+#: lib/getopt.c:348
 #, fuzzy, c-format
 msgid "%s: option '%s%s' doesn't allow an argument\n"
 msgstr "%s: opcja '%c%s' nie może mieć argumentów\n"
 
-#: lib/getopt.c:360
+#: lib/getopt.c:363
 #, fuzzy, c-format
 msgid "%s: option '%s%s' requires an argument\n"
 msgstr "%s: opcja '--%s' musi mieć argument\n"
 
-#: lib/getopt.c:621
+#: lib/getopt.c:624
 #, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s: błędna opcja -- '%c'\n"
 
-#: lib/getopt.c:636 lib/getopt.c:682
+#: lib/getopt.c:639 lib/getopt.c:685
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s: opcja musi mieć argument -- '%c'\n"
@@ -92,11 +92,11 @@ msgstr "%s: opcja musi mieć argument -- '%c'\n"
 #. If you don't know what to put here, please see
 #. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:355
+#: lib/quotearg.c:354
 msgid "`"
 msgstr "`"
 
-#: lib/quotearg.c:356
+#: lib/quotearg.c:355
 msgid "'"
 msgstr "'"
 
@@ -185,7 +185,7 @@ msgstr "cd ok, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: otrzymano przekierowanie do `%s'\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1229
+#: src/CmdExec.cc:408 src/FileCopy.cc:1230
 msgid "Too many redirections"
 msgstr "Zbyt dużo przekierowań"
 
@@ -473,8 +473,8 @@ msgstr ""
 "zobaczyć nowe listy plików użyj komendy `recls' lub `cache flush'.\n"
 "\n"
 "Zmienne cls-default i cls-completion-default mogą być użyte do określenia\n"
-"domyślnych parametrów dla listingów \"cls\" względnie listingów \"completion"
-"\".\n"
+"domyślnych parametrów dla listingów \"cls\" względnie listingów "
+"\"completion\".\n"
 "Na przykład, aby listing \"completion\" pokazywał rozmiary plików ustaw:\n"
 "cls-completion-default na \"-s\".\n"
 "\n"
@@ -1267,7 +1267,7 @@ msgstr ""
 "lftp wyłączy się automatycznie po zakończeniu wszystkich zadań.\n"
 "Dopóki lftp działa, można go przywrócić w normalnym trybie poleceniem `fg'.\n"
 
-#: src/commands.cc:837 src/commands.cc:3609
+#: src/commands.cc:837 src/commands.cc:3616
 #, c-format
 msgid "Try `%s --help' for more information\n"
 msgstr "Spróbuj `%s --help' by uzyskać więcej informacji\n"
@@ -1279,241 +1279,241 @@ msgstr ""
 "%s: -c, -f, -v i -h są w konflikcie z pozostałymi opcjami i argumentami "
 "`open'\n"
 
-#: src/commands.cc:955
+#: src/commands.cc:956
 #, c-format
 msgid "Usage: %s [-e cmd] [-p port] [-u user[,pass]] <host|url>\n"
 msgstr ""
 "Użycie: %s [-e polecenie] [-p port] [-u użytkownik[,hasło]] <host|url>\n"
 
-#: src/commands.cc:1045 src/commands.cc:2275 src/DummyProto.cc:65
+#: src/commands.cc:1046 src/commands.cc:2276 src/DummyProto.cc:65
 #: src/MirrorJob.cc:2172 src/MirrorJob.cc:2194
 msgid " - not supported protocol"
 msgstr " - protokół nie jest wspierany"
 
-#: src/commands.cc:1077 src/commands.cc:2259
+#: src/commands.cc:1078 src/commands.cc:2260
 msgid "Password: "
 msgstr "Hasło: "
 
-#: src/commands.cc:1079
+#: src/commands.cc:1080
 #, c-format
 msgid "%s: GetPass() failed -- assume anonymous login\n"
 msgstr "%s: GetPass() nie powiodło się -- logowanie anonimowe\n"
 
-#: src/commands.cc:1190 src/commands.cc:1283 src/commands.cc:1659
-#: src/commands.cc:1690 src/commands.cc:1828 src/commands.cc:1913
-#: src/commands.cc:2186 src/commands.cc:2380 src/commands.cc:2542
-#: src/commands.cc:2587 src/commands.cc:2615 src/commands.cc:2622
-#: src/commands.cc:2923 src/commands.cc:2950 src/commands.cc:2957
-#: src/commands.cc:3286 src/lftp.cc:267 src/MirrorJob.cc:2136
+#: src/commands.cc:1191 src/commands.cc:1284 src/commands.cc:1660
+#: src/commands.cc:1691 src/commands.cc:1829 src/commands.cc:1914
+#: src/commands.cc:2187 src/commands.cc:2381 src/commands.cc:2543
+#: src/commands.cc:2588 src/commands.cc:2616 src/commands.cc:2623
+#: src/commands.cc:2930 src/commands.cc:2957 src/commands.cc:2964
+#: src/commands.cc:3293 src/lftp.cc:267 src/MirrorJob.cc:2136
 #: src/SleepJob.cc:144 src/SleepJob.cc:200 src/Torrent.cc:4169
 #, c-format
 msgid "Try `help %s' for more information.\n"
 msgstr "W celu uzyskania większej ilości informacji spróbuj `help %s'.\n"
 
-#: src/commands.cc:1200
+#: src/commands.cc:1201
 #, c-format
 msgid "Usage: %s [OPTS] command args...\n"
 msgstr "Użycie: %s [OPCJE] komenda argumenty...\n"
 
-#: src/commands.cc:1253
+#: src/commands.cc:1254
 #, c-format
 msgid "%s: -n: positive number expected. "
 msgstr "%s: -n: Oczekiwano liczby dodatniej. "
 
-#: src/commands.cc:1305
+#: src/commands.cc:1306
 #, c-format
 msgid "Created a stopped queue.\n"
 msgstr "Utworzono zatrzymaną kolejkę.\n"
 
-#: src/commands.cc:1348 src/commands.cc:1376
+#: src/commands.cc:1349 src/commands.cc:1377
 #, c-format
 msgid "%s: No queue is active.\n"
 msgstr "%s: Nie ma aktywnej kolejki.\n"
 
-#: src/commands.cc:1368
+#: src/commands.cc:1369
 #, c-format
 msgid "%s: -m: Number expected as second argument. "
 msgstr "%s: -m: Oczekiwano liczby jako drugiego argumentu. "
 
-#: src/commands.cc:1420
+#: src/commands.cc:1421
 #, c-format
 msgid "Usage: %s <cmd>\n"
 msgstr "Użycie: %s <komenda>\n"
 
-#: src/commands.cc:1526
+#: src/commands.cc:1527
 msgid "invalid argument for `--sort'"
 msgstr "nieprawidłowy argument dla `--sort'"
 
-#: src/commands.cc:1556
+#: src/commands.cc:1557
 msgid "invalid block size"
 msgstr "nieprawidłowy rozmiar bloku"
 
-#: src/commands.cc:1699
+#: src/commands.cc:1700
 #, c-format
 msgid "Usage: %s [OPTS] files...\n"
 msgstr "Użycie: %s [OPCJE] pliki...\n"
 
-#: src/commands.cc:1784 src/commands.cc:1813
+#: src/commands.cc:1785 src/commands.cc:1814
 #, fuzzy, c-format
 msgid "%s: %s: Number expected. "
 msgstr "%s: -n: Oczekiwano liczby. "
 
-#: src/commands.cc:1833
+#: src/commands.cc:1834
 #, fuzzy, c-format
 msgid "%s: --continue conflicts with --remove-target.\n"
 msgstr "%s: --share jest w konflikcie z --only-new.\n"
 
-#: src/commands.cc:1843 src/commands.cc:1919
+#: src/commands.cc:1844 src/commands.cc:1920
 #, c-format
 msgid "File name missed. "
 msgstr "Brak nazwy pliku. "
 
-#: src/commands.cc:1988
+#: src/commands.cc:1989
 #, c-format
 msgid "Usage: %s %s[-f] files...\n"
 msgstr "Użycie: %s %s[-f] pliki...\n"
 
-#: src/commands.cc:2031
+#: src/commands.cc:2032
 #, c-format
 msgid "Usage: %s [-e] <file|command>\n"
 msgstr "Użycie: %s [-e] <plik|polecenie>\n"
 
-#: src/commands.cc:2078
+#: src/commands.cc:2079
 #, c-format
 msgid "Usage: %s [-v] [-v] ...\n"
 msgstr "Użycie: %s [-v] [-v] ...\n"
 
-#: src/commands.cc:2092 src/commands.cc:2346 src/commands.cc:2468
-#: src/commands.cc:2684 src/commands.cc:3094 src/commands.cc:3175
+#: src/commands.cc:2093 src/commands.cc:2347 src/commands.cc:2469
+#: src/commands.cc:2685 src/commands.cc:3101 src/commands.cc:3182
 #: src/lftp.cc:279
 #, c-format
 msgid "%s: %s - not a number\n"
 msgstr "%s: %s - nie jest numerem\n"
 
-#: src/commands.cc:2099 src/commands.cc:2325 src/commands.cc:2355
-#: src/commands.cc:2486
+#: src/commands.cc:2100 src/commands.cc:2326 src/commands.cc:2356
+#: src/commands.cc:2487
 #, c-format
 msgid "%s: %d - no such job\n"
 msgstr "%s: %d - nie ma takiego zadania\n"
 
-#: src/commands.cc:2134
+#: src/commands.cc:2135
 #, c-format
 msgid "Usage: %s [-p]\n"
 msgstr "Użycie: %s [-p]\n"
 
-#: src/commands.cc:2226
+#: src/commands.cc:2227
 #, c-format
 msgid "debug level is %d, output goes to %s\n"
 msgstr "poziom debugowania wynosi %d, wyniki przekierowywane do %s\n"
 
-#: src/commands.cc:2229
+#: src/commands.cc:2230
 #, c-format
 msgid "debug is off\n"
 msgstr "debugowanie jest wyłączone\n"
 
-#: src/commands.cc:2240
+#: src/commands.cc:2241
 #, c-format
 msgid "Usage: %s <user|URL> [<pass>]\n"
 msgstr "Użycie: %s <użytkownik|URL> [<hasło>]\n"
 
-#: src/commands.cc:2315 src/commands.cc:2478
+#: src/commands.cc:2316 src/commands.cc:2479
 #, c-format
 msgid "%s: no current job\n"
 msgstr "%s: nie ma takiego zadania\n"
 
-#: src/commands.cc:2327
+#: src/commands.cc:2328
 #, c-format
 msgid "Usage: %s <jobno> ... | all\n"
 msgstr "Użycie: %s <nr_proc> ... | all\n"
 
-#: src/commands.cc:2408
+#: src/commands.cc:2409
 #, c-format
 msgid "%s: %s. Use `set -a' to look at all variables.\n"
 msgstr "%s: %s. Użyj `set -a' by sprawdzić wszystkie zmienne.\n"
 
-#: src/commands.cc:2452
+#: src/commands.cc:2453
 #, c-format
 msgid "Usage: %s [<jobno>]\n"
 msgstr "Użycie: %s [<nr_proc>]\n"
 
-#: src/commands.cc:2491
+#: src/commands.cc:2492
 #, c-format
 msgid "%s: some other job waits for job %d\n"
 msgstr "%s: jakiś inny proces czeka na proces %d\n"
 
-#: src/commands.cc:2496
+#: src/commands.cc:2497
 #, c-format
 msgid "%s: wait loop detected\n"
 msgstr "%s: wykryto pętle zastoju\n"
 
-#: src/commands.cc:2552
+#: src/commands.cc:2553
 #, fuzzy, c-format
 msgid "Usage: %s [OPTS] <files> <target-dir>\n"
 msgstr "Użycie: %s [OPCJE] plik\n"
 
-#: src/commands.cc:2614 src/commands.cc:2949
+#: src/commands.cc:2615 src/commands.cc:2956
 #, c-format
 msgid "Invalid command. "
 msgstr "Nieprawidłowe polecenie. "
 
-#: src/commands.cc:2621 src/commands.cc:2956
+#: src/commands.cc:2622 src/commands.cc:2963
 #, c-format
 msgid "Ambiguous command. "
 msgstr "Dwuznaczne polecenie. "
 
-#: src/commands.cc:2640
+#: src/commands.cc:2641
 #, c-format
 msgid "%s: Operand missed for size\n"
 msgstr "%s: Operandowi brakuje rozmiaru\n"
 
-#: src/commands.cc:2657
+#: src/commands.cc:2658
 #, c-format
 msgid "%s: Operand missed for `expire'\n"
 msgstr "%s: Brakuje operandu dla `expire'\n"
 
-#: src/commands.cc:2690
+#: src/commands.cc:2691
 #, c-format
 msgid ""
 "%s: %s - no such cached session. Use `scache' to look at session list.\n"
 msgstr ""
 "%s: %s - brak takiej sesji w buforze. Użyj `scache' by poszukać w liście.\n"
 
-#: src/commands.cc:2714
+#: src/commands.cc:2715
 #, c-format
 msgid "Sorry, no help for %s\n"
 msgstr "Niestety, brak pomocy dla %s\n"
 
-#: src/commands.cc:2719
+#: src/commands.cc:2720
 #, c-format
 msgid "%s is a built-in alias for %s\n"
 msgstr "%s jest wbudowanym aliasem do %s\n"
 
-#: src/commands.cc:2724
+#: src/commands.cc:2725
 #, c-format
 msgid "Usage: %s\n"
 msgstr "Użycie: %s\n"
 
-#: src/commands.cc:2732
+#: src/commands.cc:2733
 #, c-format
 msgid "%s is an alias to `%s'\n"
 msgstr "%s jest aliasem do `%s'\n"
 
-#: src/commands.cc:2736
+#: src/commands.cc:2737
 #, c-format
 msgid "No such command `%s'. Use `help' to see available commands.\n"
 msgstr "Nie ma takiego polecenia `%s'. Użyj `help' by uzyskać spis komend.\n"
 
-#: src/commands.cc:2738
+#: src/commands.cc:2739
 #, c-format
 msgid "Ambiguous command `%s'. Use `help' to see available commands.\n"
 msgstr "Dwuznaczne polecenie `%s'. Użyj `help' by uzyskać spis komend.\n"
 
-#: src/commands.cc:2804
+#: src/commands.cc:2805
 #, c-format
 msgid "LFTP | Version %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 msgstr "LFTP | Wersja %s | Copyright (c) 1996-%d Alexander V. Lukyanov\n"
 
-#: src/commands.cc:2807
+#: src/commands.cc:2808
 #, c-format
 msgid ""
 "LFTP is free software: you can redistribute it and/or modify\n"
@@ -1542,89 +1542,89 @@ msgstr ""
 "Kopia Powszechnej Licencji Publicznej GNU powinna być dołączona do LFTP.\n"
 "Jeśli nie, można ją zobaczyć pod <http://www.gnu.org/licenses/>.\n"
 
-#: src/commands.cc:2821
+#: src/commands.cc:2822
 #, c-format
 msgid "Send bug reports and questions to the mailing list <%s>.\n"
 msgstr "Raporty o błędach oraz pytania proszę przesyłać na listę <%s>.\n"
 
-#: src/commands.cc:2827
+#: src/commands.cc:2828
 msgid "Libraries used: "
 msgstr "Użyte biblioteki: "
 
-#: src/commands.cc:2972 src/commands.cc:3000
+#: src/commands.cc:2979 src/commands.cc:3007
 #, c-format
 msgid "%s: bookmark name required\n"
 msgstr "%s: wymagana jest nazwa zakładki\n"
 
-#: src/commands.cc:2989
+#: src/commands.cc:2996
 #, c-format
 msgid "%s: spaces in bookmark name are not allowed\n"
 msgstr "%s: spacje w nazwie pliku zakładki są niedozwolone\n"
 
-#: src/commands.cc:3002
+#: src/commands.cc:3009
 #, c-format
 msgid "%s: no such bookmark `%s'\n"
 msgstr "%s: nie ma takiej zakładki `%s'\n"
 
-#: src/commands.cc:3025
+#: src/commands.cc:3032
 #, c-format
 msgid "%s: import type required (netscape,ncftp)\n"
 msgstr "%s: wymagany jest typ importowanych danych (netscape,ncftp)\n"
 
-#: src/commands.cc:3103
+#: src/commands.cc:3110
 #, c-format
 msgid "Usage: %s [-d #] dir\n"
 msgstr "Użycie: %s [-d $] katalog\n"
 
-#: src/commands.cc:3208
+#: src/commands.cc:3215
 #, c-format
 msgid "%s: invalid block size `%s'\n"
 msgstr "%s: nieprawidłowy rozmiar bloku `%s'\n"
 
-#: src/commands.cc:3219
+#: src/commands.cc:3226
 #, c-format
 msgid "Usage: %s [options] <dirs>\n"
 msgstr "Użycie: %s [opcje] <katalogi>\n"
 
-#: src/commands.cc:3225
+#: src/commands.cc:3232
 #, c-format
 msgid "%s: warning: summarizing is the same as using --max-depth=0\n"
 msgstr "%s: uwaga: podsumowanie jest takie samo jak przy --max-depth=0\n"
 
-#: src/commands.cc:3229
+#: src/commands.cc:3236
 #, c-format
 msgid "%s: summarizing conflicts with --max-depth=%i\n"
 msgstr "%s: podsumowanie konfliktów z --max-depth=%i\n"
 
-#: src/commands.cc:3273
+#: src/commands.cc:3280
 #, c-format
 msgid "Usage: %s command args...\n"
 msgstr "Użycie: %s module argumenty...\n"
 
-#: src/commands.cc:3285
+#: src/commands.cc:3292
 #, c-format
 msgid "Usage: %s module [args...]\n"
 msgstr "Użycie: %s module [argumenty...]\n"
 
-#: src/commands.cc:3303 src/LocalAccess.cc:642
+#: src/commands.cc:3310 src/LocalAccess.cc:642
 msgid "cannot get current directory"
 msgstr "nie można uzyskać aktualnego katalogu"
 
-#: src/commands.cc:3367
+#: src/commands.cc:3374
 #, c-format
 msgid "Usage: %s [OPTS] mode file...\n"
 msgstr "Użycie: %s [OPCJE] tryb pliki...\n"
 
-#: src/commands.cc:3387
+#: src/commands.cc:3394
 #, c-format
 msgid "invalid mode string: %s\n"
 msgstr "nieprawidłowy tryb: %s\n"
 
-#: src/commands.cc:3450 src/commands.cc:3459
+#: src/commands.cc:3457 src/commands.cc:3466
 msgid "Invalid range format. Format is min-max, e.g. 10-20."
 msgstr "Nieprawidłowy format zakresu. Format to min-maks, np. 10-20."
 
-#: src/commands.cc:3471
+#: src/commands.cc:3478
 #, c-format
 msgid "Usage: %s [OPTS] file\n"
 msgstr "Użycie: %s [OPCJE] plik\n"
@@ -1663,7 +1663,7 @@ msgid "File cannot be accessed"
 msgstr "Brak dostępu do pliku"
 
 #: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4599
-#: src/ftpclass.cc:4608 src/SFtp.cc:1335 src/Torrent.cc:3533
+#: src/ftpclass.cc:4608 src/SFtp.cc:1339 src/Torrent.cc:3533
 msgid "Not connected"
 msgstr "Nie połączony"
 
@@ -1730,16 +1730,22 @@ msgstr "kopiowanie: get powróciło do %lld, przeszukiwanie put\n"
 msgid "file size decreased during transfer"
 msgstr "rozmiar pliku zmniejszył się w trakcie przesyłania"
 
-#: src/FileCopy.cc:1226
+#: src/FileCopy.cc:1227
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "kopiowanie: otrzymano przekierowanie do `%s'\n"
 
-#: src/FileCopy.cc:1382
+#: src/FileCopy.cc:1290
+#, fuzzy
+#| msgid "file size decreased during transfer"
+msgid "file size increased during transfer"
+msgstr "rozmiar pliku zmniejszył się w trakcie przesyłania"
+
+#: src/FileCopy.cc:1390
 msgid "file name missed in URL"
 msgstr "brak nazwy pliku w URL"
 
-#: src/FileCopy.cc:2078
+#: src/FileCopy.cc:2086
 msgid "Verify command failed without a message"
 msgstr "Polecenie weryfikacji nie powiodło się bez komunikatu"
 
@@ -1809,45 +1815,45 @@ msgid "Running connect program"
 msgstr "Uruchamianie programu łączącego"
 
 #: src/Fish.cc:588 src/ftpclass.cc:2887 src/ftpclass.cc:3107 src/Http.cc:1510
-#: src/SFtp.cc:741 src/SFtp.cc:1082 src/SFtp.cc:1083 src/SSH_Access.cc:167
+#: src/SFtp.cc:742 src/SFtp.cc:1083 src/SFtp.cc:1084 src/SSH_Access.cc:167
 #, c-format
 msgid "Peer closed connection"
 msgstr "Komputer po drugiej stronie zamknął połączenie"
 
-#: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4219 src/SFtp.cc:1107
+#: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4219 src/SFtp.cc:1108
 #, c-format
 msgid "extra server response"
 msgstr "dodatkowa odpowiedź serwera"
 
 #: src/Fish.cc:987 src/ftpclass.cc:4611 src/Http.cc:2329 src/Http.cc:2336
-#: src/SFtp.cc:1341 src/Torrent.cc:3536 src/TorrentTracker.cc:624
+#: src/SFtp.cc:1345 src/Torrent.cc:3536 src/TorrentTracker.cc:624
 msgid "Connecting..."
 msgstr "Łączenie się..."
 
-#: src/Fish.cc:989 src/ftpclass.cc:4617 src/SFtp.cc:1343
+#: src/Fish.cc:989 src/ftpclass.cc:4617 src/SFtp.cc:1347
 msgid "Connected"
 msgstr "Połączono"
 
 #: src/Fish.cc:991 src/ftpclass.cc:4594 src/ftpclass.cc:4622
-#: src/ftpclass.cc:4636 src/Http.cc:2338 src/SFtp.cc:1345
+#: src/ftpclass.cc:4636 src/Http.cc:2338 src/SFtp.cc:1349
 #: src/TorrentTracker.cc:626
 msgid "Waiting for response..."
 msgstr "Czekanie na odpowiedź..."
 
-#: src/Fish.cc:993 src/ftpclass.cc:4656 src/Http.cc:2341 src/SFtp.cc:1347
+#: src/Fish.cc:993 src/ftpclass.cc:4656 src/Http.cc:2341 src/SFtp.cc:1351
 msgid "Receiving data"
 msgstr "Otrzymuję dane"
 
-#: src/Fish.cc:995 src/ftpclass.cc:4654 src/Http.cc:2334 src/SFtp.cc:1349
+#: src/Fish.cc:995 src/ftpclass.cc:4654 src/Http.cc:2334 src/SFtp.cc:1353
 msgid "Sending data"
 msgstr "Wysyłam dane"
 
-#: src/Fish.cc:997 src/SFtp.cc:1351
+#: src/Fish.cc:997 src/SFtp.cc:1355
 msgid "Done"
 msgstr "Gotowe"
 
-#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2196
-#: src/SFtp.cc:2316
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2200
+#: src/SFtp.cc:2320
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Pobieranie listy plików (%lld) [%s]"
@@ -1911,7 +1917,7 @@ msgid "MLSD is disabled by ftp:use-mlsd"
 msgstr "MLSD jest zablokowane przez ftp:use-mlsd"
 
 #: src/ftpclass.cc:1411 src/Http.cc:1431 src/Torrent.cc:3204
-#: src/Torrent.cc:3743 src/TorrentTracker.cc:393
+#: src/Torrent.cc:3743 src/TorrentTracker.cc:395
 #, c-format
 msgid "cannot create socket of address family %d"
 msgstr "nie można utworzyć gniazda dla rodziny adresu %d"
@@ -2200,7 +2206,7 @@ msgstr ""
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
 msgstr "Dołączenie terminala do podanego procesu lftp działającego w tle.\n"
 
-#: src/lftp_ssl.cc:1402
+#: src/lftp_ssl.cc:1291
 #, c-format
 msgid "No certificate presented by %s.\n"
 msgstr ""
@@ -2687,7 +2693,7 @@ msgstr "%s ok, %d katalog$|i|ów$ usunięto\n"
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s ok, %d plik$|i|ów$ usunięto\n"
 
-#: src/SFtp.cc:1098 src/SFtp.cc:1099
+#: src/SFtp.cc:1099 src/SFtp.cc:1100
 #, c-format
 msgid "invalid server response format"
 msgstr "nieprawidłowy format odpowiedzi serwera"
@@ -2969,21 +2975,21 @@ msgstr ""
 " --dht-bootstrap=<węzeł>  rozruch DHT poprzez wysłanie zapytania do węzła\n"
 " --share        współdzielenie podanego pliku lub katalogu\n"
 
-#: src/TorrentTracker.cc:176
+#: src/TorrentTracker.cc:178
 msgid "not started"
 msgstr "nierozpoczęte"
 
-#: src/TorrentTracker.cc:179
+#: src/TorrentTracker.cc:181
 #, c-format
 msgid "next request in %s"
 msgstr "następne żądanie w %s"
 
-#: src/TorrentTracker.cc:282 src/TorrentTracker.cc:501
+#: src/TorrentTracker.cc:284 src/TorrentTracker.cc:501
 #, c-format
 msgid "Received valid info about %d peer$|s$"
 msgstr "Otrzymano poprawne informacje o %d użytkownik$u|ach|ach$"
 
-#: src/TorrentTracker.cc:296
+#: src/TorrentTracker.cc:298
 #, c-format
 msgid "Received valid info about %d IPv6 peer$|s$"
 msgstr "Otrzymano poprawne informacje o %d użytkownik$u|ach|ach$ IPv6"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.9.1.16-d4fe-dirty\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2024-11-04 08:43+0100\n"
+"POT-Creation-Date: 2024-11-08 13:05+0300\n"
 "PO-Revision-Date: 2024-11-04 08:21+0100\n"
 "Last-Translator: Страхиња Радић <contact@strahinja.org>\n"
 "Language-Team: Serbian <sr@li.org>\n"
@@ -30,7 +30,7 @@ msgstr "двосмислен аргумент %s за %s"
 msgid "Valid arguments are:"
 msgstr "Исправни аргументи су:"
 
-#: lib/error.c:194
+#: lib/error.c:208
 msgid "Unknown system error"
 msgstr "Непозната системска грешка"
 
@@ -1810,7 +1810,7 @@ msgid "extra server response"
 msgstr "сувишни одговор сервера"
 
 #: src/Fish.cc:987 src/ftpclass.cc:4611 src/Http.cc:2329 src/Http.cc:2336
-#: src/SFtp.cc:1345 src/Torrent.cc:3536 src/TorrentTracker.cc:626
+#: src/SFtp.cc:1345 src/Torrent.cc:3536 src/TorrentTracker.cc:624
 msgid "Connecting..."
 msgstr "Повезивање..."
 
@@ -1820,7 +1820,7 @@ msgstr "Повезан"
 
 #: src/Fish.cc:991 src/ftpclass.cc:4594 src/ftpclass.cc:4622
 #: src/ftpclass.cc:4636 src/Http.cc:2338 src/SFtp.cc:1349
-#: src/TorrentTracker.cc:628
+#: src/TorrentTracker.cc:626
 msgid "Waiting for response..."
 msgstr "Чекање на одговор..."
 
@@ -2007,7 +2007,7 @@ msgid "Connection idle"
 msgstr "Повезивање није активно"
 
 #: src/ftpclass.cc:4604 src/Http.cc:2323 src/Resolver.cc:172
-#: src/Resolver.cc:217 src/TorrentTracker.cc:624
+#: src/Resolver.cc:217 src/TorrentTracker.cc:622
 #, c-format
 msgid "Resolving host address..."
 msgstr "Разрешавање адресе хоста..."
@@ -2968,7 +2968,7 @@ msgstr "није покренут"
 msgid "next request in %s"
 msgstr "следећи захтев за %s"
 
-#: src/TorrentTracker.cc:284 src/TorrentTracker.cc:503
+#: src/TorrentTracker.cc:284 src/TorrentTracker.cc:501
 #, c-format
 msgid "Received valid info about %d peer$|s$"
 msgstr "Примљени исправни подаци о %d сусед$у|а|а$"
