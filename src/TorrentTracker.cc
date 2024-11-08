@@ -412,11 +412,9 @@ int UdpTracker::Do()
    }
    if(!has_connection_id) {
       // need to get connection id
-      SendConnectRequest();
-      return MOVED;
+      return SendConnectRequest() ? MOVED : m;
    }
-   SendEventRequest();
-   return MOVED;
+   return SendEventRequest() ? MOVED : m;
 }
 
 void UdpTracker::NextPeer() {
@@ -541,7 +539,7 @@ bool UdpTracker::SendPacket(Buffer& req)
 
 bool UdpTracker::SendConnectRequest()
 {
-   LogNote(9,"connecting...");
+   LogNote(9,"sending UDP tracker connect request...");
    Buffer req;
    req.PackUINT64BE(connect_magic);
    req.PackUINT32BE(a_connect);

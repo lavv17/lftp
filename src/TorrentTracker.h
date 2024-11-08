@@ -196,7 +196,7 @@ public:
 	 close(sock);
    }
    int Do();
-   bool IsActive() const { return current_event!=ev_idle; }
+   bool IsActive() const { return has_connection_id && current_event!=ev_idle; }
    void SendTrackerRequest(const char *event);
    const char *Status() const;
 };
