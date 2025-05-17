@@ -161,6 +161,7 @@ public:
       }
    bool to_bool() const
       {
+	 if (is_nil()) return false;
 	 return ResMgr::str2bool(s);
       }
    bool to_tri_bool(bool a) const;
