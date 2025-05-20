@@ -584,7 +584,7 @@ ResValue ResType::Query(const char *closure) const
 
 bool ResMgr::str2bool(const char *s)
 {
-   return(strchr("TtYy1+",s[0])!=0 || !strcasecmp(s,"on"));
+   return s && (strchr("TtYy1+",s[0])!=0 || !strcasecmp(s,"on"));
 }
 
 ResDecl::ResDecl(const char *a_name,const char *a_defvalue,ResValValid *a_val_valid,ResClValid *a_closure_valid)
