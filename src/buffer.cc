@@ -491,23 +491,31 @@ int IOBuffer::Do()
    if(Done() || Error())
       return STALL;
    int res=0;
+   int remaining_size;
    switch(mode)
    {
    case PUT:
-      if(Size()==0)
-	 return STALL;
-      res=Put_LL(buffer+buffer_ptr,Size());
-      if(res>0)
-      {
-	 RateAdd(res);
-	 buffer_ptr+=res;
-	 event_time=now;
-	 if(eof)
-	    PutEOF_LL();
-	 return MOVED;
+      remaining_size = Size();
+      if (remaining_size > 0) {
+         res=Put_LL(buffer+buffer_ptr, remaining_size);
+         if (res <= 0) {
+            return STALL;
+         }
+         RateAdd(res);
+         buffer_ptr+=res;
+         event_time=now;
+         if (eof) {
+            /* We do not have to check for return value of PutEOF_LL here as
+             * We MOVED anyway and find out whether it was a success in next Do */
+            PutEOF_LL();
+         }
+         return MOVED;
+      }
+      if (eof && PutEOF_LL()) {
+         event_time=now;
+         return MOVED;
       }
       break;
-
    case GET:
       if(eof)
 	 return STALL;

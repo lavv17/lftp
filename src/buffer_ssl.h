@@ -42,7 +42,7 @@ public:
    IOBufferSSL(const Ref<lftp_ssl>& s,dir_t m) : IOBuffer(m), ssl(s) {}
    ~IOBufferSSL();
    int Do();
-   bool Done() { return IOBuffer::Done() && ssl->handshake_done; }
+   bool Done() { return IOBuffer::Done() && ssl->handshake_done && ssl->goodbye_done; }
 };
 #endif
 
