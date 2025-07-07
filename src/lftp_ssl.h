@@ -38,6 +38,7 @@ class lftp_ssl_base
 {
 public:
    bool handshake_done;
+   bool goodbye_done;
    int fd;
    xstring_c hostname;
    enum handshake_mode_t { CLIENT, SERVER } handshake_mode;
@@ -108,7 +109,7 @@ public:
    bool want_out();
    void copy_sid(const lftp_ssl_gnutls *);
    void load_keys();
-   void shutdown();
+   int shutdown();
 };
 typedef lftp_ssl_gnutls lftp_ssl;
 #elif USE_OPENSSL
@@ -144,7 +145,7 @@ public:
    bool want_out();
    void copy_sid(const lftp_ssl_openssl *);
    void load_keys();
-   void shutdown();
+   int shutdown();
 };
 typedef lftp_ssl_openssl lftp_ssl;
 #endif

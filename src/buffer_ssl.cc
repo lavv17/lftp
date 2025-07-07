@@ -39,10 +39,11 @@ int IOBufferSSL::Do()
       // nothing to write, but may need to do handshake
       if(!ssl->handshake_done)
       {
-	 if(Put_LL("",0)<0)
-	    return MOVED;
-	 if(ssl->handshake_done && eof)
-	    ssl->shutdown();
+	      if(Put_LL("",0)<0)
+            return MOVED;
+      }
+	   if(ssl->handshake_done && eof && IOBufferSSL::PutEOF_LL()) {
+         return MOVED;
       }
       if(ssl->handshake_done && !eof)
 	 return m;
@@ -103,8 +104,17 @@ int IOBufferSSL::Put_LL(const char *buf,int size)
 
 int IOBufferSSL::PutEOF_LL()
 {
-   if(Size()==0)
-      ssl->shutdown();
+   int res;
+   if(Size()==0) {
+      res = ssl->shutdown();
+      if (res == ssl->RETRY) {
+         SetNotReady(ssl->fd,want_mask());
+         return 1;
+      } else if (res == ssl->ERROR) {
+         SetError(ssl->error,ssl->fatal);
+         return -1;
+      }
+   }
    return 0;
 }
 

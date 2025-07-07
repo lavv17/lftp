@@ -48,6 +48,7 @@ lftp_ssl_base::lftp_ssl_base(int fd1,handshake_mode_t m,const char *h)
 {
    fd=fd1;
    handshake_done=false;
+   goodbye_done=false;
    handshake_mode=m;
    fatal=false;
    cert_error=false;
@@ -350,10 +351,30 @@ void lftp_ssl_gnutls::load_keys()
       Log::global->Format(9, "Loaded %d CRLs\n", res);
    gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, cred);
 }
-void lftp_ssl_gnutls::shutdown()
+/* Try to shutdown the tls connection, return 1 if needed to call again otherwise 0*/
+int lftp_ssl_gnutls::shutdown()
 {
-   if(handshake_done)
-      gnutls_bye(session,GNUTLS_SHUT_RDWR);  // FIXME - E_AGAIN
+   int res;
+   if(handshake_done) {
+      res = gnutls_bye(session,GNUTLS_SHUT_RDWR);
+      if (res == GNUTLS_E_SUCCESS) {
+         goodbye_done = true;
+         return DONE;
+      } else if (res == GNUTLS_E_AGAIN || res == GNUTLS_E_INTERRUPTED) {
+         /* In ideal world we would not need this if, but windows does not
+          * send close-notify, so do not wait on server close-notify */
+         if (gnutls_record_get_direction(session) == 0) {
+            goodbye_done = true;
+            return DONE;
+         }
+         return RETRY;
+      }
+      fatal=check_fatal(res);
+      set_error("gnutls_bye",gnutls_strerror(res));
+      return ERROR;
+   }
+   goodbye_done = true;
+   return DONE;
 }
 lftp_ssl_gnutls::~lftp_ssl_gnutls()
 {
@@ -854,10 +875,23 @@ void lftp_ssl_openssl::load_keys()
       }
    }
 }
-void lftp_ssl_openssl::shutdown()
+int lftp_ssl_openssl::shutdown()
 {
-   if(handshake_done)
-      SSL_shutdown(ssl);
+   int res;
+   if(handshake_done) {
+      res = SSL_shutdown(ssl);
+      if (res == 1) {
+         goodbye_done = true;
+         return DONE;
+      } else if (res == 0) {
+         return RETRY;
+      }
+      fatal=check_fatal(res);
+      set_error("SSL_shutdown",strerror());
+      return ERROR;
+   }
+   goodbye_done = true;
+   return DONE;
 }
 lftp_ssl_openssl::~lftp_ssl_openssl()
 {
