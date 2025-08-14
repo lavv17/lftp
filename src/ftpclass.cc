@@ -651,7 +651,7 @@ int Ftp::SendCWD(const char *path,const char *path_url,Expect::expect_t c)
       }
    } else {
       char *path1=alloca_strdup(path); // to split it
-      char *path2=alloca_strdup(path); // to re-assemble
+      char *path2=alloca_strdup2(path, 2); // to re-assemble + add space for potential ~/ prefix
       if(AbsolutePath(path)) {
 	 if(real_cwd && !strncmp(real_cwd,path,real_cwd.length())
 	 && path[real_cwd.length()]=='/') {
