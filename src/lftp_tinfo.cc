@@ -20,7 +20,7 @@
 #include <config.h>
 
 extern "C" {
-#if defined(HAVE_CURSES_H)
+#if defined(HAVE_CURSES_H) && !defined(__sun__)
 # include <curses.h>
 # if defined(HAVE_TERM_H)
 #  include <term.h>
