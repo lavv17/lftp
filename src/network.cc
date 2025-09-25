@@ -264,6 +264,11 @@ void Networker::SetSocketMaxseg(int sock,int socket_maxseg)
       ProtoLog::LogError(1,"setsockopt(TCP_MAXSEG,%d): %s",socket_maxseg,strerror(errno));
 #endif
 }
+void Networker::SetTCPNodelay(int sock)
+{
+   if(-1==setsockopt(sock, SOL_TCP, TCP_NODELAY, &one, sizeof(one)))
+      ProtoLog::LogError(1,"setsockopt(TCP_NODELAY): %s", strerror(errno));
+}
 
 int Networker::SocketCreateUnbound(int af,int type,int proto,const char *hostname)
 {
