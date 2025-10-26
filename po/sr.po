@@ -1,14 +1,14 @@
 # Serbian translation for lftp
-# Copyright (C) 2021 Страхиња Радић <contact@strahinja.org>
+# Copyright (C) 2021 Страхиња Радић <sr@strahinja.org>
 # You may modify and redistribute this file according to GNU GPL (see COPYING).
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: lftp 4.9.1.16-d4fe-dirty\n"
 "Report-Msgid-Bugs-To: lftp-bugs@lftp.yar.ru\n"
-"POT-Creation-Date: 2024-11-08 13:05+0300\n"
-"PO-Revision-Date: 2024-11-04 08:21+0100\n"
-"Last-Translator: Страхиња Радић <contact@strahinja.org>\n"
+"POT-Creation-Date: 2025-10-26 18:20+0100\n"
+"PO-Revision-Date: 2025-10-26 17:08+0100\n"
+"Last-Translator: Страхиња Радић <sr@strahinja.org>\n"
 "Language-Team: Serbian <sr@li.org>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "двосмислен аргумент %s за %s"
 msgid "Valid arguments are:"
 msgstr "Исправни аргументи су:"
 
-#: lib/error.c:208
+#: lib/error.c:194
 msgid "Unknown system error"
 msgstr "Непозната системска грешка"
 
@@ -179,7 +179,7 @@ msgstr "cd у реду, cwd=%s\n"
 msgid "%s: received redirection to `%s'\n"
 msgstr "%s: примљено преусмеравање на „%s“\n"
 
-#: src/CmdExec.cc:408 src/FileCopy.cc:1230
+#: src/CmdExec.cc:408 src/FileCopy.cc:1231
 msgid "Too many redirections"
 msgstr "Превише преусмеравања"
 
@@ -1650,7 +1650,7 @@ msgid "File cannot be accessed"
 msgstr "Датотеци се не може приступити"
 
 #: src/FileAccess.cc:163 src/Fish.cc:982 src/ftpclass.cc:4599
-#: src/ftpclass.cc:4608 src/SFtp.cc:1339 src/Torrent.cc:3533
+#: src/ftpclass.cc:4608 src/SFtp.cc:1343 src/Torrent.cc:3533
 msgid "Not connected"
 msgstr "Нема повезивања"
 
@@ -1717,20 +1717,20 @@ msgstr ""
 msgid "file size decreased during transfer"
 msgstr "величина датотеке се смањила током преноса"
 
-#: src/FileCopy.cc:1227
+#: src/FileCopy.cc:1228
 #, c-format
 msgid "copy: received redirection to `%s'\n"
 msgstr "copy: примљено преусмеравање на „%s“\n"
 
-#: src/FileCopy.cc:1290
+#: src/FileCopy.cc:1291
 msgid "file size increased during transfer"
 msgstr "величина датотеке је повећана током преноса"
 
-#: src/FileCopy.cc:1390
+#: src/FileCopy.cc:1391
 msgid "file name missed in URL"
 msgstr "назив датотеке недостаје у УРЛ-у"
 
-#: src/FileCopy.cc:2086
+#: src/FileCopy.cc:2087
 msgid "Verify command failed without a message"
 msgstr "Наредба за верификацију није успешна не давши излаз"
 
@@ -1799,45 +1799,45 @@ msgid "Running connect program"
 msgstr "Покренут је програм за повезивање"
 
 #: src/Fish.cc:588 src/ftpclass.cc:2887 src/ftpclass.cc:3107 src/Http.cc:1510
-#: src/SFtp.cc:742 src/SFtp.cc:1083 src/SFtp.cc:1084 src/SSH_Access.cc:167
+#: src/SFtp.cc:746 src/SFtp.cc:1087 src/SFtp.cc:1088 src/SSH_Access.cc:167
 #, c-format
 msgid "Peer closed connection"
 msgstr "Сусед је затворио повезивање"
 
-#: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4219 src/SFtp.cc:1108
+#: src/Fish.cc:634 src/ftpclass.cc:3037 src/ftpclass.cc:4219 src/SFtp.cc:1112
 #, c-format
 msgid "extra server response"
 msgstr "сувишни одговор сервера"
 
 #: src/Fish.cc:987 src/ftpclass.cc:4611 src/Http.cc:2329 src/Http.cc:2336
-#: src/SFtp.cc:1345 src/Torrent.cc:3536 src/TorrentTracker.cc:624
+#: src/SFtp.cc:1349 src/Torrent.cc:3536 src/TorrentTracker.cc:624
 msgid "Connecting..."
 msgstr "Повезивање..."
 
-#: src/Fish.cc:989 src/ftpclass.cc:4617 src/SFtp.cc:1347
+#: src/Fish.cc:989 src/ftpclass.cc:4617 src/SFtp.cc:1351
 msgid "Connected"
 msgstr "Повезан"
 
 #: src/Fish.cc:991 src/ftpclass.cc:4594 src/ftpclass.cc:4622
-#: src/ftpclass.cc:4636 src/Http.cc:2338 src/SFtp.cc:1349
+#: src/ftpclass.cc:4636 src/Http.cc:2338 src/SFtp.cc:1353
 #: src/TorrentTracker.cc:626
 msgid "Waiting for response..."
 msgstr "Чекање на одговор..."
 
-#: src/Fish.cc:993 src/ftpclass.cc:4656 src/Http.cc:2341 src/SFtp.cc:1351
+#: src/Fish.cc:993 src/ftpclass.cc:4656 src/Http.cc:2341 src/SFtp.cc:1355
 msgid "Receiving data"
 msgstr "Примање података"
 
-#: src/Fish.cc:995 src/ftpclass.cc:4654 src/Http.cc:2334 src/SFtp.cc:1353
+#: src/Fish.cc:995 src/ftpclass.cc:4654 src/Http.cc:2334 src/SFtp.cc:1357
 msgid "Sending data"
 msgstr "Слање података"
 
-#: src/Fish.cc:997 src/SFtp.cc:1355
+#: src/Fish.cc:997 src/SFtp.cc:1359
 msgid "Done"
 msgstr "Завршено"
 
-#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2200
-#: src/SFtp.cc:2320
+#: src/Fish.cc:1136 src/FtpDirList.cc:123 src/HttpDir.cc:1384 src/SFtp.cc:2205
+#: src/SFtp.cc:2325
 #, c-format
 msgid "Getting file list (%lld) [%s]"
 msgstr "Добављање листе датотека (%lld) [%s]"
@@ -2186,7 +2186,7 @@ msgstr ""
 msgid "Attach the terminal to specified backgrounded lftp process.\n"
 msgstr "Качи терминал за задати позадински lftp процес.\n"
 
-#: src/lftp_ssl.cc:1291
+#: src/lftp_ssl.cc:1325
 #, c-format
 msgid "No certificate presented by %s.\n"
 msgstr "%s није приказао ниједан сертификат.\n"
@@ -2678,7 +2678,7 @@ msgstr "%s у реду, %d директоријум$ уклоњен|а укло�
 msgid "%s ok, %d file$|s$ removed\n"
 msgstr "%s у реду, %d датотек$а уклоњена|е уклоњене|а уклоњено$\n"
 
-#: src/SFtp.cc:1099 src/SFtp.cc:1100
+#: src/SFtp.cc:1103 src/SFtp.cc:1104
 #, c-format
 msgid "invalid server response format"
 msgstr "Неисправан формат одговора сервера"
