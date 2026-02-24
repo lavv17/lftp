@@ -86,7 +86,27 @@ int pgetJob::Do()
    }
    else if(chunks.count()>0)
    {
-      if(chunks[0]->Error())
+      if(ends_pending)
+      {
+	 int last=chunks.count()-1;
+	 if(chunks[last]->Error())
+	 {
+	    Log::global->Format(0,"pget: chunk[%d] error: %s\n",last,chunks[last]->ErrorText());
+	    no_parallel=true;
+	    c->Resume();
+	 }
+	 else if(chunks[last]->Done())
+	 {
+	    // both ends done, resume middle chunks
+	    ends_pending=false;
+	    for(int i=0; i<last; i++)
+	       chunks[i]->Resume();
+	    m=MOVED;
+	 }
+	 else
+	    c->Suspend();
+      }
+      else if(chunks[0]->Error())
       {
 	 Log::global->Format(0,"pget: chunk[%d] error: %s\n",0,chunks[0]->ErrorText());
 	 no_parallel=true;
@@ -329,6 +349,8 @@ pgetJob::pgetJob(FileCopy *c1,const char *n,int m)
    total_xfer_rate=0;
    no_parallel=false;
    chunks_done=false;
+   priority_ends=false;
+   ends_pending=false;
    pget_cont=c->SetContinue(false);
    max_chunks=m?m:ResMgr::Query("pget:default-n",0);
    total_eta=-1;
@@ -526,4 +548,11 @@ void pgetJob::InitChunks(off_t offset,off_t size)
       curr_offs+=chunk_size;
    }
    assert(curr_offs==size);
+   if(priority_ends && num_of_chunks>=2)
+   {
+      ends_pending=true;
+      // suspend middle chunks, only main and last chunk run initially
+      for(int i=0; i<num_of_chunks-1; i++)
+	 chunks[i]->Suspend();
+   }
 }
