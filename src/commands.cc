@@ -366,7 +366,8 @@ const struct CmdExec::cmd_rec CmdExec::static_cmd_table[]=
 	 " -c  continue transfer. Requires <lfile>.lftp-pget-status file.\n"
 	 " -n <maxconn>  set maximum number of connections (default is is taken from\n"
 	 "     pget:default-n setting)\n"
-	 " -O <base> specifies base directory where files should be placed\n")},
+	 " -O <base> specifies base directory where files should be placed\n"
+	 " --priority-ends  download first and last pieces first (useful for video)\n")},
    {"put",     cmd_get,    N_("put [OPTS] <lfile> [-o <rfile>]"),
 	 N_("Upload <lfile> with remote name <rfile>.\n"
 	 " -o <rfile> specifies remote file name (default - basename of lfile)\n"
@@ -1724,6 +1725,7 @@ CMD(get)
       {"quiet",no_argument,0,'q'},
       {"parallel",optional_argument,0,'P'},
       {"use-pget-n",optional_argument,0,'n'},
+      {"priority-ends",no_argument,0,256+'p'},
       {"glob",no_argument,0,256+'g'},
       {"reverse",no_argument,0,256+'R'},
       {0}
@@ -1743,6 +1745,7 @@ CMD(get)
    bool make_dirs=false;
    bool reverse=false;
    bool quiet=false;
+   bool priority_ends=false;
    const char *output_dir=0;
 
    if(!strncmp(op,"re",2))
@@ -1821,6 +1824,9 @@ CMD(get)
       case(256+'R'):
 	 reverse=!reverse;
 	 break;
+      case(256+'p'):
+	 priority_ends=true;
+	 break;
       case(256+'g'):
 	 glob=true;
 	 break;
@@ -1832,6 +1838,10 @@ CMD(get)
    }
    if(cont && del_target) {
       eprintf(_("%s: --continue conflicts with --remove-target.\n"),op);
+      return 0;
+   }
+   if(priority_ends && strcmp(op,"pget")) {
+      eprintf(_("%s: --priority-ends can only be used with pget.\n"),op);
       return 0;
    }
    JobRef<GetJob> j;
@@ -1882,7 +1892,12 @@ CMD(get)
    if(ascii)
       j->Ascii();
    if(n_conn!=1)
-      j->SetCopyJobCreator(new pCopyJobCreator(n_conn));
+   {
+      pCopyJobCreator *creator=new pCopyJobCreator(n_conn);
+      if(priority_ends)
+	 creator->priority_ends=true;
+      j->SetCopyJobCreator(creator);
+   }
    if(parallel>0)
       j->SetParallel(parallel);
    j->Quiet(quiet);

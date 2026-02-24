@@ -48,6 +48,8 @@ class pgetJob : public CopyJob
    bool	no_parallel:1;
    bool chunks_done:1;
    bool pget_cont:1;
+   bool priority_ends:1;
+   bool ends_pending:1;
 
    void free_chunks();
    ChunkXfer *NewChunk(const char *remote,off_t start,off_t limit);
@@ -74,6 +76,7 @@ public:
    void PrepareToDie();
 
    void SetMaxConn(int n) { max_chunks=n; }
+   void SetPriorityEnds() { priority_ends=true; }
 
    off_t GetBytesCount() { return total_xferred; }
    double GetTransferRate() { return total_xfer_rate; }
@@ -83,9 +86,13 @@ class pCopyJobCreator : public CopyJobCreator
 {
 public:
    int max_chunks;
-   pCopyJobCreator(int n) : max_chunks(n) {}
+   bool priority_ends;
+   pCopyJobCreator(int n) : max_chunks(n), priority_ends(false) {}
    CopyJob *New(FileCopy *c,const char *n,const char *o) const {
-      return new pgetJob(c,n,max_chunks);
+      pgetJob *j=new pgetJob(c,n,max_chunks);
+      if(priority_ends)
+	 j->SetPriorityEnds();
+      return j;
    }
 };
 
