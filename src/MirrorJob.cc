@@ -2226,7 +2226,16 @@ CMD(mirror)
       source_dir=".";
    }
    if(!target_dir)
-      target_dir=".";
+   {
+      if(!reverse)
+      {
+	 const char *od=ResMgr::Query("xfer:destination-directory",parent->session->GetHostName());
+	 if(od && *od)
+	    target_dir=od;
+      }
+      if(!target_dir)
+	 target_dir=".";
+   }
 
    if(!reverse)
    {
