@@ -356,16 +356,26 @@ int lftp_ssl_gnutls::shutdown()
 {
    int res;
    if(handshake_done) {
+      // Certain SSL implementations do not reply us with
+      // close_notify that is why we must not wait for it
+      // indefinetely
+      if (ssl_shutdown_timer && ssl_shutdown_timer->Stopped()) {
+         Log::global->Format(9,"TLS Timer ran out, considering channel closed\n");
+         goodbye_done = true;
+         return DONE;
+      }
       res = gnutls_bye(session,GNUTLS_SHUT_RDWR);
       if (res == GNUTLS_E_SUCCESS) {
+         if (ssl_shutdown_timer) {
+            ssl_shutdown_timer->Stop();
+            Log::global->Format(9,"Stopping TLS close timer\n");
+         }
          goodbye_done = true;
          return DONE;
       } else if (res == GNUTLS_E_AGAIN || res == GNUTLS_E_INTERRUPTED) {
-         /* In ideal world we would not need this if, but windows does not
-          * send close-notify, so do not wait on server close-notify */
-         if (gnutls_record_get_direction(session) == 0) {
-            goodbye_done = true;
-            return DONE;
+         if (!ssl_shutdown_timer) {
+            ssl_shutdown_timer = new Timer(0, 200);
+            Log::global->Format(9,"Starting TLS close timer\n");
          }
          return RETRY;
       }
