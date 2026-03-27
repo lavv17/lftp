@@ -480,6 +480,9 @@ static completion_type cmd_completion_type(const char *cmd,int start)
       w=skip_word(w);
    }
 
+   if (!strcmp(buf, "edit"))
+	   return REMOTE_FILE;
+
    if(!strcmp(buf,"get")
    || !strcmp(buf,"pget")
    || !strcmp(buf,"get1"))
