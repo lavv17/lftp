@@ -2531,6 +2531,8 @@ Execute commands from the file. May be specified multiple times.
 .TP
 .BI \-f " script_file"
 Execute commands in the file and exit.
+If \fIscript_file\fP is `\-', commands are read from stdin.
+To work with a file literally named `\-', use a path prefix such as `./\-'.
 This option must be used alone without other arguments (except \fB\-\-norc\fP).
 .TP
 .BI \-c " commands"
