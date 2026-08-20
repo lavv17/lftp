@@ -417,6 +417,12 @@ void Torrent::SHA1(const xstring& str,xstring& buf)
    buf.set_length(SHA1_DIGEST_SIZE);
 }
 
+static bool IsSafeTorrentPathComponent(const xstring& path)
+{
+   return path.length()>0 && !path.eq(".") && !path.eq("..")
+      && path.instr('/')<0 && path.instr('\\')<0;
+}
+
 void Torrent::ValidatePiece(unsigned p)
 {
    const xstring& buf=Torrent::RetrieveBlock(p,0,PieceLength(p));
@@ -801,6 +807,10 @@ bool Torrent::SetMetadata(const xstring& md)
       name.truncate();
       info_hash.hexdump_to(name);
    }
+   if(!IsSafeTorrentPathComponent(name)) {
+      SetError("Meta-data: invalid name");
+      return false;
+   }
    Reconfig(0);
 
    BeNode *files=info->lookup("files");
@@ -827,9 +837,27 @@ bool Torrent::SetMetadata(const xstring& md)
 	    SetError("Meta-data: invalid or missing file length");
 	    return false;
 	 }
-	 if(!Lookup(files->list[i]->dict,"path",BeNode::BE_LIST)) {
+	 BeNode *path=files->list[i]->lookup("path.utf-8",BeNode::BE_LIST);
+	 void (Torrent::*tr)(BeNode*)const=&Torrent::TranslateStringFromUTF8;
+	 if(!path) {
+	    path=Lookup(files->list[i]->dict,"path",BeNode::BE_LIST);
+	    tr=&Torrent::TranslateString;
+	 }
+	 if(!path || path->list.length()==0) {
 	    SetError("Meta-data: file path missing");
 	    return false;
+	 }
+	 for(int j=0; j<path->list.length(); j++) {
+	    BeNode *component=path->list[j];
+	    if(component->type!=BeNode::BE_STR) {
+	       SetError(xstring::format("Meta-data: invalid `info/files[%d]/path[%d]'",i,j));
+	       return false;
+	    }
+	    (this->*tr)(component);
+	    if(!IsSafeTorrentPathComponent(component->str_lc)) {
+	       SetError(xstring::format("Meta-data: invalid `info/files[%d]/path[%d]'",i,j));
+	       return false;
+	    }
 	 }
 	 total_length+=f->num;
       }
@@ -1517,17 +1545,16 @@ const char *Torrent::MakePath(BeNode *p) const
       tr=&Torrent::TranslateString;
    }
    static xstring buf;
-   buf.set(name);
-   if(buf.eq("..") || buf[0]=='/') {
-      buf.set_substr(0,0,"_",1);
-   }
+   buf.set(IsSafeTorrentPathComponent(name) ? name.get() : "_");
    for(int i=0; i<path->list.count(); i++) {
       BeNode *e=path->list[i];
       if(e->type==BeNode::BE_STR) {
 	 (this->*tr)(e);
+	 if(!IsSafeTorrentPathComponent(e->str_lc)) {
+	    buf.append("/_");
+	    continue;
+	 }
 	 buf.append('/');
-	 if(e->str_lc.eq(".."))
-	    buf.append('_');
 	 buf.append(e->str_lc);
       }
    }
