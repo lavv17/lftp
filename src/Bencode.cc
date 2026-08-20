@@ -45,8 +45,21 @@ BeNode::BeNode(xmap_p<BeNode> *m)
    dict.move_here(*m);
 }
 
+static const unsigned MAX_BENCODE_DEPTH=128;
+
+static BeNode *ParseBencode(const char *s,int s_len,int *rest,unsigned depth);
+
 BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
 {
+   return ParseBencode(s,s_len,rest,0);
+}
+
+static BeNode *ParseBencode(const char *s,int s_len,int *rest,unsigned depth)
+{
+   if(depth>=MAX_BENCODE_DEPTH) {
+      *rest=s_len;
+      return 0;
+   }
    if(s_len<2) {
       *rest=0;
       return 0;
@@ -97,7 +110,7 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
       while(s_len>1 && *s!='e')
       {
 	 int rest1;
-	 BeNode *n=Parse(s,s_len,&rest1);
+	 BeNode *n=ParseBencode(s,s_len,&rest1,depth+1);
 	 if(!n) {
 	    *rest=rest1;
 	    return 0;
@@ -122,18 +135,18 @@ BeNode *BeNode::Parse(const char *s,int s_len,int *rest)
       while(s_len>1 && *s!='e')
       {
 	 int rest1;
-	 Ref<BeNode> n(Parse(s,s_len,&rest1));
+	 Ref<BeNode> n(ParseBencode(s,s_len,&rest1,depth+1));
 	 if(!n) {
 	    *rest=rest1;
 	    return 0;
 	 }
-	 if(n->type!=BE_STR) {
+	 if(n->type!=BeNode::BE_STR) {
 	    *rest=s_len;
 	    return 0;
 	 }
 	 s+=(s_len-rest1);
 	 s_len=rest1;
-	 BeNode *v=Parse(s,s_len,&rest1);
+	 BeNode *v=ParseBencode(s,s_len,&rest1,depth+1);
 	 if(!v) {
 	    *rest=rest1;
 	    return 0;
