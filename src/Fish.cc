@@ -1179,6 +1179,8 @@ static FileSet *ls_to_FileSet(const char *b,int len)
 
       set->Add(f);
    }
+   // Remote shell output must not introduce path components into file names.
+   set->ExcludeCompound();
    return set;
 }
 
