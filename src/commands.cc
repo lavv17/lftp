@@ -793,9 +793,14 @@ Job *CmdExec::builtin_lftp()
 	 cmd.set("version;");
 	 break;
       case('f'):
-	 cmd.set("source ");
-	 cmd.append_quoted(optarg);
-	 cmd.append(';');
+	 if(!strcmp(optarg,"-")) {
+	    SetCmdFeeder(new FileFeeder(new FDStream(0,"<stdin>")));
+	    lftp_feeder=0;
+	 } else {
+	    cmd.set("source ");
+	    cmd.append_quoted(optarg);
+	    cmd.append(';');
+	 }
 	 break;
       case('c'):
 	 args->CombineCmdTo(cmd,args->getindex()-1).append("\n\n");
