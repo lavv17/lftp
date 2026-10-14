@@ -1730,7 +1730,7 @@ CMD(get)
       {"reverse",no_argument,0,256+'R'},
       {0}
    };
-   const char *opts="+cEeaO:qP";
+   const char *opts="+cEeaO:qP:";
 
    int opt;
    bool cont=false;
