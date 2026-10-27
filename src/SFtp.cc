@@ -653,6 +653,8 @@ void SFtp::SendRequest()
 	 SetError(NOT_SUPP);
 	 break;
       }
+      if (mode==SYMLINK)
+         SendRequest(new Request_REMOVE(WirePath(file1)),Expect::IGNORE);
       if(protocol_version>=6)
 	 SendRequest(new Request_LINK(mode==SYMLINK?lc_to_utf8(file):WirePath(file),WirePath(file1),mode==SYMLINK),Expect::DEFAULT);
       else
