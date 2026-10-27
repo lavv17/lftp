@@ -4872,8 +4872,10 @@ void Ftp::Reconfig(const char *name)
 
    if(conn && conn->control_sock!=-1)
       SetSocketBuffer(conn->control_sock);
-   if(conn && conn->data_sock!=-1)
+   if(conn && conn->data_sock!=-1) {
       SetSocketBuffer(conn->data_sock);
+      SetTCPNodelay(conn->data_sock);
+   }
    if(conn && conn->data_iobuf && rate_limit)
       rate_limit->SetBufferSize(conn->data_iobuf,max_buf);
 }

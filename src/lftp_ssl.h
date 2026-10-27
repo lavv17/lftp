@@ -33,6 +33,7 @@
 
 #include "Ref.h"
 #include "xstring.h"
+#include "Timer.h"
 
 class lftp_ssl_base
 {
@@ -92,6 +93,7 @@ class lftp_ssl_gnutls : public lftp_ssl_base
    static Ref<lftp_ssl_gnutls_instance> instance;
    gnutls_session_t session;
    gnutls_certificate_credentials_t cred;
+   Ref<Timer> ssl_shutdown_timer;
    void verify_certificate_chain(const gnutls_datum_t *cert_chain,int cert_chain_length);
    int do_handshake();
    bool check_fatal(int res);

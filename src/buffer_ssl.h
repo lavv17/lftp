@@ -21,6 +21,7 @@
 #define BUFFER_SSL_H
 
 #include "buffer.h"
+#include "Timer.h"
 
 #if USE_SSL
 #include "lftp_ssl.h"
