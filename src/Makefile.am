@@ -10,7 +10,7 @@ EXTRA_DIST = $(pkgdata_SCRIPTS) $(bin_SCRIPTS) $(noinst_SCRIPTS)
 lftp_SOURCES = lftp.cc complete.h complete.cc lftp_rl.c lftp_rl.h attach.cc attach.h
 
 TASK_MODULES = liblftp-pty.la liblftp-network.la proto-ftp.la proto-http.la proto-file.la proto-fish.la proto-sftp.la
-JOB_MODULES = cmd-mirror.la cmd-sleep.la cmd-torrent.la
+JOB_MODULES = cmd-mirror.la cmd-sleep.la cmd-torrent.la cmd-edit.la compat-mode.la
 if WITH_MODULES
   pkgverlib_LTLIBRARIES = $(TASK_MODULES) $(JOB_MODULES)
 else
@@ -30,6 +30,8 @@ cmd_mirror_la_SOURCES = MirrorJob.cc MirrorJob.h
 cmd_sleep_la_SOURCES  = SleepJob.cc SleepJob.h
 cmd_torrent_la_SOURCES= Torrent.cc Torrent.h TorrentTracker.cc TorrentTracker.h\
  DHT.cc DHT.h Bencode.cc Bencode.h
+cmd_edit_la_SOURCES   = cmd-edit.cc
+compat_mode_la_SOURCES= CompatMode.cc CompatMode.h
 liblftp_pty_la_SOURCES     = PtyShell.cc PtyShell.h lftp_pty.c lftp_pty.h SSH_Access.cc SSH_Access.h
 liblftp_network_la_SOURCES = NetAccess.cc NetAccess.h Resolver.cc Resolver.h\
  lftp_ssl.cc lftp_ssl.h buffer_ssl.cc buffer_ssl.h RateLimit.cc RateLimit.h\
@@ -49,6 +51,8 @@ proto_sftp_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_mirror_la_LDFLAGS = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_sleep_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 cmd_torrent_la_LDFLAGS= -module -avoid-version -rpath $(pkgverlibdir)
+cmd_edit_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
+compat_mode_la_LDFLAGS  = -module -avoid-version -rpath $(pkgverlibdir)
 liblftp_pty_la_LDFLAGS     = -avoid-version -rpath $(pkgverlibdir)
 liblftp_network_la_CPPFLAGS = $(AM_CPPFLAGS) $(OPENSSL_CPPFLAGS) $(ZLIB_CPPFLAGS) $(LIBGNUTLS_CFLAGS)
 liblftp_network_la_LDFLAGS = -avoid-version -rpath $(pkgverlibdir)
