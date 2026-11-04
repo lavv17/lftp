@@ -492,6 +492,8 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    source_name,target_name);
 	 AddWaiting(mj);
 	 mj->cmdline.vset("\\mirror `",source_name_rel,"'",NULL);
+	 if(target_is_local && !script_only)
+	    open_child=mj;   // the next entry waits until its files are created
 
 	 mj->source_relative_dir.set(source_name_rel);
 	 mj->target_relative_dir.set(target_name_rel);
@@ -1142,9 +1144,17 @@ int   MirrorJob::Do()
 	 goto pre_FINISHING;
       while(transfer_count<parallel && state==WAITING_FOR_TRANSFER)
       {
+	 // local target: a folder's files and folders are all created before
+	 // the next entry, so the whole tree appears on disk in sort order.
+	 // Transfers already started keep running meanwhile.
+	 if(open_child)
+	    break;
 	 file=to_transfer->curr();
 	 if(!file)
 	 {
+	    // everything here is created: let the parent go on
+	    if(!FlagSet(DEPTH_FIRST))
+	       ReleaseParent();
 	    // go to the next step only when all transfers have finished
 	    if(waiting_num>0)
 	       break;
@@ -1341,6 +1351,7 @@ int   MirrorJob::Do()
       if(remove_source_files && (same || to_rm_src))
 	 goto pre_SOURCE_REMOVING_SAME;
    pre_FINISHING:
+      ReleaseParent();
       set_state(FINISHING);
       m=MOVED;
       /*fallthrough*/
@@ -1455,6 +1466,7 @@ int   MirrorJob::Do()
       if(waiting_num>0)
 	 break;
    pre_DONE:
+      ReleaseParent();
       set_state(DONE);
       m=MOVED;
       bytes_transferred=0;
@@ -1485,7 +1497,8 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    source_dir(new_source_dir), target_dir(new_target_dir),
    transfer_time_elapsed(0), root_transfer_count(0),
    verbose_report(0),
-   parent_mirror(parent), root_mirror(parent?parent->root_mirror:this)
+   parent_mirror(parent), root_mirror(parent?parent->root_mirror:this),
+   open_child(0)
 {
 
    source_session=source;
@@ -1565,8 +1578,15 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    MirrorStarted();
 }
 
+void MirrorJob::ReleaseParent()
+{
+   if(parent_mirror && parent_mirror->open_child==this)
+      parent_mirror->open_child=0;
+}
+
 MirrorJob::~MirrorJob()
 {
+   ReleaseParent();
    if(script && script_needs_closing)
       fclose(script);
 }
@@ -2411,7 +2431,8 @@ CDECL void module_init()
 	 " -R, --reverse          reverse mirror (put files)\n"
 	 " -P, --parallel[=N]     transfer N files in parallel\n"
 	 "     --sort=KEY         name, natural, size, date, oldest, newest (-desc);\n"
-	 "                        local files are created in this order, also with -P\n"
+	 "                        local files are created in this order, also with -P;\n"
+	 "                        each folder is filled before the next entry\n"
 	 "Lots of other options are documented in the man page lftp(1).\n"
 	 "\n"
 	 "When using -R, the first directory is local and the second is remote.\n"

@@ -14,7 +14,13 @@ any file is transferred), then files, each group sorted by KEY:
 
 lftp copies the mtime and size, so they are read from the target itself.
 
+With --tree it checks the whole tree under DIR instead, by creation time:
+every folder is created, with everything inside it, before the next entry
+of its parent. So no entry from outside a folder may be created between
+the folder and the last thing created inside it.
+
 usage: check_order.py DIR KEY [--readdir] [-v]
+       check_order.py DIR --tree [-v]
 exit 0 when the order matches, 1 when it does not.
 """
 import functools
@@ -100,7 +106,33 @@ def expected_sequences(d, names, key):
     return seqs
 
 
+def check_tree(root, verbose):
+    entries = []
+    for dp, dns, fns in os.walk(root):
+        entries += [os.path.relpath(os.path.join(dp, n), root) for n in dns + fns]
+    bt = birth_times(root, entries)
+    bad = []
+    for d in entries:
+        if not os.path.isdir(os.path.join(root, d)):
+            continue
+        inside = [e for e in entries if e.startswith(d + os.sep)]
+        if not inside:
+            continue
+        start, end = bt[d], max(bt[e] for e in inside)
+        for x in entries:
+            if x == d or x.startswith(d + os.sep) or d.startswith(x + os.sep):
+                continue   # inside the folder, or a folder holding it
+            if start < bt[x] < end:
+                bad.append((x, d))
+    print(f"{root}: whole tree, {len(entries)} entries, {len(bad)} created inside another folder's turn")
+    for x, d in bad[: (len(bad) if verbose else 12)]:
+        print(f"  {x!r} was created while {d!r} was still being filled")
+    return 1 if bad else 0
+
+
 def main():
+    if "--tree" in sys.argv:
+        return check_tree(sys.argv[1], "-v" in sys.argv)
     d, key = sys.argv[1], sys.argv[2]
     readdir = "--readdir" in sys.argv
     verbose = "-v" in sys.argv

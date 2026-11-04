@@ -4,7 +4,8 @@
 # Starts a local FTP server that delays every download by a random amount
 # (so parallel transfers finish in random order, as on a real network),
 # mirrors a tree of many small files with --parallel=8 and checks that every
-# file and folder on the target was created in the sort order.
+# file and folder on the target was created in the sort order, and that each
+# folder was filled completely before the next entry was started.
 #
 # usage: tests/ordered/run.run [FAT_DIR]
 #   FAT_DIR  optional: a mounted FAT/exFAT folder; also checks the order the
@@ -48,6 +49,8 @@ def make(d, names):
 make(src, [f"track {i}.mp3" for i in range(1, 121)])
 for k, cd in enumerate(["CD 1", "CD 2", "CD 10"]):
     make(os.path.join(src, cd), [f"{i:d} - song.mp3" for i in range(1, 41)])
+    if cd == "CD 2":
+        make(os.path.join(src, cd, "Bonus"), [f"bonus {i}.mp3" for i in range(1, 16)])
     t = base + 100_000 + (2 - k) * 3600                  # CD 10 oldest, CD 1 newest
     os.utime(os.path.join(src, cd), (t, t))
 EOF
@@ -62,6 +65,8 @@ check_tree() {   # DIR KEY [--readdir]
    while IFS= read -r -d '' sub; do
       "$PYTHON" "$HERE/check_order.py" "$sub" "$key" $rd || bad=1
    done < <(find "$d" -type d -print0)
+   # creation time over the whole tree (FAT: the listing order above is the one players read)
+   [ -z "$rd" ] && { "$PYTHON" "$HERE/check_order.py" "$d" --tree || bad=1; }
    return $bad
 }
 mirror() {   # SOURCE TARGET ARGS...

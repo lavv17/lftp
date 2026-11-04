@@ -153,6 +153,11 @@ private:
    MirrorJob *parent_mirror;
    MirrorJob *root_mirror;
 
+   // local target: the sub-mirror whose files are still being created.
+   // The next entry waits for it, so the whole tree is created in order.
+   MirrorJob *open_child;
+   void ReleaseParent();
+
    time_t newer_than;
    time_t older_than;
    Ref<Range> my_size_range;

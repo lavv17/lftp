@@ -712,7 +712,8 @@ download N files in parallel
 T}
 	\-\-sort=\fIKEY\fP	T{
 order of transfers for this mirror, one of the mirror:sort\-by values;
-local files and directories are created in this order, also with \-\-parallel
+local files and directories are created in this order, also with \-\-parallel;
+each directory is filled completely before the next entry
 T}
 	\-\-use-pget[\-n=\fIN\fP]	T{
 use pget to transfer every single file
@@ -2139,6 +2140,9 @@ overrides this setting.
 On a local target the files and directories are also created in this order,
 with \-\-parallel too: each local file is created when its transfer starts,
 not when its first data arrive, and local directories are made one at a time.
+Each directory is filled completely, its subdirectories included, before the
+next entry of its parent is created, so the whole tree is written in order;
+transfers already started keep running meanwhile, so the speed is the same.
 This matters for players, car stereos and frames that show files in the order
 they were written (FAT, exFAT). With xfer:use-temp-file the final rename
 decides the order of directory entries, so keep it off for that.
