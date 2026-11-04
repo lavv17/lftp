@@ -337,7 +337,6 @@ static ResType lftp_vars[] = {
    {"net:connection-takeover",	 "yes",   ResMgr::BoolValidate,0},
 
    {"mirror:sort-by",		 "name",  SortByValidate,ResMgr::NoClosure},
-   {"mirror:ordered",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:order",		 "*.sfv *.sig *.md5* *.sum * */", 0,ResMgr::NoClosure},
    {"mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:parallel-transfer-count", "0",ResMgr::UNumberValidate,0},

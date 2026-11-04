@@ -404,8 +404,11 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    c->RemoveSourceLater();
 	 if(remove_target)
 	    c->RemoveTargetFirst();   // instant for a local target
-	 if(ordered && dst_local)
-	    dst_local->OpenNow();     // the file exists from now, in dispatch order
+	 // create the local file now, as its transfer is dispatched, not when
+	 // its first data arrive: transfers are dispatched in sort order, so the
+	 // files appear on disk in that order also with --parallel.
+	 if(dst_local)
+	    dst_local->OpenNow();
 	 if(FlagSet(ASCII))
 	    c->Ascii();
 	 CopyJob *cp=(use_pget ? new pgetJob(c,file->name,pget_n) : new CopyJob(c,file->name,"mirror"));
@@ -472,10 +475,10 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    }
 	 }
 
-	 // ordered: make the local subdirectory now, at its place in the
-	 // sort order, rather than later when the sub-mirror gets to it.
+	 // make the local subdirectory now, at its place in the sort order,
+	 // rather than later when the sub-mirror gets to it.
 	 // Not with --depth-first (or --no-empty-dirs), which decide later.
-	 if(ordered && target_is_local && !script_only && create_target_subdir
+	 if(target_is_local && !script_only && create_target_subdir
 	 && !FlagSet(DEPTH_FIRST) && mkdir(target_name,0777)==0)
 	 {
 	    Report(_("Making directory `%s'"),target_name_rel);
@@ -1102,7 +1105,7 @@ int   MirrorJob::Do()
       if(max_error_count>0 && stats.error_count>=max_error_count)
 	 goto pre_FINISHING;
       while(transfer_count<parallel && state==TARGET_MKDIR
-	    && !(ordered && waiting_num>0))   // ordered: one mkdir at a time
+	    && !(target_is_local && waiting_num>0))   // local: one at a time, in order
       {
 	 file=to_mkdir->curr();
 	 if(!file)
@@ -1519,7 +1522,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    parallel=1;
    pget_n=1;
    pget_minchunk=0x10000;
-   ordered=false;
 
    source_redirections=0;
    target_redirections=0;
@@ -1546,7 +1548,6 @@ MirrorJob::MirrorJob(MirrorJob *parent,
       parallel=parent->parallel;
       pget_n=parent->pget_n;
       pget_minchunk=parent->pget_minchunk;
-      ordered=parent->ordered;
       sort_by.set(parent->sort_by);
       remove_source_files=parent->remove_source_files;
       remove_source_dirs=parent->remove_source_dirs;
@@ -1856,8 +1857,6 @@ CMD(mirror)
       OPT_TRANSFER_ALL,
       OPT_TARGET_FLAT,
       OPT_DELETE_EXCLUDED,
-      OPT_ORDERED,
-      OPT_NO_ORDERED,
       OPT_SORT,
    };
    static const struct option mirror_opts[]=
@@ -1921,8 +1920,6 @@ CMD(mirror)
       {"transfer-all",no_argument,0,OPT_TRANSFER_ALL},
       {"flat",no_argument,0,OPT_TARGET_FLAT},
       {"delete-excluded",no_argument,0,OPT_DELETE_EXCLUDED},
-      {"ordered",no_argument,0,OPT_ORDERED},
-      {"no-ordered",no_argument,0,OPT_NO_ORDERED},
       {"sort",required_argument,0,OPT_SORT},
       {0}
    };
@@ -1953,7 +1950,6 @@ CMD(mirror)
    const char *recursion_mode=0;
    bool single_file=false;
    bool single_dir=false;
-   bool ordered=ResMgr::QueryBool("mirror:ordered",0);
    xstring_c sort_by;
 
    Ref<PatternSet> exclude;
@@ -2179,12 +2175,6 @@ CMD(mirror)
       case(OPT_DELETE_EXCLUDED):
 	 flags|=MirrorJob::DELETE_EXCLUDED;
 	 break;
-      case(OPT_ORDERED):
-	 ordered=true;
-	 break;
-      case(OPT_NO_ORDERED):
-	 ordered=false;
-	 break;
       case(OPT_SORT):
       {
 	 // same keys as mirror:sort-by, checked by the same validator
@@ -2371,7 +2361,6 @@ CMD(mirror)
       j->SetParallel(parallel);
    if(use_pget>1 && !(flags&MirrorJob::ASCII))
       j->SetPGet(use_pget);
-   j->SetOrdered(ordered);
    if(sort_by)
       j->SetSortBy(sort_by);
 
@@ -2421,8 +2410,8 @@ CDECL void module_init()
 	 "\n"
 	 " -R, --reverse          reverse mirror (put files)\n"
 	 " -P, --parallel[=N]     transfer N files in parallel\n"
-	 "     --ordered          create files in sort order, also with --parallel\n"
-	 "     --sort=KEY         name, natural, size, date, oldest, newest (-desc)\n"
+	 "     --sort=KEY         name, natural, size, date, oldest, newest (-desc);\n"
+	 "                        local files are created in this order, also with -P\n"
 	 "Lots of other options are documented in the man page lftp(1).\n"
 	 "\n"
 	 "When using -R, the first directory is local and the second is remote.\n"

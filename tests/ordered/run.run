@@ -1,5 +1,5 @@
 #!/bin/bash
-# Test for mirror --ordered: parallel downloads that keep the sort order.
+# Test: mirror --parallel keeps the sort order on disk.
 #
 # Starts a local FTP server that delays every download by a random amount
 # (so parallel transfers finish in random order, as on a real network),
@@ -10,10 +10,13 @@
 #   FAT_DIR  optional: a mounted FAT/exFAT folder; also checks the order the
 #            filesystem lists entries in (what car stereos and players read).
 # needs: python3 with pyftpdlib  (pip install pyftpdlib), PYTHON=... to pick one.
+# STOCK_LFTP=/usr/bin/lftp (default) is an unmodified lftp, run once to show
+# the problem; skipped when not installed.
 
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
 LFTP=${LFTP:-$HERE/../../src/lftp}
+STOCK_LFTP=${STOCK_LFTP:-/usr/bin/lftp}
 PYTHON=${PYTHON:-python3}
 PORT=${PORT:-2121}
 FAT=${1:-}
@@ -63,7 +66,7 @@ check_tree() {   # DIR KEY [--readdir]
 }
 mirror() {   # SOURCE TARGET ARGS...
    local src=$1 dst=$2; shift 2
-   "$LFTP" -c "set cmd:at-exit ''; mirror --no-perms $* '$src' '$dst'" 2>&1
+   "${USE_LFTP:-$LFTP}" -c "set cmd:at-exit ''; mirror --no-perms $* '$src' '$dst'" 2>&1
    diff -r "$SRC" "$dst" >/dev/null || { echo "  CONTENT DIFFERS in $dst"; return 1; }
 }
 run() {   # NAME KEY EXPECT(ok|disorder) TARGET_ROOT MIRROR_ARGS... [-- check args]
@@ -77,22 +80,28 @@ run() {   # NAME KEY EXPECT(ok|disorder) TARGET_ROOT MIRROR_ARGS... [-- check ar
 }
 
 OUT=$WORK/out; mkdir -p "$OUT"
-run stock          natural      disorder "$OUT" --sort=natural
-run natural        natural      ok       "$OUT" --ordered --sort=natural
-run natural-desc   natural-desc ok       "$OUT" --ordered --sort=natural-desc
-run name           name         ok       "$OUT" --ordered --sort=name
-run oldest         oldest       ok       "$OUT" --ordered --sort=oldest
-run newest         newest       ok       "$OUT" --ordered --sort=newest
-run size           size         ok       "$OUT" --ordered --sort=size
+stock() {   # ROOT: the problem, with unmodified lftp (default sort: name)
+   [ -x "$STOCK_LFTP" ] || { echo "== stock lftp not found ($STOCK_LFTP), skipped"; return; }
+   USE_LFTP=$STOCK_LFTP run stock name disorder "$1"
+}
 
-echo "== local folder to local folder: mirror --parallel=$PAR --ordered --sort=natural"
-mirror "file://$SRC" "$OUT/local" --parallel=$PAR --ordered --sort=natural || FAIL=1
+stock "$OUT"
+run default        name         ok       "$OUT"
+run natural        natural      ok       "$OUT" --sort=natural
+run natural-desc   natural-desc ok       "$OUT" --sort=natural-desc
+run name           name         ok       "$OUT" --sort=name
+run oldest         oldest       ok       "$OUT" --sort=oldest
+run newest         newest       ok       "$OUT" --sort=newest
+run size           size         ok       "$OUT" --sort=size
+
+echo "== local folder to local folder: mirror --parallel=$PAR --sort=natural"
+mirror "file://$SRC" "$OUT/local" --parallel=$PAR --sort=natural || FAIL=1
 check_tree "$OUT/local" natural && echo "  -> ok" || { echo "  -> disorder"; FAIL=1; }
 
 if [ -n "$FAT" ]; then
    FATRUN=$FAT/lftp-ordered-test.$$; mkdir -p "$FATRUN"
-   run stock   natural disorder "$FATRUN" --sort=natural
-   run natural natural ok       "$FATRUN" --ordered --sort=natural
+   stock "$FATRUN"
+   run natural natural ok       "$FATRUN" --sort=natural
    rm -rf -- "$FATRUN"
 fi
 

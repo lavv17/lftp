@@ -710,15 +710,9 @@ T}
 \-P,	\-\-parallel[=\fIN\fP]	T{
 download N files in parallel
 T}
-	\-\-ordered	T{
-create each local file and directory when its transfer starts, so they
-appear on the target in the sort order even with \-\-parallel (see mirror:ordered)
-T}
-	\-\-no\-ordered	T{
-turn \-\-ordered off (overrides mirror:ordered)
-T}
 	\-\-sort=\fIKEY\fP	T{
-order of transfers for this mirror, one of the mirror:sort\-by values
+order of transfers for this mirror, one of the mirror:sort\-by values;
+local files and directories are created in this order, also with \-\-parallel
 T}
 	\-\-use-pget[\-n=\fIN\fP]	T{
 use pget to transfer every single file
@@ -2141,16 +2135,13 @@ newest first, oldest is oldest first; files of equal size or date go by name.
 \-desc reverses any of them. When the value is name or natural, then mirror:order
 setting also affects the order or transfers. The \-\-sort option of mirror
 overrides this setting.
-.TP
-.BR mirror:ordered " (boolean)"
-when true, mirror creates each local file at the moment its transfer is started
-instead of when its first data arrive, and makes local directories one at a
-time at their place in the sort order. Transfers are started in sort order, so
-with \-\-parallel the files still appear on the target in that order. This
-matters for players, car stereos and frames that show files in the order they
-were written (FAT, exFAT). Applies to local targets. With xfer:use-temp-file
-the final rename decides the order of directory entries, so keep it off.
-Same as \-\-ordered.
+
+On a local target the files and directories are also created in this order,
+with \-\-parallel too: each local file is created when its transfer starts,
+not when its first data arrive, and local directories are made one at a time.
+This matters for players, car stereos and frames that show files in the order
+they were written (FAT, exFAT). With xfer:use-temp-file the final rename
+decides the order of directory entries, so keep it off for that.
 .TP
 .BR mirror:order " (list of patterns)"
 specifies order of file transfers when sorting by name. E.g. setting this to "*.sfv *.sum" makes mirror to

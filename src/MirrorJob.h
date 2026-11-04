@@ -171,9 +171,6 @@ private:
    int pget_n;
    int pget_minchunk;
 
-   // ordered: create each local file when its transfer is dispatched, so
-   // files appear on the target in sort order even with --parallel.
-   bool ordered;
    xstring_c sort_by;	// overrides mirror:sort-by when set
    const char *GetSortBy() const;
    void SortSet(FileSet *set) const;
@@ -273,7 +270,6 @@ public:
 
    void  SetParallel(int p) { parallel=p; }
    void  SetPGet(int n) { pget_n=n; }
-   void  SetOrdered(bool o) { ordered=o; }
    void  SetSortBy(const char *s) { sort_by.set(s); }
 
    void Fg();
