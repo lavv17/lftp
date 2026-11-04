@@ -414,6 +414,9 @@ public:
    pid_t GetProcGroup() { return stream->GetProcGroup(); }
    void Kill(int sig);
 
+   // open (and so create) the local file right now instead of on the
+   // first write; used by mirror --ordered.
+   void OpenNow() { getfd(); }
    void DontCreateFgData() { create_fg_data=false; }
    void NeedSeek() { need_seek=true; }
    void CloseWhenDone() { close_when_done=true; }

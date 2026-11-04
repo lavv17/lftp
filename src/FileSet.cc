@@ -228,6 +228,35 @@ static int files_sort_name(const Ref<FileInfo> *s1, const Ref<FileInfo> *s2)
    return strcmp((*s1)->name, (*s2)->name);
 }
 
+// natural order: runs of digits compare as numbers, so "track 2" comes
+// before "track 10". Names equal as numbers ("01", "1") fall back to strcmp.
+static int natural_strcmp(const char *s1, const char *s2)
+{
+   const unsigned char *p=(const unsigned char*)s1;
+   const unsigned char *q=(const unsigned char*)s2;
+   while(*p && *q) {
+      if(*p>='0' && *p<='9' && *q>='0' && *q<='9') {
+	 while(*p=='0') p++;
+	 while(*q=='0') q++;
+	 const unsigned char *ps=p, *qs=q;
+	 while(*p>='0' && *p<='9') p++;
+	 while(*q>='0' && *q<='9') q++;
+	 if(p-ps != q-qs)
+	    return (p-ps < q-qs) ? -1 : 1;
+	 int c=memcmp(ps,qs,p-ps);
+	 if(c)
+	    return c;
+	 continue;
+      }
+      if(*p!=*q)
+	 return *p<*q ? -1 : 1;
+      p++, q++;
+   }
+   if(*p || *q)
+      return *p ? 1 : -1;
+   return strcmp(s1,s2);
+}
+
 static int (*compare)(const char *s1, const char *s2);
 static int rev_cmp;
 static RefArray<FileInfo> *files_cmp;
@@ -245,7 +274,7 @@ static int sort_size(const int *s1, const int *s2)
    const FileInfo *p2=(*files_cmp)[*s2];
    if(p1->size > p2->size) return -rev_cmp;
    if(p1->size < p2->size) return rev_cmp;
-   return 0;
+   return compare(p1->name, p2->name);   // ties: always by name, A to Z
 }
 
 static int sort_dirs(const int *s1, const int *s2)
@@ -271,18 +300,19 @@ static int sort_date(const int *s1, const int *s2)
    const FileInfo *p1=(*files_cmp)[*s1];
    const FileInfo *p2=(*files_cmp)[*s2];
    if(p1->date==p2->date)
-      return sort_name(s1,s2);
+      return compare(p1->name, p2->name);   // ties: always by name, A to Z
    return p1->date>p2->date ? -rev_cmp : rev_cmp;
 }
 
-void FileSet::Sort(sort_e newsort, bool casefold, bool reverse)
+void FileSet::Sort(sort_e newsort, bool casefold, bool reverse, bool natural)
 {
-   if(newsort == BYNAME && !casefold && !reverse) {
+   if(newsort == BYNAME && !casefold && !reverse && !natural) {
       Unsort();
       return;
    }
 
-   if(casefold) compare = strcasecmp;
+   if(natural) compare = natural_strcmp;
+   else if(casefold) compare = strcasecmp;
    else compare = strcmp;
 
    rev_cmp=(reverse?-1:1);
@@ -1114,7 +1144,7 @@ static int fnmatch_dir(const char *pattern,const FileInfo *file)
    return result;
 }
 
-void FileSet::SortByPatternList(const char *list_c)
+void FileSet::SortByPatternList(const char *list_c, bool natural)
 {
    const int max_rank=1000000;
    for(int i=0; i<fnum; i++)
@@ -1125,7 +1155,7 @@ void FileSet::SortByPatternList(const char *list_c)
       for(int i=0; i<fnum; i++)
 	 if(files[i]->GetRank()==max_rank && !fnmatch_dir(p,files[i]))
 	    files[i]->SetRank(rank);
-   Sort(BYRANK);
+   Sort(BYRANK,false,false,natural);
 }
 
 void FileInfo::MakeLongName()

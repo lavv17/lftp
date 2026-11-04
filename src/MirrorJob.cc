@@ -393,8 +393,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	    src_peer=new FileCopyPeerFA(source_session->Clone(),file->name,FA::RETRIEVE);
 
 	 FileCopyPeer *dst_peer=0;
+	 FileCopyPeerFDStream *dst_local=0;
 	 if(target_is_local)
-	    dst_peer=new FileCopyPeerFDStream(new FileStream(target_name,O_WRONLY|O_CREAT|(cont_this?0:O_TRUNC)),FileCopyPeer::PUT);
+	    dst_peer=dst_local=new FileCopyPeerFDStream(new FileStream(target_name,O_WRONLY|O_CREAT|(cont_this?0:O_TRUNC)),FileCopyPeer::PUT);
 	 else
 	    dst_peer=new FileCopyPeerFA(target_session->Clone(),dst_name,FA::STORE);
 
@@ -402,7 +403,9 @@ void  MirrorJob::HandleFile(FileInfo *file)
 	 if(remove_source_files)
 	    c->RemoveSourceLater();
 	 if(remove_target)
-	    c->RemoveTargetFirst();
+	    c->RemoveTargetFirst();   // instant for a local target
+	 if(ordered && dst_local)
+	    dst_local->OpenNow();     // the file exists from now, in dispatch order
 	 if(FlagSet(ASCII))
 	    c->Ascii();
 	 CopyJob *cp=(use_pget ? new pgetJob(c,file->name,pget_n) : new CopyJob(c,file->name,"mirror"));
@@ -467,6 +470,16 @@ void  MirrorJob::HandleFile(FileInfo *file)
 		  create_target_subdir=true;
 	       }
 	    }
+	 }
+
+	 // ordered: make the local subdirectory now, at its place in the
+	 // sort order, rather than later when the sub-mirror gets to it.
+	 // Not with --depth-first (or --no-empty-dirs), which decide later.
+	 if(ordered && target_is_local && !script_only && create_target_subdir
+	 && !FlagSet(DEPTH_FIRST) && mkdir(target_name,0777)==0)
+	 {
+	    Report(_("Making directory `%s'"),target_name_rel);
+	    create_target_subdir=false;
 	 }
 
       do_submirror:
@@ -661,16 +674,9 @@ void  MirrorJob::InitSets()
       new_files_set->UnsortFlat();
    }
 
-   const char *sort_by=ResMgr::Query("mirror:sort-by",0);
-   bool desc=strstr(sort_by,"-desc");
-   if(!strncmp(sort_by,"name",4))
-      to_transfer->SortByPatternList(ResMgr::Query("mirror:order",0));
-   else if(!strncmp(sort_by,"date",4))
-      to_transfer->Sort(FileSet::BYDATE);
-   else if(!strncmp(sort_by,"size",4))
-      to_transfer->Sort(FileSet::BYSIZE,false,true);
-   if(desc)
-      to_transfer->ReverseSort();
+   SortSet(to_transfer.get_non_const());
+   if(to_mkdir)
+      SortSet(to_mkdir.get_non_const());
 
    int dir_count=0;
    if(to_mkdir) {
@@ -680,6 +686,35 @@ void  MirrorJob::InitSets()
       to_transfer->Count(&dir_count,NULL,NULL,NULL);
       only_dirs = (dir_count==to_transfer->count());
    }
+}
+
+const char *MirrorJob::GetSortBy() const
+{
+   if(sort_by)
+      return sort_by;
+   return ResMgr::Query("mirror:sort-by",0);
+}
+
+// sort a file set by the sort key of this mirror:
+//   name, natural  - mirror:order patterns first, then by name
+//                    (natural: "track 2" before "track 10")
+//   date, newest   - newest first;  oldest - oldest first
+//   size           - smallest first
+// "-desc" reverses any of them.
+void MirrorJob::SortSet(FileSet *set) const
+{
+   const char *key=GetSortBy();
+   bool desc=strstr(key,"-desc");
+   if(!strncmp(key,"name",4) || !strncmp(key,"natural",7))
+      set->SortByPatternList(ResMgr::Query("mirror:order",0),!strncmp(key,"natural",7));
+   else if(!strncmp(key,"date",4) || !strncmp(key,"newest",6))
+      set->Sort(FileSet::BYDATE);
+   else if(!strncmp(key,"oldest",6))
+      set->Sort(FileSet::BYDATE,false,true);
+   else if(!strncmp(key,"size",4))
+      set->Sort(FileSet::BYSIZE,false,true);
+   if(desc)
+      set->ReverseSort();
 }
 
 void MirrorJob::ExcludeEmptyDir(const char *target_rel_dir)
@@ -1066,7 +1101,8 @@ int   MirrorJob::Do()
       }
       if(max_error_count>0 && stats.error_count>=max_error_count)
 	 goto pre_FINISHING;
-      while(transfer_count<parallel && state==TARGET_MKDIR)
+      while(transfer_count<parallel && state==TARGET_MKDIR
+	    && !(ordered && waiting_num>0))   // ordered: one mkdir at a time
       {
 	 file=to_mkdir->curr();
 	 if(!file)
@@ -1483,6 +1519,7 @@ MirrorJob::MirrorJob(MirrorJob *parent,
    parallel=1;
    pget_n=1;
    pget_minchunk=0x10000;
+   ordered=false;
 
    source_redirections=0;
    target_redirections=0;
@@ -1509,6 +1546,8 @@ MirrorJob::MirrorJob(MirrorJob *parent,
       parallel=parent->parallel;
       pget_n=parent->pget_n;
       pget_minchunk=parent->pget_minchunk;
+      ordered=parent->ordered;
+      sort_by.set(parent->sort_by);
       remove_source_files=parent->remove_source_files;
       remove_source_dirs=parent->remove_source_dirs;
       skip_noaccess=parent->skip_noaccess;
@@ -1817,6 +1856,9 @@ CMD(mirror)
       OPT_TRANSFER_ALL,
       OPT_TARGET_FLAT,
       OPT_DELETE_EXCLUDED,
+      OPT_ORDERED,
+      OPT_NO_ORDERED,
+      OPT_SORT,
    };
    static const struct option mirror_opts[]=
    {
@@ -1879,6 +1921,9 @@ CMD(mirror)
       {"transfer-all",no_argument,0,OPT_TRANSFER_ALL},
       {"flat",no_argument,0,OPT_TARGET_FLAT},
       {"delete-excluded",no_argument,0,OPT_DELETE_EXCLUDED},
+      {"ordered",no_argument,0,OPT_ORDERED},
+      {"no-ordered",no_argument,0,OPT_NO_ORDERED},
+      {"sort",required_argument,0,OPT_SORT},
       {0}
    };
 
@@ -1908,6 +1953,8 @@ CMD(mirror)
    const char *recursion_mode=0;
    bool single_file=false;
    bool single_dir=false;
+   bool ordered=ResMgr::QueryBool("mirror:ordered",0);
+   xstring_c sort_by;
 
    Ref<PatternSet> exclude;
    Ref<PatternSet> top_exclude;
@@ -2132,6 +2179,23 @@ CMD(mirror)
       case(OPT_DELETE_EXCLUDED):
 	 flags|=MirrorJob::DELETE_EXCLUDED;
 	 break;
+      case(OPT_ORDERED):
+	 ordered=true;
+	 break;
+      case(OPT_NO_ORDERED):
+	 ordered=false;
+	 break;
+      case(OPT_SORT):
+      {
+	 // same keys as mirror:sort-by, checked by the same validator
+	 sort_by.set(optarg);
+	 const char *err=ResMgr::FindRes("mirror:sort-by")->val_valid(&sort_by);
+	 if(err) {
+	    eprintf("%s: --sort: %s\n",args->a0(),err);
+	    return 0;
+	 }
+	 break;
+      }
       case('?'):
 	 eprintf(_("Try `help %s' for more information.\n"),args->a0());
       no_job:
@@ -2307,6 +2371,9 @@ CMD(mirror)
       j->SetParallel(parallel);
    if(use_pget>1 && !(flags&MirrorJob::ASCII))
       j->SetPGet(use_pget);
+   j->SetOrdered(ordered);
+   if(sort_by)
+      j->SetSortBy(sort_by);
 
    if(!recursion_mode && single_file && !single_dir)
       recursion_mode="never";
@@ -2353,6 +2420,9 @@ CDECL void module_init()
 	 "Mirror specified remote directory to local directory\n"
 	 "\n"
 	 " -R, --reverse          reverse mirror (put files)\n"
+	 " -P, --parallel[=N]     transfer N files in parallel\n"
+	 "     --ordered          create files in sort order, also with --parallel\n"
+	 "     --sort=KEY         name, natural, size, date, oldest, newest (-desc)\n"
 	 "Lots of other options are documented in the man page lftp(1).\n"
 	 "\n"
 	 "When using -R, the first directory is local and the second is remote.\n"

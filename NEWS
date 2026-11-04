@@ -1,3 +1,13 @@
+Unreleased - mirror --ordered
+
+* mirror: new --ordered option and mirror:ordered setting: with --parallel,
+  local files and directories are created in the sort order, not in the
+  order their first data arrive (for players that follow write order).
+* mirror: new --sort=KEY option, overrides mirror:sort-by for one mirror.
+* mirror:sort-by: new values natural, oldest, newest (and -desc of each);
+  natural puts "track 2" before "track 10".
+* sorting by size or date: files with equal size or date go by name.
+
 Version 4.9.3 - 2024-11-08
 
 * fixed sftp out-of-order problem.

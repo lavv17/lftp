@@ -160,9 +160,11 @@ const char *OrderValidate(xstring_c *s)
 static const char *SortByValidate(xstring_c *s)
 {
    static const char * const valid_set[]={
-      "name", "name-desc", "size", "size-desc", "date", "date-desc", 0
+      "name", "name-desc", "natural", "natural-desc",
+      "size", "size-desc", "date", "date-desc",
+      "oldest", "oldest-desc", "newest", "newest-desc", 0
    };
-   return SetValidate(*s,valid_set,"mirror:order-by");
+   return SetValidate(*s,valid_set,"mirror:sort-by");
 }
 
 #if USE_SSL
@@ -335,6 +337,7 @@ static ResType lftp_vars[] = {
    {"net:connection-takeover",	 "yes",   ResMgr::BoolValidate,0},
 
    {"mirror:sort-by",		 "name",  SortByValidate,ResMgr::NoClosure},
+   {"mirror:ordered",		 "no",	  ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:order",		 "*.sfv *.sig *.md5* *.sum * */", 0,ResMgr::NoClosure},
    {"mirror:parallel-directories", "yes", ResMgr::BoolValidate,ResMgr::NoClosure},
    {"mirror:parallel-transfer-count", "0",ResMgr::UNumberValidate,0},

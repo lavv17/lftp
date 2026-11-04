@@ -1,0 +1,100 @@
+#!/bin/bash
+# Test for mirror --ordered: parallel downloads that keep the sort order.
+#
+# Starts a local FTP server that delays every download by a random amount
+# (so parallel transfers finish in random order, as on a real network),
+# mirrors a tree of many small files with --parallel=8 and checks that every
+# file and folder on the target was created in the sort order.
+#
+# usage: tests/ordered/run.run [FAT_DIR]
+#   FAT_DIR  optional: a mounted FAT/exFAT folder; also checks the order the
+#            filesystem lists entries in (what car stereos and players read).
+# needs: python3 with pyftpdlib  (pip install pyftpdlib), PYTHON=... to pick one.
+
+set -u
+HERE=$(cd "$(dirname "$0")" && pwd)
+LFTP=${LFTP:-$HERE/../../src/lftp}
+PYTHON=${PYTHON:-python3}
+PORT=${PORT:-2121}
+FAT=${1:-}
+PAR=8
+
+"$PYTHON" -c "import pyftpdlib" 2>/dev/null || { echo "needs pyftpdlib: pip install pyftpdlib"; exit 2; }
+[ -x "$LFTP" ] || { echo "build lftp first ($LFTP not found)"; exit 2; }
+
+WORK=$(mktemp -d "${TMPDIR:-/tmp}/lftp-ordered-test.XXXXXX")
+SRC=$WORK/src
+cleanup() {
+   [ -n "${SERVER:-}" ] && kill "$SERVER" 2>/dev/null
+   [ -n "$WORK" ] && [ -d "$WORK" ] && rm -rf -- "$WORK"
+}
+trap cleanup EXIT
+
+# --- source tree: names, sizes and dates in three different orders ---------
+"$PYTHON" - "$SRC" <<'EOF'
+import os, random, sys
+src = sys.argv[1]; r = random.Random(7)
+base = 1_600_000_000
+def make(d, names):
+    os.makedirs(d, exist_ok=True)
+    stamps = r.sample(range(len(names)), len(names))   # date order unrelated to name
+    for n, s in zip(names, stamps):
+        p = os.path.join(d, n)
+        open(p, "wb").write(r.randbytes(r.randint(1000, 60000)))
+        os.utime(p, (base + s * 600, base + s * 600))
+make(src, [f"track {i}.mp3" for i in range(1, 121)])
+for k, cd in enumerate(["CD 1", "CD 2", "CD 10"]):
+    make(os.path.join(src, cd), [f"{i:d} - song.mp3" for i in range(1, 41)])
+    t = base + 100_000 + (2 - k) * 3600                  # CD 10 oldest, CD 1 newest
+    os.utime(os.path.join(src, cd), (t, t))
+EOF
+
+"$PYTHON" "$HERE/ftp_server.py" "$SRC" "$PORT" 300 >"$WORK/server.log" 2>&1 &
+SERVER=$!
+for _ in $(seq 50); do "$LFTP" -c "set net:max-retries 1; open ftp://127.0.0.1:$PORT; cls / >/dev/null" 2>/dev/null && break; sleep 0.2; done
+
+FAIL=0
+check_tree() {   # DIR KEY [--readdir]
+   local d=$1 key=$2 rd=${3:-} bad=0
+   while IFS= read -r -d '' sub; do
+      "$PYTHON" "$HERE/check_order.py" "$sub" "$key" $rd || bad=1
+   done < <(find "$d" -type d -print0)
+   return $bad
+}
+mirror() {   # SOURCE TARGET ARGS...
+   local src=$1 dst=$2; shift 2
+   "$LFTP" -c "set cmd:at-exit ''; mirror --no-perms $* '$src' '$dst'" 2>&1
+   diff -r "$SRC" "$dst" >/dev/null || { echo "  CONTENT DIFFERS in $dst"; return 1; }
+}
+run() {   # NAME KEY EXPECT(ok|disorder) TARGET_ROOT MIRROR_ARGS... [-- check args]
+   local name=$1 key=$2 expect=$3 root=$4; shift 4
+   local dst=$root/$name
+   echo "== $name: mirror --parallel=$PAR $*"
+   mirror "ftp://127.0.0.1:$PORT/" "$dst" --parallel=$PAR "$@" || { FAIL=1; return; }
+   local rd=""; [ -n "$FAT" ] && [ "$root" = "${FATRUN:-}" ] && rd=--readdir
+   if check_tree "$dst" "$key" $rd; then res=ok; else res=disorder; fi
+   if [ "$res" = "$expect" ]; then echo "  -> $res, as expected"; else echo "  -> $res, EXPECTED $expect"; FAIL=1; fi
+}
+
+OUT=$WORK/out; mkdir -p "$OUT"
+run stock          natural      disorder "$OUT" --sort=natural
+run natural        natural      ok       "$OUT" --ordered --sort=natural
+run natural-desc   natural-desc ok       "$OUT" --ordered --sort=natural-desc
+run name           name         ok       "$OUT" --ordered --sort=name
+run oldest         oldest       ok       "$OUT" --ordered --sort=oldest
+run newest         newest       ok       "$OUT" --ordered --sort=newest
+run size           size         ok       "$OUT" --ordered --sort=size
+
+echo "== local folder to local folder: mirror --parallel=$PAR --ordered --sort=natural"
+mirror "file://$SRC" "$OUT/local" --parallel=$PAR --ordered --sort=natural || FAIL=1
+check_tree "$OUT/local" natural && echo "  -> ok" || { echo "  -> disorder"; FAIL=1; }
+
+if [ -n "$FAT" ]; then
+   FATRUN=$FAT/lftp-ordered-test.$$; mkdir -p "$FATRUN"
+   run stock   natural disorder "$FATRUN" --sort=natural
+   run natural natural ok       "$FATRUN" --ordered --sort=natural
+   rm -rf -- "$FATRUN"
+fi
+
+[ $FAIL = 0 ] && echo "ALL PASSED" || echo "FAILED"
+exit $FAIL
