@@ -153,6 +153,11 @@ private:
    MirrorJob *parent_mirror;
    MirrorJob *root_mirror;
 
+   // local target: the sub-mirror whose files are still being created.
+   // The next entry waits for it, so the whole tree is created in order.
+   MirrorJob *open_child;
+   void ReleaseParent();
+
    time_t newer_than;
    time_t older_than;
    Ref<Range> my_size_range;
@@ -170,6 +175,10 @@ private:
    int parallel;
    int pget_n;
    int pget_minchunk;
+
+   xstring_c sort_by;	// overrides mirror:sort-by when set
+   const char *GetSortBy() const;
+   void SortSet(FileSet *set) const;
 
    xstring_c on_change;
 
@@ -266,6 +275,7 @@ public:
 
    void  SetParallel(int p) { parallel=p; }
    void  SetPGet(int n) { pget_n=n; }
+   void  SetSortBy(const char *s) { sort_by.set(s); }
 
    void Fg();
    void Bg();

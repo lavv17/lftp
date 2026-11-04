@@ -710,6 +710,11 @@ T}
 \-P,	\-\-parallel[=\fIN\fP]	T{
 download N files in parallel
 T}
+	\-\-sort=\fIKEY\fP	T{
+order of transfers for this mirror, one of the mirror:sort\-by values;
+local files and directories are created in this order, also with \-\-parallel;
+each directory is filled completely before the next entry
+T}
 	\-\-use-pget[\-n=\fIN\fP]	T{
 use pget to transfer every single file
 T}
@@ -2123,9 +2128,24 @@ is applied. It is never used if mirror:exclude-regex is empty.
 when true, mirror doesn't create empty directories (like \-\-no\-empty\-dirs option).
 .TP
 .BR mirror:sort-by " (string)"
-specifies order of file transfers. Valid values are: name, name-desc, size, size-desc,
-date, date-desc. When the value is name or name-desc, then mirror:order setting also
-affects the order or transfers.
+specifies order of file transfers. Valid values are: name, name-desc, natural,
+natural-desc, size, size-desc, date, date-desc, oldest, oldest-desc, newest,
+newest-desc. Natural is name order with runs of digits compared as numbers, so
+"track 2" comes before "track 10". Size is smallest first, date and newest are
+newest first, oldest is oldest first; files of equal size or date go by name.
+\-desc reverses any of them. When the value is name or natural, then mirror:order
+setting also affects the order or transfers. The \-\-sort option of mirror
+overrides this setting.
+
+On a local target the files and directories are also created in this order,
+with \-\-parallel too: each local file is created when its transfer starts,
+not when its first data arrive, and local directories are made one at a time.
+Each directory is filled completely, its subdirectories included, before the
+next entry of its parent is created, so the whole tree is written in order;
+transfers already started keep running meanwhile, so the speed is the same.
+This matters for players, car stereos and frames that show files in the order
+they were written (FAT, exFAT). With xfer:use-temp-file the final rename
+decides the order of directory entries, so keep it off for that.
 .TP
 .BR mirror:order " (list of patterns)"
 specifies order of file transfers when sorting by name. E.g. setting this to "*.sfv *.sum" makes mirror to

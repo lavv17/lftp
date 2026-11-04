@@ -191,9 +191,9 @@ public:
    void  SubtractNotOlderDirs(const FileSet *);
    void  SubtractCurr();
    bool  SubtractByName(const char *name);
-   void  Sort(sort_e newsort, bool casefold=false, bool reverse=false);
+   void  Sort(sort_e newsort, bool casefold=false, bool reverse=false, bool natural=false);
    void  Unsort();
-   void	 SortByPatternList(const char *list_c);
+   void	 SortByPatternList(const char *list_c, bool natural=false);
    void	 ReverseSort();
    void	 UnsortFlat();
 

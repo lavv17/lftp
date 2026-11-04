@@ -160,9 +160,11 @@ const char *OrderValidate(xstring_c *s)
 static const char *SortByValidate(xstring_c *s)
 {
    static const char * const valid_set[]={
-      "name", "name-desc", "size", "size-desc", "date", "date-desc", 0
+      "name", "name-desc", "natural", "natural-desc",
+      "size", "size-desc", "date", "date-desc",
+      "oldest", "oldest-desc", "newest", "newest-desc", 0
    };
-   return SetValidate(*s,valid_set,"mirror:order-by");
+   return SetValidate(*s,valid_set,"mirror:sort-by");
 }
 
 #if USE_SSL
